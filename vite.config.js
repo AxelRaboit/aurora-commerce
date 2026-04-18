@@ -22,6 +22,7 @@ export default defineConfig({
                 sidebar: './assets/sidebar.js',
                 flash: './assets/flash.js',
                 theme: './assets/theme.js',
+                guest: './assets/guest/index.js',
                 // Admin pages
                 'admin/dashboard': './assets/admin/dashboard/index.js',
                 'admin/posts': './assets/admin/posts/index.js',

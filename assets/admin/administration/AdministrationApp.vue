@@ -5,6 +5,10 @@ import { toast } from "vue-sonner";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import { useForm } from "@/composables/useForm.js";
+import { useDateFormat } from "@/composables/useDateFormat.js";
+import { useFileSize } from "@/composables/useFileSize.js";
+import { submitForm } from "@/utils/formSubmit.js";
+import { statusBadge } from "@/utils/statusStyles.js";
 import { required, email, compose } from "@/utils/validators.js";
 import {
     LayoutDashboard,
@@ -24,7 +28,9 @@ import {
     ShieldCheck,
 } from "lucide-vue-next";
 
-const { t: translate, locale } = useI18n();
+const { t: translate } = useI18n();
+const { formatDateShort, formatDateTime } = useDateFormat();
+const { formatSize } = useFileSize();
 
 const tabNav = ref(null);
 
@@ -69,52 +75,6 @@ const tabs = [
     { key: "access_requests", label: () => translate("admin.tabs.access_requests"), path: props.accessRequestsPath, icon: KeyRound },
 ];
 
-function formatBytes(bytes) {
-    if (!bytes) return "0 B";
-    const units = ["B", "KB", "MB", "GB", "TB"];
-    const unitIndex = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, unitIndex)).toFixed(1)} ${units[unitIndex]}`;
-}
-
-function formatDate(iso) {
-    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
-}
-
-function formatDateTime(iso) {
-    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
-}
-
-function statusBadge(status) {
-    return {
-        published: "bg-emerald-500/15 text-emerald-400",
-        draft: "bg-amber-500/15 text-amber-400",
-        trash: "bg-rose-500/15 text-rose-400",
-    }[status] || "bg-surface-2 text-secondary";
-}
-
-// ── Submit helper (hidden form POST like Nimbus) ──────────────────────────────
-
-function submitForm(action, extraFields = {}) {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = action;
-    const csrf = document.createElement("input");
-    csrf.type = "hidden";
-    csrf.name = "_token";
-    csrf.value = props.csrfToken;
-    form.appendChild(csrf);
-    for (const [name, value] of Object.entries(extraFields)) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value ?? "";
-        form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// ── Parameters ────────────────────────────────────────────────────────────────
 
 const editingKey = ref(null);
 const editingValue = ref("");
@@ -151,8 +111,6 @@ async function saveEdit(param) {
         editSaving.value = false;
     }
 }
-
-// ── Users ─────────────────────────────────────────────────────────────────────
 
 const searchInput = ref(props.search);
 
@@ -219,11 +177,9 @@ function confirmDelete(user) {
 function doDelete() {
     if (!pendingDelete.value) return;
     const url = props.userDeletePath.replace("__id__", pendingDelete.value.id);
-    submitForm(url);
+    submitForm(url, props.csrfToken);
     pendingDelete.value = null;
 }
-
-// ── Invitations ───────────────────────────────────────────────────────────────
 
 const invitationEmail = ref("");
 const invitationMessage = ref("");
@@ -242,15 +198,13 @@ function submitInvitation() {
 
     if (!isValid || invitationSending.value) return;
     invitationSending.value = true;
-    submitForm(props.invitationSendPath, {
+    submitForm(props.invitationSendPath, props.csrfToken, {
         email: invitationEmail.value,
         message: invitationMessage.value,
         credential_email: invitationCredentialEmail.value,
         credential_password: invitationCredentialPassword.value,
     });
 }
-
-// ── Access Requests ───────────────────────────────────────────────────────────
 
 const statusBadgeAR = {
     pending: "bg-amber-500/15 text-amber-400",
@@ -274,18 +228,18 @@ function openApproveModal(accessRequest) {
 
 function doApproveRequest() {
     if (!pendingApprove.value) return;
-    submitForm(props.accessRequestApprovePath.replace("__id__", pendingApprove.value.id));
+    submitForm(props.accessRequestApprovePath.replace("__id__", pendingApprove.value.id), props.csrfToken);
     pendingApprove.value = null;
 }
 
 function doRejectRequest() {
     if (!pendingReject.value) return;
-    submitForm(props.accessRequestRejectPath.replace("__id__", pendingReject.value.id));
+    submitForm(props.accessRequestRejectPath.replace("__id__", pendingReject.value.id), props.csrfToken);
     pendingReject.value = null;
 }
 
 function doPurge() {
-    submitForm(props.accessRequestPurgePath);
+    submitForm(props.accessRequestPurgePath, props.csrfToken);
     confirmPurge.value = false;
 }
 
@@ -340,7 +294,7 @@ function accessRequestsUrl(page) {
                         </div>
                     </div>
                     <p class="text-2xl font-bold text-sky-400">{{ parsedStats.media?.total ?? 0 }}</p>
-                    <p class="text-xs text-muted mt-0.5">{{ formatBytes(parsedStats.media?.totalSize ?? 0) }}</p>
+                    <p class="text-xs text-muted mt-0.5">{{ formatSize(parsedStats.media?.totalSize ?? 0) }}</p>
                 </div>
 
                 <div class="bg-surface border border-line rounded-xl p-4">
@@ -521,7 +475,7 @@ function accessRequestsUrl(page) {
                         </div>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
-                        <p class="text-xs text-muted">{{ formatDate(user.createdAt) }}</p>
+                        <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
                         <div class="flex items-center gap-1">
                             <a
                                 v-if="!user.isCurrent"
@@ -562,7 +516,7 @@ function accessRequestsUrl(page) {
                                 <span v-if="user.isCurrent" class="ml-1 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-400">{{ translate('admin.users.you') }}</span>
                             </td>
                             <td class="px-4 py-3 text-secondary">{{ user.email }}</td>
-                            <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDate(user.createdAt) }}</td>
+                            <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
                                     <a
@@ -711,7 +665,7 @@ function accessRequestsUrl(page) {
                     </div>
                     <p v-if="accessRequest.message" class="text-sm text-secondary">{{ accessRequest.message }}</p>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
-                        <p class="text-xs text-muted">{{ formatDate(accessRequest.createdAt) }} · expire {{ formatDate(accessRequest.expiresAt) }}</p>
+                        <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
                         <div v-if="accessRequest.status === 'pending'" class="flex items-center gap-1">
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" :title="translate('admin.access_requests.approve')" v-on:click="openApproveModal(accessRequest)">
                                 <Check class="w-4 h-4" :stroke-width="2" />
@@ -752,8 +706,8 @@ function accessRequestsUrl(page) {
                                     {{ statusLabelAR[accessRequest.status] ?? accessRequest.status }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDate(accessRequest.createdAt) }}</td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDate(accessRequest.expiresAt) }}</td>
+                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.createdAt) }}</td>
+                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.expiresAt) }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
                                     <template v-if="accessRequest.status === 'pending'">
