@@ -1,0 +1,12 @@
+# Symfony Security messages - FR
+'An authentication exception occurred.': "Une erreur d'authentification s'est produite."
+'Authentication credentials could not be verified.': "Les identifiants d'authentification n'ont pas pu être vérifiés."
+'Invalid credentials.': 'Identifiant ou mot de passe incorrect.'
+'Bad credentials': 'Identifiant ou mot de passe incorrect.'
+'Invalid CSRF token.': 'Token CSRF invalide.'
+'No authentication provided': 'Aucune authentification fournie.'
+'User account is disabled.': 'Le compte utilisateur est désactivé.'
+'User account is locked.': 'Le compte utilisateur est verrouillé.'
+'User account is expired.': 'Le compte utilisateur a expiré.'
+'User credentials have expired.': "Les identifiants de l'utilisateur ont expiré."
+'User does not exist.': "L'utilisateur n'existe pas."

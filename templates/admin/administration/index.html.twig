@@ -1,0 +1,49 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.administration'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {% set tabLabels = {
+        overview: 'admin.tabs.overview'|trans,
+        users: 'admin.tabs.users'|trans,
+        parameters: 'admin.tabs.parameters'|trans,
+        invitations: 'admin.tabs.invitations'|trans,
+        access_requests: 'admin.tabs.access_requests'|trans,
+    } %}
+    {{ include('components/page_header.html.twig', {
+        crumbs: [
+            {label: 'nav.administration'|trans, href: path('dev_dashboard')},
+            {label: tabLabels[tab] ?? tab},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div id="admin-app"
+     data-tab="{{ tab }}"
+     data-locale="{{ app.request.locale }}"
+     data-stats="{{ tab == 'overview' ? stats|json_encode : '{}' }}"
+     data-parameters="{{ tab == 'parameters' ? parameters|json_encode : '{}' }}"
+     data-users="{{ tab == 'users' ? users|json_encode : '{}' }}"
+     data-access-requests="{{ tab == 'access_requests' ? accessRequests|json_encode : '{}' }}"
+     data-search="{{ search ?? '' }}"
+     data-overview-path="{{ path('dev_dashboard') }}"
+     data-parameters-path="{{ path('dev_parameters') }}"
+     data-parameter-update-path="{{ path('dev_parameters_update', {key: '__key__'}) }}"
+     data-users-path="{{ path('dev_users') }}"
+     data-user-create-path="{{ path('dev_users_create') }}"
+     data-user-delete-path="{{ path('dev_users_delete', {id: '__id__'}) }}"
+     data-invitations-path="{{ path('dev_invitations') }}"
+     data-invitation-send-path="{{ path('dev_invitations_send') }}"
+     data-access-requests-path="{{ path('dev_access_requests') }}"
+     data-access-request-approve-path="{{ path('dev_access_requests_approve', {id: '__id__'}) }}"
+     data-access-request-reject-path="{{ path('dev_access_requests_reject', {id: '__id__'}) }}"
+     data-access-request-purge-path="{{ path('dev_access_requests_purge') }}"
+     data-impersonate-path="{{ path('admin_dashboard', {_switch_user: '__email__'}) }}"
+     data-csrf-token="{{ csrf_token('admin') }}"
+     class="flex-1">
+</div>
+{% endblock %}
+
+{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/administration') }}{% endblock %}
+{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/administration') }}{% endblock %}

@@ -1,0 +1,104 @@
+auth:
+  login:
+    title: "Login"
+    email: "Email"
+    email_placeholder: "your@email.com"
+    password: "Password"
+    remember: "Remember me"
+    submit: "Sign in"
+    forgot: "Forgot password?"
+    no_account: "No account yet?"
+    request_access: "Request access"
+  register:
+    title: "Create an account"
+    heading: "Create an account"
+    name: "Name"
+    name_placeholder: "John Doe"
+    email: "Email"
+    password: "Password"
+    password_confirm: "Confirm password"
+    submit: "Create account"
+    already_account: "Already have an account?"
+    login_link: "Sign in"
+    closed_title: "Registration closed"
+    closed_desc: "New registrations are currently disabled."
+    error_name_required: "Name is required."
+    error_email_required: "Email address is required."
+    error_email_invalid: "Invalid email address."
+    error_email_taken: "This email address is already in use."
+    error_password_length: "Password must be at least 8 characters."
+    error_password_mismatch: "Passwords do not match."
+  access_request:
+    title: "Request access"
+    description: "Fill out this form to request access to the administration."
+    name: "Name (optional)"
+    name_placeholder: "John Doe"
+    email: "Email"
+    message: "Message (optional)"
+    message_placeholder: "Describe your need..."
+    submit: "Send request"
+    success_toast: "Your access request has been sent."
+    already_account: "Already have an account?"
+    login_link: "Sign in"
+  forgot_password:
+    title: "Forgot password"
+    instructions: "Enter your email address and we'll send you a link to reset your password."
+    submit: "Send reset link"
+    sent: "If this address is linked to an account, you will receive an email shortly."
+    back_login: "Back to login"
+  reset_password:
+    title: "Reset password"
+    instructions: "Choose a new password for your account."
+    submit: "Reset password"
+    success: "Your password has been reset successfully."
+    invalid_link: "This link is invalid or has expired."
+  hero:
+    heading: "Manage your content"
+    heading_accent: "with Velox."
+    description: "A modern interface to create, manage and publish your web content."
+    feature_1: "Flexible content management"
+    feature_2: "Customizable content types"
+    feature_3: "Built-in media management"
+    feature_4: "Modern and fast interface"
+
+profile:
+  errors:
+    name_required: 'Name is required.'
+    email_invalid: 'Invalid email address.'
+    email_taken: 'This email address is already in use.'
+    current_password_invalid: 'The current password is incorrect.'
+    password_too_short: 'The password must be at least 8 characters long.'
+    password_mismatch: 'Passwords do not match.'
+    invalid_locale: 'Unsupported language.'
+    invalid_csrf: 'Invalid security token.'
+
+admin:
+  tabs:
+    overview: "Overview"
+    users: "Users"
+    invitations: "Invitations"
+    access_requests: "Access Requests"
+    parameters: "Parameters"
+  users:
+    cannot_delete_self: 'You cannot delete your own account.'
+    created: 'User created successfully.'
+    deleted: 'User deleted.'
+  invitations:
+    sent: 'Invitation sent to {email}.'
+  access_requests:
+    approved: 'Request from {name} approved.'
+    rejected: 'Request from {name} rejected.'
+    purged: 'Processed requests deleted.'
+
+impersonation:
+  banner: "You are impersonating {name}"
+  leave: "Leave"
+
+nav:
+  dashboard: "Dashboard"
+  posts: "Content"
+  postTypes: "Post types"
+  media: "Media"
+  menus: "Menus"
+  administration: "Administration"
+  profile: "My profile"

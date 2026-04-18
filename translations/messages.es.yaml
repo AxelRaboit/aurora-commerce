@@ -1,0 +1,104 @@
+auth:
+  login:
+    title: "Iniciar sesión"
+    email: "Correo electrónico"
+    email_placeholder: "tu@email.com"
+    password: "Contraseña"
+    remember: "Recordarme"
+    submit: "Iniciar sesión"
+    forgot: "¿Olvidaste tu contraseña?"
+    no_account: "¿No tienes cuenta?"
+    request_access: "Solicitar acceso"
+  register:
+    title: "Crear una cuenta"
+    heading: "Crear una cuenta"
+    name: "Nombre"
+    name_placeholder: "Juan García"
+    email: "Correo electrónico"
+    password: "Contraseña"
+    password_confirm: "Confirmar contraseña"
+    submit: "Crear cuenta"
+    already_account: "¿Ya tienes cuenta?"
+    login_link: "Iniciar sesión"
+    closed_title: "Registro cerrado"
+    closed_desc: "Los nuevos registros están desactivados actualmente."
+    error_name_required: "El nombre es obligatorio."
+    error_email_required: "La dirección de correo es obligatoria."
+    error_email_invalid: "Dirección de correo electrónico inválida."
+    error_email_taken: "Esta dirección de correo ya está en uso."
+    error_password_length: "La contraseña debe tener al menos 8 caracteres."
+    error_password_mismatch: "Las contraseñas no coinciden."
+  access_request:
+    title: "Solicitar acceso"
+    description: "Rellena este formulario para solicitar acceso a la administración."
+    name: "Nombre (opcional)"
+    name_placeholder: "Juan García"
+    email: "Correo electrónico"
+    message: "Mensaje (opcional)"
+    message_placeholder: "Describe tu necesidad..."
+    submit: "Enviar solicitud"
+    success_toast: "Tu solicitud de acceso ha sido enviada."
+    already_account: "¿Ya tienes cuenta?"
+    login_link: "Iniciar sesión"
+  forgot_password:
+    title: "Contraseña olvidada"
+    instructions: "Introduce tu dirección de correo y te enviaremos un enlace para restablecer tu contraseña."
+    submit: "Enviar enlace"
+    sent: "Si esta dirección está asociada a una cuenta, recibirás un correo en breve."
+    back_login: "Volver al inicio de sesión"
+  reset_password:
+    title: "Restablecer contraseña"
+    instructions: "Elige una nueva contraseña para tu cuenta."
+    submit: "Restablecer contraseña"
+    success: "Tu contraseña ha sido restablecida con éxito."
+    invalid_link: "Este enlace es inválido o ha expirado."
+  hero:
+    heading: "Gestiona tu contenido"
+    heading_accent: "con Velox."
+    description: "Una interfaz moderna para crear, gestionar y publicar contenido web."
+    feature_1: "Gestión de contenido flexible"
+    feature_2: "Tipos de contenido personalizables"
+    feature_3: "Gestión de medios integrada"
+    feature_4: "Interfaz moderna y rápida"
+
+profile:
+  errors:
+    name_required: 'El nombre es obligatorio.'
+    email_invalid: 'Dirección de correo electrónico inválida.'
+    email_taken: 'Esta dirección de correo ya está en uso.'
+    current_password_invalid: 'La contraseña actual es incorrecta.'
+    password_too_short: 'La contraseña debe tener al menos 8 caracteres.'
+    password_mismatch: 'Las contraseñas no coinciden.'
+    invalid_locale: 'Idioma no compatible.'
+    invalid_csrf: 'Token de seguridad inválido.'
+
+admin:
+  tabs:
+    overview: "Resumen"
+    users: "Usuarios"
+    invitations: "Invitaciones"
+    access_requests: "Solicitudes de acceso"
+    parameters: "Parámetros"
+  users:
+    cannot_delete_self: 'No puedes eliminar tu propia cuenta.'
+    created: 'Usuario creado con éxito.'
+    deleted: 'Usuario eliminado.'
+  invitations:
+    sent: 'Invitación enviada a {email}.'
+  access_requests:
+    approved: 'Solicitud de {name} aprobada.'
+    rejected: 'Solicitud de {name} rechazada.'
+    purged: 'Solicitudes procesadas eliminadas.'
+
+impersonation:
+  banner: "Has iniciado sesión como {name}"
+  leave: "Salir"
+
+nav:
+  dashboard: "Panel de control"
+  posts: "Contenido"
+  postTypes: "Tipos de contenido"
+  media: "Medios"
+  menus: "Menús"
+  administration: "Administración"
+  profile: "Mi perfil"

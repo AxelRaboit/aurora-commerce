@@ -1,0 +1,44 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+# Node
+/node_modules/
+
+# Vite build
+/public/build/
+
+# Uploads
+/public/uploads/
+
+# Lock files (pnpm only)
+package-lock.json
+yarn.lock
+
+# IDE
+/.idea/
+/.vscode/
+
+# Version (generated at deploy time)
+/VERSION
+
+# PHP CS Fixer
+.php-cs-fixer.cache
+
+# Twig CS Fixer
+.twig-cs-fixer.cache
+
+# Tools vendors
+/tools/*/vendor/
+/tools/*/composer.lock

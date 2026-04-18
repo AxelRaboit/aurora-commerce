@@ -1,0 +1,17 @@
+<script>
+    (function () {
+        var s = localStorage.getItem('velox-theme');
+        if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            {% if colorScheme is defined and colorScheme %}
+            document.documentElement.style.colorScheme = 'dark';
+            {% endif %}
+        }
+        {% if sidebar is defined and sidebar %}
+        var c = localStorage.getItem('velox-sidebar');
+        if (c === 'collapsed') {
+            document.documentElement.classList.add('sidebar-collapsed');
+        }
+        {% endif %}
+    })();
+</script>

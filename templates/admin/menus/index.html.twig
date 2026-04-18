@@ -1,0 +1,9 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.menus'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'nav.menus'|trans}) }}
+{% endblock %}
+
+{% block body %}{% endblock %}

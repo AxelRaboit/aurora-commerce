@@ -1,0 +1,124 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}{{ 'auth.register.title'|trans }} — Velox{% endblock %}
+
+{% block hero %}
+    {% if registrationEnabled %}
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary leading-tight mb-4">
+            {{ 'auth.hero.heading'|trans }}<br>
+            <span class="text-indigo-500">{{ 'auth.hero.heading_accent'|trans }}</span>
+        </h1>
+        <p class="text-secondary text-base leading-relaxed mb-8">{{ 'auth.hero.description'|trans }}</p>
+        <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-secondary text-sm">
+                {{ include('components/icon.html.twig', {name: 'file-text', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+                {{ 'auth.hero.feature_1'|trans }}
+            </li>
+            <li class="flex items-center gap-3 text-secondary text-sm">
+                {{ include('components/icon.html.twig', {name: 'sliders', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+                {{ 'auth.hero.feature_2'|trans }}
+            </li>
+            <li class="flex items-center gap-3 text-secondary text-sm">
+                {{ include('components/icon.html.twig', {name: 'image', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+                {{ 'auth.hero.feature_3'|trans }}
+            </li>
+            <li class="flex items-center gap-3 text-secondary text-sm">
+                {{ include('components/icon.html.twig', {name: 'zap', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+                {{ 'auth.hero.feature_4'|trans }}
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if not registrationEnabled %}
+        <div class="space-y-2 text-center py-4">
+            <p class="text-primary font-semibold">{{ 'auth.register.closed_title'|trans }}</p>
+            <p class="text-secondary text-sm">{{ 'auth.register.closed_desc'|trans }}</p>
+            <div class="mt-6 flex flex-col gap-2 text-sm">
+                <a href="{{ path('app_access_request') }}" class="text-primary underline">{{ 'auth.login.request_access'|trans }}</a>
+                <a href="{{ path('admin_login') }}" class="text-primary underline">{{ 'auth.register.login_link'|trans }}</a>
+            </div>
+        </div>
+    {% else %}
+        <h2 class="text-lg font-bold text-primary mb-5">{{ 'auth.register.heading'|trans }}</h2>
+
+        <form method="POST" action="{{ path('app_register') }}" class="flex flex-col gap-4">
+            <div>
+                <label for="name" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.register.name'|trans }}</label>
+                <input type="text" id="name" name="name"
+                       value="{{ values.name ?? '' }}"
+                       placeholder="{{ 'auth.register.name_placeholder'|trans }}"
+                       class="w-full px-3 py-2 border {{ errors.name is defined ? 'border-red-500' : 'border-line' }} rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                       autocomplete="name" required autofocus>
+                {% if errors.name is defined %}
+                    <p class="mt-1 text-xs text-red-500">{{ errors.name }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.register.email'|trans }}</label>
+                <input type="email" id="email" name="email"
+                       value="{{ values.email ?? '' }}"
+                       placeholder="{{ 'auth.login.email_placeholder'|trans }}"
+                       class="w-full px-3 py-2 border {{ errors.email is defined ? 'border-red-500' : 'border-line' }} rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                       autocomplete="email" required>
+                {% if errors.email is defined %}
+                    <p class="mt-1 text-xs text-red-500">{{ errors.email }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.register.password'|trans }}</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password"
+                           placeholder="••••••••"
+                           class="w-full px-3 py-2 pr-10 border {{ errors.password is defined ? 'border-red-500' : 'border-line' }} rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                           autocomplete="new-password" required>
+                    <button type="button" tabindex="-1"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted hover:text-primary transition-colors"
+                            onclick="var i=this.previousElementSibling;i.type=i.type==='password'?'text':'password'">
+                        {{ include('components/icon.html.twig', {name: 'eye', class: 'w-4 h-4', size: 16}) }}
+                    </button>
+                </div>
+                {% if errors.password is defined %}
+                    <p class="mt-1 text-xs text-red-500">{{ errors.password }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.register.password_confirm'|trans }}</label>
+                <div class="relative">
+                    <input type="password" id="password_confirmation" name="password_confirmation"
+                           placeholder="••••••••"
+                           class="w-full px-3 py-2 pr-10 border {{ errors.password_confirmation is defined ? 'border-red-500' : 'border-line' }} rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                           autocomplete="new-password" required>
+                    <button type="button" tabindex="-1"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted hover:text-primary transition-colors"
+                            onclick="var i=this.previousElementSibling;i.type=i.type==='password'?'text':'password'">
+                        {{ include('components/icon.html.twig', {name: 'eye', class: 'w-4 h-4', size: 16}) }}
+                    </button>
+                </div>
+                {% if errors.password_confirmation is defined %}
+                    <p class="mt-1 text-xs text-red-500">{{ errors.password_confirmation }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 w-full rounded text-white font-bold py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {{ 'auth.register.submit'|trans }}
+            </button>
+        </form>
+
+        <div class="mt-6 flex items-center gap-4">
+            <div class="flex-1 border-t border-line"></div>
+            <span class="text-sm text-secondary">ou</span>
+            <div class="flex-1 border-t border-line"></div>
+        </div>
+
+        <p class="mt-4 text-center text-sm text-secondary">
+            {{ 'auth.register.already_account'|trans }}
+            <a href="{{ path('admin_login') }}" class="text-primary underline">{{ 'auth.register.login_link'|trans }}</a>
+        </p>
+    {% endif %}
+{% endblock %}

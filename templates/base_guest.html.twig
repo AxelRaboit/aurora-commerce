@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Velox{% endblock %}</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
+        {{ include('components/theme_script.html.twig', {colorScheme: true}) }}
+        {{ vite_entry_link_tags('app') }}
+        {{ vite_entry_link_tags('flash') }}
+        {{ vite_entry_script_tags('app') }}
+        {{ vite_entry_script_tags('flash') }}
+        {{ vite_entry_script_tags('theme') }}
+        <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
+    </head>
+    <body class="transition-colors duration-200">
+
+        <button type="button" id="theme-toggle"
+                class="fixed top-4 right-4 z-50 p-2 rounded-lg text-muted hover:text-primary hover:bg-surface-2 border border-line transition-colors">
+            <span class="icon-moon">{{ include('components/icon.html.twig', {name: 'moon', class: 'w-5 h-5'}) }}</span>
+            <span class="icon-sun" style="display:none">{{ include('components/icon.html.twig', {name: 'sun', class: 'w-5 h-5'}) }}</span>
+        </button>
+
+        {% set hero_content %}{% block hero %}{% endblock %}{% endset %}
+        {% set form_content %}{% block content %}{% endblock %}{% endset %}
+
+        {% if hero_content|trim %}
+            <div class="flex min-h-screen items-center justify-center bg-bg px-4 py-12">
+                <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                    <div>
+                        <a href="{{ path('admin_login') }}" class="inline-flex items-center gap-3 mb-8">
+                            <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-indigo-500/30 rounded-2xl">
+                                <defs><linearGradient id="vg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#4f46e5"/></linearGradient></defs>
+                                <rect width="64" height="64" rx="14" fill="url(#vg1)"/>
+                                <text x="32" y="45" font-family="'Inter','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">V</text>
+                                <line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+                            </svg>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-2xl leading-tight">Velox</span>
+                                {% if appVersion is defined and appVersion %}
+                                    <span class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {{ hero_content|raw }}
+                    </div>
+                    <div class="w-full bg-surface border border-line px-6 py-6 shadow-md rounded-xl">
+                        {{ form_content|raw }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="flex min-h-screen flex-col items-center justify-center bg-bg px-4 py-12">
+                <a href="{{ path('admin_login') }}" class="flex flex-col items-center gap-2 mb-6">
+                    <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-indigo-500/30 rounded-2xl">
+                        <defs><linearGradient id="vg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#4f46e5"/></linearGradient></defs>
+                        <rect width="64" height="64" rx="14" fill="url(#vg2)"/>
+                        <text x="32" y="45" font-family="'Inter','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">V</text>
+                        <line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="text-primary font-bold text-2xl">Velox</span>
+                    {% if appVersion is defined and appVersion %}
+                        <span class="text-xs text-secondary">{{ appVersion }}</span>
+                    {% endif %}
+                </a>
+                <div class="w-full bg-surface border border-line px-6 py-6 shadow-md rounded-xl sm:max-w-md">
+                    {{ form_content|raw }}
+                </div>
+            </div>
+        {% endif %}
+
+    </body>
+</html>

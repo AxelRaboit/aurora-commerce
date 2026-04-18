@@ -1,0 +1,126 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Profile;
+
+use App\Contract\UserManagerInterface;
+use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\ChangePasswordInput;
+use App\DTO\UpdateProfileInput;
+use App\Entity\User;
+use App\Enum\HttpMethodEnum;
+use App\Enum\LocaleEnum;
+use App\Enum\UserRoleEnum;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+#[Route('/admin/profile', name: 'profile')]
+#[IsGranted(UserRoleEnum::Admin->value)]
+final class ProfileController extends AbstractController
+{
+    use JsonValidationTrait;
+
+    public function __construct(
+        private readonly UserManagerInterface $userManager,
+        private readonly ValidatorInterface $validator,
+        private readonly TranslatorInterface $translator,
+    ) {}
+
+    #[Route('', name: '')]
+    public function index(): Response
+    {
+        return $this->render('admin/profile/index.html.twig');
+    }
+
+    #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    public function update(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true) ?? [];
+        $input = UpdateProfileInput::fromArray($data);
+
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        }
+
+        $this->userManager->update($user, $input->name, $input->email);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/password', name: '_password', methods: [HttpMethodEnum::Post->value])]
+    public function password(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true) ?? [];
+        $input = ChangePasswordInput::fromArray($data);
+
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        }
+
+        if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
+            return $this->json(['success' => false, 'errors' => [
+                'current_password' => $this->translator->trans('profile.errors.current_password_invalid'),
+            ]]);
+        }
+
+        $this->userManager->changePassword($user, $input->password);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    public function delete(Request $request, TokenStorageInterface $tokenStorage): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true) ?? [];
+
+        if (!$this->isCsrfTokenValid('profile_delete', $data['_token'] ?? '')) {
+            return $this->json([
+                'success' => false,
+                'error' => $this->translator->trans('profile.errors.invalid_csrf'),
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $tokenStorage->setToken(null);
+        $request->getSession()->invalidate();
+        $this->userManager->delete($user);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/locale', name: '_locale', methods: [HttpMethodEnum::Post->value])]
+    public function locale(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true) ?? [];
+        $locale = LocaleEnum::tryFrom($data['locale'] ?? '');
+
+        if (null === $locale) {
+            return $this->json([
+                'success' => false,
+                'error' => $this->translator->trans('profile.errors.invalid_locale'),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $request->getSession()->set('_locale', $locale->value);
+        $this->userManager->changeLocale($user, $locale);
+
+        return $this->json(['success' => true]);
+    }
+}

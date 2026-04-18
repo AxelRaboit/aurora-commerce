@@ -1,0 +1,92 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}{{ 'auth.login.title'|trans }} — Velox{% endblock %}
+
+{% block hero %}
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary leading-tight mb-4">
+        {{ 'auth.hero.heading'|trans }}<br>
+        <span class="text-indigo-500">{{ 'auth.hero.heading_accent'|trans }}</span>
+    </h1>
+    <p class="text-secondary text-base leading-relaxed mb-8">{{ 'auth.hero.description'|trans }}</p>
+    <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-secondary text-sm">
+            {{ include('components/icon.html.twig', {name: 'file-text', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+            {{ 'auth.hero.feature_1'|trans }}
+        </li>
+        <li class="flex items-center gap-3 text-secondary text-sm">
+            {{ include('components/icon.html.twig', {name: 'sliders', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+            {{ 'auth.hero.feature_2'|trans }}
+        </li>
+        <li class="flex items-center gap-3 text-secondary text-sm">
+            {{ include('components/icon.html.twig', {name: 'image', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+            {{ 'auth.hero.feature_3'|trans }}
+        </li>
+        <li class="flex items-center gap-3 text-secondary text-sm">
+            {{ include('components/icon.html.twig', {name: 'zap', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+            {{ 'auth.hero.feature_4'|trans }}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        <div class="mb-4 text-sm font-medium text-red-500">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ path('admin_login') }}" class="flex flex-col gap-4">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div>
+            <label for="email" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.login.email'|trans }}</label>
+            <input type="email" id="email" name="email"
+                   value="{{ last_username }}"
+                   placeholder="{{ 'auth.login.email_placeholder'|trans }}"
+                   class="w-full px-3 py-2 border border-line rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                   autocomplete="email" required autofocus>
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ 'auth.login.password'|trans }}</label>
+            <div class="relative">
+                <input type="password" id="password" name="password"
+                       placeholder="••••••••"
+                       class="w-full px-3 py-2 pr-10 border border-line rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                       autocomplete="current-password" required>
+                <button type="button" tabindex="-1"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted hover:text-primary transition-colors"
+                        onclick="var i=this.previousElementSibling;i.type=i.type==='password'?'text':'password'">
+                    {{ include('components/icon.html.twig', {name: 'eye', class: 'w-4 h-4', size: 16}) }}
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="_remember_me" value="1"
+                       class="w-4 h-4 rounded border-line bg-surface-2 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+                <span class="text-sm text-secondary">{{ 'auth.login.remember'|trans }}</span>
+            </label>
+            <a href="{{ path('app_forgot_password') }}" class="text-sm text-primary underline transition-colors">
+                {{ 'auth.login.forgot'|trans }}
+            </a>
+        </div>
+
+        <button type="submit"
+                class="inline-flex items-center justify-center gap-2 w-full rounded text-white font-bold py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            {{ 'auth.login.submit'|trans }}
+        </button>
+    </form>
+
+    <div class="mt-6 flex items-center gap-4">
+        <div class="flex-1 border-t border-line"></div>
+        <span class="text-sm text-secondary">ou</span>
+        <div class="flex-1 border-t border-line"></div>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-2 text-center text-sm">
+        <a href="{{ path('app_register') }}" class="text-primary underline transition-colors">{{ 'auth.login.no_account'|trans }}</a>
+        <a href="{{ path('app_access_request') }}" class="text-primary underline transition-colors">{{ 'auth.login.request_access'|trans }}</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Velox{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
+    {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
+    {% block stylesheets %}
+        {{ vite_entry_link_tags('app') }}
+        {{ vite_entry_link_tags('sidebar') }}
+        {{ vite_entry_link_tags('flash') }}
+    {% endblock %}
+    <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
+    {% block javascripts %}
+        {{ vite_entry_script_tags('app') }}
+        {{ vite_entry_script_tags('sidebar') }}
+        {{ vite_entry_script_tags('flash') }}
+    {% endblock %}
+</head>
+<body class="transition-colors duration-200">
+
+<div class="min-h-screen bg-bg">
+
+    <div id="app-sidebar"
+         data-user-name="{{ app.user.name }}"
+         data-user-email="{{ app.user.email }}"
+         data-active-route="{{ app.request.attributes.get('_route') }}"
+         data-logout-csrf="{{ csrf_token('logout') }}"
+         data-dashboard-path="{{ path('admin_dashboard') }}"
+         data-posts-path="{{ path('admin_posts') }}"
+         data-post-types-path="{{ path('admin_post_types') }}"
+         data-media-path="{{ path('admin_media') }}"
+         data-menus-path="{{ path('admin_menus') }}"
+         data-administration-path="{{ path('dev_dashboard') }}"
+         data-is-dev="{{ is_granted('ROLE_DEV') ? 'true' : 'false' }}"
+         data-profile-path="{{ path('profile') }}"
+         data-logout-path="{{ path('admin_logout') }}"
+         data-locale="{{ app.request.locale }}"
+         data-app-version="{{ appVersion is defined ? appVersion : '' }}"
+    ></div>
+
+    <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
+
+        {% block page_header_slot %}{% endblock %}
+
+        {% if is_granted('IS_IMPERSONATOR') %}
+            <div class="bg-amber-500/15 border-b border-amber-500/40 px-4 py-2 flex items-center justify-center gap-3 text-xs text-amber-300">
+                {{ include('components/icon.html.twig', {name: 'user-check', class: 'w-4 h-4 shrink-0', size: 16}) }}
+                <span>{{ 'impersonation.banner'|trans({'{name}': app.user.name}) }}</span>
+                <a href="{{ path('admin_dashboard', {_switch_user: '_exit'}) }}" class="ml-2 underline hover:text-amber-200 transition-colors font-medium">
+                    {{ 'impersonation.leave'|trans }}
+                </a>
+            </div>
+        {% endif %}
+
+        <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+            {% block body %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

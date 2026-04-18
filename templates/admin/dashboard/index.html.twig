@@ -1,0 +1,14 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.dashboard'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'nav.dashboard'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div id="admin-app" data-locale="{{ app.request.locale }}"></div>
+{% endblock %}
+
+{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/dashboard') }}{% endblock %}
+{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/dashboard') }}{% endblock %}

@@ -1,0 +1,104 @@
+auth:
+  login:
+    title: "Anmelden"
+    email: "E-Mail"
+    email_placeholder: "ihre@email.de"
+    password: "Passwort"
+    remember: "Angemeldet bleiben"
+    submit: "Anmelden"
+    forgot: "Passwort vergessen?"
+    no_account: "Noch kein Konto?"
+    request_access: "Zugang anfragen"
+  register:
+    title: "Konto erstellen"
+    heading: "Konto erstellen"
+    name: "Name"
+    name_placeholder: "Max Mustermann"
+    email: "E-Mail"
+    password: "Passwort"
+    password_confirm: "Passwort bestätigen"
+    submit: "Konto erstellen"
+    already_account: "Bereits ein Konto?"
+    login_link: "Anmelden"
+    closed_title: "Registrierung geschlossen"
+    closed_desc: "Neue Registrierungen sind derzeit deaktiviert."
+    error_name_required: "Name ist erforderlich."
+    error_email_required: "E-Mail-Adresse ist erforderlich."
+    error_email_invalid: "Ungültige E-Mail-Adresse."
+    error_email_taken: "Diese E-Mail-Adresse wird bereits verwendet."
+    error_password_length: "Das Passwort muss mindestens 8 Zeichen lang sein."
+    error_password_mismatch: "Die Passwörter stimmen nicht überein."
+  access_request:
+    title: "Zugang anfragen"
+    description: "Füllen Sie dieses Formular aus, um Zugang zur Administration anzufragen."
+    name: "Name (optional)"
+    name_placeholder: "Max Mustermann"
+    email: "E-Mail"
+    message: "Nachricht (optional)"
+    message_placeholder: "Beschreiben Sie Ihr Anliegen..."
+    submit: "Anfrage senden"
+    success_toast: "Ihre Zugriffsanfrage wurde gesendet."
+    already_account: "Bereits ein Konto?"
+    login_link: "Anmelden"
+  forgot_password:
+    title: "Passwort vergessen"
+    instructions: "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts."
+    submit: "Link senden"
+    sent: "Wenn diese Adresse mit einem Konto verknüpft ist, erhalten Sie in Kürze eine E-Mail."
+    back_login: "Zurück zur Anmeldung"
+  reset_password:
+    title: "Passwort zurücksetzen"
+    instructions: "Wählen Sie ein neues Passwort für Ihr Konto."
+    submit: "Passwort zurücksetzen"
+    success: "Ihr Passwort wurde erfolgreich zurückgesetzt."
+    invalid_link: "Dieser Link ist ungültig oder abgelaufen."
+  hero:
+    heading: "Verwalten Sie Ihre Inhalte"
+    heading_accent: "mit Velox."
+    description: "Eine moderne Oberfläche zum Erstellen, Verwalten und Veröffentlichen von Webinhalten."
+    feature_1: "Flexible Inhaltsverwaltung"
+    feature_2: "Anpassbare Inhaltstypen"
+    feature_3: "Integrierte Medienverwaltung"
+    feature_4: "Moderne und schnelle Oberfläche"
+
+profile:
+  errors:
+    name_required: 'Der Name ist erforderlich.'
+    email_invalid: 'Ungültige E-Mail-Adresse.'
+    email_taken: 'Diese E-Mail-Adresse wird bereits verwendet.'
+    current_password_invalid: 'Das aktuelle Passwort ist falsch.'
+    password_too_short: 'Das Passwort muss mindestens 8 Zeichen lang sein.'
+    password_mismatch: 'Die Passwörter stimmen nicht überein.'
+    invalid_locale: 'Nicht unterstützte Sprache.'
+    invalid_csrf: 'Ungültiges Sicherheitstoken.'
+
+admin:
+  tabs:
+    overview: "Übersicht"
+    users: "Benutzer"
+    invitations: "Einladungen"
+    access_requests: "Zugriffsanfragen"
+    parameters: "Parameter"
+  users:
+    cannot_delete_self: 'Du kannst dein eigenes Konto nicht löschen.'
+    created: 'Benutzer erfolgreich erstellt.'
+    deleted: 'Benutzer gelöscht.'
+  invitations:
+    sent: 'Einladung an {email} gesendet.'
+  access_requests:
+    approved: 'Anfrage von {name} genehmigt.'
+    rejected: 'Anfrage von {name} abgelehnt.'
+    purged: 'Bearbeitete Anfragen gelöscht.'
+
+impersonation:
+  banner: "Du bist angemeldet als {name}"
+  leave: "Verlassen"
+
+nav:
+  dashboard: "Übersicht"
+  posts: "Inhalte"
+  postTypes: "Inhaltstypen"
+  media: "Medien"
+  menus: "Menüs"
+  administration: "Administration"
+  profile: "Mein Profil"

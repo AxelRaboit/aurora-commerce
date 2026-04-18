@@ -1,0 +1,35 @@
+#sidebar { width: 15rem; transition: width 200ms ease; }
+.sidebar-collapsed #sidebar { width: 4rem; }
+
+@media (min-width: 1024px) {
+    #main-content { padding-left: 15rem; transition: padding-left 200ms ease; }
+    .sidebar-collapsed #main-content { padding-left: 4rem; }
+}
+
+.sh-wrap { justify-content: space-between; padding-left: 1rem; padding-right: 1rem; }
+.sidebar-collapsed .sh-wrap { justify-content: center; padding-left: 0; padding-right: 0; }
+
+.sh-logo-expanded { display: flex; }
+.sh-logo-collapsed { display: none; }
+.sidebar-collapsed .sh-logo-expanded { display: none; }
+.sidebar-collapsed .sh-logo-collapsed { display: flex; }
+
+.sh-collapse-btn { display: flex; }
+.sidebar-collapsed .sh-collapse-btn { display: none; }
+
+.sh-expand-btn { display: none; }
+.sidebar-collapsed .sh-expand-btn { display: flex; }
+
+.sidebar-nav { padding-left: 0.75rem; padding-right: 0.75rem; overflow-y: auto; }
+.sidebar-collapsed .sidebar-nav { padding-left: 0.5rem; padding-right: 0.5rem; overflow-y: visible; }
+.sidebar-bottom { padding-left: 0.75rem; padding-right: 0.75rem; }
+.sidebar-collapsed .sidebar-bottom { padding-left: 0.5rem; padding-right: 0.5rem; }
+
+.si { gap: 0.75rem; padding: 0.625rem 0.75rem; }
+.sidebar-collapsed .si { justify-content: center; padding: 0.625rem 0; gap: 0; }
+
+.si-label { display: block; min-width: 0; }
+.sidebar-collapsed .si-label { display: none; }
+
+.si-tooltip { display: none; }
+.sidebar-collapsed .si:hover .si-tooltip { display: block; }

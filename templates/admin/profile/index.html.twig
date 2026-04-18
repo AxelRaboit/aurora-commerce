@@ -1,0 +1,25 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.profile'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'nav.profile'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div id="admin-app"
+     data-user-name="{{ app.user.name }}"
+     data-user-email="{{ app.user.email }}"
+     data-locale="{{ app.request.locale }}"
+     data-update-path="{{ path('profile_update') }}"
+     data-password-path="{{ path('profile_password') }}"
+     data-locale-path="{{ path('profile_locale') }}"
+     data-delete-path="{{ path('profile_delete') }}"
+     data-login-path="{{ path('admin_login') }}"
+     data-delete-csrf="{{ csrf_token('profile_delete') }}"
+     class="flex-1">
+</div>
+{% endblock %}
+
+{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/profile') }}{% endblock %}
+{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/profile') }}{% endblock %}
