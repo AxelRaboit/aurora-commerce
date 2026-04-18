@@ -26,11 +26,6 @@ production:
 	$(PNPM) install --frozen-lockfile
 	$(PNPM) run build
 
-watch:
-	$(PNPM) run dev
-
-dev:
-	$(PNPM) run dev
 
 # === Install & Update ===
 setup-dirs: ## Create required runtime directories
@@ -120,7 +115,8 @@ docker-down:
 # === Symfony ===
 start:
 	@docker compose up -d database 2>/dev/null || true
-	symfony server:start
+	symfony server:start -d
+	$(PNPM) run dev
 
 start-no-tls:
 	symfony server:start --no-tls -d
