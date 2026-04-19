@@ -82,7 +82,9 @@ jobs:
 
       # —— Symfony ⚡ ——————————————————————————————————————————————————————————————————
       - name: Create test database
-        run: php bin/console doctrine:database:create --no-interaction
+        env:
+          PGPASSWORD: "!ChangeMe!"
+        run: psql -h 127.0.0.1 -U app -d velox -c "CREATE DATABASE velox_test;"
 
       - name: Run migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction
