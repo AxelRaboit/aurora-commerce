@@ -11,11 +11,13 @@ use App\Repository\ResetPasswordRequestRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[AsAlias(PasswordResetManagerInterface::class)]
 final readonly class PasswordResetManager implements PasswordResetManagerInterface
 {
     public function __construct(

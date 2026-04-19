@@ -10,7 +10,7 @@ export function useAdminAccessRequests(
     csrfToken,
     initialAccessRequests,
 ) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
 
     const parsedAccessRequests = computed(() => {
         try {
@@ -27,9 +27,9 @@ export function useAdminAccessRequests(
     };
 
     const statusLabel = computed(() => ({
-        pending: translate("admin.access_requests.status_pending"),
-        approved: translate("admin.access_requests.status_approved"),
-        rejected: translate("admin.access_requests.status_rejected"),
+        pending: t("admin.access_requests.status_pending"),
+        approved: t("admin.access_requests.status_approved"),
+        rejected: t("admin.access_requests.status_rejected"),
     }));
 
     const pendingApprove = ref(null);

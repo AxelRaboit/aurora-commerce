@@ -4,7 +4,7 @@ import { toast } from "vue-sonner";
 import { useForm } from "@/composables/useForm.js";
 
 export function useTagEdit(editPath, onSuccess) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
     const { errors, setErrors, clearErrors } = useForm();
 
     const editingTag = ref(null);
@@ -27,14 +27,18 @@ export function useTagEdit(editPath, onSuccess) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: name.value }),
             });
+            if (!response.ok && response.status !== 422)
+                throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             if (data.success) {
                 editingTag.value = null;
-                toast.success(translate("admin.tags.updated"));
+                toast.success(t("admin.tags.updated"));
                 onSuccess(data.tag);
             } else {
                 setErrors(data.errors ?? {});
             }
+        } catch {
+            toast.error(t("common.error"));
         } finally {
             loading.value = false;
         }

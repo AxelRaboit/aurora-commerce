@@ -1,11 +1,10 @@
 import { useI18n } from "vue-i18n";
+import { Locale, LOCALE_LABELS } from "@/utils/lang.js";
 
-export const SUPPORTED_LOCALES = [
-    { code: "fr", label: "Français" },
-    { code: "en", label: "English" },
-    { code: "es", label: "Español" },
-    { code: "de", label: "Deutsch" },
-];
+export const SUPPORTED_LOCALES = Object.values(Locale).map((code) => ({
+    code,
+    label: LOCALE_LABELS[code],
+}));
 
 export function useLocale(endpoint = "/admin/profile/locale") {
     const { locale } = useI18n();
@@ -17,8 +16,8 @@ export function useLocale(endpoint = "/admin/profile/locale") {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ locale: code }),
             });
-        } catch (e) {
-            console.warn("[useLocale] Failed to persist locale on server:", e);
+        } catch {
+            console.warn("[useLocale] Failed to persist locale on server.");
         }
         locale.value = code;
         localStorage.setItem("velox-locale", code);

@@ -5,7 +5,7 @@ import { useForm } from "@/composables/useForm.js";
 import { required, email, compose } from "@/utils/validators.js";
 
 export function useProfileInfo(updatePath, initialName, initialEmail) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
     const {
         errors: infoErrors,
         validate: validateInfo,
@@ -20,13 +20,11 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
     async function saveInfo() {
         const isValid = validateInfo({
             name: () =>
-                required(translate("profile.errors.name_required"))(
-                    infoName.value,
-                ),
+                required(t("profile.errors.name_required"))(infoName.value),
             email: () =>
                 compose(
-                    required(translate("profile.errors.email_invalid")),
-                    email(translate("profile.errors.email_invalid")),
+                    required(t("profile.errors.email_invalid")),
+                    email(t("profile.errors.email_invalid")),
                 )(infoEmail.value),
         });
 
@@ -45,7 +43,7 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
             const data = await response.json();
             if (data.success) {
                 clearInfoErrors();
-                toast.success(translate("profile.info.saved"));
+                toast.success(t("profile.info.saved"));
             } else {
                 setInfoErrors(data.errors ?? {});
             }

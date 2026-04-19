@@ -13,7 +13,7 @@ export function useAdminUsers(
     initialUsers,
     initialSearch,
 ) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
 
     const parsedUsers = computed(() => {
         try {
@@ -51,20 +51,18 @@ export function useAdminUsers(
     async function submitCreate() {
         const isValid = validateCreate({
             name: () =>
-                required(translate("profile.errors.name_required"))(
-                    newUser.value.name,
-                ),
+                required(t("profile.errors.name_required"))(newUser.value.name),
             email: () =>
                 compose(
-                    required(translate("profile.errors.email_invalid")),
-                    email(translate("profile.errors.email_invalid")),
+                    required(t("profile.errors.email_invalid")),
+                    email(t("profile.errors.email_invalid")),
                 )(newUser.value.email),
             password: () => {
                 if (
                     !newUser.value.password ||
                     newUser.value.password.length < 8
                 )
-                    return translate("profile.errors.password_too_short");
+                    return t("profile.errors.password_too_short");
                 return null;
             },
         });

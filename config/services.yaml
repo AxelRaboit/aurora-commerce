@@ -37,8 +37,3 @@ services:
     App\Twig\VersionExtension:
         arguments:
             $projectDir: '%kernel.project_dir%'
-
-    # Interface aliases (Dependency Inversion Principle)
-    App\Contract\UserManagerInterface: '@App\Manager\UserManager'
-    App\Contract\AccessRequestManagerInterface: '@App\Manager\AccessRequestManager'
-    App\Contract\PasswordResetManagerInterface: '@App\Manager\PasswordResetManager'

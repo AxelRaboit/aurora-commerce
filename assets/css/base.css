@@ -1,0 +1,57 @@
+@layer base {
+    button, [role="button"], [type="button"], [type="submit"], [type="reset"] {
+        cursor: pointer;
+    }
+}
+
+body {
+    background-color: var(--th-bg);
+    color: var(--color-primary);
+}
+
+@utility scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        color 200ms ease,
+        fill 200ms ease,
+        stroke 200ms ease !important;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.15s ease;
+}
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+.modal-enter-from .relative,
+.modal-leave-to .relative {
+    transform: scale(0.97);
+    opacity: 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--th-surface-2) inset !important;
+    -webkit-text-fill-color: var(--color-primary) !important;
+    caret-color: var(--color-primary);
+    transition: background-color 5000s ease-in-out 0s;
+}

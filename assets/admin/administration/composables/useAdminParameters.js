@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 
 export function useAdminParameters(parameterUpdatePath, initialParameters) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
 
     const parsedParameters = computed(() => {
         try {
@@ -43,9 +43,9 @@ export function useAdminParameters(parameterUpdatePath, initialParameters) {
             if (response.ok) {
                 param.value = editingValue.value || null;
                 editingKey.value = null;
-                toast.success(translate("admin.parameters.saved"));
+                toast.success(t("admin.parameters.saved"));
             } else {
-                toast.error(translate("common.error"));
+                toast.error(t("common.error"));
             }
         } finally {
             editSaving.value = false;

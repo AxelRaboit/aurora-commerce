@@ -10,8 +10,10 @@ use App\Enum\LocaleEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[AsAlias(UserManagerInterface::class)]
 final readonly class UserManager implements UserManagerInterface
 {
     public function __construct(

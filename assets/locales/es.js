@@ -187,6 +187,95 @@ export default {
             status_approved: "Aprobado",
             status_rejected: "Rechazado",
         },
+        editor: {
+            placeholder: "Empieza a escribir…",
+            image: {
+                captionPlaceholder: "Leyenda…",
+            },
+            quote: {
+                placeholder: "Cita…",
+                captionPlaceholder: "Autor…",
+            },
+            mediaText: {
+                flipLeft: "⇄ Imagen a la izquierda",
+                flipRight: "⇄ Imagen a la derecha",
+                captionPlaceholder: "Leyenda…",
+                textPlaceholder: "Tu texto…",
+                urlPlaceholder: "URL de imagen…",
+                changeUrl: "Cambiar URL",
+                confirm: "Confirmar",
+            },
+            callout: {
+                types: {
+                    info: "Info",
+                    success: "Éxito",
+                    warning: "Atención",
+                    danger: "Peligro",
+                    tip: "Consejo",
+                },
+                titlePlaceholder: "Título…",
+                messagePlaceholder: "Mensaje…",
+            },
+            templates: {
+                title: "Elegir una plantilla",
+                subtitle:
+                    "El contenido actual será reemplazado por la plantilla seleccionada.",
+                block: "bloque",
+                blocks: "bloques",
+                article: {
+                    label: "Artículo clásico",
+                    description: "Título, introducción, imagen, cuerpo",
+                },
+                journal: {
+                    label: "Doble maquetación",
+                    description: "Alternancia imagen-texto estilo periódico",
+                },
+                twoColumn: {
+                    label: "Dos columnas",
+                    description: "Contenido dividido en dos columnas iguales",
+                },
+                landing: {
+                    label: "Sección landing",
+                    description: "Titular, imagen completa, puntos clave",
+                },
+                tutorial: {
+                    label: "Tutorial / Guía",
+                    description: "Pasos numerados con bloques de código",
+                },
+                newsletter: {
+                    label: "Newsletter",
+                    description: "Formato email: intro, secciones, CTA",
+                },
+            },
+        },
+        posts: {
+            add: "Nuevo contenido",
+            edit: "Editar contenido",
+            searchPlaceholder: "Buscar contenido…",
+            empty: "No se encontró ningún contenido.",
+            deleteConfirm:
+                "¿Eliminar « {title} »? Esta acción es irreversible.",
+            created: "Contenido creado.",
+            updated: "Contenido actualizado.",
+            deleted: "Contenido eliminado.",
+            title: "Título",
+            titlePlaceholder: "Mi título…",
+            slug: "Slug",
+            slugPlaceholder: "mi-titulo",
+            status: "Estado",
+            postType: "Tipo de contenido",
+            tags: "Etiquetas",
+            blocks: "Contenido",
+            metaTitle: "Meta-título",
+            metaDescription: "Meta-descripción",
+            preview: "Vista previa",
+            previewEmpty: "No hay contenido para previsualizar.",
+            statusOptions: {
+                draft: "Borrador",
+                published: "Publicado",
+                trash: "Papelera",
+            },
+        },
         tags: {
             add: "Añadir etiqueta",
             name: "Nombre",

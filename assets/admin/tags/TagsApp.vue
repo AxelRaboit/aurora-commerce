@@ -10,7 +10,7 @@ import { useTagEdit } from "./composables/useTagEdit.js";
 import { useTagDelete } from "./composables/useTagDelete.js";
 import { Pencil, Trash2, Plus, Tag, Search } from "lucide-vue-next";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
@@ -25,7 +25,7 @@ const props = defineProps({
 const { tags, page, totalPages, search: searchInput, addTag, updateTag, removeTag, performSearch, goToPage } = useTagList(props.tagsPath, props.tags, props.search);
 const create = useTagCreate(props.createPath, (tag) => addTag(tag));
 const edit = useTagEdit(props.editPath, (tag) => updateTag(tag));
-const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
+const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.tags.deleted");
 </script>
 
 <template>
@@ -37,7 +37,7 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
                 <input
                     v-model="searchInput"
                     type="text"
-                    :placeholder="translate('admin.tags.searchPlaceholder')"
+                    :placeholder="t('admin.tags.searchPlaceholder')"
                     class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     v-on:keyup.enter="performSearch"
                 >
@@ -48,7 +48,7 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
                 v-on:click="performSearch"
             >
                 <Search class="w-4 h-4" :stroke-width="2" />
-                {{ translate('admin.users.search') }}
+                {{ t('admin.users.search') }}
             </button>
             <button
                 type="button"
@@ -56,13 +56,13 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
                 v-on:click="create.open()"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ translate('admin.tags.add') }}
+                {{ t('admin.tags.add') }}
             </button>
         </div>
 
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
-            <AppNoData v-if="!tags.length" :message="translate('admin.tags.empty')" />
+            <AppNoData v-if="!tags.length" :message="t('admin.tags.empty')" />
             <div v-for="tag in tags" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-center gap-2">
                     <Tag class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
@@ -87,15 +87,15 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
                     <tr>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ translate('admin.tags.name') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ translate('admin.tags.slug') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ translate('admin.tags.createdAt') }}</th>
-                        <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ translate('admin.tags.actions') }}</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.tags.name') }}</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t('admin.tags.slug') }}</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.tags.createdAt') }}</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t('admin.tags.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
                     <tr v-if="!tags.length">
-                        <td colspan="4"><AppNoData :message="translate('admin.tags.empty')" /></td>
+                        <td colspan="4"><AppNoData :message="t('admin.tags.empty')" /></td>
                     </tr>
                     <tr v-for="tag in tags" :key="tag.id" class="hover:bg-surface-2/50 transition-colors">
                         <td class="px-6 py-3">
@@ -123,7 +123,7 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
 
         <!-- Pagination -->
         <div v-if="totalPages > 1" class="flex items-center justify-between text-sm text-secondary">
-            <span>{{ translate('common.pagination', { page, totalPages }) }}</span>
+            <span>{{ t('common.pagination', { page, totalPages }) }}</span>
             <div class="flex gap-1">
                 <button
                     v-for="p in totalPages"
@@ -140,44 +140,44 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id));
 
         <!-- Create modal -->
         <AppModal :show="create.showModal.value" v-on:close="create.showModal.value = false">
-            <h3 class="text-lg font-semibold text-primary">{{ translate('admin.tags.add') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('admin.tags.add') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="create.submit()">
                 <AppInput
                     v-model="create.name.value"
-                    :label="translate('admin.tags.name')"
+                    :label="t('admin.tags.name')"
                     :error="create.errors.value.name"
                     required
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="create.showModal.value = false">{{ translate('common.cancel') }}</button>
-                    <button type="submit" :disabled="create.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ translate('common.create') }}</button>
+                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="create.showModal.value = false">{{ t('common.cancel') }}</button>
+                    <button type="submit" :disabled="create.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ t('common.create') }}</button>
                 </div>
             </form>
         </AppModal>
 
         <!-- Edit modal -->
         <AppModal :show="!!edit.editingTag.value" v-on:close="edit.editingTag.value = null">
-            <h3 class="text-lg font-semibold text-primary">{{ translate('admin.tags.edit') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('admin.tags.edit') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="edit.submit()">
                 <AppInput
                     v-model="edit.name.value"
-                    :label="translate('admin.tags.name')"
+                    :label="t('admin.tags.name')"
                     :error="edit.errors.value.name"
                     required
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="edit.editingTag.value = null">{{ translate('common.cancel') }}</button>
-                    <button type="submit" :disabled="edit.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ translate('common.save') }}</button>
+                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="edit.editingTag.value = null">{{ t('common.cancel') }}</button>
+                    <button type="submit" :disabled="edit.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ t('common.save') }}</button>
                 </div>
             </form>
         </AppModal>
 
         <!-- Delete modal -->
         <AppModal :show="!!deleteTag.pendingDelete.value" max-width="sm" v-on:close="deleteTag.pendingDelete.value = null">
-            <p class="text-sm text-primary">{{ translate('admin.tags.deleteConfirm', { name: deleteTag.pendingDelete.value?.name }) }}</p>
+            <p class="text-sm text-primary">{{ t('admin.tags.deleteConfirm', { name: deleteTag.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
-                <button type="button" class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="deleteTag.pendingDelete.value = null">{{ translate('common.cancel') }}</button>
-                <button type="button" :disabled="deleteTag.loading.value" class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors disabled:opacity-50" v-on:click="deleteTag.submit()">{{ translate('common.delete') }}</button>
+                <button type="button" class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="deleteTag.pendingDelete.value = null">{{ t('common.cancel') }}</button>
+                <button type="button" :disabled="deleteTag.loading.value" class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors disabled:opacity-50" v-on:click="deleteTag.submit()">{{ t('common.delete') }}</button>
             </div>
         </AppModal>
     </div>

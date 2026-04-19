@@ -5,7 +5,7 @@ import { submitForm } from "@/utils/formSubmit.js";
 import { required, email, compose } from "@/utils/validators.js";
 
 export function useAdminInvitations(invitationSendPath, csrfToken) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
     const { errors: invitationErrors, validate: validateInvitation } =
         useForm();
 
@@ -19,8 +19,8 @@ export function useAdminInvitations(invitationSendPath, csrfToken) {
         const isValid = validateInvitation({
             email: () =>
                 compose(
-                    required(translate("profile.errors.email_invalid")),
-                    email(translate("profile.errors.email_invalid")),
+                    required(t("profile.errors.email_invalid")),
+                    email(t("profile.errors.email_invalid")),
                 )(invitationEmail.value),
         });
 

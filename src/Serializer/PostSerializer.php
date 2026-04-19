@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Serializer;
+
+use App\Entity\Post;
+use DateTimeInterface;
+
+final readonly class PostSerializer
+{
+    public function serialize(Post $post): array
+    {
+        $defaultTranslation = $post->getTranslation('fr');
+
+        return [
+            'id' => $post->getId(),
+            'status' => $post->getStatus(),
+            'postType' => [
+                'id' => $post->getPostType()->getId(),
+                'label' => $post->getPostType()->getLabel(),
+                'slug' => $post->getPostType()->getSlug(),
+            ],
+            'title' => $defaultTranslation?->getTitle(),
+            'slug' => $defaultTranslation?->getSlug(),
+            'tagIds' => $post->getTags()->map(fn (object $tag): ?int => $tag->getId())->toArray(),
+            'createdAt' => $post->getCreatedAt()->format(DateTimeInterface::ATOM),
+            'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
+        ];
+    }
+
+    public function serializeFull(Post $post): array
+    {
+        $translations = [];
+        foreach ($post->getTranslations() as $locale => $translation) {
+            $translations[(string) $locale] = [
+                'title' => $translation->getTitle(),
+                'slug' => $translation->getSlug(),
+                'blocks' => $translation->getBlocks(),
+                'metaTitle' => $translation->getMetaTitle(),
+                'metaDescription' => $translation->getMetaDescription(),
+                'customFields' => $translation->getCustomFields(),
+            ];
+        }
+
+        return [
+            ...$this->serialize($post),
+            'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
+            'translations' => $translations,
+        ];
+    }
+}

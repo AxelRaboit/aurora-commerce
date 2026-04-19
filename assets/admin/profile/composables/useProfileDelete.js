@@ -2,12 +2,12 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 export function useProfileDelete(deletePath, loginPath, deleteCsrf) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
 
     const deleteLoading = ref(false);
 
     async function deleteAccount() {
-        if (!confirm(translate("profile.danger.confirm"))) return;
+        if (!confirm(t("profile.danger.confirm"))) return;
         deleteLoading.value = true;
         try {
             const response = await fetch(deletePath, {

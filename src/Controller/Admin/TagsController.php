@@ -11,7 +11,7 @@ use App\Entity\Tag;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\TagRepository;
-use DateTimeInterface;
+use App\Serializer\TagSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +29,7 @@ class TagsController extends AbstractController
     public function __construct(
         private readonly TagRepository $tagRepository,
         private readonly TagManagerInterface $tagManager,
+        private readonly TagSerializer $tagSerializer,
         private readonly ValidatorInterface $validator,
     ) {}
 
@@ -40,12 +41,7 @@ class TagsController extends AbstractController
         $result = $this->tagRepository->findPaginated($page, 20, $search ?: null);
 
         $items = array_map(
-            fn (Tag $tag): array => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'slug' => $tag->getSlug(),
-                'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
-            ],
+            $this->tagSerializer->serialize(...),
             $result['items'],
         );
 
@@ -67,12 +63,7 @@ class TagsController extends AbstractController
 
         $tag = $this->tagManager->create($input->name);
 
-        return $this->json(['success' => true, 'tag' => [
-            'id' => $tag->getId(),
-            'name' => $tag->getName(),
-            'slug' => $tag->getSlug(),
-            'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
-        ]]);
+        return $this->json(['success' => true, 'tag' => $this->tagSerializer->serialize($tag)]);
     }
 
     #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
@@ -87,12 +78,7 @@ class TagsController extends AbstractController
 
         $this->tagManager->update($tag, $input->name);
 
-        return $this->json(['success' => true, 'tag' => [
-            'id' => $tag->getId(),
-            'name' => $tag->getName(),
-            'slug' => $tag->getSlug(),
-            'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
-        ]]);
+        return $this->json(['success' => true, 'tag' => $this->tagSerializer->serialize($tag)]);
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]

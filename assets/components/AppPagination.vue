@@ -11,7 +11,7 @@ const props = defineProps({
     urlFn:      { type: Function, required: true },
 });
 
-const { t: translate } = useI18n({ useScope: 'global' });
+const { t } = useI18n({ useScope: 'global' });
 
 const from = computed(() => props.total === 0 ? 0 : (props.page - 1) * props.perPage + 1);
 const lastItemNumber = computed(() => Math.min(props.page * props.perPage, props.total));
@@ -38,7 +38,7 @@ const pageNumbers = computed(() => {
 <template>
     <div v-if="totalPages > 1" class="mt-4 space-y-3 flex flex-col items-center">
         <p class="text-sm text-secondary">
-            {{ translate('pagination.results', { from, to: lastItemNumber, total }) }}
+            {{ t('pagination.results', { from, to: lastItemNumber, total }) }}
         </p>
 
         <div class="flex flex-wrap gap-1 items-center justify-center">
@@ -48,7 +48,7 @@ const pageNumbers = computed(() => {
                 :class="page > 1 ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
             >
                 <ChevronLeft class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ translate('pagination.previous') }}
+                {{ t('pagination.previous') }}
             </a>
 
             <template v-for="(pageNumber, index) in pageNumbers" :key="index">
@@ -68,7 +68,7 @@ const pageNumbers = computed(() => {
                 class="px-3 py-1 rounded text-sm transition inline-flex items-center gap-1"
                 :class="page < totalPages ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
             >
-                {{ translate('pagination.next') }}
+                {{ t('pagination.next') }}
                 <ChevronRight class="w-3.5 h-3.5" :stroke-width="2" />
             </a>
         </div>

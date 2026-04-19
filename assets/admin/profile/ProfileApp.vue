@@ -8,7 +8,7 @@ import { useProfileInfo } from "./composables/useProfileInfo.js";
 import { useProfilePassword } from "./composables/useProfilePassword.js";
 import { useProfileDelete } from "./composables/useProfileDelete.js";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
     userName: { type: String, default: "" },
@@ -33,21 +33,21 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
         <!-- Langue -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ translate('profile.locale.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ translate('profile.locale.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('profile.locale.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('profile.locale.subtitle') }}</p>
             </header>
             <div>
-                <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ translate('profile.locale.field') }}</label>
+                <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.locale.field') }}</label>
                 <select
                     v-model="selectedLocale"
                     :disabled="localeLoading"
                     class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-indigo-500 focus:outline-none transition disabled:opacity-50"
                     v-on:change="changeLocale"
                 >
-                    <option value="fr">{{ translate('locales.fr') }}</option>
-                    <option value="en">{{ translate('locales.en') }}</option>
-                    <option value="es">{{ translate('locales.es') }}</option>
-                    <option value="de">{{ translate('locales.de') }}</option>
+                    <option value="fr">{{ t('locales.fr') }}</option>
+                    <option value="en">{{ t('locales.en') }}</option>
+                    <option value="es">{{ t('locales.es') }}</option>
+                    <option value="de">{{ t('locales.de') }}</option>
                 </select>
             </div>
         </div>
@@ -55,14 +55,14 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
         <!-- Informations -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ translate('profile.info.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ translate('profile.info.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('profile.info.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('profile.info.subtitle') }}</p>
             </header>
             <form class="space-y-4" v-on:submit.prevent="saveInfo">
                 <AppInput
                     v-model="infoName"
-                    :label="translate('profile.info.name')"
-                    :placeholder="translate('profile.info.namePlaceholder')"
+                    :label="t('profile.info.name')"
+                    :placeholder="t('profile.info.namePlaceholder')"
                     :error="infoErrors.name"
                     autocomplete="name"
                     required
@@ -70,14 +70,14 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 <AppInput
                     v-model="infoEmail"
                     type="email"
-                    :label="translate('profile.info.email')"
-                    :placeholder="translate('profile.info.emailPlaceholder')"
+                    :label="t('profile.info.email')"
+                    :placeholder="t('profile.info.emailPlaceholder')"
                     :error="infoErrors.email"
                     autocomplete="email"
                     required
                 />
                 <div class="pt-1">
-                    <AppButton type="submit" :loading="infoLoading">{{ translate('common.save') }}</AppButton>
+                    <AppButton type="submit" :loading="infoLoading">{{ t('common.save') }}</AppButton>
                 </div>
             </form>
         </div>
@@ -85,13 +85,13 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
         <!-- Mot de passe -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ translate('profile.password.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ translate('profile.password.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('profile.password.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('profile.password.subtitle') }}</p>
             </header>
             <form class="space-y-4" v-on:submit.prevent="savePassword">
                 <AppInput
                     v-model="currentPassword"
-                    :label="translate('profile.password.current')"
+                    :label="t('profile.password.current')"
                     :error="passwordErrors.current_password"
                     placeholder="••••••••"
                     autocomplete="current-password"
@@ -101,7 +101,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 <div>
                     <AppInput
                         v-model="newPassword"
-                        :label="translate('profile.password.new')"
+                        :label="t('profile.password.new')"
                         :error="passwordErrors.password"
                         placeholder="••••••••"
                         autocomplete="new-password"
@@ -112,7 +112,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 </div>
                 <AppInput
                     v-model="confirmPassword"
-                    :label="translate('profile.password.confirm')"
+                    :label="t('profile.password.confirm')"
                     :error="passwordErrors.password_confirmation"
                     placeholder="••••••••"
                     autocomplete="new-password"
@@ -120,7 +120,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                     required
                 />
                 <div class="pt-1">
-                    <AppButton type="submit" :loading="passwordLoading">{{ translate('common.save') }}</AppButton>
+                    <AppButton type="submit" :loading="passwordLoading">{{ t('common.save') }}</AppButton>
                 </div>
             </form>
         </div>
@@ -128,8 +128,8 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
         <!-- Zone de danger -->
         <div class="bg-surface border border-rose-900/40 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-rose-400">{{ translate('profile.danger.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ translate('profile.danger.description') }}</p>
+                <h2 class="text-lg font-semibold text-rose-400">{{ t('profile.danger.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('profile.danger.description') }}</p>
             </header>
             <button
                 type="button"
@@ -137,7 +137,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 class="px-4 py-2.5 rounded-lg text-sm font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-900/40 transition-colors disabled:opacity-50"
                 v-on:click="deleteAccount"
             >
-                {{ translate('profile.danger.submit') }}
+                {{ t('profile.danger.submit') }}
             </button>
         </div>
     </div>

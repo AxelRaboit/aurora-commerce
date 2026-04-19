@@ -9,11 +9,13 @@ use App\Entity\AccessRequest;
 use App\Enum\AccessRequestStatusEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
 
+#[AsAlias(AccessRequestManagerInterface::class)]
 final readonly class AccessRequestManager implements AccessRequestManagerInterface
 {
     public function __construct(

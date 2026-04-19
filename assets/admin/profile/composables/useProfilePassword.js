@@ -6,7 +6,7 @@ import { required } from "@/utils/validators.js";
 import { passwordValidator } from "@/utils/passwordRules.js";
 
 export function useProfilePassword(passwordPath) {
-    const { t: translate } = useI18n();
+    const { t } = useI18n();
     const {
         errors: passwordErrors,
         validate: validatePassword,
@@ -22,7 +22,7 @@ export function useProfilePassword(passwordPath) {
     async function savePassword() {
         const isValid = validatePassword({
             current_password: () =>
-                required(translate("profile.errors.current_password_invalid"))(
+                required(t("profile.errors.current_password_invalid"))(
                     currentPassword.value,
                 ),
             password: () => passwordValidator(translate)(newPassword.value),
@@ -31,7 +31,7 @@ export function useProfilePassword(passwordPath) {
                     newPassword.value &&
                     newPassword.value !== confirmPassword.value
                 )
-                    return translate("profile.errors.password_mismatch");
+                    return t("profile.errors.password_mismatch");
                 return null;
             },
         });
@@ -52,7 +52,7 @@ export function useProfilePassword(passwordPath) {
             const data = await response.json();
             if (data.success) {
                 clearPasswordErrors();
-                toast.success(translate("profile.password.saved"));
+                toast.success(t("profile.password.saved"));
                 currentPassword.value = "";
                 newPassword.value = "";
                 confirmPassword.value = "";

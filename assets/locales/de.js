@@ -185,6 +185,96 @@ export default {
             status_approved: "Genehmigt",
             status_rejected: "Abgelehnt",
         },
+        editor: {
+            placeholder: "Beginne zu schreiben…",
+            image: {
+                captionPlaceholder: "Bildunterschrift…",
+            },
+            quote: {
+                placeholder: "Zitat…",
+                captionPlaceholder: "Autor…",
+            },
+            mediaText: {
+                flipLeft: "⇄ Bild links",
+                flipRight: "⇄ Bild rechts",
+                captionPlaceholder: "Bildunterschrift…",
+                textPlaceholder: "Ihr Text…",
+                urlPlaceholder: "Bild-URL…",
+                changeUrl: "URL ändern",
+                confirm: "Bestätigen",
+            },
+            callout: {
+                types: {
+                    info: "Info",
+                    success: "Erfolg",
+                    warning: "Warnung",
+                    danger: "Gefahr",
+                    tip: "Tipp",
+                },
+                titlePlaceholder: "Titel…",
+                messagePlaceholder: "Nachricht…",
+            },
+            templates: {
+                title: "Vorlage auswählen",
+                subtitle:
+                    "Der aktuelle Inhalt wird durch die ausgewählte Vorlage ersetzt.",
+                block: "Block",
+                blocks: "Blöcke",
+                article: {
+                    label: "Klassischer Artikel",
+                    description: "Titel, Einleitung, Bild, Haupttext",
+                },
+                journal: {
+                    label: "Doppellayout",
+                    description:
+                        "Wechselndes Bild-Text-Layout wie eine Zeitung",
+                },
+                twoColumn: {
+                    label: "Zwei Spalten",
+                    description: "Inhalt auf zwei gleiche Spalten verteilt",
+                },
+                landing: {
+                    label: "Landing-Abschnitt",
+                    description: "Headline, Vollbild, Schlüsselpunkte",
+                },
+                tutorial: {
+                    label: "Tutorial / Anleitung",
+                    description: "Nummerierte Schritte mit Code-Blöcken",
+                },
+                newsletter: {
+                    label: "Newsletter",
+                    description: "E-Mail-Format: Einleitung, Abschnitte, CTA",
+                },
+            },
+        },
+        posts: {
+            add: "Neuer Inhalt",
+            edit: "Inhalt bearbeiten",
+            searchPlaceholder: "Inhalt suchen…",
+            empty: "Kein Inhalt gefunden.",
+            deleteConfirm:
+                "« {title} » löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+            created: "Inhalt erstellt.",
+            updated: "Inhalt aktualisiert.",
+            deleted: "Inhalt gelöscht.",
+            title: "Titel",
+            titlePlaceholder: "Mein Titel…",
+            slug: "Slug",
+            slugPlaceholder: "mein-titel",
+            status: "Status",
+            postType: "Inhaltstyp",
+            tags: "Tags",
+            blocks: "Inhalt",
+            metaTitle: "Meta-Titel",
+            metaDescription: "Meta-Beschreibung",
+            preview: "Vorschau",
+            previewEmpty: "Kein Inhalt zur Vorschau.",
+            statusOptions: {
+                draft: "Entwurf",
+                published: "Veröffentlicht",
+                trash: "Papierkorb",
+            },
+        },
         tags: {
             add: "Tag hinzufügen",
             name: "Name",

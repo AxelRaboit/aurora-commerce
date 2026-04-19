@@ -188,6 +188,95 @@ export default {
             status_approved: "Approuvé",
             status_rejected: "Rejeté",
         },
+        editor: {
+            placeholder: "Commencez à rédiger…",
+            image: {
+                captionPlaceholder: "Légende…",
+            },
+            quote: {
+                placeholder: "Citation…",
+                captionPlaceholder: "Auteur…",
+            },
+            mediaText: {
+                flipLeft: "⇄ Image à gauche",
+                flipRight: "⇄ Image à droite",
+                captionPlaceholder: "Légende…",
+                textPlaceholder: "Votre texte…",
+                urlPlaceholder: "URL de l'image…",
+                changeUrl: "Changer l'URL",
+                confirm: "Valider",
+            },
+            callout: {
+                types: {
+                    info: "Info",
+                    success: "Succès",
+                    warning: "Attention",
+                    danger: "Danger",
+                    tip: "Astuce",
+                },
+                titlePlaceholder: "Titre…",
+                messagePlaceholder: "Message…",
+            },
+            templates: {
+                title: "Choisir un template",
+                subtitle:
+                    "Le contenu actuel sera remplacé par le template sélectionné.",
+                block: "bloc",
+                blocks: "blocs",
+                article: {
+                    label: "Article classique",
+                    description: "Titre, introduction, image, corps de texte",
+                },
+                journal: {
+                    label: "Double mise en page",
+                    description: "Alternance image-texte façon journal",
+                },
+                twoColumn: {
+                    label: "Deux colonnes",
+                    description: "Contenu réparti en deux colonnes égales",
+                },
+                landing: {
+                    label: "Section landing",
+                    description: "Accroche, image pleine largeur, points clés",
+                },
+                tutorial: {
+                    label: "Tutoriel / Guide",
+                    description: "Étapes numérotées avec blocs de code",
+                },
+                newsletter: {
+                    label: "Newsletter",
+                    description: "Format email : intro, sections, CTA",
+                },
+            },
+        },
+        posts: {
+            add: "Nouveau contenu",
+            edit: "Modifier le contenu",
+            searchPlaceholder: "Rechercher un contenu…",
+            empty: "Aucun contenu trouvé.",
+            deleteConfirm:
+                "Supprimer « {title} » ? Cette action est irréversible.",
+            created: "Contenu créé.",
+            updated: "Contenu mis à jour.",
+            deleted: "Contenu supprimé.",
+            title: "Titre",
+            titlePlaceholder: "Mon titre…",
+            slug: "Slug",
+            slugPlaceholder: "mon-titre",
+            status: "Statut",
+            postType: "Type de contenu",
+            tags: "Tags",
+            blocks: "Contenu",
+            metaTitle: "Méta-titre",
+            metaDescription: "Méta-description",
+            preview: "Prévisualiser",
+            previewEmpty: "Aucun contenu à prévisualiser.",
+            statusOptions: {
+                draft: "Brouillon",
+                published: "Publié",
+                trash: "Corbeille",
+            },
+        },
         tags: {
             add: "Ajouter un tag",
             name: "Nom",
