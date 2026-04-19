@@ -66,7 +66,7 @@ const previewHtml = computed(() =>
                 </div>
 
                 <!-- Content -->
-                <div class="flex-1 w-full max-w-3xl mx-auto px-6 py-12">
+                <div class="flex-1 w-full max-w-6xl mx-auto px-12 py-12">
                     <div v-if="loading" class="text-secondary text-sm">{{ t("common.loading") }}</div>
                     <template v-else-if="post">
                         <h1 v-if="post.translations?.[activeLocale]?.title" class="text-3xl font-bold text-primary mb-8">
