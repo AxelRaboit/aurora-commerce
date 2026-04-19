@@ -23,6 +23,7 @@ export default defineConfig({
                 flash: './assets/flash.js',
                 theme: './assets/theme.js',
                 guest: './assets/guest/index.js',
+                register: './assets/auth/register/index.js',
                 // Admin pages
                 'admin/dashboard': './assets/admin/dashboard/index.js',
                 'admin/posts': './assets/admin/posts/index.js',

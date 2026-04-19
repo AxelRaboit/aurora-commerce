@@ -13,6 +13,42 @@ export default {
         loading: "Loading…",
         confirm: "Confirm",
         error: "An error occurred.",
+        or: "or",
+    },
+    auth: {
+        register: {
+            heading: "Create an account",
+            name: "Name",
+            name_placeholder: "John Doe",
+            email: "Email",
+            password: "Password",
+            password_confirm: "Confirm password",
+            submit: "Create account",
+            already_account: "Already have an account?",
+            login_link: "Sign in",
+            closed_title: "Registration closed",
+            closed_desc: "New registrations are currently disabled.",
+            error_name_required: "Name is required.",
+            error_email_required: "Email address is required.",
+            error_email_invalid: "Invalid email address.",
+            error_email_taken: "This email address is already in use.",
+            error_password_mismatch: "Passwords do not match.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "At least 8 characters",
+            uppercase: "One uppercase letter",
+            number: "One number",
+            special: "One special character",
+        },
+        errors: {
+            too_short: "Password must be at least 8 characters.",
+            no_uppercase:
+                "Password must contain at least one uppercase letter.",
+            no_number: "Password must contain at least one number.",
+            no_special: "Password must contain at least one special character.",
+        },
     },
     nav: {
         dashboard: "Dashboard",
@@ -36,7 +72,9 @@ export default {
             title: "Profile information",
             subtitle: "Update your name and email address.",
             name: "Full name",
+            namePlaceholder: "John Doe",
             email: "Email address",
+            emailPlaceholder: "you{'@'}example.com",
             saved: "Profile updated successfully.",
         },
         password: {
@@ -55,6 +93,13 @@ export default {
             submit: "Delete my account",
             confirm:
                 "Are you sure you want to delete your account? This action cannot be undone.",
+        },
+        errors: {
+            name_required: "Name is required.",
+            email_invalid: "Invalid email address.",
+            email_taken: "This email address is already in use.",
+            current_password_invalid: "The current password is incorrect.",
+            password_mismatch: "Passwords do not match.",
         },
     },
     admin: {

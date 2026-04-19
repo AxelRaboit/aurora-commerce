@@ -4,8 +4,10 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
+import PasswordStrength from "@/components/PasswordStrength.vue";
 import { useForm } from "@/composables/useForm.js";
 import { required, email, compose } from "@/utils/validators.js";
+import { passwordValidator } from "@/utils/passwordRules.js";
 
 const { t: translate } = useI18n();
 
@@ -95,10 +97,7 @@ const { errors: passwordErrors, validate: validatePassword, setErrors: setPasswo
 async function savePassword() {
     const isValid = validatePassword({
         current_password: () => required(translate("profile.errors.current_password_invalid"))(currentPassword.value),
-        password: () => {
-            if (!newPassword.value || newPassword.value.length < 8) return translate("profile.errors.password_too_short");
-            return null;
-        },
+        password: () => passwordValidator(translate)(newPassword.value),
         password_confirmation: () => {
             if (newPassword.value && newPassword.value !== confirmPassword.value) return translate("profile.errors.password_mismatch");
             return null;
@@ -190,6 +189,7 @@ async function deleteAccount() {
                 <AppInput
                     v-model="infoName"
                     :label="translate('profile.info.name')"
+                    :placeholder="translate('profile.info.namePlaceholder')"
                     :error="infoErrors.name"
                     autocomplete="name"
                     required
@@ -198,6 +198,7 @@ async function deleteAccount() {
                     v-model="infoEmail"
                     type="email"
                     :label="translate('profile.info.email')"
+                    :placeholder="translate('profile.info.emailPlaceholder')"
                     :error="infoErrors.email"
                     autocomplete="email"
                     required
@@ -224,15 +225,18 @@ async function deleteAccount() {
                     toggleable
                     required
                 />
-                <AppInput
-                    v-model="newPassword"
-                    :label="translate('profile.password.new')"
-                    :error="passwordErrors.password"
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                    toggleable
-                    required
-                />
+                <div>
+                    <AppInput
+                        v-model="newPassword"
+                        :label="translate('profile.password.new')"
+                        :error="passwordErrors.password"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                        toggleable
+                        required
+                    />
+                    <PasswordStrength :password="newPassword" />
+                </div>
                 <AppInput
                     v-model="confirmPassword"
                     :label="translate('profile.password.confirm')"

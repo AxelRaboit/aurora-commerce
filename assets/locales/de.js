@@ -13,6 +13,43 @@ export default {
         loading: "Laden…",
         confirm: "Bestätigen",
         error: "Ein Fehler ist aufgetreten.",
+        or: "oder",
+    },
+    auth: {
+        register: {
+            heading: "Konto erstellen",
+            name: "Name",
+            name_placeholder: "Max Mustermann",
+            email: "E-Mail",
+            password: "Passwort",
+            password_confirm: "Passwort bestätigen",
+            submit: "Konto erstellen",
+            already_account: "Bereits ein Konto?",
+            login_link: "Anmelden",
+            closed_title: "Registrierung geschlossen",
+            closed_desc: "Neue Registrierungen sind derzeit deaktiviert.",
+            error_name_required: "Name ist erforderlich.",
+            error_email_required: "E-Mail-Adresse ist erforderlich.",
+            error_email_invalid: "Ungültige E-Mail-Adresse.",
+            error_email_taken: "Diese E-Mail-Adresse wird bereits verwendet.",
+            error_password_mismatch: "Die Passwörter stimmen nicht überein.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "Mindestens 8 Zeichen",
+            uppercase: "Ein Großbuchstabe",
+            number: "Eine Zahl",
+            special: "Ein Sonderzeichen",
+        },
+        errors: {
+            too_short: "Das Passwort muss mindestens 8 Zeichen lang sein.",
+            no_uppercase:
+                "Das Passwort muss mindestens einen Großbuchstaben enthalten.",
+            no_number: "Das Passwort muss mindestens eine Zahl enthalten.",
+            no_special:
+                "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
+        },
     },
     nav: {
         dashboard: "Übersicht",
@@ -36,7 +73,9 @@ export default {
             title: "Profilinformationen",
             subtitle: "Aktualisiere deinen Namen und deine E-Mail-Adresse.",
             name: "Vollständiger Name",
+            namePlaceholder: "Max Mustermann",
             email: "E-Mail-Adresse",
+            emailPlaceholder: "du{'@'}beispiel.de",
             saved: "Profil erfolgreich aktualisiert.",
         },
         password: {
@@ -56,6 +95,13 @@ export default {
             submit: "Mein Konto löschen",
             confirm:
                 "Bist du sicher, dass du dein Konto löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+        },
+        errors: {
+            name_required: "Name ist erforderlich.",
+            email_invalid: "Ungültige E-Mail-Adresse.",
+            email_taken: "Diese E-Mail-Adresse wird bereits verwendet.",
+            current_password_invalid: "Das aktuelle Passwort ist falsch.",
+            password_mismatch: "Die Passwörter stimmen nicht überein.",
         },
     },
     admin: {

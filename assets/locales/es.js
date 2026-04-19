@@ -13,6 +13,43 @@ export default {
         loading: "Cargando…",
         confirm: "Confirmar",
         error: "Ha ocurrido un error.",
+        or: "o",
+    },
+    auth: {
+        register: {
+            heading: "Crear una cuenta",
+            name: "Nombre",
+            name_placeholder: "Juan García",
+            email: "Correo electrónico",
+            password: "Contraseña",
+            password_confirm: "Confirmar contraseña",
+            submit: "Crear cuenta",
+            already_account: "¿Ya tienes cuenta?",
+            login_link: "Iniciar sesión",
+            closed_title: "Registro cerrado",
+            closed_desc: "Los nuevos registros están desactivados actualmente.",
+            error_name_required: "El nombre es obligatorio.",
+            error_email_required: "La dirección de correo es obligatoria.",
+            error_email_invalid: "Dirección de correo electrónico inválida.",
+            error_email_taken: "Esta dirección de correo ya está en uso.",
+            error_password_mismatch: "Las contraseñas no coinciden.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "Mínimo 8 caracteres",
+            uppercase: "Una letra mayúscula",
+            number: "Un número",
+            special: "Un carácter especial",
+        },
+        errors: {
+            too_short: "La contraseña debe tener al menos 8 caracteres.",
+            no_uppercase:
+                "La contraseña debe contener al menos una letra mayúscula.",
+            no_number: "La contraseña debe contener al menos un número.",
+            no_special:
+                "La contraseña debe contener al menos un carácter especial.",
+        },
     },
     nav: {
         dashboard: "Panel de control",
@@ -36,7 +73,9 @@ export default {
             title: "Información del perfil",
             subtitle: "Actualiza tu nombre y correo electrónico.",
             name: "Nombre completo",
+            namePlaceholder: "Juan García",
             email: "Correo electrónico",
+            emailPlaceholder: "tú{'@'}ejemplo.com",
             saved: "Perfil actualizado con éxito.",
         },
         password: {
@@ -56,6 +95,13 @@ export default {
             submit: "Eliminar mi cuenta",
             confirm:
                 "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+        },
+        errors: {
+            name_required: "El nombre es obligatorio.",
+            email_invalid: "Dirección de correo electrónico inválida.",
+            email_taken: "Esta dirección de correo ya está en uso.",
+            current_password_invalid: "La contraseña actual es incorrecta.",
+            password_mismatch: "Las contraseñas no coinciden.",
         },
     },
     admin: {

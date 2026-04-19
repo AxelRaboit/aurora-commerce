@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-vue-next";
 const props = defineProps({
     modelValue: { type: String, default: '' },
     type: { type: String, default: 'text' },
+    name: { type: String, default: '' },
     placeholder: { type: String, default: '' },
     label: { type: String, default: '' },
     error: { type: String, default: '' },
@@ -30,6 +31,7 @@ const inputType = computed(() => {
         <div :class="toggleable ? 'relative' : ''">
             <input
                 :type="inputType"
+                :name="name || undefined"
                 :value="modelValue"
                 :placeholder="placeholder"
                 :required="required"

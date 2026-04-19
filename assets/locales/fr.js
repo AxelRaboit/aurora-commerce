@@ -13,6 +13,44 @@ export default {
         loading: "Chargement…",
         confirm: "Confirmer",
         error: "Une erreur est survenue.",
+        or: "ou",
+    },
+    auth: {
+        register: {
+            heading: "Créer un compte",
+            name: "Nom",
+            name_placeholder: "Jean Dupont",
+            email: "Email",
+            password: "Mot de passe",
+            password_confirm: "Confirmer le mot de passe",
+            submit: "Créer le compte",
+            already_account: "Déjà un compte ?",
+            login_link: "Se connecter",
+            closed_title: "Inscriptions fermées",
+            closed_desc:
+                "Les nouvelles inscriptions sont désactivées pour le moment.",
+            error_name_required: "Le nom est requis.",
+            error_email_required: "L'adresse email est requise.",
+            error_email_invalid: "Adresse email invalide.",
+            error_email_taken: "Cette adresse email est déjà utilisée.",
+            error_password_mismatch: "Les mots de passe ne correspondent pas.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "8 caractères minimum",
+            uppercase: "Une lettre majuscule",
+            number: "Un chiffre",
+            special: "Un caractère spécial",
+        },
+        errors: {
+            too_short: "Le mot de passe doit contenir au moins 8 caractères.",
+            no_uppercase:
+                "Le mot de passe doit contenir au moins une majuscule.",
+            no_number: "Le mot de passe doit contenir au moins un chiffre.",
+            no_special:
+                "Le mot de passe doit contenir au moins un caractère spécial.",
+        },
     },
     nav: {
         dashboard: "Tableau de bord",
@@ -36,7 +74,9 @@ export default {
             title: "Informations du profil",
             subtitle: "Mettez à jour votre nom et adresse e-mail.",
             name: "Nom complet",
+            namePlaceholder: "Jean Dupont",
             email: "Adresse e-mail",
+            emailPlaceholder: "vous{'@'}exemple.com",
             saved: "Profil mis à jour avec succès.",
         },
         password: {
@@ -56,6 +96,13 @@ export default {
             submit: "Supprimer mon compte",
             confirm:
                 "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+        },
+        errors: {
+            name_required: "Le nom est requis.",
+            email_invalid: "Adresse e-mail invalide.",
+            email_taken: "Cette adresse e-mail est déjà utilisée.",
+            current_password_invalid: "Le mot de passe actuel est incorrect.",
+            password_mismatch: "Les mots de passe ne correspondent pas.",
         },
     },
     admin: {
