@@ -6,7 +6,8 @@ import { required, email, compose } from "@/utils/validators.js";
 
 export function useAdminInvitations(invitationSendPath, csrfToken) {
     const { t: translate } = useI18n();
-    const { errors: invitationErrors, validate: validateInvitation } = useForm();
+    const { errors: invitationErrors, validate: validateInvitation } =
+        useForm();
 
     const invitationEmail = ref("");
     const invitationMessage = ref("");
@@ -16,10 +17,11 @@ export function useAdminInvitations(invitationSendPath, csrfToken) {
 
     function submitInvitation() {
         const isValid = validateInvitation({
-            email: () => compose(
-                required(translate("profile.errors.email_invalid")),
-                email(translate("profile.errors.email_invalid")),
-            )(invitationEmail.value),
+            email: () =>
+                compose(
+                    required(translate("profile.errors.email_invalid")),
+                    email(translate("profile.errors.email_invalid")),
+                )(invitationEmail.value),
         });
 
         if (!isValid || invitationSending.value) return;

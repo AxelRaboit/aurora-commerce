@@ -196,7 +196,8 @@ export default {
             searchPlaceholder: "Buscar una etiqueta…",
             empty: "No se encontraron etiquetas.",
             edit: "Editar etiqueta",
-            deleteConfirm: "¿Eliminar la etiqueta \"{name}\"? Esta acción es irreversible.",
+            deleteConfirm:
+                '¿Eliminar la etiqueta "{name}"? Esta acción es irreversible.',
             created: "Etiqueta creada.",
             updated: "Etiqueta actualizada.",
             deleted: "Etiqueta eliminada.",

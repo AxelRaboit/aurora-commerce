@@ -237,7 +237,13 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
         <!-- Users -->
         <div v-if="props.tab === 'users'" class="space-y-4">
             <div class="flex flex-col sm:flex-row gap-2">
-                <input v-model="users.searchInput.value" type="text" :placeholder="translate('admin.users.searchPlaceholder')" class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500" v-on:keyup.enter="users.performSearch">
+                <input
+                    v-model="users.searchInput.value"
+                    type="text"
+                    :placeholder="translate('admin.users.searchPlaceholder')"
+                    class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    v-on:keyup.enter="users.performSearch"
+                >
                 <button type="button" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium" v-on:click="users.performSearch">{{ translate('admin.users.search') }}</button>
                 <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-surface-2 text-primary hover:bg-surface-3 border border-line" v-on:click="users.openCreate">
                     <Plus class="w-4 h-4" />
@@ -325,9 +331,29 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-md w-full mx-4 space-y-4">
                     <h3 class="text-lg font-semibold text-primary">{{ translate('admin.users.add') }}</h3>
                     <form class="space-y-4" v-on:submit.prevent="users.submitCreate">
-                        <AppInput v-model="users.newUser.value.name" :label="translate('admin.users.name')" :error="users.createErrors.value.name" autocomplete="name" required />
-                        <AppInput v-model="users.newUser.value.email" type="email" :label="translate('admin.users.email')" :error="users.createErrors.value.email" autocomplete="email" required />
-                        <AppInput v-model="users.newUser.value.password" :label="translate('admin.users.password')" :error="users.createErrors.value.password" autocomplete="new-password" toggleable required />
+                        <AppInput
+                            v-model="users.newUser.value.name"
+                            :label="translate('admin.users.name')"
+                            :error="users.createErrors.value.name"
+                            autocomplete="name"
+                            required
+                        />
+                        <AppInput
+                            v-model="users.newUser.value.email"
+                            type="email"
+                            :label="translate('admin.users.email')"
+                            :error="users.createErrors.value.email"
+                            autocomplete="email"
+                            required
+                        />
+                        <AppInput
+                            v-model="users.newUser.value.password"
+                            :label="translate('admin.users.password')"
+                            :error="users.createErrors.value.password"
+                            autocomplete="new-password"
+                            toggleable
+                            required
+                        />
                         <div class="flex items-center justify-end gap-2 pt-2">
                             <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="users.showCreateModal.value = false">{{ translate('common.cancel') }}</button>
                             <button type="submit" :disabled="users.createLoading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ translate('common.create') }}</button>
@@ -341,7 +367,14 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
         <div v-if="props.tab === 'invitations'" class="max-w-lg space-y-4">
             <p class="text-sm text-secondary">{{ translate('admin.invitations.description') }}</p>
             <form class="space-y-4" v-on:submit.prevent="invitations.submitInvitation">
-                <AppInput v-model="invitations.invitationEmail.value" type="email" :label="translate('admin.invitations.email')" :placeholder="translate('admin.invitations.emailPlaceholder')" :error="invitations.invitationErrors.value.email" required />
+                <AppInput
+                    v-model="invitations.invitationEmail.value"
+                    type="email"
+                    :label="translate('admin.invitations.email')"
+                    :placeholder="translate('admin.invitations.emailPlaceholder')"
+                    :error="invitations.invitationErrors.value.email"
+                    required
+                />
                 <AppTextarea v-model="invitations.invitationMessage.value" :label="translate('admin.invitations.message')" :placeholder="translate('admin.invitations.messagePlaceholder')" :rows="5" />
                 <div class="border border-line rounded-lg p-4 space-y-3 bg-surface-2/50">
                     <p class="text-xs text-secondary">{{ translate('admin.invitations.credentialsHint') }}</p>

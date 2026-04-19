@@ -17,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class AccessRequestRepository extends ServiceEntityRepository
 {
     use PaginationTrait;
-    
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AccessRequest::class);

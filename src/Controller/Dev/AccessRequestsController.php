@@ -41,13 +41,13 @@ final class AccessRequestsController extends AbstractController
                 ...$result,
                 'items' => array_map(
                     fn (AccessRequest $accessRequest): array => [
-                        'id'             => $accessRequest->getId(),
+                        'id' => $accessRequest->getId(),
                         'requesterEmail' => $accessRequest->getRequesterEmail(),
-                        'requesterName'  => $accessRequest->getRequesterName(),
-                        'message'        => $accessRequest->getMessage(),
-                        'status'         => $accessRequest->getStatus()->value,
-                        'expiresAt'      => $accessRequest->getExpiresAt()->format(DateTimeInterface::ATOM),
-                        'createdAt'      => $accessRequest->getCreatedAt()->format(DateTimeInterface::ATOM),
+                        'requesterName' => $accessRequest->getRequesterName(),
+                        'message' => $accessRequest->getMessage(),
+                        'status' => $accessRequest->getStatus()->value,
+                        'expiresAt' => $accessRequest->getExpiresAt()->format(DateTimeInterface::ATOM),
+                        'createdAt' => $accessRequest->getCreatedAt()->format(DateTimeInterface::ATOM),
                     ],
                     $result['items'],
                 ),
@@ -99,5 +99,4 @@ final class AccessRequestsController extends AbstractController
 
         return $this->redirectToRoute('dev_access_requests');
     }
-
 }

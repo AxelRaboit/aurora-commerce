@@ -36,22 +36,22 @@ class TagsController extends AbstractController
     public function index(Request $request): Response
     {
         $search = mb_trim((string) $request->query->get('search', ''));
-        $page   = max(1, (int) $request->query->get('page', '1'));
+        $page = max(1, (int) $request->query->get('page', '1'));
         $result = $this->tagRepository->findPaginated($page, 20, $search ?: null);
 
         $items = array_map(
             fn (Tag $tag): array => [
-                'id'        => $tag->getId(),
-                'name'      => $tag->getName(),
-                'slug'      => $tag->getSlug(),
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'slug' => $tag->getSlug(),
                 'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
             ],
             $result['items'],
         );
 
         return $this->render('admin/tags/index.html.twig', [
-            'tags'       => ['items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']],
-            'search'     => $search,
+            'tags' => ['items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']],
+            'search' => $search,
         ]);
     }
 
@@ -68,9 +68,9 @@ class TagsController extends AbstractController
         $tag = $this->tagManager->create($input->name);
 
         return $this->json(['success' => true, 'tag' => [
-            'id'        => $tag->getId(),
-            'name'      => $tag->getName(),
-            'slug'      => $tag->getSlug(),
+            'id' => $tag->getId(),
+            'name' => $tag->getName(),
+            'slug' => $tag->getSlug(),
             'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
         ]]);
     }
@@ -88,9 +88,9 @@ class TagsController extends AbstractController
         $this->tagManager->update($tag, $input->name);
 
         return $this->json(['success' => true, 'tag' => [
-            'id'        => $tag->getId(),
-            'name'      => $tag->getName(),
-            'slug'      => $tag->getSlug(),
+            'id' => $tag->getId(),
+            'name' => $tag->getName(),
+            'slug' => $tag->getSlug(),
             'createdAt' => $tag->getCreatedAt()->format(DateTimeInterface::ATOM),
         ]]);
     }

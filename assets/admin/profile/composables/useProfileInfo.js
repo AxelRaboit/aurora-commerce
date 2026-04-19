@@ -6,7 +6,12 @@ import { required, email, compose } from "@/utils/validators.js";
 
 export function useProfileInfo(updatePath, initialName, initialEmail) {
     const { t: translate } = useI18n();
-    const { errors: infoErrors, validate: validateInfo, setErrors: setInfoErrors, clearErrors: clearInfoErrors } = useForm();
+    const {
+        errors: infoErrors,
+        validate: validateInfo,
+        setErrors: setInfoErrors,
+        clearErrors: clearInfoErrors,
+    } = useForm();
 
     const infoName = ref(initialName);
     const infoEmail = ref(initialEmail);
@@ -14,11 +19,15 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
 
     async function saveInfo() {
         const isValid = validateInfo({
-            name: () => required(translate("profile.errors.name_required"))(infoName.value),
-            email: () => compose(
-                required(translate("profile.errors.email_invalid")),
-                email(translate("profile.errors.email_invalid")),
-            )(infoEmail.value),
+            name: () =>
+                required(translate("profile.errors.name_required"))(
+                    infoName.value,
+                ),
+            email: () =>
+                compose(
+                    required(translate("profile.errors.email_invalid")),
+                    email(translate("profile.errors.email_invalid")),
+                )(infoEmail.value),
         });
 
         if (!isValid) return;
@@ -28,7 +37,10 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
             const response = await fetch(updatePath, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: infoName.value, email: infoEmail.value }),
+                body: JSON.stringify({
+                    name: infoName.value,
+                    email: infoEmail.value,
+                }),
             });
             const data = await response.json();
             if (data.success) {

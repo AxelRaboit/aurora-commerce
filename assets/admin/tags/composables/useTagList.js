@@ -1,7 +1,13 @@
 import { ref, computed } from "vue";
 
 export function useTagList(tagsPath, initialTags, initialSearch) {
-    const parsed = (() => { try { return JSON.parse(initialTags); } catch { return { items: [], total: 0, page: 1, totalPages: 1 }; } })();
+    const parsed = (() => {
+        try {
+            return JSON.parse(initialTags);
+        } catch {
+            return { items: [], total: 0, page: 1, totalPages: 1 };
+        }
+    })();
 
     const tags = ref(parsed.items ?? []);
     const page = ref(parsed.page ?? 1);
@@ -34,5 +40,15 @@ export function useTagList(tagsPath, initialTags, initialSearch) {
         window.location.href = url.toString();
     }
 
-    return { tags, page, totalPages, search, addTag, updateTag, removeTag, performSearch, goToPage };
+    return {
+        tags,
+        page,
+        totalPages,
+        search,
+        addTag,
+        updateTag,
+        removeTag,
+        performSearch,
+        goToPage,
+    };
 }

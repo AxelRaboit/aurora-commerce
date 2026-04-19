@@ -7,7 +7,12 @@ import { passwordValidator } from "@/utils/passwordRules.js";
 
 export function useProfilePassword(passwordPath) {
     const { t: translate } = useI18n();
-    const { errors: passwordErrors, validate: validatePassword, setErrors: setPasswordErrors, clearErrors: clearPasswordErrors } = useForm();
+    const {
+        errors: passwordErrors,
+        validate: validatePassword,
+        setErrors: setPasswordErrors,
+        clearErrors: clearPasswordErrors,
+    } = useForm();
 
     const currentPassword = ref("");
     const newPassword = ref("");
@@ -16,10 +21,17 @@ export function useProfilePassword(passwordPath) {
 
     async function savePassword() {
         const isValid = validatePassword({
-            current_password: () => required(translate("profile.errors.current_password_invalid"))(currentPassword.value),
+            current_password: () =>
+                required(translate("profile.errors.current_password_invalid"))(
+                    currentPassword.value,
+                ),
             password: () => passwordValidator(translate)(newPassword.value),
             password_confirmation: () => {
-                if (newPassword.value && newPassword.value !== confirmPassword.value) return translate("profile.errors.password_mismatch");
+                if (
+                    newPassword.value &&
+                    newPassword.value !== confirmPassword.value
+                )
+                    return translate("profile.errors.password_mismatch");
                 return null;
             },
         });
@@ -52,5 +64,12 @@ export function useProfilePassword(passwordPath) {
         }
     }
 
-    return { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword };
+    return {
+        currentPassword,
+        newPassword,
+        confirmPassword,
+        passwordLoading,
+        passwordErrors,
+        savePassword,
+    };
 }

@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class SettingRepository extends ServiceEntityRepository
 {
     use PaginationTrait;
-    
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Setting::class);

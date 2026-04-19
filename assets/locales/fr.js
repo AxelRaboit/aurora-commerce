@@ -197,7 +197,8 @@ export default {
             searchPlaceholder: "Rechercher un tag…",
             empty: "Aucun tag trouvé.",
             edit: "Modifier le tag",
-            deleteConfirm: "Supprimer le tag \"{name}\" ? Cette action est irréversible.",
+            deleteConfirm:
+                'Supprimer le tag "{name}" ? Cette action est irréversible.',
             created: "Tag créé.",
             updated: "Tag mis à jour.",
             deleted: "Tag supprimé.",

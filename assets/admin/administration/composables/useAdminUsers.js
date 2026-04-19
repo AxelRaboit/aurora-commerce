@@ -4,23 +4,43 @@ import { useForm } from "@/composables/useForm.js";
 import { submitForm } from "@/utils/formSubmit.js";
 import { required, email, compose } from "@/utils/validators.js";
 
-export function useAdminUsers(usersPath, userCreatePath, userDeletePath, impersonatePath, csrfToken, initialUsers, initialSearch) {
+export function useAdminUsers(
+    usersPath,
+    userCreatePath,
+    userDeletePath,
+    impersonatePath,
+    csrfToken,
+    initialUsers,
+    initialSearch,
+) {
     const { t: translate } = useI18n();
 
-    const parsedUsers = computed(() => { try { return JSON.parse(initialUsers); } catch { return { items: [] }; } });
+    const parsedUsers = computed(() => {
+        try {
+            return JSON.parse(initialUsers);
+        } catch {
+            return { items: [] };
+        }
+    });
 
     const searchInput = ref(initialSearch);
 
     function performSearch() {
         const url = new URL(usersPath, window.location.origin);
-        if (searchInput.value) url.searchParams.set("search", searchInput.value);
+        if (searchInput.value)
+            url.searchParams.set("search", searchInput.value);
         window.location.href = url.toString();
     }
 
     const showCreateModal = ref(false);
     const newUser = ref({ name: "", email: "", password: "" });
     const createLoading = ref(false);
-    const { errors: createErrors, validate: validateCreate, setErrors: setCreateErrors, clearErrors: clearCreateErrors } = useForm();
+    const {
+        errors: createErrors,
+        validate: validateCreate,
+        setErrors: setCreateErrors,
+        clearErrors: clearCreateErrors,
+    } = useForm();
 
     function openCreate() {
         showCreateModal.value = true;
@@ -30,13 +50,21 @@ export function useAdminUsers(usersPath, userCreatePath, userDeletePath, imperso
 
     async function submitCreate() {
         const isValid = validateCreate({
-            name: () => required(translate("profile.errors.name_required"))(newUser.value.name),
-            email: () => compose(
-                required(translate("profile.errors.email_invalid")),
-                email(translate("profile.errors.email_invalid")),
-            )(newUser.value.email),
+            name: () =>
+                required(translate("profile.errors.name_required"))(
+                    newUser.value.name,
+                ),
+            email: () =>
+                compose(
+                    required(translate("profile.errors.email_invalid")),
+                    email(translate("profile.errors.email_invalid")),
+                )(newUser.value.email),
             password: () => {
-                if (!newUser.value.password || newUser.value.password.length < 8) return translate("profile.errors.password_too_short");
+                if (
+                    !newUser.value.password ||
+                    newUser.value.password.length < 8
+                )
+                    return translate("profile.errors.password_too_short");
                 return null;
             },
         });

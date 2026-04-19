@@ -49,8 +49,7 @@ class AccessRequest
         #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
         #[Groups(['access_request:read'])]
         private DateTimeImmutable $expiresAt,
-    )
-    {
+    ) {
         $this->token = bin2hex(random_bytes(32));
     }
 

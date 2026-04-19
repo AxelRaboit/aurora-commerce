@@ -191,7 +191,7 @@ export default {
             searchPlaceholder: "Search a tag…",
             empty: "No tags found.",
             edit: "Edit tag",
-            deleteConfirm: "Delete tag \"{name}\"? This action is irreversible.",
+            deleteConfirm: 'Delete tag "{name}"? This action is irreversible.',
             created: "Tag created.",
             updated: "Tag updated.",
             deleted: "Tag deleted.",

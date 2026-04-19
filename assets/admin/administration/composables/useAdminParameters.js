@@ -5,7 +5,13 @@ import { toast } from "vue-sonner";
 export function useAdminParameters(parameterUpdatePath, initialParameters) {
     const { t: translate } = useI18n();
 
-    const parsedParameters = computed(() => { try { return JSON.parse(initialParameters); } catch { return { items: [] }; } });
+    const parsedParameters = computed(() => {
+        try {
+            return JSON.parse(initialParameters);
+        } catch {
+            return { items: [] };
+        }
+    });
 
     const editingKey = ref(null);
     const editingValue = ref("");
@@ -25,7 +31,10 @@ export function useAdminParameters(parameterUpdatePath, initialParameters) {
         if (editSaving.value) return;
         editSaving.value = true;
         try {
-            const url = parameterUpdatePath.replace("__key__", encodeURIComponent(param.key));
+            const url = parameterUpdatePath.replace(
+                "__key__",
+                encodeURIComponent(param.key),
+            );
             const response = await fetch(url, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -43,5 +52,13 @@ export function useAdminParameters(parameterUpdatePath, initialParameters) {
         }
     }
 
-    return { parsedParameters, editingKey, editingValue, editSaving, startEdit, cancelEdit, saveEdit };
+    return {
+        parsedParameters,
+        editingKey,
+        editingValue,
+        editSaving,
+        startEdit,
+        cancelEdit,
+        saveEdit,
+    };
 }
