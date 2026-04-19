@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -13,6 +15,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
+    use PaginationTrait;
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
@@ -23,7 +27,7 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findPaginatedForAdmin(int $page, ?string $search = null, int $limit = 20): array
     {
-        $queryBuilder = $this->createQueryBuilder('u')->orderBy('u.createdAt', 'DESC');
+        $queryBuilder = $this->createQueryBuilder('u')->orderBy('u.createdAt', Order::Descending->value);
         $countQueryBuilder = $this->createQueryBuilder('u')->select('COUNT(u.id)');
 
         if ($search) {
@@ -33,18 +37,6 @@ class UserRepository extends ServiceEntityRepository
             $countQueryBuilder->andWhere($condition)->setParameter('search', $param);
         }
 
-        $total = (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
-        $totalPages = max(1, (int) ceil($total / $limit));
-        $page = max(1, min($page, $totalPages));
-        $offset = ($page - 1) * $limit;
-
-        $items = $queryBuilder->setMaxResults($limit)->setFirstResult($offset)->getQuery()->getResult();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'totalPages' => $totalPages,
-        ];
+        return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }
 }

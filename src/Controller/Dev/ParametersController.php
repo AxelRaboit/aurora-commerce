@@ -34,12 +34,12 @@ final class ParametersController extends AbstractController
 
         $items = array_map(
             fn ($parameter): array => [
-                'key' => $parameter->getKey(),
-                'label' => $labelsByKey[$parameter->getKey()] ?? $parameter->getKey(),
-                'value' => $parameter->getValue(),
+                'key'         => $parameter->getKey(),
+                'label'       => $labelsByKey[$parameter->getKey()] ?? $parameter->getKey(),
+                'value'       => $parameter->getValue(),
                 'description' => $parameter->getDescription(),
-                'type' => $parameter->getType(),
-                'group' => $parameter->getGroup(),
+                'type'        => $parameter->getType(),
+                'group'       => $parameter->getGroup(),
             ],
             $result['items'],
         );

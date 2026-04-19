@@ -1,13 +1,12 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import PasswordStrength from "@/components/PasswordStrength.vue";
-import { useForm } from "@/composables/useForm.js";
-import { required, email, compose } from "@/utils/validators.js";
-import { passwordValidator } from "@/utils/passwordRules.js";
+import { useProfileLocale } from "./composables/useProfileLocale.js";
+import { useProfileInfo } from "./composables/useProfileInfo.js";
+import { useProfilePassword } from "./composables/useProfilePassword.js";
+import { useProfileDelete } from "./composables/useProfileDelete.js";
 
 const { t: translate } = useI18n();
 
@@ -23,136 +22,10 @@ const props = defineProps({
     deleteCsrf: { type: String, default: "" },
 });
 
-// ── Locale ────────────────────────────────────────────────────────────────────
-
-const selectedLocale = ref(props.locale);
-const localeLoading = ref(false);
-
-async function changeLocale() {
-    if (selectedLocale.value === props.locale) return;
-    localeLoading.value = true;
-    try {
-        const response = await fetch(props.localePath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ locale: selectedLocale.value }),
-        });
-        if (!response.ok) {
-            selectedLocale.value = props.locale;
-            return;
-        }
-        window.location.reload();
-    } catch {
-        selectedLocale.value = props.locale;
-    } finally {
-        localeLoading.value = false;
-    }
-}
-
-// ── Profile info ──────────────────────────────────────────────────────────────
-
-const infoName = ref(props.userName);
-const infoEmail = ref(props.userEmail);
-const infoLoading = ref(false);
-const { errors: infoErrors, validate: validateInfo, setErrors: setInfoErrors, clearErrors: clearInfoErrors } = useForm();
-
-async function saveInfo() {
-    const isValid = validateInfo({
-        name: () => required(translate("profile.errors.name_required"))(infoName.value),
-        email: () => compose(
-            required(translate("profile.errors.email_invalid")),
-            email(translate("profile.errors.email_invalid")),
-        )(infoEmail.value),
-    });
-
-    if (!isValid) return;
-
-    infoLoading.value = true;
-    try {
-        const response = await fetch(props.updatePath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: infoName.value, email: infoEmail.value }),
-        });
-        const data = await response.json();
-        if (data.success) {
-            clearInfoErrors();
-            toast.success(translate("profile.info.saved"));
-        } else {
-            setInfoErrors(data.errors ?? {});
-        }
-    } finally {
-        infoLoading.value = false;
-    }
-}
-
-// ── Password ──────────────────────────────────────────────────────────────────
-
-const currentPassword = ref("");
-const newPassword = ref("");
-const confirmPassword = ref("");
-const passwordLoading = ref(false);
-const { errors: passwordErrors, validate: validatePassword, setErrors: setPasswordErrors, clearErrors: clearPasswordErrors } = useForm();
-
-async function savePassword() {
-    const isValid = validatePassword({
-        current_password: () => required(translate("profile.errors.current_password_invalid"))(currentPassword.value),
-        password: () => passwordValidator(translate)(newPassword.value),
-        password_confirmation: () => {
-            if (newPassword.value && newPassword.value !== confirmPassword.value) return translate("profile.errors.password_mismatch");
-            return null;
-        },
-    });
-
-    if (!isValid) return;
-
-    passwordLoading.value = true;
-    try {
-        const response = await fetch(props.passwordPath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                current_password: currentPassword.value,
-                password: newPassword.value,
-                password_confirmation: confirmPassword.value,
-            }),
-        });
-        const data = await response.json();
-        if (data.success) {
-            clearPasswordErrors();
-            toast.success(translate("profile.password.saved"));
-            currentPassword.value = "";
-            newPassword.value = "";
-            confirmPassword.value = "";
-        } else {
-            setPasswordErrors(data.errors ?? {});
-        }
-    } finally {
-        passwordLoading.value = false;
-    }
-}
-
-// ── Delete account ────────────────────────────────────────────────────────────
-
-const deleteLoading = ref(false);
-
-async function deleteAccount() {
-    if (!confirm(translate("profile.danger.confirm"))) return;
-    deleteLoading.value = true;
-    try {
-        const response = await fetch(props.deletePath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ _token: props.deleteCsrf }),
-        });
-        const data = await response.json();
-        if (data.success) {
-            window.location.href = props.loginPath;
-        }
-    } finally {
-        deleteLoading.value = false;
-    }
-}
+const { selectedLocale, localeLoading, changeLocale } = useProfileLocale(props.localePath, props.locale);
+const { infoName, infoEmail, infoLoading, infoErrors, saveInfo } = useProfileInfo(props.updatePath, props.userName, props.userEmail);
+const { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword } = useProfilePassword(props.passwordPath);
+const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, props.loginPath, props.deleteCsrf);
 </script>
 
 <template>

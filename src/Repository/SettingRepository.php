@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Setting;
+use App\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SettingRepository extends ServiceEntityRepository
 {
+    use PaginationTrait;
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Setting::class);
@@ -56,24 +59,11 @@ class SettingRepository extends ServiceEntityRepository
      */
     public function findPaginated(int $page, int $limit = 20): array
     {
-        $total = (int) $this->createQueryBuilder('s')->select('COUNT(s.key)')->getQuery()->getSingleScalarResult();
-        $totalPages = max(1, (int) ceil($total / $limit));
-        $page = max(1, min($page, $totalPages));
-        $offset = ($page - 1) * $limit;
-
-        $items = $this->createQueryBuilder('s')
+        $queryBuilder = $this->createQueryBuilder('s')
             ->orderBy('s.group', 'ASC')
-            ->addOrderBy('s.key', 'ASC')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getQuery()
-            ->getResult();
+            ->addOrderBy('s.key', 'ASC');
+        $countQueryBuilder = $this->createQueryBuilder('s')->select('COUNT(s.key)');
 
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'totalPages' => $totalPages,
-        ];
+        return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }
 }

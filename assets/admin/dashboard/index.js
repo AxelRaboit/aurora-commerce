@@ -1,4 +1,4 @@
 import { mountApp } from "@/utils/mountApp.js";
-import App from "./App.vue";
+import DashboardApp from "./DashboardApp.vue";
 
-mountApp("admin-app", App);
+mountApp("app-dashboard", DashboardApp);

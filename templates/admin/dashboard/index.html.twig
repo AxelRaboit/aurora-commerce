@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<div id="admin-app" data-locale="{{ app.request.locale }}"></div>
+<div id="app-dashboard" data-locale="{{ app.request.locale }}"></div>
 {% endblock %}
 
 {% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/dashboard') }}{% endblock %}

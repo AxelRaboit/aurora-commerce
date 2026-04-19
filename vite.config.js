@@ -33,6 +33,7 @@ export default defineConfig({
                 'admin/post-types': './assets/admin/post-types/index.js',
                 'admin/profile': './assets/admin/profile/index.js',
                 'admin/administration': './assets/admin/administration/index.js',
+                'admin/tags': './assets/admin/tags/index.js',
             },
             output: {
                 manualChunks(id) {

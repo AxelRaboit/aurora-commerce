@@ -1,4 +1,4 @@
 import { mountApp } from "@/utils/mountApp.js";
-import App from "./App.vue";
+import PostTypesApp from "./PostTypesApp.vue";
 
-mountApp("admin-app", App);
+mountApp("app-post-types", PostTypesApp);

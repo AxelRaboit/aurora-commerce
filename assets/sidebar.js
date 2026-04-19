@@ -12,6 +12,7 @@ mountApp("app-sidebar", AppSidebar, (data) => ({
     postTypesPath: data.postTypesPath || "/admin/post-types",
     mediaPath: data.mediaPath || "/admin/media",
     menusPath: data.menusPath || "/admin/menus",
+    tagsPath: data.tagsPath || "/admin/tags",
     administrationPath: data.administrationPath || "/dev",
     profilePath: data.profilePath || "/admin/profile",
     logoutPath: data.logoutPath || "/admin/logout",

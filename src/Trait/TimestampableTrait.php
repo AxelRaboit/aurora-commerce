@@ -7,6 +7,7 @@ namespace App\Trait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 trait TimestampableTrait
 {
@@ -29,11 +30,13 @@ trait TimestampableTrait
         $this->updatedAt = new DateTimeImmutable();
     }
 
+    #[Groups(['timestamps'])]
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
+    #[Groups(['timestamps'])]
     public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;

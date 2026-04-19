@@ -10,6 +10,7 @@ use App\Trait\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AccessRequestRepository::class)]
 #[ORM\Table(name: 'access_requests')]
@@ -23,23 +24,32 @@ class AccessRequest
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['access_request:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 64, unique: true)]
     private string $token;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['access_request:read'])]
     private ?string $requesterName = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['access_request:read'])]
     private ?string $message = null;
 
     #[ORM\Column(length: 20, enumType: AccessRequestStatusEnum::class, options: ['default' => 'pending'])]
+    #[Groups(['access_request:read'])]
     private AccessRequestStatusEnum $status = AccessRequestStatusEnum::Pending;
 
-    public function __construct(#[ORM\Column(length: 255)]
-        private string $requesterEmail, #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-        private DateTimeImmutable $expiresAt)
+    public function __construct(
+        #[ORM\Column(length: 255)]
+        #[Groups(['access_request:read'])]
+        private string $requesterEmail,
+        #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+        #[Groups(['access_request:read'])]
+        private DateTimeImmutable $expiresAt,
+    )
     {
         $this->token = bin2hex(random_bytes(32));
     }

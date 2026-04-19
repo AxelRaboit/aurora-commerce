@@ -6,7 +6,9 @@ namespace App\Repository;
 
 use App\Entity\AccessRequest;
 use App\Enum\AccessRequestStatusEnum;
+use App\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AccessRequestRepository extends ServiceEntityRepository
 {
+    use PaginationTrait;
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AccessRequest::class);
@@ -39,27 +43,9 @@ class AccessRequestRepository extends ServiceEntityRepository
      */
     public function findPaginatedAdmin(int $page = 1, int $limit = 20): array
     {
-        $total = (int) $this->createQueryBuilder('a')
-            ->select('COUNT(a.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
+        $queryBuilder = $this->createQueryBuilder('a')->orderBy('a.createdAt', Order::Descending->value);
+        $countQueryBuilder = $this->createQueryBuilder('a')->select('COUNT(a.id)');
 
-        $totalPages = max(1, (int) ceil($total / $limit));
-        $page = max(1, min($page, $totalPages));
-        $offset = ($page - 1) * $limit;
-
-        $items = $this->createQueryBuilder('a')
-            ->orderBy('a.createdAt', 'DESC')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getQuery()
-            ->getResult();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'totalPages' => $totalPages,
-        ];
+        return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }
 }

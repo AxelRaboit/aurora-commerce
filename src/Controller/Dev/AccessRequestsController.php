@@ -10,6 +10,7 @@ use App\Entity\AccessRequest;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\AccessRequestRepository;
+use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,18 @@ final class AccessRequestsController extends AbstractController
             'tab' => 'access_requests',
             'accessRequests' => [
                 ...$result,
-                'items' => array_map($this->serialize(...), $result['items']),
+                'items' => array_map(
+                    fn (AccessRequest $accessRequest): array => [
+                        'id'             => $accessRequest->getId(),
+                        'requesterEmail' => $accessRequest->getRequesterEmail(),
+                        'requesterName'  => $accessRequest->getRequesterName(),
+                        'message'        => $accessRequest->getMessage(),
+                        'status'         => $accessRequest->getStatus()->value,
+                        'expiresAt'      => $accessRequest->getExpiresAt()->format(DateTimeInterface::ATOM),
+                        'createdAt'      => $accessRequest->getCreatedAt()->format(DateTimeInterface::ATOM),
+                    ],
+                    $result['items'],
+                ),
             ],
         ]);
     }
@@ -88,16 +100,4 @@ final class AccessRequestsController extends AbstractController
         return $this->redirectToRoute('dev_access_requests');
     }
 
-    private function serialize(AccessRequest $accessRequest): array
-    {
-        return [
-            'id' => $accessRequest->getId(),
-            'requesterEmail' => $accessRequest->getRequesterEmail(),
-            'requesterName' => $accessRequest->getRequesterName(),
-            'message' => $accessRequest->getMessage(),
-            'status' => $accessRequest->getStatus()->value,
-            'expiresAt' => $accessRequest->getExpiresAt()->format('c'),
-            'createdAt' => $accessRequest->getCreatedAt()->format('c'),
-        ];
-    }
 }

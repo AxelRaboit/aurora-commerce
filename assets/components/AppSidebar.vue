@@ -9,6 +9,7 @@ import {
     Layers,
     Image,
     Menu,
+    Tag,
     Shield,
     LogOut,
     Moon,
@@ -30,6 +31,7 @@ const props = defineProps({
     postTypesPath: { type: String, default: "/admin/post-types" },
     mediaPath: { type: String, default: "/admin/media" },
     menusPath: { type: String, default: "/admin/menus" },
+    tagsPath: { type: String, default: "/admin/tags" },
     administrationPath: { type: String, default: "/dev" },
     profilePath: { type: String, default: "/admin/profile" },
     logoutPath: { type: String, default: "/admin/logout" },
@@ -62,6 +64,7 @@ const navItems = [
     { route: "admin_post_types", path: props.postTypesPath, label: t("nav.postTypes"), icon: Layers, activeColor: "indigo" },
     { route: "admin_media", path: props.mediaPath, label: t("nav.media"), icon: Image, activeColor: "indigo" },
     { route: "admin_menus", path: props.menusPath, label: t("nav.menus"), icon: Menu, activeColor: "indigo" },
+    { route: "admin_tags", path: props.tagsPath, label: t("nav.tags"), icon: Tag, activeColor: "indigo" },
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
 ];
 

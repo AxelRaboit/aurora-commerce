@@ -46,9 +46,9 @@ final class UsersController extends AbstractController
 
         $items = array_map(
             fn (User $user): array => [
-                'id' => $user->getId(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
+                'id'        => $user->getId(),
+                'name'      => $user->getName(),
+                'email'     => $user->getEmail(),
                 'createdAt' => $user->getCreatedAt()->format(DateTimeInterface::ATOM),
                 'isCurrent' => $user->getId() === $currentUser->getId(),
             ],

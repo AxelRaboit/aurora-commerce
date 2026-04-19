@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\SettingRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SettingRepository::class)]
 #[ORM\Table(name: 'settings')]
@@ -14,14 +15,19 @@ class Setting
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(name: 'setting_key', length: 100)]
+        #[Groups(['setting:read'])]
         private string $key = '',
         #[ORM\Column(type: 'text', nullable: true)]
+        #[Groups(['setting:read'])]
         private ?string $value = null,
         #[ORM\Column(length: 255, nullable: true)]
+        #[Groups(['setting:read'])]
         private ?string $description = null,
         #[ORM\Column(name: 'setting_type', length: 50)]
+        #[Groups(['setting:read'])]
         private string $type = 'string',
         #[ORM\Column(name: 'setting_group', length: 100, nullable: true)]
+        #[Groups(['setting:read'])]
         private ?string $group = null
     ) {}
 

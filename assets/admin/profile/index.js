@@ -1,4 +1,4 @@
 import { mountApp } from "@/utils/mountApp.js";
 import ProfileApp from "./ProfileApp.vue";
 
-mountApp("admin-app", ProfileApp);
+mountApp("app-profile", ProfileApp);
