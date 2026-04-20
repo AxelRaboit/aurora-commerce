@@ -9,6 +9,8 @@ import { useTagCreate } from "./composables/useTagCreate.js";
 import { useTagEdit } from "./composables/useTagEdit.js";
 import { useTagDelete } from "./composables/useTagDelete.js";
 import { Pencil, Trash2, Plus, Tag, Search } from "lucide-vue-next";
+import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -38,26 +40,18 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
                     v-model="searchInput"
                     type="text"
                     :placeholder="t('admin.tags.searchPlaceholder')"
-                    class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-2 border border-line/60 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                     v-on:keyup.enter="performSearch"
                 >
             </div>
-            <button
-                type="button"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-surface-2 border border-line hover:bg-surface-3 text-secondary transition-colors"
-                v-on:click="performSearch"
-            >
+            <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="performSearch">
                 <Search class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.users.search') }}
-            </button>
-            <button
-                type="button"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
-                v-on:click="create.open()"
-            >
+            </AppButton>
+            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="create.open()">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.tags.add') }}
-            </button>
+            </AppButton>
         </div>
 
         <!-- Mobile cards -->
@@ -71,12 +65,12 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
                 <div class="flex items-center justify-between pt-1 border-t border-line">
                     <p class="text-xs text-muted font-mono">{{ tag.slug }}</p>
                     <div class="flex items-center gap-1">
-                        <button type="button" class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" v-on:click="edit.open(tag)">
+                        <AppIconButton color="indigo" v-on:click="edit.open(tag)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                        <button type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" v-on:click="deleteTag.confirm(tag)">
+                        </AppIconButton>
+                        <AppIconButton color="rose" v-on:click="deleteTag.confirm(tag)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppIconButton>
                     </div>
                 </div>
             </div>
@@ -87,10 +81,10 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
                     <tr>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.tags.name') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t('admin.tags.slug') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.tags.createdAt') }}</th>
-                        <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t('admin.tags.actions') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.tags.name') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.tags.slug') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.tags.createdAt') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.tags.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -98,22 +92,22 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
                         <td colspan="4"><AppNoData :message="t('admin.tags.empty')" /></td>
                     </tr>
                     <tr v-for="tag in tags" :key="tag.id" class="hover:bg-surface-2/50 transition-colors">
-                        <td class="px-6 py-3">
+                        <td class="px-4 py-3">
                             <div class="flex items-center gap-2">
                                 <Tag class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
                                 <span class="font-medium text-primary">{{ tag.name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-3 text-secondary font-mono text-xs hidden md:table-cell">{{ tag.slug }}</td>
-                        <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ formatDateShort(tag.createdAt) }}</td>
-                        <td class="px-6 py-3">
+                        <td class="px-4 py-3 text-secondary font-mono text-xs hidden md:table-cell">{{ tag.slug }}</td>
+                        <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ formatDateShort(tag.createdAt) }}</td>
+                        <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-1">
-                                <button type="button" class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" v-on:click="edit.open(tag)">
+                                <AppIconButton color="indigo" v-on:click="edit.open(tag)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
-                                </button>
-                                <button type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" v-on:click="deleteTag.confirm(tag)">
+                                </AppIconButton>
+                                <AppIconButton color="rose" v-on:click="deleteTag.confirm(tag)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </button>
+                                </AppIconButton>
                             </div>
                         </td>
                     </tr>
@@ -149,8 +143,8 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
                     required
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="create.showModal.value = false">{{ t('common.cancel') }}</button>
-                    <button type="submit" :disabled="create.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ t('common.create') }}</button>
+                    <AppButton variant="ghost" size="md" v-on:click="create.showModal.value = false">{{ t('common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="create.loading.value">{{ t('common.create') }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -166,8 +160,8 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
                     required
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="edit.editingTag.value = null">{{ t('common.cancel') }}</button>
-                    <button type="submit" :disabled="edit.loading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ t('common.save') }}</button>
+                    <AppButton variant="ghost" size="md" v-on:click="edit.editingTag.value = null">{{ t('common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="edit.loading.value">{{ t('common.save') }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -176,8 +170,8 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
         <AppModal :show="!!deleteTag.pendingDelete.value" max-width="sm" v-on:close="deleteTag.pendingDelete.value = null">
             <p class="text-sm text-primary">{{ t('admin.tags.deleteConfirm', { name: deleteTag.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
-                <button type="button" class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="deleteTag.pendingDelete.value = null">{{ t('common.cancel') }}</button>
-                <button type="button" :disabled="deleteTag.loading.value" class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors disabled:opacity-50" v-on:click="deleteTag.submit()">{{ t('common.delete') }}</button>
+                <AppButton variant="ghost" size="md" v-on:click="deleteTag.pendingDelete.value = null">{{ t('common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteTag.loading.value" v-on:click="deleteTag.submit()">{{ t('common.delete') }}</AppButton>
             </div>
         </AppModal>
     </div>

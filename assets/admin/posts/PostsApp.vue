@@ -13,6 +13,8 @@ import { usePostDelete } from "./composables/usePostDelete.js";
 import { Pencil, Trash2, Plus, FileText, Search, Eye } from "lucide-vue-next";
 import PostEditor from "./PostEditor.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
+import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -51,10 +53,10 @@ function openEdit(post) {
 function onEditorSaved(post, isNew) {
     if (isNew) {
         addPost(post);
+        editingPostId.value = post.id;
     } else {
         updatePost(post);
     }
-    view.value = "list";
 }
 
 const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
@@ -99,7 +101,7 @@ async function openPreview(post) {
     <!-- List view -->
     <div v-else class="space-y-4">
         <!-- Toolbar -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="flex flex-col sm:flex-row gap-2">
             <div class="relative flex-1">
                 <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" :stroke-width="2" />
                 <input
@@ -110,24 +112,14 @@ async function openPreview(post) {
                     v-on:keyup.enter="performSearch"
                 >
             </div>
-            <div class="flex gap-2 shrink-0">
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-surface-2 border border-line/60 hover:bg-surface-3 text-secondary transition-colors"
-                    v-on:click="performSearch"
-                >
-                    <Search class="w-4 h-4" :stroke-width="2" />
-                    {{ t("admin.users.search") }}
-                </button>
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm"
-                    v-on:click="openCreate"
-                >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t("admin.posts.add") }}
-                </button>
-            </div>
+            <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="performSearch">
+                <Search class="w-4 h-4" :stroke-width="2" />
+                {{ t("admin.users.search") }}
+            </AppButton>
+            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+                <Plus class="w-4 h-4" :stroke-width="2" />
+                {{ t("admin.posts.add") }}
+            </AppButton>
         </div>
 
         <!-- Mobile cards -->
@@ -146,15 +138,15 @@ async function openPreview(post) {
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
                     <div class="flex items-center gap-0.5">
-                        <button type="button" class="p-1.5 text-muted hover:text-sky-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="openPreview(post)">
+                        <AppIconButton color="sky" v-on:click="openPreview(post)">
                             <Eye class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                        <button type="button" class="p-1.5 text-muted hover:text-indigo-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="openEdit(post)">
+                        </AppIconButton>
+                        <AppIconButton color="indigo" v-on:click="openEdit(post)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                        <button type="button" class="p-1.5 text-muted hover:text-rose-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="deletePost.confirm(post)">
+                        </AppIconButton>
+                        <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppIconButton>
                     </div>
                 </div>
             </div>
@@ -165,11 +157,11 @@ async function openPreview(post) {
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.tags.createdAt") }}</th>
-                        <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.tags.actions") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.tags.createdAt") }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.tags.actions") }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
@@ -177,30 +169,30 @@ async function openPreview(post) {
                         <td colspan="5"><AppNoData :message="t('admin.posts.empty')" /></td>
                     </tr>
                     <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-5 py-3.5">
+                        <td class="px-4 py-3">
                             <div class="flex items-center gap-2.5">
                                 <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
                                 <span class="font-medium text-primary text-sm">{{ post.title ?? "—" }}</span>
                             </div>
                         </td>
-                        <td class="px-5 py-3.5 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "—" }}</td>
-                        <td class="px-5 py-3.5">
+                        <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "—" }}</td>
+                        <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(post.status)">
                                 {{ t("admin.stats.postStatus." + post.status) }}
                             </span>
                         </td>
-                        <td class="px-5 py-3.5 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
-                        <td class="px-5 py-3.5">
+                        <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
+                        <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button type="button" class="p-1.5 text-muted hover:text-sky-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="openPreview(post)">
+                                <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
-                                </button>
-                                <button type="button" class="p-1.5 text-muted hover:text-indigo-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="openEdit(post)">
+                                </AppIconButton>
+                                <AppIconButton color="indigo" v-on:click="openEdit(post)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
-                                </button>
-                                <button type="button" class="p-1.5 text-muted hover:text-rose-400 hover:bg-surface-2 rounded-lg transition-colors" v-on:click="deletePost.confirm(post)">
+                                </AppIconButton>
+                                <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </button>
+                                </AppIconButton>
                             </div>
                         </td>
                     </tr>
@@ -231,17 +223,12 @@ async function openPreview(post) {
                 {{ t("admin.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
             </p>
             <div class="flex justify-end gap-2 mt-2">
-                <button type="button" class="px-3 py-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors rounded-lg hover:bg-surface-2" v-on:click="deletePost.pendingDelete.value = null">
+                <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
                     {{ t("common.cancel") }}
-                </button>
-                <button
-                    type="button"
-                    :disabled="deletePost.loading.value"
-                    class="px-3 py-1.5 text-sm font-medium bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors disabled:opacity-50 shadow-sm"
-                    v-on:click="deletePost.submit()"
-                >
+                </AppButton>
+                <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
                     {{ t("common.delete") }}
-                </button>
+                </AppButton>
             </div>
         </AppModal>
     </div>

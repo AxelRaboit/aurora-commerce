@@ -1,7 +1,9 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useForm } from "@/composables/useForm.js";
+import { useApiRequest } from "@/composables/useApiRequest.js";
 import { submitForm } from "@/utils/formSubmit.js";
+import { parseJson } from "@/utils/parseJson.js";
 import { required, email, compose } from "@/utils/validators.js";
 
 export function useAdminUsers(
@@ -15,13 +17,7 @@ export function useAdminUsers(
 ) {
     const { t } = useI18n();
 
-    const parsedUsers = computed(() => {
-        try {
-            return JSON.parse(initialUsers);
-        } catch {
-            return { items: [] };
-        }
-    });
+    const parsedUsers = computed(() => parseJson(initialUsers, { items: [] }));
 
     const searchInput = ref(initialSearch);
 
@@ -34,13 +30,13 @@ export function useAdminUsers(
 
     const showCreateModal = ref(false);
     const newUser = ref({ name: "", email: "", password: "" });
-    const createLoading = ref(false);
     const {
         errors: createErrors,
         validate: validateCreate,
         setErrors: setCreateErrors,
         clearErrors: clearCreateErrors,
     } = useForm();
+    const { loading: createLoading, request: createRequest } = useApiRequest();
 
     function openCreate() {
         showCreateModal.value = true;
@@ -69,21 +65,12 @@ export function useAdminUsers(
 
         if (!isValid) return;
 
-        createLoading.value = true;
-        try {
-            const response = await fetch(userCreatePath, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newUser.value),
-            });
-            const data = await response.json();
-            if (data.success) {
-                window.location.reload();
-            } else {
-                setCreateErrors(data.errors ?? {});
-            }
-        } finally {
-            createLoading.value = false;
+        const data = await createRequest(userCreatePath, newUser.value);
+        if (!data) return;
+        if (data.success) {
+            window.location.reload();
+        } else {
+            setCreateErrors(data.errors ?? {});
         }
     }
 

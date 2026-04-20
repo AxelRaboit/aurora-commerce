@@ -1,9 +1,18 @@
 const DEFAULT_TYPES = [
-    { value: "info", label: "Info", icon: "ℹ️" },
-    { value: "success", label: "Success", icon: "✅" },
-    { value: "warning", label: "Warning", icon: "⚠️" },
-    { value: "danger", label: "Danger", icon: "🚨" },
-    { value: "tip", label: "Tip", icon: "💡" },
+    { value: "info", label: "Info" },
+    { value: "success", label: "Success" },
+    { value: "warning", label: "Warning" },
+    { value: "danger", label: "Danger" },
+    { value: "tip", label: "Tip" },
+    { value: "note", label: "Note" },
+    { value: "question", label: "Question" },
+    { value: "important", label: "Important" },
+    { value: "update", label: "Update" },
+    { value: "rose", label: "Rose" },
+    { value: "indigo", label: "Indigo" },
+    { value: "lime", label: "Lime" },
+    { value: "amber", label: "Amber" },
+    { value: "fuchsia", label: "Fuchsia" },
 ];
 
 export default class CalloutBlock {
@@ -64,17 +73,17 @@ export default class CalloutBlock {
     #createTabs() {
         const tabs = document.createElement("div");
         tabs.className = "callout-block__tabs";
-        this.#types.forEach(({ value, label, icon }) => {
-            tabs.appendChild(this.#createTab(value, `${icon} ${label}`));
+        this.#types.forEach(({ value, label }) => {
+            tabs.appendChild(this.#createTab(value, label));
         });
         return tabs;
     }
 
-    #createTab(value, text) {
+    #createTab(value, label) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `callout-block__tab callout-block__tab--${value}${this.#data.type === value ? " callout-block__tab--active" : ""}`;
-        btn.textContent = text;
+        btn.title = label;
         btn.addEventListener("click", () => {
             this.#data.type = value;
             this.#rebuild();

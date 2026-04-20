@@ -30,7 +30,8 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 const holderEl = ref(null);
-const registerFlush = inject("registerEditorFlush", null);
+const registerFlush  = inject("registerEditorFlush",  null);
+const registerRender = inject("registerEditorRender", null);
 
 let editor = null;
 let ready = false;
@@ -42,11 +43,41 @@ async function flush() {
     }
 }
 
+async function renderBlocks(blocks) {
+    if (!editor || !ready) return;
+    await editor.render({ blocks });
+    const data = await editor.save();
+    emit("update:modelValue", data.blocks);
+}
+
 onMounted(async () => {
     editor = new EditorJS({
         holder: holderEl.value,
         placeholder: props.placeholder || t("admin.editor.placeholder"),
         data: { blocks: props.modelValue },
+        i18n: {
+            messages: {
+                toolNames: {
+                    "Text":         t("admin.editor.toolNames.text"),
+                    "Heading":      t("admin.editor.toolNames.heading"),
+                    "List":           t("admin.editor.toolNames.list"),
+                    "Ordered List":   t("admin.editor.toolNames.orderedList"),
+                    "Unordered List": t("admin.editor.toolNames.unorderedList"),
+                    "Checklist":    t("admin.editor.toolNames.checklist"),
+                    "Quote":        t("admin.editor.toolNames.quote"),
+                    "Code":         t("admin.editor.toolNames.code"),
+                    "Delimiter":    t("admin.editor.toolNames.delimiter"),
+                    "Table":        t("admin.editor.toolNames.table"),
+                    "Image":        t("admin.editor.toolNames.image"),
+                    "Embed":        t("admin.editor.toolNames.embed"),
+                    "Marker":       t("admin.editor.toolNames.marker"),
+                    "InlineCode":   t("admin.editor.toolNames.inlineCode"),
+                    "Callout":      t("admin.editor.toolNames.callout"),
+                    "Image + Text": t("admin.editor.toolNames.mediaText"),
+                    "Two Columns":  t("admin.editor.toolNames.twoColumn"),
+                },
+            },
+        },
         tools: {
             // Blocs de texte
             header: {
@@ -131,13 +162,6 @@ onMounted(async () => {
             callout: {
                 class: CalloutBlock,
                 config: {
-                    types: [
-                        { value: "info",    label: t("admin.editor.callout.types.info"),    icon: "ℹ️" },
-                        { value: "success", label: t("admin.editor.callout.types.success"), icon: "✅" },
-                        { value: "warning", label: t("admin.editor.callout.types.warning"), icon: "⚠️" },
-                        { value: "danger",  label: t("admin.editor.callout.types.danger"),  icon: "🚨" },
-                        { value: "tip",     label: t("admin.editor.callout.types.tip"),     icon: "💡" },
-                    ],
                     titlePlaceholder:   t("admin.editor.callout.titlePlaceholder"),
                     messagePlaceholder: t("admin.editor.callout.messagePlaceholder"),
                 },
@@ -171,10 +195,12 @@ onMounted(async () => {
     new Undo({ editor });
     ready = true;
     registerFlush?.(flush);
+    registerRender?.(renderBlocks);
 });
 
 onBeforeUnmount(async () => {
     registerFlush?.(null);
+    registerRender?.(null);
     await flush();
     if (editor && ready) editor.destroy();
     editor = null;

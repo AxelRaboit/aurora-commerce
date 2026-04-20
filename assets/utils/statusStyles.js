@@ -4,11 +4,18 @@ const POST_STATUS_CLASSES = {
     trash: "bg-rose-500/15 text-rose-400",
 };
 
-/**
- * Returns Tailwind classes for a post status badge.
- * @param {string} status
- * @returns {string}
- */
 export function statusBadge(status) {
     return POST_STATUS_CLASSES[status] ?? "bg-surface-2 text-secondary";
+}
+
+const ACCESS_REQUEST_STATUS_CLASSES = {
+    pending: "bg-amber-500/15 text-amber-400",
+    approved: "bg-emerald-500/15 text-emerald-400",
+    rejected: "bg-surface-2 text-muted",
+};
+
+export function accessRequestStatusBadge(status) {
+    return (
+        ACCESS_REQUEST_STATUS_CLASSES[status] ?? "bg-surface-2 text-secondary"
+    );
 }

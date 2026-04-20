@@ -46,6 +46,7 @@ final readonly class PostSerializer
         return [
             ...$this->serialize($post),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
+            'featuredMediaUrl' => $post->getFeaturedMedia()?->getPublicUrl(),
             'translations' => $translations,
         ];
     }

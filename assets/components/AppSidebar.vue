@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
+import AppButton from "@/components/AppButton.vue";
 import {
     LayoutDashboard,
     FileText,
@@ -179,9 +180,9 @@ function isActive(route) {
             <AppLogo :size="28" />
             <span class="text-primary font-bold text-base tracking-tight">Velox</span>
         </a>
-        <button class="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors" v-on:click="openMobile">
+        <AppButton variant="ghost" size="none" class="p-2" v-on:click="openMobile">
             <MenuIcon class="w-5 h-5" :stroke-width="2" />
-        </button>
+        </AppButton>
     </div>
 
     <!-- Mobile drawer -->
@@ -202,9 +203,9 @@ function isActive(route) {
                         <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                     </div>
                 </div>
-                <button class="p-1.5 text-muted hover:text-primary transition-colors" v-on:click="closeMobile">
+                <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="closeMobile">
                     <X class="w-5 h-5" :stroke-width="2" />
-                </button>
+                </AppButton>
             </div>
 
             <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">

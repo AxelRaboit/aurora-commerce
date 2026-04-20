@@ -1,17 +1,14 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { parseJson } from "@/utils/parseJson.js";
 
 export function useAdminParameters(parameterUpdatePath, initialParameters) {
     const { t } = useI18n();
 
-    const parsedParameters = computed(() => {
-        try {
-            return JSON.parse(initialParameters);
-        } catch {
-            return { items: [] };
-        }
-    });
+    const parsedParameters = computed(() =>
+        parseJson(initialParameters, { items: [] }),
+    );
 
     const editingKey = ref(null);
     const editingValue = ref("");

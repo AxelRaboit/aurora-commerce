@@ -1,13 +1,15 @@
 <script setup>
-import { ref, reactive, computed, onMounted, watch, provide } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate } from "lucide-vue-next";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
+import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import EditorBlock from "@/components/EditorBlock.vue";
+import PreviewOverlay from "@/components/PreviewOverlay.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
 import { slugify } from "@/utils/slugify.js";
@@ -30,8 +32,10 @@ const emit = defineEmits(["saved", "back"]);
 const activeLocale = ref(props.locales[0] ?? "fr");
 const fetching = ref(false);
 
-let flushEditor = null;
-provide("registerEditorFlush", (fn) => { flushEditor = fn; });
+let flushEditor      = null;
+let renderEditorBlocks = null;
+provide("registerEditorFlush",  (fn) => { flushEditor       = fn; });
+provide("registerEditorRender", (fn) => { renderEditorBlocks = fn; });
 
 function makeEmptyTranslation() {
     return { title: "", slug: "", blocks: [], metaTitle: "", metaDescription: "", customFields: {} };
@@ -45,13 +49,24 @@ const form = reactive({
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
 });
 
+// ── Slug lock ────────────────────────────────────────────────────────────────
+const slugLocked = ref(true);
+
 watch(
     () => form.translations[activeLocale.value]?.title,
     (newTitle) => {
         const translation = form.translations[activeLocale.value];
-        if (translation) translation.slug = slugify(newTitle);
+        if (translation && slugLocked.value) translation.slug = slugify(newTitle);
     },
 );
+
+function toggleSlugLock() {
+    slugLocked.value = !slugLocked.value;
+    if (slugLocked.value) {
+        const translation = form.translations[activeLocale.value];
+        if (translation) translation.slug = slugify(translation.title);
+    }
+}
 
 async function switchLocale(locale) {
     if (locale === activeLocale.value) return;
@@ -59,7 +74,64 @@ async function switchLocale(locale) {
     activeLocale.value = locale;
 }
 
+// ── Dirty state ──────────────────────────────────────────────────────────────
+const isDirty = ref(false);
+watch(form, () => { isDirty.value = true; }, { deep: true });
+
+// ── Featured image ───────────────────────────────────────────────────────────
+const featuredMediaUrl = ref(null);
+const uploadingFeatured = ref(false);
+const featuredInputRef = ref(null);
+const previewFeatured = ref(false);
+
+async function uploadFeaturedImage(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    uploadingFeatured.value = true;
+    try {
+        const body = new FormData();
+        body.append("image", file);
+        const response = await fetch("/admin/media/upload", { method: "POST", body });
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        if (data.success) {
+            form.featuredMediaId = data.file?.id ?? null;
+            featuredMediaUrl.value = data.file?.url ?? null;
+        }
+    } catch {
+        toast.error(t("common.error"));
+    } finally {
+        uploadingFeatured.value = false;
+        if (featuredInputRef.value) featuredInputRef.value.value = "";
+    }
+}
+
+function removeFeaturedImage() {
+    form.featuredMediaId = null;
+    featuredMediaUrl.value = null;
+}
+
+// ── SEO counters ─────────────────────────────────────────────────────────────
+const metaTitleLength = computed(() => form.translations[activeLocale.value]?.metaTitle?.length ?? 0);
+const metaDescLength  = computed(() => form.translations[activeLocale.value]?.metaDescription?.length ?? 0);
+
+function seoCounterClass(length, max) {
+    if (length === 0)          return "text-muted";
+    if (length <= max * 0.85)  return "text-green-500";
+    if (length <= max)         return "text-amber-500";
+    return "text-red-500";
+}
+
+// ── Keyboard shortcut Ctrl+S ─────────────────────────────────────────────────
+function onKeydown(event) {
+    if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+        event.preventDefault();
+        handleSave();
+    }
+}
+
 onMounted(async () => {
+    window.addEventListener("keydown", onKeydown);
     if (!props.postId) return;
     fetching.value = true;
     try {
@@ -70,6 +142,7 @@ onMounted(async () => {
             form.postTypeId = String(data.post.postType.id);
             form.status = data.post.status;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
+            featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.tagIds = [...(data.post.tagIds ?? [])];
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
@@ -82,7 +155,12 @@ onMounted(async () => {
         emit("back");
     } finally {
         fetching.value = false;
+        nextTick(() => { isDirty.value = false; });
     }
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("keydown", onKeydown);
 });
 
 function toggleTag(tagId) {
@@ -94,14 +172,60 @@ function toggleTag(tagId) {
     }
 }
 
-const showPreview = ref(false);
+const showPreview   = ref(false);
 const showTemplates = ref(false);
-const editorKey = ref(0);
+const editorKey     = ref(0);
 
-function applyTemplate(template) {
-    form.translations[activeLocale.value].blocks = structuredClone(template.blocks);
-    showTemplates.value = false;
-    editorKey.value++;
+// ── Template panel state ─────────────────────────────────────────────────────
+const activeCategory     = ref("all");
+const confirmingTemplate = ref(null);
+const hoveredTemplate    = ref(null);
+
+const TEMPLATE_CATEGORIES = ["article", "marketing", "layout", "technique"];
+
+
+const BLOCK_TYPE_TO_TOOL_NAME = {
+    header:    "heading",
+    paragraph: "text",
+    image:     "image",
+    list:      "list",
+    code:      "code",
+    callout:   "callout",
+    delimiter: "delimiter",
+    twoColumn: "twoColumn",
+    mediaText: "mediaText",
+    embed:     "embed",
+    table:     "table",
+    quote:     "quote",
+    checklist: "checklist",
+};
+
+const filteredTemplates = computed(() =>
+    activeCategory.value === "all"
+        ? TEMPLATES
+        : TEMPLATES.filter((tpl) => tpl.category === activeCategory.value),
+);
+
+function blockLabel(type) {
+    const key = BLOCK_TYPE_TO_TOOL_NAME[type];
+    return key ? t(`admin.editor.toolNames.${key}`) : type;
+}
+
+function closeTemplates() {
+    showTemplates.value    = false;
+    confirmingTemplate.value = null;
+    hoveredTemplate.value  = null;
+}
+
+async function applyTemplate(template) {
+    const blocks = structuredClone(template.blocks);
+    closeTemplates();
+    if (renderEditorBlocks) {
+        await renderEditorBlocks(blocks);
+    } else {
+        form.translations[activeLocale.value].blocks = blocks;
+        editorKey.value++;
+    }
 }
 
 const previewHtml = computed(() =>
@@ -119,13 +243,14 @@ const { loading, errors, save: savePost } = usePostSave(
 
 async function handleSave() {
     await flushEditor?.();
-    await savePost(props.postId, {
+    const success = await savePost(props.postId, {
         postTypeId: Number(form.postTypeId),
         status: form.status,
         featuredMediaId: form.featuredMediaId,
         tagIds: form.tagIds,
         translations: form.translations,
     });
+    if (success) isDirty.value = false;
 }
 </script>
 
@@ -137,13 +262,9 @@ async function handleSave() {
     <div v-else class="space-y-6">
         <!-- Top bar -->
         <div class="flex items-center gap-3 flex-wrap">
-            <button
-                type="button"
-                class="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
-                v-on:click="$emit('back')"
-            >
+            <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
                 <ArrowLeft class="w-5 h-5" :stroke-width="2" />
-            </button>
+            </AppButton>
             <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
                 {{ postId ? t("admin.posts.edit") : t("admin.posts.add") }}
             </h1>
@@ -152,31 +273,25 @@ async function handleSave() {
                 <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
                 <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
             </AppSelect>
-            <button
-                type="button"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-surface-2 border border-line hover:bg-surface-3 text-secondary transition-colors shrink-0"
-                v-on:click="showTemplates = true"
-            >
+            <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="showTemplates = true">
                 <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
-                Templates
-            </button>
-            <button
-                type="button"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-surface-2 border border-line hover:bg-surface-3 text-secondary transition-colors shrink-0"
-                v-on:click="showPreview = true"
-            >
+                <span class="hidden sm:inline">Templates</span>
+            </AppButton>
+            <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="showPreview = true">
                 <Eye class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.posts.preview") }}
-            </button>
-            <button
-                type="button"
-                :disabled="loading"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 transition-colors shrink-0"
+                <span class="hidden sm:inline">{{ t("admin.posts.preview") }}</span>
+            </AppButton>
+            <AppButton
+                variant="primary"
+                size="md"
+                class="relative shrink-0"
+                :loading="loading"
                 v-on:click="handleSave"
             >
-                <Save class="w-4 h-4" :stroke-width="2" />
-                {{ loading ? t("common.loading") : t("common.save") }}
-            </button>
+                <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
+                <span class="hidden sm:inline">{{ t("common.save") }}</span>
+                <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
+            </AppButton>
         </div>
 
         <!-- Global save errors -->
@@ -185,7 +300,7 @@ async function handleSave() {
         </div>
 
         <!-- Meta row: post type + tags -->
-        <div class="flex flex-wrap items-center gap-3 px-1">
+        <div class="flex flex-col gap-3 px-1">
             <div v-if="postTypes.length" class="flex items-center gap-2 shrink-0">
                 <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.postType") }}</span>
                 <div class="min-w-40">
@@ -214,6 +329,57 @@ async function handleSave() {
             </div>
         </div>
 
+        <!-- Featured image -->
+        <div class="flex flex-col gap-2 px-1">
+            <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.featuredImage") }}</span>
+            <div v-if="featuredMediaUrl" class="relative group w-full h-48">
+                <img
+                    :src="featuredMediaUrl"
+                    class="w-full h-full object-cover rounded-lg border border-line cursor-zoom-in"
+                    :alt="t('admin.posts.featuredImage')"
+                    v-on:click="previewFeatured = true"
+                >
+                <button
+                    type="button"
+                    class="absolute top-2 right-2 p-1 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    v-on:click="removeFeaturedImage"
+                >
+                    <X class="w-4 h-4" :stroke-width="2.5" />
+                </button>
+            </div>
+            <label
+                v-else
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-line rounded-lg cursor-pointer hover:border-indigo-400 transition-colors"
+                :class="uploadingFeatured ? 'opacity-50 pointer-events-none' : ''"
+            >
+                <ImagePlus class="w-6 h-6 text-muted mb-1.5" :stroke-width="1.5" />
+                <span class="text-sm text-muted">{{ uploadingFeatured ? t("common.loading") : t("admin.posts.addImage") }}</span>
+                <input
+                    ref="featuredInputRef"
+                    type="file"
+                    accept="image/*"
+                    class="sr-only"
+                    v-on:change="uploadFeaturedImage"
+                >
+            </label>
+        </div>
+
+        <!-- Featured image lightbox -->
+        <Teleport to="body">
+            <Transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition ease-in duration-150"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div v-if="previewFeatured" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" v-on:click="previewFeatured = false">
+                    <img :src="featuredMediaUrl" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" :alt="t('admin.posts.featuredImage')">
+                </div>
+            </Transition>
+        </Teleport>
+
         <!-- Locale tabs -->
         <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
             <button
@@ -237,15 +403,54 @@ async function handleSave() {
                 :label="t('admin.posts.title')"
                 :placeholder="t('admin.posts.titlePlaceholder')"
             />
-            <AppInput
-                v-model="form.translations[activeLocale].slug"
-                :label="t('admin.posts.slug')"
-                :placeholder="t('admin.posts.slugPlaceholder')"
-            />
+            <div class="flex items-end gap-2">
+                <div class="flex-1">
+                    <AppInput
+                        v-model="form.translations[activeLocale].slug"
+                        :label="t('admin.posts.slug')"
+                        :placeholder="t('admin.posts.slugPlaceholder')"
+                        :readonly="slugLocked"
+                    />
+                </div>
+                <AppButton
+                    variant="secondary"
+                    size="none"
+                    class="p-2 mb-0.5 shrink-0"
+                    :title="slugLocked ? t('admin.posts.slugUnlock') : t('admin.posts.slugLock')"
+                    v-on:click="toggleSlugLock"
+                >
+                    <Lock v-if="slugLocked" class="w-4 h-4" :stroke-width="2" />
+                    <Unlock v-else class="w-4 h-4" :stroke-width="2" />
+                </AppButton>
+            </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="border-t border-line pt-4 space-y-3">
+            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">SEO</p>
+            <div>
+                <AppInput
+                    v-model="form.translations[activeLocale].metaTitle"
+                    :label="t('admin.posts.metaTitle')"
+                />
+                <p class="text-right text-xs mt-1" :class="seoCounterClass(metaTitleLength, 60)">
+                    {{ metaTitleLength }}/60
+                </p>
+            </div>
+            <div>
+                <AppTextarea
+                    v-model="form.translations[activeLocale].metaDescription"
+                    :label="t('admin.posts.metaDescription')"
+                    :rows="3"
+                />
+                <p class="text-right text-xs mt-1" :class="seoCounterClass(metaDescLength, 160)">
+                    {{ metaDescLength }}/160
+                </p>
+            </div>
         </div>
 
         <!-- Editor.js -->
-        <div>
+        <div class="border-t border-line pt-4">
             <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
                 {{ t("admin.posts.blocks") }}
             </label>
@@ -255,20 +460,6 @@ async function handleSave() {
                     v-model="form.translations[activeLocale].blocks"
                 />
             </div>
-        </div>
-
-        <!-- SEO -->
-        <div class="border-t border-line pt-4 space-y-3">
-            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">SEO</p>
-            <AppInput
-                v-model="form.translations[activeLocale].metaTitle"
-                :label="t('admin.posts.metaTitle')"
-            />
-            <AppTextarea
-                v-model="form.translations[activeLocale].metaDescription"
-                :label="t('admin.posts.metaDescription')"
-                :rows="3"
-            />
         </div>
     </div>
 
@@ -283,33 +474,168 @@ async function handleSave() {
             leave-to-class="opacity-0"
         >
             <div v-if="showTemplates" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                <div class="w-full max-w-2xl bg-surface rounded-2xl border border-line shadow-2xl flex flex-col max-h-[80vh]">
+                <div class="w-full max-w-4xl bg-surface rounded-2xl border border-line shadow-2xl flex flex-col max-h-[85vh]">
                     <!-- Header -->
                     <div class="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
                         <div>
                             <h2 class="text-base font-semibold text-primary">{{ t("admin.editor.templates.title") }}</h2>
                             <p class="text-xs text-muted mt-0.5">{{ t("admin.editor.templates.subtitle") }}</p>
                         </div>
-                        <button type="button" class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors" v-on:click="showTemplates = false">
+                        <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="closeTemplates">
                             <X class="w-5 h-5" :stroke-width="2" />
+                        </AppButton>
+                    </div>
+
+                    <!-- Category filters -->
+                    <div class="flex gap-2 px-6 py-3 border-b border-line shrink-0 flex-wrap">
+                        <button
+                            v-for="cat in ['all', ...TEMPLATE_CATEGORIES]"
+                            :key="cat"
+                            type="button"
+                            class="px-3 py-1 rounded-full text-xs font-medium transition-colors"
+                            :class="activeCategory === cat ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            v-on:click="activeCategory = cat; confirmingTemplate = null"
+                        >
+                            {{ t("admin.editor.templates.categories." + cat) }}
                         </button>
                     </div>
-                    <!-- Grid -->
-                    <div class="overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button
-                            v-for="template in TEMPLATES"
-                            :key="template.id"
-                            type="button"
-                            class="text-left p-4 rounded-xl border border-line bg-surface-2 hover:border-indigo-500 hover:bg-indigo-500/5 transition-all group"
-                            v-on:click="applyTemplate(template)"
-                        >
-                            <div class="flex items-center gap-3 mb-2">
-                                <span class="text-2xl">{{ template.icon }}</span>
-                                <span class="font-medium text-primary text-sm group-hover:text-indigo-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
-                            </div>
-                            <p class="text-xs text-muted">{{ t("admin.editor.templates." + template.id + ".description") }}</p>
-                            <p class="text-xs text-muted/60 mt-2">{{ template.blocks.length }} {{ template.blocks.length > 1 ? t("admin.editor.templates.blocks") : t("admin.editor.templates.block") }}</p>
-                        </button>
+
+                    <!-- Body -->
+                    <div class="flex flex-1 min-h-0" v-on:mouseleave="hoveredTemplate = null">
+                        <!-- Grid -->
+                        <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+                            <button
+                                v-for="template in filteredTemplates"
+                                :key="template.id"
+                                type="button"
+                                class="relative text-left p-4 rounded-xl border transition-all group overflow-hidden"
+                                :class="confirmingTemplate?.id === template.id
+                                    ? 'border-indigo-500 bg-indigo-500/10'
+                                    : 'border-line bg-surface-2 hover:border-indigo-500 hover:bg-indigo-500/5'"
+                                v-on:click="confirmingTemplate = confirmingTemplate?.id === template.id ? null : template"
+                                v-on:mouseenter="hoveredTemplate = template"
+                            >
+                                <!-- Confirm overlay -->
+                                <Transition
+                                    enter-active-class="transition ease-out duration-150"
+                                    enter-from-class="opacity-0"
+                                    enter-to-class="opacity-100"
+                                    leave-active-class="transition ease-in duration-100"
+                                    leave-from-class="opacity-100"
+                                    leave-to-class="opacity-0"
+                                >
+                                    <div v-if="confirmingTemplate?.id === template.id" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/95 backdrop-blur-sm rounded-xl p-4">
+                                        <p class="text-sm font-medium text-primary text-center">{{ t("admin.editor.templates.confirmReplace") }}</p>
+                                        <div class="flex gap-2">
+                                            <AppButton variant="primary" size="md" v-on:click.stop="applyTemplate(template)">{{ t("admin.editor.templates.apply") }}</AppButton>
+                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("common.cancel") }}</AppButton>
+                                        </div>
+                                    </div>
+                                </Transition>
+
+                                <!-- Card content -->
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="text-2xl">{{ template.icon }}</span>
+                                    <span class="font-medium text-primary text-sm group-hover:text-indigo-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
+                                </div>
+                                <p class="text-xs text-muted">{{ t("admin.editor.templates." + template.id + ".description") }}</p>
+                            </button>
+                        </div>
+
+                        <!-- Side preview panel -->
+                        <div class="w-56 border-l border-line p-5 hidden md:flex flex-col gap-4 shrink-0 overflow-y-auto">
+                            <Transition
+                                enter-active-class="transition ease-out duration-150"
+                                enter-from-class="opacity-0"
+                                enter-to-class="opacity-100"
+                                leave-active-class="transition ease-in duration-100"
+                                leave-from-class="opacity-100"
+                                leave-to-class="opacity-0"
+                                mode="out-in"
+                            >
+                                <div v-if="hoveredTemplate" :key="hoveredTemplate.id" class="flex flex-col gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xl">{{ hoveredTemplate.icon }}</span>
+                                            <span class="font-semibold text-sm text-primary">{{ t("admin.editor.templates." + hoveredTemplate.id + ".label") }}</span>
+                                        </div>
+                                        <span class="inline-block px-2 py-0.5 rounded-full text-xs bg-surface-3 text-secondary">
+                                            {{ t("admin.editor.templates.categories." + hoveredTemplate.category) }}
+                                        </span>
+                                    </div>
+                                    <div v-if="hoveredTemplate.blocks.length" class="flex flex-col gap-1.5">
+                                        <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("admin.editor.templates.structure") }}</p>
+                                        <!-- header -->
+                                        <template v-for="(block, i) in hoveredTemplate.blocks" :key="i">
+                                            <div v-if="block.type === 'header'" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
+                                            <div v-else-if="block.type === 'paragraph'" class="flex flex-col gap-1">
+                                                <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
+                                                <div class="h-1.5 rounded-sm bg-surface-3 w-5/6" />
+                                                <div class="h-1.5 rounded-sm bg-surface-3 w-4/6" />
+                                            </div>
+                                            <div v-else-if="block.type === 'image'" class="h-10 rounded-sm bg-surface-3 w-full flex items-center justify-center">
+                                                <svg
+                                                    class="w-4 h-4 text-muted/50"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.5"
+                                                ><rect
+                                                    x="3"
+                                                    y="3"
+                                                    width="18"
+                                                    height="18"
+                                                    rx="2"
+                                                /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+                                            </div>
+                                            <div v-else-if="block.type === 'mediaText'" class="flex gap-1.5">
+                                                <div class="h-8 rounded-sm bg-surface-3 w-2/5 shrink-0" />
+                                                <div class="flex flex-col gap-1 flex-1 justify-center">
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
+                                                </div>
+                                            </div>
+                                            <div v-else-if="block.type === 'twoColumn'" class="flex gap-1.5">
+                                                <div class="flex flex-col gap-1 flex-1">
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
+                                                </div>
+                                                <div class="flex flex-col gap-1 flex-1">
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
+                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-3/5" />
+                                                </div>
+                                            </div>
+                                            <div v-else-if="block.type === 'list'" class="flex flex-col gap-1">
+                                                <div v-for="n in 3" :key="n" class="flex items-center gap-1">
+                                                    <div class="w-1 h-1 rounded-full bg-surface-3 shrink-0" />
+                                                    <div class="h-1.5 rounded-sm bg-surface-3" :class="n === 1 ? 'w-4/5' : n === 2 ? 'w-3/5' : 'w-2/3'" />
+                                                </div>
+                                            </div>
+                                            <div v-else-if="block.type === 'code'" class="h-8 rounded-sm bg-surface-3 w-full px-2 flex flex-col justify-center gap-1">
+                                                <div class="h-1 rounded-sm bg-muted/20 w-2/3" />
+                                                <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
+                                            </div>
+                                            <div v-else-if="block.type === 'callout'" class="h-7 rounded-sm bg-surface-3 w-full border-l-2 border-muted/30 pl-2 flex flex-col justify-center gap-1">
+                                                <div class="h-1.5 rounded-sm bg-muted/30 w-3/4" />
+                                                <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
+                                            </div>
+                                            <div v-else-if="block.type === 'delimiter'" class="flex items-center gap-1.5 py-0.5">
+                                                <div class="h-px flex-1 bg-surface-3" />
+                                                <div class="w-1 h-1 rounded-full bg-surface-3" />
+                                                <div class="h-px flex-1 bg-surface-3" />
+                                            </div>
+                                            <div v-else class="h-2 rounded-sm bg-surface-3 w-2/3" />
+                                        </template>
+                                    </div>
+                                    <p v-else class="text-xs text-muted italic">{{ t("admin.editor.templates.emptyContent") }}</p>
+                                    <p class="text-xs text-muted mt-auto pt-2 border-t border-line">
+                                        {{ hoveredTemplate.blocks.length }}
+                                        {{ hoveredTemplate.blocks.length > 1 ? t("admin.editor.templates.blocks") : t("admin.editor.templates.block") }}
+                                    </p>
+                                </div>
+                                <p v-else key="empty" class="text-xs text-muted italic">{{ t("admin.editor.templates.subtitle") }}</p>
+                            </Transition>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -317,45 +643,12 @@ async function handleSave() {
     </Teleport>
 
     <!-- Preview overlay -->
-    <Teleport to="body">
-        <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div v-if="showPreview" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-y-auto">
-                <!-- Preview header -->
-                <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
-                    <span class="text-sm font-medium text-secondary">
-                        {{ t("admin.posts.preview") }} — {{ t("locales." + activeLocale) }}
-                    </span>
-                    <button
-                        type="button"
-                        class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
-                        v-on:click="showPreview = false"
-                    >
-                        <X class="w-5 h-5" :stroke-width="2" />
-                    </button>
-                </div>
-
-                <!-- Preview content -->
-                <div class="flex-1 w-full max-w-3xl mx-auto px-6 py-12">
-                    <h1 v-if="form.translations[activeLocale]?.title" class="text-3xl font-bold text-primary mb-8">
-                        {{ form.translations[activeLocale].title }}
-                    </h1>
-                    <div
-                        v-if="previewHtml"
-                        class="prose-preview"
-                        v-html="previewHtml"
-                    />
-                    <p v-else class="text-muted text-sm italic">
-                        {{ t("admin.posts.previewEmpty") }}
-                    </p>
-                </div>
-            </div>
-        </Transition>
-    </Teleport>
+    <PreviewOverlay
+        :show="showPreview"
+        :title="form.translations[activeLocale]?.title"
+        :html="previewHtml"
+        :featured-media-url="featuredMediaUrl"
+        :label="t('admin.posts.preview') + ' — ' + t('locales.' + activeLocale)"
+        v-on:close="showPreview = false"
+    />
 </template>

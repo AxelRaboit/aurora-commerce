@@ -3,9 +3,12 @@ import { computed, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
+import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { statusBadge } from "@/utils/statusStyles.js";
+import { parseJson } from "@/utils/parseJson.js";
 import { useAdminUsers } from "./composables/useAdminUsers.js";
 import { useAdminParameters } from "./composables/useAdminParameters.js";
 import { useAdminInvitations } from "./composables/useAdminInvitations.js";
@@ -62,7 +65,7 @@ const props = defineProps({
     csrfToken: { type: String, default: "" },
 });
 
-const parsedStats = computed(() => { try { return JSON.parse(props.stats); } catch { return {}; } });
+const parsedStats = computed(() => parseJson(props.stats, {}));
 
 const tabs = [
     { key: "overview", label: () => t("admin.tabs.overview"), path: props.overviewPath, icon: LayoutDashboard },
@@ -172,9 +175,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
             </div>
         </div>
 
-        <!-- Parameters -->
         <div v-if="props.tab === 'parameters'" class="space-y-3">
-            <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <p v-if="!parameters.parsedParameters.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</p>
                 <div v-for="parameter in parameters.parsedParameters.value.items" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
@@ -185,8 +186,8 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                     </div>
                     <div v-if="parameters.editingKey.value === parameter.key" class="flex items-center gap-2">
                         <input v-model="parameters.editingValue.value" class="flex-1 bg-surface-2 text-primary rounded-md px-2 py-1 border border-line focus:border-indigo-500 focus:outline-none text-sm" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit">
-                        <button type="button" :disabled="parameters.editSaving.value" class="px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</button>
-                        <button type="button" class="px-2.5 py-1 text-xs font-medium rounded-md text-secondary hover:text-primary hover:bg-surface-2" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</button>
+                        <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</AppButton>
+                        <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
                     </div>
                     <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md font-mono text-primary hover:bg-surface-2 transition-colors text-sm" v-on:click="parameters.startEdit(parameter)">
                         <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
@@ -196,7 +197,6 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </div>
             </div>
 
-            <!-- Desktop table -->
             <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
@@ -216,8 +216,8 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <td class="px-4 py-3 align-top">
                                 <div v-if="parameters.editingKey.value === parameter.key" class="flex items-center gap-2">
                                     <input v-model="parameters.editingValue.value" class="flex-1 bg-surface-2 text-primary rounded-md px-2 py-1 border border-line focus:border-indigo-500 focus:outline-none text-sm" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit">
-                                    <button type="button" :disabled="parameters.editSaving.value" class="px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</button>
-                                    <button type="button" class="px-2.5 py-1 text-xs font-medium rounded-md text-secondary hover:text-primary hover:bg-surface-2" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</button>
+                                    <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</AppButton>
+                                    <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
                                 </div>
                                 <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md font-mono text-primary hover:bg-surface-2 transition-colors" v-on:click="parameters.startEdit(parameter)">
                                     <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
@@ -234,7 +234,6 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
             </div>
         </div>
 
-        <!-- Users -->
         <div v-if="props.tab === 'users'" class="space-y-4">
             <div class="flex flex-col sm:flex-row gap-2">
                 <input
@@ -244,14 +243,13 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                     class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     v-on:keyup.enter="users.performSearch"
                 >
-                <button type="button" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium" v-on:click="users.performSearch">{{ t('admin.users.search') }}</button>
-                <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-surface-2 text-primary hover:bg-surface-3 border border-line" v-on:click="users.openCreate">
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="users.performSearch">{{ t('admin.users.search') }}</AppButton>
+                <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="users.openCreate">
                     <Plus class="w-4 h-4" />
                     {{ t('admin.users.add') }}
-                </button>
+                </AppButton>
             </div>
 
-            <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <p v-if="!users.parsedUsers.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.users.empty') }}</p>
                 <div v-for="user in users.parsedUsers.value.items" :key="user.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -270,15 +268,14 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <a v-if="!user.isCurrent" :href="users.impersonatePath.replace('__email__', encodeURIComponent(user.email))" class="p-1.5 rounded text-muted hover:text-amber-400 transition-colors" :title="t('admin.users.impersonate', { name: user.name })">
                                 <LogIn class="w-4 h-4" :stroke-width="2" />
                             </a>
-                            <button v-if="!user.isCurrent" type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" v-on:click="users.confirmDelete(user)">
+                            <AppIconButton v-if="!user.isCurrent" color="rose" v-on:click="users.confirmDelete(user)">
                                 <Trash2 class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                            </AppIconButton>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Desktop table -->
             <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
@@ -302,9 +299,9 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                                     <a v-if="!user.isCurrent" :href="users.impersonatePath.replace('__email__', encodeURIComponent(user.email))" class="p-1.5 rounded text-muted hover:text-amber-400 transition-colors" :title="t('admin.users.impersonate', { name: user.name })">
                                         <LogIn class="w-4 h-4" :stroke-width="2" />
                                     </a>
-                                    <button v-if="!user.isCurrent" type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" v-on:click="users.confirmDelete(user)">
+                                    <AppIconButton v-if="!user.isCurrent" color="rose" v-on:click="users.confirmDelete(user)">
                                         <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                    </button>
+                                    </AppIconButton>
                                 </div>
                             </td>
                         </tr>
@@ -315,18 +312,16 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </table>
             </div>
 
-            <!-- Confirm delete modal -->
             <div v-if="users.pendingDelete.value" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t('admin.users.deleteConfirm', { name: users.pendingDelete.value.name }) }}</p>
                     <div class="flex justify-end gap-2">
-                        <button type="button" class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="users.pendingDelete.value = null">{{ t('common.cancel') }}</button>
-                        <button type="button" class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="users.doDelete">{{ t('common.delete') }}</button>
+                        <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null">{{ t('common.cancel') }}</AppButton>
+                        <AppButton variant="danger" size="md" v-on:click="users.doDelete">{{ t('common.delete') }}</AppButton>
                     </div>
                 </div>
             </div>
 
-            <!-- Create modal -->
             <div v-if="users.showCreateModal.value" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-md w-full mx-4 space-y-4">
                     <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.add') }}</h3>
@@ -355,15 +350,14 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             required
                         />
                         <div class="flex items-center justify-end gap-2 pt-2">
-                            <button type="button" class="px-3 py-2 text-sm font-medium rounded-lg text-secondary hover:text-primary hover:bg-surface-2" v-on:click="users.showCreateModal.value = false">{{ t('common.cancel') }}</button>
-                            <button type="submit" :disabled="users.createLoading.value" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">{{ t('common.create') }}</button>
+                            <AppButton variant="ghost" size="md" v-on:click="users.showCreateModal.value = false">{{ t('common.cancel') }}</AppButton>
+                            <AppButton type="submit" variant="primary" size="md" :loading="users.createLoading.value">{{ t('common.create') }}</AppButton>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Invitations -->
         <div v-if="props.tab === 'invitations'" class="max-w-lg space-y-4">
             <p class="text-sm text-secondary">{{ t('admin.invitations.description') }}</p>
             <form class="space-y-4" v-on:submit.prevent="invitations.submitInvitation">
@@ -383,23 +377,27 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                         <AppInput v-model="invitations.invitationCredentialPassword.value" :label="t('admin.invitations.credentialPassword')" />
                     </div>
                 </div>
-                <button type="submit" :disabled="invitations.invitationSending.value" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm font-medium">
-                    <Mail class="w-4 h-4" :stroke-width="2" />
-                    {{ invitations.invitationSending.value ? t('admin.invitations.sending') : t('admin.invitations.send') }}
-                </button>
+                <AppButton
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :loading="invitations.invitationSending.value"
+                >
+                    <Mail v-if="!invitations.invitationSending.value" class="w-4 h-4" :stroke-width="2" />
+                    {{ t('admin.invitations.send') }}
+                </AppButton>
             </form>
         </div>
 
-        <!-- Access Requests -->
         <div v-if="props.tab === 'access_requests'" class="space-y-4">
             <div class="flex justify-end">
-                <button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted hover:text-rose-400 hover:bg-rose-500/10 border border-line rounded-lg transition-colors" v-on:click="accessRequests.confirmPurge.value = true">
+                <AppButton variant="danger-outline" size="md" v-on:click="accessRequests.confirmPurge.value = true">
                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('admin.access_requests.purge') }}
-                </button>
+                </AppButton>
             </div>
 
-            <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <p v-if="!accessRequests.parsedAccessRequests.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</p>
                 <div v-for="accessRequest in accessRequests.parsedAccessRequests.value.items" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -408,7 +406,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '—' }}</p>
                             <p class="text-xs text-secondary truncate">{{ accessRequest.requesterEmail }}</p>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full shrink-0" :class="accessRequests.statusBadge[accessRequest.status]">
+                        <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full shrink-0" :class="accessRequests.statusBadge(accessRequest.status)">
                             <component :is="accessRequest.status === 'pending' ? Clock : accessRequest.status === 'approved' ? ShieldCheck : X" class="w-3 h-3" :stroke-width="2.5" />
                             {{ accessRequests.statusLabel.value[accessRequest.status] ?? accessRequest.status }}
                         </span>
@@ -417,18 +415,17 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                     <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
                         <div v-if="accessRequest.status === 'pending'" class="flex items-center gap-1">
-                            <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
+                            <AppIconButton color="emerald" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
                                 <Check class="w-4 h-4" :stroke-width="2" />
-                            </button>
-                            <button class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
+                            </AppIconButton>
+                            <AppIconButton color="rose" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
                                 <X class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                            </AppIconButton>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Desktop table -->
             <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
@@ -451,7 +448,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                                 <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '—' }}</p>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" :class="accessRequests.statusBadge[accessRequest.status]">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" :class="accessRequests.statusBadge(accessRequest.status)">
                                     <component :is="accessRequest.status === 'pending' ? Clock : accessRequest.status === 'approved' ? ShieldCheck : X" class="w-3 h-3" :stroke-width="2.5" />
                                     {{ accessRequests.statusLabel.value[accessRequest.status] ?? accessRequest.status }}
                                 </span>
@@ -461,12 +458,12 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-1">
                                     <template v-if="accessRequest.status === 'pending'">
-                                        <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
+                                        <AppIconButton color="emerald" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
                                             <Check class="w-4 h-4" :stroke-width="2" />
-                                        </button>
-                                        <button class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
+                                        </AppIconButton>
+                                        <AppIconButton color="rose" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
                                             <X class="w-4 h-4" :stroke-width="2" />
-                                        </button>
+                                        </AppIconButton>
                                     </template>
                                 </div>
                             </td>
@@ -478,35 +475,32 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </table>
             </div>
 
-            <!-- Approve modal -->
             <div v-if="accessRequests.pendingApprove.value" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t('admin.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value.requesterName ?? accessRequests.pendingApprove.value.requesterEmail }) }}</p>
                     <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="accessRequests.pendingApprove.value = null">{{ t('common.cancel') }}</button>
-                        <button class="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="accessRequests.doApproveRequest">{{ t('admin.access_requests.approve') }}</button>
+                        <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null">{{ t('common.cancel') }}</AppButton>
+                        <AppButton variant="primary" size="md" v-on:click="accessRequests.doApproveRequest">{{ t('admin.access_requests.approve') }}</AppButton>
                     </div>
                 </div>
             </div>
 
-            <!-- Reject modal -->
             <div v-if="accessRequests.pendingReject.value" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t('admin.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value.requesterName ?? accessRequests.pendingReject.value.requesterEmail }) }}</p>
                     <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="accessRequests.pendingReject.value = null">{{ t('common.cancel') }}</button>
-                        <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="accessRequests.doRejectRequest">{{ t('admin.access_requests.reject') }}</button>
+                        <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null">{{ t('common.cancel') }}</AppButton>
+                        <AppButton variant="danger" size="md" v-on:click="accessRequests.doRejectRequest">{{ t('admin.access_requests.reject') }}</AppButton>
                     </div>
                 </div>
             </div>
 
-            <!-- Purge modal -->
             <div v-if="accessRequests.confirmPurge.value" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                 <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t('admin.access_requests.purgeConfirm') }}</p>
                     <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="accessRequests.confirmPurge.value = false">{{ t('common.cancel') }}</button>
-                        <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="accessRequests.doPurge">{{ t('admin.access_requests.purge') }}</button>
+                        <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false">{{ t('common.cancel') }}</AppButton>
+                        <AppButton variant="danger" size="md" v-on:click="accessRequests.doPurge">{{ t('admin.access_requests.purge') }}</AppButton>
                     </div>
                 </div>
             </div>

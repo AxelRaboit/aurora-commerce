@@ -1,35 +1,20 @@
 import { ref } from "vue";
+import { useApiRequest } from "@/composables/useApiRequest.js";
 
 export function usePostSave(createPath, editPath, onSuccess) {
-    const loading = ref(false);
+    const { loading, request } = useApiRequest();
     const errors = ref({});
 
     async function save(postId, formData) {
-        if (loading.value) return false;
-        loading.value = true;
         errors.value = {};
-        try {
-            const url = postId
-                ? editPath.replace("__id__", postId)
-                : createPath;
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-            if (!response.ok && response.status !== 422)
-                throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data.success) {
-                onSuccess(data.post);
-                return true;
-            }
-            errors.value = data.errors ?? {};
-        } catch (error) {
-            errors.value = { network: error.message };
-        } finally {
-            loading.value = false;
+        const url = postId ? editPath.replace("__id__", postId) : createPath;
+        const data = await request(url, formData);
+        if (!data) return false;
+        if (data.success) {
+            onSuccess(data.post);
+            return true;
         }
+        errors.value = data.errors ?? {};
         return false;
     }
 

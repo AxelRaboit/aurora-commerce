@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
+import AppButton from "@/components/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -36,12 +37,10 @@ const previewHtml = computed(() =>
             leave-to-class="opacity-0"
         >
             <div v-if="post || loading" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-y-auto">
-                <!-- Header -->
                 <div class="sticky top-0 z-10 flex items-center gap-3 px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
                         {{ post?.title ?? "…" }}
                     </span>
-                    <!-- Locale switcher -->
                     <div v-if="post" class="flex gap-1">
                         <button
                             v-for="locale in locales"
@@ -56,19 +55,15 @@ const previewHtml = computed(() =>
                             {{ t("locales." + locale) }}
                         </button>
                     </div>
-                    <button
-                        type="button"
-                        class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
-                        v-on:click="$emit('close')"
-                    >
+                    <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="$emit('close')">
                         <X class="w-5 h-5" :stroke-width="2" />
-                    </button>
+                    </AppButton>
                 </div>
 
-                <!-- Content -->
                 <div class="flex-1 w-full max-w-6xl mx-auto px-12 py-12">
                     <div v-if="loading" class="text-secondary text-sm">{{ t("common.loading") }}</div>
                     <template v-else-if="post">
+                        <img v-if="post.featuredMediaUrl" :src="post.featuredMediaUrl" class="w-full max-h-80 object-cover rounded-xl mb-8" alt="">
                         <h1 v-if="post.translations?.[activeLocale]?.title" class="text-3xl font-bold text-primary mb-8">
                             {{ post.translations[activeLocale].title }}
                         </h1>

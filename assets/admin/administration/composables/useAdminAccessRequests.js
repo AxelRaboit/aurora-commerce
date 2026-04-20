@@ -1,6 +1,8 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { submitForm } from "@/utils/formSubmit.js";
+import { parseJson } from "@/utils/parseJson.js";
+import { accessRequestStatusBadge } from "@/utils/statusStyles.js";
 
 export function useAdminAccessRequests(
     accessRequestsPath,
@@ -12,19 +14,9 @@ export function useAdminAccessRequests(
 ) {
     const { t } = useI18n();
 
-    const parsedAccessRequests = computed(() => {
-        try {
-            return JSON.parse(initialAccessRequests);
-        } catch {
-            return { items: [] };
-        }
-    });
-
-    const statusBadge = {
-        pending: "bg-amber-500/15 text-amber-400",
-        approved: "bg-emerald-500/15 text-emerald-400",
-        rejected: "bg-surface-2 text-muted",
-    };
+    const parsedAccessRequests = computed(() =>
+        parseJson(initialAccessRequests, { items: [] }),
+    );
 
     const statusLabel = computed(() => ({
         pending: t("admin.access_requests.status_pending"),
@@ -71,7 +63,7 @@ export function useAdminAccessRequests(
 
     return {
         parsedAccessRequests,
-        statusBadge,
+        statusBadge: accessRequestStatusBadge,
         statusLabel,
         pendingApprove,
         pendingReject,
