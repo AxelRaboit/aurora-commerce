@@ -72,7 +72,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
 
     private function sendRequesterApproval(AccessRequest $request, ?string $generatedPassword = null): void
     {
-        $loginUrl = $this->urlGenerator->generate('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $loginUrl = $this->urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $body = $this->twig->render('email/access_request_approved.html.twig', [
             'request' => $request,

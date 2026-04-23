@@ -28,7 +28,7 @@ final readonly class InvitationService
             'customMessage' => $message ?: null,
             'credentialEmail' => $credentialEmail ?: null,
             'credentialPassword' => $credentialPassword ?: null,
-            'loginUrl' => $this->urlGenerator->generate('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'loginUrl' => $this->urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
 
         $this->mailer->send((new Email())

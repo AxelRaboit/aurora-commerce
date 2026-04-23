@@ -71,7 +71,7 @@ final class PasswordResetController extends AbstractController
                 $this->passwordResetManager->resetPassword($resetRequest, $input->password);
                 $this->addFlash('success', $this->translator->trans('auth.reset_password.success'));
 
-                return $this->redirectToRoute('admin_login');
+                return $this->redirectToRoute('app_login');
             }
         }
 

@@ -36,7 +36,7 @@ const props = defineProps({
     tagsPath: { type: String, default: "/admin/tags" },
     administrationPath: { type: String, default: "/dev/dashboard" },
     profilePath: { type: String, default: "/admin/profile" },
-    logoutPath: { type: String, default: "/admin/logout" },
+    logoutPath: { type: String, default: "/logout" },
     locale: { type: String, default: "fr" },
     isDev: { type: Boolean, default: false },
     appVersion: { type: String, default: "" },

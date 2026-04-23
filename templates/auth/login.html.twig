@@ -35,7 +35,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{{ path('admin_login') }}" class="flex flex-col gap-4">
+    <form method="post" action="{{ path('app_login') }}" class="flex flex-col gap-4">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
         <div>

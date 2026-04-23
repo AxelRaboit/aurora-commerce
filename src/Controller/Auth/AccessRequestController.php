@@ -55,6 +55,6 @@ final class AccessRequestController extends AbstractController
         $this->accessRequestManager->create($input->email, $input->name, $input->message);
         $this->addFlash('success', $this->translator->trans('auth.access_request.success_toast'));
 
-        return $this->redirectToRoute('admin_login');
+        return $this->redirectToRoute('app_login');
     }
 }

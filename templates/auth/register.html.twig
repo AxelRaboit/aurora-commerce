@@ -33,7 +33,7 @@
 {% block content %}
     <div {{ vue_component('RegisterApp', {
         registerPath: path('app_register'),
-        loginPath: path('admin_login'),
+        loginPath: path('app_login'),
         registrationEnabled: registrationEnabled,
         initialErrors: errors,
         values: {name: values.name ?? '', email: values.email ?? ''},
