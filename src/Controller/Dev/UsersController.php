@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/dev/users', name: 'dev_users')]
+#[Route('/dev/dashboard/users', name: 'dev_users')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class UsersController extends AbstractController
 {

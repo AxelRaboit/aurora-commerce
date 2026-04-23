@@ -9,3 +9,10 @@
 
 controllers:
     resource: routing.controllers
+
+dev_root:
+    path: /dev
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    defaults:
+        route: dev_dashboard
+        permanent: true

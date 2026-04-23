@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/dev/access-requests', name: 'dev_access_requests')]
+#[Route('/dev/dashboard/access-requests', name: 'dev_access_requests')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class AccessRequestsController extends AbstractController
 {

@@ -34,7 +34,7 @@ const props = defineProps({
     mediaPath: { type: String, default: "/admin/media" },
     menusPath: { type: String, default: "/admin/menus" },
     tagsPath: { type: String, default: "/admin/tags" },
-    administrationPath: { type: String, default: "/dev" },
+    administrationPath: { type: String, default: "/dev/dashboard" },
     profilePath: { type: String, default: "/admin/profile" },
     logoutPath: { type: String, default: "/admin/logout" },
     locale: { type: String, default: "fr" },

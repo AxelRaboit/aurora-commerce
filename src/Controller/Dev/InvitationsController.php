@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/dev/invitations', name: 'dev_invitations')]
+#[Route('/dev/dashboard/invitations', name: 'dev_invitations')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class InvitationsController extends AbstractController
 {

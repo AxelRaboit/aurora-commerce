@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/dev/parameters', name: 'dev_parameters')]
+#[Route('/dev/dashboard/parameters', name: 'dev_parameters')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class ParametersController extends AbstractController
 {
