@@ -10,13 +10,11 @@
     {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
-        {{ vite_entry_link_tags('sidebar') }}
         {{ vite_entry_link_tags('flash') }}
     {% endblock %}
     <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
     {% block javascripts %}
         {{ vite_entry_script_tags('app') }}
-        {{ vite_entry_script_tags('sidebar') }}
         {{ vite_entry_script_tags('flash') }}
     {% endblock %}
 </head>
@@ -24,24 +22,24 @@
 
 <div class="min-h-screen bg-bg">
 
-    <div id="app-sidebar"
-         data-user-name="{{ app.user.name }}"
-         data-user-email="{{ app.user.email }}"
-         data-active-route="{{ app.request.attributes.get('_route') }}"
-         data-logout-csrf="{{ csrf_token('logout') }}"
-         data-dashboard-path="{{ path('admin_dashboard') }}"
-         data-posts-path="{{ path('admin_posts') }}"
-         data-post-types-path="{{ path('admin_post_types') }}"
-         data-media-path="{{ path('admin_media') }}"
-         data-menus-path="{{ path('admin_menus') }}"
-         data-tags-path="{{ path('admin_tags') }}"
-         data-administration-path="{{ path('dev_dashboard') }}"
-         data-is-dev="{{ is_granted('ROLE_DEV') ? 'true' : 'false' }}"
-         data-profile-path="{{ path('profile') }}"
-         data-logout-path="{{ path('admin_logout') }}"
-         data-locale="{{ app.request.locale }}"
-         data-app-version="{{ appVersion is defined ? appVersion : '' }}"
-    ></div>
+    <div {{ vue_component('AppSidebar', {
+        userName: app.user.name,
+        userEmail: app.user.email,
+        activeRoute: app.request.attributes.get('_route'),
+        logoutCsrf: csrf_token('logout'),
+        dashboardPath: path('admin_dashboard'),
+        postsPath: path('admin_posts'),
+        postTypesPath: path('admin_post_types'),
+        mediaPath: path('admin_media'),
+        menusPath: path('admin_menus'),
+        tagsPath: path('admin_tags'),
+        administrationPath: path('dev_dashboard'),
+        isDev: is_granted('ROLE_DEV'),
+        profilePath: path('profile'),
+        logoutPath: path('admin_logout'),
+        locale: app.request.locale,
+        appVersion: appVersion is defined ? appVersion : '',
+    }) }}></div>
 
     <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
 

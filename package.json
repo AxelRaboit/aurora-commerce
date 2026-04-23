@@ -7,6 +7,9 @@
         "preview": "vite preview"
     },
     "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@symfony/stimulus-bridge": "^3.2.0 || ^4.0.0",
+        "@symfony/ux-vue": "file:vendor/symfony/ux-vue/assets",
         "@tailwindcss/forms": "0.4.0-alpha.2",
         "@tailwindcss/vite": "^4.2.2",
         "@vitejs/plugin-vue": "^6.0.5",

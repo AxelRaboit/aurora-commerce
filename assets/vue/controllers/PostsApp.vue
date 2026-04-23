@@ -6,13 +6,12 @@ import AppNoData from "@/components/AppNoData.vue";
 import AppModal from "@/components/AppModal.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import { statusBadge } from "@/utils/statusStyles.js";
-import { parseJson } from "@/utils/parseJson.js";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
-import { usePostList } from "./composables/usePostList.js";
-import { usePostDelete } from "./composables/usePostDelete.js";
+import { usePostList } from "@/admin/posts/composables/usePostList.js";
+import { usePostDelete } from "@/admin/posts/composables/usePostDelete.js";
 import { Pencil, Trash2, Plus, FileText, Search, Eye } from "lucide-vue-next";
-import PostEditor from "./PostEditor.vue";
-import PostPreviewOverlay from "./PostPreviewOverlay.vue";
+import PostEditor from "@/admin/posts/PostEditor.vue";
+import PostPreviewOverlay from "@/admin/posts/PostPreviewOverlay.vue";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 
@@ -21,20 +20,20 @@ const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
     postsPath: { type: String, required: true },
-    posts: { type: String, default: '{"items":[],"total":0,"page":1,"totalPages":1}' },
+    posts: { type: Object, default: () => ({ items: [], total: 0, page: 1, totalPages: 1 }) },
     search: { type: String, default: "" },
-    postTypes: { type: String, default: "[]" },
-    allTags: { type: String, default: "[]" },
-    locales: { type: String, default: () => JSON.stringify(DEFAULT_LOCALES) },
+    postTypes: { type: Array, default: () => [] },
+    allTags: { type: Array, default: () => [] },
+    locales: { type: Array, default: () => DEFAULT_LOCALES },
     createPath: { type: String, required: true },
     showPath: { type: String, required: true },
     editPath: { type: String, required: true },
     deletePath: { type: String, required: true },
 });
 
-const parsedPostTypes = parseJson(props.postTypes, []);
-const parsedAllTags   = parseJson(props.allTags, []);
-const parsedLocales   = parseJson(props.locales, DEFAULT_LOCALES);
+const parsedPostTypes = props.postTypes ?? [];
+const parsedAllTags   = props.allTags ?? [];
+const parsedLocales   = props.locales ?? DEFAULT_LOCALES;
 
 // View state: 'list' | 'editor'
 const view = ref("list");

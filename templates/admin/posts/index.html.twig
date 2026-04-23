@@ -7,21 +7,16 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-posts"
-     data-locale="{{ app.request.locale }}"
-     data-posts="{{ posts|json_encode|e('html_attr') }}"
-     data-search="{{ search }}"
-     data-post-types="{{ postTypes|json_encode|e('html_attr') }}"
-     data-all-tags="{{ allTags|json_encode|e('html_attr') }}"
-     data-locales="{{ locales|json_encode|e('html_attr') }}"
-     data-posts-path="{{ path('admin_posts') }}"
-     data-create-path="{{ path('admin_posts_create') }}"
-     data-show-path="{{ path('admin_posts_show', {id: '__id__'}) }}"
-     data-edit-path="{{ path('admin_posts_edit', {id: '__id__'}) }}"
-     data-delete-path="{{ path('admin_posts_delete', {id: '__id__'}) }}"
-     class="flex-1 min-w-0">
-</div>
+<div {{ vue_component('PostsApp', {
+    postsPath: path('admin_posts'),
+    posts: posts,
+    search: search,
+    postTypes: postTypes,
+    allTags: allTags,
+    locales: locales,
+    createPath: path('admin_posts_create'),
+    showPath: path('admin_posts_show', {id: '__id__'}),
+    editPath: path('admin_posts_edit', {id: '__id__'}),
+    deletePath: path('admin_posts_delete', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
 {% endblock %}
-
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/posts') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/posts') }}{% endblock %}

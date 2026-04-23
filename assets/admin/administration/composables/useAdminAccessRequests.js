@@ -1,7 +1,6 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { submitForm } from "@/utils/formSubmit.js";
-import { parseJson } from "@/utils/parseJson.js";
 import { accessRequestStatusBadge } from "@/utils/statusStyles.js";
 
 export function useAdminAccessRequests(
@@ -14,8 +13,8 @@ export function useAdminAccessRequests(
 ) {
     const { t } = useI18n();
 
-    const parsedAccessRequests = computed(() =>
-        parseJson(initialAccessRequests, { items: [] }),
+    const parsedAccessRequests = computed(
+        () => initialAccessRequests ?? { items: [] },
     );
 
     const statusLabel = computed(() => ({

@@ -6,4 +6,6 @@
     {{ include('components/page_header.html.twig', {title: 'nav.media'|trans}) }}
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+<div {{ vue_component('MediaApp') }}></div>
+{% endblock %}

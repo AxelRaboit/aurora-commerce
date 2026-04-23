@@ -4,10 +4,10 @@ import AppInput from "@/components/AppInput.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppNoData from "@/components/AppNoData.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
-import { useTagList } from "./composables/useTagList.js";
-import { useTagCreate } from "./composables/useTagCreate.js";
-import { useTagEdit } from "./composables/useTagEdit.js";
-import { useTagDelete } from "./composables/useTagDelete.js";
+import { useTagList } from "@/admin/tags/composables/useTagList.js";
+import { useTagCreate } from "@/admin/tags/composables/useTagCreate.js";
+import { useTagEdit } from "@/admin/tags/composables/useTagEdit.js";
+import { useTagDelete } from "@/admin/tags/composables/useTagDelete.js";
 import { Pencil, Trash2, Plus, Tag, Search } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
@@ -17,7 +17,7 @@ const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
     tagsPath: { type: String, required: true },
-    tags: { type: String, default: '{"items":[],"total":0,"page":1,"totalPages":1}' },
+    tags: { type: Object, default: () => ({ items: [], total: 0, page: 1, totalPages: 1 }) },
     search: { type: String, default: "" },
     createPath: { type: String, required: true },
     editPath: { type: String, required: true },

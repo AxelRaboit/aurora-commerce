@@ -31,15 +31,11 @@
 {% endblock %}
 
 {% block content %}
-    {{ vite_entry_link_tags('register') }}
-    {{ vite_entry_script_tags('register') }}
-    <div
-        id="app-register"
-        data-locale="{{ app.request.locale }}"
-        data-register-path="{{ path('app_register') }}"
-        data-login-path="{{ path('admin_login') }}"
-        data-registration-enabled="{{ registrationEnabled ? 'true' : 'false' }}"
-        data-initial-errors="{{ errors|json_encode }}"
-        data-values="{{ {name: values.name ?? '', email: values.email ?? ''}|json_encode }}"
-    ></div>
+    <div {{ vue_component('RegisterApp', {
+        registerPath: path('app_register'),
+        loginPath: path('admin_login'),
+        registrationEnabled: registrationEnabled,
+        initialErrors: errors,
+        values: {name: values.name ?? '', email: values.email ?? ''},
+    }) }}></div>
 {% endblock %}

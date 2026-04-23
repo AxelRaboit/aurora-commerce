@@ -9,11 +9,10 @@ import AppModal from "@/components/AppModal.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { statusBadge } from "@/utils/statusStyles.js";
-import { parseJson } from "@/utils/parseJson.js";
-import { useAdminUsers } from "./composables/useAdminUsers.js";
-import { useAdminParameters } from "./composables/useAdminParameters.js";
-import { useAdminInvitations } from "./composables/useAdminInvitations.js";
-import { useAdminAccessRequests } from "./composables/useAdminAccessRequests.js";
+import { useAdminUsers } from "@/admin/administration/composables/useAdminUsers.js";
+import { useAdminParameters } from "@/admin/administration/composables/useAdminParameters.js";
+import { useAdminInvitations } from "@/admin/administration/composables/useAdminInvitations.js";
+import { useAdminAccessRequests } from "@/admin/administration/composables/useAdminAccessRequests.js";
 import {
     LayoutDashboard,
     Sliders,
@@ -55,10 +54,10 @@ onMounted(() => {
 
 const props = defineProps({
     tab: { type: String, default: "overview" },
-    stats: { type: String, default: "{}" },
-    parameters: { type: String, default: "{}" },
-    users: { type: String, default: "{}" },
-    accessRequests: { type: String, default: "{}" },
+    stats: { type: Object, default: () => ({}) },
+    parameters: { type: Object, default: () => ({}) },
+    users: { type: Object, default: () => ({}) },
+    accessRequests: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
     overviewPath: { type: String, required: true },
     parametersPath: { type: String, required: true },
@@ -78,7 +77,7 @@ const props = defineProps({
     csrfToken: { type: String, default: "" },
 });
 
-const parsedStats = computed(() => parseJson(props.stats, {}));
+const parsedStats = computed(() => props.stats ?? {});
 
 const tabs = [
     { key: "overview", label: () => t("admin.tabs.overview"), path: props.overviewPath, icon: LayoutDashboard },
@@ -96,7 +95,6 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
 
 <template>
     <div class="space-y-6">
-        <!-- Tabs -->
         <nav ref="tabNav" class="flex gap-1 border-b border-line overflow-x-auto">
             <a
                 v-for="tabItem in tabs"
@@ -113,7 +111,6 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
             </a>
         </nav>
 
-        <!-- Overview -->
         <div v-if="props.tab === 'overview'" class="space-y-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-surface border border-line rounded-xl p-4">

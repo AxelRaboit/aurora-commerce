@@ -3,7 +3,6 @@ import { useI18n } from "vue-i18n";
 import { useForm } from "@/composables/useForm.js";
 import { useApiRequest } from "@/composables/useApiRequest.js";
 import { submitForm } from "@/utils/formSubmit.js";
-import { parseJson } from "@/utils/parseJson.js";
 import { required, email, compose } from "@/utils/validators.js";
 
 const DEFAULT_LOCALE = "fr";
@@ -21,7 +20,7 @@ export function useAdminUsers(
 ) {
     const { t } = useI18n();
 
-    const parsedUsers = computed(() => parseJson(initialUsers, { items: [] }));
+    const parsedUsers = computed(() => initialUsers ?? { items: [] });
 
     const searchInput = ref(initialSearch);
 

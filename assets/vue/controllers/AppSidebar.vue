@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
 import AppButton from "@/components/AppButton.vue";
+import "@/css/sidebar.css";
 import {
     LayoutDashboard,
     FileText,

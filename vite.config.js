@@ -8,7 +8,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         vue(),
-        symfonyPlugin(),
+        symfonyPlugin({ stimulus: true }),
     ],
     resolve: {
         alias: {
@@ -19,21 +19,9 @@ export default defineConfig({
         rolldownOptions: {
             input: {
                 app: './assets/app.js',
-                sidebar: './assets/sidebar.js',
                 flash: './assets/flash.js',
                 theme: './assets/theme.js',
                 guest: './assets/guest/index.js',
-                register: './assets/auth/register/index.js',
-                // Admin pages
-                'admin/dashboard': './assets/admin/dashboard/index.js',
-                'admin/posts': './assets/admin/posts/index.js',
-                'admin/editor': './assets/admin/editor/index.js',
-                'admin/media': './assets/admin/media/index.js',
-                'admin/menus': './assets/admin/menus/index.js',
-                'admin/post-types': './assets/admin/post-types/index.js',
-                'admin/profile': './assets/admin/profile/index.js',
-                'admin/administration': './assets/admin/administration/index.js',
-                'admin/tags': './assets/admin/tags/index.js',
             },
             output: {
                 manualChunks(id) {

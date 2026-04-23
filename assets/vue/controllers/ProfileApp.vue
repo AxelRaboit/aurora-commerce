@@ -3,10 +3,10 @@ import { useI18n } from "vue-i18n";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import PasswordStrength from "@/components/PasswordStrength.vue";
-import { useProfileLocale } from "./composables/useProfileLocale.js";
-import { useProfileInfo } from "./composables/useProfileInfo.js";
-import { useProfilePassword } from "./composables/useProfilePassword.js";
-import { useProfileDelete } from "./composables/useProfileDelete.js";
+import { useProfileLocale } from "@/admin/profile/composables/useProfileLocale.js";
+import { useProfileInfo } from "@/admin/profile/composables/useProfileInfo.js";
+import { useProfilePassword } from "@/admin/profile/composables/useProfilePassword.js";
+import { useProfileDelete } from "@/admin/profile/composables/useProfileDelete.js";
 
 const { t } = useI18n();
 

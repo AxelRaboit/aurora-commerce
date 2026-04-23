@@ -7,8 +7,5 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-dashboard" data-locale="{{ app.request.locale }}"></div>
+<div {{ vue_component('DashboardApp') }}></div>
 {% endblock %}
-
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/dashboard') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/dashboard') }}{% endblock %}

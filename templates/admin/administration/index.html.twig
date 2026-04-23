@@ -19,33 +19,28 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-administration"
-     data-tab="{{ tab }}"
-     data-locale="{{ app.request.locale }}"
-     data-stats="{{ tab == 'overview' ? stats|json_encode : '{}' }}"
-     data-parameters="{{ tab == 'parameters' ? parameters|json_encode : '{}' }}"
-     data-users="{{ tab == 'users' ? users|json_encode : '{}' }}"
-     data-access-requests="{{ tab == 'access_requests' ? accessRequests|json_encode : '{}' }}"
-     data-search="{{ search ?? '' }}"
-     data-overview-path="{{ path('dev_dashboard') }}"
-     data-parameters-path="{{ path('dev_parameters') }}"
-     data-parameter-update-path="{{ path('dev_parameters_update', {key: '__key__'}) }}"
-     data-users-path="{{ path('dev_users') }}"
-     data-user-create-path="{{ path('dev_users_create') }}"
-     data-user-update-path="{{ path('dev_users_update', {id: '__id__'}) }}"
-     data-user-toggle-role-path="{{ path('dev_users_toggle_role', {id: '__id__'}) }}"
-     data-user-delete-path="{{ path('dev_users_delete', {id: '__id__'}) }}"
-     data-invitations-path="{{ path('dev_invitations') }}"
-     data-invitation-send-path="{{ path('dev_invitations_send') }}"
-     data-access-requests-path="{{ path('dev_access_requests') }}"
-     data-access-request-approve-path="{{ path('dev_access_requests_approve', {id: '__id__'}) }}"
-     data-access-request-reject-path="{{ path('dev_access_requests_reject', {id: '__id__'}) }}"
-     data-access-request-purge-path="{{ path('dev_access_requests_purge') }}"
-     data-impersonate-path="{{ path('admin_dashboard', {_switch_user: '__email__'}) }}"
-     data-csrf-token="{{ csrf_token('admin') }}"
-     class="flex-1">
-</div>
+<div {{ vue_component('AdministrationApp', {
+    tab: tab,
+    stats: tab == 'overview' ? stats : {},
+    parameters: tab == 'parameters' ? parameters : {},
+    users: tab == 'users' ? users : {},
+    accessRequests: tab == 'access_requests' ? accessRequests : {},
+    search: search ?? '',
+    overviewPath: path('dev_dashboard'),
+    parametersPath: path('dev_parameters'),
+    parameterUpdatePath: path('dev_parameters_update', {key: '__key__'}),
+    usersPath: path('dev_users'),
+    userCreatePath: path('dev_users_create'),
+    userUpdatePath: path('dev_users_update', {id: '__id__'}),
+    userToggleRolePath: path('dev_users_toggle_role', {id: '__id__'}),
+    userDeletePath: path('dev_users_delete', {id: '__id__'}),
+    invitationsPath: path('dev_invitations'),
+    invitationSendPath: path('dev_invitations_send'),
+    accessRequestsPath: path('dev_access_requests'),
+    accessRequestApprovePath: path('dev_access_requests_approve', {id: '__id__'}),
+    accessRequestRejectPath: path('dev_access_requests_reject', {id: '__id__'}),
+    accessRequestPurgePath: path('dev_access_requests_purge'),
+    impersonatePath: path('admin_dashboard', {_switch_user: '__email__'}),
+    csrfToken: csrf_token('admin'),
+}) }} class="flex-1"></div>
 {% endblock %}
-
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/administration') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/administration') }}{% endblock %}

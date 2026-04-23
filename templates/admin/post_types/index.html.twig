@@ -6,4 +6,6 @@
     {{ include('components/page_header.html.twig', {title: 'nav.postTypes'|trans}) }}
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+<div {{ vue_component('PostTypesApp') }}></div>
+{% endblock %}

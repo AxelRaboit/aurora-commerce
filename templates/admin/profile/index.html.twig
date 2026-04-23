@@ -7,19 +7,15 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-profile"
-     data-user-name="{{ app.user.name }}"
-     data-user-email="{{ app.user.email }}"
-     data-locale="{{ app.request.locale }}"
-     data-update-path="{{ path('profile_update') }}"
-     data-password-path="{{ path('profile_password') }}"
-     data-locale-path="{{ path('profile_locale') }}"
-     data-delete-path="{{ path('profile_delete') }}"
-     data-login-path="{{ path('admin_login') }}"
-     data-delete-csrf="{{ csrf_token('profile_delete') }}"
-     class="flex-1">
-</div>
+<div {{ vue_component('ProfileApp', {
+    userName: app.user.name,
+    userEmail: app.user.email,
+    locale: app.request.locale,
+    updatePath: path('profile_update'),
+    passwordPath: path('profile_password'),
+    localePath: path('profile_locale'),
+    deletePath: path('profile_delete'),
+    loginPath: path('admin_login'),
+    deleteCsrf: csrf_token('profile_delete'),
+}) }} class="flex-1"></div>
 {% endblock %}
-
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/profile') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/profile') }}{% endblock %}

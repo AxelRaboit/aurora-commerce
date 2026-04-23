@@ -7,17 +7,12 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-tags"
-     data-locale="{{ app.request.locale }}"
-     data-tags="{{ tags|json_encode|e('html_attr') }}"
-     data-search="{{ search }}"
-     data-tags-path="{{ path('admin_tags') }}"
-     data-create-path="{{ path('admin_tags_create') }}"
-     data-edit-path="{{ path('admin_tags_edit', {id: '__id__'}) }}"
-     data-delete-path="{{ path('admin_tags_delete', {id: '__id__'}) }}"
-     class="flex-1">
-</div>
+<div {{ vue_component('TagsApp', {
+    tagsPath: path('admin_tags'),
+    tags: tags,
+    search: search,
+    createPath: path('admin_tags_create'),
+    editPath: path('admin_tags_edit', {id: '__id__'}),
+    deletePath: path('admin_tags_delete', {id: '__id__'}),
+}) }} class="flex-1"></div>
 {% endblock %}
-
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('admin/tags') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('admin/tags') }}{% endblock %}
