@@ -81,8 +81,12 @@ admin:
     parameters: "Parameters"
   users:
     cannot_delete_self: 'You cannot delete your own account.'
+    cannot_modify_self: 'You cannot modify your own role.'
     created: 'User created successfully.'
+    updated: 'User updated.'
     deleted: 'User deleted.'
+    dev_granted: 'Dev role granted.'
+    dev_revoked: 'Dev role revoked.'
   invitations:
     sent: 'Invitation sent to {email}.'
   access_requests:

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
@@ -43,6 +43,8 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
+
+const userInitial = computed(() => props.userName?.charAt(0)?.toUpperCase() || "?");
 
 const SIDEBAR_KEY = "velox-sidebar";
 
@@ -105,9 +107,14 @@ function isActive(route) {
             </button>
         </div>
 
-        <div class="sh-logo-expanded flex-col border-b border-line px-4 py-3 shrink-0">
-            <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
-            <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+        <div class="sh-logo-expanded items-center gap-3 border-b border-line px-4 py-3 shrink-0">
+            <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-semibold shrink-0">
+                {{ userInitial }}
+            </div>
+            <div class="flex flex-col min-w-0">
+                <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
+                <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+            </div>
         </div>
 
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">

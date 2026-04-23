@@ -13,6 +13,8 @@ interface UserManagerInterface
 
     public function update(User $user, string $name, string $email): void;
 
+    public function toggleDevRole(User $user): bool;
+
     public function changePassword(User $user, string $newPassword): void;
 
     public function changeLocale(User $user, LocaleEnum $locale): void;

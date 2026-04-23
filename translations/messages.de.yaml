@@ -81,8 +81,12 @@ admin:
     parameters: "Parameter"
   users:
     cannot_delete_self: 'Du kannst dein eigenes Konto nicht löschen.'
+    cannot_modify_self: 'Du kannst deine eigene Rolle nicht ändern.'
     created: 'Benutzer erfolgreich erstellt.'
+    updated: 'Benutzer aktualisiert.'
     deleted: 'Benutzer gelöscht.'
+    dev_granted: 'Dev-Rolle zugewiesen.'
+    dev_revoked: 'Dev-Rolle entzogen.'
   invitations:
     sent: 'Einladung an {email} gesendet.'
   access_requests:

@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Enum\LocaleEnum;
-use App\Validator\Constraint\UniqueEmail;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class CreateUserInput
+final readonly class UpdateUserInput
 {
     public function __construct(
         #[Assert\NotBlank(message: 'profile.errors.name_required')]
         public string $name,
         #[Assert\NotBlank(message: 'profile.errors.email_invalid')]
         #[Assert\Email(message: 'profile.errors.email_invalid')]
-        #[UniqueEmail(message: 'profile.errors.email_taken')]
         public string $email,
-        #[Assert\NotBlank(message: 'profile.errors.password_too_short')]
-        #[Assert\Length(min: 8, minMessage: 'profile.errors.password_too_short')]
         public string $password,
         public LocaleEnum $locale,
     ) {}

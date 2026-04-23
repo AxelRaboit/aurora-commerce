@@ -44,6 +44,30 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
+    public function toggleDevRole(User $user): bool
+    {
+        $roles = array_values(array_filter(
+            $user->getRoles(),
+            static fn (string $role): bool => UserRoleEnum::User->value !== $role,
+        ));
+
+        $hasDev = in_array(UserRoleEnum::Dev->value, $roles, true);
+
+        if ($hasDev) {
+            $roles = array_values(array_filter(
+                $roles,
+                static fn (string $role): bool => UserRoleEnum::Dev->value !== $role,
+            ));
+        } else {
+            $roles[] = UserRoleEnum::Dev->value;
+        }
+
+        $user->setRoles($roles);
+        $this->entityManager->flush();
+
+        return !$hasDev;
+    }
+
     public function changePassword(User $user, string $newPassword): void
     {
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));

@@ -81,8 +81,12 @@ admin:
     access_requests: "Demandes d'accès"
   users:
     cannot_delete_self: 'Vous ne pouvez pas supprimer votre propre compte.'
+    cannot_modify_self: 'Vous ne pouvez pas modifier votre propre rôle.'
     created: 'Utilisateur créé avec succès.'
+    updated: 'Utilisateur mis à jour.'
     deleted: 'Utilisateur supprimé.'
+    dev_granted: 'Rôle Dev attribué.'
+    dev_revoked: 'Rôle Dev retiré.'
   invitations:
     sent: 'Invitation envoyée à {email}.'
   access_requests:

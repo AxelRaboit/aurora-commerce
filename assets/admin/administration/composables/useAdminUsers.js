@@ -6,9 +6,13 @@ import { submitForm } from "@/utils/formSubmit.js";
 import { parseJson } from "@/utils/parseJson.js";
 import { required, email, compose } from "@/utils/validators.js";
 
+const DEFAULT_LOCALE = "fr";
+
 export function useAdminUsers(
     usersPath,
     userCreatePath,
+    userUpdatePath,
+    userToggleRolePath,
     userDeletePath,
     impersonatePath,
     csrfToken,
@@ -29,7 +33,12 @@ export function useAdminUsers(
     }
 
     const showCreateModal = ref(false);
-    const newUser = ref({ name: "", email: "", password: "" });
+    const newUser = ref({
+        name: "",
+        email: "",
+        password: "",
+        locale: DEFAULT_LOCALE,
+    });
     const {
         errors: createErrors,
         validate: validateCreate,
@@ -40,7 +49,12 @@ export function useAdminUsers(
 
     function openCreate() {
         showCreateModal.value = true;
-        newUser.value = { name: "", email: "", password: "" };
+        newUser.value = {
+            name: "",
+            email: "",
+            password: "",
+            locale: DEFAULT_LOCALE,
+        };
         clearCreateErrors();
     }
 
@@ -74,6 +88,74 @@ export function useAdminUsers(
         }
     }
 
+    const showEditModal = ref(false);
+    const editingUser = ref(null);
+    const editUserForm = ref({
+        name: "",
+        email: "",
+        password: "",
+        locale: DEFAULT_LOCALE,
+    });
+    const {
+        errors: editErrors,
+        validate: validateEdit,
+        setErrors: setEditErrors,
+        clearErrors: clearEditErrors,
+    } = useForm();
+    const { loading: editLoading, request: editRequest } = useApiRequest();
+
+    function openEdit(user) {
+        editingUser.value = user;
+        editUserForm.value = {
+            name: user.name,
+            email: user.email,
+            password: "",
+            locale: user.locale ?? DEFAULT_LOCALE,
+        };
+        clearEditErrors();
+        showEditModal.value = true;
+    }
+
+    function closeEdit() {
+        showEditModal.value = false;
+        editingUser.value = null;
+    }
+
+    async function submitEdit() {
+        if (!editingUser.value) return;
+
+        const isValid = validateEdit({
+            name: () =>
+                required(t("profile.errors.name_required"))(
+                    editUserForm.value.name,
+                ),
+            email: () =>
+                compose(
+                    required(t("profile.errors.email_invalid")),
+                    email(t("profile.errors.email_invalid")),
+                )(editUserForm.value.email),
+            password: () => {
+                if (
+                    editUserForm.value.password &&
+                    editUserForm.value.password.length < 8
+                )
+                    return t("profile.errors.password_too_short");
+                return null;
+            },
+        });
+
+        if (!isValid) return;
+
+        const url = userUpdatePath.replace("__id__", editingUser.value.id);
+        const data = await editRequest(url, editUserForm.value);
+        if (!data) return;
+        if (data.success) {
+            window.location.reload();
+        } else {
+            setEditErrors(data.errors ?? {});
+        }
+    }
+
     const pendingDelete = ref(null);
 
     function confirmDelete(user) {
@@ -87,6 +169,22 @@ export function useAdminUsers(
         pendingDelete.value = null;
     }
 
+    const pendingToggleRole = ref(null);
+
+    function confirmToggleRole(user) {
+        pendingToggleRole.value = user;
+    }
+
+    function doToggleRole() {
+        if (!pendingToggleRole.value) return;
+        const url = userToggleRolePath.replace(
+            "__id__",
+            pendingToggleRole.value.id,
+        );
+        submitForm(url, csrfToken);
+        pendingToggleRole.value = null;
+    }
+
     return {
         parsedUsers,
         searchInput,
@@ -97,9 +195,20 @@ export function useAdminUsers(
         createErrors,
         openCreate,
         submitCreate,
+        showEditModal,
+        editingUser,
+        editUserForm,
+        editLoading,
+        editErrors,
+        openEdit,
+        closeEdit,
+        submitEdit,
         pendingDelete,
         confirmDelete,
         doDelete,
+        pendingToggleRole,
+        confirmToggleRole,
+        doToggleRole,
         impersonatePath,
     };
 }
