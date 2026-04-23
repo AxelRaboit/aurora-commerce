@@ -109,7 +109,7 @@ function isActive(route) {
         </div>
 
         <div class="sh-logo-expanded items-center gap-3 border-b border-line px-4 py-3 shrink-0">
-            <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-semibold shrink-0">
+            <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
                 {{ userInitial }}
             </div>
             <div class="flex flex-col min-w-0">
