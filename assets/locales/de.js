@@ -79,6 +79,7 @@ export default {
         taxonomies: "Taxonomien",
         tags: "Tags",
         users: "Benutzer",
+        settings: "Einstellungen",
         viewSite: "Website ansehen",
         administration: "Administration",
         profile: "Mein Profil",
@@ -250,6 +251,18 @@ export default {
             description: "Beschreibung",
             empty: "Keine Parameter.",
             saved: "Parameter gespeichert.",
+        },
+        settings: {
+            tabs: {
+                general: "Allgemein",
+                reading: "Lesen",
+                localization: "Lokalisierung",
+                branding: "Markenidentität",
+                seo: "SEO",
+            },
+            save: "Speichern",
+            saved: "Einstellungen gespeichert.",
+            browseMedia: "Medien durchsuchen",
         },
         users: {
             searchPlaceholder: "Nach Name oder E-Mail suchen…",

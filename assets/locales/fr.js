@@ -80,6 +80,7 @@ export default {
         taxonomies: "Taxonomies",
         tags: "Tags",
         users: "Utilisateurs",
+        settings: "Réglages",
         viewSite: "Voir le site",
         administration: "Administration",
         profile: "Mon profil",
@@ -251,6 +252,18 @@ export default {
             description: "Description",
             empty: "Aucun paramètre.",
             saved: "Paramètre enregistré.",
+        },
+        settings: {
+            tabs: {
+                general: "Général",
+                reading: "Lecture",
+                localization: "Localisation",
+                branding: "Identité visuelle",
+                seo: "SEO",
+            },
+            save: "Enregistrer",
+            saved: "Réglages sauvegardés.",
+            browseMedia: "Parcourir les médias",
         },
         users: {
             searchPlaceholder: "Rechercher par nom ou email…",

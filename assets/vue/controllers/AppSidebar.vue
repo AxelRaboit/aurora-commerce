@@ -24,6 +24,7 @@ import {
     ChevronsRight,
     Menu as MenuIcon,
     X,
+    Settings,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -45,6 +46,7 @@ const props = defineProps({
     locale: { type: String, default: "fr" },
     isAdmin: { type: Boolean, default: false },
     isDev: { type: Boolean, default: false },
+    settingsPath: { type: String, default: "" },
     mailpitUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
 });
@@ -77,6 +79,7 @@ const navItems = [
     { route: "admin_menus", path: props.menusPath, label: t("nav.menus"), icon: Menu, activeColor: "indigo" },
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
     ...(props.isAdmin ? [{ route: "admin_users", path: props.usersPath, label: t("nav.users"), icon: UsersIcon, activeColor: "indigo" }] : []),
+    ...(props.settingsPath !== "" ? [{ route: "admin_settings", path: props.settingsPath, label: t("nav.settings"), icon: Settings, activeColor: "indigo" }] : []),
     { route: "__front", path: props.frontPath, label: t("nav.viewSite"), icon: Globe, activeColor: "emerald", external: true },
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
 ];

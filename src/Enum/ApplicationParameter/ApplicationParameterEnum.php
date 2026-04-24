@@ -22,6 +22,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';
     case HomepagePostId = 'homepage_post_id';
+    case LogoMediaId = 'logo_media_id';
+    case FaviconMediaId = 'favicon_media_id';
+    case SeoTitleTemplate = 'seo_title_template';
+    case SeoDefaultDescription = 'seo_default_description';
 
     public function getKey(): string
     {
@@ -47,6 +51,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
             self::HomepagePostId => 'Page d\'accueil (ID du post)',
+            self::LogoMediaId => 'Logo du site',
+            self::FaviconMediaId => 'Favicon',
+            self::SeoTitleTemplate => 'Template de titre SEO',
+            self::SeoDefaultDescription => 'Description SEO par défaut',
         };
     }
 
@@ -69,6 +77,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
             self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
             self::HomepagePostId => 'ID d\'un post affiché sur la page d\'accueil. Vide = liste des derniers articles.',
+            self::LogoMediaId => 'ID du média utilisé comme logo',
+            self::FaviconMediaId => 'ID du média utilisé comme favicon',
+            self::SeoTitleTemplate => 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex: {title} — {siteName}',
+            self::SeoDefaultDescription => 'Meta description utilisée quand aucune description spécifique n\'est définie',
         };
     }
 
@@ -91,6 +103,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => '20',
             self::TrashAutoPurgeDays => '30',
             self::HomepagePostId => '',
+            self::LogoMediaId => '',
+            self::FaviconMediaId => '',
+            self::SeoTitleTemplate => '{title} — {siteName}',
+            self::SeoDefaultDescription => '',
         };
     }
 
@@ -99,7 +115,16 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'int',
             self::CommentsEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
+            self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
+        };
+    }
+
+    public function isAdminAccessible(): bool
+    {
+        return match ($this->getGroup()) {
+            'general', 'reading', 'localization', 'branding', 'seo' => true,
+            default => false,
         };
     }
 
@@ -111,6 +136,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::RegistrationEnabled => 'system',
+            self::LogoMediaId, self::FaviconMediaId => 'branding',
+            self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
         };
     }
 }

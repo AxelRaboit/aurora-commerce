@@ -38,6 +38,7 @@
         administrationPath: path('dev_dashboard'),
         isAdmin: is_granted('ROLE_ADMIN'),
         isDev: is_granted('ROLE_DEV'),
+        settingsPath: is_granted('ROLE_ADMIN') ? path('admin_settings') : '',
         profilePath: path('profile'),
         logoutPath: path('app_logout'),
         locale: app.request.locale,

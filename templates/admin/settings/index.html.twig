@@ -1,0 +1,15 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.settings'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'nav.settings'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('SettingsApp', {
+    groups: groups,
+    updatePath: path('admin_settings_update'),
+    mediaPickerPath: mediaPickerPath,
+}) }}></div>
+{% endblock %}
