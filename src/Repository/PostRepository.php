@@ -10,6 +10,7 @@ use App\Repository\Trait\PaginationTrait;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -42,11 +43,22 @@ class PostRepository extends ServiceEntityRepository
         $queryBuilder->andWhere($trashCondition);
         $countQueryBuilder->andWhere($trashCondition);
 
-        if ($search) {
-            $condition = 'LOWER(t.title) LIKE :search';
-            $param = '%'.mb_strtolower($search).'%';
-            $queryBuilder->andWhere($condition)->setParameter('search', $param);
-            $countQueryBuilder->andWhere($condition)->setParameter('search', $param);
+        if (null !== $search && '' !== mb_trim($search)) {
+            $rankedIds = $this->fullTextPostIds($search);
+            if ([] === $rankedIds) {
+                return ['items' => [], 'total' => 0, 'page' => max(1, $page), 'totalPages' => 1];
+            }
+
+            $queryBuilder->andWhere('p.id IN (:rankedIds)')->setParameter('rankedIds', $rankedIds);
+            $countQueryBuilder->andWhere('p.id IN (:rankedIds)')->setParameter('rankedIds', $rankedIds);
+
+            // Preserve tsvector ranking order
+            $caseExpr = 'CASE p.id';
+            foreach ($rankedIds as $index => $id) {
+                $caseExpr .= sprintf(' WHEN %d THEN %d', (int) $id, $index);
+            }
+            $caseExpr .= ' END';
+            $queryBuilder->resetDQLPart('orderBy')->orderBy($caseExpr, Order::Ascending->value);
         }
 
         if (null !== $postTypeId) {
@@ -56,6 +68,32 @@ class PostRepository extends ServiceEntityRepository
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
+    }
+
+    /**
+     * @return list<int> Post IDs matching the full-text query, ordered by rank (best first).
+     */
+    public function fullTextPostIds(string $search, int $limit = 200): array
+    {
+        $sql = <<<'SQL'
+            SELECT pt.post_id, MAX(ts_rank(pt.search_vector, websearch_to_tsquery('simple', :q))) AS rank
+            FROM post_translations pt
+            WHERE pt.search_vector @@ websearch_to_tsquery('simple', :q)
+            GROUP BY pt.post_id
+            ORDER BY rank DESC
+            LIMIT :max
+        SQL;
+
+        $connection = $this->getEntityManager()->getConnection();
+        $rows = $connection->fetchAllAssociative($sql, [
+            'q' => $search,
+            'max' => $limit,
+        ], [
+            'q' => ParameterType::STRING,
+            'max' => ParameterType::INTEGER,
+        ]);
+
+        return array_map(static fn (array $row): int => (int) $row['post_id'], $rows);
     }
 
     /**

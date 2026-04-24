@@ -18,6 +18,7 @@ use App\Repository\PostSlugHistoryRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\SettingRepository;
 use App\Repository\TaxonomyTermRepository;
+use App\Service\PostTextExtractor;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -41,6 +42,7 @@ final readonly class PostManager implements PostManagerInterface
         private SettingRepository $settingRepository,
         private SluggerInterface $slugger,
         private Security $security,
+        private PostTextExtractor $textExtractor,
     ) {}
 
     public function create(PostInput $input): Post
@@ -133,6 +135,8 @@ final readonly class PostManager implements PostManagerInterface
             $translation->setFocusKeyword($translationData['focusKeyword'] ?? null);
             $jsonLd = $translationData['jsonLd'] ?? null;
             $translation->setJsonLd(is_array($jsonLd) ? $jsonLd : null);
+
+            $translation->setSearchContent($this->textExtractor->extract($translation));
         }
 
         $post->updateTimestamps();
@@ -254,6 +258,8 @@ final readonly class PostManager implements PostManagerInterface
 
             $translation->setSlug($newSlug);
         }
+
+        $translation->setSearchContent($this->textExtractor->extract($translation));
     }
 
     private function snapshotRevision(Post $post): void

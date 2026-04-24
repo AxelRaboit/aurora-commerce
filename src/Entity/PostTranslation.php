@@ -58,6 +58,9 @@ class PostTranslation
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $jsonLd = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $searchContent = null;
+
     #[ORM\ManyToOne(targetEntity: Post::class, inversedBy: 'translations')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Post $post;
@@ -209,6 +212,18 @@ class PostTranslation
     public function setJsonLd(?array $jsonLd): static
     {
         $this->jsonLd = $jsonLd;
+
+        return $this;
+    }
+
+    public function getSearchContent(): ?string
+    {
+        return $this->searchContent;
+    }
+
+    public function setSearchContent(?string $searchContent): static
+    {
+        $this->searchContent = $searchContent;
 
         return $this;
     }

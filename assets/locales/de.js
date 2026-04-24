@@ -4,6 +4,22 @@ export default {
         previous: "Zurück",
         next: "Weiter",
     },
+    search: {
+        button: "Suchen",
+        placeholder: "Suchen (Inhalte, Begriffe, Medien)…",
+        hint: "Tippen zum Suchen…",
+        empty: "Kein Ergebnis.",
+        sections: {
+            posts: "Inhalte",
+            terms: "Begriffe",
+            media: "Medien",
+        },
+        keys: {
+            navigate: "navigieren",
+            select: "auswählen",
+            close: "schließen",
+        },
+    },
     common: {
         save: "Speichern",
         cancel: "Abbrechen",

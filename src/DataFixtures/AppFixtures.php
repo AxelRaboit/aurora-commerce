@@ -16,6 +16,7 @@ use App\Entity\User;
 use App\Enum\LocaleEnum;
 use App\Enum\PostStatusEnum;
 use App\Enum\UserRoleEnum;
+use App\Service\PostTextExtractor;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -24,6 +25,7 @@ class AppFixtures extends Fixture
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
+        private readonly PostTextExtractor $textExtractor,
     ) {}
 
     public function load(ObjectManager $manager): void
@@ -136,6 +138,9 @@ class AppFixtures extends Fixture
                 ['type' => 'heading', 'data' => ['text' => 'Welcome to Velox', 'level' => 1]],
                 ['type' => 'paragraph', 'data' => ['text' => 'Your modern CMS powered by Symfony and Vue 3.']],
             ]);
+        $homePageFrench->setSearchContent($this->textExtractor->extract($homePageFrench));
+        $homePageEnglish->setSearchContent($this->textExtractor->extract($homePageEnglish));
+
         $manager->persist($homePage);
         $manager->persist($homePageFrench);
         $manager->persist($homePageEnglish);

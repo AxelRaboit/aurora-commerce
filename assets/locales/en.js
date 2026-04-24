@@ -4,6 +4,22 @@ export default {
         previous: "Previous",
         next: "Next",
     },
+    search: {
+        button: "Search",
+        placeholder: "Search (content, terms, media)…",
+        hint: "Type to search…",
+        empty: "No result.",
+        sections: {
+            posts: "Content",
+            terms: "Terms",
+            media: "Media",
+        },
+        keys: {
+            navigate: "navigate",
+            select: "select",
+            close: "close",
+        },
+    },
     common: {
         save: "Save",
         cancel: "Cancel",

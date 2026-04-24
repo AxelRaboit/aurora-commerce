@@ -23,6 +23,22 @@ class TaxonomyTermRepository extends ServiceEntityRepository
     /**
      * @return list<TaxonomyTerm>
      */
+    public function searchByName(string $query, int $limit = 10): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.translations', 'tr')
+            ->leftJoin('t.taxonomy', 'tx')
+            ->addSelect('tr', 'tx')
+            ->where('LOWER(tr.name) LIKE :search')
+            ->setParameter('search', '%'.mb_strtolower($query).'%')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<TaxonomyTerm>
+     */
     public function findByTaxonomyOrdered(Taxonomy $taxonomy): array
     {
         return $this->createQueryBuilder('t')

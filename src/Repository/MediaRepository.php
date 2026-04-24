@@ -25,4 +25,20 @@ class MediaRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return list<Media>
+     */
+    public function searchByName(string $query, int $limit = 10): array
+    {
+        $like = '%'.mb_strtolower($query).'%';
+
+        return $this->createQueryBuilder('m')
+            ->where('LOWER(m.originalName) LIKE :search')
+            ->orWhere('LOWER(m.alt) LIKE :search')
+            ->setParameter('search', $like)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
