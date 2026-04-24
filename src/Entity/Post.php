@@ -53,10 +53,11 @@ class Post implements TimestampableInterface
     private Collection $translations;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, TaxonomyTerm>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts')]
-    private Collection $tags;
+    #[ORM\ManyToMany(targetEntity: TaxonomyTerm::class, inversedBy: 'posts')]
+    #[ORM\JoinTable(name: 'post_terms')]
+    private Collection $terms;
 
     /**
      * @var Collection<int, PostRevision>
@@ -67,7 +68,7 @@ class Post implements TimestampableInterface
     public function __construct()
     {
         $this->translations = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->terms = new ArrayCollection();
         $this->revisions = new ArrayCollection();
     }
 
@@ -196,28 +197,25 @@ class Post implements TimestampableInterface
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, TaxonomyTerm>
      */
-    public function getTags(): Collection
+    public function getTerms(): Collection
     {
-        return $this->tags;
+        return $this->terms;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTerm(TaxonomyTerm $term): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addPost($this);
+        if (!$this->terms->contains($term)) {
+            $this->terms->add($term);
         }
 
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTerm(TaxonomyTerm $term): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removePost($this);
-        }
+        $this->terms->removeElement($term);
 
         return $this;
     }

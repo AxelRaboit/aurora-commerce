@@ -131,7 +131,7 @@ class PostRepository extends ServiceEntityRepository
             ->leftJoin('p.postType', 'pt')
             ->leftJoin('p.translations', 't')
             ->addSelect('pt', 't')
-            ->orderBy('p.updatedAt', 'DESC')
+            ->orderBy('p.updatedAt', Order::Descending->value)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

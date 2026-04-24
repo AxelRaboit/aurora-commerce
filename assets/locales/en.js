@@ -386,7 +386,8 @@ export default {
                     slug: "Present in the slug",
                 },
                 jsonLd: "JSON-LD (schema.org)",
-                jsonLdPlaceholder: "JSON-LD object to embed inside <script type=\"application/ld+json\">",
+                jsonLdPlaceholder:
+                    'JSON-LD object to embed inside <script type="application/ld+json">',
                 jsonLdMustBeObject: "JSON-LD must be an object.",
                 generateArticle: "Generate Article",
             },

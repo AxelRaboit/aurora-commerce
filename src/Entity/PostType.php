@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\PostTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -42,16 +43,22 @@ class PostType
     private array $supports = ['blocks', 'thumbnail', 'excerpt'];
 
     #[ORM\OneToMany(targetEntity: PostTypeField::class, mappedBy: 'postType', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => Order::Ascending->value])]
     private Collection $fields;
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'postType')]
     private Collection $posts;
 
+    /** @var Collection<int, Taxonomy> */
+    #[ORM\ManyToMany(targetEntity: Taxonomy::class, inversedBy: 'postTypes')]
+    #[ORM\JoinTable(name: 'post_type_taxonomies')]
+    private Collection $taxonomies;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->taxonomies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,5 +170,27 @@ class PostType
     public function getPosts(): Collection
     {
         return $this->posts;
+    }
+
+    /** @return Collection<int, Taxonomy> */
+    public function getTaxonomies(): Collection
+    {
+        return $this->taxonomies;
+    }
+
+    public function addTaxonomy(Taxonomy $taxonomy): static
+    {
+        if (!$this->taxonomies->contains($taxonomy)) {
+            $this->taxonomies->add($taxonomy);
+        }
+
+        return $this;
+    }
+
+    public function removeTaxonomy(Taxonomy $taxonomy): static
+    {
+        $this->taxonomies->removeElement($taxonomy);
+
+        return $this;
     }
 }

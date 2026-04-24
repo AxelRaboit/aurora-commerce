@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Setting;
 use App\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -48,8 +49,8 @@ class SettingRepository extends ServiceEntityRepository
     public function findAllOrdered(): array
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.group', 'ASC')
-            ->addOrderBy('s.key', 'ASC')
+            ->orderBy('s.group', Order::Ascending->value)
+            ->addOrderBy('s.key', Order::Ascending->value)
             ->getQuery()
             ->getResult();
     }
@@ -60,8 +61,8 @@ class SettingRepository extends ServiceEntityRepository
     public function findPaginated(int $page, int $limit = 20): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->orderBy('s.group', 'ASC')
-            ->addOrderBy('s.key', 'ASC');
+            ->orderBy('s.group', Order::Ascending->value)
+            ->addOrderBy('s.key', Order::Ascending->value);
         $countQueryBuilder = $this->createQueryBuilder('s')->select('COUNT(s.key)');
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);

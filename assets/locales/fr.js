@@ -392,7 +392,8 @@ export default {
                     slug: "Présent dans le slug",
                 },
                 jsonLd: "JSON-LD (schema.org)",
-                jsonLdPlaceholder: "Objet JSON-LD qui sera injecté dans <script type=\"application/ld+json\">",
+                jsonLdPlaceholder:
+                    'Objet JSON-LD qui sera injecté dans <script type="application/ld+json">',
                 jsonLdMustBeObject: "Le JSON-LD doit être un objet.",
                 generateArticle: "Générer Article",
             },

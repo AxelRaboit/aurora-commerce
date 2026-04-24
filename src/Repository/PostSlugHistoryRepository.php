@@ -31,14 +31,14 @@ class PostSlugHistoryRepository extends ServiceEntityRepository
     public function removeByLocaleAndSlug(string $locale, string $slug): void
     {
         $entry = $this->findOneByLocaleAndSlug($locale, $slug);
-        if (null !== $entry) {
+        if ($entry instanceof PostSlugHistory) {
             $this->getEntityManager()->remove($entry);
         }
     }
 
     public function recordIfNew(Post $post, string $locale, string $oldSlug): void
     {
-        if (null !== $this->findOneByLocaleAndSlug($locale, $oldSlug)) {
+        if ($this->findOneByLocaleAndSlug($locale, $oldSlug) instanceof PostSlugHistory) {
             return;
         }
 

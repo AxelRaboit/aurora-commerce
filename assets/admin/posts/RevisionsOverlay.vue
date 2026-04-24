@@ -6,6 +6,7 @@ import { renderBlocks } from "@/utils/blocksRenderer.js";
 import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/utils/revisionDiff.js";
 import { statusBadge } from "@/utils/statusStyles.js";
 import AppButton from "@/components/AppButton.vue";
+import AppCheckbox from "@/components/AppCheckbox.vue";
 import { toast } from "vue-sonner";
 
 const { t } = useI18n();
@@ -220,10 +221,11 @@ const visibleEntries = computed(() =>
                                     <span class="text-rose-600 dark:text-rose-400">-{{ stats.removed }}</span>
                                     <span class="text-muted">· {{ stats.unchanged }} {{ t("admin.posts.revisions.unchanged") }}</span>
                                 </div>
-                                <label class="flex items-center gap-2 text-xs text-secondary cursor-pointer ml-auto">
-                                    <input v-model="showUnchanged" type="checkbox" class="rounded border-line">
-                                    {{ t("admin.posts.revisions.showUnchanged") }}
-                                </label>
+                                <AppCheckbox
+                                    v-model="showUnchanged"
+                                    :label="t('admin.posts.revisions.showUnchanged')"
+                                    class="text-xs ml-auto"
+                                />
                                 <AppButton variant="primary" size="sm" :loading="restoring" v-on:click="restore">
                                     <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
                                     {{ t("admin.posts.revisions.restore") }}

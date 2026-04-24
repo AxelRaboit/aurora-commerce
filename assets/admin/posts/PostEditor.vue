@@ -7,6 +7,7 @@ import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppMessage from "@/components/AppMessage.vue";
+import AppCheckbox from "@/components/AppCheckbox.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import EditorBlock from "@/components/EditorBlock.vue";
@@ -26,7 +27,7 @@ const { t } = useI18n();
 const props = defineProps({
     postId: { type: Number, default: null },
     postTypes: { type: Array, default: () => [] },
-    allTags: { type: Array, default: () => [] },
+    allTerms: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     showPath: { type: String, required: true },
     createPath: { type: String, required: true },
@@ -79,7 +80,7 @@ const form = reactive({
     status: "draft",
     scheduledAt: "",
     featuredMediaId: null,
-    tagIds: [],
+    termIds: [],
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
 });
 
@@ -192,18 +193,17 @@ watch(
     { immediate: true },
 );
 
-function onJsonLdInput(event) {
-    jsonLdText.value = event.target.value;
-    const raw = event.target.value.trim();
+watch(jsonLdText, (raw) => {
     const tr = activeTranslation.value;
     if (!tr) return;
-    if ("" === raw) {
+    const trimmed = raw.trim();
+    if ("" === trimmed) {
         tr.jsonLd = null;
         jsonLdError.value = null;
         return;
     }
     try {
-        const parsed = JSON.parse(raw);
+        const parsed = JSON.parse(trimmed);
         if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
             jsonLdError.value = t("admin.posts.seo.jsonLdMustBeObject");
             return;
@@ -213,7 +213,7 @@ function onJsonLdInput(event) {
     } catch (err) {
         jsonLdError.value = err.message;
     }
-}
+});
 
 function generateArticleJsonLd() {
     const tr = activeTranslation.value;
@@ -293,7 +293,7 @@ onMounted(async () => {
             trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
-            form.tagIds = [...(data.post.tagIds ?? [])];
+            form.termIds = [...(data.post.termIds ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
@@ -315,12 +315,12 @@ onBeforeUnmount(() => {
     window.removeEventListener("keydown", onKeydown);
 });
 
-function toggleTag(tagId) {
-    const index = form.tagIds.indexOf(tagId);
+function toggleTerm(termId) {
+    const index = form.termIds.indexOf(termId);
     if (index === -1) {
-        form.tagIds.push(tagId);
+        form.termIds.push(termId);
     } else {
-        form.tagIds.splice(index, 1);
+        form.termIds.splice(index, 1);
     }
 }
 
@@ -343,7 +343,7 @@ async function reloadAfterRestore() {
             trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
-            form.tagIds = [...(data.post.tagIds ?? [])];
+            form.termIds = [...(data.post.termIds ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
@@ -438,7 +438,7 @@ async function handleSave({ force = false } = {}) {
         status: form.status,
         scheduledAt: form.status === "scheduled" && form.scheduledAt ? form.scheduledAt : null,
         featuredMediaId: form.featuredMediaId,
-        tagIds: form.tagIds,
+        termIds: form.termIds,
         translations: form.translations,
         version: version.value,
         force,
@@ -577,21 +577,20 @@ function forceSave() {
                     </AppSelect>
                 </div>
             </div>
-            <!-- Tags inline chips -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.tags") }}</span>
+            <!-- Terms inline chips (grouped by taxonomy) -->
+            <div v-if="allTerms.length" class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.terms") }}</span>
                 <label
-                    v-for="tag in allTags"
-                    :key="tag.id"
+                    v-for="term in allTerms"
+                    :key="term.id"
                     class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
-                    :class="form.tagIds.includes(tag.id)
+                    :class="form.termIds.includes(term.id)
                         ? 'bg-indigo-600 border-indigo-600 text-white'
                         : 'bg-surface-2 border-line text-secondary hover:border-indigo-400 hover:text-primary'"
                 >
-                    <input type="checkbox" class="sr-only" :checked="form.tagIds.includes(tag.id)" v-on:change="toggleTag(tag.id)">
-                    {{ tag.name }}
+                    <input type="checkbox" class="sr-only" :checked="form.termIds.includes(term.id)" v-on:change="toggleTerm(term.id)">
+                    {{ term.name }}
                 </label>
-                <p v-if="!allTags.length" class="text-xs text-muted italic">{{ t("admin.tags.empty") }}</p>
             </div>
         </div>
 
@@ -727,14 +726,10 @@ function forceSave() {
                         :label="t('admin.posts.seo.canonicalUrl')"
                         placeholder="https://example.com/..."
                     />
-                    <label class="flex items-center gap-2 text-sm text-secondary cursor-pointer">
-                        <input
-                            v-model="form.translations[activeLocale].noindex"
-                            type="checkbox"
-                            class="w-4 h-4 rounded border-line bg-surface-2 text-indigo-600 focus:ring-indigo-500"
-                        >
-                        {{ t("admin.posts.seo.noindex") }}
-                    </label>
+                    <AppCheckbox
+                        v-model="form.translations[activeLocale].noindex"
+                        :label="t('admin.posts.seo.noindex')"
+                    />
 
                     <!-- OG image -->
                     <div>
@@ -752,7 +747,13 @@ function forceSave() {
                                 <ImagePlus v-else class="w-5 h-5 text-muted" :stroke-width="2" />
                             </div>
                             <div class="flex gap-2">
-                                <input ref="ogInputRef" type="file" accept="image/*" class="hidden" v-on:change="uploadOgImage">
+                                <input
+                                    ref="ogInputRef"
+                                    type="file"
+                                    accept="image/*"
+                                    class="hidden"
+                                    v-on:change="uploadOgImage"
+                                >
                                 <AppButton variant="secondary" size="sm" :loading="uploadingOg" v-on:click="ogInputRef?.click()">
                                     {{ t("admin.posts.seo.ogImageUpload") }}
                                 </AppButton>
@@ -803,15 +804,13 @@ function forceSave() {
                         {{ t("admin.posts.seo.generateArticle") }}
                     </AppButton>
                 </div>
-                <textarea
-                    :value="jsonLdText"
+                <AppTextarea
+                    v-model="jsonLdText"
                     :placeholder="t('admin.posts.seo.jsonLdPlaceholder')"
                     :rows="8"
-                    class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-xs text-primary placeholder-muted font-mono focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                    :class="jsonLdError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''"
-                    v-on:input="onJsonLdInput"
+                    :error="jsonLdError ?? ''"
+                    mono
                 />
-                <p v-if="jsonLdError" class="text-xs text-red-500">{{ jsonLdError }}</p>
             </div>
         </div>
 

@@ -17,7 +17,7 @@ use App\Repository\PostRevisionRepository;
 use App\Repository\PostSlugHistoryRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\SettingRepository;
-use App\Repository\TagRepository;
+use App\Repository\TaxonomyTermRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -34,7 +34,7 @@ final readonly class PostManager implements PostManagerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private PostTypeRepository $postTypeRepository,
-        private TagRepository $tagRepository,
+        private TaxonomyTermRepository $termRepository,
         private MediaRepository $mediaRepository,
         private PostRevisionRepository $revisionRepository,
         private PostSlugHistoryRepository $slugHistoryRepository,
@@ -103,9 +103,9 @@ final readonly class PostManager implements PostManagerInterface
         $featuredMediaId = $snapshot['featuredMediaId'] ?? null;
         $post->setFeaturedMedia(null !== $featuredMediaId ? $this->mediaRepository->find($featuredMediaId) : null);
 
-        $this->syncTags($post, array_values(array_filter(
-            array_map(intval(...), $snapshot['tagIds'] ?? []),
-            static fn (int $tagId): bool => $tagId > 0,
+        $this->syncTerms($post, array_values(array_filter(
+            array_map(intval(...), $snapshot['termIds'] ?? []),
+            static fn (int $termId): bool => $termId > 0,
         )));
 
         foreach ((array) ($snapshot['translations'] ?? []) as $locale => $translationData) {
@@ -163,29 +163,29 @@ final readonly class PostManager implements PostManagerInterface
             : null;
         $post->setFeaturedMedia($featuredMedia);
 
-        $this->syncTags($post, $input->tagIds);
+        $this->syncTerms($post, $input->termIds);
 
         foreach ($input->translations as $locale => $translationInput) {
             $this->applyTranslation($post, $locale, $translationInput);
         }
     }
 
-    /** @param array<int> $tagIds */
-    private function syncTags(Post $post, array $tagIds): void
+    /** @param array<int> $termIds */
+    private function syncTerms(Post $post, array $termIds): void
     {
-        foreach ($post->getTags() as $existingTag) {
-            if (!in_array($existingTag->getId(), $tagIds, true)) {
-                $post->removeTag($existingTag);
+        foreach ($post->getTerms() as $existingTerm) {
+            if (!in_array($existingTerm->getId(), $termIds, true)) {
+                $post->removeTerm($existingTerm);
             }
         }
 
-        $currentTagIds = $post->getTags()->map(fn ($tag): ?int => $tag->getId())->toArray();
+        $currentTermIds = $post->getTerms()->map(fn ($term): ?int => $term->getId())->toArray();
 
-        foreach ($tagIds as $tagId) {
-            if (!in_array($tagId, $currentTagIds, true)) {
-                $tag = $this->tagRepository->find($tagId);
-                if (null !== $tag) {
-                    $post->addTag($tag);
+        foreach ($termIds as $termId) {
+            if (!in_array($termId, $currentTermIds, true)) {
+                $term = $this->termRepository->find($termId);
+                if (null !== $term) {
+                    $post->addTerm($term);
                 }
             }
         }
@@ -217,9 +217,11 @@ final readonly class PostManager implements PostManagerInterface
                 // If the new slug appears in history, remove that entry to avoid a self-redirect.
                 $this->slugHistoryRepository->removeByLocaleAndSlug($locale, $newSlug);
             }
+
             if (null !== $previousSlug && '' !== $previousSlug) {
                 $this->slugHistoryRepository->recordIfNew($post, $locale, $previousSlug);
             }
+
             $translation->setSlug($newSlug);
         }
     }
@@ -274,7 +276,7 @@ final readonly class PostManager implements PostManagerInterface
             'status' => $post->getStatus()->value,
             'postTypeId' => $post->getPostType()->getId(),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
-            'tagIds' => $post->getTags()->map(fn ($tag): ?int => $tag->getId())->toArray(),
+            'termIds' => $post->getTerms()->map(fn ($term): ?int => $term->getId())->toArray(),
             'publishedAt' => $post->getPublishedAt()?->format(DATE_ATOM),
             'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'translations' => $translations,

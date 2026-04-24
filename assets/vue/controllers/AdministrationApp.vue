@@ -197,7 +197,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                         <span v-if="parameter.group" class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-surface-2 text-muted shrink-0">{{ parameter.group }}</span>
                     </div>
                     <div v-if="parameters.editingKey.value === parameter.key" class="space-y-2">
-                        <input v-model="parameters.editingValue.value" class="w-full bg-surface-2 text-primary rounded-md px-2 py-1.5 border border-line focus:border-indigo-500 focus:outline-none text-sm" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit">
+                        <AppInput v-model="parameters.editingValue.value" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
                         <div class="flex gap-2">
                             <AppButton
                                 variant="primary"
@@ -237,7 +237,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             </td>
                             <td class="px-5 py-3 align-top w-1/4">
                                 <div v-if="parameters.editingKey.value === parameter.key" class="flex items-center gap-2">
-                                    <input v-model="parameters.editingValue.value" class="flex-1 bg-surface-2 text-primary rounded-md px-2 py-1 border border-line focus:border-indigo-500 focus:outline-none text-sm" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit">
+                                    <AppInput v-model="parameters.editingValue.value" class="flex-1" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
                                     <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</AppButton>
                                     <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
                                 </div>

@@ -9,6 +9,8 @@ use App\Entity\Post;
 use App\Entity\PostTranslation;
 use App\Entity\PostType;
 use App\Entity\Setting;
+use App\Entity\Taxonomy;
+use App\Entity\TaxonomyTerm;
 use App\Entity\Theme;
 use App\Entity\User;
 use App\Enum\LocaleEnum;
@@ -51,6 +53,39 @@ class AppFixtures extends Fixture
 
         $manager->persist($pageType);
         $manager->persist($articleType);
+
+        // Built-in taxonomies
+        $taxonomyLabels = [
+            'tag' => ['fr' => 'Étiquette', 'en' => 'Tag', 'es' => 'Etiqueta', 'de' => 'Schlagwort'],
+            'category' => ['fr' => 'Catégorie', 'en' => 'Category', 'es' => 'Categoría', 'de' => 'Kategorie'],
+        ];
+
+        foreach ($taxonomyLabels as $slug => $labels) {
+            $taxonomy = (new Taxonomy())
+                ->setSlug($slug)
+                ->setHierarchical('category' === $slug)
+                ->setIsBuiltIn(true);
+
+            foreach ($labels as $locale => $label) {
+                $taxonomy->translate($locale)->setLabel($label);
+            }
+
+            $pageType->addTaxonomy($taxonomy);
+            $articleType->addTaxonomy($taxonomy);
+
+            $manager->persist($taxonomy);
+
+            if ('tag' === $slug) {
+                foreach (['Nouveauté' => 'nouveaute', 'Tutoriel' => 'tutoriel'] as $name => $termSlug) {
+                    $term = (new TaxonomyTerm())->setTaxonomy($taxonomy);
+                    foreach (array_keys($labels) as $locale) {
+                        $term->translate($locale)->setName($name)->setSlug($termSlug);
+                    }
+
+                    $manager->persist($term);
+                }
+            }
+        }
 
         // Default theme
         $theme = (new Theme())

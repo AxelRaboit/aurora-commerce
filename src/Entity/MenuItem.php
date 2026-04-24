@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\MenuItemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuItemRepository::class)]
@@ -38,7 +39,7 @@ class MenuItem
     private ?MenuItem $parent = null;
 
     #[ORM\OneToMany(targetEntity: MenuItem::class, mappedBy: 'parent')]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => Order::Ascending->value])]
     private Collection $children;
 
     #[ORM\ManyToOne(targetEntity: Menu::class, inversedBy: 'items')]

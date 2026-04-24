@@ -15,7 +15,7 @@ final readonly class PostInput
 {
     /**
      * @param array<string, PostTranslationInput> $translations
-     * @param array<int>                          $tagIds
+     * @param array<int>                          $termIds
      */
     public function __construct(
         #[Assert\NotNull(message: 'posts.errors.post_type_required')]
@@ -25,7 +25,7 @@ final readonly class PostInput
         #[Assert\Choice(callback: [PostStatusEnum::class, 'values'], message: 'posts.errors.status_invalid')]
         public string $status,
         public ?int $featuredMediaId,
-        public array $tagIds,
+        public array $termIds,
         public array $translations,
         public ?string $scheduledAt = null,
         public ?int $version = null,
@@ -42,16 +42,16 @@ final readonly class PostInput
             }
         }
 
-        $tagIds = array_values(array_filter(
-            array_map(intval(...), is_array($data['tagIds'] ?? null) ? $data['tagIds'] : []),
-            fn (int $tagId): bool => $tagId > 0,
+        $termIds = array_values(array_filter(
+            array_map(intval(...), is_array($data['termIds'] ?? null) ? $data['termIds'] : []),
+            fn (int $termId): bool => $termId > 0,
         ));
 
         return new self(
             postTypeId: (int) ($data['postTypeId'] ?? 0),
             status: Str::trimOrNull((string) ($data['status'] ?? '')) ?? PostStatusEnum::Draft->value,
             featuredMediaId: isset($data['featuredMediaId']) && $data['featuredMediaId'] > 0 ? (int) $data['featuredMediaId'] : null,
-            tagIds: $tagIds,
+            termIds: $termIds,
             translations: $translations,
             scheduledAt: Str::trimOrNull((string) ($data['scheduledAt'] ?? '')),
             version: isset($data['version']) ? (int) $data['version'] : null,

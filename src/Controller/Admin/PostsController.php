@@ -14,11 +14,11 @@ use App\Enum\UserRoleEnum;
 use App\Repository\PostRepository;
 use App\Repository\PostRevisionRepository;
 use App\Repository\PostTypeRepository;
-use App\Repository\TagRepository;
+use App\Repository\TaxonomyTermRepository;
 use App\Serializer\PostRevisionSerializer;
 use App\Serializer\PostSerializer;
 use App\Serializer\PostTypeSerializer;
-use App\Serializer\TagSerializer;
+use App\Serializer\TaxonomyTermSerializer;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
@@ -39,11 +39,11 @@ class PostsController extends AbstractController
     public function __construct(
         private readonly PostRepository $postRepository,
         private readonly PostTypeRepository $postTypeRepository,
-        private readonly TagRepository $tagRepository,
+        private readonly TaxonomyTermRepository $termRepository,
         private readonly PostManagerInterface $postManager,
         private readonly PostSerializer $postSerializer,
         private readonly PostTypeSerializer $postTypeSerializer,
-        private readonly TagSerializer $tagSerializer,
+        private readonly TaxonomyTermSerializer $termSerializer,
         private readonly PostRevisionRepository $revisionRepository,
         private readonly PostRevisionSerializer $revisionSerializer,
         private readonly ValidatorInterface $validator,
@@ -69,16 +69,17 @@ class PostsController extends AbstractController
             $this->postTypeRepository->findAll(),
         );
 
-        $allTags = array_map(
-            $this->tagSerializer->serialize(...),
-            $this->tagRepository->findAll(),
+        $locale = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
+        $allTerms = array_map(
+            fn ($term): array => $this->termSerializer->serialize($term, $locale),
+            $this->termRepository->findAll(),
         );
 
         return $this->render('admin/posts/index.html.twig', [
             'posts' => ['items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']],
             'search' => $search,
             'postTypes' => $postTypes,
-            'allTags' => $allTags,
+            'allTerms' => $allTerms,
             'trashed' => $trashed,
             'locales' => $this->getParameter('kernel.enabled_locales'),
         ]);

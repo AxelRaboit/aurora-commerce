@@ -33,7 +33,7 @@ trait BuildsPostPayload
             'status' => $post->getStatus()->value,
             'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
-            'tagIds' => $post->getTags()->map(fn ($tag) => $tag->getId())->toArray(),
+            'termIds' => $post->getTerms()->map(fn ($term) => $term->getId())->toArray(),
             'translations' => $translations,
         ];
 

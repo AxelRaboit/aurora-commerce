@@ -33,7 +33,7 @@ final readonly class PostTranslationInput
         $jsonLd = null;
         if (is_array($rawJsonLd)) {
             $jsonLd = $rawJsonLd;
-        } elseif (is_string($rawJsonLd) && '' !== trim($rawJsonLd)) {
+        } elseif (is_string($rawJsonLd) && '' !== mb_trim($rawJsonLd)) {
             $decoded = json_decode($rawJsonLd, true);
             if (is_array($decoded)) {
                 $jsonLd = $decoded;

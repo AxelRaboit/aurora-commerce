@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Post;
 use App\Entity\PostRevision;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -27,8 +28,8 @@ class PostRevisionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
             ->where('r.post = :post')
             ->setParameter('post', $post)
-            ->orderBy('r.createdAt', 'DESC')
-            ->addOrderBy('r.id', 'DESC')
+            ->orderBy('r.createdAt', Order::Descending->value)
+            ->addOrderBy('r.id', Order::Descending->value)
             ->getQuery()
             ->getResult();
     }
@@ -43,8 +44,8 @@ class PostRevisionRepository extends ServiceEntityRepository
             ->select('r.id')
             ->where('r.post = :post')
             ->setParameter('post', $post)
-            ->orderBy('r.createdAt', 'DESC')
-            ->addOrderBy('r.id', 'DESC')
+            ->orderBy('r.createdAt', Order::Descending->value)
+            ->addOrderBy('r.id', Order::Descending->value)
             ->setFirstResult($limit)
             ->getQuery()
             ->getSingleColumnResult();
