@@ -10,6 +10,7 @@ use App\DTO\MediaInput;
 use App\Entity\Media;
 use App\Entity\MediaFolder;
 use App\Repository\MediaFolderRepository;
+use App\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -24,6 +25,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger,
         private MediaFolderRepository $folderRepository,
+        private ImageVariantGenerator $variantGenerator,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -51,6 +53,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $media->setWidth($width);
         $media->setHeight($height);
         $media->setFolder($folder);
+        $media->setVariants($this->variantGenerator->generate($newFilename, (string) $mimeType));
 
         $this->entityManager->persist($media);
         $this->entityManager->flush();
@@ -77,12 +80,20 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->flush();
     }
 
+    public function move(Media $media, ?MediaFolder $folder): void
+    {
+        $media->setFolder($folder);
+        $this->entityManager->flush();
+    }
+
     public function delete(Media $media): void
     {
         $filePath = sprintf('%s/%s', $this->uploadDir, $media->getPath());
         if (is_file($filePath)) {
             @unlink($filePath);
         }
+
+        $this->variantGenerator->deleteVariants($media->getVariants());
 
         $this->entityManager->remove($media);
         $this->entityManager->flush();

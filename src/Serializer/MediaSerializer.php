@@ -13,6 +13,11 @@ final readonly class MediaSerializer
      */
     public function serialize(Media $media): array
     {
+        $variantUrls = [];
+        foreach (array_keys($media->getVariants()) as $name) {
+            $variantUrls[$name] = $media->getVariantUrl($name);
+        }
+
         return [
             'id' => $media->getId(),
             'url' => $media->getPublicUrl(),
@@ -26,8 +31,11 @@ final readonly class MediaSerializer
             'caption' => $media->getCaption(),
             'focalX' => $media->getFocalX(),
             'focalY' => $media->getFocalY(),
+            'focalPositionCss' => $media->getFocalPositionCss(),
             'folderId' => $media->getFolder()?->getId(),
             'isImage' => $media->isImage(),
+            'variants' => $variantUrls,
+            'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
         ];
     }
 }

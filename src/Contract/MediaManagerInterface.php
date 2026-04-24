@@ -16,6 +16,8 @@ interface MediaManagerInterface
 
     public function update(Media $media, MediaInput $input): void;
 
+    public function move(Media $media, ?MediaFolder $folder): void;
+
     public function delete(Media $media): void;
 
     public function createFolder(MediaFolderInput $input): MediaFolder;

@@ -196,9 +196,13 @@ export default {
         },
         media: {
             folders: "Carpetas",
+            newFolder: "Nueva",
             rootFolder: "Todos los medios",
             upload: "Subir",
             uploaded: "{count} archivo(s) subido(s).",
+            moved: "Movido.",
+            collapse: "Plegar",
+            expand: "Desplegar",
             searchPlaceholder: "Buscar…",
             empty: "Sin medios en esta carpeta.",
             missingAlt: "Alt faltante",

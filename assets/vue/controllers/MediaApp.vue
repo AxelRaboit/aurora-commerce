@@ -2,7 +2,7 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Folder, FolderPlus, Upload, Search, Image as ImageIcon, ChevronRight, Home } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Search, Image as ImageIcon, ChevronRight, ChevronDown, Home } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
@@ -24,6 +24,7 @@ const props = defineProps({
     uploadPath: { type: String, default: "/admin/media/upload" },
     editPath: { type: String, default: "/admin/media/__id__/edit" },
     deletePath: { type: String, default: "/admin/media/__id__/delete" },
+    movePath: { type: String, default: "/admin/media/__id__/move" },
     folderCreatePath: { type: String, default: "/admin/media/folders" },
     folderEditPath: { type: String, default: "/admin/media/folders/__id__/edit" },
     folderDeletePath: { type: String, default: "/admin/media/folders/__id__/delete" },
@@ -64,17 +65,58 @@ function buildFolderTree(list) {
     return roots;
 }
 
-function flattenFolders(nodes, depth = 0) {
+function flattenFolders(nodes, depth = 0, skipDescendantsOf = null) {
     const result = [];
     for (const node of nodes) {
-        result.push({ ...node, depth });
-        if (node.children.length) result.push(...flattenFolders(node.children, depth + 1));
+        result.push({
+            ...node,
+            depth,
+            childCount: node.children.length,
+        });
+        const collapsed = skipDescendantsOf?.has(node.id) ?? false;
+        if (node.children.length && !collapsed) {
+            result.push(...flattenFolders(node.children, depth + 1, skipDescendantsOf));
+        }
     }
     return result;
 }
 
 const folderTree = computed(() => buildFolderTree(folders.value));
-const flatFolders = computed(() => flattenFolders(folderTree.value));
+
+// Folders collapsed by the user (the ones whose children are hidden in the tree).
+const collapsedFolderIds = ref(loadCollapsedFolderIds());
+
+function loadCollapsedFolderIds() {
+    try {
+        const raw = localStorage.getItem("velox-media-collapsed-folders");
+        if (!raw) return new Set();
+        return new Set(JSON.parse(raw));
+    } catch {
+        return new Set();
+    }
+}
+
+function persistCollapsedFolderIds() {
+    try {
+        localStorage.setItem("velox-media-collapsed-folders", JSON.stringify([...collapsedFolderIds.value]));
+    } catch {}
+}
+
+function toggleCollapse(folderId) {
+    if (collapsedFolderIds.value.has(folderId)) {
+        collapsedFolderIds.value.delete(folderId);
+    } else {
+        collapsedFolderIds.value.add(folderId);
+    }
+    // Trigger reactivity: Sets aren't deeply reactive in Vue, so clone
+    collapsedFolderIds.value = new Set(collapsedFolderIds.value);
+    persistCollapsedFolderIds();
+}
+
+const flatFolders = computed(() => flattenFolders(folderTree.value, 0, collapsedFolderIds.value));
+
+// flatFolders for selects (modals) always expanded, no depth-skipping
+const allFlatFolders = computed(() => flattenFolders(folderTree.value));
 
 const currentFolder = computed(() => folders.value.find((f) => f.id === currentFolderId.value) ?? null);
 
@@ -288,118 +330,259 @@ const folderParentOptions = computed(() => {
         }
     };
     addDescendants(folderModal.editing.id);
-    return flatFolders.value.filter((f) => !forbidden.has(f.id));
+    return allFlatFolders.value.filter((f) => !forbidden.has(f.id));
 });
+
+// ── Drag & drop ──────────────────────────────────────────────────────────────
+const dragOverFolderId = ref(null);
+const rootDragOver = ref(false);
+
+function onMediaDragStart(event, mediaItem) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("application/x-velox-media", String(mediaItem.id));
+}
+
+function onFolderDragStart(event, folder) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("application/x-velox-folder", String(folder.id));
+}
+
+function onFolderDragOver(event, folderId) {
+    if (event.dataTransfer.types.includes("application/x-velox-media") || event.dataTransfer.types.includes("application/x-velox-folder")) {
+        event.preventDefault();
+        dragOverFolderId.value = folderId;
+        rootDragOver.value = false;
+    }
+}
+
+function onRootDragOver(event) {
+    if (event.dataTransfer.types.includes("application/x-velox-media") || event.dataTransfer.types.includes("application/x-velox-folder")) {
+        event.preventDefault();
+        rootDragOver.value = true;
+        dragOverFolderId.value = null;
+    }
+}
+
+function onDragLeave() {
+    dragOverFolderId.value = null;
+    rootDragOver.value = false;
+}
+
+async function onFolderDrop(event, targetFolderId) {
+    event.preventDefault();
+    const mediaId = event.dataTransfer.getData("application/x-velox-media");
+    const folderId = event.dataTransfer.getData("application/x-velox-folder");
+    dragOverFolderId.value = null;
+    rootDragOver.value = false;
+
+    if (mediaId) {
+        await moveMedia(Number(mediaId), targetFolderId);
+    } else if (folderId) {
+        await moveFolder(Number(folderId), targetFolderId);
+    }
+}
+
+async function moveMedia(mediaId, folderId) {
+    try {
+        const response = await fetch(props.movePath.replace("__id__", mediaId), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ folderId }),
+        });
+        const data = await response.json();
+        if (!data.success) {
+            toast.error(t("common.error"));
+            return;
+        }
+        // If the target is the current folder, keep the item; else remove it from the grid
+        if (folderId !== currentFolderId.value) {
+            media.value = media.value.filter((m) => m.id !== mediaId);
+        } else {
+            const idx = media.value.findIndex((m) => m.id === mediaId);
+            if (idx !== -1) media.value[idx] = data.media;
+        }
+        toast.success(t("admin.media.moved"));
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
+
+async function moveFolder(folderId, newParentId) {
+    if (folderId === newParentId) return;
+    const folder = folders.value.find((f) => f.id === folderId);
+    if (!folder) return;
+    try {
+        const response = await fetch(props.folderEditPath.replace("__id__", folderId), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: folder.name, parentId: newParentId }),
+        });
+        const data = await response.json();
+        if (!data.success) {
+            toast.error(data.errors?.parentId ?? t("common.error"));
+            return;
+        }
+        const idx = folders.value.findIndex((f) => f.id === folderId);
+        if (idx !== -1) folders.value[idx] = data.folder;
+        toast.success(t("admin.media.moved"));
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
 </script>
 
 <template>
-    <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
-        <!-- Folder sidebar -->
-        <aside class="lg:w-72 shrink-0 space-y-2">
-            <div class="flex items-center justify-between gap-2">
-                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.media.folders") }}</h2>
-                <AppButton variant="primary" size="sm" v-on:click="openCreateFolder">
-                    <FolderPlus class="w-3.5 h-3.5" :stroke-width="2" />
+    <div class="flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
+        <!-- Top toolbar: breadcrumbs + search + upload -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 bg-surface border border-line/60 rounded-xl px-4 py-3">
+            <nav class="flex items-center gap-1 text-sm text-muted min-w-0 flex-1 flex-wrap">
+                <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
+                    <Home class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("admin.media.rootFolder") }}
+                </button>
+                <template v-for="crumb in breadcrumbs" :key="crumb.id">
+                    <ChevronRight class="w-3 h-3 shrink-0" :stroke-width="2" />
+                    <button type="button" class="hover:text-primary transition-colors truncate" v-on:click="navigateTo(crumb.id)">{{ crumb.name }}</button>
+                </template>
+            </nav>
+
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:shrink-0">
+                <div class="relative w-full sm:w-64">
+                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" :stroke-width="2" />
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        :placeholder="t('admin.media.searchPlaceholder')"
+                        class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-2 border border-line/60 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                        v-on:keyup.enter="runSearch"
+                    >
+                </div>
+                <input ref="uploadInput" type="file" accept="image/*" multiple class="hidden" v-on:change="uploadFiles">
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" :loading="uploading" v-on:click="uploadInput?.click()">
+                    <Upload class="w-4 h-4" :stroke-width="2" />
+                    {{ t("admin.media.upload") }}
                 </AppButton>
             </div>
-            <div class="space-y-0.5">
-                <button
-                    type="button"
-                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
-                    :class="!currentFolderId
-                        ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-600/30'
-                        : 'hover:bg-surface-2 text-primary border border-transparent'"
-                    v-on:click="navigateTo(null)"
-                >
-                    <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 text-sm font-medium">{{ t("admin.media.rootFolder") }}</span>
-                </button>
-                <div
-                    v-for="folder in flatFolders"
-                    :key="folder.id"
-                    class="group flex items-center gap-1"
-                    :style="{ paddingLeft: `${folder.depth * 1}rem` }"
-                >
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Folder sidebar -->
+            <aside class="lg:w-72 shrink-0 space-y-2">
+                <div class="flex items-center gap-1.5">
+                    <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.media.folders") }}</h2>
                     <button
                         type="button"
-                        class="flex-1 text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
-                        :class="currentFolderId === folder.id
-                            ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-600/30'
-                            : 'hover:bg-surface-2 text-primary border border-transparent'"
-                        v-on:click="navigateTo(folder.id)"
+                        class="p-0.5 text-muted hover:text-primary hover:bg-surface-2 rounded transition-colors"
+                        :title="t('admin.media.newFolder')"
+                        v-on:click="openCreateFolder"
                     >
-                        <Folder class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="flex-1 text-sm truncate">{{ folder.name }}</span>
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     </button>
-                    <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
-                        <AppIconButton color="indigo" v-on:click="openEditFolder(folder)">
-                            <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton color="rose" v-on:click="deletingFolder = folder">
-                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        </AppIconButton>
-                    </div>
                 </div>
-            </div>
-        </aside>
-
-        <!-- Main -->
-        <main class="flex-1 min-w-0 space-y-4">
-            <!-- Breadcrumbs + toolbar -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <nav class="flex items-center gap-1 text-sm text-muted">
-                    <button type="button" class="hover:text-primary" v-on:click="navigateTo(null)">{{ t("admin.media.rootFolder") }}</button>
-                    <template v-for="crumb in breadcrumbs" :key="crumb.id">
-                        <ChevronRight class="w-3 h-3" :stroke-width="2" />
-                        <button type="button" class="hover:text-primary" v-on:click="navigateTo(crumb.id)">{{ crumb.name }}</button>
-                    </template>
-                </nav>
-
-                <div class="ml-auto flex items-center gap-2 flex-wrap">
-                    <div class="relative">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" :stroke-width="2" />
-                        <input
-                            v-model="searchQuery"
-                            type="text"
-                            :placeholder="t('admin.media.searchPlaceholder')"
-                            class="pl-9 pr-4 py-2 rounded-lg bg-surface-2 border border-line/60 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-                            v-on:keyup.enter="runSearch"
+                <div class="space-y-0.5">
+                    <button
+                        type="button"
+                        class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
+                        :class="[
+                            !currentFolderId
+                                ? 'bg-indigo-600/15 text-indigo-400 border-indigo-600/30'
+                                : 'hover:bg-surface-2 text-primary border-transparent',
+                            rootDragOver ? 'ring-2 ring-indigo-500' : '',
+                        ]"
+                        v-on:click="navigateTo(null)"
+                        v-on:dragover="onRootDragOver"
+                        v-on:dragleave="onDragLeave"
+                        v-on:drop="onFolderDrop($event, null)"
+                    >
+                        <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
+                        <span class="flex-1 text-sm font-medium">{{ t("admin.media.rootFolder") }}</span>
+                    </button>
+                    <div
+                        v-for="folder in flatFolders"
+                        :key="folder.id"
+                        class="group flex items-center gap-1"
+                        :style="{ paddingLeft: `${folder.depth * 1}rem` }"
+                        draggable="true"
+                        v-on:dragstart="onFolderDragStart($event, folder)"
+                    >
+                        <button
+                            v-if="folder.childCount > 0"
+                            type="button"
+                            class="p-1 -ml-1 text-muted hover:text-primary rounded shrink-0"
+                            :title="collapsedFolderIds.has(folder.id) ? t('admin.media.expand') : t('admin.media.collapse')"
+                            v-on:click.stop="toggleCollapse(folder.id)"
                         >
-                    </div>
-                    <input ref="uploadInput" type="file" accept="image/*" multiple class="hidden" v-on:change="uploadFiles">
-                    <AppButton variant="primary" size="md" :loading="uploading" v-on:click="uploadInput?.click()">
-                        <Upload class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.media.upload") }}
-                    </AppButton>
-                </div>
-            </div>
-
-            <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">
-                {{ t("admin.media.altWarning") }}
-            </AppMessage>
-
-            <AppNoData v-if="!media.length" :message="t('admin.media.empty')" />
-            <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                <div
-                    v-for="item in media"
-                    :key="item.id"
-                    class="group relative bg-surface border border-line/60 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-400 transition-colors"
-                    v-on:click="openEditMedia(item)"
-                >
-                    <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
-                        <img v-if="item.isImage" :src="item.url" :alt="item.alt ?? ''" class="w-full h-full object-cover">
-                        <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
-                        <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-rose-500/80 text-white">
-                            {{ t("admin.media.missingAlt") }}
+                            <ChevronRight v-if="collapsedFolderIds.has(folder.id)" class="w-3 h-3" :stroke-width="2" />
+                            <ChevronDown v-else class="w-3 h-3" :stroke-width="2" />
+                        </button>
+                        <span v-else class="w-4 shrink-0" />
+                        <button
+                            type="button"
+                            class="flex-1 text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border min-w-0"
+                            :class="[
+                                currentFolderId === folder.id
+                                    ? 'bg-indigo-600/15 text-indigo-400 border-indigo-600/30'
+                                    : 'hover:bg-surface-2 text-primary border-transparent',
+                                dragOverFolderId === folder.id ? 'ring-2 ring-indigo-500' : '',
+                            ]"
+                            v-on:click="navigateTo(folder.id)"
+                            v-on:dragover="onFolderDragOver($event, folder.id)"
+                            v-on:dragleave="onDragLeave"
+                            v-on:drop="onFolderDrop($event, folder.id)"
+                        >
+                            <Folder class="w-4 h-4 shrink-0" :stroke-width="2" />
+                            <span class="flex-1 text-sm truncate">{{ folder.name }}</span>
+                            <span v-if="folder.childCount > 0" class="text-[11px] text-muted font-mono shrink-0">{{ folder.childCount }}</span>
+                        </button>
+                        <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
+                            <AppIconButton color="indigo" v-on:click="openEditFolder(folder)">
+                                <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton color="rose" v-on:click="deletingFolder = folder">
+                                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
                         </div>
                     </div>
-                    <div class="p-2 space-y-0.5">
-                        <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
-                        <div class="text-[10px] text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
+                </div>
+            </aside>
+
+            <!-- Main -->
+            <main class="flex-1 min-w-0 space-y-4">
+                <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">
+                    {{ t("admin.media.altWarning") }}
+                </AppMessage>
+
+                <AppNoData v-if="!media.length" :message="t('admin.media.empty')" />
+                <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    <div
+                        v-for="item in media"
+                        :key="item.id"
+                        class="group relative bg-surface border border-line/60 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-400 transition-colors"
+                        draggable="true"
+                        v-on:click="openEditMedia(item)"
+                        v-on:dragstart="onMediaDragStart($event, item)"
+                    >
+                        <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
+                            <img
+                                v-if="item.isImage"
+                                :src="item.thumbnailUrl ?? item.url"
+                                :alt="item.alt ?? ''"
+                                class="w-full h-full object-cover"
+                                :style="{ objectPosition: item.focalPositionCss ?? '50% 50%' }"
+                            >
+                            <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
+                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-rose-500/80 text-white">
+                                {{ t("admin.media.missingAlt") }}
+                            </div>
+                        </div>
+                        <div class="p-2 space-y-0.5">
+                            <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
+                            <div class="text-[10px] text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
 
         <!-- Edit media modal -->
         <AppModal :show="!!editingMedia" max-width="3xl" v-on:close="closeEditMedia" scrollable>
@@ -451,7 +634,7 @@ const folderParentOptions = computed(() => {
                         <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.media.folder") }}</label>
                         <AppSelect v-model="editForm.folderId">
                             <option :value="null">{{ t("admin.media.rootFolder") }}</option>
-                            <option v-for="folder in flatFolders" :key="folder.id" :value="folder.id">
+                            <option v-for="folder in allFlatFolders" :key="folder.id" :value="folder.id">
                                 {{ "— ".repeat(folder.depth) }}{{ folder.name }}
                             </option>
                         </AppSelect>

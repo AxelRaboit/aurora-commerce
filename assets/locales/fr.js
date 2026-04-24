@@ -197,9 +197,13 @@ export default {
         },
         media: {
             folders: "Dossiers",
+            newFolder: "Nouveau",
             rootFolder: "Tous les médias",
             upload: "Téléverser",
             uploaded: "{count} fichier(s) téléversé(s).",
+            moved: "Déplacé.",
+            collapse: "Replier",
+            expand: "Déplier",
             searchPlaceholder: "Rechercher…",
             empty: "Aucun média dans ce dossier.",
             missingAlt: "Alt manquant",

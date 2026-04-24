@@ -196,9 +196,13 @@ export default {
         },
         media: {
             folders: "Ordner",
+            newFolder: "Neu",
             rootFolder: "Alle Medien",
             upload: "Hochladen",
             uploaded: "{count} Datei(en) hochgeladen.",
+            moved: "Verschoben.",
+            collapse: "Einklappen",
+            expand: "Ausklappen",
             searchPlaceholder: "Suchen…",
             empty: "Keine Medien in diesem Ordner.",
             missingAlt: "Alt fehlt",

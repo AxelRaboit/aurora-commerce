@@ -98,7 +98,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
     public function edit(Media $media, Request $request): JsonResponse
     {
         $input = MediaInput::fromArray($this->decodeJson($request));
@@ -117,7 +117,19 @@ class MediaController extends AbstractController
         return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
     }
 
-    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/move', name: '_move', methods: [HttpMethodEnum::Post->value])]
+    public function move(Media $media, Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $folderId = isset($data['folderId']) && (int) $data['folderId'] > 0 ? (int) $data['folderId'] : null;
+        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+
+        $this->mediaManager->move($media, $folder);
+
+        return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
+    }
+
+    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(Media $media): JsonResponse
     {
         $this->mediaManager->delete($media);

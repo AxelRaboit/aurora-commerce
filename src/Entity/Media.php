@@ -57,6 +57,10 @@ class Media implements TimestampableInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?MediaFolder $folder = null;
 
+    /** @var array<string, string> variant name (thumbnail/medium/large) → relative path under uploads */
+    #[ORM\Column(type: 'json', options: ['default' => '{}'])]
+    private array $variants = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -204,6 +208,39 @@ class Media implements TimestampableInterface
         $this->folder = $folder;
 
         return $this;
+    }
+
+    /** @return array<string, string> */
+    public function getVariants(): array
+    {
+        return $this->variants;
+    }
+
+    /** @param array<string, string> $variants */
+    public function setVariants(array $variants): static
+    {
+        $this->variants = $variants;
+
+        return $this;
+    }
+
+    public function getVariantUrl(string $size): ?string
+    {
+        $path = $this->variants[$size] ?? null;
+
+        return null === $path ? null : '/uploads/'.$path;
+    }
+
+    /**
+     * Returns a CSS object-position value like "50% 25%" based on the focal
+     * point, or "50% 50%" (centered) when no focal point is set.
+     */
+    public function getFocalPositionCss(): string
+    {
+        $x = null !== $this->focalX ? round($this->focalX * 100, 2) : 50;
+        $y = null !== $this->focalY ? round($this->focalY * 100, 2) : 50;
+
+        return sprintf('%s%% %s%%', $x, $y);
     }
 
     public function isImage(): bool

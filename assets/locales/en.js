@@ -194,9 +194,13 @@ export default {
         },
         media: {
             folders: "Folders",
+            newFolder: "New",
             rootFolder: "All media",
             upload: "Upload",
             uploaded: "{count} file(s) uploaded.",
+            moved: "Moved.",
+            collapse: "Collapse",
+            expand: "Expand",
             searchPlaceholder: "Search…",
             empty: "No media in this folder.",
             missingAlt: "Missing alt",

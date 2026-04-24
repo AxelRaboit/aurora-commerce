@@ -71,6 +71,7 @@ function makeEmptyTranslation() {
         customFields: {},
         ogImageMediaId: null,
         ogImageUrl: null,
+        ogImageFocalPosition: "50% 50%",
         canonicalUrl: "",
         noindex: false,
         focusKeyword: "",
@@ -167,6 +168,7 @@ watch(form, () => { isDirty.value = true; }, { deep: true });
 
 // ── Featured image ───────────────────────────────────────────────────────────
 const featuredMediaUrl = ref(null);
+const featuredMediaFocalPosition = ref("50% 50%");
 const uploadingFeatured = ref(false);
 const featuredInputRef = ref(null);
 const previewFeatured = ref(false);
@@ -184,6 +186,7 @@ async function uploadFeaturedImage(event) {
         if (data.success) {
             form.featuredMediaId = data.file?.id ?? null;
             featuredMediaUrl.value = data.file?.url ?? null;
+            featuredMediaFocalPosition.value = data.media?.focalPositionCss ?? "50% 50%";
         }
     } catch {
         toast.error(t("common.error"));
@@ -302,6 +305,7 @@ async function uploadOgImage(event) {
         if (data.success) {
             tr.ogImageMediaId = data.file?.id ?? null;
             tr.ogImageUrl = data.file?.url ?? null;
+            tr.ogImageFocalPosition = data.media?.focalPositionCss ?? "50% 50%";
         }
     } catch {
         toast.error(t("common.error"));
@@ -342,6 +346,7 @@ onMounted(async () => {
             trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
+            featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
             form.termIds = [...(data.post.termIds ?? [])];
             form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
             relatedPosts.value = [...(data.post.relatedPosts ?? [])];
@@ -472,6 +477,7 @@ async function reloadAfterRestore() {
             trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
+            featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
             form.termIds = [...(data.post.termIds ?? [])];
             form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
             relatedPosts.value = [...(data.post.relatedPosts ?? [])];
@@ -818,6 +824,7 @@ function forceSave() {
                 <img
                     :src="featuredMediaUrl"
                     class="w-full h-full object-cover rounded-lg border border-line cursor-zoom-in"
+                    :style="{ objectPosition: featuredMediaFocalPosition }"
                     :alt="t('admin.posts.featuredImage')"
                     v-on:click="previewFeatured = true"
                 >
@@ -973,6 +980,7 @@ function forceSave() {
                                     v-if="form.translations[activeLocale].ogImageUrl"
                                     :src="form.translations[activeLocale].ogImageUrl"
                                     class="w-full h-full object-cover"
+                                    :style="{ objectPosition: form.translations[activeLocale].ogImageFocalPosition ?? '50% 50%' }"
                                     alt=""
                                 >
                                 <ImagePlus v-else class="w-5 h-5 text-muted" :stroke-width="2" />

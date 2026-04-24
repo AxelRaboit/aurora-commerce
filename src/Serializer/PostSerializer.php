@@ -48,6 +48,7 @@ final readonly class PostSerializer
                 'customFields' => $translation->getCustomFields(),
                 'ogImageMediaId' => $translation->getOgImage()?->getId(),
                 'ogImageUrl' => $translation->getOgImage()?->getPublicUrl(),
+                'ogImageFocalPosition' => $translation->getOgImage()?->getFocalPositionCss(),
                 'canonicalUrl' => $translation->getCanonicalUrl(),
                 'noindex' => $translation->isNoindex(),
                 'focusKeyword' => $translation->getFocusKeyword(),
@@ -69,6 +70,7 @@ final readonly class PostSerializer
             ...$this->serialize($post),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'featuredMediaUrl' => $post->getFeaturedMedia()?->getPublicUrl(),
+            'featuredMediaFocalPosition' => $post->getFeaturedMedia()?->getFocalPositionCss(),
             'translations' => $translations,
             'relatedPosts' => $relatedPosts,
         ];
