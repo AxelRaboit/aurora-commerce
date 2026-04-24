@@ -104,6 +104,7 @@ nav:
   postTypes: "Inhaltstypen"
   media: "Medien"
   menus: "Menüs"
+  taxonomies: "Taxonomien"
   tags: "Tags"
   administration: "Administration"
   profile: "Mein Profil"
