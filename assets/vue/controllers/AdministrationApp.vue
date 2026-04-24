@@ -257,12 +257,12 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
         </div>
 
         <div v-if="props.tab === 'users'" class="space-y-4">
-            <div class="flex flex-col sm:flex-row gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2">
                 <input
                     v-model="users.searchInput.value"
                     type="text"
                     :placeholder="t('admin.users.searchPlaceholder')"
-                    class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="w-full px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     v-on:keyup.enter="users.performSearch"
                 >
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="users.performSearch">{{ t('admin.users.search') }}</AppButton>

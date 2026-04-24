@@ -322,37 +322,44 @@ function forceSave() {
         </div>
 
         <!-- Top bar -->
-        <div class="flex items-center gap-3 flex-wrap">
-            <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
-                <ArrowLeft class="w-5 h-5" :stroke-width="2" />
-            </AppButton>
-            <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
-                {{ postId ? t("admin.posts.edit") : t("admin.posts.add") }}
-            </h1>
-            <AppSelect v-model="form.status">
-                <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
-                <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
-                <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
-            </AppSelect>
-            <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="showTemplates = true">
-                <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
-                <span class="hidden sm:inline">Templates</span>
-            </AppButton>
-            <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="showPreview = true">
-                <Eye class="w-4 h-4" :stroke-width="2" />
-                <span class="hidden sm:inline">{{ t("admin.posts.preview") }}</span>
-            </AppButton>
-            <AppButton
-                variant="primary"
-                size="md"
-                class="relative shrink-0"
-                :loading="loading"
-                v-on:click="handleSave"
-            >
-                <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
-                <span class="hidden sm:inline">{{ t("common.save") }}</span>
-                <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
-            </AppButton>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <!-- Back + title (always inline) -->
+            <div class="flex items-center gap-3 sm:flex-1 min-w-0">
+                <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
+                    <ArrowLeft class="w-5 h-5" :stroke-width="2" />
+                </AppButton>
+                <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
+                    {{ postId ? t("admin.posts.edit") : t("admin.posts.add") }}
+                </h1>
+            </div>
+
+            <!-- Actions: stacked on mobile, inline on desktop -->
+            <div class="grid grid-cols-1 sm:flex sm:items-center gap-2">
+                <AppSelect v-model="form.status" class="w-full sm:w-auto">
+                    <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
+                    <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
+                    <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
+                </AppSelect>
+                <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showTemplates = true">
+                    <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
+                    <span>Templates</span>
+                </AppButton>
+                <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showPreview = true">
+                    <Eye class="w-4 h-4" :stroke-width="2" />
+                    <span>{{ t("admin.posts.preview") }}</span>
+                </AppButton>
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    class="relative w-full sm:w-auto"
+                    :loading="loading"
+                    v-on:click="handleSave"
+                >
+                    <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
+                    <span>{{ t("common.save") }}</span>
+                    <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
+                </AppButton>
+            </div>
         </div>
 
         <!-- Global save errors -->

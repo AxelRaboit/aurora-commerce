@@ -33,8 +33,8 @@ const deleteTag = useTagDelete(props.deletePath, (id) => removeTag(id), "admin.t
 <template>
     <div class="space-y-4">
         <!-- Toolbar -->
-        <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2">
+            <div class="relative">
                 <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" :stroke-width="2" />
                 <input
                     v-model="searchInput"
