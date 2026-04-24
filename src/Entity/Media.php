@@ -47,6 +47,16 @@ class Media implements TimestampableInterface
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $caption = null;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $focalX = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $focalY = null;
+
+    #[ORM\ManyToOne(targetEntity: MediaFolder::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?MediaFolder $folder = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -156,6 +166,42 @@ class Media implements TimestampableInterface
     public function setCaption(?string $caption): static
     {
         $this->caption = $caption;
+
+        return $this;
+    }
+
+    public function getFocalX(): ?float
+    {
+        return $this->focalX;
+    }
+
+    public function setFocalX(?float $focalX): static
+    {
+        $this->focalX = $focalX;
+
+        return $this;
+    }
+
+    public function getFocalY(): ?float
+    {
+        return $this->focalY;
+    }
+
+    public function setFocalY(?float $focalY): static
+    {
+        $this->focalY = $focalY;
+
+        return $this;
+    }
+
+    public function getFolder(): ?MediaFolder
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(?MediaFolder $folder): static
+    {
+        $this->folder = $folder;
 
         return $this;
     }
