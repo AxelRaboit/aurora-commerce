@@ -274,6 +274,28 @@ export default {
                     label: "Page vierge",
                     description: "Repartir de zéro, sans aucun bloc",
                 },
+                changelog: {
+                    label: "Changelog",
+                    description:
+                        "Notes de version : nouveautés, améliorations, corrections",
+                },
+                faq: {
+                    label: "FAQ",
+                    description: "Questions/réponses structurées avec callout",
+                },
+                portfolio: {
+                    label: "Portfolio / Projet",
+                    description:
+                        "Présentation projet : image, contexte, résultat",
+                },
+                comparison: {
+                    label: "Comparatif",
+                    description: "Deux options face à face avec verdict final",
+                },
+                recap: {
+                    label: "Compte-rendu",
+                    description: "Résumé, décisions et prochaines étapes",
+                },
                 confirmReplace: "Remplacer le contenu actuel ?",
                 apply: "Appliquer",
                 emptyContent: "Contenu vide",

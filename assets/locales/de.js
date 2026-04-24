@@ -272,6 +272,29 @@ export default {
                     label: "Leere Seite",
                     description: "Von vorne anfangen, ohne Blöcke",
                 },
+                changelog: {
+                    label: "Changelog",
+                    description:
+                        "Versionshinweise: Neuheiten, Verbesserungen, Korrekturen",
+                },
+                faq: {
+                    label: "FAQ",
+                    description:
+                        "Strukturierte Fragen & Antworten mit Callout-Blöcken",
+                },
+                portfolio: {
+                    label: "Portfolio / Projekt",
+                    description: "Projektpräsentation: Bild, Kontext, Ergebnis",
+                },
+                comparison: {
+                    label: "Vergleich",
+                    description: "Zwei Optionen gegenübergestellt mit Fazit",
+                },
+                recap: {
+                    label: "Besprechungsprotokoll",
+                    description:
+                        "Zusammenfassung, Entscheidungen und nächste Schritte",
+                },
                 confirmReplace: "Aktuellen Inhalt ersetzen?",
                 apply: "Anwenden",
                 emptyContent: "Leerer Inhalt",

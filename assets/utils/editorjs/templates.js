@@ -321,4 +321,275 @@ export const TEMPLATES = [
             },
         ],
     },
+    {
+        id: "changelog",
+        category: "technique",
+        icon: "📝",
+        blocks: [
+            {
+                type: "header",
+                data: { text: "Changelog — v1.0.0", level: 2 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Date de sortie : [date]. Résumé des changements apportés dans cette version.",
+                },
+            },
+            {
+                type: "callout",
+                data: {
+                    type: "success",
+                    title: "Nouveautés",
+                    message:
+                        "— Fonctionnalité A ajoutée\n— Fonctionnalité B ajoutée",
+                },
+            },
+            {
+                type: "callout",
+                data: {
+                    type: "tip",
+                    title: "Améliorations",
+                    message:
+                        "— Performance de X améliorée\n— Interface de Y simplifiée",
+                },
+            },
+            {
+                type: "callout",
+                data: {
+                    type: "warning",
+                    title: "Corrections",
+                    message:
+                        "— Correction du bug #123\n— Correction du bug #456",
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "header",
+                data: { text: "Changelog — v0.9.0", level: 3 },
+            },
+            {
+                type: "list",
+                data: {
+                    style: "unordered",
+                    items: [
+                        "Première version publique",
+                        "Mise en place de l'architecture de base",
+                        "Intégration des outils principaux",
+                    ],
+                },
+            },
+        ],
+    },
+    {
+        id: "faq",
+        category: "technique",
+        icon: "❓",
+        blocks: [
+            {
+                type: "header",
+                data: { text: "Questions fréquentes", level: 2 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Retrouvez ci-dessous les réponses aux questions les plus courantes.",
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "header",
+                data: { text: "Comment commencer ?", level: 3 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Il suffit de créer un compte et de suivre les étapes d'intégration. Le processus prend moins de 5 minutes.",
+                },
+            },
+            {
+                type: "header",
+                data: { text: "Quels sont les prérequis ?", level: 3 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Aucun prérequis technique particulier. Une connexion internet et un navigateur récent suffisent.",
+                },
+            },
+            {
+                type: "header",
+                data: { text: "Comment contacter le support ?", level: 3 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Notre équipe est disponible par email et par chat en direct du lundi au vendredi, de 9h à 18h.",
+                },
+            },
+            {
+                type: "callout",
+                data: {
+                    type: "info",
+                    title: "Vous ne trouvez pas votre réponse ?",
+                    message:
+                        "Consultez notre documentation complète ou contactez notre équipe support.",
+                },
+            },
+        ],
+    },
+    {
+        id: "portfolio",
+        category: "marketing",
+        icon: "🎨",
+        blocks: [
+            {
+                type: "header",
+                data: { text: "Nom du projet", level: 2 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Une courte accroche qui résume l'essence du projet en une ou deux phrases percutantes.",
+                },
+            },
+            {
+                type: "image",
+                data: {
+                    file: {
+                        url: "https://picsum.photos/seed/portfolio/1200/600",
+                    },
+                    caption: "Aperçu du projet",
+                    withBorder: false,
+                    stretched: true,
+                    withBackground: false,
+                },
+            },
+            {
+                type: "header",
+                data: { text: "À propos du projet", level: 3 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Décrivez ici le contexte, les objectifs et les défis relevés. Expliquez votre démarche et les choix réalisés tout au long du projet.",
+                },
+            },
+            {
+                type: "twoColumn",
+                data: {
+                    left: "🎯 Objectifs\n— Définir la cible\n— Répondre au besoin\n— Livrer dans les délais",
+                    right: "🛠️ Technologies\n— Outil A\n— Outil B\n— Outil C",
+                },
+            },
+            {
+                type: "callout",
+                data: {
+                    type: "success",
+                    title: "Résultat",
+                    message:
+                        "Décrivez ici l'impact concret du projet : chiffres clés, retours clients, bénéfices mesurables.",
+                },
+            },
+        ],
+    },
+    {
+        id: "comparison",
+        category: "layout",
+        icon: "⚖️",
+        blocks: [
+            {
+                type: "header",
+                data: { text: "Comparatif : Option A vs Option B", level: 2 },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Voici une comparaison détaillée pour vous aider à choisir la solution la mieux adaptée à votre situation.",
+                },
+            },
+            {
+                type: "twoColumn",
+                data: {
+                    left: "✅ Option A\n— Avantage 1\n— Avantage 2\n— Avantage 3",
+                    right: "✅ Option B\n— Avantage 1\n— Avantage 2\n— Avantage 3",
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "twoColumn",
+                data: {
+                    left: "❌ Inconvénients A\n— Limite 1\n— Limite 2",
+                    right: "❌ Inconvénients B\n— Limite 1\n— Limite 2",
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "callout",
+                data: {
+                    type: "tip",
+                    title: "Notre recommandation",
+                    message:
+                        "Résumez ici votre verdict final et les critères décisifs pour orienter le choix du lecteur.",
+                },
+            },
+        ],
+    },
+    {
+        id: "recap",
+        category: "article",
+        icon: "📋",
+        blocks: [
+            {
+                type: "header",
+                data: {
+                    text: "Compte-rendu — [Événement / Réunion]",
+                    level: 2,
+                },
+            },
+            {
+                type: "paragraph",
+                data: {
+                    text: "Résumé de la session du [date]. Participants : [liste]. Durée : [durée].",
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "header",
+                data: { text: "Points abordés", level: 3 },
+            },
+            {
+                type: "list",
+                data: {
+                    style: "unordered",
+                    items: [
+                        "Point 1 — description courte",
+                        "Point 2 — description courte",
+                        "Point 3 — description courte",
+                    ],
+                },
+            },
+            {
+                type: "header",
+                data: { text: "Décisions prises", level: 3 },
+            },
+            {
+                type: "list",
+                data: {
+                    style: "ordered",
+                    items: ["Décision 1", "Décision 2", "Décision 3"],
+                },
+            },
+            { type: "delimiter", data: {} },
+            {
+                type: "callout",
+                data: {
+                    type: "info",
+                    title: "Prochaines étapes",
+                    message:
+                        "Listez ici les actions à suivre, les responsables et les échéances associées.",
+                },
+            },
+        ],
+    },
 ];

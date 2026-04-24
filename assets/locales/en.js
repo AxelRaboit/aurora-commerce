@@ -268,6 +268,28 @@ export default {
                     label: "Blank page",
                     description: "Start from scratch with no blocks",
                 },
+                changelog: {
+                    label: "Changelog",
+                    description:
+                        "Release notes: new features, improvements, fixes",
+                },
+                faq: {
+                    label: "FAQ",
+                    description: "Structured Q&A with callout blocks",
+                },
+                portfolio: {
+                    label: "Portfolio / Project",
+                    description: "Project showcase: image, context, result",
+                },
+                comparison: {
+                    label: "Comparison",
+                    description:
+                        "Two options side by side with a final verdict",
+                },
+                recap: {
+                    label: "Meeting recap",
+                    description: "Summary, decisions and next steps",
+                },
                 confirmReplace: "Replace the current content?",
                 apply: "Apply",
                 emptyContent: "Empty content",

@@ -273,6 +273,30 @@ export default {
                     label: "Página en blanco",
                     description: "Empezar desde cero, sin bloques",
                 },
+                changelog: {
+                    label: "Changelog",
+                    description:
+                        "Notas de versión: novedades, mejoras, correcciones",
+                },
+                faq: {
+                    label: "FAQ",
+                    description:
+                        "Preguntas y respuestas estructuradas con callout",
+                },
+                portfolio: {
+                    label: "Portfolio / Proyecto",
+                    description:
+                        "Presentación de proyecto: imagen, contexto, resultado",
+                },
+                comparison: {
+                    label: "Comparativa",
+                    description:
+                        "Dos opciones frente a frente con veredicto final",
+                },
+                recap: {
+                    label: "Acta de reunión",
+                    description: "Resumen, decisiones y próximos pasos",
+                },
                 confirmReplace: "¿Reemplazar el contenido actual?",
                 apply: "Aplicar",
                 emptyContent: "Contenido vacío",
