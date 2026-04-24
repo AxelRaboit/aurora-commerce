@@ -8,6 +8,7 @@ use App\Contract\PostManagerInterface;
 use App\DTO\PostInput;
 use App\DTO\PostTranslationInput;
 use App\Entity\Post;
+use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TagRepository;
@@ -61,7 +62,7 @@ final readonly class PostManager implements PostManagerInterface
         }
 
         $post->setPostType($postType);
-        $post->setStatus($input->status);
+        $post->setStatus(PostStatusEnum::from($input->status));
 
         $featuredMedia = null !== $input->featuredMediaId
             ? $this->mediaRepository->find($input->featuredMediaId)

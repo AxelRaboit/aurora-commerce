@@ -127,6 +127,9 @@ export default {
             postStatus: {
                 published: "Veröffentlicht",
                 draft: "Entwurf",
+                pending_review: "Zur Überprüfung",
+                scheduled: "Geplant",
+                archived: "Archiviert",
                 trash: "Papierkorb",
             },
         },
@@ -372,7 +375,10 @@ export default {
             previewEmpty: "Kein Inhalt zur Vorschau.",
             statusOptions: {
                 draft: "Entwurf",
+                pending_review: "Zur Überprüfung",
+                scheduled: "Geplant",
                 published: "Veröffentlicht",
+                archived: "Archiviert",
                 trash: "Papierkorb",
             },
             conflict:

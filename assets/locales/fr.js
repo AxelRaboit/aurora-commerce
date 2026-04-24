@@ -128,6 +128,9 @@ export default {
             postStatus: {
                 published: "Publié",
                 draft: "Brouillon",
+                pending_review: "En attente de relecture",
+                scheduled: "Planifié",
+                archived: "Archivé",
                 trash: "Corbeille",
             },
         },
@@ -373,7 +376,10 @@ export default {
             previewEmpty: "Aucun contenu à prévisualiser.",
             statusOptions: {
                 draft: "Brouillon",
+                pending_review: "En attente de relecture",
+                scheduled: "Planifié",
                 published: "Publié",
+                archived: "Archivé",
                 trash: "Corbeille",
             },
             conflict:

@@ -125,6 +125,9 @@ export default {
             postStatus: {
                 published: "Published",
                 draft: "Draft",
+                pending_review: "Pending review",
+                scheduled: "Scheduled",
+                archived: "Archived",
                 trash: "Trash",
             },
         },
@@ -366,7 +369,10 @@ export default {
             previewEmpty: "No content to preview.",
             statusOptions: {
                 draft: "Draft",
+                pending_review: "Pending review",
+                scheduled: "Scheduled",
                 published: "Published",
+                archived: "Archived",
                 trash: "Trash",
             },
             conflict:

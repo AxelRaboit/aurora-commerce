@@ -337,7 +337,10 @@ function forceSave() {
             <div class="grid grid-cols-1 sm:flex sm:items-center gap-2">
                 <AppSelect v-model="form.status" class="w-full sm:w-auto">
                     <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
+                    <option value="pending_review">{{ t("admin.posts.statusOptions.pending_review") }}</option>
+                    <option value="scheduled">{{ t("admin.posts.statusOptions.scheduled") }}</option>
                     <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
+                    <option value="archived">{{ t("admin.posts.statusOptions.archived") }}</option>
                     <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
                 </AppSelect>
                 <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showTemplates = true">

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Media;
-use App\Entity\Post;
+use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\MenuRepository;
 use App\Repository\PostRepository;
@@ -51,9 +51,12 @@ final readonly class AdminStatsService
     private function getPostStats(): array
     {
         $total = $this->postRepository->count([]);
-        $published = $this->postRepository->count(['status' => Post::STATUS_PUBLISHED]);
-        $draft = $this->postRepository->count(['status' => Post::STATUS_DRAFT]);
-        $trash = $this->postRepository->count(['status' => Post::STATUS_TRASH]);
+        $published = $this->postRepository->count(['status' => PostStatusEnum::Published]);
+        $draft = $this->postRepository->count(['status' => PostStatusEnum::Draft]);
+        $pendingReview = $this->postRepository->count(['status' => PostStatusEnum::PendingReview]);
+        $scheduled = $this->postRepository->count(['status' => PostStatusEnum::Scheduled]);
+        $archived = $this->postRepository->count(['status' => PostStatusEnum::Archived]);
+        $trash = $this->postRepository->count(['status' => PostStatusEnum::Trash]);
 
         $byType = [];
         foreach ($this->postTypeRepository->findAll() as $type) {
@@ -68,6 +71,9 @@ final readonly class AdminStatsService
             'total' => $total,
             'published' => $published,
             'draft' => $draft,
+            'pendingReview' => $pendingReview,
+            'scheduled' => $scheduled,
+            'archived' => $archived,
             'trash' => $trash,
             'byType' => $byType,
         ];
@@ -142,7 +148,7 @@ final readonly class AdminStatsService
             $result[] = [
                 'id' => $post->getId(),
                 'title' => $firstTranslation ? $firstTranslation->getTitle() : '(sans titre)',
-                'status' => $post->getStatus(),
+                'status' => $post->getStatus()->value,
                 'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
                 'postType' => $post->getPostType()?->getLabel() ?? '',
             ];

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use App\Entity\Post;
+use App\Enum\PostStatusEnum;
 use App\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -19,7 +19,7 @@ final readonly class PostInput
         #[Assert\Positive(message: 'posts.errors.post_type_required')]
         public int $postTypeId,
         #[Assert\NotBlank(message: 'posts.errors.status_required')]
-        #[Assert\Choice(choices: [Post::STATUS_DRAFT, Post::STATUS_PUBLISHED, Post::STATUS_TRASH], message: 'posts.errors.status_invalid')]
+        #[Assert\Choice(callback: [PostStatusEnum::class, 'values'], message: 'posts.errors.status_invalid')]
         public string $status,
         public ?int $featuredMediaId,
         public array $tagIds,
@@ -45,7 +45,7 @@ final readonly class PostInput
 
         return new self(
             postTypeId: (int) ($data['postTypeId'] ?? 0),
-            status: Str::trimOrNull((string) ($data['status'] ?? '')) ?? Post::STATUS_DRAFT,
+            status: Str::trimOrNull((string) ($data['status'] ?? '')) ?? PostStatusEnum::Draft->value,
             featuredMediaId: isset($data['featuredMediaId']) && $data['featuredMediaId'] > 0 ? (int) $data['featuredMediaId'] : null,
             tagIds: $tagIds,
             translations: $translations,

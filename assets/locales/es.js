@@ -127,6 +127,9 @@ export default {
             postStatus: {
                 published: "Publicado",
                 draft: "Borrador",
+                pending_review: "Pendiente de revisión",
+                scheduled: "Programado",
+                archived: "Archivado",
                 trash: "Papelera",
             },
         },
@@ -374,7 +377,10 @@ export default {
             previewEmpty: "No hay contenido para previsualizar.",
             statusOptions: {
                 draft: "Borrador",
+                pending_review: "Pendiente de revisión",
+                scheduled: "Programado",
                 published: "Publicado",
+                archived: "Archivado",
                 trash: "Papelera",
             },
             conflict:

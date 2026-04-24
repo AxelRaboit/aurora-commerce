@@ -12,6 +12,7 @@ use App\Entity\Setting;
 use App\Entity\Theme;
 use App\Entity\User;
 use App\Enum\LocaleEnum;
+use App\Enum\PostStatusEnum;
 use App\Enum\UserRoleEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -81,7 +82,7 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
         // Sample page
-        $homePage = (new Post())->setPostType($pageType)->setStatus(Post::STATUS_PUBLISHED);
+        $homePage = (new Post())->setPostType($pageType)->setStatus(PostStatusEnum::Published);
         $homePageFrench = (new PostTranslation())
             ->setPost($homePage)
             ->setLocale(LocaleEnum::French->value)

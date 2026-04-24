@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use App\Tests\Integration\Concern\BuildsPostPayload;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class PostsControllerTest extends IntegrationTestCase
@@ -111,5 +112,49 @@ final class PostsControllerTest extends IntegrationTestCase
 
         self::assertSame(200, $statusCode);
         self::assertTrue($body['success'] ?? false);
+    }
+
+    /**
+     * @return iterable<string, array{0: string}>
+     */
+    public static function newEditorialStatusesProvider(): iterable
+    {
+        yield 'pending_review' => ['pending_review'];
+        yield 'scheduled' => ['scheduled'];
+        yield 'archived' => ['archived'];
+    }
+
+    #[DataProvider('newEditorialStatusesProvider')]
+    public function testEditAcceptsNewEditorialStatus(string $status): void
+    {
+        $post = $this->firstPost();
+
+        $payload = $this->postPayload($post, $post->getVersion());
+        $payload['status'] = $status;
+
+        [$statusCode, $body] = $this->editPost($post->getId(), $payload);
+
+        self::assertSame(200, $statusCode, json_encode($body));
+        self::assertTrue($body['success'] ?? false);
+        self::assertSame($status, $body['post']['status']);
+
+        static::getContainer()->get(EntityManagerInterface::class)->clear();
+        $refreshed = static::getContainer()->get(PostRepository::class)->find($post->getId());
+        self::assertSame($status, $refreshed->getStatus()->value);
+    }
+
+    public function testEditRejectsUnknownStatus(): void
+    {
+        $post = $this->firstPost();
+
+        $payload = $this->postPayload($post, $post->getVersion());
+        $payload['status'] = 'bogus';
+
+        [$statusCode, $body] = $this->editPost($post->getId(), $payload);
+
+        self::assertSame(200, $statusCode);
+        self::assertFalse($body['success'] ?? true);
+        self::assertArrayHasKey('errors', $body);
+        self::assertArrayHasKey('status', $body['errors']);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\PostStatusEnum;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,12 +18,6 @@ class Post implements TimestampableInterface
 {
     use TimestampableTrait;
 
-    public const STATUS_DRAFT = 'draft';
-
-    public const STATUS_PUBLISHED = 'published';
-
-    public const STATUS_TRASH = 'trash';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -32,8 +27,8 @@ class Post implements TimestampableInterface
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private int $version = 1;
 
-    #[ORM\Column(length: 50)]
-    private string $status = self::STATUS_DRAFT;
+    #[ORM\Column(length: 50, enumType: PostStatusEnum::class)]
+    private PostStatusEnum $status = PostStatusEnum::Draft;
 
     #[ORM\ManyToOne(targetEntity: PostType::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
@@ -68,12 +63,12 @@ class Post implements TimestampableInterface
         return $this->version;
     }
 
-    public function getStatus(): string
+    public function getStatus(): PostStatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(PostStatusEnum $status): static
     {
         $this->status = $status;
 
@@ -132,7 +127,7 @@ class Post implements TimestampableInterface
 
     public function isPublished(): bool
     {
-        return self::STATUS_PUBLISHED === $this->status;
+        return PostStatusEnum::Published === $this->status;
     }
 
     /**

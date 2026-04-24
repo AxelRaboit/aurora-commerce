@@ -1,6 +1,9 @@
 const POST_STATUS_CLASSES = {
     published: "bg-emerald-500/15 text-emerald-400",
     draft: "bg-amber-500/15 text-amber-400",
+    pending_review: "bg-sky-500/15 text-sky-400",
+    scheduled: "bg-violet-500/15 text-violet-400",
+    archived: "bg-slate-500/15 text-slate-400",
     trash: "bg-rose-500/15 text-rose-400",
 };
 
