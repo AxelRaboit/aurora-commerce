@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge } from "lucide-vue-next";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
@@ -12,6 +12,7 @@ import EditorBlock from "@/components/EditorBlock.vue";
 import PreviewOverlay from "@/components/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
+import RevisionsOverlay from "./RevisionsOverlay.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
@@ -198,7 +199,42 @@ function toggleTag(tagId) {
 
 const showPreview   = ref(false);
 const showTemplates = ref(false);
+const showRevisions = ref(false);
 const editorKey     = ref(0);
+
+async function reloadAfterRestore() {
+    showRevisions.value = false;
+    try {
+        const response = await fetch(props.showPath.replace("__id__", props.postId));
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (data.success) {
+            form.postTypeId = String(data.post.postType.id);
+            form.status = data.post.status;
+            form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
+            publishedAt.value = data.post.publishedAt ?? null;
+            form.featuredMediaId = data.post.featuredMediaId ?? null;
+            featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
+            form.tagIds = [...(data.post.tagIds ?? [])];
+            version.value = data.post.version ?? null;
+            for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
+                if (form.translations[locale]) {
+                    Object.assign(form.translations[locale], translation);
+                }
+            }
+            snapshotBase(form.translations);
+            if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
+                await nextTick();
+                await renderEditorBlocks(form.translations[activeLocale.value].blocks);
+            } else {
+                editorKey.value++;
+            }
+            nextTick(() => { isDirty.value = false; });
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
 
 // ── Template panel state ─────────────────────────────────────────────────────
 const activeCategory     = ref("all");
@@ -359,6 +395,10 @@ function forceSave() {
                 <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showTemplates = true">
                     <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
                     <span>Templates</span>
+                </AppButton>
+                <AppButton v-if="postId" variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showRevisions = true">
+                    <History class="w-4 h-4" :stroke-width="2" />
+                    <span>{{ t("admin.posts.revisions.title") }}</span>
                 </AppButton>
                 <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showPreview = true">
                     <Eye class="w-4 h-4" :stroke-width="2" />
@@ -758,5 +798,16 @@ function forceSave() {
         :locales="locales"
         v-on:close="closeMerge"
         v-on:apply="applyMergeResolution"
+    />
+
+    <!-- Revisions overlay -->
+    <RevisionsOverlay
+        v-if="postId"
+        :post-id="postId"
+        :show="showRevisions"
+        :locales="locales"
+        :current-translations="form.translations"
+        v-on:close="showRevisions = false"
+        v-on:restored="reloadAfterRestore"
     />
 </template>

@@ -8,11 +8,14 @@ use App\Contract\PostManagerInterface;
 use App\Controller\Trait\JsonValidationTrait;
 use App\DTO\PostInput;
 use App\Entity\Post;
+use App\Entity\PostRevision;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\PostRepository;
+use App\Repository\PostRevisionRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TagRepository;
+use App\Serializer\PostRevisionSerializer;
 use App\Serializer\PostSerializer;
 use App\Serializer\PostTypeSerializer;
 use App\Serializer\TagSerializer;
@@ -41,6 +44,8 @@ class PostsController extends AbstractController
         private readonly PostSerializer $postSerializer,
         private readonly PostTypeSerializer $postTypeSerializer,
         private readonly TagSerializer $tagSerializer,
+        private readonly PostRevisionRepository $revisionRepository,
+        private readonly PostRevisionSerializer $revisionSerializer,
         private readonly ValidatorInterface $validator,
         private readonly EntityManagerInterface $entityManager,
     ) {}
@@ -127,5 +132,40 @@ class PostsController extends AbstractController
         $this->postManager->delete($post);
 
         return $this->json(['success' => true]);
+    }
+
+    #[Route('/{id}/revisions', name: '_revisions', methods: [HttpMethodEnum::Get->value])]
+    public function listRevisions(Post $post): JsonResponse
+    {
+        $items = array_map(
+            $this->revisionSerializer->serialize(...),
+            $this->revisionRepository->findByPost($post),
+        );
+
+        return $this->json(['success' => true, 'revisions' => $items]);
+    }
+
+    #[Route('/{id}/revisions/{revisionId}', name: '_revision_show', methods: [HttpMethodEnum::Get->value])]
+    public function showRevision(Post $post, int $revisionId): JsonResponse
+    {
+        $revision = $this->revisionRepository->find($revisionId);
+        if (!$revision instanceof PostRevision || $revision->getPost() !== $post) {
+            return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json(['success' => true, 'revision' => $this->revisionSerializer->serializeFull($revision)]);
+    }
+
+    #[Route('/{id}/revisions/{revisionId}/restore', name: '_revision_restore', methods: [HttpMethodEnum::Post->value])]
+    public function restoreRevision(Post $post, int $revisionId): JsonResponse
+    {
+        $revision = $this->revisionRepository->find($revisionId);
+        if (!$revision instanceof PostRevision || $revision->getPost() !== $post) {
+            return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        $this->postManager->restoreRevision($post, $revision);
+
+        return $this->json(['success' => true, 'post' => $this->postSerializer->serialize($post)]);
     }
 }

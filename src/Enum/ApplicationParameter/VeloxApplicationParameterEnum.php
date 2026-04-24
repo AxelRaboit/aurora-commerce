@@ -19,6 +19,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
     case CommentsEnabled = 'comments_enabled';
     case MaintenanceMode = 'maintenance_mode';
     case RegistrationEnabled = 'registration_enabled';
+    case PostRevisionsLimit = 'post_revisions_limit';
 
     public function getKey(): string
     {
@@ -41,6 +42,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::CommentsEnabled => 'Commentaires activés',
             self::MaintenanceMode => 'Mode maintenance',
             self::RegistrationEnabled => 'Inscriptions ouvertes',
+            self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
         };
     }
 
@@ -60,6 +62,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::CommentsEnabled => 'Commentaires activés (0 = désactivés, 1 = activés)',
             self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = site fermé au public)',
             self::RegistrationEnabled => 'Autoriser les nouvelles inscriptions (0 = désactivé, 1 = activé)',
+            self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
         };
     }
 
@@ -79,13 +82,14 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::CommentsEnabled => '0',
             self::MaintenanceMode => '0',
             self::RegistrationEnabled => '0',
+            self::PostRevisionsLimit => '20',
         };
     }
 
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb => 'int',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit => 'int',
             self::CommentsEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
             default => 'string',
         };
@@ -96,7 +100,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
-            self::PostsPerPage, self::CommentsEnabled => 'reading',
+            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::RegistrationEnabled => 'system',
         };

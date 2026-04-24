@@ -8,13 +8,19 @@ use App\Contract\PostManagerInterface;
 use App\DTO\PostInput;
 use App\DTO\PostTranslationInput;
 use App\Entity\Post;
+use App\Entity\PostRevision;
+use App\Entity\User;
+use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
 use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
+use App\Repository\PostRevisionRepository;
 use App\Repository\PostTypeRepository;
+use App\Repository\SettingRepository;
 use App\Repository\TagRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -26,7 +32,10 @@ final readonly class PostManager implements PostManagerInterface
         private PostTypeRepository $postTypeRepository,
         private TagRepository $tagRepository,
         private MediaRepository $mediaRepository,
+        private PostRevisionRepository $revisionRepository,
+        private SettingRepository $settingRepository,
         private SluggerInterface $slugger,
+        private Security $security,
     ) {}
 
     public function create(PostInput $input): Post
@@ -47,12 +56,50 @@ final readonly class PostManager implements PostManagerInterface
         // bumps when the owning entity itself is scheduled for UPDATE.
         $post->updateTimestamps();
         $this->entityManager->flush();
+
+        $this->snapshotRevision($post);
     }
 
     public function delete(Post $post): void
     {
         $this->entityManager->remove($post);
         $this->entityManager->flush();
+    }
+
+    public function restoreRevision(Post $post, PostRevision $revision): void
+    {
+        $snapshot = $revision->getSnapshot();
+
+        $post->setStatus(PostStatusEnum::from($snapshot['status'] ?? PostStatusEnum::Draft->value));
+
+        $post->setPublishedAt($this->hydrateDate($snapshot['publishedAt'] ?? null));
+        $post->setScheduledAt($this->hydrateDate($snapshot['scheduledAt'] ?? null));
+
+        $featuredMediaId = $snapshot['featuredMediaId'] ?? null;
+        $post->setFeaturedMedia(null !== $featuredMediaId ? $this->mediaRepository->find($featuredMediaId) : null);
+
+        $this->syncTags($post, array_values(array_filter(
+            array_map(intval(...), $snapshot['tagIds'] ?? []),
+            static fn (int $tagId): bool => $tagId > 0,
+        )));
+
+        foreach ((array) ($snapshot['translations'] ?? []) as $locale => $translationData) {
+            if (!is_array($translationData)) {
+                continue;
+            }
+            $translation = $post->translate((string) $locale);
+            $translation->setTitle($translationData['title'] ?? null);
+            $translation->setSlug($translationData['slug'] ?? null);
+            $translation->setBlocks($translationData['blocks'] ?? []);
+            $translation->setMetaTitle($translationData['metaTitle'] ?? null);
+            $translation->setMetaDescription($translationData['metaDescription'] ?? null);
+            $translation->setCustomFields($translationData['customFields'] ?? []);
+        }
+
+        $post->updateTimestamps();
+        $this->entityManager->flush();
+
+        $this->snapshotRevision($post);
     }
 
     private function applyInput(Post $post, PostInput $input): void
@@ -122,5 +169,70 @@ final readonly class PostManager implements PostManagerInterface
 
         $slug = $input->slug ?: ($input->title ? $this->slugger->slug($input->title)->lower()->toString() : null);
         $translation->setSlug($slug);
+    }
+
+    private function snapshotRevision(Post $post): void
+    {
+        $revision = new PostRevision();
+        $revision->setPost($post);
+        $revision->setPostVersion($post->getVersion());
+        $revision->setStatus($post->getStatus());
+        $revision->setSnapshot($this->buildSnapshot($post));
+
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $revision->setAuthor($user);
+        }
+
+        $this->entityManager->persist($revision);
+        $this->entityManager->flush();
+
+        $limit = (int) $this->settingRepository->get(
+            VeloxApplicationParameterEnum::PostRevisionsLimit->value,
+            VeloxApplicationParameterEnum::PostRevisionsLimit->getDefaultValue(),
+        );
+
+        if ($limit > 0) {
+            $this->revisionRepository->pruneOlderThanLimit($post, $limit);
+        }
+    }
+
+    /** @return array<string, mixed> */
+    private function buildSnapshot(Post $post): array
+    {
+        $translations = [];
+        foreach ($post->getTranslations() as $locale => $translation) {
+            $translations[(string) $locale] = [
+                'title' => $translation->getTitle(),
+                'slug' => $translation->getSlug(),
+                'blocks' => $translation->getBlocks(),
+                'metaTitle' => $translation->getMetaTitle(),
+                'metaDescription' => $translation->getMetaDescription(),
+                'customFields' => $translation->getCustomFields(),
+            ];
+        }
+
+        return [
+            'status' => $post->getStatus()->value,
+            'postTypeId' => $post->getPostType()->getId(),
+            'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
+            'tagIds' => $post->getTags()->map(fn ($tag): ?int => $tag->getId())->toArray(),
+            'publishedAt' => $post->getPublishedAt()?->format(\DATE_ATOM),
+            'scheduledAt' => $post->getScheduledAt()?->format(\DATE_ATOM),
+            'translations' => $translations,
+        ];
+    }
+
+    private function hydrateDate(?string $value): ?DateTimeImmutable
+    {
+        if (null === $value || '' === $value) {
+            return null;
+        }
+
+        try {
+            return new DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
     }
 }

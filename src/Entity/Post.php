@@ -55,10 +55,23 @@ class Post implements TimestampableInterface
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts')]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, PostRevision>
+     */
+    #[ORM\OneToMany(targetEntity: PostRevision::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
+    private Collection $revisions;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->revisions = new ArrayCollection();
+    }
+
+    /** @return Collection<int, PostRevision> */
+    public function getRevisions(): Collection
+    {
+        return $this->revisions;
     }
 
     public function getId(): ?int

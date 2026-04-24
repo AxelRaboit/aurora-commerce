@@ -6,6 +6,7 @@ namespace App\Contract;
 
 use App\DTO\PostInput;
 use App\Entity\Post;
+use App\Entity\PostRevision;
 
 interface PostManagerInterface
 {
@@ -14,4 +15,6 @@ interface PostManagerInterface
     public function update(Post $post, PostInput $input): void;
 
     public function delete(Post $post): void;
+
+    public function restoreRevision(Post $post, PostRevision $revision): void;
 }
