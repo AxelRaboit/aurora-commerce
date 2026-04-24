@@ -25,6 +25,8 @@ final readonly class PostSerializer
             'title' => $defaultTranslation?->getTitle(),
             'slug' => $defaultTranslation?->getSlug(),
             'tagIds' => $post->getTags()->map(fn (object $tag): ?int => $tag->getId())->toArray(),
+            'publishedAt' => $post->getPublishedAt()?->format(DateTimeInterface::ATOM),
+            'scheduledAt' => $post->getScheduledAt()?->format(DateTimeInterface::ATOM),
             'createdAt' => $post->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

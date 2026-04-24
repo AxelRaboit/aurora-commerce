@@ -6,7 +6,10 @@ namespace App\DTO;
 
 use App\Enum\PostStatusEnum;
 use App\Support\Str;
+use DateTimeImmutable;
+use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final readonly class PostInput
 {
@@ -24,6 +27,7 @@ final readonly class PostInput
         public ?int $featuredMediaId,
         public array $tagIds,
         public array $translations,
+        public ?string $scheduledAt = null,
         public ?int $version = null,
         public bool $force = false,
     ) {}
@@ -49,8 +53,41 @@ final readonly class PostInput
             featuredMediaId: isset($data['featuredMediaId']) && $data['featuredMediaId'] > 0 ? (int) $data['featuredMediaId'] : null,
             tagIds: $tagIds,
             translations: $translations,
+            scheduledAt: Str::trimOrNull((string) ($data['scheduledAt'] ?? '')),
             version: isset($data['version']) ? (int) $data['version'] : null,
             force: (bool) ($data['force'] ?? false),
         );
+    }
+
+    #[Assert\Callback]
+    public function validateScheduling(ExecutionContextInterface $context): void
+    {
+        if (PostStatusEnum::Scheduled->value !== $this->status) {
+            return;
+        }
+
+        if (null === $this->scheduledAt) {
+            $context->buildViolation('posts.errors.scheduled_at_required')
+                ->atPath('scheduledAt')
+                ->addViolation();
+
+            return;
+        }
+
+        try {
+            $date = new DateTimeImmutable($this->scheduledAt);
+        } catch (Exception) {
+            $context->buildViolation('posts.errors.scheduled_at_invalid')
+                ->atPath('scheduledAt')
+                ->addViolation();
+
+            return;
+        }
+
+        if ($date <= new DateTimeImmutable()) {
+            $context->buildViolation('posts.errors.scheduled_at_in_past')
+                ->atPath('scheduledAt')
+                ->addViolation();
+        }
     }
 }

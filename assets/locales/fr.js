@@ -382,6 +382,8 @@ export default {
                 archived: "Archivé",
                 trash: "Corbeille",
             },
+            scheduledAt: "Date de planification",
+            publishedAt: "Publié le",
             conflict:
                 "Ce contenu a été modifié par un autre utilisateur depuis votre dernière sauvegarde. Vos modifications n'ont pas été enregistrées.",
             conflictCompare: "Voir la version actuelle",

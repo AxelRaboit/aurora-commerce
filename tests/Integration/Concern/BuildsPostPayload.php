@@ -31,6 +31,7 @@ trait BuildsPostPayload
         $payload = [
             'postTypeId' => $post->getPostType()->getId(),
             'status' => $post->getStatus()->value,
+            'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'tagIds' => $post->getTags()->map(fn ($tag) => $tag->getId())->toArray(),
             'translations' => $translations,

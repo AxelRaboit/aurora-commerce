@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\MessageHandler;
+
+use App\Enum\PostStatusEnum;
+use App\Message\PublishScheduledPostsMessage;
+use App\Repository\PostRepository;
+use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler]
+final readonly class PublishScheduledPostsHandler
+{
+    public function __construct(
+        private PostRepository $postRepository,
+        private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
+    ) {}
+
+    public function __invoke(PublishScheduledPostsMessage $message): void
+    {
+        $now = new DateTimeImmutable();
+
+        $duePosts = $this->postRepository->createQueryBuilder('p')
+            ->where('p.status = :status')
+            ->andWhere('p.scheduledAt IS NOT NULL')
+            ->andWhere('p.scheduledAt <= :now')
+            ->setParameter('status', PostStatusEnum::Scheduled)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getResult();
+
+        $count = 0;
+        foreach ($duePosts as $post) {
+            $post->setStatus(PostStatusEnum::Published);
+            if (null === $post->getPublishedAt()) {
+                $post->setPublishedAt($post->getScheduledAt() ?? $now);
+            }
+            $post->setScheduledAt(null);
+            ++$count;
+        }
+
+        if ($count > 0) {
+            $this->entityManager->flush();
+            $this->logger->info('Published {count} scheduled post(s).', ['count' => $count]);
+        }
+    }
+}

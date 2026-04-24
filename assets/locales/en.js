@@ -375,6 +375,8 @@ export default {
                 archived: "Archived",
                 trash: "Trash",
             },
+            scheduledAt: "Scheduled for",
+            publishedAt: "Published on",
             conflict:
                 "This content was modified by another user since your last save. Your changes have not been saved.",
             conflictCompare: "View current version",

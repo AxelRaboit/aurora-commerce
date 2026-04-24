@@ -6,8 +6,10 @@ namespace App\Entity;
 
 use App\Enum\PostStatusEnum;
 use App\Repository\PostRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
@@ -29,6 +31,12 @@ class Post implements TimestampableInterface
 
     #[ORM\Column(length: 50, enumType: PostStatusEnum::class)]
     private PostStatusEnum $status = PostStatusEnum::Draft;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $publishedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $scheduledAt = null;
 
     #[ORM\ManyToOne(targetEntity: PostType::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
@@ -128,6 +136,30 @@ class Post implements TimestampableInterface
     public function isPublished(): bool
     {
         return PostStatusEnum::Published === $this->status;
+    }
+
+    public function getPublishedAt(): ?DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(?DateTimeImmutable $publishedAt): static
+    {
+        $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    public function getScheduledAt(): ?DateTimeImmutable
+    {
+        return $this->scheduledAt;
+    }
+
+    public function setScheduledAt(?DateTimeImmutable $scheduledAt): static
+    {
+        $this->scheduledAt = $scheduledAt;
+
+        return $this;
     }
 
     /**

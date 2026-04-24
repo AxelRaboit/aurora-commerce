@@ -131,6 +131,9 @@ final class PostsControllerTest extends IntegrationTestCase
 
         $payload = $this->postPayload($post, $post->getVersion());
         $payload['status'] = $status;
+        if ('scheduled' === $status) {
+            $payload['scheduledAt'] = (new \DateTimeImmutable('+1 day'))->format(DATE_ATOM);
+        }
 
         [$statusCode, $body] = $this->editPost($post->getId(), $payload);
 

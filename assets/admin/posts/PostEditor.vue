@@ -61,10 +61,13 @@ function makeEmptyTranslation() {
 const form = reactive({
     postTypeId: String(props.postTypes[0]?.id ?? ""),
     status: "draft",
+    scheduledAt: "",
     featuredMediaId: null,
     tagIds: [],
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
 });
+
+const publishedAt = ref(null);
 
 // ── Slug lock ────────────────────────────────────────────────────────────────
 const slugLocked = ref(true);
@@ -158,6 +161,8 @@ onMounted(async () => {
         if (data.success) {
             form.postTypeId = String(data.post.postType.id);
             form.status = data.post.status;
+            form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
+            publishedAt.value = data.post.publishedAt ?? null;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.tagIds = [...(data.post.tagIds ?? [])];
@@ -267,6 +272,7 @@ async function handleSave({ force = false } = {}) {
     const success = await savePost(props.postId, {
         postTypeId: Number(form.postTypeId),
         status: form.status,
+        scheduledAt: form.status === "scheduled" && form.scheduledAt ? form.scheduledAt : null,
         featuredMediaId: form.featuredMediaId,
         tagIds: form.tagIds,
         translations: form.translations,
@@ -343,6 +349,13 @@ function forceSave() {
                     <option value="archived">{{ t("admin.posts.statusOptions.archived") }}</option>
                     <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
                 </AppSelect>
+                <AppInput
+                    v-if="form.status === 'scheduled'"
+                    v-model="form.scheduledAt"
+                    type="datetime-local"
+                    class="w-full sm:w-auto"
+                    :placeholder="t('admin.posts.scheduledAt')"
+                />
                 <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showTemplates = true">
                     <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
                     <span>Templates</span>
@@ -369,6 +382,11 @@ function forceSave() {
         <div v-if="Object.keys(errors).length" class="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-400 space-y-1">
             <p v-for="(message, field) in errors" :key="field">{{ message }}</p>
         </div>
+
+        <!-- Published at info -->
+        <p v-if="publishedAt" class="px-1 text-xs text-muted">
+            {{ t("admin.posts.publishedAt") }} {{ new Date(publishedAt).toLocaleString() }}
+        </p>
 
         <!-- Meta row: post type + tags -->
         <div class="flex flex-col gap-3 px-1">

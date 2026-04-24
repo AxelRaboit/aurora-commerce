@@ -12,6 +12,7 @@ use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TagRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -62,7 +63,19 @@ final readonly class PostManager implements PostManagerInterface
         }
 
         $post->setPostType($postType);
-        $post->setStatus(PostStatusEnum::from($input->status));
+
+        $status = PostStatusEnum::from($input->status);
+        $post->setStatus($status);
+
+        if (PostStatusEnum::Scheduled === $status && null !== $input->scheduledAt) {
+            $post->setScheduledAt(new DateTimeImmutable($input->scheduledAt));
+        } else {
+            $post->setScheduledAt(null);
+        }
+
+        if (PostStatusEnum::Published === $status && null === $post->getPublishedAt()) {
+            $post->setPublishedAt(new DateTimeImmutable());
+        }
 
         $featuredMedia = null !== $input->featuredMediaId
             ? $this->mediaRepository->find($input->featuredMediaId)

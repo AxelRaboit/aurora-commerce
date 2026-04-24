@@ -383,6 +383,8 @@ export default {
                 archived: "Archivado",
                 trash: "Papelera",
             },
+            scheduledAt: "Programado para",
+            publishedAt: "Publicado el",
             conflict:
                 "Este contenido fue modificado por otro usuario desde tu última guardado. Tus cambios no se han guardado.",
             conflictCompare: "Ver la versión actual",

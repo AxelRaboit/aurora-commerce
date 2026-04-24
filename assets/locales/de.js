@@ -381,6 +381,8 @@ export default {
                 archived: "Archiviert",
                 trash: "Papierkorb",
             },
+            scheduledAt: "Geplant für",
+            publishedAt: "Veröffentlicht am",
             conflict:
                 "Dieser Inhalt wurde von einem anderen Benutzer seit deiner letzten Speicherung geändert. Deine Änderungen wurden nicht gespeichert.",
             conflictCompare: "Aktuelle Version ansehen",
