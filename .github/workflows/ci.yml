@@ -151,6 +151,19 @@ jobs:
       - name: PHPStan
         run: make stan
 
+      # —— Test database 🗄️ ——————————————————————————————————————————————————
+      - name: Create test database (dbname_suffix _test applied automatically by Doctrine in test env)
+        run: php bin/console doctrine:database:create --env=test --if-not-exists
+
+      - name: Run migrations on test database
+        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+
       # —— Tests 🧪 —————————————————————————————————————————————————————————————
-      - name: Run tests
-        run: make test
+      - name: Run frontend tests
+        run: make test-frontend
+
+      - name: Run backend unit tests
+        run: make test-backend-unit
+
+      - name: Run backend integration tests
+        run: make test-backend-integration

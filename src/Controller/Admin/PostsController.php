@@ -16,6 +16,9 @@ use App\Repository\TagRepository;
 use App\Serializer\PostSerializer;
 use App\Serializer\PostTypeSerializer;
 use App\Serializer\TagSerializer;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +42,7 @@ class PostsController extends AbstractController
         private readonly PostTypeSerializer $postTypeSerializer,
         private readonly TagSerializer $tagSerializer,
         private readonly ValidatorInterface $validator,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -82,7 +86,7 @@ class PostsController extends AbstractController
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = PostInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = PostInput::fromArray($this->decodeJson($request));
 
         $violations = $this->validator->validate($input);
         if (count($violations) > 0) {
@@ -97,7 +101,15 @@ class PostsController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
     public function edit(Post $post, Request $request): JsonResponse
     {
-        $input = PostInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = PostInput::fromArray($this->decodeJson($request));
+
+        if (!$input->force && null !== $input->version) {
+            try {
+                $this->entityManager->lock($post, LockMode::OPTIMISTIC, $input->version);
+            } catch (OptimisticLockException) {
+                return $this->json(['success' => false, 'conflict' => true], Response::HTTP_CONFLICT);
+            }
+        }
 
         $violations = $this->validator->validate($input);
         if (count($violations) > 0) {

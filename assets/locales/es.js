@@ -219,6 +219,42 @@ export default {
                 mediaText: "Imagen + Texto",
                 twoColumn: "2 Columnas",
             },
+            ui: {
+                blockTunes: {
+                    toggler: {
+                        "Click to tune": "Configurar",
+                        "or drag to move": "o arrastra para mover",
+                    },
+                },
+                inlineToolbar: {
+                    converter: {
+                        "Convert to": "Convertir en",
+                    },
+                },
+                toolbar: {
+                    toolbox: {
+                        Add: "Añadir",
+                    },
+                },
+                popover: {
+                    Filter: "Filtrar",
+                    "Nothing found": "Sin resultados",
+                    "Nothing found. Try searching for something else.":
+                        "Sin resultados. Prueba con otro término.",
+                },
+            },
+            blockTunes: {
+                delete: {
+                    Delete: "Eliminar",
+                    "Click to delete": "Haz clic para eliminar",
+                },
+                moveUp: {
+                    "Move up": "Mover arriba",
+                },
+                moveDown: {
+                    "Move down": "Mover abajo",
+                },
+            },
             image: {
                 captionPlaceholder: "Leyenda…",
             },
@@ -340,6 +376,39 @@ export default {
                 draft: "Borrador",
                 published: "Publicado",
                 trash: "Papelera",
+            },
+            conflict:
+                "Este contenido fue modificado por otro usuario desde tu última guardado. Tus cambios no se han guardado.",
+            conflictCompare: "Ver la versión actual",
+            conflictMerge: "Fusionar",
+            conflictForce: "Forzar mi guardado",
+            merge: {
+                title: "Resolver conflictos",
+                subtitle: "Elige qué versión mantener para cada bloque.",
+                apply: "Aplicar y guardar",
+                yours: "La tuya",
+                theirs: "La suya",
+                use: "Usar:",
+                deleted: "(bloque eliminado)",
+                showUnchanged: "Mostrar bloques sin cambios",
+                hideUnchanged: "Ocultar bloques sin cambios",
+                acceptAllMine: "Aceptar todo lo mío",
+                acceptAllTheirs: "Aceptar todo lo suyo",
+                nothingToShow: "No hay cambios que mostrar.",
+                unresolvedCount: "{count} conflicto(s) sin resolver",
+                unresolvedError: "Aún hay conflictos sin resolver.",
+                summary:
+                    "{unchanged} sin cambios · {auto} auto-fusionados · {conflicts} conflicto(s)",
+                kind: {
+                    unchanged: "Sin cambios",
+                    "local-modified": "Modificado por ti",
+                    "remote-modified": "Modificado remotamente",
+                    "local-added": "Añadido por ti",
+                    "remote-added": "Añadido remotamente",
+                    "local-removed": "Eliminado por ti",
+                    "remote-removed": "Eliminado remotamente",
+                    conflict: "CONFLICTO",
+                },
             },
         },
         tags: {

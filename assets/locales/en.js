@@ -214,6 +214,42 @@ export default {
                 mediaText: "Image + Text",
                 twoColumn: "2 Columns",
             },
+            ui: {
+                blockTunes: {
+                    toggler: {
+                        "Click to tune": "Click to tune",
+                        "or drag to move": "or drag to move",
+                    },
+                },
+                inlineToolbar: {
+                    converter: {
+                        "Convert to": "Convert to",
+                    },
+                },
+                toolbar: {
+                    toolbox: {
+                        Add: "Add",
+                    },
+                },
+                popover: {
+                    Filter: "Filter",
+                    "Nothing found": "Nothing found",
+                    "Nothing found. Try searching for something else.":
+                        "Nothing found. Try searching for something else.",
+                },
+            },
+            blockTunes: {
+                delete: {
+                    Delete: "Delete",
+                    "Click to delete": "Click to delete",
+                },
+                moveUp: {
+                    "Move up": "Move up",
+                },
+                moveDown: {
+                    "Move down": "Move down",
+                },
+            },
             image: {
                 captionPlaceholder: "Caption…",
             },
@@ -332,6 +368,39 @@ export default {
                 draft: "Draft",
                 published: "Published",
                 trash: "Trash",
+            },
+            conflict:
+                "This content was modified by another user since your last save. Your changes have not been saved.",
+            conflictCompare: "View current version",
+            conflictMerge: "Merge",
+            conflictForce: "Force my save",
+            merge: {
+                title: "Resolve conflicts",
+                subtitle: "Choose which version to keep for each block.",
+                apply: "Apply & save",
+                yours: "Yours",
+                theirs: "Theirs",
+                use: "Use:",
+                deleted: "(block deleted)",
+                showUnchanged: "Show unchanged blocks",
+                hideUnchanged: "Hide unchanged blocks",
+                acceptAllMine: "Accept all mine",
+                acceptAllTheirs: "Accept all theirs",
+                nothingToShow: "No changes to display.",
+                unresolvedCount: "{count} unresolved conflict(s)",
+                unresolvedError: "Some conflicts are still unresolved.",
+                summary:
+                    "{unchanged} unchanged · {auto} auto-merged · {conflicts} conflict(s)",
+                kind: {
+                    unchanged: "Unchanged",
+                    "local-modified": "Modified by you",
+                    "remote-modified": "Modified remotely",
+                    "local-added": "Added by you",
+                    "remote-added": "Added remotely",
+                    "local-removed": "Removed by you",
+                    "remote-removed": "Removed remotely",
+                    conflict: "CONFLICT",
+                },
             },
         },
         tags: {

@@ -217,6 +217,42 @@ export default {
                 mediaText: "Bild + Text",
                 twoColumn: "2 Spalten",
             },
+            ui: {
+                blockTunes: {
+                    toggler: {
+                        "Click to tune": "Konfigurieren",
+                        "or drag to move": "oder ziehen zum Verschieben",
+                    },
+                },
+                inlineToolbar: {
+                    converter: {
+                        "Convert to": "Umwandeln in",
+                    },
+                },
+                toolbar: {
+                    toolbox: {
+                        Add: "Hinzufügen",
+                    },
+                },
+                popover: {
+                    Filter: "Filtern",
+                    "Nothing found": "Nichts gefunden",
+                    "Nothing found. Try searching for something else.":
+                        "Nichts gefunden. Versuche einen anderen Begriff.",
+                },
+            },
+            blockTunes: {
+                delete: {
+                    Delete: "Löschen",
+                    "Click to delete": "Zum Löschen klicken",
+                },
+                moveUp: {
+                    "Move up": "Nach oben",
+                },
+                moveDown: {
+                    "Move down": "Nach unten",
+                },
+            },
             image: {
                 captionPlaceholder: "Bildunterschrift…",
             },
@@ -338,6 +374,39 @@ export default {
                 draft: "Entwurf",
                 published: "Veröffentlicht",
                 trash: "Papierkorb",
+            },
+            conflict:
+                "Dieser Inhalt wurde von einem anderen Benutzer seit deiner letzten Speicherung geändert. Deine Änderungen wurden nicht gespeichert.",
+            conflictCompare: "Aktuelle Version ansehen",
+            conflictMerge: "Zusammenführen",
+            conflictForce: "Meine Speicherung erzwingen",
+            merge: {
+                title: "Konflikte lösen",
+                subtitle: "Wähle für jeden Block die zu behaltende Version.",
+                apply: "Übernehmen und speichern",
+                yours: "Deine",
+                theirs: "Ihre",
+                use: "Verwenden:",
+                deleted: "(Block gelöscht)",
+                showUnchanged: "Unveränderte Blöcke anzeigen",
+                hideUnchanged: "Unveränderte Blöcke ausblenden",
+                acceptAllMine: "Alle meine übernehmen",
+                acceptAllTheirs: "Alle ihre übernehmen",
+                nothingToShow: "Keine Änderungen anzuzeigen.",
+                unresolvedCount: "{count} ungelöste(r) Konflikt(e)",
+                unresolvedError: "Es gibt noch ungelöste Konflikte.",
+                summary:
+                    "{unchanged} unverändert · {auto} auto-gemerged · {conflicts} Konflikt(e)",
+                kind: {
+                    unchanged: "Unverändert",
+                    "local-modified": "Von dir geändert",
+                    "remote-modified": "Remote geändert",
+                    "local-added": "Von dir hinzugefügt",
+                    "remote-added": "Remote hinzugefügt",
+                    "local-removed": "Von dir entfernt",
+                    "remote-removed": "Remote entfernt",
+                    conflict: "KONFLIKT",
+                },
             },
         },
         tags: {

@@ -57,24 +57,59 @@ onMounted(async () => {
         data: { blocks: props.modelValue },
         i18n: {
             messages: {
+                ui: {
+                    blockTunes: {
+                        toggler: {
+                            "Click to tune":   t("admin.editor.ui.blockTunes.toggler.Click to tune"),
+                            "or drag to move": t("admin.editor.ui.blockTunes.toggler.or drag to move"),
+                        },
+                    },
+                    inlineToolbar: {
+                        converter: {
+                            "Convert to": t("admin.editor.ui.inlineToolbar.converter.Convert to"),
+                        },
+                    },
+                    toolbar: {
+                        toolbox: {
+                            Add: t("admin.editor.ui.toolbar.toolbox.Add"),
+                        },
+                    },
+                    popover: {
+                        Filter:           t("admin.editor.ui.popover.Filter"),
+                        "Nothing found":  t("admin.editor.ui.popover.Nothing found"),
+                        "Nothing found. Try searching for something else.": t("admin.editor.ui.popover.Nothing found. Try searching for something else."),
+                    },
+                },
                 toolNames: {
-                    "Text":         t("admin.editor.toolNames.text"),
-                    "Heading":      t("admin.editor.toolNames.heading"),
+                    "Text":           t("admin.editor.toolNames.text"),
+                    "Heading":        t("admin.editor.toolNames.heading"),
                     "List":           t("admin.editor.toolNames.list"),
                     "Ordered List":   t("admin.editor.toolNames.orderedList"),
                     "Unordered List": t("admin.editor.toolNames.unorderedList"),
-                    "Checklist":    t("admin.editor.toolNames.checklist"),
-                    "Quote":        t("admin.editor.toolNames.quote"),
-                    "Code":         t("admin.editor.toolNames.code"),
-                    "Delimiter":    t("admin.editor.toolNames.delimiter"),
-                    "Table":        t("admin.editor.toolNames.table"),
-                    "Image":        t("admin.editor.toolNames.image"),
-                    "Embed":        t("admin.editor.toolNames.embed"),
-                    "Marker":       t("admin.editor.toolNames.marker"),
-                    "InlineCode":   t("admin.editor.toolNames.inlineCode"),
-                    "Callout":      t("admin.editor.toolNames.callout"),
-                    "Image + Text": t("admin.editor.toolNames.mediaText"),
-                    "Two Columns":  t("admin.editor.toolNames.twoColumn"),
+                    "Checklist":      t("admin.editor.toolNames.checklist"),
+                    "Quote":          t("admin.editor.toolNames.quote"),
+                    "Code":           t("admin.editor.toolNames.code"),
+                    "Delimiter":      t("admin.editor.toolNames.delimiter"),
+                    "Table":          t("admin.editor.toolNames.table"),
+                    "Image":          t("admin.editor.toolNames.image"),
+                    "Embed":          t("admin.editor.toolNames.embed"),
+                    "Marker":         t("admin.editor.toolNames.marker"),
+                    "InlineCode":     t("admin.editor.toolNames.inlineCode"),
+                    "Callout":        t("admin.editor.toolNames.callout"),
+                    "Image + Text":   t("admin.editor.toolNames.mediaText"),
+                    "Two Columns":    t("admin.editor.toolNames.twoColumn"),
+                },
+                blockTunes: {
+                    delete: {
+                        Delete:           t("admin.editor.blockTunes.delete.Delete"),
+                        "Click to delete": t("admin.editor.blockTunes.delete.Click to delete"),
+                    },
+                    moveUp: {
+                        "Move up": t("admin.editor.blockTunes.moveUp.Move up"),
+                    },
+                    moveDown: {
+                        "Move down": t("admin.editor.blockTunes.moveDown.Move down"),
+                    },
                 },
             },
         },
@@ -190,9 +225,15 @@ onMounted(async () => {
             emit("update:modelValue", data.blocks);
         },
     });
-    await editor.isReady;
-    new DragDrop(editor);
-    new Undo({ editor });
+    const localEditor = editor;
+    try {
+        await localEditor.isReady;
+    } catch {
+        return;
+    }
+    if (editor !== localEditor) return;
+    new DragDrop(localEditor);
+    new Undo({ editor: localEditor });
     ready = true;
     registerFlush?.(flush);
     registerRender?.(renderBlocks);

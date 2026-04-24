@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus } from "lucide-vue-next";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
@@ -10,7 +10,10 @@ import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import EditorBlock from "@/components/EditorBlock.vue";
 import PreviewOverlay from "@/components/PreviewOverlay.vue";
+import PostPreviewOverlay from "./PostPreviewOverlay.vue";
+import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import { usePostSave } from "./composables/usePostSave.js";
+import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
 import { slugify } from "@/utils/slugify.js";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
@@ -31,6 +34,20 @@ const emit = defineEmits(["saved", "back"]);
 
 const activeLocale = ref(props.locales[0] ?? "fr");
 const fetching = ref(false);
+
+const {
+    version,
+    baseTranslations,
+    remotePost,
+    remoteLoading,
+    showMerge,
+    mergeRemoteTranslations,
+    snapshotBase,
+    openRemoteVersion,
+    closeRemoteVersion,
+    openMerge,
+    closeMerge,
+} = useConflictResolution({ showPath: props.showPath, postId: computed(() => props.postId) });
 
 let flushEditor      = null;
 let renderEditorBlocks = null;
@@ -144,11 +161,13 @@ onMounted(async () => {
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.tagIds = [...(data.post.tagIds ?? [])];
+            version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
                     Object.assign(form.translations[locale], translation);
                 }
             }
+            snapshotBase(form.translations);
         }
     } catch {
         toast.error(t("common.error"));
@@ -232,16 +251,18 @@ const previewHtml = computed(() =>
     renderBlocks(form.translations[activeLocale.value]?.blocks ?? []),
 );
 
-const { loading, errors, save: savePost } = usePostSave(
+const { loading, errors, conflict, save: savePost } = usePostSave(
     props.createPath,
     props.editPath,
     (post) => {
         toast.success(props.postId ? t("admin.posts.updated") : t("admin.posts.created"));
+        version.value = post.version ?? null;
+        snapshotBase(form.translations);
         emit("saved", post, !props.postId);
     },
 );
 
-async function handleSave() {
+async function handleSave({ force = false } = {}) {
     await flushEditor?.();
     const success = await savePost(props.postId, {
         postTypeId: Number(form.postTypeId),
@@ -249,8 +270,28 @@ async function handleSave() {
         featuredMediaId: form.featuredMediaId,
         tagIds: form.tagIds,
         translations: form.translations,
+        version: version.value,
+        force,
     });
     if (success) isDirty.value = false;
+}
+
+async function applyMergeResolution(resolvedBlocksByLocale) {
+    for (const [locale, blocks] of Object.entries(resolvedBlocksByLocale)) {
+        if (form.translations[locale]) {
+            form.translations[locale].blocks = blocks;
+        }
+    }
+    closeMerge();
+    await nextTick();
+    if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
+        await renderEditorBlocks(form.translations[activeLocale.value].blocks);
+    }
+    await handleSave({ force: true });
+}
+
+function forceSave() {
+    handleSave({ force: true });
 }
 </script>
 
@@ -260,6 +301,26 @@ async function handleSave() {
     </div>
 
     <div v-else class="space-y-6">
+        <!-- Conflict banner -->
+        <div v-if="conflict" class="flex flex-col sm:flex-row sm:items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+            <span class="shrink-0 mt-0.5">⚠️</span>
+            <div class="flex-1">{{ t("admin.posts.conflict") }}</div>
+            <div class="flex flex-wrap gap-2 shrink-0">
+                <AppButton variant="secondary" size="sm" v-on:click="openRemoteVersion">
+                    <Eye class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("admin.posts.conflictCompare") }}
+                </AppButton>
+                <AppButton variant="primary" size="sm" :loading="remoteLoading" v-on:click="openMerge">
+                    <Merge class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("admin.posts.conflictMerge") }}
+                </AppButton>
+                <AppButton variant="danger" size="sm" :loading="loading" v-on:click="forceSave">
+                    <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("admin.posts.conflictForce") }}
+                </AppButton>
+            </div>
+        </div>
+
         <!-- Top bar -->
         <div class="flex items-center gap-3 flex-wrap">
             <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
@@ -650,5 +711,24 @@ async function handleSave() {
         :featured-media-url="featuredMediaUrl"
         :label="t('admin.posts.preview') + ' — ' + t('locales.' + activeLocale)"
         v-on:close="showPreview = false"
+    />
+
+    <!-- Remote version preview (conflict compare) -->
+    <PostPreviewOverlay
+        :post="remotePost"
+        :loading="remoteLoading"
+        :locales="locales"
+        v-on:close="closeRemoteVersion"
+    />
+
+    <!-- Conflict merge overlay -->
+    <ConflictMergeOverlay
+        :show="showMerge"
+        :base="baseTranslations"
+        :local="form.translations"
+        :remote="mergeRemoteTranslations ?? {}"
+        :locales="locales"
+        v-on:close="closeMerge"
+        v-on:apply="applyMergeResolution"
     />
 </template>

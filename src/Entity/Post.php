@@ -28,6 +28,10 @@ class Post implements TimestampableInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Version]
+    #[ORM\Column(type: 'integer', options: ['default' => 1])]
+    private int $version = 1;
+
     #[ORM\Column(length: 50)]
     private string $status = self::STATUS_DRAFT;
 
@@ -57,6 +61,11 @@ class Post implements TimestampableInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getStatus(): string

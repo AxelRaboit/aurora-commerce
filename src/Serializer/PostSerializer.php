@@ -15,6 +15,7 @@ final readonly class PostSerializer
 
         return [
             'id' => $post->getId(),
+            'version' => $post->getVersion(),
             'status' => $post->getStatus(),
             'postType' => [
                 'id' => $post->getPostType()->getId(),

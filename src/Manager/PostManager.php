@@ -40,6 +40,10 @@ final readonly class PostManager implements PostManagerInterface
     public function update(Post $post, PostInput $input): void
     {
         $this->applyInput($post, $input);
+        // Force the Post entity to be marked as dirty so Doctrine's @Version increments
+        // even when only related entities (translations, tags) changed — @Version only
+        // bumps when the owning entity itself is scheduled for UPDATE.
+        $post->updateTimestamps();
         $this->entityManager->flush();
     }
 

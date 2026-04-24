@@ -4,12 +4,18 @@ import { useApiRequest } from "@/composables/useApiRequest.js";
 export function usePostSave(createPath, editPath, onSuccess) {
     const { loading, request } = useApiRequest();
     const errors = ref({});
+    const conflict = ref(false);
 
     async function save(postId, formData) {
         errors.value = {};
+        conflict.value = false;
         const url = postId ? editPath.replace("__id__", postId) : createPath;
         const data = await request(url, formData);
         if (!data) return false;
+        if (data.conflict) {
+            conflict.value = true;
+            return false;
+        }
         if (data.success) {
             onSuccess(data.post);
             return true;
@@ -18,5 +24,5 @@ export function usePostSave(createPath, editPath, onSuccess) {
         return false;
     }
 
-    return { loading, errors, save };
+    return { loading, errors, conflict, save };
 }

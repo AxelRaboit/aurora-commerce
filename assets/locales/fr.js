@@ -220,6 +220,42 @@ export default {
                 mediaText: "Image + Texte",
                 twoColumn: "2 Colonnes",
             },
+            ui: {
+                blockTunes: {
+                    toggler: {
+                        "Click to tune": "Configurer",
+                        "or drag to move": "ou glisser pour déplacer",
+                    },
+                },
+                inlineToolbar: {
+                    converter: {
+                        "Convert to": "Convertir en",
+                    },
+                },
+                toolbar: {
+                    toolbox: {
+                        Add: "Ajouter",
+                    },
+                },
+                popover: {
+                    Filter: "Filtrer",
+                    "Nothing found": "Aucun résultat",
+                    "Nothing found. Try searching for something else.":
+                        "Aucun résultat. Essayez un autre terme.",
+                },
+            },
+            blockTunes: {
+                delete: {
+                    Delete: "Supprimer",
+                    "Click to delete": "Cliquez pour supprimer",
+                },
+                moveUp: {
+                    "Move up": "Déplacer vers le haut",
+                },
+                moveDown: {
+                    "Move down": "Déplacer vers le bas",
+                },
+            },
             image: {
                 captionPlaceholder: "Légende…",
             },
@@ -339,6 +375,39 @@ export default {
                 draft: "Brouillon",
                 published: "Publié",
                 trash: "Corbeille",
+            },
+            conflict:
+                "Ce contenu a été modifié par un autre utilisateur depuis votre dernière sauvegarde. Vos modifications n'ont pas été enregistrées.",
+            conflictCompare: "Voir la version actuelle",
+            conflictMerge: "Fusionner",
+            conflictForce: "Forcer ma sauvegarde",
+            merge: {
+                title: "Résoudre les conflits",
+                subtitle: "Choisissez quelle version garder pour chaque bloc.",
+                apply: "Appliquer et sauvegarder",
+                yours: "La vôtre",
+                theirs: "La leur",
+                use: "Utiliser :",
+                deleted: "(bloc supprimé)",
+                showUnchanged: "Afficher les blocs inchangés",
+                hideUnchanged: "Masquer les blocs inchangés",
+                acceptAllMine: "Tout accepter à gauche",
+                acceptAllTheirs: "Tout accepter à droite",
+                nothingToShow: "Aucun changement à afficher.",
+                unresolvedCount: "{count} conflit(s) non résolu(s)",
+                unresolvedError: "Il reste des conflits non résolus.",
+                summary:
+                    "{unchanged} inchangé(s) · {auto} fusion auto · {conflicts} conflit(s)",
+                kind: {
+                    unchanged: "Inchangé",
+                    "local-modified": "Modifié par vous",
+                    "remote-modified": "Modifié à distance",
+                    "local-added": "Ajouté par vous",
+                    "remote-added": "Ajouté à distance",
+                    "local-removed": "Supprimé par vous",
+                    "remote-removed": "Supprimé à distance",
+                    conflict: "CONFLIT",
+                },
             },
         },
         tags: {

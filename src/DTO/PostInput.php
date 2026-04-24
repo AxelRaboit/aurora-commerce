@@ -24,6 +24,8 @@ final readonly class PostInput
         public ?int $featuredMediaId,
         public array $tagIds,
         public array $translations,
+        public ?int $version = null,
+        public bool $force = false,
     ) {}
 
     public static function fromArray(array $data): self
@@ -47,6 +49,8 @@ final readonly class PostInput
             featuredMediaId: isset($data['featuredMediaId']) && $data['featuredMediaId'] > 0 ? (int) $data['featuredMediaId'] : null,
             tagIds: $tagIds,
             translations: $translations,
+            version: isset($data['version']) ? (int) $data['version'] : null,
+            force: (bool) ($data['force'] ?? false),
         );
     }
 }
