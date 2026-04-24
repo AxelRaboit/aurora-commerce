@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{{ context.siteName }}{% endblock %}</title>
     {% set pageDescription = pageDescription|default(context.siteDescription ?? '') %}
+    {% set alternates = alternates|default([]) %}
     {% block meta %}
         <meta name="description" content="{{ pageDescription }}">
         <meta property="og:title" content="{{ block('title') }}">
         <meta property="og:description" content="{{ pageDescription }}">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="{{ context.siteName }}">
+        <meta property="og:locale" content="{{ locale }}">
+        {% for alt in alternates %}
+            {% if alt.locale != locale %}
+                <meta property="og:locale:alternate" content="{{ alt.locale }}">
+            {% endif %}
+        {% endfor %}
+        {% for alt in alternates %}
+            <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ context.siteUrl }}{{ alt.url }}">
+            {% if alt.locale == context.defaultLocale %}
+                <link rel="alternate" hreflang="x-default" href="{{ context.siteUrl }}{{ alt.url }}">
+            {% endif %}
+        {% endfor %}
         {% block og_image %}{% endblock %}
         {% block canonical %}{% endblock %}
         {% block robots %}{% endblock %}
@@ -29,9 +42,15 @@
                 {{ context.siteName }}
             </a>
             {% if context.activeLocales|length > 1 %}
+                {% set alternatesByLocale = {} %}
+                {% for alt in alternates %}
+                    {% set alternatesByLocale = alternatesByLocale|merge({(alt.locale): alt.url}) %}
+                {% endfor %}
                 <div class="ml-auto flex items-center gap-1 text-xs">
                     {% for loc in context.activeLocales %}
-                        <a href="{{ path('front_home', {locale: loc.code}) }}"
+                        {% set href = alternatesByLocale[loc.code] ?? path('front_home', {locale: loc.code}) %}
+                        <a href="{{ href }}"
+                           hreflang="{{ loc.code }}"
                            class="px-2 py-1 rounded {{ locale == loc.code ? 'bg-indigo-600 text-white' : 'text-muted hover:text-primary' }}">
                             {{ loc.code|upper }}
                         </a>
