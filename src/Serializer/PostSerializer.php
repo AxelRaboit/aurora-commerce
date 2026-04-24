@@ -45,6 +45,12 @@ final readonly class PostSerializer
                 'metaTitle' => $translation->getMetaTitle(),
                 'metaDescription' => $translation->getMetaDescription(),
                 'customFields' => $translation->getCustomFields(),
+                'ogImageMediaId' => $translation->getOgImage()?->getId(),
+                'ogImageUrl' => $translation->getOgImage()?->getPublicUrl(),
+                'canonicalUrl' => $translation->getCanonicalUrl(),
+                'noindex' => $translation->isNoindex(),
+                'focusKeyword' => $translation->getFocusKeyword(),
+                'jsonLd' => $translation->getJsonLd(),
             ];
         }
 

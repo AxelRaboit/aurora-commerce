@@ -14,6 +14,7 @@ use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
 use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\PostRevisionRepository;
+use App\Repository\PostSlugHistoryRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\SettingRepository;
 use App\Repository\TagRepository;
@@ -36,6 +37,7 @@ final readonly class PostManager implements PostManagerInterface
         private TagRepository $tagRepository,
         private MediaRepository $mediaRepository,
         private PostRevisionRepository $revisionRepository,
+        private PostSlugHistoryRepository $slugHistoryRepository,
         private SettingRepository $settingRepository,
         private SluggerInterface $slugger,
         private Security $security,
@@ -118,6 +120,14 @@ final readonly class PostManager implements PostManagerInterface
             $translation->setMetaTitle($translationData['metaTitle'] ?? null);
             $translation->setMetaDescription($translationData['metaDescription'] ?? null);
             $translation->setCustomFields($translationData['customFields'] ?? []);
+
+            $ogImageId = $translationData['ogImageMediaId'] ?? null;
+            $translation->setOgImage(null !== $ogImageId ? $this->mediaRepository->find($ogImageId) : null);
+            $translation->setCanonicalUrl($translationData['canonicalUrl'] ?? null);
+            $translation->setNoindex((bool) ($translationData['noindex'] ?? false));
+            $translation->setFocusKeyword($translationData['focusKeyword'] ?? null);
+            $jsonLd = $translationData['jsonLd'] ?? null;
+            $translation->setJsonLd(is_array($jsonLd) ? $jsonLd : null);
         }
 
         $post->updateTimestamps();
@@ -191,8 +201,27 @@ final readonly class PostManager implements PostManagerInterface
         $translation->setMetaDescription($input->metaDescription);
         $translation->setCustomFields($input->customFields);
 
-        $slug = $input->slug ?: ($input->title ? $this->slugger->slug($input->title)->lower()->toString() : null);
-        $translation->setSlug($slug);
+        $translation->setOgImage(
+            null !== $input->ogImageMediaId ? $this->mediaRepository->find($input->ogImageMediaId) : null,
+        );
+        $translation->setCanonicalUrl($input->canonicalUrl);
+        $translation->setNoindex($input->noindex);
+        $translation->setFocusKeyword($input->focusKeyword);
+        $translation->setJsonLd($input->jsonLd);
+
+        $previousSlug = $translation->getSlug();
+        $newSlug = $input->slug ?: ($input->title ? $this->slugger->slug($input->title)->lower()->toString() : null);
+
+        if ($newSlug !== $previousSlug) {
+            if (null !== $newSlug) {
+                // If the new slug appears in history, remove that entry to avoid a self-redirect.
+                $this->slugHistoryRepository->removeByLocaleAndSlug($locale, $newSlug);
+            }
+            if (null !== $previousSlug && '' !== $previousSlug) {
+                $this->slugHistoryRepository->recordIfNew($post, $locale, $previousSlug);
+            }
+            $translation->setSlug($newSlug);
+        }
     }
 
     private function snapshotRevision(Post $post): void
@@ -233,6 +262,11 @@ final readonly class PostManager implements PostManagerInterface
                 'metaTitle' => $translation->getMetaTitle(),
                 'metaDescription' => $translation->getMetaDescription(),
                 'customFields' => $translation->getCustomFields(),
+                'ogImageMediaId' => $translation->getOgImage()?->getId(),
+                'canonicalUrl' => $translation->getCanonicalUrl(),
+                'noindex' => $translation->isNoindex(),
+                'focusKeyword' => $translation->getFocusKeyword(),
+                'jsonLd' => $translation->getJsonLd(),
             ];
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\PostTranslationRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostTranslationRepository::class)]
@@ -39,6 +40,23 @@ class PostTranslation
     /** @var array<string, mixed> */
     #[ORM\Column(type: 'json')]
     private array $customFields = [];
+
+    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Media $ogImage = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $canonicalUrl = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $noindex = false;
+
+    #[ORM\Column(length: 120, nullable: true)]
+    private ?string $focusKeyword = null;
+
+    /** @var array<string, mixed>|null */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $jsonLd = null;
 
     #[ORM\ManyToOne(targetEntity: Post::class, inversedBy: 'translations')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -129,6 +147,68 @@ class PostTranslation
     public function setCustomFields(array $customFields): static
     {
         $this->customFields = $customFields;
+
+        return $this;
+    }
+
+    public function getOgImage(): ?Media
+    {
+        return $this->ogImage;
+    }
+
+    public function setOgImage(?Media $ogImage): static
+    {
+        $this->ogImage = $ogImage;
+
+        return $this;
+    }
+
+    public function getCanonicalUrl(): ?string
+    {
+        return $this->canonicalUrl;
+    }
+
+    public function setCanonicalUrl(?string $canonicalUrl): static
+    {
+        $this->canonicalUrl = $canonicalUrl;
+
+        return $this;
+    }
+
+    public function isNoindex(): bool
+    {
+        return $this->noindex;
+    }
+
+    public function setNoindex(bool $noindex): static
+    {
+        $this->noindex = $noindex;
+
+        return $this;
+    }
+
+    public function getFocusKeyword(): ?string
+    {
+        return $this->focusKeyword;
+    }
+
+    public function setFocusKeyword(?string $focusKeyword): static
+    {
+        $this->focusKeyword = $focusKeyword;
+
+        return $this;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function getJsonLd(): ?array
+    {
+        return $this->jsonLd;
+    }
+
+    /** @param array<string, mixed>|null $jsonLd */
+    public function setJsonLd(?array $jsonLd): static
+    {
+        $this->jsonLd = $jsonLd;
 
         return $this;
     }

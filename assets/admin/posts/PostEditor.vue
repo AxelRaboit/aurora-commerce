@@ -14,6 +14,7 @@ import PreviewOverlay from "@/components/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
+import GoogleSerpPreview from "./GoogleSerpPreview.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
@@ -57,7 +58,20 @@ provide("registerEditorFlush",  (fn) => { flushEditor       = fn; });
 provide("registerEditorRender", (fn) => { renderEditorBlocks = fn; });
 
 function makeEmptyTranslation() {
-    return { title: "", slug: "", blocks: [], metaTitle: "", metaDescription: "", customFields: {} };
+    return {
+        title: "",
+        slug: "",
+        blocks: [],
+        metaTitle: "",
+        metaDescription: "",
+        customFields: {},
+        ogImageMediaId: null,
+        ogImageUrl: null,
+        canonicalUrl: "",
+        noindex: false,
+        focusKeyword: "",
+        jsonLd: null,
+    };
 }
 
 const form = reactive({
@@ -143,6 +157,116 @@ function seoCounterClass(length, max) {
     if (length <= max * 0.85)  return "text-green-500";
     if (length <= max)         return "text-amber-500";
     return "text-red-500";
+}
+
+// ── SEO quality checks ───────────────────────────────────────────────────────
+const activeTranslation = computed(() => form.translations[activeLocale.value] ?? null);
+
+function containsCI(haystack, needle) {
+    if (!haystack || !needle) return false;
+    return haystack.toLowerCase().includes(needle.toLowerCase());
+}
+
+const focusChecks = computed(() => {
+    const tr = activeTranslation.value;
+    const keyword = tr?.focusKeyword?.trim() ?? "";
+    if (!keyword || !tr) return [];
+    return [
+        { key: "title", ok: containsCI(tr.title, keyword) },
+        { key: "metaTitle", ok: containsCI(tr.metaTitle, keyword) },
+        { key: "metaDescription", ok: containsCI(tr.metaDescription, keyword) },
+        { key: "slug", ok: containsCI(tr.slug, keyword) },
+    ];
+});
+
+// ── JSON-LD helpers ──────────────────────────────────────────────────────────
+const jsonLdText = ref("");
+const jsonLdError = ref(null);
+
+watch(
+    () => activeTranslation.value?.jsonLd,
+    (value) => {
+        jsonLdText.value = value ? JSON.stringify(value, null, 2) : "";
+        jsonLdError.value = null;
+    },
+    { immediate: true },
+);
+
+function onJsonLdInput(event) {
+    jsonLdText.value = event.target.value;
+    const raw = event.target.value.trim();
+    const tr = activeTranslation.value;
+    if (!tr) return;
+    if ("" === raw) {
+        tr.jsonLd = null;
+        jsonLdError.value = null;
+        return;
+    }
+    try {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+            jsonLdError.value = t("admin.posts.seo.jsonLdMustBeObject");
+            return;
+        }
+        tr.jsonLd = parsed;
+        jsonLdError.value = null;
+    } catch (err) {
+        jsonLdError.value = err.message;
+    }
+}
+
+function generateArticleJsonLd() {
+    const tr = activeTranslation.value;
+    if (!tr) return;
+    const template = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: tr.title || "",
+        description: tr.metaDescription || "",
+        image: tr.ogImageUrl ? [tr.ogImageUrl] : undefined,
+        datePublished: publishedAt.value ?? undefined,
+    };
+    // Strip undefined entries
+    for (const key of Object.keys(template)) {
+        if (template[key] === undefined) delete template[key];
+    }
+    tr.jsonLd = template;
+    jsonLdText.value = JSON.stringify(template, null, 2);
+    jsonLdError.value = null;
+}
+
+// ── OG image upload ──────────────────────────────────────────────────────────
+const ogInputRef = ref(null);
+const uploadingOg = ref(false);
+
+async function uploadOgImage(event) {
+    const file = event.target.files?.[0];
+    const tr = activeTranslation.value;
+    if (!file || !tr) return;
+    uploadingOg.value = true;
+    try {
+        const body = new FormData();
+        body.append("image", file);
+        const response = await fetch("/admin/media/upload", { method: "POST", body });
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        if (data.success) {
+            tr.ogImageMediaId = data.file?.id ?? null;
+            tr.ogImageUrl = data.file?.url ?? null;
+        }
+    } catch {
+        toast.error(t("common.error"));
+    } finally {
+        uploadingOg.value = false;
+        if (ogInputRef.value) ogInputRef.value.value = "";
+    }
+}
+
+function removeOgImage() {
+    const tr = activeTranslation.value;
+    if (!tr) return;
+    tr.ogImageMediaId = null;
+    tr.ogImageUrl = null;
 }
 
 // ── Keyboard shortcut Ctrl+S ─────────────────────────────────────────────────
@@ -568,26 +692,126 @@ function forceSave() {
         </div>
 
         <!-- SEO -->
-        <div class="border-t border-line pt-4 space-y-3">
+        <div class="border-t border-line pt-4 space-y-4">
             <p class="text-xs font-semibold text-secondary uppercase tracking-wide">SEO</p>
-            <div>
-                <AppInput
-                    v-model="form.translations[activeLocale].metaTitle"
-                    :label="t('admin.posts.metaTitle')"
-                />
-                <p class="text-right text-xs mt-1" :class="seoCounterClass(metaTitleLength, 60)">
-                    {{ metaTitleLength }}/60
-                </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Left column: fields -->
+                <div class="space-y-3">
+                    <div>
+                        <AppInput
+                            v-model="form.translations[activeLocale].metaTitle"
+                            :label="t('admin.posts.metaTitle')"
+                        />
+                        <p class="text-right text-xs mt-1" :class="seoCounterClass(metaTitleLength, 60)">
+                            {{ metaTitleLength }}/60
+                        </p>
+                    </div>
+                    <div>
+                        <AppTextarea
+                            v-model="form.translations[activeLocale].metaDescription"
+                            :label="t('admin.posts.metaDescription')"
+                            :rows="3"
+                        />
+                        <p class="text-right text-xs mt-1" :class="seoCounterClass(metaDescLength, 160)">
+                            {{ metaDescLength }}/160
+                        </p>
+                    </div>
+                    <AppInput
+                        v-model="form.translations[activeLocale].focusKeyword"
+                        :label="t('admin.posts.seo.focusKeyword')"
+                        :placeholder="t('admin.posts.seo.focusKeywordPlaceholder')"
+                    />
+                    <AppInput
+                        v-model="form.translations[activeLocale].canonicalUrl"
+                        :label="t('admin.posts.seo.canonicalUrl')"
+                        placeholder="https://example.com/..."
+                    />
+                    <label class="flex items-center gap-2 text-sm text-secondary cursor-pointer">
+                        <input
+                            v-model="form.translations[activeLocale].noindex"
+                            type="checkbox"
+                            class="w-4 h-4 rounded border-line bg-surface-2 text-indigo-600 focus:ring-indigo-500"
+                        >
+                        {{ t("admin.posts.seo.noindex") }}
+                    </label>
+
+                    <!-- OG image -->
+                    <div>
+                        <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">
+                            {{ t("admin.posts.seo.ogImage") }}
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <div class="w-24 h-16 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
+                                <img
+                                    v-if="form.translations[activeLocale].ogImageUrl"
+                                    :src="form.translations[activeLocale].ogImageUrl"
+                                    class="w-full h-full object-cover"
+                                    alt=""
+                                >
+                                <ImagePlus v-else class="w-5 h-5 text-muted" :stroke-width="2" />
+                            </div>
+                            <div class="flex gap-2">
+                                <input ref="ogInputRef" type="file" accept="image/*" class="hidden" v-on:change="uploadOgImage">
+                                <AppButton variant="secondary" size="sm" :loading="uploadingOg" v-on:click="ogInputRef?.click()">
+                                    {{ t("admin.posts.seo.ogImageUpload") }}
+                                </AppButton>
+                                <AppButton
+                                    v-if="form.translations[activeLocale].ogImageUrl"
+                                    variant="ghost"
+                                    size="sm"
+                                    v-on:click="removeOgImage"
+                                >
+                                    <X class="w-3.5 h-3.5" :stroke-width="2" />
+                                </AppButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: SERP preview + quality checks -->
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-xs text-secondary uppercase tracking-wide mb-2">{{ t("admin.posts.seo.serpPreview") }}</p>
+                        <GoogleSerpPreview
+                            :title="form.translations[activeLocale].metaTitle || form.translations[activeLocale].title"
+                            :description="form.translations[activeLocale].metaDescription"
+                            :slug="form.translations[activeLocale].slug"
+                        />
+                    </div>
+
+                    <AppMessage v-if="focusChecks.length" variant="info">
+                        <p class="font-medium mb-1">{{ t("admin.posts.seo.focusChecksTitle") }}</p>
+                        <ul class="space-y-0.5 text-xs">
+                            <li v-for="check in focusChecks" :key="check.key" class="flex items-center gap-1.5">
+                                <span v-if="check.ok" class="text-emerald-500">✓</span>
+                                <span v-else class="text-rose-500">✗</span>
+                                {{ t(`admin.posts.seo.focusChecks.${check.key}`) }}
+                            </li>
+                        </ul>
+                    </AppMessage>
+                </div>
             </div>
-            <div>
-                <AppTextarea
-                    v-model="form.translations[activeLocale].metaDescription"
-                    :label="t('admin.posts.metaDescription')"
-                    :rows="3"
+
+            <!-- JSON-LD -->
+            <div class="border-t border-line pt-4 space-y-2">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <label class="text-xs text-secondary uppercase tracking-wide">
+                        {{ t("admin.posts.seo.jsonLd") }}
+                    </label>
+                    <AppButton variant="secondary" size="sm" v-on:click="generateArticleJsonLd">
+                        {{ t("admin.posts.seo.generateArticle") }}
+                    </AppButton>
+                </div>
+                <textarea
+                    :value="jsonLdText"
+                    :placeholder="t('admin.posts.seo.jsonLdPlaceholder')"
+                    :rows="8"
+                    class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-xs text-primary placeholder-muted font-mono focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                    :class="jsonLdError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''"
+                    v-on:input="onJsonLdInput"
                 />
-                <p class="text-right text-xs mt-1" :class="seoCounterClass(metaDescLength, 160)">
-                    {{ metaDescLength }}/160
-                </p>
+                <p v-if="jsonLdError" class="text-xs text-red-500">{{ jsonLdError }}</p>
             </div>
         </div>
 
