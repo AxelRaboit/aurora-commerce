@@ -5,15 +5,31 @@ declare(strict_types=1);
 namespace App\Serializer;
 
 use App\Entity\PostType;
+use App\Entity\PostTypeField;
 
 final readonly class PostTypeSerializer
 {
     public function serialize(PostType $postType): array
     {
+        $fields = array_map(
+            static fn (PostTypeField $field): array => [
+                'id' => $field->getId(),
+                'name' => $field->getName(),
+                'label' => $field->getLabel(),
+                'type' => $field->getType(),
+                'required' => $field->isRequired(),
+                'translatable' => $field->isTranslatable(),
+                'options' => $field->getOptions(),
+                'position' => $field->getPosition(),
+            ],
+            $postType->getFields()->toArray(),
+        );
+
         return [
             'id' => $postType->getId(),
             'label' => $postType->getLabel(),
             'slug' => $postType->getSlug(),
+            'fields' => $fields,
         ];
     }
 }

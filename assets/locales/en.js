@@ -403,6 +403,10 @@ export default {
                 title: "Related posts",
                 searchPlaceholder: "Search for a post to link…",
             },
+            customFields: "Custom fields",
+            customField: {
+                upload: "Upload",
+            },
             blocks: "Content",
             metaTitle: "Meta title",
             metaDescription: "Meta description",

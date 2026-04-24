@@ -87,15 +87,23 @@ class PostsController extends AbstractController
     #[Route('/search', name: '_search', methods: [HttpMethodEnum::Get->value])]
     public function search(Request $request): JsonResponse
     {
-        $query = mb_trim((string) $request->query->get('q', ''));
-        $excludeId = $request->query->getInt('excludeId') ?: null;
-        $results = $this->postRepository->searchForReference($query, $excludeId);
+        $idsParam = (string) $request->query->get('ids', '');
+        if ('' !== $idsParam) {
+            $ids = array_values(array_filter(array_map('intval', explode(',', $idsParam)), static fn (int $id): bool => $id > 0));
+            $results = $this->postRepository->findByIds($ids);
+        } else {
+            $query = mb_trim((string) $request->query->get('q', ''));
+            $excludeId = $request->query->getInt('excludeId') ?: null;
+            $postTypeId = $request->query->getInt('postTypeId') ?: null;
+            $results = $this->postRepository->searchForReference($query, $excludeId, $postTypeId);
+        }
 
         $items = array_map(
             fn (Post $post): array => [
                 'id' => $post->getId(),
                 'title' => $post->getTranslation('fr')?->getTitle() ?? $post->getTranslations()->first()?->getTitle(),
                 'status' => $post->getStatus()->value,
+                'postTypeId' => $post->getPostType()->getId(),
                 'postType' => $post->getPostType()->getLabel(),
             ],
             $results,

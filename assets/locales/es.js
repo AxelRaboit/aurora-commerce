@@ -410,6 +410,10 @@ export default {
                 title: "Artículos relacionados",
                 searchPlaceholder: "Buscar un artículo para vincular…",
             },
+            customFields: "Campos personalizados",
+            customField: {
+                upload: "Subir",
+            },
             blocks: "Contenido",
             metaTitle: "Meta-título",
             metaDescription: "Meta-descripción",

@@ -408,6 +408,10 @@ export default {
                 title: "Verwandte Beiträge",
                 searchPlaceholder: "Beitrag zum Verknüpfen suchen…",
             },
+            customFields: "Benutzerdefinierte Felder",
+            customField: {
+                upload: "Hochladen",
+            },
             blocks: "Inhalt",
             metaTitle: "Meta-Titel",
             metaDescription: "Meta-Beschreibung",

@@ -125,7 +125,7 @@ class PostRepository extends ServiceEntityRepository
     /**
      * @return list<Post>
      */
-    public function searchForReference(?string $query, ?int $excludeId = null, int $limit = 20): array
+    public function searchForReference(?string $query, ?int $excludeId = null, ?int $postTypeId = null, int $limit = 20): array
     {
         $queryBuilder = $this->createQueryBuilder('p')
             ->leftJoin('p.translations', 't')
@@ -139,12 +139,37 @@ class PostRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('p.id != :excludeId')->setParameter('excludeId', $excludeId);
         }
 
+        if (null !== $postTypeId) {
+            $queryBuilder->andWhere('p.postType = :postTypeId')->setParameter('postTypeId', $postTypeId);
+        }
+
         if (null !== $query && '' !== $query) {
             $queryBuilder->andWhere('LOWER(t.title) LIKE :search')
                 ->setParameter('search', '%'.mb_strtolower($query).'%');
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param list<int> $ids
+     *
+     * @return list<Post>
+     */
+    public function findByIds(array $ids): array
+    {
+        if ([] === $ids) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.translations', 't')
+            ->leftJoin('p.postType', 'pt')
+            ->addSelect('t', 'pt')
+            ->where('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

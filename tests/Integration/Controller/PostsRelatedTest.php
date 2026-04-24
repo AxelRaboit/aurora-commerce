@@ -94,4 +94,19 @@ final class PostsRelatedTest extends IntegrationTestCase
         $ids = array_map(static fn (array $r): int => $r['id'], $body['results']);
         self::assertNotContains($first->getId(), $ids);
     }
+
+    public function testSearchEndpointResolvesByIds(): void
+    {
+        $first = $this->createPost('Alpha');
+        $second = $this->createPost('Beta');
+        $third = $this->createPost('Gamma');
+
+        $this->client->request('GET', sprintf('/admin/posts/search?ids=%d,%d', $first->getId(), $third->getId()));
+        self::assertSame(200, $this->client->getResponse()->getStatusCode());
+        $body = json_decode((string) $this->client->getResponse()->getContent(), true);
+
+        $ids = array_map(static fn (array $r): int => $r['id'], $body['results']);
+        self::assertEqualsCanonicalizing([$first->getId(), $third->getId()], $ids);
+        self::assertNotContains($second->getId(), $ids);
+    }
 }

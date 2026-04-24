@@ -409,6 +409,10 @@ export default {
                 title: "Articles liés",
                 searchPlaceholder: "Rechercher un article à lier…",
             },
+            customFields: "Champs personnalisés",
+            customField: {
+                upload: "Téléverser",
+            },
             blocks: "Contenu",
             metaTitle: "Méta-titre",
             metaDescription: "Méta-description",

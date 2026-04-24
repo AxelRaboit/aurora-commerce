@@ -17,6 +17,7 @@ import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
 import GoogleSerpPreview from "./GoogleSerpPreview.vue";
+import PostCustomField from "./PostCustomField.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
@@ -380,6 +381,36 @@ const availableTaxonomies = computed(() => {
     if (!currentPostTypeId) return [];
     return (props.taxonomies ?? []).filter((tx) => (tx.postTypeIds ?? []).includes(currentPostTypeId));
 });
+
+// ── Custom fields (defined on the current PostType) ──────────────────────────
+const customFieldsDefs = computed(() => {
+    const currentPostTypeId = Number(form.postTypeId);
+    const pt = props.postTypes.find((postType) => postType.id === currentPostTypeId);
+    if (!pt) return [];
+    return [...(pt.fields ?? [])].sort((a, b) => a.position - b.position);
+});
+
+function defaultValueForField(field) {
+    if (field.type === "checkbox") return false;
+    if (field.type === "reference" && field.options?.multiple === true) return [];
+    return null;
+}
+
+function ensureCustomFieldsForLocale(locale) {
+    const translation = form.translations[locale];
+    if (!translation) return;
+    for (const field of customFieldsDefs.value) {
+        if (!(field.name in translation.customFields)) {
+            translation.customFields[field.name] = defaultValueForField(field);
+        }
+    }
+}
+
+watch(
+    [customFieldsDefs, activeLocale],
+    () => ensureCustomFieldsForLocale(activeLocale.value),
+    { immediate: true },
+);
 
 function taxonomyLabel(taxonomy) {
     return taxonomy.translations?.[activeLocale.value]?.label
@@ -873,6 +904,20 @@ function forceSave() {
                     <Lock v-if="slugLocked" class="w-4 h-4" :stroke-width="2" />
                     <Unlock v-else class="w-4 h-4" :stroke-width="2" />
                 </AppButton>
+            </div>
+        </div>
+
+        <!-- Custom fields defined on the post type -->
+        <div v-if="customFieldsDefs.length" class="border-t border-line pt-4 space-y-3">
+            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("admin.posts.customFields") }}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <PostCustomField
+                    v-for="field in customFieldsDefs"
+                    :key="field.id"
+                    :field="field"
+                    :model-value="form.translations[activeLocale].customFields[field.name]"
+                    v-on:update:model-value="form.translations[activeLocale].customFields[field.name] = $event"
+                />
             </div>
         </div>
 
