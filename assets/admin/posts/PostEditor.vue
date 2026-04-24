@@ -27,7 +27,7 @@ const { t } = useI18n();
 const props = defineProps({
     postId: { type: Number, default: null },
     postTypes: { type: Array, default: () => [] },
-    allTerms: { type: Array, default: () => [] },
+    taxonomies: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     showPath: { type: String, required: true },
     createPath: { type: String, required: true },
@@ -324,6 +324,54 @@ function toggleTerm(termId) {
     }
 }
 
+// ── Taxonomy picker helpers ──────────────────────────────────────────────────
+const availableTaxonomies = computed(() => {
+    const currentPostTypeId = Number(form.postTypeId);
+    if (!currentPostTypeId) return [];
+    return (props.taxonomies ?? []).filter((tx) => (tx.postTypeIds ?? []).includes(currentPostTypeId));
+});
+
+function taxonomyLabel(taxonomy) {
+    return taxonomy.translations?.[activeLocale.value]?.label
+        ?? taxonomy.translations?.[props.locales[0]]?.label
+        ?? taxonomy.slug;
+}
+
+function termLabel(term) {
+    return term.translations?.[activeLocale.value]?.name
+        ?? term.translations?.[props.locales[0]]?.name
+        ?? "(—)";
+}
+
+function buildTermTree(terms) {
+    const byId = new Map(terms.map((term) => [term.id, { ...term, children: [] }]));
+    const roots = [];
+    for (const node of byId.values()) {
+        if (node.parentId && byId.has(node.parentId)) {
+            byId.get(node.parentId).children.push(node);
+        } else {
+            roots.push(node);
+        }
+    }
+    const sortRecursive = (nodes) => {
+        nodes.sort((a, b) => (a.position - b.position) || (a.id - b.id));
+        nodes.forEach((n) => sortRecursive(n.children));
+    };
+    sortRecursive(roots);
+    return roots;
+}
+
+function flattenTreeWithDepth(nodes, depth = 0) {
+    const result = [];
+    for (const node of nodes) {
+        result.push({ ...node, depth });
+        if (node.children?.length) {
+            result.push(...flattenTreeWithDepth(node.children, depth + 1));
+        }
+    }
+    return result;
+}
+
 const showPreview   = ref(false);
 const showTemplates = ref(false);
 const showRevisions = ref(false);
@@ -577,20 +625,49 @@ function forceSave() {
                     </AppSelect>
                 </div>
             </div>
-            <!-- Terms inline chips (grouped by taxonomy) -->
-            <div v-if="allTerms.length" class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.terms") }}</span>
-                <label
-                    v-for="term in allTerms"
-                    :key="term.id"
-                    class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
-                    :class="form.termIds.includes(term.id)
-                        ? 'bg-indigo-600 border-indigo-600 text-white'
-                        : 'bg-surface-2 border-line text-secondary hover:border-indigo-400 hover:text-primary'"
-                >
-                    <input type="checkbox" class="sr-only" :checked="form.termIds.includes(term.id)" v-on:change="toggleTerm(term.id)">
-                    {{ term.name }}
-                </label>
+            <!-- Terms picker, grouped by taxonomy -->
+            <div v-for="taxonomy in availableTaxonomies" :key="taxonomy.id" class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ taxonomyLabel(taxonomy) }}</span>
+                    <span v-if="taxonomy.hierarchical" class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">
+                        {{ t("admin.taxonomies.hierarchical") }}
+                    </span>
+                </div>
+
+                <!-- Flat taxonomy: chip picker -->
+                <div v-if="!taxonomy.hierarchical" class="flex items-center gap-2 flex-wrap">
+                    <label
+                        v-for="term in taxonomy.terms"
+                        :key="term.id"
+                        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
+                        :class="form.termIds.includes(term.id)
+                            ? 'bg-indigo-600 border-indigo-600 text-white'
+                            : 'bg-surface-2 border-line text-secondary hover:border-indigo-400 hover:text-primary'"
+                    >
+                        <input type="checkbox" class="sr-only" :checked="form.termIds.includes(term.id)" v-on:change="toggleTerm(term.id)">
+                        {{ termLabel(term) }}
+                    </label>
+                    <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
+                </div>
+
+                <!-- Hierarchical taxonomy: indented checkbox tree -->
+                <div v-else class="max-h-60 overflow-y-auto border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
+                    <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
+                    <label
+                        v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
+                        :key="term.id"
+                        class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
+                        :style="{ paddingLeft: `${0.375 + term.depth * 1.25}rem` }"
+                    >
+                        <input
+                            type="checkbox"
+                            class="w-4 h-4 rounded border-line bg-surface text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0"
+                            :checked="form.termIds.includes(term.id)"
+                            v-on:change="toggleTerm(term.id)"
+                        >
+                        <span class="text-primary">{{ termLabel(term) }}</span>
+                    </label>
+                </div>
             </div>
         </div>
 

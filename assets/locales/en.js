@@ -398,6 +398,7 @@ export default {
             status: "Status",
             postType: "Content type",
             terms: "Terms",
+            termsPickerEmpty: "No terms in this taxonomy yet.",
             blocks: "Content",
             metaTitle: "Meta title",
             metaDescription: "Meta description",

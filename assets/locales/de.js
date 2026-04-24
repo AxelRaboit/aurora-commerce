@@ -403,6 +403,7 @@ export default {
             status: "Status",
             postType: "Inhaltstyp",
             terms: "Begriffe",
+            termsPickerEmpty: "Noch keine Begriffe in dieser Taxonomie.",
             blocks: "Inhalt",
             metaTitle: "Meta-Titel",
             metaDescription: "Meta-Beschreibung",

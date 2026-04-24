@@ -23,7 +23,7 @@ const props = defineProps({
     posts: { type: Object, default: () => ({ items: [], total: 0, page: 1, totalPages: 1 }) },
     search: { type: String, default: "" },
     postTypes: { type: Array, default: () => [] },
-    allTerms: { type: Array, default: () => [] },
+    taxonomies: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     trashed: { type: Boolean, default: false },
     createPath: { type: String, required: true },
@@ -55,7 +55,7 @@ async function restorePost(post) {
 }
 
 const parsedPostTypes = props.postTypes ?? [];
-const parsedAllTerms  = props.allTerms ?? [];
+const parsedTaxonomies = props.taxonomies ?? [];
 const parsedLocales   = props.locales ?? DEFAULT_LOCALES;
 
 // View state: 'list' | 'editor'
@@ -115,7 +115,7 @@ async function openPreview(post) {
         v-if="view === 'editor'"
         :post-id="editingPostId"
         :post-types="parsedPostTypes"
-        :all-terms="parsedAllTerms"
+        :taxonomies="parsedTaxonomies"
         :locales="parsedLocales"
         :show-path="showPath"
         :create-path="createPath"

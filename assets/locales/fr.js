@@ -404,6 +404,7 @@ export default {
             status: "Statut",
             postType: "Type de contenu",
             terms: "Termes",
+            termsPickerEmpty: "Aucun terme dans cette taxonomie pour l'instant.",
             blocks: "Contenu",
             metaTitle: "Méta-titre",
             metaDescription: "Méta-description",
