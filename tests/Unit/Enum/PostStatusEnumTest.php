@@ -12,7 +12,7 @@ final class PostStatusEnumTest extends TestCase
     public function testValuesReturnsAllCasesInDeclarationOrder(): void
     {
         self::assertSame(
-            ['draft', 'pending_review', 'scheduled', 'published', 'archived', 'trash'],
+            ['draft', 'pending_review', 'scheduled', 'published', 'archived'],
             PostStatusEnum::values(),
         );
     }

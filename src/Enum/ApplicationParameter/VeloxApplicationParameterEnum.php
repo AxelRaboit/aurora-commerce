@@ -20,6 +20,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
     case MaintenanceMode = 'maintenance_mode';
     case RegistrationEnabled = 'registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
+    case TrashAutoPurgeDays = 'trash_auto_purge_days';
 
     public function getKey(): string
     {
@@ -43,6 +44,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::MaintenanceMode => 'Mode maintenance',
             self::RegistrationEnabled => 'Inscriptions ouvertes',
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
+            self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
         };
     }
 
@@ -63,6 +65,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = site fermé au public)',
             self::RegistrationEnabled => 'Autoriser les nouvelles inscriptions (0 = désactivé, 1 = activé)',
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
+            self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
         };
     }
 
@@ -83,13 +86,14 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::MaintenanceMode => '0',
             self::RegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
+            self::TrashAutoPurgeDays => '30',
         };
     }
 
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit => 'int',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
             self::CommentsEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
             default => 'string',
         };
@@ -100,7 +104,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
-            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit => 'reading',
+            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::RegistrationEnabled => 'system',
         };

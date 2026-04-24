@@ -27,6 +27,8 @@ final readonly class PostSerializer
             'tagIds' => $post->getTags()->map(fn (object $tag): ?int => $tag->getId())->toArray(),
             'publishedAt' => $post->getPublishedAt()?->format(DateTimeInterface::ATOM),
             'scheduledAt' => $post->getScheduledAt()?->format(DateTimeInterface::ATOM),
+            'deletedAt' => $post->getDeletedAt()?->format(DateTimeInterface::ATOM),
+            'trashed' => $post->isTrashed(),
             'createdAt' => $post->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

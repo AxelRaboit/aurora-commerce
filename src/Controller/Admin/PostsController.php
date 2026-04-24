@@ -56,7 +56,8 @@ class PostsController extends AbstractController
         $search = mb_trim((string) $request->query->get('search', ''));
         $page = max(1, (int) $request->query->get('page', '1'));
         $postTypeId = $request->query->getInt('postTypeId') ?: null;
-        $result = $this->postRepository->findPaginated($page, 20, $search ?: null, $postTypeId);
+        $trashed = $request->query->getBoolean('trashed');
+        $result = $this->postRepository->findPaginated($page, 20, $search ?: null, $postTypeId, trashed: $trashed);
 
         $items = array_map(
             $this->postSerializer->serialize(...),
@@ -78,6 +79,7 @@ class PostsController extends AbstractController
             'search' => $search,
             'postTypes' => $postTypes,
             'allTags' => $allTags,
+            'trashed' => $trashed,
             'locales' => $this->getParameter('kernel.enabled_locales'),
         ]);
     }
@@ -130,6 +132,22 @@ class PostsController extends AbstractController
     public function delete(Post $post): JsonResponse
     {
         $this->postManager->delete($post);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/{id}/restore', name: '_restore', methods: [HttpMethodEnum::Post->value])]
+    public function restore(Post $post): JsonResponse
+    {
+        $this->postManager->restore($post);
+
+        return $this->json(['success' => true, 'post' => $this->postSerializer->serialize($post)]);
+    }
+
+    #[Route('/{id}/force-delete', name: '_force_delete', methods: [HttpMethodEnum::Post->value])]
+    public function forceDelete(Post $post): JsonResponse
+    {
+        $this->postManager->forceDelete($post);
 
         return $this->json(['success' => true]);
     }

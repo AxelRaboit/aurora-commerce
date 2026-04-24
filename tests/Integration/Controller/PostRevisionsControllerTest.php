@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Controller;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\PostRepository;
+use App\Repository\SettingRepository;
 use App\Repository\UserRepository;
 use App\Tests\Integration\Concern\BuildsPostPayload;
 use App\Tests\Integration\IntegrationTestCase;
@@ -93,7 +94,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         $post = $this->firstPost();
 
         $container = static::getContainer();
-        $container->get(\App\Repository\SettingRepository::class)->set('post_revisions_limit', '2');
+        $container->get(SettingRepository::class)->set('post_revisions_limit', '2');
 
         for ($i = 0; $i < 4; ++$i) {
             $reloaded = static::getContainer()->get(PostRepository::class)->find($post->getId());

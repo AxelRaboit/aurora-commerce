@@ -1,0 +1,35 @@
+{#
+  Underlined text link component.
+
+  Usage (simple):
+    {{ include('components/app_link.html.twig', { href: path('app_login'), label: 'Login'|trans }) }}
+
+  Usage (block):
+    {% embed 'components/app_link.html.twig' with { href: '...', variant: 'inherit' } %}
+        {% block content %}<strong>Leave</strong>{% endblock %}
+    {% endembed %}
+
+  Variants:
+    - primary (default): text-primary color, standard underlined
+    - inherit: inherits parent color (use inside colored banners)
+
+  Sizes: sm (text-sm) | md (default, no size class)
+  Attributes: extraClass to append custom classes
+#}
+
+{% set _variant = variant|default('primary') %}
+{% set _size = size|default('md') %}
+
+{% set _variants = {
+    primary: 'text-primary underline transition-colors',
+    inherit: 'underline hover:opacity-80 transition-opacity',
+} %}
+
+{% set _sizes = {
+    sm: 'text-sm',
+    md: '',
+} %}
+
+{% set _class = (_variants[_variant] ?? _variants.primary) ~ ' ' ~ (_sizes[_size] ?? '') ~ ' ' ~ (extraClass|default('')) %}
+
+<a href="{{ href }}" class="{{ _class|trim }}">{% block content %}{{ label|default('') }}{% endblock %}</a>

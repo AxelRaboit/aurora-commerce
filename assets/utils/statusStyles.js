@@ -4,7 +4,6 @@ const POST_STATUS_CLASSES = {
     pending_review: "bg-sky-500/15 text-sky-400",
     scheduled: "bg-violet-500/15 text-violet-400",
     archived: "bg-slate-500/15 text-slate-400",
-    trash: "bg-rose-500/15 text-rose-400",
 };
 
 export function statusBadge(status) {

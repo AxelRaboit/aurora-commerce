@@ -19,10 +19,13 @@ use App\Repository\SettingRepository;
 use App\Repository\TagRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\SluggerInterface;
+
+use const DATE_ATOM;
 
 #[AsAlias(PostManagerInterface::class)]
 final readonly class PostManager implements PostManagerInterface
@@ -62,6 +65,26 @@ final readonly class PostManager implements PostManagerInterface
 
     public function delete(Post $post): void
     {
+        if ($post->isTrashed()) {
+            return;
+        }
+
+        $post->setDeletedAt(new DateTimeImmutable());
+        $post->updateTimestamps();
+
+        $this->entityManager->flush();
+    }
+
+    public function restore(Post $post): void
+    {
+        $post->setDeletedAt(null);
+        $post->updateTimestamps();
+
+        $this->entityManager->flush();
+    }
+
+    public function forceDelete(Post $post): void
+    {
         $this->entityManager->remove($post);
         $this->entityManager->flush();
     }
@@ -87,6 +110,7 @@ final readonly class PostManager implements PostManagerInterface
             if (!is_array($translationData)) {
                 continue;
             }
+
             $translation = $post->translate((string) $locale);
             $translation->setTitle($translationData['title'] ?? null);
             $translation->setSlug($translationData['slug'] ?? null);
@@ -120,7 +144,7 @@ final readonly class PostManager implements PostManagerInterface
             $post->setScheduledAt(null);
         }
 
-        if (PostStatusEnum::Published === $status && null === $post->getPublishedAt()) {
+        if (PostStatusEnum::Published === $status && !$post->getPublishedAt() instanceof DateTimeImmutable) {
             $post->setPublishedAt(new DateTimeImmutable());
         }
 
@@ -217,8 +241,8 @@ final readonly class PostManager implements PostManagerInterface
             'postTypeId' => $post->getPostType()->getId(),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'tagIds' => $post->getTags()->map(fn ($tag): ?int => $tag->getId())->toArray(),
-            'publishedAt' => $post->getPublishedAt()?->format(\DATE_ATOM),
-            'scheduledAt' => $post->getScheduledAt()?->format(\DATE_ATOM),
+            'publishedAt' => $post->getPublishedAt()?->format(DATE_ATOM),
+            'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'translations' => $translations,
         ];
     }
@@ -231,7 +255,7 @@ final readonly class PostManager implements PostManagerInterface
 
         try {
             return new DateTimeImmutable($value);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }

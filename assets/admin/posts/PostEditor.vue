@@ -6,6 +6,7 @@ import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
+import AppMessage from "@/components/AppMessage.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import EditorBlock from "@/components/EditorBlock.vue";
@@ -69,6 +70,7 @@ const form = reactive({
 });
 
 const publishedAt = ref(null);
+const trashed = ref(false);
 
 // ── Slug lock ────────────────────────────────────────────────────────────────
 const slugLocked = ref(true);
@@ -164,6 +166,7 @@ onMounted(async () => {
             form.status = data.post.status;
             form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
             publishedAt.value = data.post.publishedAt ?? null;
+            trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.tagIds = [...(data.post.tagIds ?? [])];
@@ -213,6 +216,7 @@ async function reloadAfterRestore() {
             form.status = data.post.status;
             form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
             publishedAt.value = data.post.publishedAt ?? null;
+            trashed.value = data.post.trashed ?? false;
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.tagIds = [...(data.post.tagIds ?? [])];
@@ -343,11 +347,15 @@ function forceSave() {
     </div>
 
     <div v-else class="space-y-6">
+        <!-- Trashed banner -->
+        <AppMessage v-if="trashed" variant="trash">
+            {{ t("admin.posts.trashedBanner") }}
+        </AppMessage>
+
         <!-- Conflict banner -->
-        <div v-if="conflict" class="flex flex-col sm:flex-row sm:items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
-            <span class="shrink-0 mt-0.5">⚠️</span>
-            <div class="flex-1">{{ t("admin.posts.conflict") }}</div>
-            <div class="flex flex-wrap gap-2 shrink-0">
+        <AppMessage v-if="conflict" variant="warning">
+            {{ t("admin.posts.conflict") }}
+            <template #actions>
                 <AppButton variant="secondary" size="sm" v-on:click="openRemoteVersion">
                     <Eye class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.posts.conflictCompare") }}
@@ -360,13 +368,13 @@ function forceSave() {
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.posts.conflictForce") }}
                 </AppButton>
-            </div>
-        </div>
+            </template>
+        </AppMessage>
 
         <!-- Top bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <!-- Back + title (always inline) -->
-            <div class="flex items-center gap-3 sm:flex-1 min-w-0">
+        <div class="space-y-3">
+            <!-- Back + title -->
+            <div class="flex items-center gap-3 min-w-0">
                 <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
                     <ArrowLeft class="w-5 h-5" :stroke-width="2" />
                 </AppButton>
@@ -376,14 +384,13 @@ function forceSave() {
             </div>
 
             <!-- Actions: stacked on mobile, inline on desktop -->
-            <div class="grid grid-cols-1 sm:flex sm:items-center gap-2">
+            <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-2">
                 <AppSelect v-model="form.status" class="w-full sm:w-auto">
                     <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
                     <option value="pending_review">{{ t("admin.posts.statusOptions.pending_review") }}</option>
                     <option value="scheduled">{{ t("admin.posts.statusOptions.scheduled") }}</option>
                     <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
                     <option value="archived">{{ t("admin.posts.statusOptions.archived") }}</option>
-                    <option value="trash">{{ t("admin.posts.statusOptions.trash") }}</option>
                 </AppSelect>
                 <AppInput
                     v-if="form.status === 'scheduled'"
@@ -396,7 +403,13 @@ function forceSave() {
                     <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
                     <span>Templates</span>
                 </AppButton>
-                <AppButton v-if="postId" variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showRevisions = true">
+                <AppButton
+                    v-if="postId"
+                    variant="secondary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="showRevisions = true"
+                >
                     <History class="w-4 h-4" :stroke-width="2" />
                     <span>{{ t("admin.posts.revisions.title") }}</span>
                 </AppButton>
@@ -419,9 +432,9 @@ function forceSave() {
         </div>
 
         <!-- Global save errors -->
-        <div v-if="Object.keys(errors).length" class="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-400 space-y-1">
+        <AppMessage v-if="Object.keys(errors).length" variant="danger">
             <p v-for="(message, field) in errors" :key="field">{{ message }}</p>
-        </div>
+        </AppMessage>
 
         <!-- Published at info -->
         <p v-if="publishedAt" class="px-1 text-xs text-muted">

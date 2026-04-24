@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Media;
 use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\MenuRepository;
@@ -13,12 +12,10 @@ use App\Repository\PostTypeRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class AdminStatsService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private PostRepository $postRepository,
         private PostTypeRepository $postTypeRepository,
         private MediaRepository $mediaRepository,
@@ -50,14 +47,6 @@ final readonly class AdminStatsService
      */
     private function getPostStats(): array
     {
-        $total = $this->postRepository->count([]);
-        $published = $this->postRepository->count(['status' => PostStatusEnum::Published]);
-        $draft = $this->postRepository->count(['status' => PostStatusEnum::Draft]);
-        $pendingReview = $this->postRepository->count(['status' => PostStatusEnum::PendingReview]);
-        $scheduled = $this->postRepository->count(['status' => PostStatusEnum::Scheduled]);
-        $archived = $this->postRepository->count(['status' => PostStatusEnum::Archived]);
-        $trash = $this->postRepository->count(['status' => PostStatusEnum::Trash]);
-
         $byType = [];
         foreach ($this->postTypeRepository->findAll() as $type) {
             $byType[] = [
@@ -68,13 +57,13 @@ final readonly class AdminStatsService
         }
 
         return [
-            'total' => $total,
-            'published' => $published,
-            'draft' => $draft,
-            'pendingReview' => $pendingReview,
-            'scheduled' => $scheduled,
-            'archived' => $archived,
-            'trash' => $trash,
+            'total' => $this->postRepository->count([]),
+            'published' => $this->postRepository->count(['status' => PostStatusEnum::Published, 'deletedAt' => null]),
+            'draft' => $this->postRepository->count(['status' => PostStatusEnum::Draft, 'deletedAt' => null]),
+            'pendingReview' => $this->postRepository->count(['status' => PostStatusEnum::PendingReview, 'deletedAt' => null]),
+            'scheduled' => $this->postRepository->count(['status' => PostStatusEnum::Scheduled, 'deletedAt' => null]),
+            'archived' => $this->postRepository->count(['status' => PostStatusEnum::Archived, 'deletedAt' => null]),
+            'trashed' => $this->postRepository->countTrashed(),
             'byType' => $byType,
         ];
     }
@@ -84,17 +73,9 @@ final readonly class AdminStatsService
      */
     private function getMediaStats(): array
     {
-        $total = $this->mediaRepository->count([]);
-
-        $totalSize = (int) $this->entityManager->createQueryBuilder()
-            ->select('COALESCE(SUM(m.size), 0)')
-            ->from(Media::class, 'm')
-            ->getQuery()
-            ->getSingleScalarResult();
-
         return [
-            'total' => $total,
-            'totalSize' => $totalSize,
+            'total' => $this->mediaRepository->count([]),
+            'totalSize' => $this->mediaRepository->getTotalStorageSize(),
         ];
     }
 
@@ -103,21 +84,8 @@ final readonly class AdminStatsService
      */
     private function getPostsByMonth(): array
     {
-        $sqlQuery = <<<'SQL'
-                SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS count
-                FROM posts
-                WHERE created_at >= :since
-                GROUP BY month
-                ORDER BY month ASC
-            SQL;
-
         $since = (new DateTimeImmutable('-5 months'))->modify('first day of this month')->setTime(0, 0);
-        $rows = $this->entityManager->getConnection()->fetchAllAssociative($sqlQuery, ['since' => $since->format('Y-m-d H:i:s')]);
-
-        $monthCountMap = [];
-        foreach ($rows as $row) {
-            $monthCountMap[$row['month']] = (int) $row['count'];
-        }
+        $monthCountMap = $this->postRepository->countByMonthSince($since);
 
         $result = [];
         for ($monthOffset = 5; $monthOffset >= 0; --$monthOffset) {
@@ -133,24 +101,15 @@ final readonly class AdminStatsService
      */
     private function getRecentPosts(): array
     {
-        $posts = $this->postRepository->createQueryBuilder('p')
-            ->leftJoin('p.postType', 'pt')
-            ->leftJoin('p.translations', 't')
-            ->addSelect('pt', 't')
-            ->orderBy('p.updatedAt', 'DESC')
-            ->setMaxResults(5)
-            ->getQuery()
-            ->getResult();
-
         $result = [];
-        foreach ($posts as $post) {
+        foreach ($this->postRepository->findRecent(5) as $post) {
             $firstTranslation = $post->getTranslations()->first() ?: null;
             $result[] = [
                 'id' => $post->getId(),
                 'title' => $firstTranslation ? $firstTranslation->getTitle() : '(sans titre)',
                 'status' => $post->getStatus()->value,
                 'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
-                'postType' => $post->getPostType()?->getLabel() ?? '',
+                'postType' => $post->getPostType()->getLabel(),
             ];
         }
 

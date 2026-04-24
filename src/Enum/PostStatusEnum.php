@@ -11,7 +11,6 @@ enum PostStatusEnum: string
     case Scheduled = 'scheduled';
     case Published = 'published';
     case Archived = 'archived';
-    case Trash = 'trash';
 
     /**
      * @return list<string>

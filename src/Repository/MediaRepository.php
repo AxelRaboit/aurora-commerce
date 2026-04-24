@@ -17,4 +17,12 @@ class MediaRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Media::class);
     }
+
+    public function getTotalStorageSize(): int
+    {
+        return (int) $this->createQueryBuilder('m')
+            ->select('COALESCE(SUM(m.size), 0)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

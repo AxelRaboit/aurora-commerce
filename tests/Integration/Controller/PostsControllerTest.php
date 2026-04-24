@@ -10,6 +10,7 @@ use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Tests\Integration\Concern\BuildsPostPayload;
 use App\Tests\Integration\IntegrationTestCase;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -132,7 +133,7 @@ final class PostsControllerTest extends IntegrationTestCase
         $payload = $this->postPayload($post, $post->getVersion());
         $payload['status'] = $status;
         if ('scheduled' === $status) {
-            $payload['scheduledAt'] = (new \DateTimeImmutable('+1 day'))->format(DATE_ATOM);
+            $payload['scheduledAt'] = (new DateTimeImmutable('+1 day'))->format(DATE_ATOM);
         }
 
         [$statusCode, $body] = $this->editPost($post->getId(), $payload);

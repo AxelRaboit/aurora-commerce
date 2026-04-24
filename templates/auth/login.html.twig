@@ -68,9 +68,11 @@
                        class="w-4 h-4 rounded border-line bg-surface-2 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
                 <span class="text-sm text-secondary">{{ 'auth.login.remember'|trans }}</span>
             </label>
-            <a href="{{ path('app_forgot_password') }}" class="text-sm text-primary underline transition-colors">
-                {{ 'auth.login.forgot'|trans }}
-            </a>
+            {{ include('components/app_link.html.twig', {
+                href: path('app_forgot_password'),
+                size: 'sm',
+                label: 'auth.login.forgot'|trans,
+            }) }}
         </div>
 
         <button type="submit"
@@ -86,7 +88,7 @@
     </div>
 
     <div class="mt-4 flex flex-col gap-2 text-center text-sm">
-        <a href="{{ path('app_register') }}" class="text-primary underline transition-colors">{{ 'auth.login.no_account'|trans }}</a>
-        <a href="{{ path('app_access_request') }}" class="text-primary underline transition-colors">{{ 'auth.login.request_access'|trans }}</a>
+        {{ include('components/app_link.html.twig', {href: path('app_register'), label: 'auth.login.no_account'|trans}) }}
+        {{ include('components/app_link.html.twig', {href: path('app_access_request'), label: 'auth.login.request_access'|trans}) }}
     </div>
 {% endblock %}

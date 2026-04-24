@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Serializer;
 
 use App\Entity\PostRevision;
+use App\Entity\User;
 use DateTimeInterface;
 
 final readonly class PostRevisionSerializer
@@ -18,7 +19,7 @@ final readonly class PostRevisionSerializer
             'postVersion' => $revision->getPostVersion(),
             'status' => $revision->getStatus()->value,
             'createdAt' => $revision->getCreatedAt()->format(DateTimeInterface::ATOM),
-            'author' => null !== $author ? [
+            'author' => $author instanceof User ? [
                 'id' => $author->getId(),
                 'email' => $author->getEmail(),
             ] : null,

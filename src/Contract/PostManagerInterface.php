@@ -16,5 +16,9 @@ interface PostManagerInterface
 
     public function delete(Post $post): void;
 
+    public function restore(Post $post): void;
+
+    public function forceDelete(Post $post): void;
+
     public function restoreRevision(Post $post, PostRevision $revision): void;
 }

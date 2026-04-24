@@ -46,13 +46,17 @@
         {% block page_header_slot %}{% endblock %}
 
         {% if is_granted('IS_IMPERSONATOR') %}
-            <div class="bg-amber-500/15 border-b border-amber-500/40 px-4 py-2 flex items-center justify-center gap-3 text-xs text-amber-300">
-                {{ include('components/icon.html.twig', {name: 'user-check', class: 'w-4 h-4 shrink-0', size: 16}) }}
-                <span>{{ 'impersonation.banner'|trans({'{name}': app.user.name}) }}</span>
-                <a href="{{ path('admin_dashboard', {_switch_user: '_exit'}) }}" class="ml-2 underline hover:text-amber-200 transition-colors font-medium">
-                    {{ 'impersonation.leave'|trans }}
-                </a>
-            </div>
+            {% embed 'components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
+                {% block content %}{{ 'impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
+                {% block actions %}
+                    {{ include('components/app_link.html.twig', {
+                        href: path('admin_dashboard', {_switch_user: '_exit'}),
+                        variant: 'inherit',
+                        extraClass: 'ml-2 font-medium',
+                        label: 'impersonation.leave'|trans,
+                    }) }}
+                {% endblock %}
+            {% endembed %}
         {% endif %}
 
         <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">

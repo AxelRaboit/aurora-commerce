@@ -9,7 +9,7 @@ import { statusBadge } from "@/utils/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
 import { usePostList } from "@/admin/posts/composables/usePostList.js";
 import { usePostDelete } from "@/admin/posts/composables/usePostDelete.js";
-import { Pencil, Trash2, Plus, FileText, Search, Eye } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, FileText, Search, Eye, Inbox, RotateCcw } from "lucide-vue-next";
 import PostEditor from "@/admin/posts/PostEditor.vue";
 import PostPreviewOverlay from "@/admin/posts/PostPreviewOverlay.vue";
 import AppButton from "@/components/AppButton.vue";
@@ -25,11 +25,34 @@ const props = defineProps({
     postTypes: { type: Array, default: () => [] },
     allTags: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
+    trashed: { type: Boolean, default: false },
     createPath: { type: String, required: true },
     showPath: { type: String, required: true },
     editPath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    restorePath: { type: String, required: true },
+    forceDeletePath: { type: String, required: true },
 });
+
+function setTrashedFilter(trashed) {
+    const url = new URL(props.postsPath, window.location.origin);
+    if (trashed) url.searchParams.set("trashed", "1");
+    window.location.href = url.toString();
+}
+
+async function restorePost(post) {
+    try {
+        const response = await fetch(props.restorePath.replace("__id__", post.id), { method: "POST" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (data.success) {
+            removePost(post.id);
+            toast.success(t("admin.posts.restored"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
 
 const parsedPostTypes = props.postTypes ?? [];
 const parsedAllTags   = props.allTags ?? [];
@@ -61,7 +84,11 @@ function onEditorSaved(post, isNew) {
 const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
     usePostList(props.postsPath, props.posts, props.search);
 
-const deletePost = usePostDelete(props.deletePath, (id) => removePost(id), "admin.posts.deleted");
+const deletePost = usePostDelete(
+    props.trashed ? props.forceDeletePath : props.deletePath,
+    (id) => removePost(id),
+    props.trashed ? "admin.posts.deletedForever" : "admin.posts.deleted",
+);
 
 const previewPost = ref(null);
 const previewLoading = ref(false);
@@ -99,6 +126,28 @@ async function openPreview(post) {
 
     <!-- List view -->
     <div v-else class="space-y-4">
+        <!-- Tabs: active vs trash -->
+        <div class="flex border-b border-line/40 text-sm">
+            <button
+                type="button"
+                class="px-4 py-2 border-b-2 font-medium transition-colors"
+                :class="!trashed ? 'border-indigo-500 text-primary' : 'border-transparent text-muted hover:text-secondary'"
+                v-on:click="setTrashedFilter(false)"
+            >
+                <FileText class="inline w-4 h-4 mr-1.5 -mt-0.5" :stroke-width="2" />
+                {{ t("admin.posts.tabs.active") }}
+            </button>
+            <button
+                type="button"
+                class="px-4 py-2 border-b-2 font-medium transition-colors"
+                :class="trashed ? 'border-rose-500 text-primary' : 'border-transparent text-muted hover:text-secondary'"
+                v-on:click="setTrashedFilter(true)"
+            >
+                <Inbox class="inline w-4 h-4 mr-1.5 -mt-0.5" :stroke-width="2" />
+                {{ t("admin.posts.tabs.trash") }}
+            </button>
+        </div>
+
         <!-- Toolbar -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2">
             <div class="relative">
@@ -115,7 +164,13 @@ async function openPreview(post) {
                 <Search class="w-4 h-4" :stroke-width="2" />
                 {{ t("admin.users.search") }}
             </AppButton>
-            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton
+                v-if="!trashed"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openCreate"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("admin.posts.add") }}
             </AppButton>
@@ -140,8 +195,11 @@ async function openPreview(post) {
                         <AppIconButton color="sky" v-on:click="openPreview(post)">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton color="indigo" v-on:click="openEdit(post)">
+                        <AppIconButton v-if="!trashed" color="indigo" v-on:click="openEdit(post)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
+                            <RotateCcw class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
@@ -186,8 +244,11 @@ async function openPreview(post) {
                                 <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="indigo" v-on:click="openEdit(post)">
+                                <AppIconButton v-if="!trashed" color="indigo" v-on:click="openEdit(post)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
+                                    <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
@@ -219,14 +280,14 @@ async function openPreview(post) {
         <!-- Delete confirmation modal -->
         <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" v-on:close="deletePost.pendingDelete.value = null">
             <p class="text-sm text-primary">
-                {{ t("admin.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
+                {{ t(trashed ? "admin.posts.forceDeleteConfirm" : "admin.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
             </p>
             <div class="flex justify-end gap-2 mt-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
                     {{ t("common.cancel") }}
                 </AppButton>
                 <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
-                    {{ t("common.delete") }}
+                    {{ t(trashed ? "admin.posts.forceDelete" : "common.delete") }}
                 </AppButton>
             </div>
         </AppModal>

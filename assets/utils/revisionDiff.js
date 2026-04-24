@@ -35,18 +35,38 @@ export function diffBlocksAgainstRevision(currentBlocks, revisionBlocks) {
         seen.add(block.id);
         const previous = revisionMap.get(block.id) ?? null;
         if (!previous) {
-            entries.push({ id: block.id, kind: RevisionDiffKind.Added, current: block, revision: null });
+            entries.push({
+                id: block.id,
+                kind: RevisionDiffKind.Added,
+                current: block,
+                revision: null,
+            });
         } else if (!blocksEqual(block, previous)) {
-            entries.push({ id: block.id, kind: RevisionDiffKind.Modified, current: block, revision: previous });
+            entries.push({
+                id: block.id,
+                kind: RevisionDiffKind.Modified,
+                current: block,
+                revision: previous,
+            });
         } else {
-            entries.push({ id: block.id, kind: RevisionDiffKind.Unchanged, current: block, revision: previous });
+            entries.push({
+                id: block.id,
+                kind: RevisionDiffKind.Unchanged,
+                current: block,
+                revision: previous,
+            });
         }
     }
 
     for (const block of revisionBlocks ?? []) {
         if (!block?.id || seen.has(block.id)) continue;
         if (currentMap.has(block.id)) continue;
-        entries.push({ id: block.id, kind: RevisionDiffKind.Removed, current: null, revision: block });
+        entries.push({
+            id: block.id,
+            kind: RevisionDiffKind.Removed,
+            current: null,
+            revision: block,
+        });
     }
 
     return entries;

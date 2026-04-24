@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Scheduler;
 
 use App\Message\PublishScheduledPostsMessage;
+use App\Message\PurgeTrashedPostsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -25,6 +26,9 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->processOnlyLastMissedRun(true)
             ->add(
                 RecurringMessage::cron('* * * * *', new PublishScheduledPostsMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('0 3 * * *', new PurgeTrashedPostsMessage()),
             );
     }
 }

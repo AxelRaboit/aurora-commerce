@@ -14,9 +14,12 @@
     postTypes: postTypes,
     allTags: allTags,
     locales: locales,
+    trashed: trashed,
     createPath: path('admin_posts_create'),
     showPath: path('admin_posts_show', {id: '__id__'}),
     editPath: path('admin_posts_edit', {id: '__id__'}),
     deletePath: path('admin_posts_delete', {id: '__id__'}),
+    restorePath: path('admin_posts_restore', {id: '__id__'}),
+    forceDeletePath: path('admin_posts_force_delete', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

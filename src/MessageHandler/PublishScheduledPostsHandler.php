@@ -25,14 +25,7 @@ final readonly class PublishScheduledPostsHandler
     {
         $now = new DateTimeImmutable();
 
-        $duePosts = $this->postRepository->createQueryBuilder('p')
-            ->where('p.status = :status')
-            ->andWhere('p.scheduledAt IS NOT NULL')
-            ->andWhere('p.scheduledAt <= :now')
-            ->setParameter('status', PostStatusEnum::Scheduled)
-            ->setParameter('now', $now)
-            ->getQuery()
-            ->getResult();
+        $duePosts = $this->postRepository->findScheduledDueBy($now);
 
         $count = 0;
         foreach ($duePosts as $post) {
@@ -40,6 +33,7 @@ final readonly class PublishScheduledPostsHandler
             if (null === $post->getPublishedAt()) {
                 $post->setPublishedAt($post->getScheduledAt() ?? $now);
             }
+
             $post->setScheduledAt(null);
             ++$count;
         }

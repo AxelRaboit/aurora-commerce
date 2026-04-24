@@ -38,6 +38,9 @@ class Post implements TimestampableInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $scheduledAt = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $deletedAt = null;
+
     #[ORM\ManyToOne(targetEntity: PostType::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private PostType $postType;
@@ -173,6 +176,23 @@ class Post implements TimestampableInterface
         $this->scheduledAt = $scheduledAt;
 
         return $this;
+    }
+
+    public function getDeletedAt(): ?DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isTrashed(): bool
+    {
+        return $this->deletedAt instanceof DateTimeImmutable;
     }
 
     /**
