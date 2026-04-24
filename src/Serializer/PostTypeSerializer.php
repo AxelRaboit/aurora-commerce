@@ -29,6 +29,11 @@ final readonly class PostTypeSerializer
             'id' => $postType->getId(),
             'label' => $postType->getLabel(),
             'slug' => $postType->getSlug(),
+            'icon' => $postType->getIcon(),
+            'hasArchive' => $postType->hasArchive(),
+            'isBuiltIn' => $postType->isBuiltIn(),
+            'supports' => $postType->getSupports(),
+            'taxonomyIds' => $postType->getTaxonomies()->map(fn ($tx): ?int => $tx->getId())->toArray(),
             'fields' => $fields,
         ];
     }

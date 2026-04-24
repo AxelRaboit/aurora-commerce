@@ -1,0 +1,188 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Manager;
+
+use App\Contract\PostTypeManagerInterface;
+use App\DTO\PostTypeFieldInput;
+use App\DTO\PostTypeInput;
+use App\Entity\PostType;
+use App\Entity\PostTypeField;
+use App\Repository\PostTypeFieldRepository;
+use App\Repository\PostTypeRepository;
+use App\Repository\TaxonomyRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
+use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+
+#[AsAlias(PostTypeManagerInterface::class)]
+final readonly class PostTypeManager implements PostTypeManagerInterface
+{
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private PostTypeRepository $postTypeRepository,
+        private PostTypeFieldRepository $fieldRepository,
+        private TaxonomyRepository $taxonomyRepository,
+    ) {}
+
+    public function create(PostTypeInput $input): PostType
+    {
+        if (null !== $this->postTypeRepository->findOneBy(['slug' => $input->slug])) {
+            throw new InvalidArgumentException(sprintf('Post type with slug "%s" already exists.', $input->slug));
+        }
+
+        $postType = (new PostType())
+            ->setSlug($input->slug)
+            ->setLabel($input->label)
+            ->setIcon($input->icon)
+            ->setHasArchive($input->hasArchive)
+            ->setIsBuiltIn(false)
+            ->setSupports($input->supports);
+
+        $this->syncTaxonomies($postType, $input->taxonomyIds);
+
+        $this->entityManager->persist($postType);
+        $this->entityManager->flush();
+
+        return $postType;
+    }
+
+    public function update(PostType $postType, PostTypeInput $input): void
+    {
+        if (!$postType->isBuiltIn() && $input->slug !== $postType->getSlug()) {
+            if (null !== $this->postTypeRepository->findOneBy(['slug' => $input->slug])) {
+                throw new InvalidArgumentException(sprintf('Post type with slug "%s" already exists.', $input->slug));
+            }
+            $postType->setSlug($input->slug);
+        }
+
+        $postType->setLabel($input->label);
+        $postType->setIcon($input->icon);
+        $postType->setHasArchive($input->hasArchive);
+        $postType->setSupports($input->supports);
+
+        $this->syncTaxonomies($postType, $input->taxonomyIds);
+
+        $this->entityManager->flush();
+    }
+
+    public function delete(PostType $postType): void
+    {
+        if ($postType->isBuiltIn()) {
+            throw new RuntimeException('Built-in post types cannot be deleted.');
+        }
+
+        if ($postType->getPosts()->count() > 0) {
+            throw new RuntimeException('Cannot delete a post type that still contains posts.');
+        }
+
+        $this->entityManager->remove($postType);
+        $this->entityManager->flush();
+    }
+
+    public function createField(PostType $postType, PostTypeFieldInput $input): PostTypeField
+    {
+        $this->assertFieldNameIsUnique($postType, $input->name);
+
+        $field = (new PostTypeField())
+            ->setName($input->name)
+            ->setLabel($input->label)
+            ->setType($input->type)
+            ->setRequired($input->required)
+            ->setTranslatable($input->translatable)
+            ->setOptions($input->options)
+            ->setPosition($this->nextPosition($postType));
+
+        $field->setPostType($postType);
+        $postType->addField($field);
+
+        $this->entityManager->persist($field);
+        $this->entityManager->flush();
+
+        return $field;
+    }
+
+    public function updateField(PostTypeField $field, PostTypeFieldInput $input): void
+    {
+        if ($input->name !== $field->getName()) {
+            $this->assertFieldNameIsUnique($field->getPostType(), $input->name, $field);
+            $field->setName($input->name);
+        }
+
+        $field->setLabel($input->label);
+        $field->setType($input->type);
+        $field->setRequired($input->required);
+        $field->setTranslatable($input->translatable);
+        $field->setOptions($input->options);
+
+        $this->entityManager->flush();
+    }
+
+    public function deleteField(PostTypeField $field): void
+    {
+        $this->entityManager->remove($field);
+        $this->entityManager->flush();
+    }
+
+    public function reorderFields(PostType $postType, array $orderedFieldIds): void
+    {
+        $fieldsById = [];
+        foreach ($postType->getFields() as $field) {
+            $fieldsById[$field->getId()] = $field;
+        }
+
+        $position = 0;
+        foreach ($orderedFieldIds as $fieldId) {
+            $field = $fieldsById[(int) $fieldId] ?? null;
+            if (null === $field) {
+                continue;
+            }
+            $field->setPosition($position++);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /** @param list<int> $taxonomyIds */
+    private function syncTaxonomies(PostType $postType, array $taxonomyIds): void
+    {
+        foreach ($postType->getTaxonomies() as $existing) {
+            if (!in_array($existing->getId(), $taxonomyIds, true)) {
+                $postType->removeTaxonomy($existing);
+            }
+        }
+
+        foreach ($taxonomyIds as $taxonomyId) {
+            $taxonomy = $this->taxonomyRepository->find($taxonomyId);
+            if (null !== $taxonomy && !$postType->getTaxonomies()->contains($taxonomy)) {
+                $postType->addTaxonomy($taxonomy);
+            }
+        }
+    }
+
+    private function assertFieldNameIsUnique(PostType $postType, string $name, ?PostTypeField $ignore = null): void
+    {
+        foreach ($postType->getFields() as $field) {
+            if ($field === $ignore) {
+                continue;
+            }
+            if ($field->getName() === $name) {
+                throw new InvalidArgumentException(sprintf('A field named "%s" already exists on this post type.', $name));
+            }
+        }
+    }
+
+    private function nextPosition(PostType $postType): int
+    {
+        $max = -1;
+        foreach ($postType->getFields() as $field) {
+            if ($field->getPosition() > $max) {
+                $max = $field->getPosition();
+            }
+        }
+
+        return $max + 1;
+    }
+}

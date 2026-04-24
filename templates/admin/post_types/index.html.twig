@@ -7,5 +7,15 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('PostTypesApp') }}></div>
+<div {{ vue_component('PostTypesApp', {
+    postTypes: postTypes,
+    taxonomies: taxonomies,
+    createPath: path('admin_post_types_create'),
+    editPath: path('admin_post_types_edit', {id: '__id__'}),
+    deletePath: path('admin_post_types_delete', {id: '__id__'}),
+    fieldCreatePath: path('admin_post_types_field_create', {id: '__id__'}),
+    fieldEditPath: path('admin_post_types_field_edit', {id: '__id__', fieldId: '__fieldId__'}),
+    fieldDeletePath: path('admin_post_types_field_delete', {id: '__id__', fieldId: '__fieldId__'}),
+    fieldReorderPath: path('admin_post_types_field_reorder', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
 {% endblock %}

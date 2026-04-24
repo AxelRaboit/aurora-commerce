@@ -112,7 +112,7 @@ class PostsController extends AbstractController
         return $this->json(['success' => true, 'results' => $items]);
     }
 
-    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
     public function show(Post $post): JsonResponse
     {
         return $this->json(['success' => true, 'post' => $this->postSerializer->serializeFull($post)]);
