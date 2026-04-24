@@ -12,6 +12,7 @@ import {
     Image,
     Menu,
     Tags as TagsIcon,
+    Globe,
     Shield,
     LogOut,
     Moon,
@@ -34,6 +35,7 @@ const props = defineProps({
     mediaPath: { type: String, default: "/admin/media" },
     menusPath: { type: String, default: "/admin/menus" },
     taxonomiesPath: { type: String, default: "/admin/taxonomies" },
+    frontPath: { type: String, default: "/" },
     administrationPath: { type: String, default: "/dev/dashboard" },
     profilePath: { type: String, default: "/admin/profile" },
     logoutPath: { type: String, default: "/logout" },
@@ -69,6 +71,7 @@ const navItems = [
     { route: "admin_media", path: props.mediaPath, label: t("nav.media"), icon: Image, activeColor: "indigo" },
     { route: "admin_menus", path: props.menusPath, label: t("nav.menus"), icon: Menu, activeColor: "indigo" },
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
+    { route: "__front", path: props.frontPath, label: t("nav.viewSite"), icon: Globe, activeColor: "emerald", external: true },
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
 ];
 
@@ -83,6 +86,7 @@ function iconClasses(item) {
 }
 
 function isActive(route) {
+    if ("__front" === route) return false;
     return props.activeRoute?.startsWith(route);
 }
 </script>
@@ -123,6 +127,8 @@ function isActive(route) {
                 v-for="item in navItems"
                 :key="item.route"
                 :href="item.path"
+                :target="item.external ? '_blank' : undefined"
+                :rel="item.external ? 'noopener' : undefined"
                 class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
                 :class="itemClasses(item)"
             >
@@ -221,6 +227,8 @@ function isActive(route) {
                     v-for="item in navItems"
                     :key="item.route"
                     :href="item.path"
+                    :target="item.external ? '_blank' : undefined"
+                    :rel="item.external ? 'noopener' : undefined"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                     :class="itemClasses(item)"
                 >

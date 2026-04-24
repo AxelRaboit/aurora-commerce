@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enum\ApplicationParameter;
 
-enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumInterface
+enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterface
 {
     case SiteName = 'site_name';
     case SiteDescription = 'site_description';
@@ -21,6 +21,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
     case RegistrationEnabled = 'registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';
+    case HomepagePostId = 'homepage_post_id';
 
     public function getKey(): string
     {
@@ -45,6 +46,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::RegistrationEnabled => 'Inscriptions ouvertes',
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
+            self::HomepagePostId => 'Page d\'accueil (ID du post)',
         };
     }
 
@@ -66,6 +68,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::RegistrationEnabled => 'Autoriser les nouvelles inscriptions (0 = désactivé, 1 = activé)',
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
             self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
+            self::HomepagePostId => 'ID d\'un post affiché sur la page d\'accueil. Vide = liste des derniers articles.',
         };
     }
 
@@ -87,13 +90,14 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
             self::RegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
             self::TrashAutoPurgeDays => '30',
+            self::HomepagePostId => '',
         };
     }
 
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'int',
             self::CommentsEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
             default => 'string',
         };
@@ -104,7 +108,7 @@ enum VeloxApplicationParameterEnum: string implements ApplicationParameterEnumIn
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
-            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'reading',
+            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::RegistrationEnabled => 'system',
         };

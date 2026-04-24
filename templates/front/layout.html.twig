@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ context.siteName }}{% endblock %}</title>
+    {% set pageDescription = pageDescription|default(context.siteDescription ?? '') %}
+    {% block meta %}
+        <meta name="description" content="{{ pageDescription }}">
+        <meta property="og:title" content="{{ block('title') }}">
+        <meta property="og:description" content="{{ pageDescription }}">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ context.siteName }}">
+        {% block og_image %}{% endblock %}
+        {% block canonical %}{% endblock %}
+        {% block robots %}{% endblock %}
+        {% block jsonld %}{% endblock %}
+    {% endblock %}
+
+    {# Reuse admin CSS for a base tailwind setup; keep front independent of admin assets otherwise. #}
+    {{ vite_entry_link_tags('app') }}
+
+    <link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
+</head>
+<body class="min-h-screen bg-bg text-primary flex flex-col">
+    <header class="border-b border-line bg-surface">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-6 flex-wrap">
+            <a href="{{ path('front_home', {locale: locale}) }}" class="text-lg font-bold text-primary">
+                {{ context.siteName }}
+            </a>
+            {% if context.activeLocales|length > 1 %}
+                <div class="ml-auto flex items-center gap-1 text-xs">
+                    {% for loc in context.activeLocales %}
+                        <a href="{{ path('front_home', {locale: loc.code}) }}"
+                           class="px-2 py-1 rounded {{ locale == loc.code ? 'bg-indigo-600 text-white' : 'text-muted hover:text-primary' }}">
+                            {{ loc.code|upper }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+        {% block body %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-line bg-surface mt-12">
+        <div class="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-muted">
+            © {{ 'now'|date('Y') }} {{ context.siteName }}
+        </div>
+    </footer>
+</body>
+</html>

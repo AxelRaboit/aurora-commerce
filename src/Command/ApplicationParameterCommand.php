@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Setting;
-use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -43,7 +43,7 @@ class ApplicationParameterCommand extends Command
             $symfonyStyle->note('Mode dry-run — aucun changement ne sera enregistré.');
         }
 
-        $enumCases = VeloxApplicationParameterEnum::cases();
+        $enumCases = ApplicationParameterEnum::cases();
         $enumKeys = array_map(fn ($enumCase): string => $enumCase->getKey(), $enumCases);
         $existing = [];
 
@@ -65,7 +65,7 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param VeloxApplicationParameterEnum[] $enumCases
+     * @param ApplicationParameterEnum[] $enumCases
      * @param array<string, Setting>          $existing
      */
     private function createMissing(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
@@ -95,7 +95,7 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param VeloxApplicationParameterEnum[] $enumCases
+     * @param ApplicationParameterEnum[] $enumCases
      * @param array<string, Setting>          $existing
      */
     private function syncMetadata(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int

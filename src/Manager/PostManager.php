@@ -10,7 +10,7 @@ use App\DTO\PostTranslationInput;
 use App\Entity\Post;
 use App\Entity\PostRevision;
 use App\Entity\User;
-use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\PostStatusEnum;
 use App\Repository\MediaRepository;
 use App\Repository\PostRevisionRepository;
@@ -279,8 +279,8 @@ final readonly class PostManager implements PostManagerInterface
         $this->entityManager->flush();
 
         $limit = (int) $this->settingRepository->get(
-            VeloxApplicationParameterEnum::PostRevisionsLimit->value,
-            VeloxApplicationParameterEnum::PostRevisionsLimit->getDefaultValue(),
+            ApplicationParameterEnum::PostRevisionsLimit->value,
+            ApplicationParameterEnum::PostRevisionsLimit->getDefaultValue(),
         );
 
         if ($limit > 0) {

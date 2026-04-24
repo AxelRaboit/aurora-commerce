@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Dev;
 
-use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\SettingRepository;
@@ -28,7 +28,7 @@ final class ParametersController extends AbstractController
         $result = $this->settingRepository->findPaginated($page);
 
         $labelsByKey = [];
-        foreach (VeloxApplicationParameterEnum::cases() as $case) {
+        foreach (ApplicationParameterEnum::cases() as $case) {
             $labelsByKey[$case->getKey()] = $case->getLabel();
         }
 

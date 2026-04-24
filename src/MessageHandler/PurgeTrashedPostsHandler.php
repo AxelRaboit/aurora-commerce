@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Enum\ApplicationParameter\VeloxApplicationParameterEnum;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Message\PurgeTrashedPostsMessage;
 use App\Repository\PostRepository;
 use App\Repository\SettingRepository;
@@ -26,8 +26,8 @@ final readonly class PurgeTrashedPostsHandler
     public function __invoke(PurgeTrashedPostsMessage $message): void
     {
         $days = (int) $this->settingRepository->get(
-            VeloxApplicationParameterEnum::TrashAutoPurgeDays->value,
-            VeloxApplicationParameterEnum::TrashAutoPurgeDays->getDefaultValue(),
+            ApplicationParameterEnum::TrashAutoPurgeDays->value,
+            ApplicationParameterEnum::TrashAutoPurgeDays->getDefaultValue(),
         );
 
         if ($days <= 0) {

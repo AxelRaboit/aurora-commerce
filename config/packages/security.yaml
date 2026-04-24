@@ -38,6 +38,7 @@ security:
         - { path: ^/access-request, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/dev, roles: ROLE_DEV }
+        - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

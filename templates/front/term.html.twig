@@ -1,0 +1,32 @@
+{% extends 'front/layout.html.twig' %}
+
+{% set termTranslation = term.getTranslation(locale) %}
+{% set termName = termTranslation ? termTranslation.name : '' %}
+
+{% block title %}{{ termName }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+    <section>
+        <p class="text-sm text-muted uppercase tracking-wide">{{ taxonomy.slug }}</p>
+        <h1 class="text-3xl font-bold mb-6">{{ termName }}</h1>
+        {% if termTranslation and termTranslation.description %}
+            <p class="text-secondary mb-6">{{ termTranslation.description }}</p>
+        {% endif %}
+
+        {% if posts.items|length == 0 %}
+            <p class="text-muted">Aucun contenu.</p>
+        {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for post in posts.items %}
+                    {{ include('front/_post_card.html.twig', {post: post, locale: locale}) }}
+                {% endfor %}
+            </div>
+            {{ include('front/_pagination.html.twig', {
+                page: posts.page,
+                totalPages: posts.totalPages,
+                route: 'front_term',
+                params: {locale: locale, taxonomySlug: taxonomy.slug, termSlug: termTranslation.slug},
+            }) }}
+        {% endif %}
+    </section>
+{% endblock %}

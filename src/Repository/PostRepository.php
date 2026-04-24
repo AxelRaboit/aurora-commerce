@@ -109,6 +109,96 @@ class PostRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findPublishedBySlug(string $slug, string $locale): ?Post
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.translations', 't')
+            ->andWhere('t.locale = :locale')
+            ->andWhere('t.slug = :slug')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('locale', $locale)
+            ->setParameter('slug', $slug)
+            ->setParameter('status', PostStatusEnum::Published)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @return array{items: list<Post>, total: int, page: int, totalPages: int}
+     */
+    public function findPublishedByPostType(int $postTypeId, int $page, int $limit, string $locale = 'fr'): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->leftJoin('p.translations', 't', 'WITH', 't.locale = :locale')
+            ->addSelect('t')
+            ->andWhere('p.postType = :postTypeId')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('locale', $locale)
+            ->setParameter('postTypeId', $postTypeId)
+            ->setParameter('status', PostStatusEnum::Published)
+            ->orderBy('p.publishedAt', Order::Descending->value)
+            ->addOrderBy('p.createdAt', Order::Descending->value);
+
+        $countQueryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.postType = :postTypeId')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('postTypeId', $postTypeId)
+            ->setParameter('status', PostStatusEnum::Published);
+
+        return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
+    }
+
+    /**
+     * @return array{items: list<Post>, total: int, page: int, totalPages: int}
+     */
+    public function findPublishedByTerm(int $termId, int $page, int $limit, string $locale = 'fr'): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->leftJoin('p.translations', 't', 'WITH', 't.locale = :locale')
+            ->innerJoin('p.terms', 'term')
+            ->addSelect('t')
+            ->andWhere('term.id = :termId')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('locale', $locale)
+            ->setParameter('termId', $termId)
+            ->setParameter('status', PostStatusEnum::Published)
+            ->orderBy('p.publishedAt', Order::Descending->value);
+
+        $countQueryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->innerJoin('p.terms', 'term')
+            ->andWhere('term.id = :termId')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('termId', $termId)
+            ->setParameter('status', PostStatusEnum::Published);
+
+        return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
+    }
+
+    /**
+     * @return list<Post>
+     */
+    public function findAllPublishedForSitemap(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.translations', 't')
+            ->leftJoin('p.postType', 'pt')
+            ->addSelect('t', 'pt')
+            ->andWhere('p.status = :status')
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('status', PostStatusEnum::Published)
+            ->orderBy('p.publishedAt', Order::Descending->value)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @return list<Post>
      */

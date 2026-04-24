@@ -1,0 +1,61 @@
+{% extends 'front/layout.html.twig' %}
+
+{% set pageTitle = translation.metaTitle ?? translation.title ?? context.siteName %}
+{% set pageDescription = translation.metaDescription ?? context.siteDescription ?? '' %}
+{% set featuredMedia = post.featuredMedia %}
+{% set ogMedia = translation.ogImage ?? featuredMedia %}
+{% set canonicalUrl = translation.canonicalUrl ?: (context.siteUrl ~ path('front_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug})) %}
+
+{% block title %}{{ pageTitle }} — {{ context.siteName }}{% endblock %}
+
+{% block og_image %}
+    {% if ogMedia %}
+        <meta property="og:image" content="{{ context.siteUrl }}{{ ogMedia.publicUrl }}">
+    {% endif %}
+    <meta property="og:type" content="article">
+    {% if post.publishedAt %}
+        <meta property="article:published_time" content="{{ post.publishedAt|date('c') }}">
+    {% endif %}
+{% endblock %}
+
+{% block canonical %}
+    <link rel="canonical" href="{{ canonicalUrl }}">
+{% endblock %}
+
+{% block robots %}
+    {% if translation.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+{% endblock %}
+
+{% block jsonld %}
+    {% if translation.jsonLd %}
+        <script type="application/ld+json">{{ translation.jsonLd|json_encode|raw }}</script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <article class="max-w-3xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-primary mb-2">{{ translation.title }}</h1>
+            {% if post.publishedAt %}
+                <time datetime="{{ post.publishedAt|date('c') }}" class="text-sm text-muted">
+                    {{ post.publishedAt|date('d/m/Y') }}
+                </time>
+            {% endif %}
+            {% if featuredMedia %}
+                <figure class="mt-6">
+                    <img
+                        src="{{ featuredMedia.variantUrl('large') ?? featuredMedia.publicUrl }}"
+                        alt="{{ featuredMedia.alt ?? translation.title ?? '' }}"
+                        class="w-full h-auto rounded-lg"
+                        style="object-position: {{ featuredMedia.focalPositionCss }}"
+                        loading="lazy"
+                    >
+                </figure>
+            {% endif %}
+        </header>
+
+        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-primary prose-a:text-indigo-500 hover:prose-a:text-indigo-600 prose-code:text-primary prose-pre:bg-surface-2 prose-pre:border prose-pre:border-line prose-blockquote:border-indigo-500 prose-blockquote:bg-surface-2 prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-line">
+            {{ content|raw }}
+        </div>
+    </article>
+{% endblock %}

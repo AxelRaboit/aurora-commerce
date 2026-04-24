@@ -78,6 +78,7 @@ export default {
         menus: "Menús",
         taxonomies: "Taxonomías",
         tags: "Etiquetas",
+        viewSite: "Ver el sitio",
         administration: "Administración",
         profile: "Mi perfil",
         logout: "Cerrar sesión",
