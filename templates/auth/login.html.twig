@@ -1,6 +1,6 @@
 {% extends 'base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.login.title'|trans }} — Velox{% endblock %}
+{% block title %}{{ 'auth.login.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block hero %}
     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary leading-tight mb-4">

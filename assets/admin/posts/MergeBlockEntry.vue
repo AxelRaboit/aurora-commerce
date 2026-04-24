@@ -27,7 +27,7 @@ const KIND_CLASS = {
 const isConflict = computed(() => props.entry.kind === MergeKind.Conflict);
 const kindLabel = computed(() => t(`admin.posts.merge.kind.${props.entry.kind}`));
 const kindClass = computed(() => KIND_CLASS[props.entry.kind] ?? "bg-surface-2 text-muted");
-const blockType = computed(() => (props.entry.local ?? props.entry.remote ?? props.entry.base)?.type ?? "—");
+const blockType = computed(() => (props.entry.local ?? props.entry.remote ?? props.entry.base)?.type ?? "-");
 const shortId = computed(() => props.entry.id.slice(0, 8));
 const canFlip = computed(
     () => props.entry.kind !== MergeKind.Unchanged && props.entry.local && props.entry.remote,

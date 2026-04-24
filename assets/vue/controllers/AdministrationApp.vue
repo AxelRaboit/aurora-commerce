@@ -213,7 +213,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                     </div>
                     <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md text-primary hover:bg-surface-2 transition-colors text-sm font-medium" v-on:click="parameters.startEdit(parameter)">
                         <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
-                        <span v-else class="text-muted italic">—</span>
+                        <span v-else class="text-muted italic">-</span>
                     </button>
                     <p v-if="parameter.description" class="text-xs text-secondary">{{ parameter.description }}</p>
                 </div>
@@ -243,7 +243,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                                 </div>
                                 <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md text-primary hover:bg-surface-2 transition-colors font-medium" v-on:click="parameters.startEdit(parameter)">
                                     <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
-                                    <span v-else class="text-muted italic">—</span>
+                                    <span v-else class="text-muted italic">-</span>
                                 </button>
                             </td>
                             <td class="px-5 py-3 align-top text-sm text-secondary hidden md:table-cell max-w-md">{{ parameter.description }}</td>
@@ -525,7 +525,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 <div v-for="accessRequest in accessRequests.parsedAccessRequests.value.items" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '—' }}</p>
+                            <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '-' }}</p>
                             <p class="text-xs text-secondary truncate">{{ accessRequest.requesterEmail }}</p>
                         </div>
                         <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full shrink-0" :class="accessRequests.statusBadge(accessRequest.status)">
@@ -563,11 +563,11 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                     <tbody class="divide-y divide-line">
                         <tr v-for="accessRequest in accessRequests.parsedAccessRequests.value.items" :key="accessRequest.id" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-6 py-3">
-                                <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '—' }}</p>
+                                <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '-' }}</p>
                                 <p class="text-xs text-secondary">{{ accessRequest.requesterEmail }}</p>
                             </td>
                             <td class="px-6 py-3 max-w-xs hidden md:table-cell">
-                                <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '—' }}</p>
+                                <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '-' }}</p>
                             </td>
                             <td class="px-6 py-3">
                                 <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" :class="accessRequests.statusBadge(accessRequest.status)">

@@ -1,6 +1,6 @@
 {% extends 'base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.register.title'|trans }} — Velox{% endblock %}
+{% block title %}{{ 'auth.register.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block hero %}
     {% if registrationEnabled %}

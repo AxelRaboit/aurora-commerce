@@ -1,6 +1,6 @@
 {% extends 'base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.access_request.title'|trans }} — Velox{% endblock %}
+{% block title %}{{ 'auth.access_request.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block content %}
     <h2 class="text-lg font-bold text-primary mb-2">{{ 'auth.access_request.title'|trans }}</h2>

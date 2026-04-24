@@ -127,7 +127,7 @@ async function openPreview(post) {
             <div v-for="post in posts" :key="post.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="flex-1 min-w-0">
-                        <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "—" }}</p>
+                        <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
                         <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
                     </div>
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0" :class="statusBadge(post.status)">
@@ -171,10 +171,10 @@ async function openPreview(post) {
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-2.5">
                                 <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
-                                <span class="font-medium text-primary text-sm">{{ post.title ?? "—" }}</span>
+                                <span class="font-medium text-primary text-sm">{{ post.title ?? "-" }}</span>
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "—" }}</td>
+                        <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
                         <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(post.status)">
                                 {{ t("admin.stats.postStatus." + post.status) }}

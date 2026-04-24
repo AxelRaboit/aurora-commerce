@@ -716,7 +716,7 @@ function forceSave() {
         :title="form.translations[activeLocale]?.title"
         :html="previewHtml"
         :featured-media-url="featuredMediaUrl"
-        :label="t('admin.posts.preview') + ' — ' + t('locales.' + activeLocale)"
+        :label="t('admin.posts.preview') + ' - ' + t('locales.' + activeLocale)"
         v-on:close="showPreview = false"
     />
 

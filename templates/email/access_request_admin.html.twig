@@ -17,7 +17,7 @@ p { margin: 0 0 16px; line-height: 1.6; color: #475569; }
     <div class="header"><h1>Nouvelle demande d'accès</h1></div>
     <div class="body">
         <p>Une nouvelle demande d'accès a été reçue.</p>
-        <div class="info-row"><span class="label">Nom</span><strong>{{ request.requesterName ?? '—' }}</strong></div>
+        <div class="info-row"><span class="label">Nom</span><strong>{{ request.requesterName ?? '-' }}</strong></div>
         <div class="info-row"><span class="label">Email</span><strong>{{ request.requesterEmail }}</strong></div>
         {% if request.message %}
             <div class="message-box"><p style="margin:0; color:#1e293b;">{{ request.message }}</p></div>
