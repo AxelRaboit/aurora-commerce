@@ -16,6 +16,7 @@ final readonly class PostInput
     /**
      * @param array<string, PostTranslationInput> $translations
      * @param array<int>                          $termIds
+     * @param array<int>                          $relatedPostIds
      */
     public function __construct(
         #[Assert\NotNull(message: 'posts.errors.post_type_required')]
@@ -27,6 +28,7 @@ final readonly class PostInput
         public ?int $featuredMediaId,
         public array $termIds,
         public array $translations,
+        public array $relatedPostIds = [],
         public ?string $scheduledAt = null,
         public ?int $version = null,
         public bool $force = false,
@@ -47,12 +49,18 @@ final readonly class PostInput
             fn (int $termId): bool => $termId > 0,
         ));
 
+        $relatedPostIds = array_values(array_filter(
+            array_map(intval(...), is_array($data['relatedPostIds'] ?? null) ? $data['relatedPostIds'] : []),
+            fn (int $relatedPostId): bool => $relatedPostId > 0,
+        ));
+
         return new self(
             postTypeId: (int) ($data['postTypeId'] ?? 0),
             status: Str::trimOrNull((string) ($data['status'] ?? '')) ?? PostStatusEnum::Draft->value,
             featuredMediaId: isset($data['featuredMediaId']) && $data['featuredMediaId'] > 0 ? (int) $data['featuredMediaId'] : null,
             termIds: $termIds,
             translations: $translations,
+            relatedPostIds: $relatedPostIds,
             scheduledAt: Str::trimOrNull((string) ($data['scheduledAt'] ?? '')),
             version: isset($data['version']) ? (int) $data['version'] : null,
             force: (bool) ($data['force'] ?? false),

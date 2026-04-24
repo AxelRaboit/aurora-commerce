@@ -399,6 +399,10 @@ export default {
             postType: "Content type",
             terms: "Terms",
             termsPickerEmpty: "No terms in this taxonomy yet.",
+            relatedPosts: {
+                title: "Related posts",
+                searchPlaceholder: "Search for a post to link…",
+            },
             blocks: "Content",
             metaTitle: "Meta title",
             metaDescription: "Meta description",

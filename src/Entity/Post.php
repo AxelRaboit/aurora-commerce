@@ -65,11 +65,24 @@ class Post implements TimestampableInterface
     #[ORM\OneToMany(targetEntity: PostRevision::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
     private Collection $revisions;
 
+    /**
+     * Directional "related posts" relation. Adding B to A's related does NOT
+     * automatically add A to B's — editors control each side independently.
+     *
+     * @var Collection<int, Post>
+     */
+    #[ORM\ManyToMany(targetEntity: Post::class)]
+    #[ORM\JoinTable(name: 'post_related_posts')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'related_post_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $relatedPosts;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
         $this->terms = new ArrayCollection();
         $this->revisions = new ArrayCollection();
+        $this->relatedPosts = new ArrayCollection();
     }
 
     /** @return Collection<int, PostRevision> */
@@ -216,6 +229,28 @@ class Post implements TimestampableInterface
     public function removeTerm(TaxonomyTerm $term): static
     {
         $this->terms->removeElement($term);
+
+        return $this;
+    }
+
+    /** @return Collection<int, Post> */
+    public function getRelatedPosts(): Collection
+    {
+        return $this->relatedPosts;
+    }
+
+    public function addRelatedPost(Post $post): static
+    {
+        if ($post !== $this && !$this->relatedPosts->contains($post)) {
+            $this->relatedPosts->add($post);
+        }
+
+        return $this;
+    }
+
+    public function removeRelatedPost(Post $post): static
+    {
+        $this->relatedPosts->removeElement($post);
 
         return $this;
     }

@@ -406,6 +406,10 @@ export default {
             postType: "Tipo de contenido",
             terms: "Términos",
             termsPickerEmpty: "Sin términos en esta taxonomía todavía.",
+            relatedPosts: {
+                title: "Artículos relacionados",
+                searchPlaceholder: "Buscar un artículo para vincular…",
+            },
             blocks: "Contenido",
             metaTitle: "Meta-título",
             metaDescription: "Meta-descripción",

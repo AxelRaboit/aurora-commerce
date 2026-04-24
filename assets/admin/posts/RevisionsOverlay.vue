@@ -163,7 +163,7 @@ const visibleEntries = computed(() =>
                 <!-- Body: two columns -->
                 <div class="flex-1 flex min-h-0">
                     <!-- Revisions list -->
-                    <aside class="w-80 shrink-0 border-r border-line bg-surface overflow-y-auto">
+                    <aside class="w-80 shrink-0 border-r border-line bg-surface overflow-y-auto scrollbar-thin">
                         <div v-if="loadingList" class="p-4 text-sm text-muted">{{ t("common.loading") }}</div>
                         <div v-else-if="revisions.length === 0" class="p-4 text-sm text-muted">
                             {{ t("admin.posts.revisions.empty") }}
@@ -191,7 +191,7 @@ const visibleEntries = computed(() =>
                     </aside>
 
                     <!-- Diff viewer -->
-                    <section class="flex-1 overflow-y-auto">
+                    <section class="flex-1 overflow-y-auto scrollbar-thin">
                         <div v-if="!selectedRevision && !loadingSelected" class="p-8 text-sm text-muted text-center">
                             {{ t("admin.posts.revisions.selectHint") }}
                         </div>

@@ -404,6 +404,10 @@ export default {
             postType: "Inhaltstyp",
             terms: "Begriffe",
             termsPickerEmpty: "Noch keine Begriffe in dieser Taxonomie.",
+            relatedPosts: {
+                title: "Verwandte Beiträge",
+                searchPlaceholder: "Beitrag zum Verknüpfen suchen…",
+            },
             blocks: "Inhalt",
             metaTitle: "Meta-Titel",
             metaDescription: "Meta-Beschreibung",

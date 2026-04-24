@@ -5,6 +5,7 @@ import { toast } from "vue-sonner";
 import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import AppCheckbox from "@/components/AppCheckbox.vue";
@@ -20,6 +21,7 @@ import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@/utils/editorjs/templates.js";
 import { slugify } from "@/utils/slugify.js";
+import { statusBadge } from "@/utils/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
 
 const { t } = useI18n();
@@ -82,10 +84,56 @@ const form = reactive({
     featuredMediaId: null,
     termIds: [],
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
+    relatedPostIds: [],
 });
 
 const publishedAt = ref(null);
 const trashed = ref(false);
+
+// ── Related posts ────────────────────────────────────────────────────────────
+const relatedPosts = ref([]);
+const relatedSearchQuery = ref("");
+const relatedSearchResults = ref([]);
+const relatedSearchLoading = ref(false);
+const relatedSearchOpen = ref(false);
+let relatedSearchTimer = null;
+
+watch(relatedSearchQuery, () => {
+    if (relatedSearchTimer) clearTimeout(relatedSearchTimer);
+    relatedSearchTimer = setTimeout(runRelatedSearch, 200);
+});
+
+async function runRelatedSearch() {
+    relatedSearchLoading.value = true;
+    try {
+        const url = new URL("/admin/posts/search", window.location.origin);
+        if (relatedSearchQuery.value) url.searchParams.set("q", relatedSearchQuery.value);
+        if (props.postId) url.searchParams.set("excludeId", String(props.postId));
+        const response = await fetch(url);
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        relatedSearchResults.value = (data.results ?? []).filter(
+            (result) => !form.relatedPostIds.includes(result.id),
+        );
+    } catch {
+        relatedSearchResults.value = [];
+    } finally {
+        relatedSearchLoading.value = false;
+    }
+}
+
+function addRelatedPost(result) {
+    if (form.relatedPostIds.includes(result.id)) return;
+    form.relatedPostIds.push(result.id);
+    relatedPosts.value.push(result);
+    relatedSearchQuery.value = "";
+    relatedSearchResults.value = relatedSearchResults.value.filter((r) => r.id !== result.id);
+}
+
+function removeRelatedPost(id) {
+    form.relatedPostIds = form.relatedPostIds.filter((existing) => existing !== id);
+    relatedPosts.value = relatedPosts.value.filter((r) => r.id !== id);
+}
 
 // ── Slug lock ────────────────────────────────────────────────────────────────
 const slugLocked = ref(true);
@@ -294,6 +342,8 @@ onMounted(async () => {
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.termIds = [...(data.post.termIds ?? [])];
+            form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
+            relatedPosts.value = [...(data.post.relatedPosts ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
@@ -392,6 +442,8 @@ async function reloadAfterRestore() {
             form.featuredMediaId = data.post.featuredMediaId ?? null;
             featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
             form.termIds = [...(data.post.termIds ?? [])];
+            form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
+            relatedPosts.value = [...(data.post.relatedPosts ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
                 if (form.translations[locale]) {
@@ -487,6 +539,7 @@ async function handleSave({ force = false } = {}) {
         scheduledAt: form.status === "scheduled" && form.scheduledAt ? form.scheduledAt : null,
         featuredMediaId: form.featuredMediaId,
         termIds: form.termIds,
+        relatedPostIds: form.relatedPostIds,
         translations: form.translations,
         version: version.value,
         force,
@@ -651,7 +704,7 @@ function forceSave() {
                 </div>
 
                 <!-- Hierarchical taxonomy: indented checkbox tree -->
-                <div v-else class="max-h-60 overflow-y-auto border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
+                <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
                     <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
                     <label
                         v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
@@ -667,6 +720,62 @@ function forceSave() {
                         >
                         <span class="text-primary">{{ termLabel(term) }}</span>
                     </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related posts -->
+        <div class="flex flex-col gap-2 px-1">
+            <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.relatedPosts.title") }}</span>
+
+            <!-- Selected related posts -->
+            <div v-if="relatedPosts.length" class="flex flex-col gap-1.5">
+                <div
+                    v-for="related in relatedPosts"
+                    :key="related.id"
+                    class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface-2 border border-line/60"
+                >
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(related.status)">
+                        {{ t("admin.stats.postStatus." + related.status) }}
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm text-primary truncate">{{ related.title ?? "(—)" }}</div>
+                        <div class="text-xs text-muted truncate">{{ related.postType }}</div>
+                    </div>
+                    <AppIconButton color="rose" v-on:click="removeRelatedPost(related.id)">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                    </AppIconButton>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="relative">
+                <AppInput
+                    v-model="relatedSearchQuery"
+                    :placeholder="t('admin.posts.relatedPosts.searchPlaceholder')"
+                    v-on:focus="relatedSearchOpen = true; runRelatedSearch()"
+                    v-on:blur="setTimeout(() => { relatedSearchOpen = false; }, 150)"
+                />
+                <div
+                    v-if="relatedSearchOpen && (relatedSearchResults.length || relatedSearchLoading)"
+                    class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto scrollbar-thin rounded-md border border-line bg-surface shadow-lg"
+                >
+                    <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("common.loading") }}</div>
+                    <button
+                        v-for="result in relatedSearchResults"
+                        :key="result.id"
+                        type="button"
+                        class="w-full text-left px-3 py-2 hover:bg-surface-2 transition-colors flex items-center gap-2"
+                        v-on:mousedown.prevent="addRelatedPost(result)"
+                    >
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(result.status)">
+                            {{ t("admin.stats.postStatus." + result.status) }}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
+                            <div class="text-xs text-muted truncate">{{ result.postType }}</div>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -945,7 +1054,7 @@ function forceSave() {
                     <!-- Body -->
                     <div class="flex flex-1 min-h-0" v-on:mouseleave="hoveredTemplate = null">
                         <!-- Grid -->
-                        <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+                        <div class="flex-1 overflow-y-auto scrollbar-thin p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                             <button
                                 v-for="template in filteredTemplates"
                                 :key="template.id"
@@ -985,7 +1094,7 @@ function forceSave() {
                         </div>
 
                         <!-- Side preview panel -->
-                        <div class="w-56 border-l border-line p-5 hidden md:flex flex-col gap-4 shrink-0 overflow-y-auto">
+                        <div class="w-56 border-l border-line p-5 hidden md:flex flex-col gap-4 shrink-0 overflow-y-auto scrollbar-thin">
                             <Transition
                                 enter-active-class="transition ease-out duration-150"
                                 enter-from-class="opacity-0"

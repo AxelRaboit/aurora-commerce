@@ -95,7 +95,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
 
 <template>
     <div class="space-y-6">
-        <nav ref="tabNav" class="flex gap-1 border-b border-line overflow-x-auto">
+        <nav ref="tabNav" class="flex gap-1 border-b border-line overflow-x-auto scrollbar-thin">
             <a
                 v-for="tabItem in tabs"
                 :key="tabItem.key"
@@ -211,7 +211,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <AppButton variant="ghost" size="md" class="flex-1" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
                         </div>
                     </div>
-                    <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md text-primary hover:bg-surface-2 transition-colors text-sm font-medium" v-on:click="parameters.startEdit(parameter)">
+                    <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md text-primary hover:bg-surface-2 transition-colors text-sm font-medium break-all" v-on:click="parameters.startEdit(parameter)">
                         <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
                         <span v-else class="text-muted italic">-</span>
                     </button>
@@ -321,7 +321,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </div>
             </div>
 
-            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
                         <tr>
@@ -548,7 +548,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </div>
             </div>
 
-            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
                         <tr>

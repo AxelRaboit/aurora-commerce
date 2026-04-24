@@ -125,6 +125,31 @@ class PostRepository extends ServiceEntityRepository
     /**
      * @return list<Post>
      */
+    public function searchForReference(?string $query, ?int $excludeId = null, int $limit = 20): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->leftJoin('p.translations', 't')
+            ->leftJoin('p.postType', 'pt')
+            ->addSelect('t', 'pt')
+            ->where('p.deletedAt IS NULL')
+            ->orderBy('p.updatedAt', Order::Descending->value)
+            ->setMaxResults($limit);
+
+        if (null !== $excludeId) {
+            $queryBuilder->andWhere('p.id != :excludeId')->setParameter('excludeId', $excludeId);
+        }
+
+        if (null !== $query && '' !== $query) {
+            $queryBuilder->andWhere('LOWER(t.title) LIKE :search')
+                ->setParameter('search', '%'.mb_strtolower($query).'%');
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @return list<Post>
+     */
     public function findRecent(int $limit = 5): array
     {
         return $this->createQueryBuilder('p')

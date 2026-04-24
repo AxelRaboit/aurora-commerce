@@ -34,6 +34,7 @@ trait BuildsPostPayload
             'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'termIds' => $post->getTerms()->map(fn ($term) => $term->getId())->toArray(),
+            'relatedPostIds' => $post->getRelatedPosts()->map(fn ($related) => $related->getId())->toArray(),
             'translations' => $translations,
         ];
 

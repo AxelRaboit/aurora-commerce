@@ -84,7 +84,27 @@ class PostsController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
+    #[Route('/search', name: '_search', methods: [HttpMethodEnum::Get->value])]
+    public function search(Request $request): JsonResponse
+    {
+        $query = mb_trim((string) $request->query->get('q', ''));
+        $excludeId = $request->query->getInt('excludeId') ?: null;
+        $results = $this->postRepository->searchForReference($query, $excludeId);
+
+        $items = array_map(
+            fn (Post $post): array => [
+                'id' => $post->getId(),
+                'title' => $post->getTranslation('fr')?->getTitle() ?? $post->getTranslations()->first()?->getTitle(),
+                'status' => $post->getStatus()->value,
+                'postType' => $post->getPostType()->getLabel(),
+            ],
+            $results,
+        );
+
+        return $this->json(['success' => true, 'results' => $items]);
+    }
+
+    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
     public function show(Post $post): JsonResponse
     {
         return $this->json(['success' => true, 'post' => $this->postSerializer->serializeFull($post)]);

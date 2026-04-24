@@ -25,6 +25,7 @@ final readonly class PostSerializer
             'title' => $defaultTranslation?->getTitle(),
             'slug' => $defaultTranslation?->getSlug(),
             'termIds' => $post->getTerms()->map(fn (object $term): ?int => $term->getId())->toArray(),
+            'relatedPostIds' => $post->getRelatedPosts()->map(fn (Post $related): ?int => $related->getId())->toArray(),
             'publishedAt' => $post->getPublishedAt()?->format(DateTimeInterface::ATOM),
             'scheduledAt' => $post->getScheduledAt()?->format(DateTimeInterface::ATOM),
             'deletedAt' => $post->getDeletedAt()?->format(DateTimeInterface::ATOM),
@@ -54,11 +55,22 @@ final readonly class PostSerializer
             ];
         }
 
+        $relatedPosts = [];
+        foreach ($post->getRelatedPosts() as $related) {
+            $relatedPosts[] = [
+                'id' => $related->getId(),
+                'title' => $related->getTranslation('fr')?->getTitle() ?? $related->getTranslations()->first()?->getTitle(),
+                'status' => $related->getStatus()->value,
+                'postType' => $related->getPostType()->getLabel(),
+            ];
+        }
+
         return [
             ...$this->serialize($post),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'featuredMediaUrl' => $post->getFeaturedMedia()?->getPublicUrl(),
             'translations' => $translations,
+            'relatedPosts' => $relatedPosts,
         ];
     }
 }

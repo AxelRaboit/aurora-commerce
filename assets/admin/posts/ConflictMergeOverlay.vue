@@ -137,7 +137,7 @@ function apply() {
                 </div>
 
                 <!-- Locale tabs -->
-                <div v-if="locales.length > 1" class="flex gap-1 px-6 py-2 border-b border-line bg-surface-2 shrink-0 overflow-x-auto">
+                <div v-if="locales.length > 1" class="flex gap-1 px-6 py-2 border-b border-line bg-surface-2 shrink-0 overflow-x-auto scrollbar-thin">
                     <button
                         v-for="locale in locales"
                         :key="locale"
@@ -189,7 +189,7 @@ function apply() {
                 </div>
 
                 <!-- Entries list -->
-                <div class="flex-1 overflow-y-auto px-6 py-4">
+                <div class="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">
                     <div v-if="visibleEntries.length === 0" class="text-center py-12 text-muted text-sm">
                         {{ t("admin.posts.merge.nothingToShow") }}
                     </div>

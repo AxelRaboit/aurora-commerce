@@ -108,6 +108,11 @@ final readonly class PostManager implements PostManagerInterface
             static fn (int $termId): bool => $termId > 0,
         )));
 
+        $this->syncRelatedPosts($post, array_values(array_filter(
+            array_map(intval(...), $snapshot['relatedPostIds'] ?? []),
+            static fn (int $id): bool => $id > 0,
+        )));
+
         foreach ((array) ($snapshot['translations'] ?? []) as $locale => $translationData) {
             if (!is_array($translationData)) {
                 continue;
@@ -164,6 +169,7 @@ final readonly class PostManager implements PostManagerInterface
         $post->setFeaturedMedia($featuredMedia);
 
         $this->syncTerms($post, $input->termIds);
+        $this->syncRelatedPosts($post, $input->relatedPostIds);
 
         foreach ($input->translations as $locale => $translationInput) {
             $this->applyTranslation($post, $locale, $translationInput);
@@ -186,6 +192,30 @@ final readonly class PostManager implements PostManagerInterface
                 $term = $this->termRepository->find($termId);
                 if (null !== $term) {
                     $post->addTerm($term);
+                }
+            }
+        }
+    }
+
+    /** @param array<int> $relatedPostIds */
+    private function syncRelatedPosts(Post $post, array $relatedPostIds): void
+    {
+        $relatedPostIds = array_values(array_filter($relatedPostIds, fn (int $id): bool => $id !== $post->getId()));
+
+        foreach ($post->getRelatedPosts() as $existing) {
+            if (!in_array($existing->getId(), $relatedPostIds, true)) {
+                $post->removeRelatedPost($existing);
+            }
+        }
+
+        $currentIds = $post->getRelatedPosts()->map(fn ($related): ?int => $related->getId())->toArray();
+
+        $repository = $this->entityManager->getRepository(Post::class);
+        foreach ($relatedPostIds as $id) {
+            if (!in_array($id, $currentIds, true)) {
+                $related = $repository->find($id);
+                if (null !== $related) {
+                    $post->addRelatedPost($related);
                 }
             }
         }
@@ -277,6 +307,7 @@ final readonly class PostManager implements PostManagerInterface
             'postTypeId' => $post->getPostType()->getId(),
             'featuredMediaId' => $post->getFeaturedMedia()?->getId(),
             'termIds' => $post->getTerms()->map(fn ($term): ?int => $term->getId())->toArray(),
+            'relatedPostIds' => $post->getRelatedPosts()->map(fn ($related): ?int => $related->getId())->toArray(),
             'publishedAt' => $post->getPublishedAt()?->format(DATE_ATOM),
             'scheduledAt' => $post->getScheduledAt()?->format(DATE_ATOM),
             'translations' => $translations,

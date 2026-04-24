@@ -53,7 +53,7 @@ const maxWidthClass = computed(() => ({
 const panelClass = computed(() => [
     maxWidthClass.value,
     props.noPadding ? "overflow-hidden" : "p-6 space-y-4",
-    props.scrollable ? "overflow-y-auto max-h-[90vh]" : "",
+    props.scrollable ? "overflow-y-auto max-h-[90vh] scrollbar-thin" : "",
 ]);
 </script>
 

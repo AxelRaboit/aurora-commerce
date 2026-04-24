@@ -36,7 +36,7 @@ const previewHtml = computed(() =>
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >
-            <div v-if="post || loading" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-y-auto">
+            <div v-if="post || loading" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-y-auto scrollbar-thin">
                 <div class="sticky top-0 z-10 flex items-center gap-3 px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
                         {{ post?.title ?? "…" }}

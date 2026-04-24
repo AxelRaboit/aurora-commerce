@@ -216,7 +216,7 @@ function isActive(route) {
                 </AppButton>
             </div>
 
-            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+            <nav class="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 space-y-0.5">
                 <a
                     v-for="item in navItems"
                     :key="item.route"
