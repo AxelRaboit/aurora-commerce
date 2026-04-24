@@ -52,6 +52,20 @@ auth:
     submit: "Reset password"
     success: "Your password has been reset successfully."
     invalid_link: "This link is invalid or has expired."
+  invitation:
+    accept_title: "Accept invitation"
+    welcome: "Welcome {name}"
+    set_password: "Set your password to activate your account."
+    password: "Password"
+    confirm_password: "Confirm password"
+    submit: "Activate my account"
+    expired: "This invitation link is invalid or has expired."
+    success: "Your account is active, welcome!"
+    errors:
+      password_required: "Password is required."
+      password_too_short: "Password must be at least 8 characters."
+      password_confirm_required: "Confirmation is required."
+      password_mismatch: "Passwords do not match."
   hero:
     heading: "Manage your content"
     heading_accent: "with Velox."
@@ -81,12 +95,22 @@ admin:
     parameters: "Parameters"
   users:
     cannot_delete_self: 'You cannot delete your own account.'
+    cannot_modify_higher_role: 'You cannot modify a user with a higher role than yours.'
     cannot_modify_self: 'You cannot modify your own role.'
     created: 'User created successfully.'
     updated: 'User updated.'
     deleted: 'User deleted.'
     dev_granted: 'Dev role granted.'
     dev_revoked: 'Dev role revoked.'
+    errors:
+      name_required: 'Name is required.'
+      name_too_long: 'Name must not exceed 100 characters.'
+      email_required: 'Email address is required.'
+      email_invalid: 'Invalid email address.'
+      email_too_long: 'Email address must not exceed 180 characters.'
+      email_taken: 'This email address is already in use.'
+      role_required: 'Role is required.'
+      role_invalid: 'Invalid role.'
   invitations:
     sent: 'Invitation sent to {email}.'
   access_requests:
@@ -106,5 +130,16 @@ nav:
   menus: "Menus"
   taxonomies: "Taxonomies"
   tags: "Tags"
+  users: "Users"
   administration: "Administration"
   profile: "My profile"
+
+mail:
+  invitation:
+    heading: "Invitation to join Velox"
+    greeting: "Hi {name},"
+    intro: "You have been invited to join {siteName}. Click the button below to activate your account and set your password."
+    cta: "Activate my account"
+    expires: "This link expires on {date}."
+    fallback_intro: "If the button does not work, copy and paste this link into your browser:"
+    footer_note: "If you were not expecting this invitation, you can safely ignore this email."

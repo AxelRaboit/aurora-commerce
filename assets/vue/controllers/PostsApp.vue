@@ -14,6 +14,7 @@ import PostEditor from "@/admin/posts/PostEditor.vue";
 import PostPreviewOverlay from "@/admin/posts/PostPreviewOverlay.vue";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
+import AppPagination from "@/components/AppPagination.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -261,21 +262,7 @@ async function openPreview(post) {
         </div>
 
         <!-- Pagination -->
-        <div v-if="totalPages > 1" class="flex flex-col items-center gap-2 mt-4">
-            <p class="text-sm text-secondary">{{ t("common.pagination", { page, totalPages }) }}</p>
-            <div class="flex flex-wrap gap-1 items-center justify-center">
-                <button
-                    v-for="pageNum in totalPages"
-                    :key="pageNum"
-                    type="button"
-                    class="w-8 h-8 rounded-lg text-sm font-medium transition-colors"
-                    :class="pageNum === page ? 'bg-indigo-600 text-white shadow-sm' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
-                    v-on:click="goToPage(pageNum)"
-                >
-                    {{ pageNum }}
-                </button>
-            </div>
-        </div>
+        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <!-- Delete confirmation modal -->
         <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" v-on:close="deletePost.pendingDelete.value = null">

@@ -36,6 +36,7 @@
         "symfony/ux-vue": "^3.0",
         "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*",
+        "twig/cssinliner-extra": "^3.24",
         "twig/extra-bundle": "^3.24"
     },
     "require-dev": {

@@ -1,76 +1,53 @@
 <script setup>
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import AppButton from "@/components/AppButton.vue";
 
 const props = defineProps({
-    page:       { type: Number, required: true },
+    page: { type: Number, required: true },
     totalPages: { type: Number, required: true },
-    total:      { type: Number, required: true },
-    perPage:    { type: Number, default: 20 },
-    urlFn:      { type: Function, required: true },
 });
 
-const { t } = useI18n({ useScope: 'global' });
+const emit = defineEmits(["change"]);
 
-const from = computed(() => props.total === 0 ? 0 : (props.page - 1) * props.perPage + 1);
-const lastItemNumber = computed(() => Math.min(props.page * props.perPage, props.total));
+const { t } = useI18n();
 
-// Build page number list with ellipsis (…) as null
-const pageNumbers = computed(() => {
-    const total = props.totalPages;
-    const current = props.page;
-    if (total <= 7) {
-        return Array.from({ length: total }, (_, index) => index + 1);
+const showNumbers = computed(() => props.totalPages <= 10);
+
+function go(newPage) {
+    if (newPage >= 1 && newPage <= props.totalPages) {
+        emit("change", newPage);
     }
-    const pages = [];
-    pages.push(1);
-    if (current > 3) pages.push(null);
-    for (let pageIndex = Math.max(2, current - 1); pageIndex <= Math.min(total - 1, current + 1); pageIndex++) {
-        pages.push(pageIndex);
-    }
-    if (current < total - 2) pages.push(null);
-    pages.push(total);
-    return pages;
-});
+}
 </script>
 
 <template>
-    <div v-if="totalPages > 1" class="mt-4 space-y-3 flex flex-col items-center">
-        <p class="text-sm text-secondary">
-            {{ t('pagination.results', { from, to: lastItemNumber, total }) }}
-        </p>
+    <div v-if="totalPages > 1" class="flex items-center justify-between gap-4 text-sm">
+        <span class="text-secondary shrink-0">
+            {{ t("common.pagination", { page, totalPages }) }}
+        </span>
 
-        <div class="flex flex-wrap gap-1 items-center justify-center">
-            <a
-                :href="page > 1 ? urlFn(page - 1) : undefined"
-                class="px-3 py-1 rounded text-sm transition inline-flex items-center gap-1"
-                :class="page > 1 ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
-            >
-                <ChevronLeft class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t('pagination.previous') }}
-            </a>
+        <div class="flex items-center gap-1">
+            <AppButton variant="ghost" size="sm" :disabled="page <= 1" v-on:click="go(page - 1)">
+                {{ t("pagination.previous") }}
+            </AppButton>
 
-            <template v-for="(pageNumber, index) in pageNumbers" :key="index">
-                <a
-                    v-if="pageNumber !== null"
-                    :href="urlFn(pageNumber)"
-                    class="px-3 py-1 rounded text-sm transition"
-                    :class="pageNumber === page ? 'bg-violet-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+            <template v-if="showNumbers">
+                <button
+                    v-for="pageNum in totalPages"
+                    :key="pageNum"
+                    type="button"
+                    class="w-8 h-8 rounded-lg text-sm font-medium transition-colors"
+                    :class="pageNum === page ? 'bg-indigo-600 text-white shadow-sm' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    v-on:click="go(pageNum)"
                 >
-                    {{ pageNumber }}
-                </a>
-                <span v-else class="px-1 text-sm text-subtle">…</span>
+                    {{ pageNum }}
+                </button>
             </template>
 
-            <a
-                :href="page < totalPages ? urlFn(page + 1) : undefined"
-                class="px-3 py-1 rounded text-sm transition inline-flex items-center gap-1"
-                :class="page < totalPages ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
-            >
-                {{ t('pagination.next') }}
-                <ChevronRight class="w-3.5 h-3.5" :stroke-width="2" />
-            </a>
+            <AppButton variant="ghost" size="sm" :disabled="page >= totalPages" v-on:click="go(page + 1)">
+                {{ t("pagination.next") }}
+            </AppButton>
         </div>
     </div>
 </template>

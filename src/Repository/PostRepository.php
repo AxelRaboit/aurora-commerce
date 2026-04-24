@@ -25,7 +25,7 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?int $postTypeId = null, string $locale = 'fr', bool $trashed = false): array
+    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?int $postTypeId = null, string $locale = 'fr', bool $trashed = false, ?int $authorId = null): array
     {
         $queryBuilder = $this->createQueryBuilder('p')
             ->leftJoin('p.translations', 't', 'WITH', 't.locale = :locale')
@@ -65,6 +65,12 @@ class PostRepository extends ServiceEntityRepository
             $condition = 'p.postType = :postTypeId';
             $queryBuilder->andWhere($condition)->setParameter('postTypeId', $postTypeId);
             $countQueryBuilder->andWhere($condition)->setParameter('postTypeId', $postTypeId);
+        }
+
+        if (null !== $authorId) {
+            $authorCondition = 'p.author = :authorId';
+            $queryBuilder->andWhere($authorCondition)->setParameter('authorId', $authorId);
+            $countQueryBuilder->andWhere($authorCondition)->setParameter('authorId', $authorId);
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);

@@ -49,6 +49,10 @@ class Post implements TimestampableInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Media $featuredMedia = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $author = null;
+
     #[ORM\OneToMany(targetEntity: PostTranslation::class, mappedBy: 'post', cascade: ['persist', 'remove'], orphanRemoval: true, indexBy: 'locale')]
     private Collection $translations;
 
@@ -133,6 +137,18 @@ class Post implements TimestampableInterface
     public function setFeaturedMedia(?Media $featuredMedia): static
     {
         $this->featuredMedia = $featuredMedia;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }

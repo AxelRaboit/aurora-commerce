@@ -6,8 +6,11 @@ namespace App\Entity;
 
 use App\Enum\LocaleEnum;
 use App\Enum\UserRoleEnum;
+use App\Enum\UserStatusEnum;
 use App\Repository\UserRepository;
 use App\Trait\TimestampableTrait;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -36,13 +39,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column]
     private string $password;
 
     #[ORM\Column(length: 5, enumType: LocaleEnum::class)]
+    #[Groups(['user:read'])]
     private LocaleEnum $locale = LocaleEnum::French;
+
+    #[ORM\Column(length: 20, enumType: UserStatusEnum::class, options: ['default' => 'active'])]
+    #[Groups(['user:read'])]
+    private UserStatusEnum $status = UserStatusEnum::Active;
+
+    #[ORM\Column(length: 20, nullable: true, unique: true)]
+    private ?string $invitationSelector = null;
+
+    #[ORM\Column(length: 128, nullable: true)]
+    private ?string $invitationHashedToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $invitationExpiresAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?DateTimeImmutable $invitedAt = null;
 
     public function getId(): ?int
     {
@@ -113,6 +135,76 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocale(LocaleEnum $locale): static
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getStatus(): UserStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(UserStatusEnum $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return UserStatusEnum::Active === $this->status;
+    }
+
+    public function isInvited(): bool
+    {
+        return UserStatusEnum::Invited === $this->status;
+    }
+
+    public function getInvitationSelector(): ?string
+    {
+        return $this->invitationSelector;
+    }
+
+    public function setInvitationSelector(?string $selector): static
+    {
+        $this->invitationSelector = $selector;
+
+        return $this;
+    }
+
+    public function getInvitationHashedToken(): ?string
+    {
+        return $this->invitationHashedToken;
+    }
+
+    public function setInvitationHashedToken(?string $hashedToken): static
+    {
+        $this->invitationHashedToken = $hashedToken;
+
+        return $this;
+    }
+
+    public function getInvitationExpiresAt(): ?DateTimeImmutable
+    {
+        return $this->invitationExpiresAt;
+    }
+
+    public function setInvitationExpiresAt(?DateTimeImmutable $expiresAt): static
+    {
+        $this->invitationExpiresAt = $expiresAt;
+
+        return $this;
+    }
+
+    public function getInvitedAt(): ?DateTimeImmutable
+    {
+        return $this->invitedAt;
+    }
+
+    public function setInvitedAt(?DateTimeImmutable $invitedAt): static
+    {
+        $this->invitedAt = $invitedAt;
 
         return $this;
     }

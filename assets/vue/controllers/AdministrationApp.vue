@@ -11,7 +11,6 @@ import { useFileSize } from "@/composables/useFileSize.js";
 import { statusBadge } from "@/utils/statusStyles.js";
 import { useAdminUsers } from "@/admin/administration/composables/useAdminUsers.js";
 import { useAdminParameters } from "@/admin/administration/composables/useAdminParameters.js";
-import { useAdminInvitations } from "@/admin/administration/composables/useAdminInvitations.js";
 import { useAdminAccessRequests } from "@/admin/administration/composables/useAdminAccessRequests.js";
 import {
     LayoutDashboard,
@@ -24,7 +23,6 @@ import {
     Pencil,
     Trash2,
     LogIn,
-    Mail,
     KeyRound,
     Check,
     X,
@@ -68,8 +66,6 @@ const props = defineProps({
     userToggleRolePath: { type: String, required: true },
     userDeletePath: { type: String, required: true },
     impersonatePath: { type: String, required: true },
-    invitationsPath: { type: String, required: true },
-    invitationSendPath: { type: String, required: true },
     accessRequestsPath: { type: String, required: true },
     accessRequestApprovePath: { type: String, required: true },
     accessRequestRejectPath: { type: String, required: true },
@@ -81,15 +77,12 @@ const parsedStats = computed(() => props.stats ?? {});
 
 const tabs = [
     { key: "overview", label: () => t("admin.tabs.overview"), path: props.overviewPath, icon: LayoutDashboard },
-    { key: "users", label: () => t("admin.tabs.users"), path: props.usersPath, icon: Users },
-    { key: "invitations", label: () => t("admin.tabs.invitations"), path: props.invitationsPath, icon: Mail },
     { key: "parameters", label: () => t("admin.tabs.parameters"), path: props.parametersPath, icon: Sliders },
     { key: "access_requests", label: () => t("admin.tabs.access_requests"), path: props.accessRequestsPath, icon: KeyRound },
 ];
 
 const users = useAdminUsers(props.usersPath, props.userCreatePath, props.userUpdatePath, props.userToggleRolePath, props.userDeletePath, props.impersonatePath, props.csrfToken, props.users, props.search);
 const parameters = useAdminParameters(props.parameterUpdatePath, props.parameters);
-const invitations = useAdminInvitations(props.invitationSendPath, props.csrfToken);
 const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.accessRequestApprovePath, props.accessRequestRejectPath, props.accessRequestPurgePath, props.csrfToken, props.accessRequests);
 </script>
 
@@ -480,37 +473,6 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
             </AppModal>
         </div>
 
-        <div v-if="props.tab === 'invitations'" class="max-w-lg space-y-4">
-            <p class="text-sm text-secondary">{{ t('admin.invitations.description') }}</p>
-            <form class="space-y-4" v-on:submit.prevent="invitations.submitInvitation">
-                <AppInput
-                    v-model="invitations.invitationEmail.value"
-                    type="email"
-                    :label="t('admin.invitations.email')"
-                    :placeholder="t('admin.invitations.emailPlaceholder')"
-                    :error="invitations.invitationErrors.value.email"
-                    required
-                />
-                <AppTextarea v-model="invitations.invitationMessage.value" :label="t('admin.invitations.message')" :placeholder="t('admin.invitations.messagePlaceholder')" :rows="5" />
-                <div class="border border-line rounded-lg p-4 space-y-3 bg-surface-2/50">
-                    <p class="text-xs text-secondary">{{ t('admin.invitations.credentialsHint') }}</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <AppInput v-model="invitations.invitationCredentialEmail.value" type="email" :label="t('admin.invitations.credentialEmail')" :placeholder="t('admin.invitations.emailPlaceholder')" />
-                        <AppInput v-model="invitations.invitationCredentialPassword.value" :label="t('admin.invitations.credentialPassword')" />
-                    </div>
-                </div>
-                <AppButton
-                    type="submit"
-                    variant="primary"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    :loading="invitations.invitationSending.value"
-                >
-                    <Mail v-if="!invitations.invitationSending.value" class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.invitations.send') }}
-                </AppButton>
-            </form>
-        </div>
 
         <div v-if="props.tab === 'access_requests'" class="space-y-4">
             <div class="flex justify-end">

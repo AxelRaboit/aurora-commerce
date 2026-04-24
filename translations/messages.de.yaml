@@ -52,6 +52,20 @@ auth:
     submit: "Passwort zurücksetzen"
     success: "Ihr Passwort wurde erfolgreich zurückgesetzt."
     invalid_link: "Dieser Link ist ungültig oder abgelaufen."
+  invitation:
+    accept_title: "Einladung annehmen"
+    welcome: "Willkommen {name}"
+    set_password: "Legen Sie Ihr Passwort fest, um Ihr Konto zu aktivieren."
+    password: "Passwort"
+    confirm_password: "Passwort bestätigen"
+    submit: "Konto aktivieren"
+    expired: "Dieser Einladungslink ist ungültig oder abgelaufen."
+    success: "Ihr Konto ist aktiv, willkommen!"
+    errors:
+      password_required: "Passwort ist erforderlich."
+      password_too_short: "Das Passwort muss mindestens 8 Zeichen enthalten."
+      password_confirm_required: "Bestätigung ist erforderlich."
+      password_mismatch: "Die Passwörter stimmen nicht überein."
   hero:
     heading: "Verwalten Sie Ihre Inhalte"
     heading_accent: "mit Velox."
@@ -81,12 +95,22 @@ admin:
     parameters: "Parameter"
   users:
     cannot_delete_self: 'Du kannst dein eigenes Konto nicht löschen.'
+    cannot_modify_higher_role: 'Du kannst keinen Benutzer mit einer höheren Rolle als deiner bearbeiten.'
     cannot_modify_self: 'Du kannst deine eigene Rolle nicht ändern.'
     created: 'Benutzer erfolgreich erstellt.'
     updated: 'Benutzer aktualisiert.'
     deleted: 'Benutzer gelöscht.'
     dev_granted: 'Dev-Rolle zugewiesen.'
     dev_revoked: 'Dev-Rolle entzogen.'
+    errors:
+      name_required: 'Name ist erforderlich.'
+      name_too_long: 'Der Name darf 100 Zeichen nicht überschreiten.'
+      email_required: 'E-Mail-Adresse ist erforderlich.'
+      email_invalid: 'Ungültige E-Mail-Adresse.'
+      email_too_long: 'Die E-Mail-Adresse darf 180 Zeichen nicht überschreiten.'
+      email_taken: 'Diese E-Mail-Adresse wird bereits verwendet.'
+      role_required: 'Rolle ist erforderlich.'
+      role_invalid: 'Ungültige Rolle.'
   invitations:
     sent: 'Einladung an {email} gesendet.'
   access_requests:
@@ -106,5 +130,16 @@ nav:
   menus: "Menüs"
   taxonomies: "Taxonomien"
   tags: "Tags"
+  users: "Benutzer"
   administration: "Administration"
   profile: "Mein Profil"
+
+mail:
+  invitation:
+    heading: "Einladung zu Velox"
+    greeting: "Hallo {name},"
+    intro: "Du wurdest eingeladen, {siteName} beizutreten. Klicke auf die Schaltfläche unten, um dein Konto zu aktivieren und dein Passwort festzulegen."
+    cta: "Konto aktivieren"
+    expires: "Dieser Link läuft am {date} ab."
+    fallback_intro: "Falls die Schaltfläche nicht funktioniert, kopiere diesen Link in deinen Browser:"
+    footer_note: "Wenn du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren."

@@ -33,12 +33,15 @@
         mediaPath: path('admin_media'),
         menusPath: path('admin_menus'),
         taxonomiesPath: path('admin_taxonomies'),
+        usersPath: path('admin_users'),
         frontPath: path('front_root'),
         administrationPath: path('dev_dashboard'),
+        isAdmin: is_granted('ROLE_ADMIN'),
         isDev: is_granted('ROLE_DEV'),
         profilePath: path('profile'),
         logoutPath: path('app_logout'),
         locale: app.request.locale,
+        mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',
         appVersion: appVersion is defined ? appVersion : '',
     }) }}></div>
 

@@ -12,9 +12,11 @@ import {
     Image,
     Menu,
     Tags as TagsIcon,
+    Users as UsersIcon,
     Globe,
     Shield,
     LogOut,
+    Mail,
     Moon,
     Sun,
     User,
@@ -35,12 +37,15 @@ const props = defineProps({
     mediaPath: { type: String, default: "/admin/media" },
     menusPath: { type: String, default: "/admin/menus" },
     taxonomiesPath: { type: String, default: "/admin/taxonomies" },
+    usersPath: { type: String, default: "/admin/users" },
     frontPath: { type: String, default: "/" },
     administrationPath: { type: String, default: "/dev/dashboard" },
     profilePath: { type: String, default: "/admin/profile" },
     logoutPath: { type: String, default: "/logout" },
     locale: { type: String, default: "fr" },
+    isAdmin: { type: Boolean, default: false },
     isDev: { type: Boolean, default: false },
+    mailpitUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
 });
 
@@ -71,6 +76,7 @@ const navItems = [
     { route: "admin_media", path: props.mediaPath, label: t("nav.media"), icon: Image, activeColor: "indigo" },
     { route: "admin_menus", path: props.menusPath, label: t("nav.menus"), icon: Menu, activeColor: "indigo" },
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
+    ...(props.isAdmin ? [{ route: "admin_users", path: props.usersPath, label: t("nav.users"), icon: UsersIcon, activeColor: "indigo" }] : []),
     { route: "__front", path: props.frontPath, label: t("nav.viewSite"), icon: Globe, activeColor: "emerald", external: true },
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
 ];
@@ -147,6 +153,20 @@ function isActive(route) {
             >
                 <ChevronsRight class="w-4 h-4" />
             </button>
+
+            <a
+                v-if="mailpitUrl"
+                :href="mailpitUrl"
+                target="_blank"
+                rel="noopener"
+                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-amber-400 hover:bg-amber-500/10 transition-colors group relative"
+            >
+                <Mail class="w-5 h-5 shrink-0 text-muted group-hover:text-amber-400 transition-colors" :stroke-width="2" />
+                <span class="si-label">Mailpit</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    Mailpit
+                </span>
+            </a>
 
             <button
                 class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"

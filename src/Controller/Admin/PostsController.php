@@ -9,9 +9,12 @@ use App\Controller\Trait\JsonValidationTrait;
 use App\DTO\PostInput;
 use App\Entity\Post;
 use App\Entity\PostRevision;
+use App\Entity\User;
 use App\Enum\HttpMethodEnum;
+use App\Enum\PostStatusEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\PostRepository;
+use App\Security\Voter\PostVoter;
 use App\Repository\PostRevisionRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TaxonomyRepository;
@@ -31,7 +34,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/posts', name: 'admin_posts')]
-#[IsGranted(UserRoleEnum::Admin->value)]
+#[IsGranted(UserRoleEnum::Contributor->value)]
 class PostsController extends AbstractController
 {
     use JsonValidationTrait;
@@ -57,7 +60,14 @@ class PostsController extends AbstractController
         $page = max(1, (int) $request->query->get('page', '1'));
         $postTypeId = $request->query->getInt('postTypeId') ?: null;
         $trashed = $request->query->getBoolean('trashed');
-        $result = $this->postRepository->findPaginated($page, 20, $search ?: null, $postTypeId, trashed: $trashed);
+
+        $authorId = null;
+        if (!$this->isGranted(UserRoleEnum::Editor->value)) {
+            $currentUser = $this->getUser();
+            $authorId = $currentUser instanceof User ? $currentUser->getId() : null;
+        }
+
+        $result = $this->postRepository->findPaginated($page, 10, $search ?: null, $postTypeId, trashed: $trashed, authorId: $authorId);
 
         $items = array_map(
             $this->postSerializer->serialize(...),
@@ -123,12 +133,31 @@ class PostsController extends AbstractController
     {
         $input = PostInput::fromArray($this->decodeJson($request));
 
+        if (!$this->isGranted(UserRoleEnum::Author->value) && PostStatusEnum::Published->value === $input->status) {
+            $input = new PostInput(
+                postTypeId: $input->postTypeId,
+                status: PostStatusEnum::PendingReview->value,
+                featuredMediaId: $input->featuredMediaId,
+                termIds: $input->termIds,
+                translations: $input->translations,
+                relatedPostIds: $input->relatedPostIds,
+                scheduledAt: $input->scheduledAt,
+                version: $input->version,
+                force: $input->force,
+            );
+        }
+
         $violations = $this->validator->validate($input);
         if (count($violations) > 0) {
             return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
         }
 
         $post = $this->postManager->create($input);
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User) {
+            $post->setAuthor($currentUser);
+            $this->entityManager->flush();
+        }
 
         return $this->json(['success' => true, 'post' => $this->postSerializer->serialize($post)]);
     }
@@ -136,7 +165,23 @@ class PostsController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
     public function edit(Post $post, Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted(PostVoter::EDIT, $post);
+
         $input = PostInput::fromArray($this->decodeJson($request));
+
+        if (!$this->isGranted(PostVoter::PUBLISH, $post) && PostStatusEnum::Published->value === $input->status) {
+            $input = new PostInput(
+                postTypeId: $input->postTypeId,
+                status: PostStatusEnum::PendingReview->value,
+                featuredMediaId: $input->featuredMediaId,
+                termIds: $input->termIds,
+                translations: $input->translations,
+                relatedPostIds: $input->relatedPostIds,
+                scheduledAt: $input->scheduledAt,
+                version: $input->version,
+                force: $input->force,
+            );
+        }
 
         if (!$input->force && null !== $input->version) {
             try {
@@ -159,6 +204,8 @@ class PostsController extends AbstractController
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(Post $post): JsonResponse
     {
+        $this->denyAccessUnlessGranted(PostVoter::DELETE, $post);
+
         $this->postManager->delete($post);
 
         return $this->json(['success' => true]);

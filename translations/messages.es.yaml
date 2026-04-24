@@ -52,6 +52,20 @@ auth:
     submit: "Restablecer contraseña"
     success: "Tu contraseña ha sido restablecida con éxito."
     invalid_link: "Este enlace es inválido o ha expirado."
+  invitation:
+    accept_title: "Aceptar invitación"
+    welcome: "Bienvenido/a {name}"
+    set_password: "Defina su contraseña para activar su cuenta."
+    password: "Contraseña"
+    confirm_password: "Confirmar contraseña"
+    submit: "Activar mi cuenta"
+    expired: "Este enlace de invitación es inválido o ha expirado."
+    success: "Tu cuenta está activa, ¡bienvenido/a!"
+    errors:
+      password_required: "La contraseña es obligatoria."
+      password_too_short: "La contraseña debe tener al menos 8 caracteres."
+      password_confirm_required: "La confirmación es obligatoria."
+      password_mismatch: "Las contraseñas no coinciden."
   hero:
     heading: "Gestiona tu contenido"
     heading_accent: "con Velox."
@@ -81,12 +95,22 @@ admin:
     parameters: "Parámetros"
   users:
     cannot_delete_self: 'No puedes eliminar tu propia cuenta.'
+    cannot_modify_higher_role: 'No puedes modificar un usuario con un rol superior al tuyo.'
     cannot_modify_self: 'No puedes modificar tu propio rol.'
     created: 'Usuario creado con éxito.'
     updated: 'Usuario actualizado.'
     deleted: 'Usuario eliminado.'
     dev_granted: 'Rol Dev otorgado.'
     dev_revoked: 'Rol Dev retirado.'
+    errors:
+      name_required: 'El nombre es obligatorio.'
+      name_too_long: 'El nombre no debe superar los 100 caracteres.'
+      email_required: 'La dirección de correo es obligatoria.'
+      email_invalid: 'Dirección de correo electrónico inválida.'
+      email_too_long: 'La dirección de correo no debe superar los 180 caracteres.'
+      email_taken: 'Esta dirección de correo ya está en uso.'
+      role_required: 'El rol es obligatorio.'
+      role_invalid: 'Rol inválido.'
   invitations:
     sent: 'Invitación enviada a {email}.'
   access_requests:
@@ -106,5 +130,16 @@ nav:
   menus: "Menús"
   taxonomies: "Taxonomías"
   tags: "Etiquetas"
+  users: "Usuarios"
   administration: "Administración"
   profile: "Mi perfil"
+
+mail:
+  invitation:
+    heading: "Invitación para unirte a Velox"
+    greeting: "Hola {name},"
+    intro: "Has sido invitado a unirte a {siteName}. Haz clic en el botón de abajo para activar tu cuenta y definir tu contraseña."
+    cta: "Activar mi cuenta"
+    expires: "Este enlace expira el {date}."
+    fallback_intro: "Si el botón no funciona, copia y pega este enlace en tu navegador:"
+    footer_note: "Si no esperabas esta invitación, puedes ignorar este correo."

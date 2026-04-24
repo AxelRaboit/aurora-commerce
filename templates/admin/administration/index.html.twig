@@ -7,7 +7,6 @@
         overview: 'admin.tabs.overview'|trans,
         users: 'admin.tabs.users'|trans,
         parameters: 'admin.tabs.parameters'|trans,
-        invitations: 'admin.tabs.invitations'|trans,
         access_requests: 'admin.tabs.access_requests'|trans,
     } %}
     {{ include('components/page_header.html.twig', {
@@ -34,8 +33,6 @@
     userUpdatePath: path('dev_users_update', {id: '__id__'}),
     userToggleRolePath: path('dev_users_toggle_role', {id: '__id__'}),
     userDeletePath: path('dev_users_delete', {id: '__id__'}),
-    invitationsPath: path('dev_invitations'),
-    invitationSendPath: path('dev_invitations_send'),
     accessRequestsPath: path('dev_access_requests'),
     accessRequestApprovePath: path('dev_access_requests_approve', {id: '__id__'}),
     accessRequestRejectPath: path('dev_access_requests_reject', {id: '__id__'}),

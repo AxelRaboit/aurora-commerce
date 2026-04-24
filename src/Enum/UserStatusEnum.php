@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Enum;
+
+enum UserStatusEnum: string
+{
+    case Active = 'active';
+    case Invited = 'invited';
+    case Disabled = 'disabled';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Active => 'Actif',
+            self::Invited => 'Invité',
+            self::Disabled => 'Désactivé',
+        };
+    }
+}

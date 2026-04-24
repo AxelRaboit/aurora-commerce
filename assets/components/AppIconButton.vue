@@ -1,7 +1,8 @@
 <script setup>
-defineProps({
+const props = defineProps({
     color: { type: String, default: "default" },
     title: { type: String, default: null },
+    href: { type: String, default: null },
 });
 
 const colors = {
@@ -15,12 +16,13 @@ const colors = {
 </script>
 
 <template>
-    <button
-        type="button"
+    <component
+        :is="href ? 'a' : 'button'"
+        v-bind="href ? { href } : { type: 'button' }"
         :title="title"
-        class="p-1.5 text-muted hover:bg-surface-2 rounded transition-colors"
+        class="p-1.5 text-muted hover:bg-surface-2 rounded transition-colors inline-flex"
         :class="colors[color] ?? colors.default"
     >
         <slot />
-    </button>
+    </component>
 </template>
