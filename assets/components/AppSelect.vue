@@ -1,8 +1,11 @@
 <script setup>
+import AppFieldLabel from "@/components/AppFieldLabel.vue";
+
 defineProps({
     modelValue: { type: [String, Number], default: '' },
     label: { type: String, default: '' },
     error: { type: String, default: '' },
+    required: { type: Boolean, default: false },
     options: { type: Array, default: () => [] },
 });
 
@@ -11,7 +14,7 @@ defineEmits(['update:modelValue']);
 
 <template>
     <div class="flex flex-col gap-1.5">
-        <label v-if="label" class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
+        <AppFieldLabel :label="label" :required="required" />
         <select
             :value="modelValue"
             class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"

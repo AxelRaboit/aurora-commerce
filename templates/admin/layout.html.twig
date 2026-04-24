@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Velox{% endblock %}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    {% if siteFaviconUrl %}
+        <link rel="icon" href="{{ siteFaviconUrl }}">
+    {% else %}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    {% endif %}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
     {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
@@ -43,6 +47,7 @@
         logoutPath: path('app_logout'),
         locale: app.request.locale,
         mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',
+        siteLogoUrl: siteLogoUrl ?? '',
         appVersion: appVersion is defined ? appVersion : '',
     }) }}></div>
 

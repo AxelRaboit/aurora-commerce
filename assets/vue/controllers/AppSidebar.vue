@@ -48,6 +48,7 @@ const props = defineProps({
     isDev: { type: Boolean, default: false },
     settingsPath: { type: String, default: "" },
     mailpitUrl: { type: String, default: "" },
+    siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
 });
 
@@ -104,14 +105,16 @@ function isActive(route) {
     <aside id="sidebar" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
         <div class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200">
             <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
-                <AppLogo :size="32" class="shrink-0" />
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain" />
+                <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
                     <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Velox</span>
                     <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                 </div>
             </a>
             <a :href="dashboardPath" class="sh-logo-collapsed">
-                <AppLogo :size="32" />
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto object-contain" />
+                <AppLogo v-else :size="32" />
             </a>
             <button
                 class="sh-collapse-btn ml-2 p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"

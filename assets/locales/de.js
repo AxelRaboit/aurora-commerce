@@ -227,6 +227,9 @@ export default {
             folderName: "Ordnername",
             parentFolder: "Übergeordneter Ordner",
             deleteFolderConfirm: "Ordner „{name}\" löschen? Inhalte werden in den Stammordner verschoben.",
+            errors: {
+                alt_required: "Alternativtext ist erforderlich.",
+            },
         },
         stats: {
             posts: "Beiträge",

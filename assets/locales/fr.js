@@ -228,6 +228,9 @@ export default {
             folderName: "Nom du dossier",
             parentFolder: "Dossier parent",
             deleteFolderConfirm: "Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.",
+            errors: {
+                alt_required: "Le texte alternatif est requis.",
+            },
         },
         stats: {
             posts: "Articles",

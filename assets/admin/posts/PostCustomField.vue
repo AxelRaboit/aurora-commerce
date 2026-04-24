@@ -20,7 +20,7 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-const label = computed(() => props.field.label + (props.field.required ? " *" : ""));
+const label = computed(() => props.field.label);
 
 function update(value) {
     emit("update:modelValue", value);
@@ -141,6 +141,7 @@ async function uploadMedia(event) {
             v-if="field.type === 'text'"
             :model-value="modelValue ?? ''"
             :label="label"
+            :required="field.required"
             v-on:update:model-value="update"
         />
 
@@ -149,6 +150,7 @@ async function uploadMedia(event) {
             v-else-if="field.type === 'textarea'"
             :model-value="modelValue ?? ''"
             :label="label"
+            :required="field.required"
             :rows="4"
             v-on:update:model-value="update"
         />
@@ -159,6 +161,7 @@ async function uploadMedia(event) {
             type="number"
             :model-value="modelValue === null || modelValue === undefined ? '' : String(modelValue)"
             :label="label"
+            :required="field.required"
             v-on:update:model-value="(v) => update(v === '' ? null : Number(v))"
         />
 
@@ -168,6 +171,7 @@ async function uploadMedia(event) {
             type="date"
             :model-value="modelValue ?? ''"
             :label="label"
+            :required="field.required"
             v-on:update:model-value="update"
         />
 
@@ -177,6 +181,7 @@ async function uploadMedia(event) {
             type="url"
             :model-value="modelValue ?? ''"
             :label="label"
+            :required="field.required"
             v-on:update:model-value="update"
         />
 
@@ -186,19 +191,23 @@ async function uploadMedia(event) {
             type="email"
             :model-value="modelValue ?? ''"
             :label="label"
+            :required="field.required"
             v-on:update:model-value="update"
         />
 
         <!-- select -->
-        <div v-else-if="field.type === 'select'" class="flex flex-col gap-1.5">
-            <label class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
-            <AppSelect :model-value="modelValue ?? ''" v-on:update:model-value="update">
-                <option value="">—</option>
-                <option v-for="choice in field.options?.choices ?? []" :key="choice.value" :value="choice.value">
-                    {{ choice.label }}
-                </option>
-            </AppSelect>
-        </div>
+        <AppSelect
+            v-else-if="field.type === 'select'"
+            :model-value="modelValue ?? ''"
+            :label="label"
+            :required="field.required"
+            v-on:update:model-value="update"
+        >
+            <option value="">—</option>
+            <option v-for="choice in field.options?.choices ?? []" :key="choice.value" :value="choice.value">
+                {{ choice.label }}
+            </option>
+        </AppSelect>
 
         <!-- checkbox -->
         <AppCheckbox

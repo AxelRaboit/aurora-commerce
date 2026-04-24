@@ -227,6 +227,9 @@ export default {
             folderName: "Nombre de carpeta",
             parentFolder: "Carpeta padre",
             deleteFolderConfirm: "¿Eliminar carpeta «{name}»? Su contenido pasará a la raíz.",
+            errors: {
+                alt_required: "El texto alternativo es obligatorio.",
+            },
         },
         stats: {
             posts: "Artículos",

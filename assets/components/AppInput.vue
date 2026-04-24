@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { Eye, EyeOff } from "lucide-vue-next";
+import AppFieldLabel from "@/components/AppFieldLabel.vue";
 
 const props = defineProps({
     modelValue: { type: String, default: '' },
@@ -24,10 +25,7 @@ const inputType = computed(() => {
 
 <template>
     <div class="flex flex-col gap-1.5">
-        <label v-if="label" class="block text-xs text-secondary uppercase tracking-wide">
-            {{ label }}
-            <span v-if="required" class="text-red-500 ml-0.5">*</span>
-        </label>
+        <AppFieldLabel :label="label" :required="required" />
         <div :class="toggleable ? 'relative' : ''">
             <input
                 :type="inputType"

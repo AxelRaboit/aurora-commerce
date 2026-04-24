@@ -144,3 +144,9 @@ mail:
     expires: "This link expires on {date}."
     fallback_intro: "If the button does not work, copy and paste this link into your browser:"
     footer_note: "If you were not expecting this invitation, you can safely ignore this email."
+
+media:
+  errors:
+    alt_required: "Alternative text is required."
+    focal_out_of_range: "Focal point must be between 0 and 1."
+    folder_name_required: "Folder name is required."

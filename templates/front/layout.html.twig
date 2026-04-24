@@ -31,6 +31,12 @@
     {% endblock %}
 
     {# Reuse admin CSS for a base tailwind setup; keep front independent of admin assets otherwise. #}
+    {% if siteFaviconUrl %}
+        <link rel="icon" href="{{ siteFaviconUrl }}">
+    {% else %}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    {% endif %}
+
     {{ vite_entry_link_tags('app') }}
 
     <link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
@@ -38,8 +44,12 @@
 <body class="min-h-screen bg-bg text-primary flex flex-col">
     <header class="border-b border-line bg-surface">
         <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-6 flex-wrap">
-            <a href="{{ path('front_home', {locale: locale}) }}" class="text-lg font-bold text-primary">
-                {{ context.siteName }}
+            <a href="{{ path('front_home', {locale: locale}) }}" class="flex items-center gap-2 text-lg font-bold text-primary">
+                {% if siteLogoUrl %}
+                    <img src="{{ siteLogoUrl }}" alt="{{ context.siteName }}" class="h-8 w-auto object-contain">
+                {% else %}
+                    {{ context.siteName }}
+                {% endif %}
             </a>
             {% if context.activeLocales|length > 1 %}
                 {% set alternatesByLocale = {} %}

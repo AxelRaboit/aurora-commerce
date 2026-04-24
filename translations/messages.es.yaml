@@ -144,3 +144,9 @@ mail:
     expires: "Este enlace expira el {date}."
     fallback_intro: "Si el botón no funciona, copia y pega este enlace en tu navegador:"
     footer_note: "Si no esperabas esta invitación, puedes ignorar este correo."
+
+media:
+  errors:
+    alt_required: "El texto alternativo es obligatorio."
+    focal_out_of_range: "El punto focal debe estar entre 0 y 1."
+    folder_name_required: "El nombre de la carpeta es obligatorio."

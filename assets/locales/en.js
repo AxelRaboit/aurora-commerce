@@ -225,6 +225,9 @@ export default {
             folderName: "Folder name",
             parentFolder: "Parent folder",
             deleteFolderConfirm: "Delete folder \"{name}\"? Its content will move to the root.",
+            errors: {
+                alt_required: "Alternative text is required.",
+            },
         },
         stats: {
             posts: "Posts",

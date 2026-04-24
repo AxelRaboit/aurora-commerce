@@ -621,7 +621,8 @@ async function moveFolder(folderId, newParentId) {
                 <div class="space-y-3">
                     <AppInput
                         v-model="editForm.alt"
-                        :label="t('admin.media.alt') + ' *'"
+                        :label="t('admin.media.alt')"
+                        :required="true"
                         :error="editErrors.alt ?? ''"
                         :placeholder="t('admin.media.altPlaceholder')"
                     />
@@ -641,6 +642,7 @@ async function moveFolder(folderId, newParentId) {
                     </div>
 
                     <dl class="text-xs text-muted space-y-0.5 pt-2 border-t border-line">
+                        <div class="flex justify-between"><dt>ID</dt><dd class="font-mono select-all">{{ editingMedia?.id }}</dd></div>
                         <div class="flex justify-between"><dt>{{ t("admin.media.filename") }}</dt><dd class="font-mono">{{ editingMedia?.originalName }}</dd></div>
                         <div class="flex justify-between"><dt>{{ t("admin.media.size") }}</dt><dd>{{ formatSize(editingMedia?.size ?? 0) }}</dd></div>
                         <div v-if="editingMedia?.width" class="flex justify-between"><dt>{{ t("admin.media.dimensions") }}</dt><dd>{{ editingMedia.width }}×{{ editingMedia.height }}</dd></div>
@@ -648,15 +650,13 @@ async function moveFolder(folderId, newParentId) {
                     </dl>
                 </div>
 
-                <div class="md:col-span-2 flex items-center justify-between pt-2 border-t border-line">
-                    <AppButton variant="danger" size="md" v-on:click="deletingMedia = editingMedia; editingMedia = null">
+                <div class="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-line">
+                    <AppButton type="submit" variant="primary" size="md" class="w-full sm:w-auto order-1 sm:order-2 sm:ms-auto" :loading="editSaving">{{ t("common.save") }}</AppButton>
+                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("common.delete") }}
                     </AppButton>
-                    <div class="flex items-center gap-2">
-                        <AppButton variant="ghost" size="md" v-on:click="closeEditMedia">{{ t("common.cancel") }}</AppButton>
-                        <AppButton type="submit" variant="primary" size="md" :loading="editSaving">{{ t("common.save") }}</AppButton>
-                    </div>
+                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-3 sm:order-3" v-on:click="closeEditMedia">{{ t("common.cancel") }}</AppButton>
                 </div>
             </form>
         </AppModal>
