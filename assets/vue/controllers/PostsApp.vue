@@ -182,7 +182,7 @@ async function openPreview(post) {
                         </td>
                         <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
