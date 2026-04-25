@@ -60,6 +60,7 @@ class UserRepository extends ServiceEntityRepository
             if ([] === $matchingIds) {
                 return ['items' => [], 'total' => 0, 'page' => max(1, $page), 'totalPages' => 1];
             }
+
             $queryBuilder->andWhere('u.id IN (:matchingIds)')->setParameter('matchingIds', $matchingIds);
             $countQueryBuilder->andWhere('u.id IN (:matchingIds)')->setParameter('matchingIds', $matchingIds);
         }

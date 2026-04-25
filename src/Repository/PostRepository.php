@@ -57,6 +57,7 @@ class PostRepository extends ServiceEntityRepository
             foreach ($rankedIds as $index => $id) {
                 $caseExpr .= sprintf(' WHEN %d THEN %d', (int) $id, $index);
             }
+
             $caseExpr .= ' END';
             $queryBuilder->resetDQLPart('orderBy')->orderBy($caseExpr, Order::Ascending->value);
         }
@@ -77,18 +78,18 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return list<int> Post IDs matching the full-text query, ordered by rank (best first).
+     * @return list<int> post IDs matching the full-text query, ordered by rank (best first)
      */
     public function fullTextPostIds(string $search, int $limit = 200): array
     {
         $sql = <<<'SQL'
-            SELECT pt.post_id, MAX(ts_rank(pt.search_vector, websearch_to_tsquery('simple', :q))) AS rank
-            FROM post_translations pt
-            WHERE pt.search_vector @@ websearch_to_tsquery('simple', :q)
-            GROUP BY pt.post_id
-            ORDER BY rank DESC
-            LIMIT :max
-        SQL;
+                SELECT pt.post_id, MAX(ts_rank(pt.search_vector, websearch_to_tsquery('simple', :q))) AS rank
+                FROM post_translations pt
+                WHERE pt.search_vector @@ websearch_to_tsquery('simple', :q)
+                GROUP BY pt.post_id
+                ORDER BY rank DESC
+                LIMIT :max
+            SQL;
 
         $connection = $this->getEntityManager()->getConnection();
         $rows = $connection->fetchAllAssociative($sql, [

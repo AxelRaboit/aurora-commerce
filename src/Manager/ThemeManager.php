@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Manager;
 
 use App\Entity\Theme;
-use App\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 final readonly class ThemeManager
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private ThemeRepository $themeRepository,
         private string $projectDir,
     ) {}
 
@@ -61,8 +61,8 @@ final readonly class ThemeManager
         }
 
         $count = 0;
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir)) as $file) {
-            if ($file->isFile() && str_ends_with($file->getFilename(), '.html.twig')) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir)) as $file) {
+            if ($file->isFile() && str_ends_with((string) $file->getFilename(), '.html.twig')) {
                 ++$count;
             }
         }

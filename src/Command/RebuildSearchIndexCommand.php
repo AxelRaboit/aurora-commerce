@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\PostTranslation;
 use App\Repository\PostTranslationRepository;
 use App\Service\PostTextExtractor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +36,7 @@ final class RebuildSearchIndexCommand extends Command
 
         $total = (int) $this->entityManager->createQueryBuilder()
             ->select('COUNT(t.id)')
-            ->from(\App\Entity\PostTranslation::class, 't')
+            ->from(PostTranslation::class, 't')
             ->getQuery()
             ->getSingleScalarResult();
 

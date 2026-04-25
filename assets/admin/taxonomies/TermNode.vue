@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
 import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus } from "lucide-vue-next";
 import AppIconButton from "@/components/AppIconButton.vue";
@@ -19,7 +19,9 @@ const name = computed(() => props.node.translations?.[props.activeLocale]?.name
     ?? "(—)");
 
 const isCollapsed = computed(() => props.collapsed.has(props.node.id));
-const hasChildren = computed(() => (props.node.children ?? []).length > 0);
+const localChildren = ref([...(props.node.children ?? [])]);
+watch(() => props.node.children, (children) => { localChildren.value = [...(children ?? [])]; });
+const hasChildren = computed(() => localChildren.value.length > 0);
 
 function onChildEnd() {
     emit("end");
@@ -74,7 +76,7 @@ function onChildEnd() {
 
         <VueDraggable
             v-if="hierarchical && !isCollapsed"
-            v-model="node.children"
+            v-model="localChildren"
             :group="{ name: groupName, pull: true, put: true }"
             handle=".drag-handle"
             :animation="150"
@@ -82,7 +84,7 @@ function onChildEnd() {
             class="pl-5 pb-1 space-y-1 min-h-[4px]"
             v-on:end="onChildEnd"
         >
-            <template v-for="child in node.children" :key="child.id">
+            <template v-for="child in localChildren" :key="child.id">
                 <TermNode
                     :node="child"
                     :hierarchical="hierarchical"

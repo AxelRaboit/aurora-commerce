@@ -17,6 +17,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case Timezone = 'timezone';
     case DateFormat = 'date_format';
     case CommentsEnabled = 'comments_enabled';
+    case CommentModerationEnabled = 'comment_moderation_enabled';
     case MaintenanceMode = 'maintenance_mode';
     case RegistrationEnabled = 'registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
@@ -46,11 +47,12 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::Timezone => 'Fuseau horaire',
             self::DateFormat => "Format d'affichage des dates",
             self::CommentsEnabled => 'Commentaires activés',
+            self::CommentModerationEnabled => 'Modération des commentaires',
             self::MaintenanceMode => 'Mode maintenance',
             self::RegistrationEnabled => 'Inscriptions ouvertes',
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
-            self::HomepagePostId => 'Page d\'accueil (ID du post)',
+            self::HomepagePostId => "Page d'accueil (ID du post)",
             self::LogoMediaId => 'Logo du site',
             self::FaviconMediaId => 'Favicon',
             self::SeoTitleTemplate => 'Template de titre SEO',
@@ -72,6 +74,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::Timezone => 'Fuseau horaire PHP (ex: Europe/Paris)',
             self::DateFormat => "Format d'affichage des dates (ex: d/m/Y)",
             self::CommentsEnabled => 'Commentaires activés (0 = désactivés, 1 = activés)',
+            self::CommentModerationEnabled => 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)',
             self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = site fermé au public)',
             self::RegistrationEnabled => 'Autoriser les nouvelles inscriptions (0 = désactivé, 1 = activé)',
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
@@ -98,6 +101,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::Timezone => 'Europe/Paris',
             self::DateFormat => 'd/m/Y',
             self::CommentsEnabled => '0',
+            self::CommentModerationEnabled => '1',
             self::MaintenanceMode => '0',
             self::RegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
@@ -114,7 +118,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     {
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'int',
-            self::CommentsEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -133,7 +137,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
-            self::PostsPerPage, self::CommentsEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
+            self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::RegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',

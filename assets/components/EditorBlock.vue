@@ -18,8 +18,19 @@ import Undo from "editorjs-undo";
 import MediaTextBlock from "@/utils/editorjs/MediaTextBlock.js";
 import TwoColumnBlock from "@/utils/editorjs/TwoColumnBlock.js";
 import CalloutBlock from "@/utils/editorjs/CalloutBlock.js";
+import { configureMediaPickerLabels } from "@/utils/mediaPicker.js";
 
 const { t } = useI18n();
+
+configureMediaPickerLabels({
+    title: t("admin.editor.mediaPicker.title"),
+    search: t("admin.editor.mediaPicker.search"),
+    allFolders: t("admin.editor.mediaPicker.allFolders"),
+    empty: t("admin.editor.mediaPicker.empty"),
+    loading: t("admin.editor.mediaPicker.loading"),
+    cancel: t("common.cancel"),
+    select: t("admin.editor.mediaPicker.select"),
+});
 
 const props = defineProps({
     modelValue: { type: Array, default: () => [] },
@@ -213,6 +224,10 @@ onMounted(async () => {
                     urlPlaceholder:     t("admin.editor.mediaText.urlPlaceholder"),
                     changeUrl:          t("admin.editor.mediaText.changeUrl"),
                     confirm:            t("admin.editor.mediaText.confirm"),
+                    browse:             t("admin.editor.mediaText.browse"),
+                    orLabel:            t("admin.editor.mediaText.or"),
+                    mediaIdPlaceholder: t("admin.editor.mediaText.mediaIdPlaceholder"),
+                    mediaIdNotFound:    t("admin.editor.mediaText.mediaIdNotFound"),
                 },
             },
             twoColumn: {

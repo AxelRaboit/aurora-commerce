@@ -125,8 +125,8 @@ final class UsersController extends AbstractController
 
         try {
             $user = $this->userManager->invite($input->name, $input->email, $input->role, $input->message);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['ok' => false, 'errors' => ['role' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['ok' => false, 'errors' => ['role' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
@@ -152,8 +152,8 @@ final class UsersController extends AbstractController
 
         try {
             $this->userManager->updateWithRole($user, $input->name, $input->email, $input->role);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['ok' => false, 'errors' => ['role' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['ok' => false, 'errors' => ['role' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
@@ -187,7 +187,6 @@ final class UsersController extends AbstractController
 
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
     }
-
 
     #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
     public function delete(User $user): JsonResponse

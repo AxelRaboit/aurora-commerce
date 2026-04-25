@@ -1,0 +1,293 @@
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { MessageSquare, Check, Ban, Trash2, Eye } from "lucide-vue-next";
+import AppPagination from "@/components/AppPagination.vue";
+import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
+import AppNoData from "@/components/AppNoData.vue";
+import AppModal from "@/components/AppModal.vue";
+
+const { t } = useI18n();
+
+const props = defineProps({
+    listPath: { type: String, required: true },
+    approvePath: { type: String, required: true },
+    spamPath: { type: String, required: true },
+    toggleModerationPath: { type: String, required: true },
+    moderationEnabled: { type: Boolean, default: true },
+    deletePath: { type: String, required: true },
+    stats: { type: Object, default: () => ({ pending: 0, approved: 0, spam: 0 }) },
+});
+
+const comments = ref([]);
+const loading = ref(false);
+const page = ref(1);
+const totalPages = ref(1);
+const total = ref(0);
+const statusFilter = ref("");
+const localStats = ref({ ...props.stats });
+
+const tabs = computed(() => [
+    { key: "", label: t("admin.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
+    { key: "pending", label: t("admin.comments.pending"), count: localStats.value.pending },
+    { key: "approved", label: t("admin.comments.approved"), count: localStats.value.approved },
+    { key: "spam", label: t("admin.comments.spam"), count: localStats.value.spam },
+]);
+
+async function fetchComments() {
+    loading.value = true;
+    try {
+        const params = new URLSearchParams();
+        params.set("page", String(page.value));
+        if (statusFilter.value) params.set("status", statusFilter.value);
+        const response = await fetch(`${props.listPath}?${params.toString()}`);
+        const data = await response.json();
+        if (data.ok) {
+            comments.value = data.items;
+            total.value = data.total;
+            totalPages.value = data.totalPages;
+            page.value = data.page;
+        } else {
+            toast.error(t("common.error"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    } finally {
+        loading.value = false;
+    }
+}
+
+onMounted(fetchComments);
+
+function selectTab(key) {
+    statusFilter.value = key;
+    page.value = 1;
+    fetchComments();
+}
+
+function goToPage(newPage) {
+    page.value = newPage;
+    fetchComments();
+}
+
+async function approveComment(comment) {
+    try {
+        const response = await fetch(props.approvePath.replace("__id__", comment.id), { method: "POST" });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("admin.comments.approveSuccess"));
+            if (comment.status === "pending") {
+                localStats.value.pending = Math.max(0, localStats.value.pending - 1);
+                localStats.value.approved += 1;
+            } else if (comment.status === "spam") {
+                localStats.value.spam = Math.max(0, localStats.value.spam - 1);
+                localStats.value.approved += 1;
+            }
+            fetchComments();
+        } else {
+            toast.error(t("common.error"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
+
+async function spamComment(comment) {
+    try {
+        const response = await fetch(props.spamPath.replace("__id__", comment.id), { method: "POST" });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("admin.comments.spamSuccess"));
+            if (comment.status === "pending") {
+                localStats.value.pending = Math.max(0, localStats.value.pending - 1);
+                localStats.value.spam += 1;
+            } else if (comment.status === "approved") {
+                localStats.value.approved = Math.max(0, localStats.value.approved - 1);
+                localStats.value.spam += 1;
+            }
+            fetchComments();
+        } else {
+            toast.error(t("common.error"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
+
+async function deleteComment(comment) {
+    if (!confirm(t("admin.comments.deleteConfirm"))) return;
+    try {
+        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: "DELETE" });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("common.deleted"));
+            if (comment.status === "pending") localStats.value.pending = Math.max(0, localStats.value.pending - 1);
+            else if (comment.status === "approved") localStats.value.approved = Math.max(0, localStats.value.approved - 1);
+            else if (comment.status === "spam") localStats.value.spam = Math.max(0, localStats.value.spam - 1);
+            fetchComments();
+        } else {
+            toast.error(t("common.error"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
+
+function statusBadgeClass(status) {
+    if (status === "approved") return "bg-emerald-500/15 text-emerald-400";
+    if (status === "spam") return "bg-rose-500/15 text-rose-400";
+    return "bg-amber-500/15 text-amber-400";
+}
+
+function truncate(text, length) {
+    if (!text) return "";
+    return text.length > length ? text.slice(0, length) + "…" : text;
+}
+
+const viewingComment = ref(null);
+const isModerationEnabled = ref(props.moderationEnabled);
+
+async function toggleModeration() {
+    try {
+        const response = await fetch(props.toggleModerationPath, { method: "POST" });
+        const data = await response.json();
+        if (data.ok) {
+            isModerationEnabled.value = data.moderationEnabled;
+            toast.success(data.moderationEnabled ? t("admin.comments.moderationEnabled") : t("admin.comments.moderationDisabled"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    }
+}
+</script>
+
+<template>
+    <div class="space-y-4">
+        <!-- Header -->
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="flex gap-1 flex-wrap">
+                <button
+                    v-for="tab in tabs"
+                    :key="tab.key"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    :class="statusFilter === tab.key ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    v-on:click="selectTab(tab.key)"
+                >
+                    {{ tab.label }}
+                    <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-indigo-600/25' : 'bg-surface-3'">
+                        {{ tab.count }}
+                    </span>
+                </button>
+            </div>
+            <AppButton
+                :variant="isModerationEnabled ? 'primary' : 'secondary'"
+                size="sm"
+                v-on:click="toggleModeration"
+            >
+                <span class="w-2 h-2 rounded-full" :class="isModerationEnabled ? 'bg-white' : 'bg-muted'" />
+                {{ isModerationEnabled ? t("admin.comments.moderationOn") : t("admin.comments.moderationOff") }}
+            </AppButton>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+            <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
+            <table v-else class="w-full text-sm">
+                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
+                    <tr>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.name') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.comments.email') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.comments.post') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.content') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden sm:table-cell">{{ t('admin.comments.date') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">Statut</th>
+                        <th class="text-right px-4 py-3 font-semibold">{{ t('common.edit') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="comment in comments" :key="comment.id" class="border-t border-line/60 hover:bg-surface-2/50">
+                        <td class="px-4 py-3 text-primary font-medium whitespace-nowrap">
+                            {{ comment.authorName }}
+                            <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
+                        <td class="px-4 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
+                        <td class="px-4 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
+                        <td class="px-4 py-3 text-xs text-muted whitespace-nowrap hidden sm:table-cell">{{ new Date(comment.createdAt).toLocaleDateString() }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" :class="statusBadgeClass(comment.status)">{{ comment.statusLabel }}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton color="indigo" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                                    <Eye class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                                    <Check class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(comment)">
+                                    <Ban class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton color="rose" :title="t('common.delete')" v-on:click="deleteComment(comment)">
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+
+        <AppModal :show="!!viewingComment" max-width="md" v-on:close="viewingComment = null">
+            <h3 class="text-lg font-semibold text-primary">{{ t('admin.comments.view') }}</h3>
+            <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.name') }}</label>
+                    <p class="text-sm text-primary font-medium">{{ viewingComment?.authorName }}</p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.email') }}</label>
+                    <p class="text-sm text-secondary">{{ viewingComment?.authorEmail }}</p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.post') }}</label>
+                    <p class="text-sm text-secondary">{{ viewingComment?.postTitle }}</p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.date') }}</label>
+                    <p class="text-sm text-muted">{{ viewingComment ? new Date(viewingComment.createdAt).toLocaleString() : '' }}</p>
+                </div>
+                <div v-if="viewingComment?.parentId" class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">En réponse à</label>
+                    <p class="text-sm text-secondary">{{ viewingComment?.parentAuthorName }}</p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.content') }}</label>
+                    <p class="text-sm text-primary whitespace-pre-wrap bg-surface-2 rounded-lg px-3 py-2.5">{{ viewingComment?.content }}</p>
+                </div>
+                <div v-if="viewingComment?.reactionCount > 0" class="flex flex-col gap-1.5">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">Réactions</label>
+                    <p class="text-sm text-secondary">{{ viewingComment?.reactionCount }}</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-line">
+                <AppIconButton v-if="viewingComment?.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
+                    <Check class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+                <AppIconButton v-if="viewingComment?.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(viewingComment); viewingComment = null">
+                    <Ban class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+                <AppIconButton color="rose" :title="t('common.delete')" v-on:click="deleteComment(viewingComment); viewingComment = null">
+                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+                <AppIconButton color="default" :title="t('common.cancel')" v-on:click="viewingComment = null">
+                    <span class="text-xs px-1">✕</span>
+                </AppIconButton>
+            </div>
+        </AppModal>
+    </div>
+</template>

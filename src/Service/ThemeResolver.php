@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-final class ThemeResolver
+final readonly class ThemeResolver
 {
     public function __construct(
-        private readonly ThemeContext $themeContext,
-        private readonly string $projectDir,
+        private ThemeContext $themeContext,
+        private string $projectDir,
     ) {}
 
     public function resolve(string $templateName): string
@@ -16,7 +16,7 @@ final class ThemeResolver
         $activeSlug = $this->themeContext->activeThemeSlug();
         $activePath = sprintf('%s/templates/themes/%s/%s.html.twig', $this->projectDir, $activeSlug, $templateName);
 
-        if ($activeSlug !== 'default' && file_exists($activePath)) {
+        if ('default' !== $activeSlug && file_exists($activePath)) {
             return sprintf('themes/%s/%s.html.twig', $activeSlug, $templateName);
         }
 

@@ -26,6 +26,7 @@ import {
     X,
     Settings,
     Palette,
+    MessageSquare,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -49,6 +50,7 @@ const props = defineProps({
     isDev: { type: Boolean, default: false },
     settingsPath: { type: String, default: "" },
     themesPath: { type: String, default: "" },
+    commentsPath: { type: String, default: "" },
     mailpitUrl: { type: String, default: "" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
@@ -82,6 +84,7 @@ const navItems = [
     { route: "admin_menus", path: props.menusPath, label: t("nav.menus"), icon: Menu, activeColor: "indigo" },
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
     ...(props.isAdmin ? [{ route: "admin_users", path: props.usersPath, label: t("nav.users"), icon: UsersIcon, activeColor: "indigo" }] : []),
+    ...(props.commentsPath !== "" ? [{ route: "admin_comments", path: props.commentsPath, label: t("nav.comments"), icon: MessageSquare, activeColor: "indigo" }] : []),
     ...(props.settingsPath !== "" ? [{ route: "admin_settings", path: props.settingsPath, label: t("nav.settings"), icon: Settings, activeColor: "indigo" }] : []),
     ...(props.themesPath !== "" ? [{ route: "admin_themes", path: props.themesPath, label: t("nav.themes"), icon: Palette, activeColor: "indigo" }] : []),
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
@@ -107,7 +110,7 @@ function isActive(route) {
     <aside id="sidebar" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
         <div class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200">
             <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
-                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain" />
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain">
                 <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
                     <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Velox</span>
@@ -115,7 +118,7 @@ function isActive(route) {
                 </div>
             </a>
             <a :href="dashboardPath" class="sh-logo-collapsed">
-                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto object-contain" />
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto object-contain">
                 <AppLogo v-else :size="32" />
             </a>
             <button

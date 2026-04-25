@@ -457,8 +457,21 @@ async function moveFolder(folderId, newParentId) {
                         v-on:keyup.enter="runSearch"
                     >
                 </div>
-                <input ref="uploadInput" type="file" accept="image/*" multiple class="hidden" v-on:change="uploadFiles">
-                <AppButton variant="primary" size="md" class="w-full sm:w-auto" :loading="uploading" v-on:click="uploadInput?.click()">
+                <input
+                    ref="uploadInput"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    class="hidden"
+                    v-on:change="uploadFiles"
+                >
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :loading="uploading"
+                    v-on:click="uploadInput?.click()"
+                >
                     <Upload class="w-4 h-4" :stroke-width="2" />
                     {{ t("admin.media.upload") }}
                 </AppButton>
@@ -585,7 +598,7 @@ async function moveFolder(folderId, newParentId) {
         </div>
 
         <!-- Edit media modal -->
-        <AppModal :show="!!editingMedia" max-width="3xl" v-on:close="closeEditMedia" scrollable>
+        <AppModal :show="!!editingMedia" max-width="3xl" scrollable v-on:close="closeEditMedia">
             <h3 class="text-lg font-semibold text-primary">{{ t("admin.media.editMedia") }}</h3>
             <form class="grid grid-cols-1 md:grid-cols-2 gap-4" v-on:submit.prevent="submitMediaEdit">
                 <div class="space-y-2">
@@ -651,7 +664,15 @@ async function moveFolder(folderId, newParentId) {
                 </div>
 
                 <div class="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-line">
-                    <AppButton type="submit" variant="primary" size="md" class="w-full sm:w-auto order-1 sm:order-2 sm:ms-auto" :loading="editSaving">{{ t("common.save") }}</AppButton>
+                    <AppButton
+                        type="submit"
+                        variant="primary"
+                        size="md"
+                        class="w-full sm:w-auto order-1 sm:order-2 sm:ms-auto"
+                        :loading="editSaving"
+                    >
+                        {{ t("common.save") }}
+                    </AppButton>
                     <AppButton variant="danger" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("common.delete") }}

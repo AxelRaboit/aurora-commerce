@@ -66,6 +66,32 @@ class MediaController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/info', name: '_info', methods: [HttpMethodEnum::Get->value])]
+    public function info(Media $media): JsonResponse
+    {
+        return $this->json(['media' => $this->mediaSerializer->serialize($media)]);
+    }
+
+    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(Request $request): JsonResponse
+    {
+        $search = mb_trim((string) $request->query->get('search', ''));
+        $folderId = $request->query->getInt('folderId') ?: null;
+        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+
+        $items = array_map(
+            $this->mediaSerializer->serialize(...),
+            $this->mediaRepository->findByFolder($folder, $search ?: null),
+        );
+
+        $folders = array_map(
+            $this->folderSerializer->serialize(...),
+            $this->folderRepository->findAllOrdered(),
+        );
+
+        return $this->json(['items' => $items, 'folders' => $folders]);
+    }
+
     #[Route('/upload', name: '_upload', methods: [HttpMethodEnum::Post->value])]
     public function upload(Request $request): JsonResponse
     {
@@ -110,8 +136,8 @@ class MediaController extends AbstractController
 
         try {
             $this->mediaManager->update($media, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['folderId' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['folderId' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
@@ -149,8 +175,8 @@ class MediaController extends AbstractController
 
         try {
             $folder = $this->mediaManager->createFolder($input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'folder' => $this->folderSerializer->serialize($folder)]);
@@ -168,8 +194,8 @@ class MediaController extends AbstractController
 
         try {
             $this->mediaManager->updateFolder($folder, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'folder' => $this->folderSerializer->serialize($folder)]);

@@ -15,6 +15,8 @@ const DEFAULT_TYPES = [
     { value: "fuchsia", label: "Fuchsia" },
 ];
 
+import { handlePlainTextPaste } from "./handlePlainTextPaste.js";
+
 export default class CalloutBlock {
     #wrapper = null;
     #titleEl = null;
@@ -100,6 +102,7 @@ export default class CalloutBlock {
         el.addEventListener("input", () => {
             this.#data[dataKey] = el.innerHTML;
         });
+        el.addEventListener("paste", handlePlainTextPaste);
         return el;
     }
 

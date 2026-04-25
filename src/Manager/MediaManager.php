@@ -75,6 +75,7 @@ final readonly class MediaManager implements MediaManagerInterface
                 throw new InvalidArgumentException(sprintf('Folder #%d not found.', $input->folderId));
             }
         }
+
         $media->setFolder($folder);
 
         $this->entityManager->flush();
@@ -108,6 +109,7 @@ final readonly class MediaManager implements MediaManagerInterface
             if (null === $parent) {
                 throw new InvalidArgumentException(sprintf('Parent folder #%d not found.', $input->parentId));
             }
+
             $folder->setParent($parent);
         }
 
@@ -127,10 +129,12 @@ final readonly class MediaManager implements MediaManagerInterface
             if (null === $newParent) {
                 throw new InvalidArgumentException(sprintf('Parent folder #%d not found.', $input->parentId));
             }
+
             if ($newParent === $folder || $newParent->isDescendantOf($folder)) {
                 throw new InvalidArgumentException('A folder cannot be nested under itself or one of its descendants.');
             }
         }
+
         $folder->setParent($newParent);
 
         $this->entityManager->flush();

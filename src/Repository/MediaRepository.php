@@ -52,7 +52,7 @@ class MediaRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('m')
             ->orderBy('m.createdAt', Order::Descending->value);
 
-        if (null === $folder) {
+        if (!$folder instanceof MediaFolder) {
             $queryBuilder->andWhere('m.folder IS NULL');
         } else {
             $queryBuilder->andWhere('m.folder = :folder')->setParameter('folder', $folder);

@@ -47,13 +47,13 @@ class SearchController extends AbstractController
         $postsSerialized = array_map(
             static fn (Post $post): array => [
                 'id' => $post->getId(),
-                'title' => $post->getTranslation('fr')?->getTitle() ?? $post->getTranslations()->first()?->getTitle(),
+                'title' => $post->getTranslation('fr')?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $post->getStatus()->value,
                 'postType' => $post->getPostType()->getLabel(),
                 'trashed' => $post->isTrashed(),
                 'snippet' => self::buildSnippet(
                     $post->getTranslation('fr')?->getSearchContent()
-                    ?? $post->getTranslations()->first()?->getSearchContent(),
+                    ?? ($post->getTranslations()->first() ?: null)?->getSearchContent(),
                     $query,
                 ),
             ],
@@ -65,7 +65,7 @@ class SearchController extends AbstractController
             fn (TaxonomyTerm $term): array => [
                 'id' => $term->getId(),
                 'name' => $term->getTranslation($defaultLocale)?->getName()
-                    ?? $term->getTranslations()->first()?->getName(),
+                    ?? ($term->getTranslations()->first() ?: null)?->getName(),
                 'taxonomy' => $term->getTaxonomy()->getSlug(),
             ],
             $this->termRepository->searchByName($query, 10),
@@ -109,6 +109,7 @@ class SearchController extends AbstractController
                 if ($start > 0) {
                     $snippet = '…'.$snippet;
                 }
+
                 if ($start + $length < mb_strlen($content)) {
                     $snippet .= '…';
                 }

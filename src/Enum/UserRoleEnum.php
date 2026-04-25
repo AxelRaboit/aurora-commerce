@@ -16,12 +16,12 @@ enum UserRoleEnum: string
     public function priority(): int
     {
         return match ($this) {
-            self::Dev         => 100,
-            self::Admin       => 80,
-            self::Editor      => 60,
-            self::Author      => 40,
+            self::Dev => 100,
+            self::Admin => 80,
+            self::Editor => 60,
+            self::Author => 40,
             self::Contributor => 20,
-            self::User        => 0,
+            self::User => 0,
         };
     }
 

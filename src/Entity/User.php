@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private UserStatusEnum $status = UserStatusEnum::Active;
 
-    #[ORM\Column(length: 20, nullable: true, unique: true)]
+    #[ORM\Column(length: 20, unique: true, nullable: true)]
     private ?string $invitationSelector = null;
 
     #[ORM\Column(length: 128, nullable: true)]

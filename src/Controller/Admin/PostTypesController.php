@@ -71,8 +71,8 @@ class PostTypesController extends AbstractController
 
         try {
             $postType = $this->postTypeManager->create($input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['slug' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['slug' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'postType' => $this->postTypeSerializer->serialize($postType)]);
@@ -89,8 +89,8 @@ class PostTypesController extends AbstractController
 
         try {
             $this->postTypeManager->update($postType, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['slug' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['slug' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'postType' => $this->postTypeSerializer->serialize($postType)]);
@@ -101,8 +101,8 @@ class PostTypesController extends AbstractController
     {
         try {
             $this->postTypeManager->delete($postType);
-        } catch (RuntimeException $error) {
-            return $this->json(['success' => false, 'error' => $error->getMessage()], Response::HTTP_CONFLICT);
+        } catch (RuntimeException $runtimeException) {
+            return $this->json(['success' => false, 'error' => $runtimeException->getMessage()], Response::HTTP_CONFLICT);
         }
 
         return $this->json(['success' => true]);
@@ -119,8 +119,8 @@ class PostTypesController extends AbstractController
 
         try {
             $this->postTypeManager->createField($postType, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['name' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['name' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'postType' => $this->postTypeSerializer->serialize($postType)]);
@@ -130,7 +130,7 @@ class PostTypesController extends AbstractController
     public function editField(PostType $postType, int $fieldId, Request $request): JsonResponse
     {
         $field = $this->findField($postType, $fieldId);
-        if (null === $field) {
+        if (!$field instanceof PostTypeField) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 
@@ -142,8 +142,8 @@ class PostTypesController extends AbstractController
 
         try {
             $this->postTypeManager->updateField($field, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['name' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['name' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'postType' => $this->postTypeSerializer->serialize($postType)]);
@@ -153,7 +153,7 @@ class PostTypesController extends AbstractController
     public function deleteField(PostType $postType, int $fieldId): JsonResponse
     {
         $field = $this->findField($postType, $fieldId);
-        if (null === $field) {
+        if (!$field instanceof PostTypeField) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 

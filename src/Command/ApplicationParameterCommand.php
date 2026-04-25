@@ -66,7 +66,7 @@ class ApplicationParameterCommand extends Command
 
     /**
      * @param ApplicationParameterEnum[] $enumCases
-     * @param array<string, Setting>          $existing
+     * @param array<string, Setting>     $existing
      */
     private function createMissing(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
@@ -96,7 +96,7 @@ class ApplicationParameterCommand extends Command
 
     /**
      * @param ApplicationParameterEnum[] $enumCases
-     * @param array<string, Setting>          $existing
+     * @param array<string, Setting>     $existing
      */
     private function syncMetadata(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {

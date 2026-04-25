@@ -26,10 +26,12 @@ final readonly class TaxonomyTermInput
             if (!is_array($payload)) {
                 continue;
             }
+
             $name = Str::trimOrNull((string) ($payload['name'] ?? ''));
             if (null === $name) {
                 continue;
             }
+
             $translations[(string) $locale] = [
                 'name' => $name,
                 'slug' => Str::trimOrNull((string) ($payload['slug'] ?? '')),

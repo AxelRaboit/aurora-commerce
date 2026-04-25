@@ -14,9 +14,9 @@ final readonly class MediaInput
         #[Assert\Length(max: 255)]
         public string $alt,
         public ?string $caption = null,
-        #[Assert\Range(min: 0, max: 1, notInRangeMessage: 'media.errors.focal_out_of_range')]
+        #[Assert\Range(notInRangeMessage: 'media.errors.focal_out_of_range', min: 0, max: 1)]
         public ?float $focalX = null,
-        #[Assert\Range(min: 0, max: 1, notInRangeMessage: 'media.errors.focal_out_of_range')]
+        #[Assert\Range(notInRangeMessage: 'media.errors.focal_out_of_range', min: 0, max: 1)]
         public ?float $focalY = null,
         public ?int $folderId = null,
     ) {}

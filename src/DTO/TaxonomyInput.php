@@ -32,10 +32,12 @@ final readonly class TaxonomyInput
             if (!is_array($payload)) {
                 continue;
             }
+
             $label = Str::trimOrNull((string) ($payload['label'] ?? ''));
             if (null === $label) {
                 continue;
             }
+
             $translations[(string) $locale] = [
                 'label' => $label,
                 'description' => Str::trimOrNull((string) ($payload['description'] ?? '')),

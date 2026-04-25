@@ -30,15 +30,42 @@
     color: var(--th-primary);
 }
 
+.mt-block__url-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--th-surface-2);
+}
+
+.mt-block__url-browse {
+    align-self: stretch;
+}
+
 .mt-block__url-input {
     width: 100%;
     padding: 0.375rem 0.625rem;
     font-size: 0.875rem;
     border: 1px solid var(--color-border);
     border-radius: 0.375rem;
-    background: var(--th-surface-2);
+    background: var(--th-surface);
     color: var(--th-primary);
-    margin-bottom: 0.375rem;
+}
+
+.mt-block__url-or {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--th-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mt-block__url-error {
+    margin: 0;
+    font-size: 0.75rem;
+    color: rgb(220 38 38);
 }
 
 .mt-block__row {

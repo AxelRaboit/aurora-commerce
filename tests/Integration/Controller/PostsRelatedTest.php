@@ -39,7 +39,7 @@ final class PostsRelatedTest extends IntegrationTestCase
         $postType = $container->get(PostTypeRepository::class)->findOneBy([]);
 
         $post = (new Post())->setPostType($postType)->setStatus(PostStatusEnum::Draft);
-        $post->translate('fr')->setTitle($title)->setSlug(strtolower(str_replace(' ', '-', $title)));
+        $post->translate('fr')->setTitle($title)->setSlug(mb_strtolower(str_replace(' ', '-', $title)));
 
         $entityManager->persist($post);
         $entityManager->flush();

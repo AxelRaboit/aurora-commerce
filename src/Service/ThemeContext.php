@@ -11,6 +11,7 @@ use App\Repository\ThemeRepository;
 final class ThemeContext
 {
     private ?Theme $cachedTheme = null;
+
     private bool $resolved = false;
 
     public function __construct(
@@ -70,7 +71,7 @@ final class ThemeContext
         $parts = [];
         foreach ($config as $key => $value) {
             if (is_string($key) && is_string($value) && str_starts_with($key, '--')) {
-                $parts[] = $key . ': ' . $value . ';';
+                $parts[] = $key.': '.$value.';';
             }
         }
 

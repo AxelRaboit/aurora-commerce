@@ -18,9 +18,6 @@ final readonly class BlocksRenderer
     {
         $output = '';
         foreach ($blocks as $block) {
-            if (!is_array($block)) {
-                continue;
-            }
             $output .= $this->renderBlock($block);
         }
 
@@ -54,6 +51,7 @@ final readonly class BlocksRenderer
     {
         $level = (int) ($data['level'] ?? 2);
         $level = max(1, min(6, $level));
+
         $text = $this->safeHtml($data['text'] ?? '');
 
         return sprintf('<h%d>%s</h%d>', $level, $text, $level);
@@ -88,6 +86,7 @@ final readonly class BlocksRenderer
             if (!is_array($item)) {
                 continue;
             }
+
             $text = $this->safeHtml($item['text'] ?? '');
             $checked = ($item['checked'] ?? false) ? 'checked' : '';
             $html .= sprintf('<li><input type="checkbox" disabled %s> %s</li>', $checked, $text);
@@ -122,6 +121,7 @@ final readonly class BlocksRenderer
         if ('' === $url) {
             return '';
         }
+
         $alt = htmlspecialchars((string) ($data['caption'] ?? ''), ENT_QUOTES, 'UTF-8');
         $caption = $this->safeHtml($data['caption'] ?? '');
 
@@ -155,11 +155,13 @@ final readonly class BlocksRenderer
             if (!is_array($row)) {
                 continue;
             }
+
             $tag = ($withHeadings && 0 === $index) ? 'th' : 'td';
             $cells = '';
             foreach ($row as $cell) {
                 $cells .= sprintf('<%s>%s</%s>', $tag, $this->safeHtml((string) $cell), $tag);
             }
+
             $html .= '<tr>'.$cells.'</tr>';
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use GdImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class ImageVariantGenerator
@@ -38,7 +39,7 @@ final readonly class ImageVariantGenerator
         }
 
         $source = $this->load($sourceAbsolute, $mimeType);
-        if (null === $source) {
+        if (!$source instanceof GdImage) {
             return [];
         }
 
@@ -64,7 +65,7 @@ final readonly class ImageVariantGenerator
             $variantAbsolute = $this->uploadDir.'/'.$variantRelative;
 
             if (!is_dir(dirname($variantAbsolute))) {
-                @mkdir(dirname($variantAbsolute), 0775, true);
+                @mkdir(dirname($variantAbsolute), 0o775, true);
             }
 
             $this->save($targetImage, $variantAbsolute, $mimeType);
@@ -105,7 +106,7 @@ final readonly class ImageVariantGenerator
         return [$targetWidth, $targetHeight];
     }
 
-    private function load(string $path, string $mimeType): ?\GdImage
+    private function load(string $path, string $mimeType): ?GdImage
     {
         $resource = match ($mimeType) {
             'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($path),
@@ -115,10 +116,10 @@ final readonly class ImageVariantGenerator
             default => false,
         };
 
-        return $resource instanceof \GdImage ? $resource : null;
+        return $resource instanceof GdImage ? $resource : null;
     }
 
-    private function save(\GdImage $image, string $path, string $mimeType): void
+    private function save(GdImage $image, string $path, string $mimeType): void
     {
         match ($mimeType) {
             'image/jpeg', 'image/jpg' => imagejpeg($image, $path, 85),
@@ -129,11 +130,12 @@ final readonly class ImageVariantGenerator
         };
     }
 
-    private function preserveTransparency(\GdImage $image, string $mimeType): void
+    private function preserveTransparency(GdImage $image, string $mimeType): void
     {
         if (!in_array($mimeType, ['image/png', 'image/gif', 'image/webp'], true)) {
             return;
         }
+
         imagealphablending($image, false);
         imagesavealpha($image, true);
         $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);

@@ -9,7 +9,6 @@ use App\DTO\PostTypeFieldInput;
 use App\DTO\PostTypeInput;
 use App\Entity\PostType;
 use App\Entity\PostTypeField;
-use App\Repository\PostTypeFieldRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TaxonomyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,7 +22,6 @@ final readonly class PostTypeManager implements PostTypeManagerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private PostTypeRepository $postTypeRepository,
-        private PostTypeFieldRepository $fieldRepository,
         private TaxonomyRepository $taxonomyRepository,
     ) {}
 
@@ -55,6 +53,7 @@ final readonly class PostTypeManager implements PostTypeManagerInterface
             if (null !== $this->postTypeRepository->findOneBy(['slug' => $input->slug])) {
                 throw new InvalidArgumentException(sprintf('Post type with slug "%s" already exists.', $input->slug));
             }
+
             $postType->setSlug($input->slug);
         }
 
@@ -96,6 +95,7 @@ final readonly class PostTypeManager implements PostTypeManagerInterface
             ->setPosition($this->nextPosition($postType));
 
         $field->setPostType($postType);
+
         $postType->addField($field);
 
         $this->entityManager->persist($field);
@@ -139,6 +139,7 @@ final readonly class PostTypeManager implements PostTypeManagerInterface
             if (null === $field) {
                 continue;
             }
+
             $field->setPosition($position++);
         }
 
@@ -168,6 +169,7 @@ final readonly class PostTypeManager implements PostTypeManagerInterface
             if ($field === $ignore) {
                 continue;
             }
+
             if ($field->getName() === $name) {
                 throw new InvalidArgumentException(sprintf('A field named "%s" already exists on this post type.', $name));
             }

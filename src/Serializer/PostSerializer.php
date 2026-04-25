@@ -60,7 +60,7 @@ final readonly class PostSerializer
         foreach ($post->getRelatedPosts() as $related) {
             $relatedPosts[] = [
                 'id' => $related->getId(),
-                'title' => $related->getTranslation('fr')?->getTitle() ?? $related->getTranslations()->first()?->getTitle(),
+                'title' => $related->getTranslation('fr')?->getTitle() ?? ($related->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $related->getStatus()->value,
                 'postType' => $related->getPostType()->getLabel(),
             ];

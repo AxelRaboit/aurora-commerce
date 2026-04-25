@@ -45,9 +45,9 @@ final class ThemesController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
-        $slug = mb_strtolower(trim((string) ($data['slug'] ?? '')));
-        $name = trim((string) ($data['name'] ?? ''));
-        $description = trim((string) ($data['description'] ?? '')) ?: null;
+        $slug = mb_strtolower(mb_trim((string) ($data['slug'] ?? '')));
+        $name = mb_trim((string) ($data['name'] ?? ''));
+        $description = mb_trim((string) ($data['description'] ?? '')) ?: null;
 
         if ('' === $slug || !preg_match('/^[a-z0-9-]+$/', $slug)) {
             return $this->json(['ok' => false, 'errors' => ['slug' => 'admin.themes.errors.slug_invalid']], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -57,7 +57,7 @@ final class ThemesController extends AbstractController
             return $this->json(['ok' => false, 'errors' => ['name' => 'admin.themes.errors.name_required']], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (null !== $this->themeRepository->findBySlug($slug)) {
+        if ($this->themeRepository->findBySlug($slug) instanceof Theme) {
             return $this->json(['ok' => false, 'errors' => ['slug' => 'admin.themes.errors.slug_taken']], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -78,8 +78,8 @@ final class ThemesController extends AbstractController
     public function update(Theme $theme, Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
-        $name = trim((string) ($data['name'] ?? ''));
-        $description = trim((string) ($data['description'] ?? '')) ?: null;
+        $name = mb_trim((string) ($data['name'] ?? ''));
+        $description = mb_trim((string) ($data['description'] ?? '')) ?: null;
         $config = isset($data['config']) && is_array($data['config']) ? $data['config'] : [];
 
         if ('' === $name) {
@@ -106,5 +106,4 @@ final class ThemesController extends AbstractController
 
         return $this->json(['ok' => true]);
     }
-
 }

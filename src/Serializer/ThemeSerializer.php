@@ -15,12 +15,12 @@ final readonly class ThemeSerializer
     public function serialize(Theme $theme): array
     {
         return [
-            'id'            => $theme->getId(),
-            'slug'          => $theme->getSlug(),
-            'name'          => $theme->getName(),
-            'description'   => $theme->getDescription(),
-            'active'        => $theme->isActive(),
-            'config'        => $theme->getConfig(),
+            'id' => $theme->getId(),
+            'slug' => $theme->getSlug(),
+            'name' => $theme->getName(),
+            'description' => $theme->getDescription(),
+            'active' => $theme->isActive(),
+            'config' => $theme->getConfig(),
             'templateCount' => $this->themeManager->countTemplates($theme->getSlug()),
         ];
     }

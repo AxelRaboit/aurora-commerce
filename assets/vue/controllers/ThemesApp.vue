@@ -82,42 +82,42 @@ async function submitCreate() {
 }
 
 // ── Edit modal ────────────────────────────────────────────────────────────────
-const CSS_SECTIONS = [
+const CSS_SECTIONS = computed(() => [
     {
         key: "general",
-        label: "Général",
+        label: t("admin.themes.sections.general"),
         vars: [
-            { key: "--th-accent",       label: "Couleur principale" },
-            { key: "--th-accent-hover", label: "Couleur principale (hover)" },
-            { key: "--th-bg",           label: "Fond de page" },
-            { key: "--th-surface",      label: "Surface" },
-            { key: "--th-surface-2",    label: "Surface secondaire" },
-            { key: "--th-primary",      label: "Texte principal" },
-            { key: "--th-secondary",    label: "Texte secondaire" },
-            { key: "--th-muted",        label: "Texte atténué" },
+            { key: "--th-accent",       label: t("admin.themes.vars.accent") },
+            { key: "--th-accent-hover", label: t("admin.themes.vars.accentHover") },
+            { key: "--th-bg",           label: t("admin.themes.vars.bg") },
+            { key: "--th-surface",      label: t("admin.themes.vars.surface") },
+            { key: "--th-surface-2",    label: t("admin.themes.vars.surface2") },
+            { key: "--th-primary",      label: t("admin.themes.vars.primary") },
+            { key: "--th-secondary",    label: t("admin.themes.vars.secondary") },
+            { key: "--th-muted",        label: t("admin.themes.vars.muted") },
         ],
     },
     {
         key: "header",
-        label: "En-tête",
+        label: t("admin.themes.sections.header"),
         vars: [
-            { key: "--th-header-bg",     label: "Fond" },
-            { key: "--th-header-border", label: "Bordure" },
-            { key: "--th-header-text",   label: "Texte" },
+            { key: "--th-header-bg",     label: t("admin.themes.vars.bg") },
+            { key: "--th-header-border", label: t("admin.themes.vars.border") },
+            { key: "--th-header-text",   label: t("admin.themes.vars.text") },
         ],
     },
     {
         key: "footer",
-        label: "Pied de page",
+        label: t("admin.themes.sections.footer"),
         vars: [
-            { key: "--th-footer-bg",     label: "Fond" },
-            { key: "--th-footer-border", label: "Bordure" },
-            { key: "--th-footer-text",   label: "Texte" },
+            { key: "--th-footer-bg",     label: t("admin.themes.vars.bg") },
+            { key: "--th-footer-border", label: t("admin.themes.vars.border") },
+            { key: "--th-footer-text",   label: t("admin.themes.vars.text") },
         ],
     },
-];
+]);
 
-const ALL_CSS_VARS = CSS_SECTIONS.flatMap((s) => s.vars);
+const ALL_CSS_VARS = computed(() => CSS_SECTIONS.value.flatMap((s) => s.vars));
 
 const DEFAULTS = {
     "--th-accent":         "#6366f1",
@@ -138,7 +138,7 @@ const DEFAULTS = {
 
 const editModal = reactive({ open: false, editing: null, saving: false, errors: {}, advanced: false });
 const editForm = reactive({ name: "", description: "" });
-const colorFields = reactive(Object.fromEntries(ALL_CSS_VARS.map((v) => [v.key, ""])));
+const colorFields = reactive(Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, ""])));
 const footerText = ref("");
 const headerLogoMediaId = ref("");
 const headerCustomText = ref("");
@@ -146,7 +146,7 @@ const headerMode = ref("default");
 
 const configFromColors = computed(() => {
     const result = {};
-    for (const { key } of ALL_CSS_VARS) {
+    for (const key of Object.keys(DEFAULTS)) {
         if (colorFields[key] && colorFields[key] !== DEFAULTS[key]) {
             result[key] = colorFields[key];
         }
@@ -167,7 +167,7 @@ function openEdit(theme) {
     editModal.advanced = false;
     editForm.name = theme.name;
     editForm.description = theme.description ?? "";
-    for (const { key } of ALL_CSS_VARS) {
+    for (const { key } of ALL_CSS_VARS.value) {
         colorFields[key] = theme.config?.[key] ?? DEFAULTS[key];
     }
     footerText.value = theme.config?.["footer_text"] ?? "";
@@ -288,8 +288,8 @@ async function confirmDelete() {
                         size="sm"
                         :variant="theme.active ? 'ghost' : 'secondary'"
                         :disabled="theme.active"
-                        v-on:click="activateTheme(theme)"
                         class="flex-1"
+                        v-on:click="activateTheme(theme)"
                     >
                         <Check class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.themes.activate") }}
@@ -312,32 +312,32 @@ async function confirmDelete() {
         </div>
 
         <!-- Create modal -->
-    <AppModal :show="createModal.open" max-width="md" v-on:close="createModal.open = false">
-        <form class="space-y-4" v-on:submit.prevent="submitCreate">
-            <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.new") }}</h2>
-            <AppInput
-                v-model="createForm.name"
-                :label="t('common.name')"
-                :error="createModal.errors.name ?? ''"
-                :required="true"
-            />
-            <AppInput
-                v-model="createForm.slug"
-                label="Slug"
-                :error="createModal.errors.slug ?? ''"
-                :required="true"
-            />
-            <AppTextarea
-                v-model="createForm.description"
-                :label="t('common.description')"
-                :rows="2"
-            />
-            <div class="flex justify-end gap-2 pt-2">
-                <AppButton variant="ghost" size="md" v-on:click="createModal.open = false">{{ t("common.cancel") }}</AppButton>
-                <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving">{{ t("common.create") }}</AppButton>
-            </div>
-        </form>
-    </AppModal>
+        <AppModal :show="createModal.open" max-width="md" v-on:close="createModal.open = false">
+            <form class="space-y-4" v-on:submit.prevent="submitCreate">
+                <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.new") }}</h2>
+                <AppInput
+                    v-model="createForm.name"
+                    :label="t('common.name')"
+                    :error="createModal.errors.name ?? ''"
+                    :required="true"
+                />
+                <AppInput
+                    v-model="createForm.slug"
+                    label="Slug"
+                    :error="createModal.errors.slug ?? ''"
+                    :required="true"
+                />
+                <AppTextarea
+                    v-model="createForm.description"
+                    :label="t('common.description')"
+                    :rows="2"
+                />
+                <div class="flex justify-end gap-2 pt-2">
+                    <AppButton variant="ghost" size="md" v-on:click="createModal.open = false">{{ t("common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving">{{ t("common.create") }}</AppButton>
+                </div>
+            </form>
+        </AppModal>
 
         <!-- Edit modal -->
         <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
@@ -365,7 +365,7 @@ async function confirmDelete() {
                                 :value="colorFields[cssVar.key]"
                                 class="w-8 h-8 rounded cursor-pointer border border-line bg-transparent p-0.5"
                                 v-on:input="colorFields[cssVar.key] = $event.target.value"
-                            />
+                            >
                             <div class="flex flex-col min-w-0 flex-1">
                                 <span class="text-xs font-medium text-primary">{{ cssVar.label }}</span>
                                 <span class="text-xs font-mono text-muted truncate">{{ cssVar.key }}</span>
@@ -377,10 +377,16 @@ async function confirmDelete() {
                         <div class="space-y-2">
                             <span class="text-xs text-secondary uppercase tracking-wide">Contenu</span>
                             <div class="flex gap-2">
-                                <button type="button" v-for="mode in [{k:'default',l:'Nom du site'},{k:'text',l:'Texte custom'},{k:'image',l:'Image média'}]" :key="mode.k"
+                                <button
+                                    v-for="mode in [{k:'default',l:'Nom du site'},{k:'text',l:'Texte custom'},{k:'image',l:'Image média'}]"
+                                    :key="mode.k"
+                                    type="button"
                                     class="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
                                     :class="headerMode === mode.k ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-surface-2 text-secondary border-line hover:text-primary'"
-                                    v-on:click="headerMode = mode.k">{{ mode.l }}</button>
+                                    v-on:click="headerMode = mode.k"
+                                >
+                                    {{ mode.l }}
+                                </button>
                             </div>
                             <AppInput v-if="headerMode === 'text'" v-model="headerCustomText" label="Texte personnalisé" :placeholder="t('admin.themes.headerTextPlaceholder')" />
                             <AppInput v-if="headerMode === 'image'" v-model="headerLogoMediaId" label="ID du média" placeholder="42" />

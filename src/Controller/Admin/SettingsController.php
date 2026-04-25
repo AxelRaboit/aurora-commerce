@@ -56,13 +56,13 @@ final class SettingsController extends AbstractController
         $key = isset($data['key']) ? (string) $data['key'] : null;
         $value = isset($data['value']) ? (string) $data['value'] : null;
 
-        if ($key === null) {
+        if (null === $key) {
             return $this->json(['ok' => false, 'error' => 'Missing key'], Response::HTTP_BAD_REQUEST);
         }
 
         $parameter = ApplicationParameterEnum::tryFrom($key);
 
-        if ($parameter === null || !$parameter->isAdminAccessible()) {
+        if (null === $parameter || !$parameter->isAdminAccessible()) {
             return $this->json(['ok' => false, 'error' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
 

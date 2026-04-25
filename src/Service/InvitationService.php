@@ -20,7 +20,6 @@ final readonly class InvitationService
         private string $siteName = 'Velox',
     ) {}
 
-
     public function sendInvitation(User $user, string $plainToken, ?string $customMessage): void
     {
         $selector = $user->getInvitationSelector();

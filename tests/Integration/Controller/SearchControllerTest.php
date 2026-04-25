@@ -39,7 +39,7 @@ final class SearchControllerTest extends IntegrationTestCase
         $post = (new Post())->setPostType($postType)->setStatus(PostStatusEnum::Draft);
         $translation = $post->translate('fr');
         $translation->setTitle($title);
-        $translation->setSlug(strtolower(str_replace(' ', '-', $title)));
+        $translation->setSlug(mb_strtolower(str_replace(' ', '-', $title)));
         $translation->setBlocks($blocks);
         $translation->setSearchContent($extractor->extract($translation));
 

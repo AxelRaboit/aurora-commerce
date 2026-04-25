@@ -100,8 +100,8 @@ async function saveGroup(groupName) {
         <div class="flex-1 min-w-0">
             <div
                 v-for="groupName in availableGroups"
-                :key="groupName"
                 v-show="activeTab === groupName"
+                :key="groupName"
             >
                 <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
                     <div

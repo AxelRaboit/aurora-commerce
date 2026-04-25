@@ -58,4 +58,11 @@
             {{ content|raw }}
         </div>
     </article>
+
+    <div {{ vue_component('PostCommentsApp', {
+        listPath: path('front_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+        submitPath: path('front_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+        reactPathTemplate: path('front_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),
+        commentsEnabled: commentsEnabled,
+    }) }}></div>
 {% endblock %}

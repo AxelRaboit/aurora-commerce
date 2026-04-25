@@ -27,7 +27,7 @@ final readonly class PostTextExtractor
 
         $joined = implode(' ', array_filter(
             array_map(static fn (?string $part): string => $part ?? '', $parts),
-            static fn (string $part): bool => '' !== trim($part),
+            static fn (string $part): bool => '' !== mb_trim($part),
         ));
 
         return mb_trim(preg_replace('/\s+/', ' ', $joined) ?? '');
@@ -40,9 +40,7 @@ final readonly class PostTextExtractor
     {
         $collected = [];
         foreach ($blocks as $block) {
-            if (is_array($block)) {
-                $this->collectStrings($block, $collected);
-            }
+            $this->collectStrings($block, $collected);
         }
 
         return implode(' ', $collected);
@@ -60,6 +58,7 @@ final readonly class PostTextExtractor
                 if (is_string($value)) {
                     $parts[] = $value;
                 }
+
                 continue;
             }
 
@@ -92,8 +91,7 @@ final readonly class PostTextExtractor
     }
 
     /**
-     * @param mixed         $value
-     * @param list<string>  $output
+     * @param list<string> $output
      */
     private function collectStrings($value, array &$output): void
     {

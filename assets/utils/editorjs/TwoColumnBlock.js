@@ -1,3 +1,5 @@
+import { handlePlainTextPaste } from "./handlePlainTextPaste.js";
+
 export default class TwoColumnBlock {
     #wrapper = null;
     #left = null;
@@ -51,6 +53,7 @@ export default class TwoColumnBlock {
         col.dataset.placeholder = placeholder;
         col.innerHTML = html;
         col.addEventListener("input", () => onChange(col.innerHTML));
+        col.addEventListener("paste", handlePlainTextPaste);
         return col;
     }
 

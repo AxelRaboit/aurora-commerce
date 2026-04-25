@@ -38,6 +38,7 @@
     {% endif %}
 
     {{ vite_entry_link_tags('app') }}
+    {{ vite_entry_script_tags('app') }}
 
     <link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
     {% set cssOverrides = themeContext.cssVariableOverrides() %}

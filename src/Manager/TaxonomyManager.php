@@ -31,7 +31,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
 
     public function create(TaxonomyInput $input): Taxonomy
     {
-        if (null !== $this->taxonomyRepository->findOneBySlug($input->slug)) {
+        if ($this->taxonomyRepository->findOneBySlug($input->slug) instanceof Taxonomy) {
             throw new InvalidArgumentException(sprintf('Taxonomy with slug "%s" already exists.', $input->slug));
         }
 
@@ -53,11 +53,13 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
     {
         if (!$taxonomy->isBuiltIn()) {
             if ($input->slug !== $taxonomy->getSlug()) {
-                if (null !== $this->taxonomyRepository->findOneBySlug($input->slug)) {
+                if ($this->taxonomyRepository->findOneBySlug($input->slug) instanceof Taxonomy) {
                     throw new InvalidArgumentException(sprintf('Taxonomy with slug "%s" already exists.', $input->slug));
                 }
+
                 $taxonomy->setSlug($input->slug);
             }
+
             $taxonomy->setHierarchical($input->hierarchical);
         }
 
@@ -99,9 +101,10 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         $parent = $this->resolveParent($term->getTaxonomy(), $input->parentId);
 
         if ($parent !== $term->getParent()) {
-            if (null !== $parent && ($parent === $term || $parent->isDescendantOf($term))) {
+            if ($parent instanceof TaxonomyTerm && ($parent === $term || $parent->isDescendantOf($term))) {
                 throw new InvalidArgumentException('A term cannot be nested under itself or one of its descendants.');
             }
+
             $term->setParent($parent);
         }
 
@@ -132,11 +135,12 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         // before mutating entities (avoids false negatives after parent detachment).
         $parentMap = [];
         foreach ($entries as $entry) {
-            $id = (int) ($entry['id'] ?? 0);
+            $id = (int) $entry['id'];
             if (!isset($termsById[$id])) {
                 continue;
             }
-            $parentMap[$id] = isset($entry['parentId']) && (int) $entry['parentId'] > 0 ? (int) $entry['parentId'] : null;
+
+            $parentMap[$id] = isset($entry['parentId']) && $entry['parentId'] > 0 ? $entry['parentId'] : null;
         }
 
         foreach ($parentMap as $id => $initialParentId) {
@@ -146,6 +150,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
                 if (isset($visited[$current])) {
                     throw new InvalidArgumentException(sprintf('Reorder would create a cycle involving term #%d.', $id));
                 }
+
                 $visited[$current] = true;
                 $current = $parentMap[$current] ?? null;
             }
@@ -157,7 +162,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         }
 
         foreach ($entries as $entry) {
-            $id = (int) ($entry['id'] ?? 0);
+            $id = (int) $entry['id'];
             $term = $termsById[$id] ?? null;
             if (null === $term) {
                 continue;
@@ -165,7 +170,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
 
             $parentId = $parentMap[$id] ?? null;
             $term->setParent(null !== $parentId ? ($termsById[$parentId] ?? null) : null);
-            $term->setPosition((int) ($entry['position'] ?? 0));
+            $term->setPosition((int) $entry['position']);
         }
 
         $this->entityManager->flush();
@@ -192,6 +197,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
             if (null === $slug || '' === $slug) {
                 $slug = '' !== $name ? $this->slugger->slug($name)->lower()->toString() : '';
             }
+
             $translation->setSlug($slug);
             $translation->setDescription($payload['description'] ?? null);
         }
@@ -219,6 +225,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         if (null === $parentId) {
             return null;
         }
+
         if (!$taxonomy->isHierarchical()) {
             return null;
         }

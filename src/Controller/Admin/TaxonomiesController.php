@@ -73,8 +73,8 @@ class TaxonomiesController extends AbstractController
 
         try {
             $taxonomy = $this->taxonomyManager->create($input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['slug' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['slug' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy)]);
@@ -92,8 +92,8 @@ class TaxonomiesController extends AbstractController
 
         try {
             $this->taxonomyManager->update($taxonomy, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['slug' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['slug' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy)]);
@@ -104,8 +104,8 @@ class TaxonomiesController extends AbstractController
     {
         try {
             $this->taxonomyManager->delete($taxonomy);
-        } catch (RuntimeException $error) {
-            return $this->json(['success' => false, 'error' => $error->getMessage()], Response::HTTP_CONFLICT);
+        } catch (RuntimeException $runtimeException) {
+            return $this->json(['success' => false, 'error' => $runtimeException->getMessage()], Response::HTTP_CONFLICT);
         }
 
         return $this->json(['success' => true]);
@@ -123,8 +123,8 @@ class TaxonomiesController extends AbstractController
 
         try {
             $term = $this->taxonomyManager->createTerm($taxonomy, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy), 'termId' => $term->getId()]);
@@ -134,7 +134,7 @@ class TaxonomiesController extends AbstractController
     public function editTerm(Taxonomy $taxonomy, int $termId, Request $request): JsonResponse
     {
         $term = $this->findTermForTaxonomy($taxonomy, $termId);
-        if (null === $term) {
+        if (!$term instanceof TaxonomyTerm) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 
@@ -147,8 +147,8 @@ class TaxonomiesController extends AbstractController
 
         try {
             $this->taxonomyManager->updateTerm($term, $input);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $error->getMessage()]]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy)]);
@@ -158,7 +158,7 @@ class TaxonomiesController extends AbstractController
     public function deleteTerm(Taxonomy $taxonomy, int $termId): JsonResponse
     {
         $term = $this->findTermForTaxonomy($taxonomy, $termId);
-        if (null === $term) {
+        if (!$term instanceof TaxonomyTerm) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 
@@ -176,10 +176,12 @@ class TaxonomiesController extends AbstractController
             if (!is_array($entry)) {
                 continue;
             }
+
             $id = (int) ($entry['id'] ?? 0);
             if ($id <= 0) {
                 continue;
             }
+
             $entries[] = [
                 'id' => $id,
                 'parentId' => isset($entry['parentId']) && (int) $entry['parentId'] > 0 ? (int) $entry['parentId'] : null,
@@ -189,8 +191,8 @@ class TaxonomiesController extends AbstractController
 
         try {
             $this->taxonomyManager->reorderTerms($taxonomy, $entries);
-        } catch (InvalidArgumentException $error) {
-            return $this->json(['success' => false, 'error' => $error->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'error' => $invalidArgumentException->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy)]);

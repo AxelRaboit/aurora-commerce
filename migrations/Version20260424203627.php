@@ -23,12 +23,12 @@ final class Version20260424203627 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE post_translations ADD search_content TEXT DEFAULT NULL');
         $this->addSql(<<<'SQL'
-            ALTER TABLE post_translations
-            ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
-                setweight(to_tsvector('simple', coalesce(title, '')), 'A')
-                || setweight(to_tsvector('simple', coalesce(search_content, '')), 'B')
-            ) STORED
-        SQL);
+                ALTER TABLE post_translations
+                ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
+                    setweight(to_tsvector('simple', coalesce(title, '')), 'A')
+                    || setweight(to_tsvector('simple', coalesce(search_content, '')), 'B')
+                ) STORED
+            SQL);
         $this->addSql('CREATE INDEX idx_post_translations_search_vector ON post_translations USING GIN (search_vector)');
     }
 

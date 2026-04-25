@@ -37,6 +37,7 @@ class SitemapController extends AbstractController
                 if (!$postType->hasArchive()) {
                     continue;
                 }
+
                 $urls[] = $this->urlEntry(
                     $this->generateUrl('front_archive', [
                         'locale' => $locale->getCode(),
@@ -50,14 +51,25 @@ class SitemapController extends AbstractController
             if ($post->getTranslation('fr')?->isNoindex()) {
                 continue;
             }
+
             foreach ($post->getTranslations() as $translation) {
                 $slug = $translation->getSlug();
-                if (null === $slug || '' === $slug || $translation->isNoindex()) {
+                if (null === $slug) {
                     continue;
                 }
+
+                if ('' === $slug) {
+                    continue;
+                }
+
+                if ($translation->isNoindex()) {
+                    continue;
+                }
+
                 if (!$this->frontContext->isLocaleActive($translation->getLocale())) {
                     continue;
                 }
+
                 $urls[] = $this->urlEntry(
                     $this->generateUrl('front_post', [
                         'locale' => $translation->getLocale(),
@@ -73,9 +85,14 @@ class SitemapController extends AbstractController
             foreach ($taxonomy->getTerms() as $term) {
                 foreach ($this->frontContext->activeLocales() as $locale) {
                     $translation = $term->getTranslation($locale->getCode());
-                    if (null === $translation || '' === $translation->getSlug()) {
+                    if (null === $translation) {
                         continue;
                     }
+
+                    if ('' === $translation->getSlug()) {
+                        continue;
+                    }
+
                     $urls[] = $this->urlEntry(
                         $this->generateUrl('front_term', [
                             'locale' => $locale->getCode(),
@@ -124,9 +141,14 @@ class SitemapController extends AbstractController
         $items = '';
         foreach ($posts as $post) {
             $translation = $post->getTranslation($locale);
-            if (null === $translation || null === $translation->getSlug()) {
+            if (null === $translation) {
                 continue;
             }
+
+            if (null === $translation->getSlug()) {
+                continue;
+            }
+
             $link = $this->generateUrl('front_post', [
                 'locale' => $locale,
                 'postTypeSlug' => $post->getPostType()->getSlug(),
@@ -167,9 +189,9 @@ class SitemapController extends AbstractController
     private function urlEntry(string $url, ?string $lastmod = null): string
     {
         $safeUrl = htmlspecialchars($url, ENT_QUOTES | ENT_XML1, 'UTF-8');
-        $entry = "<url><loc>{$safeUrl}</loc>";
+        $entry = sprintf('<url><loc>%s</loc>', $safeUrl);
         if (null !== $lastmod) {
-            $entry .= "<lastmod>{$lastmod}</lastmod>";
+            $entry .= sprintf('<lastmod>%s</lastmod>', $lastmod);
         }
 
         return $entry.'</url>';

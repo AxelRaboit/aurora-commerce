@@ -14,10 +14,10 @@ use App\Enum\HttpMethodEnum;
 use App\Enum\PostStatusEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\PostRepository;
-use App\Security\Voter\PostVoter;
 use App\Repository\PostRevisionRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\TaxonomyRepository;
+use App\Security\Voter\PostVoter;
 use App\Serializer\PostRevisionSerializer;
 use App\Serializer\PostSerializer;
 use App\Serializer\PostTypeSerializer;
@@ -99,7 +99,7 @@ class PostsController extends AbstractController
     {
         $idsParam = (string) $request->query->get('ids', '');
         if ('' !== $idsParam) {
-            $ids = array_values(array_filter(array_map('intval', explode(',', $idsParam)), static fn (int $id): bool => $id > 0));
+            $ids = array_values(array_filter(array_map(intval(...), explode(',', $idsParam)), static fn (int $id): bool => $id > 0));
             $results = $this->postRepository->findByIds($ids);
         } else {
             $query = mb_trim((string) $request->query->get('q', ''));
@@ -111,7 +111,7 @@ class PostsController extends AbstractController
         $items = array_map(
             fn (Post $post): array => [
                 'id' => $post->getId(),
-                'title' => $post->getTranslation('fr')?->getTitle() ?? $post->getTranslations()->first()?->getTitle(),
+                'title' => $post->getTranslation('fr')?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $post->getStatus()->value,
                 'postTypeId' => $post->getPostType()->getId(),
                 'postType' => $post->getPostType()->getLabel(),

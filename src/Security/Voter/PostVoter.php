@@ -9,13 +9,17 @@ use App\Entity\User;
 use App\Enum\UserRoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class PostVoter extends Voter
 {
     public const string VIEW = 'POST_VIEW';
+
     public const string EDIT = 'POST_EDIT';
+
     public const string DELETE = 'POST_DELETE';
+
     public const string PUBLISH = 'POST_PUBLISH';
 
     public function __construct(
@@ -31,7 +35,7 @@ final class PostVoter extends Voter
         return $subject instanceof Post;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         if (!$user instanceof User) {

@@ -15,7 +15,7 @@ const { t } = useI18n();
 
 const props = defineProps({
     field: { type: Object, required: true },
-    modelValue: { default: null },
+    modelValue: { type: [String, Number, Boolean, Array, Object], default: null },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -225,7 +225,13 @@ async function uploadMedia(event) {
                     <span v-if="modelValue" class="text-[10px] text-muted font-mono">#{{ modelValue }}</span>
                     <ImagePlus v-else class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
-                <input ref="mediaInput" type="file" accept="image/*" class="hidden" v-on:change="uploadMedia">
+                <input
+                    ref="mediaInput"
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                    v-on:change="uploadMedia"
+                >
                 <AppButton variant="secondary" size="sm" :loading="uploading" v-on:click="mediaInput?.click()">
                     {{ t("admin.posts.customField.upload") }}
                 </AppButton>

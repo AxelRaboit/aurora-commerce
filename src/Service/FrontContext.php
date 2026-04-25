@@ -16,6 +16,7 @@ final class FrontContext
 {
     /** @var list<Locale>|null */
     private ?array $cachedLocales = null;
+
     private ?Locale $cachedDefault = null;
 
     public function __construct(
@@ -44,7 +45,7 @@ final class FrontContext
 
     public function defaultLocale(): string
     {
-        if (null === $this->cachedDefault) {
+        if (!$this->cachedDefault instanceof Locale) {
             foreach ($this->activeLocales() as $locale) {
                 if ($locale->isDefault()) {
                     $this->cachedDefault = $locale;
@@ -80,7 +81,7 @@ final class FrontContext
 
     public function siteUrl(): string
     {
-        return rtrim($this->setting(ApplicationParameterEnum::SiteUrl->value, 'http://localhost') ?? 'http://localhost', '/');
+        return mb_rtrim($this->setting(ApplicationParameterEnum::SiteUrl->value, 'http://localhost') ?? 'http://localhost', '/');
     }
 
     public function homepagePostId(): ?int

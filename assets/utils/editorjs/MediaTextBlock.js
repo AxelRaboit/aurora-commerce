@@ -1,3 +1,6 @@
+import { handlePlainTextPaste } from "./handlePlainTextPaste.js";
+import { openMediaPicker } from "../mediaPicker.js";
+
 export default class MediaTextBlock {
     #wrapper = null;
     #data;
@@ -16,6 +19,7 @@ export default class MediaTextBlock {
 
     constructor({ data, config = {} }) {
         this.#data = {
+            mediaId: data.mediaId ?? null,
             url: data.url ?? "",
             caption: data.caption ?? "",
             text: data.text ?? "",
@@ -29,6 +33,10 @@ export default class MediaTextBlock {
             urlPlaceholder: config.urlPlaceholder ?? "Image URL…",
             changeUrl: config.changeUrl ?? "Change URL",
             confirm: config.confirm ?? "Confirm",
+            browse: config.browse ?? "Browse media",
+            orLabel: config.orLabel ?? "or",
+            mediaIdPlaceholder: config.mediaIdPlaceholder ?? "Media ID…",
+            mediaIdNotFound: config.mediaIdNotFound ?? "Media not found",
         };
     }
 
@@ -88,6 +96,7 @@ export default class MediaTextBlock {
             cap.addEventListener("input", () => {
                 this.#data.caption = cap.innerHTML;
             });
+            cap.addEventListener("paste", handlePlainTextPaste);
 
             col.appendChild(img);
             col.appendChild(cap);
@@ -98,8 +107,9 @@ export default class MediaTextBlock {
             );
         } else {
             col.appendChild(
-                this.#createUrlForm((url) => {
+                this.#createUrlForm((url, mediaId = null) => {
                     this.#data.url = url;
+                    this.#data.mediaId = mediaId;
                     this.#rebuild();
                 }),
             );
@@ -120,6 +130,7 @@ export default class MediaTextBlock {
         editable.addEventListener("input", () => {
             this.#data.text = editable.innerHTML;
         });
+        editable.addEventListener("paste", handlePlainTextPaste);
 
         col.appendChild(editable);
         return col;
@@ -128,29 +139,93 @@ export default class MediaTextBlock {
     #promptUrl(col) {
         col.innerHTML = "";
         col.appendChild(
-            this.#createUrlForm((url) => {
+            this.#createUrlForm((url, mediaId = null) => {
                 this.#data.url = url;
+                this.#data.mediaId = mediaId;
                 this.#rebuild();
             }),
         );
     }
 
     #createUrlForm(onConfirm) {
-        const fragment = document.createDocumentFragment();
+        const wrapper = document.createElement("div");
+        wrapper.className = "mt-block__url-form";
 
-        const input = document.createElement("input");
-        input.type = "url";
-        input.placeholder = this.#config.urlPlaceholder;
-        input.className = "mt-block__url-input";
+        const browseBtn = this.#createButton(this.#config.browse, async () => {
+            const media = await openMediaPicker({ imagesOnly: true });
+            if (media?.url) onConfirm(media.url, media.id ?? null);
+        });
+        browseBtn.classList.add("mt-block__url-browse");
 
-        const confirm = this.#createButton(this.#config.confirm, () => {
-            const url = input.value.trim();
+        const separator = document.createElement("span");
+        separator.className = "mt-block__url-or";
+        separator.textContent = this.#config.orLabel;
+
+        const urlInput = document.createElement("input");
+        urlInput.type = "url";
+        urlInput.placeholder = this.#config.urlPlaceholder;
+        urlInput.className = "mt-block__url-input";
+        const submitUrl = () => {
+            const url = urlInput.value.trim();
             if (url) onConfirm(url);
+        };
+        urlInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitUrl();
+            }
+        });
+        urlInput.addEventListener("blur", submitUrl);
+
+        const separator2 = document.createElement("span");
+        separator2.className = "mt-block__url-or";
+        separator2.textContent = this.#config.orLabel;
+
+        const idInput = document.createElement("input");
+        idInput.type = "number";
+        idInput.min = "1";
+        idInput.placeholder = this.#config.mediaIdPlaceholder;
+        idInput.className = "mt-block__url-input";
+        const error = document.createElement("p");
+        error.className = "mt-block__url-error";
+        error.style.display = "none";
+        const submitId = async () => {
+            const id = parseInt(idInput.value, 10);
+            if (!id || id < 1) return;
+            error.style.display = "none";
+            try {
+                const response = await fetch(`/admin/media/${id}/info`, {
+                    headers: { Accept: "application/json" },
+                });
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                if (data?.media?.url) {
+                    onConfirm(data.media.url, data.media.id);
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                error.textContent = this.#config.mediaIdNotFound;
+                error.style.display = "block";
+            }
+        };
+        idInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitId();
+            }
+        });
+        idInput.addEventListener("blur", () => {
+            if (idInput.value.trim()) submitId();
         });
 
-        fragment.appendChild(input);
-        fragment.appendChild(confirm);
-        return fragment;
+        wrapper.appendChild(browseBtn);
+        wrapper.appendChild(separator);
+        wrapper.appendChild(urlInput);
+        wrapper.appendChild(separator2);
+        wrapper.appendChild(idInput);
+        wrapper.appendChild(error);
+        return wrapper;
     }
 
     #createButton(text, onClick) {
