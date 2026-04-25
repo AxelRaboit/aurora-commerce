@@ -34,6 +34,10 @@ final readonly class RedirectUnauthenticatedOnNotFoundListener
             return;
         }
 
+        if (!$this->isProtectedPath($event->getRequest()->getPathInfo())) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         if ($token instanceof TokenInterface && $token->getUser() instanceof UserInterface) {
             return;
@@ -42,5 +46,13 @@ final readonly class RedirectUnauthenticatedOnNotFoundListener
         $event->setResponse(new RedirectResponse(
             $this->urlGenerator->generate('app_login'),
         ));
+    }
+
+    private function isProtectedPath(string $path): bool
+    {
+        $adminPrefix = $this->urlGenerator->generate('admin_dashboard');
+        $devPrefix = $this->urlGenerator->generate('dev_dashboard');
+
+        return str_starts_with($path, $adminPrefix) || str_starts_with($path, $devPrefix);
     }
 }
