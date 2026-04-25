@@ -8,10 +8,15 @@ import AppButton from "@/components/AppButton.vue";
 import AppModal from "@/components/AppModal.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import { useFileSize } from "@/composables/useFileSize.js";
-import { statusBadge } from "@/utils/statusStyles.js";
+import { statusBadge, statusBadgeColor } from "@/utils/statusStyles.js";
+import AppBadge from "@/components/AppBadge.vue";
 import { useAdminUsers } from "@/admin/administration/composables/useAdminUsers.js";
 import { useAdminParameters } from "@/admin/administration/composables/useAdminParameters.js";
 import { useAdminAccessRequests } from "@/admin/administration/composables/useAdminAccessRequests.js";
+import AdminUserBadges from "@/admin/administration/AdminUserBadges.vue";
+import AdminUserActions from "@/admin/administration/AdminUserActions.vue";
+import AdminAccessRequestStatusBadge from "@/admin/administration/AdminAccessRequestStatusBadge.vue";
+import AdminAccessRequestActions from "@/admin/administration/AdminAccessRequestActions.vue";
 import {
     LayoutDashboard,
     Sliders,
@@ -20,16 +25,8 @@ import {
     Menu as MenuIcon,
     Users,
     Plus,
-    Pencil,
     Trash2,
-    LogIn,
     KeyRound,
-    Check,
-    X,
-    Clock,
-    Shield,
-    ShieldCheck,
-    UserRound,
 } from "lucide-vue-next";
 
 const LOCALE_OPTIONS = [
@@ -187,7 +184,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
                             <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>
                         </div>
-                        <span v-if="parameter.group" class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-surface-2 text-muted shrink-0">{{ parameter.group }}</span>
+                        <AppBadge v-if="parameter.group" color="gray" class="shrink-0">{{ parameter.group }}</AppBadge>
                     </div>
                     <div v-if="parameters.editingKey.value === parameter.key" class="space-y-2">
                         <AppInput v-model="parameters.editingValue.value" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
@@ -226,7 +223,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <td class="px-5 py-3 align-top w-1/3">
                                 <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
                                 <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>
-                                <span v-if="parameter.group" class="mt-1 inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-surface-2 text-muted">{{ parameter.group }}</span>
+                                <AppBadge v-if="parameter.group" color="gray" class="mt-1">{{ parameter.group }}</AppBadge>
                             </td>
                             <td class="px-5 py-3 align-top w-1/4">
                                 <div v-if="parameters.editingKey.value === parameter.key" class="flex items-center gap-2">
@@ -274,41 +271,19 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <p class="text-xs text-secondary truncate">{{ user.email }}</p>
                         </div>
                         <div class="flex items-center gap-1 shrink-0">
-                            <span v-if="user.isCurrent" class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400">{{ t('admin.users.you') }}</span>
-                            <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full" :class="user.isDevRole ? 'bg-indigo-500/15 text-indigo-400' : 'bg-surface-2 text-muted'">
-                                {{ user.isDevRole ? t('admin.users.role_dev') : t('admin.users.role_user') }}
-                            </span>
-                            <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-surface-2 text-muted uppercase">{{ user.locale }}</span>
+                            <AdminUserBadges :user="user" />
                         </div>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
                         <div class="flex items-center gap-1">
-                            <button type="button" class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" :title="t('admin.users.edit')" v-on:click="users.openEdit(user)">
-                                <Pencil class="w-4 h-4" :stroke-width="2" />
-                            </button>
-                            <a v-if="!user.isCurrent" :href="users.impersonatePath.replace('__email__', encodeURIComponent(user.email))" class="p-1.5 text-muted hover:text-amber-400 transition-colors rounded" :title="t('admin.users.impersonate', { name: user.name })">
-                                <LogIn class="w-4 h-4" :stroke-width="2" />
-                            </a>
-                            <button
-                                v-if="!user.isCurrent"
-                                type="button"
-                                class="p-1.5 text-muted transition-colors rounded"
-                                :class="user.isDevRole ? 'hover:text-indigo-400' : 'hover:text-rose-400'"
-                                :title="user.isDevRole ? t('admin.users.revoke_dev') : t('admin.users.grant_dev')"
-                                v-on:click="users.confirmToggleRole(user)"
-                            >
-                                <component :is="user.isDevRole ? UserRound : Shield" class="w-4 h-4" :stroke-width="2" />
-                            </button>
-                            <button
-                                v-if="!user.isCurrent"
-                                type="button"
-                                class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded"
-                                :title="t('common.delete')"
-                                v-on:click="users.confirmDelete(user)"
-                            >
-                                <Trash2 class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                            <AdminUserActions
+                                :user="user"
+                                :impersonate-path="users.impersonatePath"
+                                v-on:edit="users.openEdit"
+                                v-on:toggle-role="users.confirmToggleRole"
+                                v-on:delete="users.confirmDelete"
+                            />
                         </div>
                     </div>
                 </div>
@@ -331,46 +306,28 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary inline-flex items-center gap-1.5">
                                     {{ user.name }}
-                                    <span v-if="user.isCurrent" class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400">{{ t('admin.users.you') }}</span>
+                                    <AppBadge v-if="user.isCurrent" color="indigo">{{ t('admin.users.you') }}</AppBadge>
                                 </p>
                             </td>
                             <td class="px-6 py-3 text-secondary">{{ user.email }}</td>
                             <td class="px-6 py-3 hidden md:table-cell">
-                                <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full" :class="user.isDevRole ? 'bg-indigo-500/15 text-indigo-400' : 'bg-surface-2 text-muted'">
+                                <AppBadge :color="user.isDevRole ? 'indigo' : 'gray'">
                                     {{ user.isDevRole ? t('admin.users.role_dev') : t('admin.users.role_user') }}
-                                </span>
+                                </AppBadge>
                             </td>
                             <td class="px-6 py-3 hidden lg:table-cell">
-                                <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-surface-2 text-muted uppercase">{{ user.locale }}</span>
+                                <AppBadge color="gray" class="uppercase">{{ user.locale }}</AppBadge>
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <button type="button" class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" :title="t('admin.users.edit')" v-on:click="users.openEdit(user)">
-                                        <Pencil class="w-4 h-4" :stroke-width="2" />
-                                    </button>
-                                    <a v-if="!user.isCurrent" :href="users.impersonatePath.replace('__email__', encodeURIComponent(user.email))" class="p-1.5 text-muted hover:text-amber-400 transition-colors rounded" :title="t('admin.users.impersonate', { name: user.name })">
-                                        <LogIn class="w-4 h-4" :stroke-width="2" />
-                                    </a>
-                                    <button
-                                        v-if="!user.isCurrent"
-                                        type="button"
-                                        class="p-1.5 text-muted transition-colors rounded"
-                                        :class="user.isDevRole ? 'hover:text-indigo-400' : 'hover:text-rose-400'"
-                                        :title="user.isDevRole ? t('admin.users.revoke_dev') : t('admin.users.grant_dev')"
-                                        v-on:click="users.confirmToggleRole(user)"
-                                    >
-                                        <component :is="user.isDevRole ? UserRound : Shield" class="w-4 h-4" :stroke-width="2" />
-                                    </button>
-                                    <button
-                                        v-if="!user.isCurrent"
-                                        type="button"
-                                        class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded"
-                                        :title="t('common.delete')"
-                                        v-on:click="users.confirmDelete(user)"
-                                    >
-                                        <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                    </button>
+                                    <AdminUserActions
+                                        :user="user"
+                                        :impersonate-path="users.impersonatePath"
+                                        v-on:edit="users.openEdit"
+                                        v-on:toggle-role="users.confirmToggleRole"
+                                        v-on:delete="users.confirmDelete"
+                                    />
                                 </div>
                             </td>
                         </tr>
@@ -490,21 +447,21 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '-' }}</p>
                             <p class="text-xs text-secondary truncate">{{ accessRequest.requesterEmail }}</p>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full shrink-0" :class="accessRequests.statusBadge(accessRequest.status)">
-                            <component :is="accessRequest.status === 'pending' ? Clock : accessRequest.status === 'approved' ? ShieldCheck : X" class="w-3 h-3" :stroke-width="2.5" />
-                            {{ accessRequests.statusLabel.value[accessRequest.status] ?? accessRequest.status }}
-                        </span>
+                        <AdminAccessRequestStatusBadge
+                            :access-request="accessRequest"
+                            :status-label="accessRequests.statusLabel.value"
+                            class="shrink-0"
+                        />
                     </div>
                     <p v-if="accessRequest.message" class="text-sm text-secondary">{{ accessRequest.message }}</p>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
-                        <div v-if="accessRequest.status === 'pending'" class="flex items-center gap-1">
-                            <button type="button" class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
-                                <Check class="w-4 h-4" :stroke-width="2" />
-                            </button>
-                            <button type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
-                                <X class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                        <div class="flex items-center gap-1">
+                            <AdminAccessRequestActions
+                                :access-request="accessRequest"
+                                v-on:approve="accessRequests.openApproveModal"
+                                v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                            />
                         </div>
                     </div>
                 </div>
@@ -532,23 +489,20 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                                 <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '-' }}</p>
                             </td>
                             <td class="px-6 py-3">
-                                <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" :class="accessRequests.statusBadge(accessRequest.status)">
-                                    <component :is="accessRequest.status === 'pending' ? Clock : accessRequest.status === 'approved' ? ShieldCheck : X" class="w-3 h-3" :stroke-width="2.5" />
-                                    {{ accessRequests.statusLabel.value[accessRequest.status] ?? accessRequest.status }}
-                                </span>
+                                <AdminAccessRequestStatusBadge
+                                    :access-request="accessRequest"
+                                    :status-label="accessRequests.statusLabel.value"
+                                />
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.createdAt) }}</td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.expiresAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-1">
-                                    <template v-if="accessRequest.status === 'pending'">
-                                        <button type="button" class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" :title="t('admin.access_requests.approve')" v-on:click="accessRequests.openApproveModal(accessRequest)">
-                                            <Check class="w-4 h-4" :stroke-width="2" />
-                                        </button>
-                                        <button type="button" class="p-1.5 text-muted hover:text-rose-400 transition-colors rounded" :title="t('admin.access_requests.reject')" v-on:click="accessRequests.pendingReject.value = accessRequest">
-                                            <X class="w-4 h-4" :stroke-width="2" />
-                                        </button>
-                                    </template>
+                                    <AdminAccessRequestActions
+                                        :access-request="accessRequest"
+                                        v-on:approve="accessRequests.openApproveModal"
+                                        v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                                    />
                                 </div>
                             </td>
                         </tr>

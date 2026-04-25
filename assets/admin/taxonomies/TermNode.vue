@@ -29,7 +29,7 @@ function onChildEnd() {
 </script>
 
 <template>
-    <div class="border border-line rounded-md bg-surface-2">
+    <div class="border border-line rounded-md bg-surface">
         <div class="flex items-center gap-1 px-2 py-1.5">
             <button
                 v-if="hierarchical"
@@ -81,7 +81,7 @@ function onChildEnd() {
             handle=".drag-handle"
             :animation="150"
             ghost-class="opacity-50"
-            class="pl-5 pb-1 space-y-1 min-h-[4px]"
+            class="pl-5 pb-1 space-y-1 min-h-1"
             v-on:end="onChildEnd"
         >
             <template v-for="child in localChildren" :key="child.id">

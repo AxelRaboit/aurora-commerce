@@ -141,3 +141,8 @@ taxonomies:
     slug_required: "El slug es obligatorio."
     slug_format: "El slug solo puede contener letras minúsculas, números, guiones y guiones bajos."
     translations_required: "Se requiere al menos una traducción."
+forms:
+  errors:
+    translations_required: Al menos un idioma debe estar rellenado.
+    type_required: El tipo de campo es obligatorio.
+    field_label_required: Al menos una etiqueta es obligatoria.

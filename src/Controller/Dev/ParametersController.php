@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Dev;
 
+use App\DTO\PaginationRequest;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
@@ -22,10 +23,9 @@ final class ParametersController extends AbstractController
     public function __construct(private readonly SettingRepository $settingRepository) {}
 
     #[Route('', name: '')]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->settingRepository->findPaginated($page);
+        $result = $this->settingRepository->findPaginated($pagination->page);
 
         $labelsByKey = [];
         foreach (ApplicationParameterEnum::cases() as $case) {

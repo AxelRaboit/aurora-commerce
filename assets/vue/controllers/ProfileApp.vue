@@ -131,14 +131,9 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('profile.danger.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.danger.description') }}</p>
             </header>
-            <button
-                type="button"
-                :disabled="deleteLoading"
-                class="px-4 py-2.5 rounded-lg text-sm font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-900/40 transition-colors disabled:opacity-50"
-                v-on:click="deleteAccount"
-            >
+            <AppButton variant="danger-subtle" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
                 {{ t('profile.danger.submit') }}
-            </button>
+            </AppButton>
         </div>
     </div>
 </template>

@@ -66,7 +66,7 @@ async function saveGroup(groupName) {
 </script>
 
 <template>
-    <div class="flex gap-6">
+    <div class="flex flex-col md:flex-row gap-6">
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
             <button
                 v-for="groupName in availableGroups"

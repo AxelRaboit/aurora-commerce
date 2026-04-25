@@ -148,7 +148,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         >
             <Search class="w-4 h-4" :stroke-width="2" />
             {{ t("search.button") }}
-            <kbd class="ml-1 px-1.5 py-0.5 rounded bg-surface-2 border border-line font-mono text-[10px] text-muted">{{ modKeyLabel }}+K</kbd>
+            <kbd class="ml-1 px-1.5 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs text-muted">{{ modKeyLabel }}+K</kbd>
         </button>
 
         <Transition
@@ -188,7 +188,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
 
                         <!-- Posts -->
                         <div v-if="results.posts.length" class="px-2 py-2 space-y-1">
-                            <p class="px-2 py-1 text-[11px] uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <FileText class="w-3 h-3" :stroke-width="2" />
                                 {{ t("search.sections.posts") }}
                             </p>
@@ -201,20 +201,20 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 v-on:mouseenter="highlightedIndex = entryIndex('post', post)"
                                 v-on:click="activateResult({ kind: 'post', item: post })"
                             >
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0 mt-0.5" :class="statusBadge(post.status)">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5" :class="statusBadge(post.status)">
                                     {{ t("admin.stats.postStatus." + post.status) }}
                                 </span>
                                 <div class="flex-1 min-w-0">
                                     <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(post.title ?? '(—)')" />
                                     <div v-if="post.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(post.snippet)" />
-                                    <div class="text-[11px] text-muted mt-0.5">{{ post.postType }}</div>
+                                    <div class="text-xs text-muted mt-0.5">{{ post.postType }}</div>
                                 </div>
                             </button>
                         </div>
 
                         <!-- Terms -->
                         <div v-if="results.terms.length" class="px-2 py-2 space-y-1 border-t border-line">
-                            <p class="px-2 py-1 text-[11px] uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <TagsIcon class="w-3 h-3" :stroke-width="2" />
                                 {{ t("search.sections.terms") }}
                             </p>
@@ -229,14 +229,14 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                             >
                                 <div class="flex-1 min-w-0">
                                     <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(term.name ?? '(—)')" />
-                                    <div class="text-[11px] text-muted">{{ term.taxonomy }}</div>
+                                    <div class="text-xs text-muted">{{ term.taxonomy }}</div>
                                 </div>
                             </button>
                         </div>
 
                         <!-- Media -->
                         <div v-if="results.media.length" class="px-2 py-2 space-y-1 border-t border-line">
-                            <p class="px-2 py-1 text-[11px] uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <Image class="w-3 h-3" :stroke-width="2" />
                                 {{ t("search.sections.media") }}
                             </p>
@@ -251,16 +251,16 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                             >
                                 <div class="flex-1 min-w-0">
                                     <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(media.name ?? '(—)')" />
-                                    <div class="text-[11px] text-muted">{{ media.mimeType }}</div>
+                                    <div class="text-xs text-muted">{{ media.mimeType }}</div>
                                 </div>
                             </button>
                         </div>
                     </div>
 
-                    <div class="px-4 py-2 border-t border-line bg-surface-2/50 text-[11px] text-muted flex items-center gap-4">
-                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-[10px]">↑↓</kbd> {{ t("search.keys.navigate") }}</span>
-                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-[10px]">Enter</kbd> {{ t("search.keys.select") }}</span>
-                        <span class="ml-auto"><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-[10px]">Esc</kbd> {{ t("search.keys.close") }}</span>
+                    <div class="px-4 py-2 border-t border-line bg-surface-2/50 text-xs text-muted flex items-center gap-4">
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">↑↓</kbd> {{ t("search.keys.navigate") }}</span>
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Enter</kbd> {{ t("search.keys.select") }}</span>
+                        <span class="ml-auto"><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Esc</kbd> {{ t("search.keys.close") }}</span>
                     </div>
                 </div>
             </div>

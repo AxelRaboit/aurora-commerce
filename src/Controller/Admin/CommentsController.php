@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\CommentManagerInterface;
+use App\DTO\PaginationRequest;
 use App\Entity\Comment;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
@@ -52,12 +53,11 @@ final class CommentsController extends AbstractController
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
-    public function list(Request $request): JsonResponse
+    public function list(PaginationRequest $pagination, Request $request): JsonResponse
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
         $status = mb_trim((string) $request->query->get('status', ''));
 
-        $result = $this->commentRepository->findPaginatedForAdmin($page, 20, $status ?: null);
+        $result = $this->commentRepository->findPaginatedForAdmin($pagination->page, 20, $status ?: null);
 
         $items = array_map(
             $this->commentSerializer->serialize(...),
@@ -89,7 +89,7 @@ final class CommentsController extends AbstractController
         return $this->json(['ok' => true, 'comment' => $this->commentSerializer->serialize($comment)]);
     }
 
-    #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
+    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(Comment $comment): JsonResponse
     {
         $this->commentManager->delete($comment);

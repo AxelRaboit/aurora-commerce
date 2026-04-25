@@ -203,4 +203,10 @@ final readonly class UserManager implements UserManagerInterface
 
         return $plainToken;
     }
+
+    public function canActOn(User $actor, User $target): bool
+    {
+        return UserRoleEnum::highestPriorityForRoles($actor->getRoles())
+            >= UserRoleEnum::highestPriorityForRoles($target->getRoles());
+    }
 }

@@ -1,0 +1,19 @@
+<script setup>
+import { Check, Clock, ShieldCheck, X } from "lucide-vue-next";
+import AppBadge from "@/components/AppBadge.vue";
+import { accessRequestStatusBadgeColor } from "@/utils/statusStyles.js";
+
+defineProps({
+    accessRequest: { type: Object, required: true },
+    statusLabel: { type: Object, required: true },
+});
+
+const STATUS_ICONS = { pending: Clock, approved: ShieldCheck, rejected: X };
+</script>
+
+<template>
+    <AppBadge :color="accessRequestStatusBadgeColor(accessRequest.status)">
+        <component :is="STATUS_ICONS[accessRequest.status] ?? Check" class="w-3 h-3" :stroke-width="2.5" />
+        {{ statusLabel[accessRequest.status] ?? accessRequest.status }}
+    </AppBadge>
+</template>

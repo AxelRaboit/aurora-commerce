@@ -17,6 +17,13 @@
     --color-line:        var(--color-border);
     --color-line-strong: var(--color-border-strong);
 
+    --width-serp-max: 600px;
+
+    --color-serp-link:      #1a0dab;
+    --color-serp-link-dark: #8ab4f8;
+    --color-serp-url:       #202124;
+    --color-serp-desc:      #4d5156;
+
     --color-accent:      var(--th-accent);
     --color-accent-hover: var(--th-accent-hover);
     --color-accent-text: var(--th-accent-text);

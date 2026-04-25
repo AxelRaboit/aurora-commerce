@@ -5,7 +5,8 @@ import { toast } from "vue-sonner";
 import AppNoData from "@/components/AppNoData.vue";
 import AppModal from "@/components/AppModal.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
-import { statusBadge } from "@/utils/statusStyles.js";
+import { statusBadgeColor } from "@/utils/statusStyles.js";
+import AppBadge from "@/components/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
 import { usePostList } from "@/admin/posts/composables/usePostList.js";
 import { usePostDelete } from "@/admin/posts/composables/usePostDelete.js";
@@ -186,9 +187,9 @@ async function openPreview(post) {
                         <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
                         <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0" :class="statusBadge(post.status)">
+                    <AppBadge :color="statusBadgeColor(post.status)" class="shrink-0">
                         {{ t("admin.stats.postStatus." + post.status) }}
-                    </span>
+                    </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
@@ -235,9 +236,9 @@ async function openPreview(post) {
                         </td>
                         <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
                         <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(post.status)">
+                            <AppBadge :color="statusBadgeColor(post.status)">
                                 {{ t("admin.stats.postStatus." + post.status) }}
-                            </span>
+                            </AppBadge>
                         </td>
                         <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
                         <td class="px-4 py-3">

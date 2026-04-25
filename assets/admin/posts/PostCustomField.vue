@@ -222,7 +222,7 @@ async function uploadMedia(event) {
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
             <div class="flex items-center gap-2">
                 <div class="w-16 h-12 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                    <span v-if="modelValue" class="text-[10px] text-muted font-mono">#{{ modelValue }}</span>
+                    <span v-if="modelValue" class="text-xs text-muted font-mono">#{{ modelValue }}</span>
                     <ImagePlus v-else class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
                 <input
@@ -249,9 +249,9 @@ async function uploadMedia(event) {
                 <div
                     v-for="result in resolved"
                     :key="result.id"
-                    class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface-2 border border-line/60"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface border border-line/60"
                 >
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(result.status)">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
                         {{ t("admin.stats.postStatus." + result.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
@@ -283,7 +283,7 @@ async function uploadMedia(event) {
                         class="w-full text-left px-3 py-2 hover:bg-surface-2 transition-colors flex items-center gap-2"
                         v-on:mousedown.prevent="addReference(result)"
                     >
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(result.status)">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
                             {{ t("admin.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">

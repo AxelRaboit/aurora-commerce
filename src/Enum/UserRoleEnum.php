@@ -38,6 +38,23 @@ enum UserRoleEnum: string
     }
 
     /**
+     * Returns the highest priority among the given role strings.
+     *
+     * @param string[] $roles
+     */
+    public static function highestPriorityForRoles(array $roles): int
+    {
+        $highest = 0;
+        foreach (self::cases() as $role) {
+            if (in_array($role->value, $roles, true)) {
+                $highest = max($highest, $role->priority());
+            }
+        }
+
+        return $highest;
+    }
+
+    /**
      * @return list<self>
      */
     public static function selectableForAdmin(): array

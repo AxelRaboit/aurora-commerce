@@ -141,3 +141,8 @@ taxonomies:
     slug_required: "Le slug est requis."
     slug_format: "Le slug ne peut contenir que des lettres minuscules, chiffres, tirets et underscores."
     translations_required: "Au moins une traduction est requise."
+forms:
+  errors:
+    translations_required: Au moins une langue doit être renseignée.
+    type_required: Le type de champ est requis.
+    field_label_required: Au moins un libellé est requis.

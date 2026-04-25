@@ -6,13 +6,13 @@ namespace App\Controller\Dev;
 
 use App\Contract\AccessRequestManagerInterface;
 use App\Contract\UserManagerInterface;
+use App\DTO\PaginationRequest;
 use App\Entity\AccessRequest;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\AccessRequestRepository;
 use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -30,10 +30,9 @@ final class AccessRequestsController extends AbstractController
     ) {}
 
     #[Route('', name: '')]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->accessRequestRepository->findPaginatedAdmin($page);
+        $result = $this->accessRequestRepository->findPaginatedAdmin($pagination->page);
 
         return $this->render('admin/administration/index.html.twig', [
             'tab' => 'access_requests',

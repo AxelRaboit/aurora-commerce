@@ -4,31 +4,33 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+use App\DTO\ThemeInput;
 use App\Entity\Theme;
+use App\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 
 final readonly class ThemeManager
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private ThemeRepository $themeRepository,
         private string $projectDir,
     ) {}
 
-    public function activate(Theme $theme): void
+    public function create(ThemeInput $input): Theme
     {
-        $this->entityManager->createQuery('UPDATE App\Entity\Theme t SET t.active = false')->execute();
-        $theme->setActive(true);
-        $this->entityManager->flush();
-    }
+        if ($this->themeRepository->findBySlug($input->slug) instanceof Theme) {
+            throw new InvalidArgumentException(sprintf('slug|%s', 'themes.errors.slug_taken'));
+        }
 
-    public function create(string $slug, string $name, ?string $description): Theme
-    {
         $theme = new Theme();
-        $theme->setSlug($slug);
-        $theme->setName($name);
-        $theme->setDescription($description);
+        $theme->setSlug($input->slug);
+        $theme->setName($input->name);
+        $theme->setDescription($input->description);
         $theme->setActive(false);
         $theme->setConfig([]);
 
@@ -38,17 +40,32 @@ final readonly class ThemeManager
         return $theme;
     }
 
-    public function update(Theme $theme, string $name, ?string $description, array $config): void
+    public function update(Theme $theme, ThemeInput $input): void
     {
-        $theme->setName($name);
-        $theme->setDescription($description);
-        $theme->setConfig($config);
+        $theme->setName($input->name);
+        $theme->setDescription($input->description);
+        $theme->setConfig($input->config);
 
+        $this->entityManager->flush();
+    }
+
+    public function activate(Theme $theme): void
+    {
+        $this->entityManager->createQuery('UPDATE App\Entity\Theme t SET t.active = false')->execute();
+        $theme->setActive(true);
         $this->entityManager->flush();
     }
 
     public function delete(Theme $theme): void
     {
+        if ('default' === $theme->getSlug()) {
+            throw new RuntimeException('themes.errors.cannot_delete_default');
+        }
+
+        if ($theme->isActive()) {
+            throw new RuntimeException('themes.errors.cannot_delete_active');
+        }
+
         $this->entityManager->remove($theme);
         $this->entityManager->flush();
     }

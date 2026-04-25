@@ -1,0 +1,14 @@
+{% extends 'themes/default/layout.html.twig' %}
+
+{% block title %}{{ translation.title }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+    <div {{ vue_component('FormRenderApp', {
+        submitPath: path('front_form_submit', {locale: locale, slug: translation.slug}),
+        formTitle: translation.title,
+        formDescription: translation.description,
+        fields: fields,
+    }) }}></div>
+</div>
+{% endblock %}

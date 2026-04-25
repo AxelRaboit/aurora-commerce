@@ -27,6 +27,7 @@ import {
     Settings,
     Palette,
     MessageSquare,
+    ClipboardList,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -51,6 +52,7 @@ const props = defineProps({
     settingsPath: { type: String, default: "" },
     themesPath: { type: String, default: "" },
     commentsPath: { type: String, default: "" },
+    formsPath: { type: String, default: "" },
     mailpitUrl: { type: String, default: "" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
@@ -85,6 +87,7 @@ const navItems = [
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
     ...(props.isAdmin ? [{ route: "admin_users", path: props.usersPath, label: t("nav.users"), icon: UsersIcon, activeColor: "indigo" }] : []),
     ...(props.commentsPath !== "" ? [{ route: "admin_comments", path: props.commentsPath, label: t("nav.comments"), icon: MessageSquare, activeColor: "indigo" }] : []),
+    ...(props.formsPath !== "" ? [{ route: "admin_forms", path: props.formsPath, label: t("nav.forms"), icon: ClipboardList, activeColor: "indigo" }] : []),
     ...(props.settingsPath !== "" ? [{ route: "admin_settings", path: props.settingsPath, label: t("nav.settings"), icon: Settings, activeColor: "indigo" }] : []),
     ...(props.themesPath !== "" ? [{ route: "admin_themes", path: props.themesPath, label: t("nav.themes"), icon: Palette, activeColor: "indigo" }] : []),
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),

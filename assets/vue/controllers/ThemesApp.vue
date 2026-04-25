@@ -7,6 +7,7 @@ import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import AppModal from "@/components/AppModal.vue";
+import AppBadge from "@/components/AppBadge.vue";
 
 const { t } = useI18n();
 
@@ -185,7 +186,7 @@ async function submitEdit() {
     try {
         const url = props.updatePath.replace("__id__", editModal.editing.id);
         const response = await fetch(url, {
-            method: "PUT",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: editForm.name,
@@ -219,7 +220,7 @@ async function confirmDelete() {
     if (!theme) return;
     try {
         const url = props.deletePath.replace("__id__", theme.id);
-        const response = await fetch(url, { method: "DELETE" });
+        const response = await fetch(url, { method: "POST" });
         const data = await response.json();
         if (!data.ok) {
             toast.error(t(data.error ?? "common.error"));
@@ -261,13 +262,10 @@ async function confirmDelete() {
                         <p v-if="theme.description" class="text-sm text-muted line-clamp-2">{{ theme.description }}</p>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
-                        <span
-                            v-if="theme.active"
-                            class="flex items-center gap-1 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full"
-                        >
+                        <AppBadge v-if="theme.active" color="emerald">
                             <Check class="w-3 h-3" :stroke-width="2.5" />
                             {{ t("admin.themes.active") }}
-                        </span>
+                        </AppBadge>
                     </div>
                 </div>
 

@@ -149,7 +149,7 @@ function apply() {
                         {{ t("locales." + locale) }}
                         <span
                             v-if="conflictBadgeFor(locale) > 0"
-                            class="px-1.5 py-0.5 rounded-full text-[10px] font-semibold"
+                            class="px-1.5 py-0.5 rounded-full text-xs font-semibold"
                             :class="unresolvedBadgeFor(locale) > 0 ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'"
                         >
                             {{ unresolvedBadgeFor(locale) > 0 ? unresolvedBadgeFor(locale) : conflictBadgeFor(locale) }}

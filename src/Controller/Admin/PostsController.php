@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Contract\PostManagerInterface;
 use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\PaginationRequest;
 use App\DTO\PostInput;
 use App\Entity\Post;
 use App\Entity\PostRevision;
@@ -54,10 +55,8 @@ class PostsController extends AbstractController
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $search = mb_trim((string) $request->query->get('search', ''));
-        $page = max(1, (int) $request->query->get('page', '1'));
         $postTypeId = $request->query->getInt('postTypeId') ?: null;
         $trashed = $request->query->getBoolean('trashed');
 
@@ -67,7 +66,7 @@ class PostsController extends AbstractController
             $authorId = $currentUser instanceof User ? $currentUser->getId() : null;
         }
 
-        $result = $this->postRepository->findPaginated($page, 10, $search ?: null, $postTypeId, trashed: $trashed, authorId: $authorId);
+        $result = $this->postRepository->findPaginated($pagination->page, 10, $pagination->search, $postTypeId, trashed: $trashed, authorId: $authorId);
 
         $items = array_map(
             $this->postSerializer->serialize(...),
@@ -86,7 +85,7 @@ class PostsController extends AbstractController
 
         return $this->render('admin/posts/index.html.twig', [
             'posts' => ['items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']],
-            'search' => $search,
+            'search' => $pagination->search ?? '',
             'postTypes' => $postTypes,
             'taxonomies' => $taxonomies,
             'trashed' => $trashed,

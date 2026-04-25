@@ -24,8 +24,10 @@ import { TEMPLATES } from "@/utils/editorjs/templates.js";
 import { slugify } from "@/utils/slugify.js";
 import { statusBadge } from "@/utils/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
+import { useDateFormat } from "@/composables/useDateFormat.js";
 
 const { t } = useI18n();
+const { formatDateTime } = useDateFormat();
 
 const props = defineProps({
     postId: { type: Number, default: null },
@@ -700,7 +702,7 @@ function forceSave() {
 
         <!-- Published at info -->
         <p v-if="publishedAt" class="px-1 text-xs text-muted">
-            {{ t("admin.posts.publishedAt") }} {{ new Date(publishedAt).toLocaleString() }}
+            {{ t("admin.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
         </p>
 
         <!-- Meta row: post type + tags -->
@@ -719,7 +721,7 @@ function forceSave() {
             <div v-for="taxonomy in availableTaxonomies" :key="taxonomy.id" class="space-y-2">
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ taxonomyLabel(taxonomy) }}</span>
-                    <span v-if="taxonomy.hierarchical" class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">
+                    <span v-if="taxonomy.hierarchical" class="text-xs px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">
                         {{ t("admin.taxonomies.hierarchical") }}
                     </span>
                 </div>
@@ -770,9 +772,9 @@ function forceSave() {
                 <div
                     v-for="related in relatedPosts"
                     :key="related.id"
-                    class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface-2 border border-line/60"
+                    class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface border border-line/60"
                 >
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(related.status)">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(related.status)">
                         {{ t("admin.stats.postStatus." + related.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
@@ -805,7 +807,7 @@ function forceSave() {
                         class="w-full text-left px-3 py-2 hover:bg-surface-2 transition-colors flex items-center gap-2"
                         v-on:mousedown.prevent="addRelatedPost(result)"
                     >
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" :class="statusBadge(result.status)">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
                             {{ t("admin.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">

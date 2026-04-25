@@ -5,24 +5,30 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Contract\CommentManagerInterface;
+use App\Contract\FormManagerInterface;
 use App\Entity\Comment;
+use App\Entity\FormTranslation;
 use App\Entity\Post;
 use App\Entity\PostSlugHistory;
 use App\Entity\PostTranslation;
 use App\Entity\Taxonomy;
 use App\Entity\TaxonomyTerm;
-use App\Entity\TaxonomyTermTranslation;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\ReactionTypeEnum;
 use App\Manager\CommentReactionManager;
 use App\Repository\CommentReactionRepository;
 use App\Repository\CommentRepository;
+use App\Repository\FormTranslationRepository;
 use App\Repository\PostRepository;
 use App\Repository\PostSlugHistoryRepository;
 use App\Repository\PostTypeRepository;
 use App\Repository\SettingRepository;
 use App\Repository\TaxonomyRepository;
+use App\Serializer\CommentSerializer;
+use App\Serializer\FormSerializer;
+use App\Service\AlternatesBuilder;
 use App\Service\BlocksRenderer;
+use App\Service\FormSubmissionValidator;
 use App\Service\FrontContext;
 use App\Service\ThemeContext;
 use App\Service\ThemeResolver;
@@ -36,8 +42,6 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-use const DATE_ATOM;
 
 class FrontController extends AbstractController
 {
@@ -56,6 +60,12 @@ class FrontController extends AbstractController
         private readonly ValidatorInterface $validator,
         private readonly CommentReactionRepository $commentReactionRepository,
         private readonly CommentReactionManager $commentReactionManager,
+        private readonly CommentSerializer $commentSerializer,
+        private readonly AlternatesBuilder $alternatesBuilder,
+        private readonly FormTranslationRepository $formTranslationRepository,
+        private readonly FormManagerInterface $formManager,
+        private readonly FormSerializer $formSerializer,
+        private readonly FormSubmissionValidator $formSubmissionValidator,
     ) {}
 
     #[Route('/', name: 'front_root', priority: 10)]
@@ -89,7 +99,7 @@ class FrontController extends AbstractController
             'themeContext' => $this->themeContext,
             'posts' => $result,
             'postType' => $postType,
-            'alternates' => $this->buildSameRouteAlternates('front_home'),
+            'alternates' => $this->alternatesBuilder->forRoute('front_home'),
         ]);
 
         return $this->withI18nHeaders($response, $locale);
@@ -131,7 +141,6 @@ class FrontController extends AbstractController
 
         $postType = $this->postTypeRepository->findOneBy(['slug' => $postTypeSlug]);
         if (null === $postType || !$postType->hasArchive()) {
-            // Might be a taxonomy slug instead → try term archive fallback
             $taxonomy = $this->taxonomyRepository->findOneBySlug($postTypeSlug);
             if ($taxonomy instanceof Taxonomy) {
                 throw $this->createNotFoundException();
@@ -149,7 +158,7 @@ class FrontController extends AbstractController
             'themeContext' => $this->themeContext,
             'postType' => $postType,
             'posts' => $result,
-            'alternates' => $this->buildSameRouteAlternates('front_archive', ['postTypeSlug' => $postType->getSlug()]),
+            'alternates' => $this->alternatesBuilder->forRoute('front_archive', ['postTypeSlug' => $postType->getSlug()]),
         ]);
 
         return $this->withI18nHeaders($response, $locale);
@@ -174,7 +183,7 @@ class FrontController extends AbstractController
             }
         }
 
-        if (null === $term) {
+        if (!$term instanceof TaxonomyTerm) {
             throw $this->createNotFoundException();
         }
 
@@ -188,7 +197,7 @@ class FrontController extends AbstractController
             'taxonomy' => $taxonomy,
             'term' => $term,
             'posts' => $result,
-            'alternates' => $this->buildTermAlternates($taxonomy, $term),
+            'alternates' => $this->alternatesBuilder->forTerm($taxonomy, $term),
         ]);
 
         return $this->withI18nHeaders($response, $locale);
@@ -291,39 +300,9 @@ class FrontController extends AbstractController
             ? $this->commentReactionRepository->countByComments($allCommentIds)
             : [];
 
-        $serializeForFront = (fn (Comment $comment): array => [
-            'id' => $comment->getId(),
-            'authorName' => $comment->getAuthorName(),
-            'content' => $comment->getContent(),
-            'createdAt' => $comment->getCreatedAt()->format(DATE_ATOM),
-            'parentId' => $comment->getParent()?->getId(),
-            'parentAuthorName' => $comment->getParent()?->getAuthorName(),
-            'reactionCounts' => $reactionCountsMap[$comment->getId()] ?? [],
-        ]);
+        $tree = $this->commentSerializer->buildFrontTree($allComments, $reactionCountsMap);
 
-        $commentMap = [];
-        foreach ($allComments as $comment) {
-            $commentMap[$comment->getId()] = $comment;
-        }
-
-        $roots = [];
-        $replies = [];
-
-        foreach ($allComments as $comment) {
-            if (null === $comment->getParent()) {
-                $roots[] = $serializeForFront($comment);
-            } else {
-                $rootId = $this->findRootId($comment, $commentMap);
-                $replies[$rootId][] = $serializeForFront($comment);
-            }
-        }
-
-        $reactionEmojis = [];
-        foreach (ReactionTypeEnum::cases() as $case) {
-            $reactionEmojis[$case->value] = $case->emoji();
-        }
-
-        return $this->json(['ok' => true, 'roots' => $roots, 'replies' => $replies, 'reactionEmojis' => $reactionEmojis]);
+        return $this->json(['ok' => true, ...$tree]);
     }
 
     #[Route('/{locale}/{postTypeSlug}/{slug}/comment/{commentId}/react', name: 'front_comment_react', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 5)]
@@ -360,6 +339,61 @@ class FrontController extends AbstractController
         return $this->json(['ok' => true, 'counts' => $updatedCounts]);
     }
 
+    #[Route('/{locale}/forms/{slug}', name: 'front_form', requirements: ['locale' => '[a-z]{2}'], priority: 7)]
+    public function showForm(string $locale, string $slug, Request $request): Response
+    {
+        $this->assertActiveLocale($locale);
+        $request->setLocale($locale);
+
+        $translation = $this->findActiveFormTranslation($locale, $slug);
+        if (!$translation instanceof FormTranslation) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $translation->getForm();
+        $fields = array_values(array_map(
+            fn ($field): array => $this->formSerializer->serializeFieldForLocale($field, $locale),
+            $form->getFields()->toArray(),
+        ));
+
+        $response = $this->render($this->themeResolver->resolve('form'), [
+            'locale' => $locale,
+            'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
+            'form' => $form,
+            'translation' => $translation,
+            'fields' => $fields,
+        ]);
+
+        return $this->withI18nHeaders($response, $locale);
+    }
+
+    #[Route('/{locale}/forms/{slug}/submit', name: 'front_form_submit', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    public function submitForm(string $locale, string $slug, Request $request): JsonResponse
+    {
+        $this->assertActiveLocale($locale);
+        $request->setLocale($locale);
+
+        $translation = $this->findActiveFormTranslation($locale, $slug);
+        if (!$translation instanceof FormTranslation) {
+            return $this->json(['ok' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        $form = $translation->getForm();
+        $payload = $request->toArray();
+
+        $errors = $this->formSubmissionValidator->validate($form, $payload);
+        if ([] !== $errors) {
+            return $this->json(['ok' => false, 'errors' => $errors]);
+        }
+
+        $submittedData = $this->formSubmissionValidator->extractSubmittedData($form, $payload);
+        $ip = $request->getClientIp() ?? '';
+        $this->formManager->submit($form, $submittedData, $locale, $ip);
+
+        return $this->json(['ok' => true]);
+    }
+
     /**
      * @param array<string, string> $commentErrors
      */
@@ -379,8 +413,8 @@ class FrontController extends AbstractController
         $allCommentIds = [];
 
         foreach ($allComments as $comment) {
-            $allCommentIds[] = $comment->getId();
-            $commentMap[$comment->getId()] = $comment;
+            $allCommentIds[] = (int) $comment->getId();
+            $commentMap[(int) $comment->getId()] = $comment;
             if (null === $comment->getParent()) {
                 $rootComments[] = $comment;
             }
@@ -388,7 +422,7 @@ class FrontController extends AbstractController
 
         foreach ($allComments as $comment) {
             if (null !== $comment->getParent()) {
-                $rootId = $this->findRootId($comment, $commentMap);
+                $rootId = $this->commentSerializer->findRootId($comment, $commentMap);
                 $commentReplies[$rootId][] = $comment;
             }
         }
@@ -409,7 +443,7 @@ class FrontController extends AbstractController
             'post' => $post,
             'translation' => $translation,
             'content' => $this->blocksRenderer->render($translation->getBlocks()),
-            'alternates' => $this->buildPostAlternates($post),
+            'alternates' => $this->alternatesBuilder->forPost($post),
             'commentsEnabled' => $commentsEnabled,
             'comments' => $rootComments,
             'commentReplies' => $commentReplies,
@@ -421,76 +455,14 @@ class FrontController extends AbstractController
         return $this->withI18nHeaders($response, $locale);
     }
 
-    /**
-     * @return list<array{locale: string, url: string}>
-     */
-    private function buildPostAlternates(Post $post): array
+    private function findActiveFormTranslation(string $locale, string $slug): ?FormTranslation
     {
-        $alternates = [];
-        foreach ($this->frontContext->activeLocaleCodes() as $code) {
-            $translation = $post->getTranslation($code);
-            if (!$translation instanceof PostTranslation) {
-                continue;
-            }
-
-            $alternates[] = [
-                'locale' => $code,
-                'url' => $this->generateUrl('front_post', [
-                    'locale' => $code,
-                    'postTypeSlug' => $post->getPostType()->getSlug(),
-                    'slug' => $translation->getSlug(),
-                ]),
-            ];
+        $translation = $this->formTranslationRepository->findOneByLocaleAndSlug($locale, $slug);
+        if (!$translation instanceof FormTranslation || !$translation->getForm()->isActive()) {
+            return null;
         }
 
-        return $alternates;
-    }
-
-    /**
-     * @param array<string, string> $extraParams
-     *
-     * @return list<array{locale: string, url: string}>
-     */
-    private function buildSameRouteAlternates(string $route, array $extraParams = []): array
-    {
-        $alternates = [];
-        foreach ($this->frontContext->activeLocaleCodes() as $code) {
-            $alternates[] = [
-                'locale' => $code,
-                'url' => $this->generateUrl($route, array_merge($extraParams, ['locale' => $code])),
-            ];
-        }
-
-        return $alternates;
-    }
-
-    /**
-     * @return list<array{locale: string, url: string}>
-     */
-    private function buildTermAlternates(Taxonomy $taxonomy, TaxonomyTerm $term): array
-    {
-        $alternates = [];
-        foreach ($this->frontContext->activeLocaleCodes() as $code) {
-            $termTranslation = $term->getTranslation($code);
-            if (!$termTranslation instanceof TaxonomyTermTranslation) {
-                continue;
-            }
-
-            if ('' === $termTranslation->getSlug()) {
-                continue;
-            }
-
-            $alternates[] = [
-                'locale' => $code,
-                'url' => $this->generateUrl('front_term', [
-                    'locale' => $code,
-                    'taxonomySlug' => $taxonomy->getSlug(),
-                    'termSlug' => $termTranslation->getSlug(),
-                ]),
-            ];
-        }
-
-        return $alternates;
+        return $translation;
     }
 
     private function withI18nHeaders(Response $response, string $locale): Response
@@ -529,22 +501,5 @@ class FrontController extends AbstractController
     private function postsPerPage(): int
     {
         return (int) ($this->frontContext->setting(ApplicationParameterEnum::PostsPerPage->value, '10') ?? 10);
-    }
-
-    /**
-     * Walks up the parent chain to find the root comment ID.
-     */
-    /**
-     * @param array<int, Comment> $commentMap pre-built id→comment map
-     */
-    private function findRootId(Comment $comment, array $commentMap): int
-    {
-        $current = $comment;
-        while (null !== $current->getParent()) {
-            $parentId = $current->getParent()->getId();
-            $current = $commentMap[$parentId] ?? $current->getParent();
-        }
-
-        return $current->getId();
     }
 }

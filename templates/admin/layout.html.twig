@@ -43,6 +43,7 @@
         isAdmin: is_granted('ROLE_ADMIN'),
         isDev: is_granted('ROLE_DEV'),
         commentsPath: is_granted('ROLE_EDITOR') ? path('admin_comments') : '',
+        formsPath: is_granted('ROLE_EDITOR') ? path('admin_forms') : '',
         settingsPath: is_granted('ROLE_ADMIN') ? path('admin_settings') : '',
         themesPath: is_granted('ROLE_ADMIN') ? path('admin_themes') : '',
         profilePath: path('profile'),

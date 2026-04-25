@@ -12,6 +12,7 @@ import AppCheckbox from "@/components/AppCheckbox.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import AppNoData from "@/components/AppNoData.vue";
+import AppBadge from "@/components/AppBadge.vue";
 
 const { t } = useI18n();
 
@@ -298,7 +299,7 @@ function toggleIn(list, value) {
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.title") }}</h2>
-                <AppButton variant="primary" size="sm" v-on:click="openCreatePostType">
+                <AppButton variant="primary" size="md" v-on:click="openCreatePostType">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.postTypes.add") }}
                 </AppButton>
@@ -332,24 +333,25 @@ function toggleIn(list, value) {
                             <h3 class="text-lg font-semibold text-primary">{{ selected.label }}</h3>
                             <p class="text-xs text-muted font-mono mt-0.5">{{ selected.slug }}</p>
                             <div class="flex items-center gap-2 mt-2 flex-wrap">
-                                <span v-if="selected.isBuiltIn" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-amber-500/15 text-amber-400">
+                                <AppBadge v-if="selected.isBuiltIn" color="amber">
                                     <Lock class="w-3 h-3" :stroke-width="2" />
                                     {{ t("admin.postTypes.builtIn") }}
-                                </span>
-                                <span v-if="selected.hasArchive" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-sky-500/15 text-sky-400">
-                                    {{ t("admin.postTypes.hasArchive") }}
-                                </span>
-                                <span v-for="support in selected.supports" :key="support" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-surface-2 text-secondary">
-                                    {{ support }}
-                                </span>
+                                </AppBadge>
+                                <AppBadge v-if="selected.hasArchive" color="sky">{{ t("admin.postTypes.hasArchive") }}</AppBadge>
+                                <AppBadge v-for="support in selected.supports" :key="support" color="gray">{{ support }}</AppBadge>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton variant="secondary" size="sm" v-on:click="openEditPostType(selected)">
+                            <AppButton variant="ghost" size="md" v-on:click="openEditPostType(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("common.edit") }}
                             </AppButton>
-                            <AppButton v-if="!selected.isBuiltIn" variant="danger" size="sm" v-on:click="deletingPostType = selected">
+                            <AppButton
+                                v-if="!selected.isBuiltIn"
+                                variant="danger"
+                                size="md"
+                                v-on:click="deletingPostType = selected"
+                            >
                                 <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("common.delete") }}
                             </AppButton>
@@ -361,7 +363,7 @@ function toggleIn(list, value) {
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.fields.title") }}</h4>
-                        <AppButton variant="primary" size="sm" v-on:click="openCreateField">
+                        <AppButton variant="primary" size="md" v-on:click="openCreateField">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("admin.postTypes.fields.add") }}
                         </AppButton>
@@ -393,9 +395,9 @@ function toggleIn(list, value) {
                                 <div class="text-sm font-medium text-primary truncate">{{ field.label }}</div>
                                 <div class="text-xs text-muted font-mono truncate">{{ field.name }}</div>
                             </div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-surface-3 text-secondary">{{ field.type }}</span>
-                            <span v-if="field.required" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-rose-500/15 text-rose-400">{{ t("admin.postTypes.fields.required") }}</span>
-                            <span v-if="field.translatable" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-sky-500/15 text-sky-400">{{ t("admin.postTypes.fields.translatable") }}</span>
+                            <AppBadge color="gray">{{ field.type }}</AppBadge>
+                            <AppBadge v-if="field.required" color="rose">{{ t("admin.postTypes.fields.required") }}</AppBadge>
+                            <AppBadge v-if="field.translatable" color="sky">{{ t("admin.postTypes.fields.translatable") }}</AppBadge>
                             <div class="flex items-center gap-0.5">
                                 <AppIconButton color="indigo" v-on:click="openEditField(field)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
@@ -421,17 +423,18 @@ function toggleIn(list, value) {
                     :label="t('admin.postTypes.slug')"
                     :error="postTypeModal.errors.slug ?? ''"
                     :disabled="postTypeModal.editing?.isBuiltIn ?? false"
-                    placeholder="ex: recipe"
+                    :placeholder="t('admin.postTypes.slugPlaceholder')"
                 />
                 <AppInput
                     v-model="postTypeForm.label"
                     :label="t('admin.postTypes.label')"
                     :error="postTypeModal.errors.label ?? ''"
+                    :placeholder="t('admin.postTypes.labelPlaceholder')"
                 />
                 <AppInput
                     v-model="postTypeForm.icon"
                     :label="t('admin.postTypes.icon')"
-                    placeholder="file-text, layers, …"
+                    :placeholder="t('admin.postTypes.iconPlaceholder')"
                 />
                 <AppCheckbox v-model="postTypeForm.hasArchive" :label="t('admin.postTypes.hasArchive')" />
 
@@ -497,12 +500,13 @@ function toggleIn(list, value) {
                         v-model="fieldForm.name"
                         :label="t('admin.postTypes.fields.name')"
                         :error="fieldModal.errors.name ?? ''"
-                        placeholder="ex: reading_time"
+                        :placeholder="t('admin.postTypes.fields.namePlaceholder')"
                     />
                     <AppInput
                         v-model="fieldForm.label"
                         :label="t('admin.postTypes.fields.label')"
                         :error="fieldModal.errors.label ?? ''"
+                        :placeholder="t('admin.postTypes.fields.labelPlaceholder')"
                     />
                 </div>
 

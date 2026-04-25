@@ -545,7 +545,7 @@ async function moveFolder(folderId, newParentId) {
                         >
                             <Folder class="w-4 h-4 shrink-0" :stroke-width="2" />
                             <span class="flex-1 text-sm truncate">{{ folder.name }}</span>
-                            <span v-if="folder.childCount > 0" class="text-[11px] text-muted font-mono shrink-0">{{ folder.childCount }}</span>
+                            <span v-if="folder.childCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.childCount }}</span>
                         </button>
                         <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
                             <AppIconButton color="indigo" v-on:click="openEditFolder(folder)">
@@ -584,13 +584,13 @@ async function moveFolder(folderId, newParentId) {
                                 :style="{ objectPosition: item.focalPositionCss ?? '50% 50%' }"
                             >
                             <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
-                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-rose-500/80 text-white">
+                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">
                                 {{ t("admin.media.missingAlt") }}
                             </div>
                         </div>
                         <div class="p-2 space-y-0.5">
                             <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
-                            <div class="text-[10px] text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
+                            <div class="text-xs text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
                         </div>
                     </div>
                 </div>

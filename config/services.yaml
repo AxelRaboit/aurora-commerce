@@ -30,6 +30,10 @@ services:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
+    App\Manager\FormManager:
+        arguments:
+            $mailerFrom: '%app.mailer_from%'
+
     App\Manager\PasswordResetManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'

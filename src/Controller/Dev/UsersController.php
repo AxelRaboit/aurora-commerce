@@ -7,6 +7,7 @@ namespace App\Controller\Dev;
 use App\Contract\UserManagerInterface;
 use App\Controller\Trait\JsonValidationTrait;
 use App\DTO\CreateUserInput;
+use App\DTO\PaginationRequest;
 use App\DTO\UpdateUserInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
@@ -36,11 +37,9 @@ final class UsersController extends AbstractController
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $search = mb_trim((string) $request->query->get('search', ''));
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->userRepository->findPaginatedForAdmin($page, $search ?: null);
+        $result = $this->userRepository->findPaginatedForAdmin($pagination->page, $pagination->search);
 
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -66,7 +65,7 @@ final class UsersController extends AbstractController
                 'page' => $result['page'],
                 'totalPages' => $result['totalPages'],
             ],
-            'search' => $search,
+            'search' => $pagination->search ?? '',
         ]);
     }
 

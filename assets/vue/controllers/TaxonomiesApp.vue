@@ -13,6 +13,7 @@ import AppCheckbox from "@/components/AppCheckbox.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import AppNoData from "@/components/AppNoData.vue";
+import AppBadge from "@/components/AppBadge.vue";
 import TermNode from "@/admin/taxonomies/TermNode.vue";
 import { slugify } from "@/utils/slugify.js";
 
@@ -347,7 +348,7 @@ function findNodeInTree(nodes, id) {
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.title") }}</h2>
-                <AppButton variant="primary" size="sm" v-on:click="openCreateTaxonomy">
+                <AppButton variant="primary" size="md" v-on:click="openCreateTaxonomy">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.taxonomies.addTaxonomy") }}
                 </AppButton>
@@ -382,22 +383,27 @@ function findNodeInTree(nodes, id) {
                             <h3 class="text-lg font-semibold text-primary">{{ translationLabel(selected, activeLocale) }}</h3>
                             <p class="text-xs text-muted font-mono mt-0.5">{{ selected.slug }}</p>
                             <div class="flex items-center gap-2 mt-2">
-                                <span v-if="selected.hierarchical" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-500/15 text-sky-400">
+                                <AppBadge v-if="selected.hierarchical" color="sky">
                                     <FolderTree class="w-3 h-3" :stroke-width="2" />
                                     {{ t("admin.taxonomies.hierarchical") }}
-                                </span>
-                                <span v-if="selected.isBuiltIn" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-amber-500/15 text-amber-400">
+                                </AppBadge>
+                                <AppBadge v-if="selected.isBuiltIn" color="amber">
                                     <Lock class="w-3 h-3" :stroke-width="2" />
                                     {{ t("admin.taxonomies.builtIn") }}
-                                </span>
+                                </AppBadge>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton variant="secondary" size="sm" v-on:click="openEditTaxonomy(selected)">
+                            <AppButton variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("common.edit") }}
                             </AppButton>
-                            <AppButton v-if="!selected.isBuiltIn" variant="danger" size="sm" v-on:click="deletingTaxonomy = selected">
+                            <AppButton
+                                v-if="!selected.isBuiltIn"
+                                variant="danger"
+                                size="md"
+                                v-on:click="deletingTaxonomy = selected"
+                            >
                                 <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("common.delete") }}
                             </AppButton>
@@ -424,7 +430,7 @@ function findNodeInTree(nodes, id) {
                                     {{ locale.toUpperCase() }}
                                 </button>
                             </div>
-                            <AppButton variant="primary" size="sm" v-on:click="openCreateTerm()">
+                            <AppButton variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("admin.taxonomies.terms.addTerm") }}
                             </AppButton>
@@ -505,10 +511,12 @@ function findNodeInTree(nodes, id) {
                     <AppInput
                         v-model="taxonomyForm.translations[activeLocale].label"
                         :label="t('admin.taxonomies.label')"
+                        :placeholder="t('admin.taxonomies.labelPlaceholder')"
                     />
                     <AppTextarea
                         v-model="taxonomyForm.translations[activeLocale].description"
                         :label="t('admin.taxonomies.description')"
+                        :placeholder="t('admin.taxonomies.descriptionPlaceholder')"
                         :rows="2"
                     />
                 </div>
@@ -577,16 +585,19 @@ function findNodeInTree(nodes, id) {
                     v-model="termForm.translations[activeLocale].name"
                     :label="t('admin.taxonomies.terms.name')"
                     :error="termModal.errors[`translations[${activeLocale}].name`] ?? ''"
+                    :placeholder="t('admin.taxonomies.terms.namePlaceholder')"
                     v-on:blur="autoSlugTerm(activeLocale)"
                 />
                 <AppInput
                     v-model="termForm.translations[activeLocale].slug"
                     :label="t('admin.taxonomies.terms.slug')"
                     :error="termModal.errors[`translations[${activeLocale}].slug`] ?? ''"
+                    :placeholder="t('admin.taxonomies.terms.slugPlaceholder')"
                 />
                 <AppTextarea
                     v-model="termForm.translations[activeLocale].description"
                     :label="t('admin.taxonomies.terms.description')"
+                    :placeholder="t('admin.taxonomies.terms.descriptionPlaceholder')"
                     :rows="2"
                 />
 

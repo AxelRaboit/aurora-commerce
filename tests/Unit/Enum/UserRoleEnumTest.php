@@ -39,4 +39,28 @@ final class UserRoleEnumTest extends TestCase
             self::assertNotEmpty($case->label(), sprintf('Label for %s must not be empty', $case->name));
         }
     }
+
+    public function testHighestPriorityForRolesReturnsMaxPriority(): void
+    {
+        $roles = [UserRoleEnum::User->value, UserRoleEnum::Admin->value, UserRoleEnum::Editor->value];
+
+        self::assertSame(UserRoleEnum::Admin->priority(), UserRoleEnum::highestPriorityForRoles($roles));
+    }
+
+    public function testHighestPriorityForRolesWithEmptyArray(): void
+    {
+        self::assertSame(0, UserRoleEnum::highestPriorityForRoles([]));
+    }
+
+    public function testHighestPriorityForRolesWithUnknownRoles(): void
+    {
+        self::assertSame(0, UserRoleEnum::highestPriorityForRoles(['ROLE_UNKNOWN']));
+    }
+
+    public function testHighestPriorityForRolesWithDevRole(): void
+    {
+        $roles = [UserRoleEnum::User->value, UserRoleEnum::Dev->value];
+
+        self::assertSame(UserRoleEnum::Dev->priority(), UserRoleEnum::highestPriorityForRoles($roles));
+    }
 }

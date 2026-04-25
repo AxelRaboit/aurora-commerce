@@ -10,8 +10,11 @@ import AppInput from "@/components/AppInput.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppNoData from "@/components/AppNoData.vue";
+import AppBadge from "@/components/AppBadge.vue";
+import { useDateFormat } from "@/composables/useDateFormat.js";
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
     roles: { type: Array, default: () => [] },
@@ -137,7 +140,7 @@ async function submitEdit() {
     try {
         const url = props.updatePath.replace("__id__", editModal.editing.id);
         const response = await fetch(url, {
-            method: "PUT",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(editForm),
         });
@@ -207,10 +210,10 @@ async function confirmDelete() {
     }
 }
 
-function statusClass(status) {
-    if ("active" === status) return "bg-emerald-500/15 text-emerald-400";
-    if ("invited" === status) return "bg-amber-500/15 text-amber-400";
-    return "bg-rose-500/15 text-rose-400";
+function statusBadgeColor(status) {
+    if ("active" === status) return "emerald";
+    if ("invited" === status) return "amber";
+    return "rose";
 }
 
 const isCurrent = (user) => user.id === props.currentUserId;
@@ -239,16 +242,60 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
+            <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-primary text-sm">
+                            {{ user.name }}
+                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                        </p>
+                        <p class="text-xs text-muted mt-0.5">{{ user.email }}</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                        <div class="flex items-center gap-1">
+                            <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                            <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                    <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
+                    <div class="flex items-center gap-0.5">
+                        <AppIconButton v-if="user.status === 'invited' && canActOn(user)" color="amber" :title="t('admin.users.resendInvitation')" v-on:click="resendInvitation(user)">
+                            <Mail class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="isDev && canActOn(user)" color="amber" :title="t('admin.users.impersonate', {name: user.name})" :href="impersonatePath.replace('__email__', encodeURIComponent(user.email))">
+                            <LogIn class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="canActOn(user)" color="indigo" :title="t('common.edit')" v-on:click="openEdit(user)">
+                            <Pencil class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="canActOn(user)" color="amber" :title="user.status === 'disabled' ? t('admin.users.enable') : t('admin.users.disable')" v-on:click="toggleDisabled(user)">
+                            <Power class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="canActOn(user)" color="rose" :title="t('common.delete')" v-on:click="deletingUser = user">
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <table v-else class="w-full text-sm">
                 <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.name') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.email') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.role') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.email') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.users.role') }}</th>
                         <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.status') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.created') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.created') }}</th>
                         <th class="text-right px-4 py-3 font-semibold">{{ t('admin.users.actions') }}</th>
                     </tr>
                 </thead>
@@ -256,19 +303,19 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
                         <td class="px-4 py-3 text-primary font-medium">
                             {{ user.name }}
-                            <span v-if="isCurrent(user)" class="ml-2 text-xs text-muted">({{ t('admin.users.you') }})</span>
+                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
                         </td>
-                        <td class="px-4 py-3 text-secondary">{{ user.email }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
+                        <td class="px-4 py-3 hidden md:table-cell">
                             <div class="flex items-center gap-1 flex-wrap">
-                                <span v-if="user.isDev" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-rose-500/15 text-rose-400">Dev</span>
-                                <span v-if="user.roleLabel" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-indigo-600/15 text-indigo-400">{{ user.roleLabel }}</span>
+                                <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                                <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
                             </div>
                         </td>
                         <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" :class="statusClass(user.status)">{{ user.statusLabel }}</span>
+                            <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
                         </td>
-                        <td class="px-4 py-3 text-xs text-muted">{{ new Date(user.createdAt).toLocaleDateString() }}</td>
+                        <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="user.status === 'invited' && canActOn(user)" color="amber" :title="t('admin.users.resendInvitation')" v-on:click="resendInvitation(user)">
@@ -299,8 +346,14 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
         <AppModal :show="inviteModal.open" max-width="md" v-on:close="inviteModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.invite') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
-                <AppInput v-model="inviteForm.name" :label="t('admin.users.name')" :error="inviteModal.errors.name ?? ''" />
-                <AppInput v-model="inviteForm.email" :label="t('admin.users.email')" type="email" :error="inviteModal.errors.email ?? ''" />
+                <AppInput v-model="inviteForm.name" :label="t('admin.users.name')" :placeholder="t('admin.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
+                <AppInput
+                    v-model="inviteForm.email"
+                    :label="t('admin.users.email')"
+                    type="email"
+                    :placeholder="t('admin.users.emailPlaceholder')"
+                    :error="inviteModal.errors.email ?? ''"
+                />
                 <div>
                     <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.role') }}</label>
                     <AppSelect v-model="inviteForm.role">

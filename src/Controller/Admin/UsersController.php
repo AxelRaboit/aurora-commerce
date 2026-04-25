@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Contract\UserManagerInterface;
 use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\PaginationRequest;
 use App\DTO\UserInput;
 use App\DTO\UserInviteInput;
 use App\Entity\User;
@@ -28,38 +29,6 @@ final class UsersController extends AbstractController
 {
     use JsonValidationTrait;
 
-    private function currentUserPriority(): int
-    {
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User) {
-            return 0;
-        }
-
-        foreach (UserRoleEnum::cases() as $role) {
-            if (in_array($role->value, $currentUser->getRoles(), true)) {
-                return $role->priority();
-            }
-        }
-
-        return 0;
-    }
-
-    private function canActOn(User $target): bool
-    {
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User) {
-            return false;
-        }
-
-        foreach (UserRoleEnum::cases() as $role) {
-            if (in_array($role->value, $target->getRoles(), true)) {
-                return $this->currentUserPriority() >= $role->priority();
-            }
-        }
-
-        return true;
-    }
-
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
@@ -79,30 +48,28 @@ final class UsersController extends AbstractController
             $selectableRoles,
         );
 
+        $currentUser = $this->getUser();
+        $currentUserPriority = $currentUser instanceof User
+            ? UserRoleEnum::highestPriorityForRoles($currentUser->getRoles())
+            : 0;
+
         return $this->render('admin/users/index.html.twig', [
             'roles' => $roles,
             'isDev' => $this->isGranted(UserRoleEnum::Dev->value),
-            'currentUserPriority' => $this->currentUserPriority(),
+            'currentUserPriority' => $currentUserPriority,
         ]);
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
-    public function list(Request $request): JsonResponse
+    public function list(PaginationRequest $pagination, Request $request): JsonResponse
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $search = mb_trim((string) $request->query->get('search', ''));
         $role = mb_trim((string) $request->query->get('role', ''));
 
-        $result = $this->userRepository->findPaginated($page, 10, $search ?: null, $role ?: null);
-
-        $items = array_map(
-            $this->userSerializer->serialize(...),
-            $result['items'],
-        );
+        $result = $this->userRepository->findPaginated($pagination->page, 10, $pagination->search, $role ?: null);
 
         return $this->json([
             'ok' => true,
-            'items' => $items,
+            'items' => array_map($this->userSerializer->serialize(...), $result['items']),
             'total' => $result['total'],
             'page' => $result['page'],
             'totalPages' => $result['totalPages'],
@@ -132,10 +99,11 @@ final class UsersController extends AbstractController
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
     }
 
-    #[Route('/{id}', name: '_update', methods: [HttpMethodEnum::Put->value])]
+    #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(User $user, Request $request): JsonResponse
     {
-        if (!$this->canActOn($user)) {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
         }
 
@@ -162,7 +130,8 @@ final class UsersController extends AbstractController
     #[Route('/{id}/resend-invitation', name: '_resend_invitation', methods: [HttpMethodEnum::Post->value])]
     public function resendInvitation(User $user): JsonResponse
     {
-        if (!$this->canActOn($user)) {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
         }
 
@@ -179,7 +148,7 @@ final class UsersController extends AbstractController
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_disable_self'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->canActOn($user)) {
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
         }
 
@@ -188,7 +157,7 @@ final class UsersController extends AbstractController
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
     }
 
-    #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
+    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(User $user): JsonResponse
     {
         $currentUser = $this->getUser();
@@ -196,7 +165,7 @@ final class UsersController extends AbstractController
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_delete_self'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->canActOn($user)) {
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
             return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
         }
 

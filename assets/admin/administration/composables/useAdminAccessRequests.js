@@ -1,7 +1,10 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { submitForm } from "@/utils/formSubmit.js";
-import { accessRequestStatusBadge } from "@/utils/statusStyles.js";
+import {
+    accessRequestStatusBadge,
+    accessRequestStatusBadgeColor,
+} from "@/utils/statusStyles.js";
 
 export function useAdminAccessRequests(
     accessRequestsPath,
@@ -63,6 +66,7 @@ export function useAdminAccessRequests(
     return {
         parsedAccessRequests,
         statusBadge: accessRequestStatusBadge,
+        statusBadgeColor: accessRequestStatusBadgeColor,
         statusLabel,
         pendingApprove,
         pendingReject,

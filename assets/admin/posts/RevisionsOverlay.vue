@@ -4,12 +4,16 @@ import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/utils/revisionDiff.js";
-import { statusBadge } from "@/utils/statusStyles.js";
+import { statusBadgeColor } from "@/utils/statusStyles.js";
 import AppButton from "@/components/AppButton.vue";
+import AppIconButton from "@/components/AppIconButton.vue";
 import AppCheckbox from "@/components/AppCheckbox.vue";
+import AppBadge from "@/components/AppBadge.vue";
 import { toast } from "vue-sonner";
+import { useDateFormat } from "@/composables/useDateFormat.js";
 
 const { t } = useI18n();
+const { formatDateTime } = useDateFormat();
 
 const props = defineProps({
     postId: { type: Number, required: true },
@@ -119,7 +123,7 @@ function renderBlock(block) {
 function formatDate(iso) {
     if (!iso) return "";
     try {
-        return new Date(iso).toLocaleString();
+        return formatDateTime(iso);
     } catch {
         return iso;
     }
@@ -150,14 +154,9 @@ const visibleEntries = computed(() =>
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
                         {{ t("admin.posts.revisions.title") }}
                     </span>
-                    <button
-                        type="button"
-                        class="p-2 text-muted hover:text-primary hover:bg-surface-2 rounded-md transition-colors"
-                        :aria-label="t('common.close')"
-                        v-on:click="emit('close')"
-                    >
+                    <AppIconButton :title="t('common.close')" v-on:click="emit('close')">
                         <X class="w-5 h-5" :stroke-width="2" />
-                    </button>
+                    </AppIconButton>
                 </div>
 
                 <!-- Body: two columns -->
@@ -177,9 +176,9 @@ const visibleEntries = computed(() =>
                                 v-on:click="selectRevision(revision)"
                             >
                                 <div class="flex items-center gap-2 text-xs">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full font-medium" :class="statusBadge(revision.status)">
+                                    <AppBadge :color="statusBadgeColor(revision.status)">
                                         {{ t("admin.stats.postStatus." + revision.status) }}
-                                    </span>
+                                    </AppBadge>
                                     <span class="text-muted font-mono">v{{ revision.postVersion }}</span>
                                 </div>
                                 <div class="mt-1 text-sm text-primary">{{ formatDate(revision.createdAt) }}</div>

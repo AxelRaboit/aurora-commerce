@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\ThemeInput;
 use App\Entity\Theme;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Manager\ThemeManager;
 use App\Repository\ThemeRepository;
 use App\Serializer\ThemeSerializer;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/themes', name: 'admin_themes')]
 #[IsGranted(UserRoleEnum::Admin->value)]
@@ -28,6 +32,7 @@ final class ThemesController extends AbstractController
         private readonly ThemeRepository $themeRepository,
         private readonly ThemeManager $themeManager,
         private readonly ThemeSerializer $themeSerializer,
+        private readonly ValidatorInterface $validator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -44,24 +49,19 @@ final class ThemesController extends AbstractController
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $data = $this->decodeJson($request);
-        $slug = mb_strtolower(mb_trim((string) ($data['slug'] ?? '')));
-        $name = mb_trim((string) ($data['name'] ?? ''));
-        $description = mb_trim((string) ($data['description'] ?? '')) ?: null;
-
-        if ('' === $slug || !preg_match('/^[a-z0-9-]+$/', $slug)) {
-            return $this->json(['ok' => false, 'errors' => ['slug' => 'admin.themes.errors.slug_invalid']], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $input = ThemeInput::fromArray($this->decodeJson($request));
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ('' === $name) {
-            return $this->json(['ok' => false, 'errors' => ['name' => 'admin.themes.errors.name_required']], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        try {
+            $theme = $this->themeManager->create($input);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            [$field, $message] = explode('|', $invalidArgumentException->getMessage(), 2) + ['_error', ''];
 
-        if ($this->themeRepository->findBySlug($slug) instanceof Theme) {
-            return $this->json(['ok' => false, 'errors' => ['slug' => 'admin.themes.errors.slug_taken']], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json(['ok' => false, 'errors' => [$field => $message]], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        $theme = $this->themeManager->create($slug, $name, $description);
 
         return $this->json(['ok' => true, 'theme' => $this->themeSerializer->serialize($theme)]);
     }
@@ -74,35 +74,28 @@ final class ThemesController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
-    #[Route('/{id}', name: '_update', methods: [HttpMethodEnum::Put->value])]
+    #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(Theme $theme, Request $request): JsonResponse
     {
-        $data = $this->decodeJson($request);
-        $name = mb_trim((string) ($data['name'] ?? ''));
-        $description = mb_trim((string) ($data['description'] ?? '')) ?: null;
-        $config = isset($data['config']) && is_array($data['config']) ? $data['config'] : [];
-
-        if ('' === $name) {
-            return $this->json(['ok' => false, 'errors' => ['name' => 'admin.themes.errors.name_required']], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $input = ThemeInput::fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $this->themeManager->update($theme, $name, $description, $config);
+        $this->themeManager->update($theme, $input);
 
         return $this->json(['ok' => true, 'theme' => $this->themeSerializer->serialize($theme)]);
     }
 
-    #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
+    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(Theme $theme): JsonResponse
     {
-        if ('default' === $theme->getSlug()) {
-            return $this->json(['ok' => false, 'error' => 'admin.themes.cannotDeleteDefault'], Response::HTTP_BAD_REQUEST);
+        try {
+            $this->themeManager->delete($theme);
+        } catch (RuntimeException $runtimeException) {
+            return $this->json(['ok' => false, 'error' => $runtimeException->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        if ($theme->isActive()) {
-            return $this->json(['ok' => false, 'error' => 'admin.themes.cannotDeleteActive'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $this->themeManager->delete($theme);
 
         return $this->json(['ok' => true]);
     }

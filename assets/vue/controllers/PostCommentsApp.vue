@@ -1,6 +1,9 @@
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, defineComponent, h } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
+import { useDateFormat } from "@/composables/useDateFormat.js";
+import PostCommentsForm from "./PostCommentsForm.vue";
+import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -10,6 +13,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const roots = ref([]);
 const replies = ref({});
@@ -109,77 +113,9 @@ async function react(commentId, type) {
 }
 
 function formatDate(iso) {
-    return new Date(iso).toLocaleDateString();
+    return formatDateShort(iso);
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-const CommentForm = defineComponent({
-    props: {
-        parentId: { default: null },
-        submitting: { type: Boolean, default: false },
-        errors: { type: Object, default: () => ({}) },
-        authorName: { type: String, default: "" },
-        authorEmail: { type: String, default: "" },
-        content: { type: String, default: "" },
-    },
-    emits: ["update:authorName", "update:authorEmail", "update:content", "submit", "cancel"],
-    setup(props, { emit }) {
-        const { t } = useI18n();
-        const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500";
-        return () => h("form", { class: "space-y-3", onSubmit: (e) => { e.preventDefault(); emit("submit"); } }, [
-            h("div", { class: "grid grid-cols-1 sm:grid-cols-2 gap-3" }, [
-                h("div", [
-                    h("label", { class: "block text-sm font-medium text-secondary mb-1" }, t("comment.name")),
-                    h("input", { type: "text", value: props.authorName, required: true, maxlength: 100, class: inputClass, onInput: (e) => emit("update:authorName", e.target.value) }),
-                    props.errors.authorName ? h("p", { class: "mt-1 text-xs text-rose-500" }, props.errors.authorName) : null,
-                ]),
-                h("div", [
-                    h("label", { class: "block text-sm font-medium text-secondary mb-1" }, t("comment.email")),
-                    h("input", { type: "email", value: props.authorEmail, required: true, class: inputClass, onInput: (e) => emit("update:authorEmail", e.target.value) }),
-                    props.errors.authorEmail ? h("p", { class: "mt-1 text-xs text-rose-500" }, props.errors.authorEmail) : null,
-                ]),
-            ]),
-            h("div", [
-                h("label", { class: "block text-sm font-medium text-secondary mb-1" }, t("comment.content")),
-                h("textarea", { value: props.content, required: true, rows: 3, maxlength: 2000, class: inputClass + " resize-y", onInput: (e) => emit("update:content", e.target.value) }),
-                props.errors.content ? h("p", { class: "mt-1 text-xs text-rose-500" }, props.errors.content) : null,
-            ]),
-            h("div", { class: "flex items-center gap-2" }, [
-                h("button", { type: "submit", disabled: props.submitting, class: "inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium transition-colors" },
-                  props.submitting ? t("common.loading") : t("comment.submit")),
-                props.parentId !== null ? h("button", { type: "button", class: "text-sm text-muted hover:text-primary transition-colors", onClick: () => emit("cancel") }, t("common.cancel")) : null,
-            ]),
-        ]);
-    },
-});
-
-const ReactionBar = defineComponent({
-    props: {
-        comment: { type: Object, required: true },
-        reactionEmojis: { type: Object, default: () => ({}) },
-    },
-    emits: ["react"],
-    setup(props, { emit }) {
-        const { t } = useI18n();
-        const btnClass = "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs bg-surface-2 hover:bg-surface-3 border border-line transition-colors";
-        return () => h("div", { class: "flex items-center gap-1 mt-3 flex-wrap" }, [
-            ...Object.entries(props.reactionEmojis).map(([type, emoji]) =>
-                (props.comment.reactionCounts?.[type] ?? 0) > 0
-                    ? h("button", { type: "button", class: btnClass, onClick: () => emit("react", props.comment.id, type) },
-                        [emoji + " " + props.comment.reactionCounts[type]])
-                    : null
-            ).filter(Boolean),
-            h("div", { class: "relative group" }, [
-                h("button", { type: "button", class: btnClass + " text-muted hover:text-primary" }, ["＋ ", t("comment.react")]),
-                h("div", { class: "hidden group-hover:flex absolute left-0 top-full mt-1 z-10 gap-1 p-2 bg-surface border border-line rounded-xl shadow-lg" },
-                  Object.entries(props.reactionEmojis).map(([type, emoji]) =>
-                      h("button", { type: "button", class: "text-lg hover:scale-125 transition-transform p-1", onClick: () => emit("react", props.comment.id, type) }, emoji)
-                  )
-                ),
-            ]),
-        ]);
-    },
-});
 </script>
 
 <template>
@@ -196,18 +132,18 @@ const ReactionBar = defineComponent({
             <p v-if="!roots.length" class="text-muted text-sm mb-8">{{ t("comment.empty") }}</p>
 
             <div v-else class="space-y-6 mb-10">
-                <div v-for="comment in roots" :key="comment.id" class="bg-surface-2 rounded-lg p-5">
+                <div v-for="rootComment in roots" :key="rootComment.id" class="bg-surface-2 rounded-lg p-5">
                     <div class="flex items-center gap-3 mb-3">
-                        <span class="font-semibold text-primary text-sm">{{ comment.authorName }}</span>
-                        <time class="text-xs text-muted">{{ formatDate(comment.createdAt) }}</time>
+                        <span class="font-semibold text-primary text-sm">{{ rootComment.authorName }}</span>
+                        <time class="text-xs text-muted">{{ formatDate(rootComment.createdAt) }}</time>
                     </div>
-                    <p class="text-secondary text-sm leading-relaxed">{{ comment.content }}</p>
+                    <p class="text-secondary text-sm leading-relaxed">{{ rootComment.content }}</p>
 
-                    <ReactionBar :comment="comment" :reaction-emojis="reactionEmojis" v-on:react="react" />
+                    <PostCommentsReactionBar :comment="rootComment" :reaction-emojis="reactionEmojis" v-on:react="react" />
 
                     <!-- Flat replies -->
-                    <div v-if="replies[comment.id]?.length" class="mt-4 ml-6 space-y-3 border-l-2 border-line pl-4">
-                        <div v-for="reply in replies[comment.id]" :key="reply.id" class="bg-surface rounded-lg p-4">
+                    <div v-if="replies[rootComment.id]?.length" class="mt-4 ml-6 space-y-3 border-l-2 border-line pl-4">
+                        <div v-for="reply in replies[rootComment.id]" :key="reply.id" class="bg-surface rounded-lg p-4">
                             <div class="flex items-center gap-2 mb-2 flex-wrap">
                                 <span class="font-semibold text-primary text-sm">{{ reply.authorName }}</span>
                                 <span v-if="reply.parentAuthorName" class="text-xs text-muted">↩ {{ reply.parentAuthorName }}</span>
@@ -215,13 +151,13 @@ const ReactionBar = defineComponent({
                             </div>
                             <p class="text-secondary text-sm leading-relaxed">{{ reply.content }}</p>
 
-                            <ReactionBar :comment="reply" :reaction-emojis="reactionEmojis" v-on:react="react" />
+                            <PostCommentsReactionBar :comment="reply" :reaction-emojis="reactionEmojis" v-on:react="react" />
 
                             <button type="button" class="mt-2 text-xs text-muted hover:text-primary transition-colors" v-on:click="openReply(reply.id)">
                                 ↩ {{ t("comment.reply") }}
                             </button>
                             <div v-if="replyOpenFor === reply.id" class="mt-3">
-                                <CommentForm
+                                <PostCommentsForm
                                     :parent-id="reply.id"
                                     :submitting="submitting"
                                     :errors="errors"
@@ -238,12 +174,12 @@ const ReactionBar = defineComponent({
                         </div>
                     </div>
 
-                    <button type="button" class="mt-3 text-xs text-muted hover:text-primary transition-colors" v-on:click="openReply(comment.id)">
+                    <button type="button" class="mt-3 text-xs text-muted hover:text-primary transition-colors" v-on:click="openReply(rootComment.id)">
                         ↩ {{ t("comment.reply") }}
                     </button>
-                    <div v-if="replyOpenFor === comment.id" class="mt-3">
-                        <CommentForm
-                            :parent-id="comment.id"
+                    <div v-if="replyOpenFor === rootComment.id" class="mt-3">
+                        <PostCommentsForm
+                            :parent-id="rootComment.id"
                             :submitting="submitting"
                             :errors="errors"
                             :author-name="form.authorName"
@@ -252,7 +188,7 @@ const ReactionBar = defineComponent({
                             v-on:update:author-name="form.authorName = $event"
                             v-on:update:author-email="form.authorEmail = $event"
                             v-on:update:content="form.content = $event"
-                            v-on:submit="submitComment(comment.id, form)"
+                            v-on:submit="submitComment(rootComment.id, form)"
                             v-on:cancel="replyOpenFor = null"
                         />
                     </div>
@@ -263,7 +199,7 @@ const ReactionBar = defineComponent({
         <!-- Main comment form -->
         <div class="bg-surface border border-line rounded-xl p-6">
             <h3 class="text-lg font-semibold text-primary mb-4">{{ t("comment.form_title") }}</h3>
-            <CommentForm
+            <PostCommentsForm
                 :parent-id="null"
                 :submitting="submitting"
                 :errors="errors"

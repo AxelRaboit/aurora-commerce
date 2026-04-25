@@ -129,7 +129,7 @@ final class CommentsControllerTest extends IntegrationTestCase
     public function testDeleteComment(): void
     {
         $commentId = $this->comment->getId();
-        $this->client->request('DELETE', sprintf('/admin/comments/%d', $commentId));
+        $this->client->request('POST', sprintf('/admin/comments/%d/delete', $commentId));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());

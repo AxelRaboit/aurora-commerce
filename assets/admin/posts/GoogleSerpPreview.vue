@@ -29,12 +29,12 @@ const truncatedDesc = computed(() => {
 </script>
 
 <template>
-    <div class="max-w-[600px] p-4 border border-line rounded-lg bg-white dark:bg-zinc-950 space-y-1" style="font-family: Arial, sans-serif">
-        <div class="text-xs text-[#202124] dark:text-zinc-400 truncate">{{ displayUrl }}</div>
-        <div class="text-[20px] leading-snug text-[#1a0dab] dark:text-[#8ab4f8] truncate">
+    <div class="max-w-serp-max p-4 border border-line rounded-lg bg-white dark:bg-zinc-950 space-y-1" style="font-family: Arial, sans-serif">
+        <div class="text-xs text-serp-url dark:text-zinc-400 truncate">{{ displayUrl }}</div>
+        <div class="text-xl leading-snug text-serp-link dark:text-serp-link-dark truncate">
             {{ truncatedTitle || "&nbsp;" }}
         </div>
-        <div class="text-sm text-[#4d5156] dark:text-zinc-400 leading-relaxed" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">
+        <div class="text-sm text-serp-desc dark:text-zinc-400 leading-relaxed" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">
             {{ truncatedDesc }}
         </div>
     </div>

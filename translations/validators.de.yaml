@@ -143,3 +143,8 @@ taxonomies:
     slug_required: "Slug ist erforderlich."
     slug_format: "Der Slug darf nur Kleinbuchstaben, Zahlen, Bindestriche und Unterstriche enthalten."
     translations_required: "Mindestens eine Übersetzung ist erforderlich."
+forms:
+  errors:
+    translations_required: Mindestens eine Sprache muss ausgefüllt werden.
+    type_required: Der Feldtyp ist erforderlich.
+    field_label_required: Mindestens eine Bezeichnung ist erforderlich.

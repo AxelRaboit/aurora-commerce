@@ -20,7 +20,7 @@ const colors = {
         :is="href ? 'a' : 'button'"
         v-bind="href ? { href } : { type: 'button' }"
         :title="title"
-        class="p-1.5 text-muted hover:bg-surface-2 rounded transition-colors inline-flex"
+        class="p-1.5 text-secondary hover:bg-surface-2 rounded transition-colors inline-flex"
         :class="colors[color] ?? colors.default"
     >
         <slot />

@@ -36,4 +36,6 @@ interface UserManagerInterface
     public function consumeInvitation(User $user, string $plainPassword): void;
 
     public function findValidInvitation(string $selector, string $token): ?User;
+
+    public function canActOn(User $actor, User $target): bool;
 }

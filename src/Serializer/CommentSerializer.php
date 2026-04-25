@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Serializer;
 
 use App\Entity\Comment;
+use App\Enum\ReactionTypeEnum;
 use App\Repository\CommentReactionRepository;
 
 use const DATE_ATOM;
@@ -15,6 +16,11 @@ final readonly class CommentSerializer
         private CommentReactionRepository $commentReactionRepository,
     ) {}
 
+    /**
+     * Admin serialization — includes private fields (email, status, counts).
+     *
+     * @return array<string, mixed>
+     */
     public function serialize(Comment $comment): array
     {
         $firstTranslation = $comment->getPost()->getTranslations()->first();
@@ -38,5 +44,75 @@ final readonly class CommentSerializer
             'replyCount' => $comment->getReplies()->count(),
             'reactionCount' => $reactionCount,
         ];
+    }
+
+    /**
+     * Front serialization — public fields only, with pre-computed reaction counts.
+     *
+     * @param array<int, array<string, int>> $reactionCountsMap
+     *
+     * @return array<string, mixed>
+     */
+    public function serializeForFront(Comment $comment, array $reactionCountsMap): array
+    {
+        return [
+            'id' => $comment->getId(),
+            'authorName' => $comment->getAuthorName(),
+            'content' => $comment->getContent(),
+            'createdAt' => $comment->getCreatedAt()->format(DATE_ATOM),
+            'parentId' => $comment->getParent()?->getId(),
+            'parentAuthorName' => $comment->getParent()?->getAuthorName(),
+            'reactionCounts' => $reactionCountsMap[$comment->getId()] ?? [],
+        ];
+    }
+
+    /**
+     * Builds the front-facing comment tree: roots, replies grouped by root ID, and reaction emojis.
+     *
+     * @param Comment[]                      $comments          ordered by createdAt ASC
+     * @param array<int, array<string, int>> $reactionCountsMap
+     *
+     * @return array{roots: list<array<string,mixed>>, replies: array<int, list<array<string,mixed>>>, reactionEmojis: array<string, string>}
+     */
+    public function buildFrontTree(array $comments, array $reactionCountsMap): array
+    {
+        $commentMap = [];
+        foreach ($comments as $comment) {
+            $commentMap[(int) $comment->getId()] = $comment;
+        }
+
+        $roots = [];
+        $replies = [];
+
+        foreach ($comments as $comment) {
+            $serialized = $this->serializeForFront($comment, $reactionCountsMap);
+            if (null === $comment->getParent()) {
+                $roots[] = $serialized;
+            } else {
+                $rootId = $this->findRootId($comment, $commentMap);
+                $replies[$rootId][] = $serialized;
+            }
+        }
+
+        $reactionEmojis = [];
+        foreach (ReactionTypeEnum::cases() as $case) {
+            $reactionEmojis[$case->value] = $case->emoji();
+        }
+
+        return ['roots' => $roots, 'replies' => $replies, 'reactionEmojis' => $reactionEmojis];
+    }
+
+    /**
+     * @param array<int, Comment> $commentMap pre-built id → comment map
+     */
+    public function findRootId(Comment $comment, array $commentMap): int
+    {
+        $current = $comment;
+        while (null !== $current->getParent()) {
+            $parentId = (int) $current->getParent()->getId();
+            $current = $commentMap[$parentId] ?? $current->getParent();
+        }
+
+        return (int) $current->getId();
     }
 }

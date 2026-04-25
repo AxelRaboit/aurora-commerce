@@ -8,8 +8,12 @@ import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppNoData from "@/components/AppNoData.vue";
 import AppModal from "@/components/AppModal.vue";
+import AppBadge from "@/components/AppBadge.vue";
+import { truncate } from "@/utils/truncate.js";
+import { useDateFormat } from "@/composables/useDateFormat.js";
 
 const { t } = useI18n();
+const { formatDateShort, formatDateTime } = useDateFormat();
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -72,19 +76,13 @@ function goToPage(newPage) {
     fetchComments();
 }
 
-async function approveComment(comment) {
+async function moderateComment(comment, path, successKey, statsUpdate) {
     try {
-        const response = await fetch(props.approvePath.replace("__id__", comment.id), { method: "POST" });
+        const response = await fetch(path.replace("__id__", comment.id), { method: "POST" });
         const data = await response.json();
         if (data.ok) {
-            toast.success(t("admin.comments.approveSuccess"));
-            if (comment.status === "pending") {
-                localStats.value.pending = Math.max(0, localStats.value.pending - 1);
-                localStats.value.approved += 1;
-            } else if (comment.status === "spam") {
-                localStats.value.spam = Math.max(0, localStats.value.spam - 1);
-                localStats.value.approved += 1;
-            }
+            toast.success(t(successKey));
+            statsUpdate(comment.status);
             fetchComments();
         } else {
             toast.error(t("common.error"));
@@ -94,32 +92,24 @@ async function approveComment(comment) {
     }
 }
 
-async function spamComment(comment) {
-    try {
-        const response = await fetch(props.spamPath.replace("__id__", comment.id), { method: "POST" });
-        const data = await response.json();
-        if (data.ok) {
-            toast.success(t("admin.comments.spamSuccess"));
-            if (comment.status === "pending") {
-                localStats.value.pending = Math.max(0, localStats.value.pending - 1);
-                localStats.value.spam += 1;
-            } else if (comment.status === "approved") {
-                localStats.value.approved = Math.max(0, localStats.value.approved - 1);
-                localStats.value.spam += 1;
-            }
-            fetchComments();
-        } else {
-            toast.error(t("common.error"));
-        }
-    } catch {
-        toast.error(t("common.error"));
-    }
+function approveComment(comment) {
+    return moderateComment(comment, props.approvePath, "admin.comments.approveSuccess", (status) => {
+        if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.approved += 1; }
+        else if (status === "spam") { localStats.value.spam = Math.max(0, localStats.value.spam - 1); localStats.value.approved += 1; }
+    });
+}
+
+function spamComment(comment) {
+    return moderateComment(comment, props.spamPath, "admin.comments.spamSuccess", (status) => {
+        if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.spam += 1; }
+        else if (status === "approved") { localStats.value.approved = Math.max(0, localStats.value.approved - 1); localStats.value.spam += 1; }
+    });
 }
 
 async function deleteComment(comment) {
     if (!confirm(t("admin.comments.deleteConfirm"))) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: "DELETE" });
+        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: "POST" });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("common.deleted"));
@@ -135,16 +125,12 @@ async function deleteComment(comment) {
     }
 }
 
-function statusBadgeClass(status) {
-    if (status === "approved") return "bg-emerald-500/15 text-emerald-400";
-    if (status === "spam") return "bg-rose-500/15 text-rose-400";
-    return "bg-amber-500/15 text-amber-400";
+function statusBadgeColor(status) {
+    if (status === "approved") return "emerald";
+    if (status === "spam") return "rose";
+    return "amber";
 }
 
-function truncate(text, length) {
-    if (!text) return "";
-    return text.length > length ? text.slice(0, length) + "…" : text;
-}
 
 const viewingComment = ref(null);
 const isModerationEnabled = ref(props.moderationEnabled);
@@ -183,7 +169,7 @@ async function toggleModeration() {
             </div>
             <AppButton
                 :variant="isModerationEnabled ? 'primary' : 'secondary'"
-                size="sm"
+                size="md"
                 v-on:click="toggleModeration"
             >
                 <span class="w-2 h-2 rounded-full" :class="isModerationEnabled ? 'bg-white' : 'bg-muted'" />
@@ -191,8 +177,43 @@ async function toggleModeration() {
             </AppButton>
         </div>
 
-        <!-- Table -->
-        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
+            <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-primary text-sm">
+                            {{ comment.authorName }}
+                            <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
+                        </p>
+                        <p class="text-xs text-muted mt-0.5">{{ comment.authorEmail }}</p>
+                        <p class="text-xs text-secondary mt-1.5 line-clamp-2">{{ comment.content }}</p>
+                    </div>
+                    <AppBadge :color="statusBadgeColor(comment.status)" class="shrink-0">{{ comment.statusLabel }}</AppBadge>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                    <p class="text-xs text-muted">{{ formatDateShort(comment.createdAt) }}</p>
+                    <div class="flex items-center gap-0.5">
+                        <AppIconButton color="indigo" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                            <Eye class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                            <Check class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(comment)">
+                            <Ban class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton color="rose" :title="t('common.delete')" v-on:click="deleteComment(comment)">
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
             <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
             <table v-else class="w-full text-sm">
                 <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
@@ -201,8 +222,8 @@ async function toggleModeration() {
                         <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.comments.email') }}</th>
                         <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.comments.post') }}</th>
                         <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.content') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden sm:table-cell">{{ t('admin.comments.date') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">Statut</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.comments.date') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.status') }}</th>
                         <th class="text-right px-4 py-3 font-semibold">{{ t('common.edit') }}</th>
                     </tr>
                 </thead>
@@ -215,9 +236,9 @@ async function toggleModeration() {
                         <td class="px-4 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
                         <td class="px-4 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
                         <td class="px-4 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
-                        <td class="px-4 py-3 text-xs text-muted whitespace-nowrap hidden sm:table-cell">{{ new Date(comment.createdAt).toLocaleDateString() }}</td>
+                        <td class="px-4 py-3 text-xs text-muted whitespace-nowrap hidden md:table-cell">{{ formatDateShort(comment.createdAt) }}</td>
                         <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" :class="statusBadgeClass(comment.status)">{{ comment.statusLabel }}</span>
+                            <AppBadge :color="statusBadgeColor(comment.status)">{{ comment.statusLabel }}</AppBadge>
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
@@ -259,7 +280,7 @@ async function toggleModeration() {
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.date') }}</label>
-                    <p class="text-sm text-muted">{{ viewingComment ? new Date(viewingComment.createdAt).toLocaleString() : '' }}</p>
+                    <p class="text-sm text-muted">{{ viewingComment ? formatDateTime(viewingComment.createdAt) : '' }}</p>
                 </div>
                 <div v-if="viewingComment?.parentId" class="flex flex-col gap-1.5">
                     <label class="block text-xs text-secondary uppercase tracking-wide">En réponse à</label>

@@ -129,7 +129,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         self::assertTrue($createBody['ok'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
-        [$status, $body] = $this->jsonRequest('PUT', sprintf('/admin/themes/%d', $themeId), [
+        [$status, $body] = $this->jsonRequest('POST', sprintf('/admin/themes/%d/edit', $themeId), [
             'name' => 'Updated Name',
             'description' => 'new desc',
             'config' => [],
@@ -161,7 +161,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         self::assertTrue($createBody['ok'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
-        $this->client->request('DELETE', sprintf('/admin/themes/%d', $themeId), [], [], ['CONTENT_TYPE' => 'application/json']);
+        $this->client->request('POST', sprintf('/admin/themes/%d/delete', $themeId), [], [], ['CONTENT_TYPE' => 'application/json']);
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -173,7 +173,7 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $defaultThemeId = $this->defaultThemeId();
 
-        $this->client->request('DELETE', sprintf('/admin/themes/%d', $defaultThemeId), [], [], ['CONTENT_TYPE' => 'application/json']);
+        $this->client->request('POST', sprintf('/admin/themes/%d/delete', $defaultThemeId), [], [], ['CONTENT_TYPE' => 'application/json']);
         $response = $this->client->getResponse();
 
         self::assertSame(400, $response->getStatusCode());

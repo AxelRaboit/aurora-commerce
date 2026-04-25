@@ -12,6 +12,7 @@ use App\Enum\UserRoleEnum;
 use App\Repository\MediaRepository;
 use App\Repository\PostRepository;
 use App\Repository\TaxonomyTermRepository;
+use App\Service\SearchSnippetBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,7 @@ class SearchController extends AbstractController
         private readonly PostRepository $postRepository,
         private readonly TaxonomyTermRepository $termRepository,
         private readonly MediaRepository $mediaRepository,
+        private readonly SearchSnippetBuilder $snippetBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -45,13 +47,13 @@ class SearchController extends AbstractController
         usort($posts, static fn (Post $a, Post $b): int => ($orderById[$a->getId()] ?? PHP_INT_MAX) <=> ($orderById[$b->getId()] ?? PHP_INT_MAX));
 
         $postsSerialized = array_map(
-            static fn (Post $post): array => [
+            fn (Post $post): array => [
                 'id' => $post->getId(),
                 'title' => $post->getTranslation('fr')?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $post->getStatus()->value,
                 'postType' => $post->getPostType()->getLabel(),
                 'trashed' => $post->isTrashed(),
-                'snippet' => self::buildSnippet(
+                'snippet' => $this->snippetBuilder->build(
                     $post->getTranslation('fr')?->getSearchContent()
                     ?? ($post->getTranslations()->first() ?: null)?->getSearchContent(),
                     $query,
@@ -88,36 +90,5 @@ class SearchController extends AbstractController
             'terms' => $termsSerialized,
             'media' => $mediaSerialized,
         ]);
-    }
-
-    private static function buildSnippet(?string $content, string $query, int $radius = 60): string
-    {
-        if (null === $content || '' === $content) {
-            return '';
-        }
-
-        $lowerContent = mb_strtolower($content);
-        $lowerQuery = mb_strtolower(preg_replace('/["\-+]/', '', $query) ?? '');
-        $tokens = array_values(array_filter(explode(' ', $lowerQuery), static fn (string $token): bool => '' !== $token));
-
-        foreach ($tokens as $token) {
-            $position = mb_strpos($lowerContent, $token);
-            if (false !== $position) {
-                $start = max(0, $position - $radius);
-                $length = mb_strlen($token) + $radius * 2;
-                $snippet = mb_substr($content, $start, $length);
-                if ($start > 0) {
-                    $snippet = '…'.$snippet;
-                }
-
-                if ($start + $length < mb_strlen($content)) {
-                    $snippet .= '…';
-                }
-
-                return $snippet;
-            }
-        }
-
-        return mb_substr($content, 0, $radius * 2).(mb_strlen($content) > $radius * 2 ? '…' : '');
     }
 }
