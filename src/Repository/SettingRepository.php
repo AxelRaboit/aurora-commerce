@@ -17,6 +17,9 @@ class SettingRepository extends ServiceEntityRepository
 {
     use PaginationTrait;
 
+    /** @var array<string, string|null>|null */
+    private ?array $cache = null;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Setting::class);
@@ -24,9 +27,9 @@ class SettingRepository extends ServiceEntityRepository
 
     public function get(string $key, ?string $default = null): ?string
     {
-        $setting = $this->find($key);
+        $this->warmUp();
 
-        return $setting?->getValue() ?? $default;
+        return array_key_exists($key, $this->cache) ? ($this->cache[$key] ?? $default) : $default;
     }
 
     public function set(string $key, ?string $value): void
@@ -41,6 +44,22 @@ class SettingRepository extends ServiceEntityRepository
         }
 
         $this->getEntityManager()->flush();
+
+        if (null !== $this->cache) {
+            $this->cache[$key] = $value;
+        }
+    }
+
+    private function warmUp(): void
+    {
+        if (null !== $this->cache) {
+            return;
+        }
+
+        $this->cache = [];
+        foreach ($this->findAll() as $setting) {
+            $this->cache[$setting->getKey()] = $setting->getValue();
+        }
     }
 
     /**

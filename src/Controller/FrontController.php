@@ -30,6 +30,7 @@ use App\Service\AlternatesBuilder;
 use App\Service\BlocksRenderer;
 use App\Service\FormSubmissionValidator;
 use App\Service\FrontContext;
+use App\Service\HttpCacheService;
 use App\Service\ThemeContext;
 use App\Service\ThemeResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -66,6 +67,7 @@ class FrontController extends AbstractController
         private readonly FormManagerInterface $formManager,
         private readonly FormSerializer $formSerializer,
         private readonly FormSubmissionValidator $formSubmissionValidator,
+        private readonly HttpCacheService $httpCache,
     ) {}
 
     #[Route('/', name: 'front_root', priority: 10)]
@@ -130,7 +132,15 @@ class FrontController extends AbstractController
             ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        return $this->renderPost($post, $locale);
+        $lastModified = $post->getUpdatedAt();
+        if (($notModified = $this->httpCache->checkNotModified($request, $lastModified)) instanceof Response) {
+            return $notModified;
+        }
+
+        $response = $this->renderPost($post, $locale);
+        $this->httpCache->setPublicCache($response, $lastModified);
+
+        return $response;
     }
 
     #[Route('/{locale}/{postTypeSlug}', name: 'front_archive', requirements: ['locale' => '[a-z]{2}'], priority: 3)]
@@ -160,6 +170,8 @@ class FrontController extends AbstractController
             'posts' => $result,
             'alternates' => $this->alternatesBuilder->forRoute('front_archive', ['postTypeSlug' => $postType->getSlug()]),
         ]);
+
+        $this->httpCache->setSharedCache($response);
 
         return $this->withI18nHeaders($response, $locale);
     }
@@ -199,6 +211,8 @@ class FrontController extends AbstractController
             'posts' => $result,
             'alternates' => $this->alternatesBuilder->forTerm($taxonomy, $term),
         ]);
+
+        $this->httpCache->setSharedCache($response);
 
         return $this->withI18nHeaders($response, $locale);
     }
