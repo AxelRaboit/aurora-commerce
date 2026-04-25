@@ -17,4 +17,14 @@ class ThemeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Theme::class);
     }
+
+    public function findActive(): ?Theme
+    {
+        return $this->findOneBy(['active' => true]);
+    }
+
+    public function findBySlug(string $slug): ?Theme
+    {
+        return $this->findOneBy(['slug' => $slug]);
+    }
 }

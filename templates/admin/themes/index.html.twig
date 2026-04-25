@@ -1,0 +1,17 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ 'nav.themes'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'nav.themes'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ThemesApp', {
+    themes: themes,
+    activatePath: path('admin_themes_activate', {id: '__id__'}),
+    updatePath: path('admin_themes_update', {id: '__id__'}),
+    createPath: path('admin_themes_create'),
+    deletePath: path('admin_themes_delete', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

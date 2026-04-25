@@ -37,3 +37,11 @@ services:
     App\Twig\VersionExtension:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
+    App\Service\ThemeResolver:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Manager\ThemeManager:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

@@ -15,6 +15,8 @@ use App\Repository\TaxonomyRepository;
 use App\Repository\TaxonomyTermRepository;
 use App\Service\BlocksRenderer;
 use App\Service\FrontContext;
+use App\Service\ThemeContext;
+use App\Service\ThemeResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +33,8 @@ class FrontController extends AbstractController
         private readonly TaxonomyTermRepository $termRepository,
         private readonly BlocksRenderer $blocksRenderer,
         private readonly FrontContext $frontContext,
+        private readonly ThemeResolver $themeResolver,
+        private readonly ThemeContext $themeContext,
     ) {}
 
     #[Route('/', name: 'front_root', priority: 10)]
@@ -58,9 +62,10 @@ class FrontController extends AbstractController
             ? $this->postRepository->findPublishedByPostType($postType->getId(), (int) $request->query->get('page', 1), $this->postsPerPage(), $locale)
             : ['items' => [], 'total' => 0, 'page' => 1, 'totalPages' => 1];
 
-        $response = $this->render('front/home.html.twig', [
+        $response = $this->render($this->themeResolver->resolve('home'), [
             'locale' => $locale,
             'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
             'posts' => $result,
             'postType' => $postType,
             'alternates' => $this->buildSameRouteAlternates('front_home'),
@@ -115,9 +120,10 @@ class FrontController extends AbstractController
         $page = max(1, (int) $request->query->get('page', 1));
         $result = $this->postRepository->findPublishedByPostType($postType->getId(), $page, $this->postsPerPage(), $locale);
 
-        $response = $this->render('front/archive.html.twig', [
+        $response = $this->render($this->themeResolver->resolve('archive'), [
             'locale' => $locale,
             'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
             'postType' => $postType,
             'posts' => $result,
             'alternates' => $this->buildSameRouteAlternates('front_archive', ['postTypeSlug' => $postType->getSlug()]),
@@ -151,9 +157,10 @@ class FrontController extends AbstractController
         $page = max(1, (int) $request->query->get('page', 1));
         $result = $this->postRepository->findPublishedByTerm($term->getId(), $page, $this->postsPerPage(), $locale);
 
-        $response = $this->render('front/term.html.twig', [
+        $response = $this->render($this->themeResolver->resolve('term'), [
             'locale' => $locale,
             'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
             'taxonomy' => $taxonomy,
             'term' => $term,
             'posts' => $result,
@@ -170,9 +177,10 @@ class FrontController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $response = $this->render('front/post.html.twig', [
+        $response = $this->render($this->themeResolver->resolve('post'), [
             'locale' => $locale,
             'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
             'post' => $post,
             'translation' => $translation,
             'content' => $this->blocksRenderer->render($translation->getBlocks()),

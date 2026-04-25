@@ -40,12 +40,22 @@
     {{ vite_entry_link_tags('app') }}
 
     <link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
+    {% set cssOverrides = themeContext.cssVariableOverrides() %}
+    {% if cssOverrides %}
+    <style>:root { {{ cssOverrides|raw }} }</style>
+    {% endif %}
 </head>
 <body class="min-h-screen bg-bg text-primary flex flex-col">
-    <header class="border-b border-line bg-surface">
+    <header style="background-color: var(--th-header-bg, var(--th-surface)); border-color: var(--th-header-border, var(--color-border)); color: var(--th-header-text, var(--th-primary));" class="border-b">
         <div class="max-w-5xl mx-auto px-4 py-4 flex items-center gap-6 flex-wrap">
-            <a href="{{ path('front_home', {locale: locale}) }}" class="flex items-center gap-2 text-lg font-bold text-primary">
-                {% if siteLogoUrl %}
+            <a href="{{ path('front_home', {locale: locale}) }}" class="flex items-center gap-2 text-lg font-bold" style="color: var(--th-header-text, var(--th-primary));">
+                {% set themeLogoUrl = themeContext.headerLogoUrl() %}
+                {% set themeText = themeContext.headerCustomText() %}
+                {% if themeLogoUrl %}
+                    <img src="{{ themeLogoUrl }}" alt="{{ context.siteName }}" class="h-8 w-auto object-contain">
+                {% elseif themeText %}
+                    {{ themeText }}
+                {% elseif siteLogoUrl %}
                     <img src="{{ siteLogoUrl }}" alt="{{ context.siteName }}" class="h-8 w-auto object-contain">
                 {% else %}
                     {{ context.siteName }}
@@ -74,9 +84,9 @@
         {% block body %}{% endblock %}
     </main>
 
-    <footer class="border-t border-line bg-surface mt-12">
-        <div class="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-muted">
-            © {{ 'now'|date('Y') }} {{ context.siteName }}
+    <footer style="background-color: var(--th-footer-bg, var(--th-surface)); border-color: var(--th-footer-border, var(--color-border));" class="border-t mt-12">
+        <div class="max-w-5xl mx-auto px-4 py-6 text-center text-xs" style="color: var(--th-footer-text, var(--th-muted));">
+            {{ themeContext.footerText(context.siteName) }}
         </div>
     </footer>
 </body>

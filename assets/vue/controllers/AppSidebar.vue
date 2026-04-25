@@ -25,6 +25,7 @@ import {
     Menu as MenuIcon,
     X,
     Settings,
+    Palette,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -47,6 +48,7 @@ const props = defineProps({
     isAdmin: { type: Boolean, default: false },
     isDev: { type: Boolean, default: false },
     settingsPath: { type: String, default: "" },
+    themesPath: { type: String, default: "" },
     mailpitUrl: { type: String, default: "" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
@@ -81,7 +83,7 @@ const navItems = [
     { route: "admin_taxonomies", path: props.taxonomiesPath, label: t("nav.taxonomies"), icon: TagsIcon, activeColor: "indigo" },
     ...(props.isAdmin ? [{ route: "admin_users", path: props.usersPath, label: t("nav.users"), icon: UsersIcon, activeColor: "indigo" }] : []),
     ...(props.settingsPath !== "" ? [{ route: "admin_settings", path: props.settingsPath, label: t("nav.settings"), icon: Settings, activeColor: "indigo" }] : []),
-    { route: "__front", path: props.frontPath, label: t("nav.viewSite"), icon: Globe, activeColor: "emerald", external: true },
+    ...(props.themesPath !== "" ? [{ route: "admin_themes", path: props.themesPath, label: t("nav.themes"), icon: Palette, activeColor: "indigo" }] : []),
     ...(props.isDev ? [{ route: "dev_", path: props.administrationPath, label: t("nav.administration"), icon: Shield, activeColor: "rose" }] : []),
 ];
 
@@ -132,6 +134,16 @@ function isActive(route) {
                 <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
                 <p class="text-xs text-muted truncate">{{ userEmail }}</p>
             </div>
+        </div>
+
+        <div class="px-3 py-2 border-b border-line shrink-0">
+            <a :href="frontPath" target="_blank" rel="noopener" class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors group relative">
+                <Globe class="w-5 h-5 shrink-0 text-muted group-hover:text-emerald-400 transition-colors" :stroke-width="2" />
+                <span class="si-label truncate">{{ t("nav.viewSite") }}</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.viewSite") }}
+                </span>
+            </a>
         </div>
 
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
@@ -248,7 +260,15 @@ function isActive(route) {
                 </AppButton>
             </div>
 
-            <nav class="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 space-y-0.5">
+            <div class="shrink-0 px-3 pt-3 pb-1 space-y-1">
+                <a :href="frontPath" target="_blank" rel="noopener" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+                    <Globe class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
+                    {{ t("nav.viewSite") }}
+                </a>
+                <hr class="border-line mt-1">
+            </div>
+
+            <nav class="flex-1 overflow-y-auto scrollbar-thin px-3 py-2 space-y-0.5">
                 <a
                     v-for="item in navItems"
                     :key="item.route"

@@ -1,8 +1,9 @@
-{% extends 'front/layout.html.twig' %}
+{% extends 'themes/default/layout.html.twig' %}
 
 {% block title %}{{ context.siteName }}{% endblock %}
 
 {% block body %}
+
     <section>
         <h1 class="text-3xl font-bold mb-6">{{ context.siteName }}</h1>
         {% if posts.items|length == 0 %}
@@ -10,11 +11,11 @@
         {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for post in posts.items %}
-                    {{ include('front/_post_card.html.twig', {post: post, locale: locale}) }}
+                    {{ include('themes/default/_post_card.html.twig', {post: post, locale: locale}) }}
                 {% endfor %}
             </div>
             {% if posts.totalPages > 1 %}
-                {{ include('front/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'front_home', params: {locale: locale}}) }}
+                {{ include('themes/default/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'front_home', params: {locale: locale}}) }}
             {% endif %}
         {% endif %}
     </section>
