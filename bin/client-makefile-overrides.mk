@@ -1,6 +1,8 @@
 # === Client overrides ===
 # These targets replace aurora's defaults with client-specific behaviour.
 
+install: install-dev ## Install the project (alias for install-dev)
+
 install-dev: ## Install for local development
 	$(COMPOSER) install --working-dir=$(AURORA)
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
