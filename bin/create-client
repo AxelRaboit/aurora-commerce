@@ -1,0 +1,379 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Aurora — create-client
+# Scaffolds a new client project that uses Aurora as a git submodule.
+#
+# Usage:
+#   bin/create-client <project-name> [destination-dir]
+#
+# Examples:
+#   bin/create-client my-client
+#   bin/create-client my-client ~/projects/my-client
+# ---------------------------------------------------------------------------
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+info()    { echo -e "${CYAN}→${RESET} $*"; }
+success() { echo -e "${GREEN}✓${RESET} $*"; }
+error()   { echo -e "${RED}✗ $*${RESET}" >&2; exit 1; }
+
+# ---------------------------------------------------------------------------
+# Args
+# ---------------------------------------------------------------------------
+
+if [[ $# -lt 1 ]]; then
+    echo -e "${BOLD}Usage:${RESET} bin/create-client <project-name> [destination-dir]"
+    exit 1
+fi
+
+PROJECT_NAME="$1"
+DEST="${2:-$(dirname "$(pwd)")/${PROJECT_NAME}}"
+AURORA_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+AURORA_REMOTE="$(git -C "$AURORA_DIR" remote get-url origin 2>/dev/null || echo 'git@github.com:AxelRaboit/aurora.git')"
+VENDOR_NAME="$(basename "$(dirname "$AURORA_REMOTE")" | tr '[:upper:]' '[:lower:]')"
+
+if [[ -d "$DEST" ]]; then
+    error "Directory already exists: $DEST"
+fi
+
+echo ""
+echo -e "${BOLD}Creating Aurora client project${RESET}"
+echo -e "  Name   : ${CYAN}${PROJECT_NAME}${RESET}"
+echo -e "  Path   : ${CYAN}${DEST}${RESET}"
+echo -e "  Aurora : ${CYAN}${AURORA_REMOTE}${RESET}"
+echo ""
+
+# ---------------------------------------------------------------------------
+# Directory structure
+# ---------------------------------------------------------------------------
+
+info "Creating directory structure..."
+mkdir -p "$DEST"/{bin,public,src/Custom,templates/Custom,config,migrations}
+touch "$DEST/src/Custom/.gitkeep"
+touch "$DEST/templates/Custom/.gitkeep"
+touch "$DEST/migrations/.gitkeep"
+
+# ---------------------------------------------------------------------------
+# composer.json
+# ---------------------------------------------------------------------------
+
+info "Writing composer.json..."
+cat > "$DEST/composer.json" <<EOF
+{
+    "name": "${VENDOR_NAME}/${PROJECT_NAME}",
+    "description": "Aurora-based client application",
+    "type": "project",
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.4",
+        "symfony/runtime": "7.4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\\\": "vendor/aurora/src/",
+            "App\\\\Custom\\\\": "src/Custom/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\\\Tests\\\\": "vendor/aurora/tests/",
+            "App\\\\Custom\\\\Tests\\\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
+    }
+}
+EOF
+
+# ---------------------------------------------------------------------------
+# .env
+# ---------------------------------------------------------------------------
+
+info "Writing .env..."
+cat > "$DEST/.env" <<EOF
+###> symfony/framework-bundle ###
+APP_ENV=dev
+APP_SECRET=change-me-in-env-local
+APP_SHARE_DIR=var/share
+###< symfony/framework-bundle ###
+
+###> symfony/routing ###
+DEFAULT_URI=http://localhost
+###< symfony/routing ###
+
+###> doctrine/doctrine-bundle ###
+DATABASE_URL="postgresql://app:!ChangeMe!@127.0.0.1:5432/${PROJECT_NAME}?serverVersion=18&charset=utf8"
+###< doctrine/doctrine-bundle ###
+
+###> symfony/messenger ###
+MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+###< symfony/messenger ###
+
+###> symfony/mailer ###
+MAILER_DSN=null://null
+MAILER_FROM=noreply@${PROJECT_NAME}.local
+ADMIN_EMAIL=admin@${PROJECT_NAME}.local
+###< symfony/mailer ###
+
+APP_NAME=${PROJECT_NAME}
+EOF
+
+# ---------------------------------------------------------------------------
+# .env.local.example
+# ---------------------------------------------------------------------------
+
+cat > "$DEST/.env.local.example" <<EOF
+# Copy this file to .env.local and fill in your local values.
+# .env.local is gitignored and never committed.
+
+APP_SECRET=your-random-secret-here
+DATABASE_URL="postgresql://app:password@127.0.0.1:5432/${PROJECT_NAME}?serverVersion=18&charset=utf8"
+EOF
+
+# ---------------------------------------------------------------------------
+# .gitignore
+# ---------------------------------------------------------------------------
+
+info "Writing .gitignore..."
+cat > "$DEST/.gitignore" <<EOF
+/.env.local
+/.env.*.local
+
+# Ignore Composer-generated vendor files but keep the aurora submodule
+/vendor/*
+!/vendor/aurora
+/vendor/aurora/vendor/
+/vendor/aurora/var/
+/vendor/aurora/public/build/
+/vendor/aurora/public/bundles/
+/vendor/aurora/node_modules/
+/vendor/aurora/.env.local
+/vendor/aurora/.env.*.local
+
+/var/
+/node_modules/
+/public/build/
+/public/bundles/
+
+/composer.lock
+/package-lock.json
+EOF
+
+# ---------------------------------------------------------------------------
+# .gitmodules
+# ---------------------------------------------------------------------------
+
+info "Writing .gitmodules..."
+cat > "$DEST/.gitmodules" <<EOF
+[submodule "vendor/aurora"]
+	path = vendor/aurora
+	url = ${AURORA_REMOTE}
+EOF
+
+# ---------------------------------------------------------------------------
+# bin/console
+# ---------------------------------------------------------------------------
+
+info "Writing bin/console..."
+cat > "$DEST/bin/console" <<'EOF'
+#!/usr/bin/env php
+<?php
+
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+
+$_SERVER['APP_CACHE_DIR'] ??= dirname(__DIR__).'/var/cache';
+$_SERVER['APP_LOG_DIR'] ??= dirname(__DIR__).'/var/log';
+
+require_once dirname(__DIR__).'/vendor/aurora/vendor/autoload.php';
+
+if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {
+    throw new LogicException('Symfony Runtime is missing. Run "composer install".');
+}
+
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+return function (array $context) {
+    return new Application(new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']));
+};
+EOF
+chmod +x "$DEST/bin/console"
+
+# ---------------------------------------------------------------------------
+# public/index.php
+# ---------------------------------------------------------------------------
+
+info "Writing public/index.php..."
+cat > "$DEST/public/index.php" <<'EOF'
+<?php
+
+$_SERVER['APP_CACHE_DIR'] ??= dirname(__DIR__).'/var/cache';
+$_SERVER['APP_LOG_DIR'] ??= dirname(__DIR__).'/var/log';
+
+require_once dirname(__DIR__).'/vendor/aurora/vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+return static function (array $context) {
+    return new \App\Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+};
+EOF
+
+# ---------------------------------------------------------------------------
+# config files
+# ---------------------------------------------------------------------------
+
+info "Writing config files..."
+
+cat > "$DEST/config/services-custom.yaml" <<'EOF'
+# Client-specific services.
+# Aurora auto-loads this file — declare App\Custom\* services here.
+#
+# services:
+#     _defaults:
+#         autowire: true
+#         autoconfigure: true
+#
+#     App\Custom\:
+#         resource: '../src/Custom/'
+EOF
+
+cat > "$DEST/config/routes-custom.yaml" <<'EOF'
+# Client-specific routes.
+# Aurora auto-loads this file — add custom controllers here.
+#
+# custom_controllers:
+#     resource:
+#         path: ../src/Custom/Controller/
+#         namespace: App\Custom\Controller
+#     type: attribute
+EOF
+
+cat > "$DEST/config/packages-custom.yaml" <<'EOF'
+# Client-specific bundle configuration (Doctrine, Twig, Mailer…).
+# Aurora auto-loads this file after its own packages config.
+#
+# To add a custom entity:
+#
+# doctrine:
+#     orm:
+#         mappings:
+#             AppCustom:
+#                 type: attribute
+#                 is_bundle: false
+#                 dir: '%aurora.client_dir%/src/Custom'
+#                 prefix: 'App\Custom'
+#                 alias: AppCustom
+#
+# doctrine_migrations:
+#     migrations_paths:
+#         'ClientMigrations': '%aurora.client_dir%/migrations'
+EOF
+
+# ---------------------------------------------------------------------------
+# README.md
+# ---------------------------------------------------------------------------
+
+info "Writing README.md..."
+cat > "$DEST/README.md" <<EOF
+# ${PROJECT_NAME}
+
+A client application built on top of [Aurora](${AURORA_REMOTE}).
+
+## Setup
+
+\`\`\`bash
+git clone --recurse-submodules <this-repo>
+cd ${PROJECT_NAME}
+cp .env.local.example .env.local   # fill in your local values
+composer install
+php bin/console doctrine:migrations:migrate
+\`\`\`
+
+If you cloned without \`--recurse-submodules\`:
+\`\`\`bash
+git submodule update --init --recursive
+\`\`\`
+
+## Structure
+
+\`\`\`
+${PROJECT_NAME}/
+├── vendor/aurora/              # Aurora core (git submodule, read-only)
+├── src/Custom/                 # Client PHP code — namespace App\Custom\*
+├── templates/Custom/           # Client Twig templates
+├── migrations/                 # Client-specific Doctrine migrations
+├── config/
+│   ├── packages-custom.yaml    # Bundle config (Doctrine mappings, etc.)
+│   ├── services-custom.yaml    # Service definitions / decorators
+│   └── routes-custom.yaml      # Custom routes
+├── bin/console
+├── public/index.php
+└── .env
+\`\`\`
+
+## Updating Aurora
+
+\`\`\`bash
+git submodule update --remote vendor/aurora
+git add vendor/aurora
+git commit -m "chore: bump aurora"
+\`\`\`
+
+## Extension points
+
+See \`vendor/aurora/EXTENDING.md\` for the full contract.
+
+| What | Where | How |
+|------|-------|-----|
+| New service | \`src/Custom/Service/\` | \`services-custom.yaml\` |
+| Override Aurora service | \`src/Custom/Service/\` | \`#[AsDecorator]\` |
+| Event listener | \`src/Custom/EventSubscriber/\` | \`#[AsEventListener]\` |
+| New page | \`src/Custom/Controller/\` | \`routes-custom.yaml\` |
+| Override template | \`templates/Custom/\` | mirror Aurora's path |
+| Custom entity | \`src/Custom/Entity/\` | \`packages-custom.yaml\` |
+EOF
+
+# ---------------------------------------------------------------------------
+# Git init + submodule
+# ---------------------------------------------------------------------------
+
+info "Initialising git repository..."
+git -C "$DEST" init -q
+git -C "$DEST" add .
+
+info "Adding Aurora as git submodule..."
+git -C "$DEST" submodule add "$AURORA_REMOTE" vendor/aurora
+
+# ---------------------------------------------------------------------------
+# composer install
+# ---------------------------------------------------------------------------
+
+info "Running composer install..."
+composer install -q --working-dir="$DEST"
+
+# ---------------------------------------------------------------------------
+# Done
+# ---------------------------------------------------------------------------
+
+echo ""
+success "Project created at ${BOLD}${DEST}${RESET}"
+echo ""
+echo -e "  Next steps:"
+echo -e "    1. ${CYAN}cd ${DEST}${RESET}"
+echo -e "    2. ${CYAN}cp .env.local.example .env.local${RESET}  — set your DB credentials"
+echo -e "    3. ${CYAN}php bin/console doctrine:migrations:migrate${RESET}"
+echo -e "    4. ${CYAN}php bin/console about${RESET}  — verify the app boots"
+echo ""

@@ -1,6 +1,6 @@
 # Extending Aurora
 
-Aurora is designed to be used as a **template/core** for client applications.
+Aurora is designed to be used as a **core** for client applications.
 Each client lives in its own git repository and consumes Aurora as a git
 submodule under `vendor/aurora/`.
 
@@ -9,32 +9,69 @@ without ever modifying core files. Anything documented here is considered
 part of the public extension surface and won't be broken without a major
 version bump.
 
-## High-level model
+## Creating a new client project
+
+Run the scaffold script from inside aurora-core:
+
+```bash
+bin/create-client <project-name> [destination-dir]
+
+# Examples
+bin/create-client acme-corp
+bin/create-client acme-corp ~/projects/acme-corp
+```
+
+The script creates the full project structure, initialises git, adds Aurora
+as a submodule, and runs `composer install`.
+
+## Project structure
 
 ```
 client-app/
-├── vendor/aurora/        # this repo (submodule, read-only for the client)
-├── src/Custom/           # App\Custom\* — the client's PHP code
-├── templates/Custom/     # client templates that override Aurora's
+├── vendor/aurora/              # Aurora core (git submodule, read-only)
+├── src/Custom/                 # App\Custom\* — client PHP code
+├── templates/Custom/           # Client Twig templates
+├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
-│   ├── services-custom.yaml
-│   └── routes-custom.yaml
-└── .env                  # overrides vendor/aurora/.env
+│   ├── packages-custom.yaml    # Bundle config (Doctrine, Twig, Mailer…)
+│   ├── services-custom.yaml    # Service definitions / decorators
+│   └── routes-custom.yaml      # Custom routes
+├── bin/console                 # Entry point — delegates to Aurora's Kernel
+├── public/index.php            # Web entry point
+└── .env                        # Client env overrides
 ```
 
 Rule of thumb: **the client never edits files under `vendor/aurora/`.** All
-customization happens via the extension points below. Updating Aurora is
+customisation happens through the extension points below. Updating Aurora is
 then a one-liner (`git submodule update --remote vendor/aurora`).
+
+## How Aurora loads client files
+
+Aurora's `Kernel` automatically detects when it runs as a submodule inside a
+`vendor/` directory. When detected, it:
+
+1. Loads `config/packages-custom.yaml` — bundle configuration (Doctrine mappings, etc.)
+2. Loads `config/services-custom.yaml` — service definitions
+3. Adds `templates/` to Twig's lookup path
+4. Loads `config/routes-custom.yaml` — custom routes
+5. Exposes `%aurora.client_dir%` as a Symfony parameter pointing to the client root
+
+No manual wiring required — the three config files are the entire contract.
+
+---
 
 ## Extension points
 
 ### 1. Services
 
-Add classes under `src/Custom/`. Register them in `config/services-custom.yaml`:
+Add classes under `src/Custom/`. Declare the namespace in `config/services-custom.yaml`:
 
 ```yaml
 services:
-    _defaults: { autowire: true, autoconfigure: true }
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
     App\Custom\:
         resource: '../src/Custom/'
 ```
@@ -54,21 +91,36 @@ final class CustomThemeContext extends ThemeContext
 {
     public function primaryColor(): string
     {
-        return '#ff0066'; // client-specific brand colour
+        return '#ff0066';
     }
 }
 ```
 
-### 3. Event listeners / subscribers
+### 3. Event listeners
 
-Hook into Aurora's flow via `#[AsEventListener]` or by implementing
-`EventSubscriberInterface`. Aurora dispatches domain events for things like
-user creation, post publishing, order placement, etc. (see
-`src/*/Event/` for the catalog).
+Hook into Aurora's flow via `#[AsEventListener]`:
+
+```php
+namespace App\Custom\EventSubscriber;
+
+use App\Module\Ecommerce\Event\OrderCreatedEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener(event: OrderCreatedEvent::class)]
+final class OrderSubscriber
+{
+    public function __invoke(OrderCreatedEvent $event): void
+    {
+        // send confirmation email, notify ERP, etc.
+    }
+}
+```
+
+See `src/*/Event/` in aurora for the full catalog of domain events.
 
 ### 4. Routes & controllers
 
-Place controllers under `src/Custom/Controller/`. They're picked up via
+Place controllers under `src/Custom/Controller/` and declare them in
 `config/routes-custom.yaml`:
 
 ```yaml
@@ -81,59 +133,116 @@ custom_controllers:
 
 ### 5. Twig templates
 
-Override any Aurora template by mirroring its path under `templates/Custom/`.
-The client's `twig.yaml` registers `templates/Custom/` ahead of
-`vendor/aurora/templates/`, so the override wins.
-
-Example — to customize the admin layout, the client creates:
+The client's `templates/` directory is registered in Twig's path. To override
+an Aurora template, mirror its path:
 
 ```
-templates/Custom/Core/admin/layout.html.twig
+# Aurora template
+vendor/aurora/templates/Core/admin/layout.html.twig
+
+# Client override
+templates/Core/admin/layout.html.twig
 ```
 
-…and Symfony resolves it before `vendor/aurora/templates/Core/admin/layout.html.twig`.
+To add new templates (not overrides), place them anywhere under `templates/`:
 
-### 6. Environment variables
+```twig
+{# templates/Custom/invoice.html.twig #}
+{% extends 'Core/admin/layout.html.twig' %}
+```
 
-`.env` in the client root is loaded **after** `vendor/aurora/.env`, so any
-variable redefined in the client overrides Aurora's default. Common ones:
+### 6. Custom entities & migrations
+
+Declare the Doctrine mapping and a separate migrations path in
+`config/packages-custom.yaml`:
+
+```yaml
+doctrine:
+    orm:
+        mappings:
+            AppCustom:
+                type: attribute
+                is_bundle: false
+                dir: '%aurora.client_dir%/src/Custom'
+                prefix: 'App\Custom'
+                alias: AppCustom
+
+doctrine_migrations:
+    migrations_paths:
+        'ClientMigrations': '%aurora.client_dir%/migrations'
+```
+
+Create the entity in `src/Custom/Entity/`:
+
+```php
+namespace App\Custom\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+class Contract
+{
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private int $id;
+}
+```
+
+Then generate and run the migration:
+
+```bash
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
+```
+
+### 7. Bundle configuration
+
+Any Symfony bundle configuration (Twig globals, rate limiter rules…) goes in
+`config/packages-custom.yaml`:
+
+```yaml
+twig:
+    globals:
+        client_name: '%env(APP_NAME)%'
+```
+
+### 8. Environment variables
+
+`.env` in the client root is loaded by the runtime. Redefine any Aurora
+default here. Common overrides:
 
 - `APP_NAME`, `APP_SECRET`
 - `DATABASE_URL`
 - `MAILER_DSN`, `MAILER_FROM`, `ADMIN_EMAIL`
 
-### 7. Theme & branding
+Never commit secrets — use `.env.local` (gitignored) for local values.
 
-Clients should not hardcode a brand colour in templates or CSS. Instead,
-configure the active theme's `primary_color` (admin UI) — the runtime
-`ThemeContext::primaryColorCss()` will regenerate the entire accent palette
-(50 → 950) from that single seed.
+### 9. Theme & branding
 
-For deeper branding (logo, footer text, header text), use the theme config
-fields surfaced by `ThemeContext`.
+Configure the active theme's `primary_color` in the admin UI — `ThemeContext`
+regenerates the full accent palette (50 → 950) from that single seed.
+
+For deeper branding (logo, footer, header text), use the theme config fields
+surfaced by `ThemeContext`.
+
+---
 
 ## Updating Aurora in a client
 
 ```bash
-cd client-app
 git submodule update --remote vendor/aurora
 git add vendor/aurora
 git commit -m "chore: bump aurora to <sha>"
 ```
 
-If Aurora introduces breaking changes that affect a client's customizations,
-those will be called out in Aurora's `CHANGELOG.md` under a `BREAKING:` line.
+Breaking changes are listed in Aurora's `CHANGELOG.md` under a `BREAKING:` line.
+
+---
 
 ## What is NOT an extension point
 
-The following are considered internal implementation details and may change
-without notice:
+The following are internal and may change without notice:
 
 - Private methods of any service
-- Internal CSS variable names that aren't `--th-*` or `--color-*`
+- Internal CSS variable names not prefixed with `--th-*` or `--color-*`
 - Database migration internals
-- Class names of internal helpers (anything not under a `*\Contract\` or
-  `*\Api\` namespace)
-
-If a client's customization relies on one of those, it may break on a
-submodule update — that's the expected trade-off.
+- Class names of helpers not under a `*\Contract\` or `*\Api\` namespace
