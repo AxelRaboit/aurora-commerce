@@ -307,112 +307,19 @@ EOF
 # ---------------------------------------------------------------------------
 
 info "Writing Makefile..."
-cat > "$DEST/Makefile" <<'MAKEFILE'
-SHELL := /bin/bash
+cp "$AURORA_DIR/Makefile" "$DEST/Makefile"
 
-PHP_BIN  = php
-CONSOLE  = $(PHP_BIN) bin/console
-COMPOSER = composer
-PNPM     = pnpm
+# Change AURORA = . to AURORA = vendor/aurora
+sed -i 's|^AURORA        = \.$|AURORA        = vendor/aurora|' "$DEST/Makefile"
 
-# === Setup ===
-install: ## Install dependencies and set up the project
-	$(COMPOSER) install --working-dir=vendor/aurora
-	$(COMPOSER) install
-	cd vendor/aurora && $(PNPM) install
-	make db-create
-	make migrate
+# Remove targets that will be overridden by client-specific versions (avoids make warnings)
+for target in install-dev install-prod deploy-prod aurora-update; do
+    awk -v t="$target" '/^[a-zA-Z]/{ in_target=($0 ~ "^"t":") } !in_target{ print }' \
+        "$DEST/Makefile" > "$DEST/Makefile.tmp" && mv "$DEST/Makefile.tmp" "$DEST/Makefile"
+done
 
-setup-dirs: ## Create required runtime directories
-	@mkdir -p var/cache var/log
-	@echo "✅ Runtime directories created"
-
-# === Server ===
-start: ## Start the Symfony dev server + Vite dev server
-	symfony server:start -d
-	cd vendor/aurora && $(PNPM) run dev
-
-start-no-tls: ## Start without TLS + Vite dev server
-	symfony server:start --no-tls -d
-	cd vendor/aurora && $(PNPM) run dev
-
-stop: ## Stop the Symfony dev server
-	symfony server:stop
-
-# === Symfony ===
-about: ## Show app info
-	$(CONSOLE) about
-
-cc: ## Clear cache (dev)
-	$(CONSOLE) cache:clear
-
-cc-prod: ## Clear and warm up production cache
-	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod
-
-routes: ## List all registered routes
-	$(CONSOLE) debug:router --show-controllers
-
-sf: ## Run any Symfony console command (usage: make sf CMD="debug:container")
-	$(CONSOLE) $(CMD)
-
-# === Database ===
-db-create: ## Create the database
-	$(CONSOLE) doctrine:database:create --if-not-exists
-
-db-drop: ## Drop the database
-	$(CONSOLE) doctrine:database:drop --force --if-exists
-
-migrate: ## Run pending migrations
-	$(CONSOLE) doctrine:migrations:migrate --no-interaction
-
-migration-diff: ## Generate a migration from entity changes
-	$(CONSOLE) doctrine:migrations:diff
-
-migration-generate: ## Generate a blank migration
-	$(CONSOLE) doctrine:migrations:generate
-
-schema-validate: ## Validate the Doctrine schema
-	$(CONSOLE) doctrine:schema:validate -vvv
-
-fixtures: ## Drop DB, re-run migrations and load fixtures
-	$(CONSOLE) doctrine:database:drop --force --if-exists
-	$(CONSOLE) doctrine:database:create --if-not-exists
-	$(CONSOLE) doctrine:migrations:migrate --no-interaction
-	$(CONSOLE) doctrine:fixtures:load --no-interaction
-	@echo "✅ Fixtures loaded"
-
-# === Tests ===
-test: db-test ## Run all backend tests
-	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox
-
-test-unit: ## Run unit tests
-	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox --testsuite=Unit
-
-test-integration: db-test ## Run integration tests
-	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox --testsuite=Integration
-
-db-test: ## Create and migrate the test database
-	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
-	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
-
-# === Aurora ===
-aurora-update: ## Pull latest Aurora changes
-	git submodule update --remote vendor/aurora
-	$(COMPOSER) install --working-dir=vendor/aurora
-	make migrate
-	@echo "✅ Aurora updated"
-
-aurora-sync-params: ## Synchronise Aurora application parameters
-	$(CONSOLE) aurora:application-parameter
-
-aurora-sync-menus: ## Sync Aurora menu locations
-	$(CONSOLE) aurora:menus:sync
-
-# === Help ===
-.PHONY: help
-help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-28s\033[0m %s\n", $$1, $$2}'
-MAKEFILE
+# Append client-specific overrides from dedicated file
+cat "$AURORA_DIR/bin/client-makefile-overrides.mk" >> "$DEST/Makefile"
 
 # ---------------------------------------------------------------------------
 # README.md
@@ -495,6 +402,9 @@ git -C "$DEST" submodule add "$AURORA_REMOTE" vendor/aurora
 
 info "Running composer install in Aurora..."
 composer install -q --working-dir="$DEST/vendor/aurora"
+
+info "Running pnpm install in Aurora..."
+pnpm install -C "$DEST/vendor/aurora" --silent
 
 info "Running composer install in client..."
 composer install -q --working-dir="$DEST"

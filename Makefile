@@ -1,13 +1,15 @@
 SHELL := /bin/bash
+
 # === Variables ===
-PHP_BIN = php
-CONSOLE = $(PHP_BIN) bin/console
-COMPOSER = composer
-PNPM = pnpm
-PHP_CS_FIXER = $(PHP_BIN) tools/php-cs-fixer/vendor/bin/php-cs-fixer
-TWIG_CS_FIXER = $(PHP_BIN) tools/twig-cs-fixer/vendor/bin/twig-cs-fixer
-PHPSTAN = $(PHP_BIN) tools/phpstan/vendor/bin/phpstan
-RECTOR = $(PHP_BIN) tools/rector/vendor/bin/rector
+AURORA        = .
+PHP_BIN       = php
+CONSOLE       = $(PHP_BIN) bin/console
+COMPOSER      = composer
+PNPM          = pnpm
+PHP_CS_FIXER  = $(PHP_BIN) $(AURORA)/tools/php-cs-fixer/vendor/bin/php-cs-fixer
+TWIG_CS_FIXER = $(PHP_BIN) $(AURORA)/tools/twig-cs-fixer/vendor/bin/twig-cs-fixer
+PHPSTAN       = $(PHP_BIN) $(AURORA)/tools/phpstan/vendor/bin/phpstan
+RECTOR        = $(PHP_BIN) $(AURORA)/tools/rector/vendor/bin/rector
 
 # === Build Commands ===
 pnpm-setup: ## Setup pnpm via corepack (usage: make pnpm-setup VERSION=10.11.0)
@@ -19,26 +21,28 @@ pnpm-setup: ## Setup pnpm via corepack (usage: make pnpm-setup VERSION=10.11.0)
 	corepack prepare pnpm@$(VERSION) --activate
 	@echo "PNPM $(VERSION) has been activated via corepack"
 
-build:
-	$(PNPM) run build
+build: ## Build assets for production
+	$(PNPM) --dir=$(AURORA) run build
 
-production:
-	$(PNPM) install --frozen-lockfile
-	$(PNPM) run build
+dev: ## Start Vite dev server
+	$(PNPM) --dir=$(AURORA) run dev
 
+production: ## Install + build for production
+	$(PNPM) --dir=$(AURORA) install --frozen-lockfile
+	$(PNPM) --dir=$(AURORA) run build
 
 # === Install & Update ===
 setup-dirs: ## Create required runtime directories
 	@mkdir -p var/cache var/log
 	@echo "✅ Runtime directories created"
 
-install-dev:
-	$(COMPOSER) install
-	$(COMPOSER) install --working-dir=tools/php-cs-fixer
-	$(COMPOSER) install --working-dir=tools/twig-cs-fixer
-	$(COMPOSER) install --working-dir=tools/rector
-	$(COMPOSER) install --working-dir=tools/phpstan
-	$(PNPM) install
+install-dev: ## Install for local development
+	$(COMPOSER) install --working-dir=$(AURORA)
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
+	$(PNPM) --dir=$(AURORA) install
 	make setup-dirs
 	make migrate
 	make sync-params
@@ -46,9 +50,9 @@ install-dev:
 	make i18n
 	make dev
 
-install-prod:
-	$(COMPOSER) install --no-dev --optimize-autoloader
-	$(PNPM) install --frozen-lockfile
+install-prod: ## Install for production
+	$(COMPOSER) install --no-dev --optimize-autoloader --working-dir=$(AURORA)
+	$(PNPM) --dir=$(AURORA) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
 	make i18n
@@ -63,31 +67,31 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	fi; \
 	echo "🚀 Deploying version $$APP_VERSION..."; \
 	echo "$$APP_VERSION" > VERSION; \
-	$(COMPOSER) install --no-dev --optimize-autoloader; \
-	$(PNPM) install --frozen-lockfile; \
+	$(COMPOSER) install --no-dev --optimize-autoloader --working-dir=$(AURORA); \
+	$(PNPM) --dir=$(AURORA) install --frozen-lockfile; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) aurora:application-parameter; \
 	$(CONSOLE) aurora:menus:sync; \
 	$(CONSOLE) app:translations:dump-js; \
-	$(PNPM) run build; \
+	$(PNPM) --dir=$(AURORA) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
 
-update:
-	$(COMPOSER) update
-	$(COMPOSER) update --working-dir=tools/php-cs-fixer
-	$(COMPOSER) update --working-dir=tools/twig-cs-fixer
-	$(COMPOSER) update --working-dir=tools/rector
-	$(COMPOSER) update --working-dir=tools/phpstan
+update: ## Update all dependencies
+	$(COMPOSER) update --working-dir=$(AURORA)
+	$(COMPOSER) update --working-dir=$(AURORA)/tools/php-cs-fixer
+	$(COMPOSER) update --working-dir=$(AURORA)/tools/twig-cs-fixer
+	$(COMPOSER) update --working-dir=$(AURORA)/tools/rector
+	$(COMPOSER) update --working-dir=$(AURORA)/tools/phpstan
 
 autoload: ## Regenerate autoloading according to PSR4
-	$(COMPOSER) dump-autoload
+	$(COMPOSER) dump-autoload --working-dir=$(AURORA)
 
 autoload-opti: ## Optimize autoloading for caching
-	$(COMPOSER) dump-autoload --optimize
+	$(COMPOSER) dump-autoload --optimize --working-dir=$(AURORA)
 
 outdated: ## Show outdated packages
-	$(COMPOSER) outdated
+	$(COMPOSER) outdated --working-dir=$(AURORA)
 
 # === Release ===
 tag: ## Create and push a new version tag (usage: make tag VERSION=1.2.3)
@@ -97,41 +101,44 @@ tag: ## Create and push a new version tag (usage: make tag VERSION=1.2.3)
 	@echo "✅ Tag $(VERSION) pushed"
 
 # === Symfony Cache ===
-cc-dev:
+cc: ## Clear cache (dev)
 	$(CONSOLE) cache:clear
 
-cc-prod:
+cc-dev: ## Clear cache (dev)
+	$(CONSOLE) cache:clear
+
+cc-prod: ## Clear and warm up production cache
 	@echo "Clearing and regenerating production cache..."
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod
 	@APP_ENV=prod APP_DEBUG=0 $(CONSOLE) about --env=prod >/dev/null 2>&1 || (echo "❌ Cache verification failed: application could not boot" && exit 1)
 	@echo "✅ Production cache regenerated successfully"
 
-warmup:
+warmup: ## Warm up cache
 	$(CONSOLE) cache:warmup
 
-purge:
+purge: ## Remove all cache and log files
 	rm -rf var/cache/* var/logs/*
 
 # === Docker ===
-docker-up:
+docker-up: ## Start database container
 	docker compose up -d database
 
-docker-down:
+docker-down: ## Stop database container
 	docker compose stop database
 
 # === Symfony ===
-start:
+start: ## Start dev server + Vite dev server
 	@docker compose up -d database 2>/dev/null || true
 	symfony server:start -d
-	$(PNPM) run dev
+	$(PNPM) --dir=$(AURORA) run dev
 
-start-no-tls:
+start-no-tls: ## Start dev server without TLS
 	symfony server:start --no-tls -d
 
-start-d:
+start-d: ## Start dev server in background
 	symfony server:start -d
 
-stop:
+stop: ## Stop dev server
 	symfony server:stop
 	@docker compose stop database 2>/dev/null || true
 
@@ -140,11 +147,14 @@ start-dev-worker: ## Start the messenger worker (async + scheduler)
 	@trap 'rm -f var/.messenger-dev-worker-running; exit' INT TERM EXIT; \
 	while true; do $(CONSOLE) messenger:consume async scheduler_main -vv --time-limit=3600 --memory-limit=512M || sleep 1; done
 
-routes:
+routes: ## List all registered routes
 	$(CONSOLE) debug:router --show-controllers
 
-sf:
-	$(CONSOLE)
+sf: ## Run any Symfony console command (usage: make sf CMD="debug:container")
+	$(CONSOLE) $(CMD)
+
+about: ## Show app info
+	$(CONSOLE) about
 
 # === Fixtures & Dev ===
 fixtures: ## Drop DB, re-run migrations and load fixtures
@@ -154,29 +164,35 @@ fixtures: ## Drop DB, re-run migrations and load fixtures
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	@echo "✅ Fixtures loaded"
 
-fixtures-load:
+fixtures-load: ## Load fixtures without dropping DB
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 
-fixtures-append:
+fixtures-append: ## Append fixtures without dropping DB
 	$(CONSOLE) doctrine:fixtures:load --append --no-interaction
 
 # === Database ===
-migration:
+db-create: ## Create the database
+	$(CONSOLE) doctrine:database:create --if-not-exists
+
+db-drop: ## Drop the database
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+
+migration: ## Generate a new migration
 	$(CONSOLE) make:migration
 
-migrate:
+migrate: ## Run pending migrations
 	$(CONSOLE) doctrine:migrations:migrate
 
-migrate-f:
+migrate-f: ## Run migrations without interaction
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
 
-migrate-prev:
+migrate-prev: ## Rollback last migration
 	$(CONSOLE) doctrine:migrations:migrate prev
 
-migration-generate:
+migration-generate: ## Generate a blank migration
 	$(CONSOLE) doctrine:migrations:generate
 
-migration-diff:
+migration-diff: ## Generate a migration from entity changes
 	$(CONSOLE) doctrine:migrations:diff
 
 sync-params: ## Synchronise application parameters (creates missing, deletes obsolete)
@@ -188,60 +204,60 @@ sync-menus: ## Create missing menus for registered locations (primary, footer, �
 i18n: ## Dump Symfony YAML translations to assets/locales/generated/*.json (consumed by vue-i18n)
 	$(CONSOLE) app:translations:dump-js
 
-schema-validate:
+schema-validate: ## Validate the Doctrine schema
 	$(CONSOLE) doctrine:schema:validate -vvv
 
 # === Tests ===
 test: test-frontend test-backend ## Run all tests (frontend + backend)
 
 test-backend: db-test ## Run all backend tests (PHPUnit)
-	$(PHP_BIN) bin/phpunit --testdox
+	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox
 
 test-backend-unit: ## Run backend unit tests
-	$(PHP_BIN) bin/phpunit --testdox --testsuite=Unit
+	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox --testsuite=Unit
 
 test-backend-integration: db-test ## Run backend integration tests
-	$(PHP_BIN) bin/phpunit --testdox --testsuite=Integration
+	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox --testsuite=Integration
 
 test-frontend: i18n ## Run frontend unit tests (Vitest)
-	$(PNPM) run test
+	$(PNPM) --dir=$(AURORA) run test
 
 test-e2e: ## Run end-to-end tests (Playwright)
-	$(PNPM) run test:e2e
+	$(PNPM) --dir=$(AURORA) run test:e2e
 
 db-test: ## Create and migrate the test database
 	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
 	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
 
 # === Code Quality ===
-stan:
-	$(PHPSTAN) analyse -c tools/phpstan/phpstan.neon --memory-limit 1G
+stan: ## Run PHPStan
+	$(PHPSTAN) analyse -c $(AURORA)/tools/phpstan/phpstan.neon --memory-limit 1G
 
-lint-php:
-	$(PHP_CS_FIXER) fix --dry-run --config=.php-cs-fixer.dist.php
+lint-php: ## Check PHP code style (dry-run)
+	$(PHP_CS_FIXER) fix --dry-run --config=$(AURORA)/.php-cs-fixer.dist.php
 
-lint-js:
-	$(PNPM) eslint --config eslint.config.cjs
+lint-js: ## Check JS code style
+	cd $(AURORA) && $(PNPM) eslint --config eslint.config.cjs
 
-lint-twig:
+lint-twig: ## Check Twig code style
 	$(TWIG_CS_FIXER)
 
-rector:
-	$(RECTOR) process --dry-run -c tools/rector/rector.php
+rector: ## Run Rector (dry-run)
+	$(RECTOR) process --dry-run -c $(AURORA)/tools/rector/rector.php
 
-fix-php:
-	$(PHP_CS_FIXER) fix --config=.php-cs-fixer.dist.php
+fix-php: ## Fix PHP code style
+	$(PHP_CS_FIXER) fix --config=$(AURORA)/.php-cs-fixer.dist.php
 
-fix-js:
-	$(PNPM) eslint --config eslint.config.cjs --fix
+fix-js: ## Fix JS code style
+	cd $(AURORA) && $(PNPM) eslint --config eslint.config.cjs --fix
 
-fix-twig:
+fix-twig: ## Fix Twig code style
 	$(TWIG_CS_FIXER) --fix
 
-fix-rector:
-	$(RECTOR) process -c tools/rector/rector.php
+fix-rector: ## Apply Rector suggestions
+	$(RECTOR) process -c $(AURORA)/tools/rector/rector.php
 
-fix:
+fix: ## Run all fixers + stan
 	make fix-js
 	make fix-twig
 	make fix-rector
@@ -262,9 +278,6 @@ setup-env: ## Create .env.local from .env.local.example template
 	fi
 	cp .env.local.example .env.local
 	@echo "✅ .env.local created from .env.local.example — edit it with your local values"
-
-about:
-	$(CONSOLE) about
 
 .PHONY: help
 help: ## Show this help message
