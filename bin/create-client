@@ -325,6 +325,16 @@ setup-dirs: ## Create required runtime directories
 	@mkdir -p var/cache var/log
 	@echo "✅ Runtime directories created"
 
+# === Server ===
+start: ## Start the Symfony dev server
+	symfony server:start -d
+
+start-no-tls: ## Start the Symfony dev server without TLS
+	symfony server:start --no-tls -d
+
+stop: ## Stop the Symfony dev server
+	symfony server:stop
+
 # === Symfony ===
 about: ## Show app info
 	$(CONSOLE) about
