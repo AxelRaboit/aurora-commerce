@@ -91,7 +91,7 @@ admin:
       feature_3: Integrierte Medienverwaltung
       feature_4: Moderne und schnelle Oberfläche
       heading: Verwalten Sie Ihre Inhalte
-      heading_accent: mit Velox.
+      heading_accent: mit Aurora.
     invitation:
       accept_title: Einladung annehmen
       confirm_password: Passwort bestätigen
@@ -267,7 +267,7 @@ shared:
       fallback_intro: 'Falls die Schaltfläche nicht funktioniert, kopiere diesen Link in deinen Browser:'
       footer_note: Wenn du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren.
       greeting: Hallo {name},
-      heading: Einladung zu Velox
+      heading: Einladung zu Aurora
       intro: Du wurdest eingeladen, {siteName} beizutreten. Klicke auf die Schaltfläche unten, um dein Konto zu aktivieren und dein Passwort festzulegen.
     verify_email:
       cta: E-Mail bestätigen

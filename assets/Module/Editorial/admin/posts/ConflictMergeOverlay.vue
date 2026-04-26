@@ -143,7 +143,7 @@ function apply() {
                         :key="locale"
                         type="button"
                         class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors shrink-0"
-                        :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'text-secondary hover:bg-surface-3'"
+                        :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'text-secondary hover:bg-surface-3'"
                         v-on:click="activeLocale = locale"
                     >
                         {{ t("shared.locales." + locale) }}
@@ -167,12 +167,12 @@ function apply() {
                         }) }}
                     </span>
                     <div class="flex-1" />
-                    <button type="button" class="text-indigo-600 hover:underline font-medium" v-on:click="showUnchanged = !showUnchanged">
+                    <button type="button" class="text-accent-600 hover:underline font-medium" v-on:click="showUnchanged = !showUnchanged">
                         {{ showUnchanged ? t("admin.posts.merge.hideUnchanged") : t("admin.posts.merge.showUnchanged") }}
                     </button>
                     <button
                         type="button"
-                        class="text-indigo-600 hover:underline font-medium"
+                        class="text-accent-600 hover:underline font-medium"
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'local')"
                     >
@@ -180,7 +180,7 @@ function apply() {
                     </button>
                     <button
                         type="button"
-                        class="text-indigo-600 hover:underline font-medium"
+                        class="text-accent-600 hover:underline font-medium"
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'remote')"
                     >

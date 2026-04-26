@@ -51,7 +51,7 @@ const TYPE_OPTIONS = computed(() => [
     { value: "service", label: t("admin.erp.products.types.service") },
 ]);
 
-const TYPE_TONE = { physical: "slate", digital: "indigo", service: "violet" };
+const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
 
 const CURRENCY_OPTIONS = [
     { value: "EUR", symbol: "€", label: "Euro" },
@@ -228,7 +228,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', product.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>
@@ -254,7 +254,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <p class="text-sm text-secondary">{{ formatPrice(product) }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', product.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>

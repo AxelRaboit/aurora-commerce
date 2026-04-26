@@ -52,7 +52,7 @@ const tabs = computed(() => [
 const statusBadge = (status) => ({
     pending: "amber",
     paid: "sky",
-    shipped: "indigo",
+    shipped: "accent",
     delivered: "emerald",
     cancelled: "rose",
 }[status] ?? "slate");
@@ -75,11 +75,11 @@ function formatTotal(order) {
                 :key="tab.key"
                 type="button"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-                :class="statusFilter === tab.key ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                :class="statusFilter === tab.key ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 v-on:click="selectTab(tab.key)"
             >
                 {{ tab.label }}
-                <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-indigo-600/25' : 'bg-surface-3'">
+                <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-accent-600/25' : 'bg-surface-3'">
                     {{ tab.count }}
                 </span>
             </button>

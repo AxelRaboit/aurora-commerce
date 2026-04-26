@@ -105,7 +105,7 @@ async function submitContact() {
                         <p v-if="company.industry" class="text-sm text-secondary truncate">{{ company.industry }}</p>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 sm:shrink-0 self-end sm:self-auto">
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDelete = true"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ async function submitContact() {
                 <dl class="space-y-3">
                     <div v-if="company.website">
                         <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.companies.website') }}</dt>
-                        <dd><AppLink :href="company.website" target="_blank" rel="noopener" class="text-indigo-400 hover:underline text-sm break-all">{{ company.website }}</AppLink></dd>
+                        <dd><AppLink :href="company.website" target="_blank" rel="noopener" class="text-accent-400 hover:underline text-sm break-all">{{ company.website }}</AppLink></dd>
                     </div>
                     <div v-if="company.phone">
                         <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.companies.phone') }}</dt>
@@ -158,12 +158,12 @@ async function submitContact() {
                 <div class="sm:hidden space-y-3">
                     <div v-for="contact in contacts" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
+                            <div class="w-9 h-9 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
                                 {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="font-medium text-primary truncate">{{ contact.firstName }} {{ contact.lastName }}</p>
-                                <AppLink v-if="contact.email" :href="`mailto:${contact.email}`" class="text-xs text-muted hover:text-indigo-400 transition-colors break-all">{{ contact.email }}</AppLink>
+                                <AppLink v-if="contact.email" :href="`mailto:${contact.email}`" class="text-xs text-muted hover:text-accent-400 transition-colors break-all">{{ contact.email }}</AppLink>
                                 <p v-else-if="contact.phone" class="text-xs text-muted">{{ contact.phone }}</p>
                             </div>
                         </div>
@@ -184,14 +184,14 @@ async function submitContact() {
                             <tr v-for="contact in contacts" :key="contact.id" class="hover:bg-surface-2/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <div class="w-7 h-7 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
+                                        <div class="w-7 h-7 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
                                             {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
                                         </div>
                                         <span class="font-medium text-primary truncate">{{ contact.firstName }} {{ contact.lastName }}</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-secondary">
-                                    <AppLink v-if="contact.email" :href="`mailto:${contact.email}`" class="hover:text-indigo-400 transition-colors break-all">{{ contact.email }}</AppLink>
+                                    <AppLink v-if="contact.email" :href="`mailto:${contact.email}`" class="hover:text-accent-400 transition-colors break-all">{{ contact.email }}</AppLink>
                                     <span v-else>—</span>
                                 </td>
                                 <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ contact.phone ?? '—' }}</td>

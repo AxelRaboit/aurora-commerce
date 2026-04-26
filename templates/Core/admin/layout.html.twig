@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Velox{% endblock %}</title>
+    <title>{% block title %}Aurora{% endblock %}</title>
     {% if siteFaviconUrl %}
         <link rel="icon" href="{{ siteFaviconUrl }}">
     {% else %}
@@ -12,11 +12,12 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
     {{ include('@Shared/components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
-    {{ include('@Shared/components/primary_color_style.html.twig') }}
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
         {{ vite_entry_link_tags('flash') }}
     {% endblock %}
+    {# Inject after Vite stylesheets so the runtime --th-accent-* override wins over the defaults baked into app.css. #}
+    {{ include('@Shared/components/primary_color_style.html.twig') }}
     <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
     {% block javascripts %}
         {{ vite_entry_script_tags('app') }}

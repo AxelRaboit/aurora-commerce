@@ -13,7 +13,7 @@ defineProps({
         :rel="target === '_blank' ? 'noopener' : undefined"
         :class="{
             'text-primary underline': variant === 'admin',
-            'text-indigo-400 hover:underline font-medium': variant === 'front',
+            'text-accent-400 hover:underline font-medium': variant === 'front',
             'text-accent hover:underline font-medium': variant === 'front-accent',
         }"
     ><slot /></a>

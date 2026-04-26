@@ -102,7 +102,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     <div class="space-y-4">
         <!-- View tabs -->
         <div v-if="kanbanPath" class="flex border-b border-line/40 text-sm">
-            <button type="button" class="px-4 py-2 border-b-2 border-indigo-500 text-primary font-medium transition-colors flex items-center gap-1.5">
+            <button type="button" class="px-4 py-2 border-b-2 border-accent-500 text-primary font-medium transition-colors flex items-center gap-1.5">
                 <List class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.crm.deals.listView') }}
             </button>
@@ -139,7 +139,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <span class="text-xs text-secondary font-medium">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</span>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', deal.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
@@ -171,7 +171,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', deal.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>

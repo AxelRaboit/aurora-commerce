@@ -16,9 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'velox:application-parameter',
+    name: 'aurora:application-parameter',
     description: 'Synchronise les paramètres applicatifs (crée les manquants, supprime les obsolètes).',
-    aliases: ['velox:ap'],
+    aliases: ['aurora:ap'],
 )]
 class ApplicationParameterCommand extends Command
 {

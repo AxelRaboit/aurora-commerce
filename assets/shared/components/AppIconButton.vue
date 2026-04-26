@@ -9,7 +9,7 @@ const props = defineProps({
 const colors = {
     default: "hover:text-primary",
     sky:     "hover:text-sky-400",
-    indigo:  "hover:text-indigo-400",
+    accent:  "hover:text-accent-400",
     rose:    "hover:text-rose-400",
     emerald: "hover:text-emerald-400",
     amber:   "hover:text-amber-400",

@@ -61,23 +61,23 @@ services:
 
     App\Core\Module\ModuleRegistry:
         arguments:
-            $modules: !tagged_iterator velox.module
+            $modules: !tagged_iterator aurora.module
 
     App\Core\Module\PermissionRegistry:
         arguments:
-            $modules: !tagged_iterator velox.module
+            $modules: !tagged_iterator aurora.module
 
     App\Core\CoreModule:
-        tags: [velox.module]
+        tags: [aurora.module]
 
     App\Module\Editorial\EditorialModule:
-        tags: [velox.module]
+        tags: [aurora.module]
 
     App\Module\Crm\CrmModule:
-        tags: [velox.module]
+        tags: [aurora.module]
 
     App\Module\Erp\ErpModule:
-        tags: [velox.module]
+        tags: [aurora.module]
 
     App\Module\Ecommerce\EcommerceModule:
-        tags: [velox.module]
+        tags: [aurora.module]

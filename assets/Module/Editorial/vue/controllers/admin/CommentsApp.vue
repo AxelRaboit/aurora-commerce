@@ -144,11 +144,11 @@ async function toggleModeration() {
                     v-for="tab in tabs"
                     :key="tab.key"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-                    :class="statusFilter === tab.key ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="statusFilter === tab.key ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                     v-on:click="selectTab(tab.key)"
                 >
                     {{ tab.label }}
-                    <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-indigo-600/25' : 'bg-surface-3'">
+                    <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-accent-600/25' : 'bg-surface-3'">
                         {{ tab.count }}
                     </span>
                 </button>
@@ -181,7 +181,7 @@ async function toggleModeration() {
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(comment.createdAt) }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton color="indigo" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                        <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
@@ -228,7 +228,7 @@ async function toggleModeration() {
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="indigo" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                                <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">

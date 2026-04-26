@@ -27,7 +27,7 @@ final readonly class FaviconController
     public function __invoke(): Response
     {
         $hex = mb_ltrim($this->themeContext->primaryColor(), '#');
-        // Default to indigo if invalid hex slipped through
+        // Default accent hue if an invalid hex slipped through
         if (6 !== mb_strlen($hex) || !ctype_xdigit($hex)) {
             $hex = '6366f1';
         }

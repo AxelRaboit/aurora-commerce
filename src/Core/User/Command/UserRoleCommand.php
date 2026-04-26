@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'velox:user:role',
+    name: 'aurora:user:role',
     description: 'Assigne ou retire un rôle à un utilisateur identifié par son email.',
 )]
 class UserRoleCommand extends Command

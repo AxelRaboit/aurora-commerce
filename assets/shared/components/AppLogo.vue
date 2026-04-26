@@ -6,13 +6,13 @@ defineProps({
 });
 
 const instanceUid = getCurrentInstance().uid;
-const gradientId = `velox-bg-${instanceUid}`;
+const gradientId = `aurora-bg-${instanceUid}`;
 </script>
 
 <template>
     <!--
-        currentColor + Tailwind text-indigo-500 makes the logo follow the active theme primary
-        colour (which overrides --color-indigo-* at runtime). The gradient uses two opacities of
+        currentColor + Tailwind text-accent-500 makes the logo follow the active theme primary
+        colour (which defines --color-accent-* at runtime). The gradient uses two opacities of
         the same hue to keep the depth effect across any colour the admin picks.
     -->
     <svg
@@ -20,7 +20,7 @@ const gradientId = `velox-bg-${instanceUid}`;
         :height="size"
         viewBox="0 0 64 64"
         xmlns="http://www.w3.org/2000/svg"
-        class="text-indigo-500"
+        class="text-accent-500"
     >
         <defs>
             <linearGradient

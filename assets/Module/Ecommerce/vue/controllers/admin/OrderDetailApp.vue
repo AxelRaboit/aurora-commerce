@@ -29,7 +29,7 @@ const { loading, request } = useApiRequest();
 const statusBadge = (status) => ({
     pending: "amber",
     paid: "sky",
-    shipped: "indigo",
+    shipped: "accent",
     delivered: "emerald",
     cancelled: "rose",
 }[status] ?? "slate");
@@ -57,7 +57,7 @@ const availableTransitions = computed(() => {
     const map = {
         pending: [],
         paid: requiresShipping
-            ? [{ status: "shipped", label: t("admin.ecommerce.orders.actions.markShipped"), icon: Truck, color: "indigo" }]
+            ? [{ status: "shipped", label: t("admin.ecommerce.orders.actions.markShipped"), icon: Truck, color: "accent" }]
             : [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markFulfilled"), icon: PackageCheck, color: "emerald" }],
         shipped: [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markDelivered"), icon: PackageCheck, color: "emerald" }],
         delivered: [],
@@ -242,7 +242,7 @@ function actionLabel(action) {
                 </h3>
                 <ol v-if="activity.length" class="space-y-3">
                     <li v-for="entry in activity" :key="entry.id" class="flex gap-3">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                        <span class="w-2 h-2 rounded-full bg-accent-500 mt-1.5 shrink-0" />
                         <div class="min-w-0">
                             <p class="text-sm text-primary">{{ actionLabel(entry.action) }}</p>
                             <p class="text-xs text-muted">{{ formatDateTime(entry.createdAt) }}<span v-if="entry.userName"> · {{ entry.userName }}</span></p>

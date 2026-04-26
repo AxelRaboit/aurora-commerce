@@ -63,7 +63,7 @@ final class AuthControllerTest extends IntegrationTestCase
     {
         $this->setRegistrationEnabled(true);
 
-        $email = 'newfront-'.uniqid().'@velox.test';
+        $email = 'newfront-'.uniqid().'@aurora.test';
         $this->client->request('POST', '/fr/register', [
             'name' => 'New Front User',
             'email' => $email,
@@ -92,7 +92,7 @@ final class AuthControllerTest extends IntegrationTestCase
 
     public function testForgotPasswordSubmitNeverRevealsAccountExistence(): void
     {
-        $this->client->request('POST', '/fr/forgot-password', ['email' => 'unknown@velox.test']);
+        $this->client->request('POST', '/fr/forgot-password', ['email' => 'unknown@aurora.test']);
         self::assertResponseIsSuccessful();
     }
 
@@ -147,7 +147,7 @@ final class AuthControllerTest extends IntegrationTestCase
 
         $user = new User();
         $user->setName('Front Tester');
-        $user->setEmail('front-tester-'.uniqid().'@velox.test');
+        $user->setEmail('front-tester-'.uniqid().'@aurora.test');
         $user->setType(UserTypeEnum::FrontUser);
         $user->setStatus(UserStatusEnum::Active);
         $user->setRoles([UserRoleEnum::User->value]);

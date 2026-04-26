@@ -16,9 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'velox:menus:sync',
+    name: 'aurora:menus:sync',
     description: 'Crée les menus manquants pour les locations enregistrées (primary, footer, …).',
-    aliases: ['velox:menus'],
+    aliases: ['aurora:menus'],
 )]
 class MenuSyncCommand extends Command
 {

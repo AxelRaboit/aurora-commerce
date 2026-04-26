@@ -98,7 +98,7 @@ async function doDelete() {
                         <div v-if="listing.displayImage" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shrink-0">
                             <img :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" class="w-full h-full object-cover">
                         </div>
-                        <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center shrink-0">
+                        <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-accent-600/20 text-accent-400 flex items-center justify-center shrink-0">
                             <ShoppingBag class="w-5 h-5 sm:w-6 sm:h-6" :stroke-width="2" />
                         </div>
                         <div class="min-w-0">
@@ -111,7 +111,7 @@ async function doDelete() {
                             {{ t(listing.isVisibleOnShop ? 'admin.ecommerce.listings.visible' : 'admin.ecommerce.listings.hidden') }}
                         </AppBadge>
                         <div class="flex items-center gap-1">
-                            <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDelete = true"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         </div>
                     </div>
@@ -125,7 +125,7 @@ async function doDelete() {
                     <div>
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.frontUrl') }}</dt>
                         <dd>
-                            <AppLink :href="frontUrl" target="_blank" class="text-indigo-400 hover:underline inline-flex items-center gap-1 text-sm">
+                            <AppLink :href="frontUrl" target="_blank" class="text-accent-400 hover:underline inline-flex items-center gap-1 text-sm">
                                 {{ frontUrl }}
                                 <ExternalLink class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppLink>

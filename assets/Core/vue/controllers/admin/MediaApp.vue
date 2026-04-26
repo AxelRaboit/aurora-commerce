@@ -90,7 +90,7 @@ const collapsedFolderIds = ref(loadCollapsedFolderIds());
 
 function loadCollapsedFolderIds() {
     try {
-        const raw = localStorage.getItem("velox-media-collapsed-folders");
+        const raw = localStorage.getItem("aurora-media-collapsed-folders");
         if (!raw) return new Set();
         return new Set(JSON.parse(raw));
     } catch {
@@ -100,7 +100,7 @@ function loadCollapsedFolderIds() {
 
 function persistCollapsedFolderIds() {
     try {
-        localStorage.setItem("velox-media-collapsed-folders", JSON.stringify([...collapsedFolderIds.value]));
+        localStorage.setItem("aurora-media-collapsed-folders", JSON.stringify([...collapsedFolderIds.value]));
     } catch {}
 }
 
@@ -347,16 +347,16 @@ const rootDragOver = ref(false);
 
 function onMediaDragStart(event, mediaItem) {
     event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("application/x-velox-media", String(mediaItem.id));
+    event.dataTransfer.setData("application/x-aurora-media", String(mediaItem.id));
 }
 
 function onFolderDragStart(event, folder) {
     event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("application/x-velox-folder", String(folder.id));
+    event.dataTransfer.setData("application/x-aurora-folder", String(folder.id));
 }
 
 function onFolderDragOver(event, folderId) {
-    if (event.dataTransfer.types.includes("application/x-velox-media") || event.dataTransfer.types.includes("application/x-velox-folder")) {
+    if (event.dataTransfer.types.includes("application/x-aurora-media") || event.dataTransfer.types.includes("application/x-aurora-folder")) {
         event.preventDefault();
         dragOverFolderId.value = folderId;
         rootDragOver.value = false;
@@ -364,7 +364,7 @@ function onFolderDragOver(event, folderId) {
 }
 
 function onRootDragOver(event) {
-    if (event.dataTransfer.types.includes("application/x-velox-media") || event.dataTransfer.types.includes("application/x-velox-folder")) {
+    if (event.dataTransfer.types.includes("application/x-aurora-media") || event.dataTransfer.types.includes("application/x-aurora-folder")) {
         event.preventDefault();
         rootDragOver.value = true;
         dragOverFolderId.value = null;
@@ -378,8 +378,8 @@ function onDragLeave() {
 
 async function onFolderDrop(event, targetFolderId) {
     event.preventDefault();
-    const mediaId = event.dataTransfer.getData("application/x-velox-media");
-    const folderId = event.dataTransfer.getData("application/x-velox-folder");
+    const mediaId = event.dataTransfer.getData("application/x-aurora-media");
+    const folderId = event.dataTransfer.getData("application/x-aurora-folder");
     dragOverFolderId.value = null;
     rootDragOver.value = false;
 
@@ -503,9 +503,9 @@ async function moveFolder(folderId, newParentId) {
                         class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
                         :class="[
                             !currentFolderId
-                                ? 'bg-indigo-600/15 text-indigo-400 border-indigo-600/30'
+                                ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
                                 : 'hover:bg-surface-2 text-primary border-transparent',
-                            rootDragOver ? 'ring-2 ring-indigo-500' : '',
+                            rootDragOver ? 'ring-2 ring-accent-500' : '',
                         ]"
                         v-on:click="navigateTo(null)"
                         v-on:dragover="onRootDragOver"
@@ -539,9 +539,9 @@ async function moveFolder(folderId, newParentId) {
                             class="flex-1 text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border min-w-0"
                             :class="[
                                 currentFolderId === folder.id
-                                    ? 'bg-indigo-600/15 text-indigo-400 border-indigo-600/30'
+                                    ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
                                     : 'hover:bg-surface-2 text-primary border-transparent',
-                                dragOverFolderId === folder.id ? 'ring-2 ring-indigo-500' : '',
+                                dragOverFolderId === folder.id ? 'ring-2 ring-accent-500' : '',
                             ]"
                             v-on:click="navigateTo(folder.id)"
                             v-on:dragover="onFolderDragOver($event, folder.id)"
@@ -553,7 +553,7 @@ async function moveFolder(folderId, newParentId) {
                             <span v-if="folder.childCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.childCount }}</span>
                         </button>
                         <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
-                            <AppIconButton color="indigo" v-on:click="openEditFolder(folder)">
+                            <AppIconButton color="accent" v-on:click="openEditFolder(folder)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton color="rose" v-on:click="deletingFolder = folder">
@@ -575,7 +575,7 @@ async function moveFolder(folderId, newParentId) {
                     <div
                         v-for="item in media"
                         :key="item.id"
-                        class="group relative bg-surface border border-line/60 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-400 transition-colors"
+                        class="group relative bg-surface border border-line/60 rounded-lg overflow-hidden cursor-pointer hover:border-accent-400 transition-colors"
                         draggable="true"
                         v-on:click="openEditMedia(item)"
                         v-on:dragstart="onMediaDragStart($event, item)"
@@ -615,7 +615,7 @@ async function moveFolder(folderId, newParentId) {
                         <img :src="editingMedia.url" :alt="editingMedia.alt ?? ''" class="w-full h-auto block">
                         <div
                             v-if="editForm.focalX !== null && editForm.focalY !== null"
-                            class="absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-indigo-500 shadow-lg pointer-events-none"
+                            class="absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent-500 shadow-lg pointer-events-none"
                             :style="{ left: `${editForm.focalX * 100}%`, top: `${editForm.focalY * 100}%` }"
                         />
                     </div>
@@ -628,7 +628,7 @@ async function moveFolder(folderId, newParentId) {
                         <button
                             v-if="editForm.focalX !== null"
                             type="button"
-                            class="text-indigo-400 hover:underline"
+                            class="text-accent-400 hover:underline"
                             v-on:click="resetFocalPoint"
                         >
                             {{ t("admin.media.resetFocal") }}

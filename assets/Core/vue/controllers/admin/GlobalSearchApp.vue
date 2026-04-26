@@ -116,7 +116,7 @@ function highlightMatch(text) {
         .map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
     if (!tokens.length) return text;
     const regex = new RegExp(`(${tokens.join("|")})`, "ig");
-    return text.replace(regex, '<mark class="bg-indigo-400/30 text-primary rounded px-0.5">$1</mark>');
+    return text.replace(regex, '<mark class="bg-accent-400/30 text-primary rounded px-0.5">$1</mark>');
 }
 
 function entryIndex(kind, item) {
@@ -194,7 +194,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`post-${post.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-start gap-3"
-                                :class="entryIndex('post', post) === highlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('post', post) === highlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="highlightedIndex = entryIndex('post', post)"
                                 v-on:click="activateResult({ kind: 'post', item: post })"
                             >
@@ -220,7 +220,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`term-${term.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('term', term) === highlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('term', term) === highlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="highlightedIndex = entryIndex('term', term)"
                                 v-on:click="activateResult({ kind: 'term', item: term })"
                             >
@@ -242,7 +242,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`media-${media.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('media', media) === highlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('media', media) === highlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="highlightedIndex = entryIndex('media', media)"
                                 v-on:click="activateResult({ kind: 'media', item: media })"
                             >

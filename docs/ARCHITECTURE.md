@@ -1,6 +1,6 @@
-# Velox Architecture
+# Aurora Architecture
 
-Velox is a platform built on Symfony 7 / PHP 8.3 / Vue 3 / Vite, designed to host
+Aurora is a platform built on Symfony 7 / PHP 8.3 / Vue 3 / Vite, designed to host
 multiple independent business modules (Editorial CMS, CRM, ERP, …) on top of a shared
 Core infrastructure.
 
@@ -81,11 +81,11 @@ interface ModuleInterface {
 }
 ```
 
-Modules are registered in `config/services.yaml` with the tag `velox.module`:
+Modules are registered in `config/services.yaml` with the tag `aurora.module`:
 
 ```yaml
 App\Module\Crm\CrmModule:
-    tags: [velox.module]
+    tags: [aurora.module]
 ```
 
 ### 3.2 ModuleRegistry
@@ -219,7 +219,7 @@ Add one mapping block per new module.
 
 1. Create `src/Module/<Name>/` with domain subfolders
 2. Implement `<Name>Module.php` (ModuleInterface) — declare nav + permissions
-3. Tag it `velox.module` in `config/services.yaml`
+3. Tag it `aurora.module` in `config/services.yaml`
 4. Add Doctrine mapping to `config/packages/doctrine.yaml`
 5. Add Twig namespace to `config/packages/twig.yaml`
 6. Add Vue glob + alias to `assets/app.js` + `vite.config.js` + `vitest.config.js`

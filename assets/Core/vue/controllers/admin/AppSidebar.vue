@@ -79,7 +79,7 @@ const { theme, toggle: toggleTheme } = useTheme();
 
 const userInitial = computed(() => props.userName?.charAt(0)?.toUpperCase() || "?");
 
-const SIDEBAR_KEY = "velox-sidebar";
+const SIDEBAR_KEY = "aurora-sidebar";
 
 function collapse() {
     document.documentElement.classList.add("sidebar-collapsed");
@@ -102,7 +102,7 @@ function buildItem(item) {
         path: item.path,
         label: t(item.labelKey),
         icon: ICON_MAP[item.icon] ?? FileText,
-        activeColor: item.activeColor ?? "indigo",
+        activeColor: item.activeColor ?? "accent",
     };
 }
 
@@ -122,7 +122,7 @@ const navItems = computed(() => groupedSections.value.flatMap(s => s.items));
 
 function itemClasses(item) {
     if (isActive(item.route)) {
-        return item.activeColor === "rose" ? "bg-rose-600/15 text-rose-400" : "bg-indigo-600/15 text-indigo-400";
+        return item.activeColor === "rose" ? "bg-rose-600/15 text-rose-400" : "bg-accent-600/15 text-accent-400";
     }
     return item.activeColor === "rose"
         ? "text-secondary hover:text-rose-400 hover:bg-rose-600/10"
@@ -131,7 +131,7 @@ function itemClasses(item) {
 
 function iconClasses(item) {
     if (isActive(item.route)) {
-        return item.activeColor === "rose" ? "text-rose-400" : "text-indigo-400";
+        return item.activeColor === "rose" ? "text-rose-400" : "text-accent-400";
     }
     return item.activeColor === "rose"
         ? "text-muted group-hover:text-rose-400 transition-colors"
@@ -148,7 +148,7 @@ function sectionContainsActive(section) {
 }
 
 // Collapsible sections — persisted in localStorage. Sections containing the active route auto-open on mount.
-const SECTIONS_KEY = "velox-sidebar-sections";
+const SECTIONS_KEY = "aurora-sidebar-sections";
 const expandedSections = ref(loadExpandedSections());
 
 function loadExpandedSections() {
@@ -280,7 +280,7 @@ function highlightMatch(text) {
         .map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
     if (!tokens.length) return text;
     const regex = new RegExp(`(${tokens.join("|")})`, "ig");
-    return text.replace(regex, '<mark class="bg-indigo-400/30 text-primary rounded px-0.5">$1</mark>');
+    return text.replace(regex, '<mark class="bg-accent-400/30 text-primary rounded px-0.5">$1</mark>');
 }
 
 function entryIndex(kind, item) {
@@ -298,7 +298,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain">
                 <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
-                    <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Velox</span>
+                    <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Aurora</span>
                     <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                 </div>
             </a>
@@ -315,7 +315,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
 
         <div class="sh-logo-expanded items-center gap-3 border-b border-line px-4 py-3 shrink-0">
-            <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
+            <div class="w-8 h-8 rounded-full bg-accent-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
                 {{ userInitial }}
             </div>
             <div class="flex flex-col min-w-0">
@@ -424,7 +424,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
             <a
                 :href="profilePath"
                 class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                :class="isActive('profile') ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
             >
                 <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="si-label truncate">{{ t("admin.nav.profile") }}</span>
@@ -453,7 +453,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
     <div class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-line z-30 flex items-center justify-between px-4">
         <a :href="dashboardPath" class="flex items-center gap-2">
             <AppLogo :size="28" />
-            <span class="text-primary font-bold text-base tracking-tight">Velox</span>
+            <span class="text-primary font-bold text-base tracking-tight">Aurora</span>
         </a>
         <div class="flex items-center gap-1">
             <AppButton variant="ghost" size="none" class="p-2" v-on:click="openPalette">
@@ -479,7 +479,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 <div class="flex items-center gap-2.5">
                     <AppLogo :size="32" />
                     <div class="flex flex-col">
-                        <span class="text-primary font-bold text-lg tracking-tight">Velox</span>
+                        <span class="text-primary font-bold text-lg tracking-tight">Aurora</span>
                         <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                     </div>
                 </div>
@@ -543,7 +543,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 <a
                     :href="profilePath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="isActive('profile') ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("admin.nav.profile") }}
@@ -606,7 +606,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`post-${post.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-start gap-3"
-                                :class="entryIndex('post', post) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('post', post) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="searchHighlightedIndex = entryIndex('post', post)"
                                 v-on:click="activateResult({ kind: 'post', item: post })"
                             >
@@ -631,7 +631,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`term-${term.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('term', term) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('term', term) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="searchHighlightedIndex = entryIndex('term', term)"
                                 v-on:click="activateResult({ kind: 'term', item: term })"
                             >
@@ -652,7 +652,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 :key="`media-${media.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('media', media) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                :class="entryIndex('media', media) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
                                 v-on:mouseenter="searchHighlightedIndex = entryIndex('media', media)"
                                 v-on:click="activateResult({ kind: 'media', item: media })"
                             >

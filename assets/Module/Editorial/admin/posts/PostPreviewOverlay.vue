@@ -48,7 +48,7 @@ const previewHtml = computed(() =>
                             type="button"
                             class="px-2.5 py-1 text-xs font-medium rounded transition-colors"
                             :class="activeLocale === locale
-                                ? 'bg-indigo-600 text-white'
+                                ? 'bg-accent-600 text-white'
                                 : 'text-secondary hover:bg-surface-2'"
                             v-on:click="activeLocale = locale"
                         >

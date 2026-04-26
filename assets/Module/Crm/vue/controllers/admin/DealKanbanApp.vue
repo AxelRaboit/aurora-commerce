@@ -78,7 +78,7 @@ async function onDrop(event, targetStage) {
             <List class="w-4 h-4" :stroke-width="2" />
             {{ t('admin.crm.deals.listView') }}
         </button>
-        <button type="button" class="px-4 py-2 border-b-2 border-indigo-500 text-primary font-medium transition-colors flex items-center gap-1.5">
+        <button type="button" class="px-4 py-2 border-b-2 border-accent-500 text-primary font-medium transition-colors flex items-center gap-1.5">
             <Columns2 class="w-4 h-4" :stroke-width="2" />
             {{ t('admin.crm.deals.kanbanView') }}
         </button>
@@ -156,7 +156,7 @@ async function onDrop(event, targetStage) {
                 <div
                     v-for="deal in localColumns[stage]"
                     :key="deal.id"
-                    class="bg-surface border border-line rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-indigo-500/40 transition-colors select-none"
+                    class="bg-surface border border-line rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-accent-500/40 transition-colors select-none"
                 >
                     <p class="text-sm font-medium text-primary leading-snug mb-1">{{ deal.name }}</p>
                     <div class="flex items-center justify-between">

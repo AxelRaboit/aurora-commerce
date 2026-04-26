@@ -1,6 +1,6 @@
 import { ref, watch } from "vue";
 
-const STORAGE_KEY = "velox-theme";
+const STORAGE_KEY = "aurora-theme";
 
 function getInitial() {
     const stored = localStorage.getItem(STORAGE_KEY);

@@ -96,7 +96,7 @@ final class PasswordResetManagerTest extends IntegrationTestCase
 
         $user = new User();
         $user->setName('Reset Tester');
-        $user->setEmail('reset-'.uniqid().'@velox.test');
+        $user->setEmail('reset-'.uniqid().'@aurora.test');
         $user->setType($type);
         $user->setStatus(UserStatusEnum::Active);
         $user->setPassword($hasher->hashPassword($user, 'oldpassword'));

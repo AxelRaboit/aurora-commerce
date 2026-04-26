@@ -21,7 +21,7 @@ defineEmits(['update:modelValue']);
             :value="modelValue"
             :placeholder="placeholder"
             :rows="rows"
-            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
             :class="[
                 { 'border-red-500 focus:border-red-500 focus:ring-red-500': error },
                 mono ? 'text-xs font-mono' : 'text-sm',

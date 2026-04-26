@@ -480,12 +480,12 @@ function submissionValue(submission, field) {
                         v-for="form in forms"
                         :key="form.id"
                         class="px-4 py-3 cursor-pointer hover:bg-surface-2/50 transition-colors flex items-start gap-2"
-                        :class="selectedForm?.id === form.id ? 'bg-indigo-600/10' : ''"
+                        :class="selectedForm?.id === form.id ? 'bg-accent-600/10' : ''"
                         v-on:click="selectForm(form)"
                     >
-                        <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-indigo-400' : 'text-muted'" :stroke-width="2" />
+                        <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-indigo-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
+                            <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
                             <p class="text-xs text-muted">{{ form.submissionCount }} {{ t("admin.forms.submissions_count") }}</p>
                         </div>
                         <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("admin.forms.inactive") }}</AppBadge>
@@ -501,7 +501,7 @@ function submissionValue(submission, field) {
             <!-- Header -->
             <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-line/60">
                 <div class="flex items-center gap-2 min-w-0">
-                    <ClipboardList class="w-5 h-5 shrink-0 text-indigo-400" :stroke-width="2" />
+                    <ClipboardList class="w-5 h-5 shrink-0 text-accent-400" :stroke-width="2" />
                     <h2 class="text-base font-semibold text-primary truncate">
                         {{ isCreating ? t("admin.forms.newForm") : (formTitle(selectedForm) || "—") }}
                     </h2>
@@ -534,7 +534,7 @@ function submissionValue(submission, field) {
                     v-for="tab in tabs"
                     :key="tab.key"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-t-md transition-colors -mb-px border-b-2"
-                    :class="activeTab === tab.key ? 'text-indigo-400 border-indigo-400' : 'text-secondary hover:text-primary border-transparent'"
+                    :class="activeTab === tab.key ? 'text-accent-400 border-accent-400' : 'text-secondary hover:text-primary border-transparent'"
                     v-on:click="onTabChange(tab.key)"
                 >
                     <component :is="tab.icon" class="w-4 h-4" :stroke-width="2" />
@@ -552,7 +552,7 @@ function submissionValue(submission, field) {
                             :key="locale"
                             type="button"
                             class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                            :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                             v-on:click="activeLocale = locale"
                         >
                             {{ locale.toUpperCase() }}
@@ -573,7 +573,7 @@ function submissionValue(submission, field) {
                         <input
                             v-model="editingForm.translations[activeLocale].title"
                             type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
                             :class="localeFieldError(formErrors, activeLocale, 'title') ? 'border-rose-500' : 'border-line/60'"
                             :placeholder="t('admin.forms.titlePlaceholder')"
                             v-on:input="onTitleInput"
@@ -585,7 +585,7 @@ function submissionValue(submission, field) {
                         <input
                             v-model="editingForm.translations[activeLocale].slug"
                             type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
                             :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
                             :placeholder="t('admin.forms.slugPlaceholder')"
                             v-on:input="onSlugInput"
@@ -599,7 +599,7 @@ function submissionValue(submission, field) {
                     <textarea
                         v-model="editingForm.translations[activeLocale].description"
                         rows="3"
-                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
                         :placeholder="t('admin.forms.descriptionPlaceholder')"
                     />
                 </div>
@@ -613,7 +613,7 @@ function submissionValue(submission, field) {
                             id="shared-slug"
                             v-model="sharedSlug"
                             type="checkbox"
-                            class="rounded border-line text-indigo-600 focus:ring-indigo-500"
+                            class="rounded border-line text-accent-600 focus:ring-accent-500"
                             v-on:change="onSharedSlugToggle"
                         >
                         <label for="shared-slug" class="text-sm text-primary cursor-pointer">{{ t("admin.forms.sharedSlug") }}</label>
@@ -624,7 +624,7 @@ function submissionValue(submission, field) {
                         <input
                             v-model="editingForm.translations[activeLocale].slug"
                             type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
                             :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
                             :placeholder="t('admin.forms.slugPlaceholder')"
                             v-on:input="onSlugInput"
@@ -641,7 +641,7 @@ function submissionValue(submission, field) {
                     <input
                         v-model="editingForm.notifyEmail"
                         type="email"
-                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
                         :placeholder="t('admin.forms.notifyEmailPlaceholder')"
                     >
                     <p class="text-xs text-muted">{{ t("admin.forms.notifyEmailHint") }}</p>
@@ -651,7 +651,7 @@ function submissionValue(submission, field) {
                     <button
                         type="button"
                         class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors"
-                        :class="editingForm.active ? 'bg-indigo-600' : 'bg-surface-3'"
+                        :class="editingForm.active ? 'bg-accent-600' : 'bg-surface-3'"
                         v-on:click="editingForm.active = !editingForm.active"
                     >
                         <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.active ? 'translate-x-4' : 'translate-x-0.5'" />
@@ -692,10 +692,10 @@ function submissionValue(submission, field) {
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-sm font-medium text-primary">{{ fieldLabel(field) || "—" }}</span>
                                 <AppBadge v-if="field.required" color="amber">{{ t("admin.forms.required") }}</AppBadge>
-                                <AppBadge color="indigo">{{ fieldTypeLabel(field.type) }}</AppBadge>
+                                <AppBadge color="accent">{{ fieldTypeLabel(field.type) }}</AppBadge>
                             </div>
                         </div>
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
@@ -735,7 +735,7 @@ function submissionValue(submission, field) {
                                         {{ submissionValue(submission, field) }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <AppIconButton color="indigo" :title="t('admin.forms.viewSubmission')" v-on:click="viewingSubmission = submission">
+                                        <AppIconButton color="accent" :title="t('admin.forms.viewSubmission')" v-on:click="viewingSubmission = submission">
                                             <Pencil class="w-4 h-4" :stroke-width="2" />
                                         </AppIconButton>
                                     </td>
@@ -767,14 +767,14 @@ function submissionValue(submission, field) {
                 <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldType") }}</label>
                 <select
                     v-model="editingField.type"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
                 >
                     <option v-for="ft in FIELD_TYPES" :key="ft.value" :value="ft.value">{{ ft.label }}</option>
                 </select>
             </div>
 
             <div class="flex items-center gap-2">
-                <input id="field-required" v-model="editingField.required" type="checkbox" class="rounded border-line text-indigo-600 focus:ring-indigo-500">
+                <input id="field-required" v-model="editingField.required" type="checkbox" class="rounded border-line text-accent-600 focus:ring-accent-500">
                 <label for="field-required" class="text-sm text-primary">{{ t("admin.forms.fieldRequired") }}</label>
             </div>
 
@@ -787,7 +787,7 @@ function submissionValue(submission, field) {
                     :key="locale"
                     type="button"
                     class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                    :class="fieldActiveLocale === locale ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    :class="fieldActiveLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                     v-on:click="fieldActiveLocale = locale"
                 >
                     {{ locale.toUpperCase() }}
@@ -803,7 +803,7 @@ function submissionValue(submission, field) {
                 <input
                     v-model="editingField.translations[fieldActiveLocale].label"
                     type="text"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
                     :class="localeFieldError(fieldErrors, fieldActiveLocale, 'label') ? 'border-rose-500' : 'border-line/60'"
                     :placeholder="t('admin.forms.fieldLabelPlaceholder')"
                 >
@@ -815,7 +815,7 @@ function submissionValue(submission, field) {
                 <input
                     v-model="editingField.translations[fieldActiveLocale].placeholder"
                     type="text"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
                     :placeholder="t('admin.forms.fieldPlaceholderPlaceholder')"
                 >
             </div>
@@ -825,7 +825,7 @@ function submissionValue(submission, field) {
                 <textarea
                     v-model="fieldOptionsText[fieldActiveLocale]"
                     rows="4"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary font-mono focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
                     :placeholder="t('admin.forms.fieldOptionsPlaceholder')"
                 />
                 <p class="text-xs text-muted">{{ t("admin.forms.fieldOptionsHint") }}</p>

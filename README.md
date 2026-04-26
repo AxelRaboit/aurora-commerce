@@ -1,6 +1,6 @@
 <div align="center">
 
-# Velox
+# Aurora
 
 **CMS headless moderne avec éditeur bloc multi-langue**
 
@@ -16,7 +16,7 @@
 
 ## Présentation
 
-Velox est un CMS administrable conçu autour d'un éditeur bloc (Editor.js) et d'un modèle de contenu flexible. Chaque contenu possède plusieurs traductions indépendantes, un type personnalisable, des tags et un statut de publication.
+Aurora est un CMS administrable conçu autour d'un éditeur bloc (Editor.js) et d'un modèle de contenu flexible. Chaque contenu possède plusieurs traductions indépendantes, un type personnalisable, des tags et un statut de publication.
 
 L'administration est une SPA Vue intégrée à Symfony via `symfony/ux-vue`. Le stockage utilise PostgreSQL, l'internationalisation repose sur `vue-i18n`, et l'édition concurrente est gérée par un système de verrouillage optimiste avec résolution de conflits 3-way façon Git.
 
@@ -41,7 +41,7 @@ L'administration est une SPA Vue intégrée à Symfony via `symfony/ux-vue`. Le 
 
 ## Résolution de conflits 3-way
 
-Quand deux administrateurs modifient simultanément le même contenu, le second voit ses modifications bloquées à la sauvegarde. Velox propose alors trois actions :
+Quand deux administrateurs modifient simultanément le même contenu, le second voit ses modifications bloquées à la sauvegarde. Aurora propose alors trois actions :
 
 1. **Voir la version actuelle** — aperçu de la version en base sans perdre son travail local
 2. **Fusionner** — ouvre un merge editor plein écran qui diffe les blocs Editor.js entre l'état de base (au chargement), local (en cours) et remote (en base), classifie chaque bloc (`unchanged`, `local-modified`, `remote-modified`, `local-added`, `remote-added`, `conflict`…) et permet de choisir version par version
@@ -78,8 +78,8 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 ### Mise en place
 
 ```bash
-git clone https://github.com/axelraboit/velox.git
-cd velox
+git clone https://github.com/axelraboit/aurora.git
+cd aurora
 
 make install-dev
 ```
@@ -95,7 +95,7 @@ cp .env .env.local
 Variables minimales à renseigner dans `.env.local` :
 
 ```dotenv
-DATABASE_URL="postgresql://user:password@127.0.0.1:5432/velox"
+DATABASE_URL="postgresql://user:password@127.0.0.1:5432/aurora"
 MAILER_DSN="smtp://localhost:25"
 APP_SECRET=your-secret-here
 ```
@@ -128,7 +128,7 @@ make deploy-prod
 
 ## Tests
 
-Velox est testé à trois niveaux :
+Aurora est testé à trois niveaux :
 
 ```bash
 make test-frontend             # Vitest — composables et composants Vue
@@ -150,7 +150,7 @@ pnpm exec playwright install chromium
 Le serveur Symfony est démarré automatiquement par Playwright (`symfony server:start --port=8000`). Pour cibler une URL existante à la place, définir `E2E_BASE_URL` :
 
 ```bash
-E2E_BASE_URL=https://staging.velox.local pnpm test:e2e
+E2E_BASE_URL=http://localhost:8000 pnpm test:e2e
 ```
 
 Le scénario complet de conflit à deux onglets est désactivé par défaut (configuration de fixtures requise) ; l'activer avec :

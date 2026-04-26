@@ -145,7 +145,7 @@ async function saveGroup(groupName) {
                 type="button"
                 class="text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                 :class="activeTab === groupName
-                    ? 'bg-indigo-600/15 text-indigo-400'
+                    ? 'bg-accent-600/15 text-accent-400'
                     : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 v-on:click="activeTab = groupName"
             >
@@ -160,7 +160,7 @@ async function saveGroup(groupName) {
                 type="button"
                 class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                 :class="activeTab === groupName
-                    ? 'bg-indigo-600/15 text-indigo-400'
+                    ? 'bg-accent-600/15 text-accent-400'
                     : 'bg-surface-2 text-secondary hover:text-primary'"
                 v-on:click="activeTab = groupName"
             >
@@ -253,7 +253,7 @@ async function saveGroup(groupName) {
                             />
                             <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
                             <p v-if="parameter.type === 'media' && props.mediaPickerPath" class="text-xs text-muted mt-1">
-                                <a :href="props.mediaPickerPath" target="_blank" rel="noopener" class="text-indigo-400 hover:underline">
+                                <a :href="props.mediaPickerPath" target="_blank" rel="noopener" class="text-accent-400 hover:underline">
                                     {{ t("admin.settings.browseMedia") }}
                                 </a>
                             </p>

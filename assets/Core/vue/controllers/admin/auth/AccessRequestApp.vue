@@ -75,7 +75,7 @@ function handleSubmit(event) {
                     name="message"
                     rows="4"
                     :placeholder="t('admin.auth.access_request.message_placeholder')"
-                    class="w-full px-3 py-2 border border-line rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
+                    class="w-full px-3 py-2 border border-line rounded-md bg-surface-2 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition resize-none"
                 />
             </div>
 

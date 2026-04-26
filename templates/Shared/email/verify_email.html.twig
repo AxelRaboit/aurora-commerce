@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{ 'shared.mail.verify_email.heading'|trans }}</h1>
 <p>{{ 'shared.mail.verify_email.greeting'|trans({'{name}': userName}) }}</p>
-<p>{{ 'shared.mail.verify_email.intro'|trans({'{siteName}': siteName ?? 'Velox'}) }}</p>
+<p>{{ 'shared.mail.verify_email.intro'|trans({'{siteName}': siteName ?? 'Aurora'}) }}</p>
 
 {{ include('@Shared/email/partials/action_button.html.twig', {
     url: verifyUrl,

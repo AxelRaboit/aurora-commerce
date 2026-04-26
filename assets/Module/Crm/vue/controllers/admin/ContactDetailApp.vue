@@ -80,7 +80,7 @@ const actionLabel = (action) => {
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
                     <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-lg sm:text-xl font-bold uppercase shrink-0">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-lg sm:text-xl font-bold uppercase shrink-0">
                             {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
                         </div>
                         <div class="min-w-0">
@@ -89,7 +89,7 @@ const actionLabel = (action) => {
                         </div>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 sm:shrink-0 self-end sm:self-auto">
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDelete = true"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
@@ -97,7 +97,7 @@ const actionLabel = (action) => {
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div v-if="contact.email" class="min-w-0">
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.email') }}</dt>
-                        <dd><AppLink :href="`mailto:${contact.email}`" class="text-indigo-400 hover:underline break-all">{{ contact.email }}</AppLink></dd>
+                        <dd><AppLink :href="`mailto:${contact.email}`" class="text-accent-400 hover:underline break-all">{{ contact.email }}</AppLink></dd>
                     </div>
                     <div v-if="contact.phone">
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.phone') }}</dt>
@@ -123,7 +123,7 @@ const actionLabel = (action) => {
 
             <ol v-else class="relative border-l border-line ml-3 space-y-6">
                 <li v-for="event in activity" :key="event.id" class="ml-4">
-                    <div class="absolute w-2.5 h-2.5 bg-indigo-600 rounded-full -left-1.5 border-2 border-bg" />
+                    <div class="absolute w-2.5 h-2.5 bg-accent-600 rounded-full -left-1.5 border-2 border-bg" />
                     <p class="text-sm font-medium text-primary">{{ actionLabel(event.action) }}</p>
                     <p class="text-xs text-secondary">
                         <span v-if="event.userName">{{ event.userName }}</span>

@@ -41,7 +41,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                 <select
                     v-model="selectedLocale"
                     :disabled="localeLoading"
-                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-indigo-500 focus:outline-none transition disabled:opacity-50"
+                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-accent-500 focus:outline-none transition disabled:opacity-50"
                     v-on:change="changeLocale"
                 >
                     <option value="fr">{{ t('shared.locales.fr') }}</option>

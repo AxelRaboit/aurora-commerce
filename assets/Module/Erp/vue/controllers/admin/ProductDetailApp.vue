@@ -44,7 +44,7 @@ const TYPE_OPTIONS = [
     { value: "service", label: () => t("admin.erp.products.types.service") },
 ];
 
-const TYPE_TONE = { physical: "slate", digital: "indigo", service: "violet" };
+const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
 
 const CURRENCY_OPTIONS = [
     { value: "EUR", symbol: "€" },
@@ -142,7 +142,7 @@ const actionLabel = (action) => {
                         <div v-if="product.image" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shrink-0">
                             <img :src="product.image.url" :alt="product.image.alt ?? product.name" class="w-full h-full object-cover">
                         </div>
-                        <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center shrink-0">
+                        <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-accent-600/20 text-accent-400 flex items-center justify-center shrink-0">
                             <Package class="w-5 h-5 sm:w-6 sm:h-6" :stroke-width="2" />
                         </div>
                         <div class="min-w-0">
@@ -155,7 +155,7 @@ const actionLabel = (action) => {
                             {{ t(`admin.erp.products.status.${product.status}`) }}
                         </AppBadge>
                         <div class="flex items-center gap-1">
-                            <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDelete = true"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         </div>
                     </div>
@@ -187,7 +187,7 @@ const actionLabel = (action) => {
             <template v-else>
                 <ol class="relative border-l border-line ml-3 space-y-6">
                     <li v-for="event in activityItems" :key="event.id" class="ml-4">
-                        <div class="absolute w-2.5 h-2.5 bg-indigo-600 rounded-full -left-1.5 border-2 border-bg" />
+                        <div class="absolute w-2.5 h-2.5 bg-accent-600 rounded-full -left-1.5 border-2 border-bg" />
                         <p class="text-sm font-medium text-primary">{{ actionLabel(event.action) }}</p>
                         <p class="text-xs text-secondary">
                             <span v-if="event.userName">{{ event.userName }}</span>

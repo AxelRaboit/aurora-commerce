@@ -209,7 +209,7 @@
 .callout-block--important, .callout--important { border-color: rgb(249 115 22);  background: rgb(255 247 237); color: rgb(154 52 18);   }
 .callout-block--update,    .callout--update    { border-color: rgb(20 184 166);  background: rgb(240 253 250); color: rgb(17 94 89);    }
 .callout-block--rose,      .callout--rose      { border-color: rgb(236 72 153);  background: rgb(255 241 242); color: rgb(159 18 57);   }
-.callout-block--indigo,    .callout--indigo    { border-color: rgb(99 102 241);  background: rgb(238 242 255); color: rgb(55 48 163);   }
+.callout-block--accent,    .callout--accent    { border-color: var(--color-accent-500); background: var(--color-accent-50); color: var(--color-accent-900); }
 .callout-block--lime,      .callout--lime      { border-color: rgb(132 204 22);  background: rgb(247 254 231); color: rgb(63 98 18);    }
 .callout-block--amber,     .callout--amber     { border-color: rgb(245 158 11);  background: rgb(255 251 235); color: rgb(120 53 15);   }
 .callout-block--fuchsia,   .callout--fuchsia   { border-color: rgb(217 70 239);  background: rgb(253 244 255); color: rgb(134 25 143);  }
@@ -224,7 +224,7 @@
 .dark .callout-block--important, .dark .callout--important { background: rgb(124 45 18   / 0.5); color: rgb(253 186 116); }
 .dark .callout-block--update,    .dark .callout--update    { background: rgb(17 94 89    / 0.5); color: rgb(94 234 212);  }
 .dark .callout-block--rose,      .dark .callout--rose      { background: rgb(136 19 55   / 0.5); color: rgb(251 207 232); }
-.dark .callout-block--indigo,    .dark .callout--indigo    { background: rgb(55 48 163   / 0.5); color: rgb(165 180 252); }
+.dark .callout-block--accent,    .dark .callout--accent    { background: color-mix(in srgb, var(--color-accent-900) 50%, transparent); color: var(--color-accent-300); }
 .dark .callout-block--lime,      .dark .callout--lime      { background: rgb(63 98 18    / 0.5); color: rgb(190 242 100); }
 .dark .callout-block--amber,     .dark .callout--amber     { background: rgb(120 53 15   / 0.5); color: rgb(252 211 77);  }
 .dark .callout-block--fuchsia,   .dark .callout--fuchsia   { background: rgb(112 26 117  / 0.5); color: rgb(240 171 252); }
@@ -239,7 +239,7 @@
 .callout-block__tab--important { background: rgb(249 115 22);  }
 .callout-block__tab--update    { background: rgb(20 184 166);  }
 .callout-block__tab--rose      { background: rgb(236 72 153);  }
-.callout-block__tab--indigo    { background: rgb(99 102 241);  }
+.callout-block__tab--accent    { background: var(--color-accent-500); }
 .callout-block__tab--lime      { background: rgb(132 204 22);  }
 .callout-block__tab--amber     { background: rgb(245 158 11);  }
 .callout-block__tab--fuchsia   { background: rgb(217 70 239);  }

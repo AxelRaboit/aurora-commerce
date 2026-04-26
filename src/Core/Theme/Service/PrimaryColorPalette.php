@@ -9,11 +9,11 @@ namespace App\Core\Theme\Service;
  *
  * Strategy: convert the seed RGB → OKLCH (perceptually-uniform colour space used by
  * Tailwind 4), keep its chroma & hue constant, then ramp the lightness across the 11
- * canonical Tailwind lightness values. The output mirrors Tailwind's own indigo scale
- * shape so swapping the seed changes hue without breaking the visual hierarchy
- * (light shades stay light, dark shades stay dark).
+ * canonical Tailwind lightness values. The output mirrors Tailwind's own scale shape
+ * so swapping the seed changes hue without breaking the visual hierarchy (light
+ * shades stay light, dark shades stay dark).
  *
- * Used by {@see ThemeContext::primaryColorPaletteCss()} to override --color-indigo-*
+ * Used by {@see ThemeContext::primaryColorCss()} to define the --color-accent-*
  * CSS variables at runtime.
  */
 final class PrimaryColorPalette
@@ -62,7 +62,7 @@ final class PrimaryColorPalette
         }
 
         if (6 !== mb_strlen($hex) || !ctype_xdigit($hex)) {
-            // Fallback to indigo-500 default when the input is malformed.
+            // Fallback to the default accent hue when the input is malformed.
             return [99, 102, 241];
         }
 

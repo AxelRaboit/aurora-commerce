@@ -14,7 +14,7 @@ describe("AppButton", () => {
         const wrapper = mount(AppButton, {
             props: { variant: "primary" },
         });
-        expect(wrapper.find("button").classes()).toContain("bg-indigo-600");
+        expect(wrapper.find("button").classes()).toContain("bg-accent-600");
     });
 
     it("applies ghost variant classes", () => {

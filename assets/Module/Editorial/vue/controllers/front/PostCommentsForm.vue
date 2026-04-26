@@ -15,7 +15,7 @@ defineProps({
 
 defineEmits(["update:authorName", "update:authorEmail", "update:content", "submit", "cancel"]);
 
-const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500";
+const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-500";
 </script>
 
 <template>

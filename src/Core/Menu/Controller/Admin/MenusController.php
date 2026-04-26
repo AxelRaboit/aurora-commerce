@@ -82,7 +82,7 @@ class MenusController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function createMenu(): JsonResponse
     {
-        // Menu creation is reserved to the velox:menus:sync command — admins
+        // Menu creation is reserved to the aurora:menus:sync command — admins
         // only manage the items of system menus (primary, footer, …).
         return $this->json(['ok' => false, 'error' => 'admin.menus.errors.create_disabled'], Response::HTTP_FORBIDDEN);
     }

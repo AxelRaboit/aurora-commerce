@@ -33,7 +33,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
     {
         $input = new FrontRegisterInput(
             name: 'Alice',
-            email: 'alice-'.uniqid().'@velox.test',
+            email: 'alice-'.uniqid().'@aurora.test',
             password: 'verysecure123',
             locale: 'fr',
         );
@@ -67,7 +67,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
 
     public function testSendPasswordResetEmailDoesNothingForUnknownEmail(): void
     {
-        $this->manager->sendPasswordResetEmail('nobody-'.uniqid().'@velox.test', 'fr');
+        $this->manager->sendPasswordResetEmail('nobody-'.uniqid().'@aurora.test', 'fr');
         $this->addToAssertionCount(1);
     }
 
@@ -109,7 +109,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
     {
         $input = new FrontRegisterInput(
             name: 'Pending',
-            email: 'pending-'.uniqid().'@velox.test',
+            email: 'pending-'.uniqid().'@aurora.test',
             password: 'verysecure123',
             locale: 'fr',
         );
@@ -123,7 +123,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
 
         $user = new User();
         $user->setName('Active');
-        $user->setEmail('active-'.uniqid().'@velox.test');
+        $user->setEmail('active-'.uniqid().'@aurora.test');
         $user->setType(UserTypeEnum::FrontUser);
         $user->setStatus(UserStatusEnum::Active);
         $user->setPassword($hasher->hashPassword($user, 'verysecure123'));

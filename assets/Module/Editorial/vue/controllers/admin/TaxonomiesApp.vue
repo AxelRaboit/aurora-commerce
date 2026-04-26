@@ -312,7 +312,7 @@ function findNodeInTree(nodes, id) {
                     type="button"
                     class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
                     :class="selectedId === taxonomy.id
-                        ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-600/30'
+                        ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30'
                         : 'bg-surface hover:bg-surface-2 text-primary border border-line/60'"
                     v-on:click="selectedId = taxonomy.id"
                 >
@@ -375,7 +375,7 @@ function findNodeInTree(nodes, id) {
                                     type="button"
                                     class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
                                     :class="activeLocale === locale
-                                        ? 'bg-indigo-600 text-white'
+                                        ? 'bg-accent-600 text-white'
                                         : 'text-secondary hover:bg-surface-2'"
                                     v-on:click="activeLocale = locale"
                                 >
@@ -454,7 +454,7 @@ function findNodeInTree(nodes, id) {
                             :key="locale"
                             type="button"
                             class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                            :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                             v-on:click="activeLocale = locale"
                         >
                             {{ locale.toUpperCase() }}
@@ -481,8 +481,8 @@ function findNodeInTree(nodes, id) {
                             :key="pt.id"
                             class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors"
                             :class="taxonomyForm.postTypeIds.includes(pt.id)
-                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                : 'bg-surface-2 border-line text-secondary hover:border-indigo-400'"
+                                ? 'bg-accent-600 border-accent-600 text-white'
+                                : 'bg-surface-2 border-line text-secondary hover:border-accent-400'"
                         >
                             <input
                                 type="checkbox"
@@ -528,7 +528,7 @@ function findNodeInTree(nodes, id) {
                         :key="locale"
                         type="button"
                         class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                        :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                        :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                         v-on:click="activeLocale = locale"
                     >
                         {{ locale.toUpperCase() }}

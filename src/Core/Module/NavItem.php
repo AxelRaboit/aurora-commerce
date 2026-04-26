@@ -11,7 +11,7 @@ final readonly class NavItem
         public string $labelKey,
         public string $icon,
         public ?string $requiredRole = null,
-        public string $activeColor = 'indigo',
+        public string $activeColor = 'accent',
         public ?string $activeRoutePrefix = null,
     ) {}
 }

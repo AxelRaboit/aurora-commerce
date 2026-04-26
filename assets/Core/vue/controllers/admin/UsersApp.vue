@@ -228,7 +228,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary text-sm">
                             {{ user.name }}
-                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
                         </p>
                         <p class="text-xs text-muted mt-0.5">{{ user.email }}</p>
                     </div>
@@ -236,7 +236,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                         <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
                         <div class="flex items-center gap-1">
                             <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
-                            <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
+                            <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
                         </div>
                     </div>
                 </div>
@@ -274,13 +274,13 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
                         <td class="px-4 py-3 text-primary font-medium">
                             {{ user.name }}
-                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
                         </td>
                         <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
                         <td class="px-4 py-3 hidden md:table-cell">
                             <div class="flex items-center gap-1 flex-wrap">
                                 <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
-                                <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
+                                <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
                             </div>
                         </td>
                         <td class="px-4 py-3">
@@ -331,7 +331,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <textarea
                         v-model="inviteForm.message"
                         rows="3"
-                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
                         :placeholder="t('admin.users.inviteMessagePlaceholder')"
                     />
                 </div>

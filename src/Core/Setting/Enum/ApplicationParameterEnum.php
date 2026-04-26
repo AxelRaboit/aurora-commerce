@@ -111,10 +111,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getDefaultValue(): string
     {
         return match ($this) {
-            self::SiteName => 'Mon site Velox',
-            self::SiteDescription => 'Propulsé par Velox CMS',
+            self::SiteName => 'Mon site Aurora',
+            self::SiteDescription => 'Propulsé par Aurora CMS',
             self::SiteUrl => 'http://localhost',
-            self::AdminEmail => 'admin@velox.app',
+            self::AdminEmail => 'admin@aurora.app',
             self::DefaultLocale => 'fr',
             self::PostsPerPage => '10',
             self::MaxUploadSizeMb => '20',

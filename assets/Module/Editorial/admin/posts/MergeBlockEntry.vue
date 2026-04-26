@@ -15,7 +15,7 @@ const emit = defineEmits(["resolve"]);
 
 const KIND_CLASS = {
     [MergeKind.Unchanged]: "bg-surface-2 text-muted",
-    [MergeKind.LocalModified]: "bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300",
+    [MergeKind.LocalModified]: "bg-accent-100 dark:bg-accent-950/50 text-accent-700 dark:text-accent-300",
     [MergeKind.RemoteModified]: "bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300",
     [MergeKind.LocalAdded]: "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300",
     [MergeKind.RemoteAdded]: "bg-cyan-100 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300",
@@ -58,13 +58,13 @@ function renderBlock(block) {
             <div
                 class="border rounded-lg overflow-hidden cursor-pointer transition-all"
                 :class="entry.resolution === 'local'
-                    ? 'border-indigo-500 ring-2 ring-indigo-500/30'
-                    : 'border-line hover:border-indigo-300'"
+                    ? 'border-accent-500 ring-2 ring-accent-500/30'
+                    : 'border-line hover:border-accent-300'"
                 v-on:click="emit('resolve', 'local')"
             >
                 <div class="flex items-center justify-between px-3 py-1.5 text-xs font-medium bg-surface-2 border-b border-line">
-                    <span class="text-indigo-600 dark:text-indigo-400">{{ t("admin.posts.merge.yours") }}</span>
-                    <Check v-if="entry.resolution === 'local'" class="w-3.5 h-3.5 text-indigo-600" :stroke-width="2.5" />
+                    <span class="text-accent-600 dark:text-accent-400">{{ t("admin.posts.merge.yours") }}</span>
+                    <Check v-if="entry.resolution === 'local'" class="w-3.5 h-3.5 text-accent-600" :stroke-width="2.5" />
                 </div>
                 <div class="p-3 prose-preview text-sm" v-html="renderBlock(entry.local) || `<em class='text-muted'>${t('admin.posts.merge.deleted')}</em>`" />
             </div>
@@ -95,7 +95,7 @@ function renderBlock(block) {
                 <button
                     type="button"
                     class="px-2 py-0.5 rounded font-medium transition-colors"
-                    :class="entry.resolution === 'local' ? 'bg-indigo-600 text-white' : 'text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50'"
+                    :class="entry.resolution === 'local' ? 'bg-accent-600 text-white' : 'text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-950/50'"
                     v-on:click="emit('resolve', 'local')"
                 >
                     {{ t("admin.posts.merge.yours") }}

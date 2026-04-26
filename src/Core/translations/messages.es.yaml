@@ -91,7 +91,7 @@ admin:
       feature_3: Gestión de medios integrada
       feature_4: Interfaz moderna y rápida
       heading: Gestiona tu contenido
-      heading_accent: con Velox.
+      heading_accent: con Aurora.
     invitation:
       accept_title: Aceptar invitación
       confirm_password: Confirmar contraseña
@@ -267,7 +267,7 @@ shared:
       fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
       footer_note: Si no esperabas esta invitación, puedes ignorar este correo.
       greeting: Hola {name},
-      heading: Invitación para unirte a Velox
+      heading: Invitación para unirte a Aurora
       intro: Has sido invitado a unirte a {siteName}. Haz clic en el botón de abajo para activar tu cuenta y definir tu contraseña.
     verify_email:
       cta: Confirmar mi correo

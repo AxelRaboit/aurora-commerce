@@ -24,9 +24,27 @@
     --color-serp-url:       #202124;
     --color-serp-desc:      #4d5156;
 
-    --color-accent:      var(--th-accent);
-    --color-accent-hover: var(--th-accent-hover);
-    --color-accent-text: var(--th-accent-text);
+    --color-accent:           var(--th-accent);
+    --color-accent-hover:     var(--th-accent-hover);
+    --color-accent-text:      var(--th-accent-text);
+    --color-scrollbar:        var(--th-scrollbar);
+    --color-scrollbar-hover:  var(--th-scrollbar-hover);
+
+    /* Tailwind-style accent palette (50 → 950). Forwarded from :root so utilities
+       like bg-accent-500 emit `var(--color-accent-500)` instead of the literal
+       value — the runtime override from ThemeContext::primaryColorCss() then
+       takes effect when a theme sets a primary colour. */
+    --color-accent-50:  var(--th-accent-50);
+    --color-accent-100: var(--th-accent-100);
+    --color-accent-200: var(--th-accent-200);
+    --color-accent-300: var(--th-accent-300);
+    --color-accent-400: var(--th-accent-400);
+    --color-accent-500: var(--th-accent-500);
+    --color-accent-600: var(--th-accent-600);
+    --color-accent-700: var(--th-accent-700);
+    --color-accent-800: var(--th-accent-800);
+    --color-accent-900: var(--th-accent-900);
+    --color-accent-950: var(--th-accent-950);
 
     --color-danger:       var(--th-danger);
     --color-danger-soft:  var(--th-danger-soft);
@@ -63,9 +81,25 @@
     --th-muted:      rgb(156 163 175);
     --th-subtle:     rgb(209 213 219);
 
-    --th-accent:       rgb(99 102 241);
-    --th-accent-hover: rgb(79  70 229);
+    --th-accent:       var(--th-accent-500);
+    --th-accent-hover: var(--th-accent-600);
     --th-accent-text:  rgb(255 255 255);
+    --th-scrollbar:       color-mix(in srgb, var(--th-accent-500) 20%, transparent);
+    --th-scrollbar-hover: color-mix(in srgb, var(--th-accent-500) 45%, transparent);
+
+    /* Default accent palette (50 → 950). Overridden at runtime by
+       ThemeContext::primaryColorCss() when the active theme has a primary colour. */
+    --th-accent-50:  oklch(0.962 0.018 272.314);
+    --th-accent-100: oklch(0.930 0.034 272.788);
+    --th-accent-200: oklch(0.870 0.065 274.039);
+    --th-accent-300: oklch(0.785 0.115 274.713);
+    --th-accent-400: oklch(0.673 0.182 276.935);
+    --th-accent-500: oklch(0.585 0.233 277.117);
+    --th-accent-600: oklch(0.511 0.262 276.966);
+    --th-accent-700: oklch(0.457 0.240 277.023);
+    --th-accent-800: oklch(0.398 0.195 277.366);
+    --th-accent-900: oklch(0.359 0.144 278.697);
+    --th-accent-950: oklch(0.257 0.090 281.288);
 
     --th-danger:       rgb(244  63  94);
     --th-danger-soft:  rgb(244  63  94 / 0.10);
@@ -102,9 +136,11 @@
     --th-muted:      rgb(107 114 128);
     --th-subtle:     rgb( 75  85  99);
 
-    --th-accent:       rgb(129 140 248);
-    --th-accent-hover: rgb(99 102 241);
+    --th-accent:       var(--th-accent-400);
+    --th-accent-hover: var(--th-accent-500);
     --th-accent-text:  rgb(255 255 255);
+    --th-scrollbar:       color-mix(in srgb, var(--th-accent-400) 20%, transparent);
+    --th-scrollbar-hover: color-mix(in srgb, var(--th-accent-400) 45%, transparent);
 
     --th-danger:       rgb(251 113 133);
     --th-danger-soft:  rgb(251 113 133 / 0.15);

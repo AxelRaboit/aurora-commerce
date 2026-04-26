@@ -1,4 +1,4 @@
-const THEME_KEY = "velox-theme";
+const THEME_KEY = "aurora-theme";
 
 function currentTheme() {
     return document.documentElement.classList.contains("dark")

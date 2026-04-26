@@ -107,11 +107,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <AppLink v-if="company.website" :href="company.website" target="_blank" class="text-xs text-indigo-400 truncate hover:underline">{{ company.website }}</AppLink>
+                    <AppLink v-if="company.website" :href="company.website" target="_blank" class="text-xs text-accent-400 truncate hover:underline">{{ company.website }}</AppLink>
                     <span v-else class="text-xs text-muted">—</span>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton color="sky" :href="showPath.replace('__id__', company.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                 :href="company.website"
                                 target="_blank"
                                 rel="noopener"
-                                class="text-indigo-400 hover:underline truncate max-w-xs block"
+                                class="text-accent-400 hover:underline truncate max-w-xs block"
                             >
                                 {{ company.website }}
                             </AppLink>
@@ -150,7 +150,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :href="showPath.replace('__id__', company.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>

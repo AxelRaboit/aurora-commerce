@@ -4,7 +4,7 @@ defineProps({
 });
 
 const colors = {
-    indigo: "bg-indigo-600/15 text-indigo-400",
+    accent: "bg-accent-600/15 text-accent-400",
     rose: "bg-rose-500/15 text-rose-400",
     sky: "bg-sky-500/15 text-sky-400",
     amber: "bg-amber-500/15 text-amber-400",

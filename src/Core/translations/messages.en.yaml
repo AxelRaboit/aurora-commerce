@@ -91,7 +91,7 @@ admin:
       feature_3: Built-in media management
       feature_4: Modern and fast interface
       heading: Manage your content
-      heading_accent: with Velox.
+      heading_accent: with Aurora.
     invitation:
       accept_title: Accept invitation
       confirm_password: Confirm password
@@ -267,7 +267,7 @@ shared:
       fallback_intro: 'If the button does not work, copy and paste this link into your browser:'
       footer_note: If you were not expecting this invitation, you can safely ignore this email.
       greeting: Hi {name},
-      heading: Invitation to join Velox
+      heading: Invitation to join Aurora
       intro: You have been invited to join {siteName}. Click the button below to activate your account and set your password.
     verify_email:
       cta: Confirm my email

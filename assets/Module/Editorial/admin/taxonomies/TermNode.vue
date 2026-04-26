@@ -65,7 +65,7 @@ function onChildEnd() {
                 <AppIconButton v-if="hierarchical" color="sky" v-on:click="emit('add-child', node.id)">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton color="indigo" v-on:click="emit('edit', node)">
+                <AppIconButton color="accent" v-on:click="emit('edit', node)">
                     <Pencil class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
                 <AppIconButton color="rose" v-on:click="emit('delete', node)">

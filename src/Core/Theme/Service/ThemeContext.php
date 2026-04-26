@@ -10,7 +10,7 @@ use App\Core\Theme\Repository\ThemeRepository;
 
 final class ThemeContext
 {
-    /** Default primary colour seed when the active theme has none configured (Tailwind indigo-500). */
+    /** Default primary colour seed when the active theme has none configured. */
     public const string DEFAULT_PRIMARY_COLOR = '#6366f1';
 
     private ?Theme $cachedTheme = null;
@@ -65,7 +65,7 @@ final class ThemeContext
         return str_replace(['{year}', '{siteName}'], [date('Y'), $siteName], $text);
     }
 
-    /** Active theme's primary colour as hex (default: indigo-500). */
+    /** Active theme's primary colour as hex (falls back to DEFAULT_PRIMARY_COLOR). */
     public function primaryColor(): string
     {
         $value = $this->activeTheme()?->getConfig()['primary_color'] ?? '';
@@ -74,16 +74,18 @@ final class ThemeContext
     }
 
     /**
-     * Generates the CSS that overrides Tailwind's default --color-indigo-* scale with
-     * the active theme's primary colour. Output goes inside a <style> in the layout
-     * head so every Tailwind class like `bg-indigo-600` automatically uses the new hue.
+     * Generates the CSS that overrides the --th-accent-* scale from the active theme's
+     * primary colour. Output goes inside a <style> in the layout head. Tailwind utilities
+     * like bg-accent-600 emit `var(--color-accent-600)` which itself forwards to
+     * `var(--th-accent-600)` — overriding --th-accent-* at runtime cascades to every
+     * accent-coloured element in the app.
      */
     public function primaryColorCss(): string
     {
         $palette = $this->primaryColorPalette->generate($this->primaryColor());
         $declarations = [];
         foreach ($palette as $stop => $value) {
-            $declarations[] = sprintf('--color-indigo-%s: %s;', $stop, $value);
+            $declarations[] = sprintf('--th-accent-%s: %s;', $stop, $value);
         }
 
         return ':root{'.implode('', $declarations).'}';

@@ -102,7 +102,7 @@ async function doDelete() {
                     </span>
                 </div>
                 <div class="flex items-center gap-1 sm:gap-2 sm:shrink-0 self-end sm:self-auto">
-                    <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDelete = true"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                 </div>
             </div>

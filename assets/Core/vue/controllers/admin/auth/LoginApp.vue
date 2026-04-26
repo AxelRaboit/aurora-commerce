@@ -67,7 +67,7 @@ function handleSubmit(event) {
 
         <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" name="_remember_me" value="1" class="w-4 h-4 rounded border-line bg-surface-2 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+                <input type="checkbox" name="_remember_me" value="1" class="w-4 h-4 rounded border-line bg-surface-2 text-accent-600 focus:ring-accent-500 focus:ring-offset-0">
                 <span class="text-sm text-secondary">{{ t('admin.auth.login.remember') }}</span>
             </label>
             <AppLink :href="forgotPath" class="text-sm">{{ t('admin.auth.login.forgot') }}</AppLink>

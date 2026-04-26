@@ -9,7 +9,7 @@ const DEFAULT_TYPES = [
     { value: "important", label: "Important" },
     { value: "update", label: "Update" },
     { value: "rose", label: "Rose" },
-    { value: "indigo", label: "Indigo" },
+    { value: "accent", label: "Accent" },
     { value: "lime", label: "Lime" },
     { value: "amber", label: "Amber" },
     { value: "fuchsia", label: "Fuchsia" },

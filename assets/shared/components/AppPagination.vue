@@ -40,7 +40,7 @@ function go(newPage) {
                     :key="pageNum"
                     type="button"
                     class="w-8 h-8 rounded-lg text-sm font-medium transition-colors"
-                    :class="pageNum === page ? 'bg-indigo-600 text-white shadow-sm' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    :class="pageNum === page ? 'bg-accent-600 text-white shadow-sm' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                     v-on:click="go(pageNum)"
                 >
                     {{ pageNum }}

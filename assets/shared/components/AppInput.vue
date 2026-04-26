@@ -36,7 +36,7 @@ const inputType = computed(() => {
                 :value="modelValue"
                 :placeholder="placeholder"
                 :required="required"
-                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition"
                 :class="[{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }, toggleable ? 'pr-10' : '', $slots.prefix ? 'pl-8' : '']"
                 v-on:input="$emit('update:modelValue', $event.target.value)"
             >

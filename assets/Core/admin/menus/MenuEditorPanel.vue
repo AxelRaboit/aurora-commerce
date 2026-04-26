@@ -60,7 +60,7 @@ function onChildReordered({ item, children }) {
                     <AppBadge v-if="menu.protected" color="amber" :title="t('admin.menus.protectedHint')">
                         {{ t('admin.menus.protected') }}
                     </AppBadge>
-                    <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="$emit('edit-menu', menu)">
+                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="$emit('edit-menu', menu)">
                         <Pencil class="w-4 h-4" :stroke-width="2" />
                     </AppIconButton>
                     <AppIconButton

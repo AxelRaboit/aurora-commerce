@@ -23,7 +23,7 @@ const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
 const { formatSize } = useFileSize();
 
-const ACTIVE_MODULE_KEY = "velox-dashboard-module";
+const ACTIVE_MODULE_KEY = "aurora-dashboard-module";
 const MODULES = [
     { id: "editorial", label: () => t("admin.nav.sections.editorial"), icon: FileText },
     { id: "crm", label: () => t("admin.nav.sections.crm"), icon: Users },
@@ -127,11 +127,11 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
                 <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.stats.posts') }}</span>
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600/10 flex items-center justify-center">
-                            <FileText class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <FileText class="w-4 h-4 text-accent-500" :stroke-width="2" />
                         </div>
                     </div>
-                    <p class="text-2xl font-bold text-indigo-400">{{ stats.posts?.total ?? 0 }}</p>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.posts?.total ?? 0 }}</p>
                     <p class="text-xs text-muted mt-0.5">
                         {{ stats.posts?.published ?? 0 }} {{ t('admin.stats.published') }} ·
                         {{ stats.posts?.draft ?? 0 }} {{ t('admin.stats.draft') }}
@@ -206,11 +206,11 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
                 <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.contacts') }}</span>
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600/10 flex items-center justify-center">
-                            <Users class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <Users class="w-4 h-4 text-accent-500" :stroke-width="2" />
                         </div>
                     </div>
-                    <p class="text-2xl font-bold text-indigo-400">{{ stats.crm?.contacts ?? 0 }}</p>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.crm?.contacts ?? 0 }}</p>
                 </div>
                 <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
@@ -256,11 +256,11 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
                 <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.products') }}</span>
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600/10 flex items-center justify-center">
-                            <Package class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <Package class="w-4 h-4 text-accent-500" :stroke-width="2" />
                         </div>
                     </div>
-                    <p class="text-2xl font-bold text-indigo-400">{{ stats.erp?.products ?? 0 }}</p>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.erp?.products ?? 0 }}</p>
                 </div>
                 <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">

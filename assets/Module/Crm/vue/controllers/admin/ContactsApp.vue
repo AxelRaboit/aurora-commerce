@@ -128,7 +128,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
         <div class="sm:hidden space-y-3">
             <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
+                    <div class="w-9 h-9 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
                         {{ avatar(contact) }}
                     </div>
                     <div class="flex-1 min-w-0">
@@ -140,7 +140,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                     <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', contact.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
@@ -163,7 +163,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                     <tr v-for="contact in items" :key="contact.id" class="hover:bg-surface-2/50 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
+                                <div class="w-8 h-8 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
                                     {{ avatar(contact) }}
                                 </div>
                                 <span class="font-medium text-primary">{{ contact.fullName }}</span>
@@ -175,7 +175,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', contact.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>

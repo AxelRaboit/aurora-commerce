@@ -55,7 +55,7 @@ function visibilityIcon(item) {
                     <span class="text-sm font-medium text-primary truncate" :class="{ 'text-rose-400': item.targetPreview?.missing }">
                         {{ targetLabel(item) }}
                     </span>
-                    <AppBadge v-if="item.translations?.fr || item.translations?.en" color="indigo" class="shrink-0">
+                    <AppBadge v-if="item.translations?.fr || item.translations?.en" color="accent" class="shrink-0">
                         {{ Object.keys(item.translations).filter((l) => item.translations[l]).join(", ") }}
                     </AppBadge>
                     <AppBadge v-if="item.openInNewTab" color="gray" class="shrink-0">
@@ -68,7 +68,7 @@ function visibilityIcon(item) {
                 <p v-if="targetHint(item)" class="text-xs text-muted truncate font-mono mt-0.5">{{ targetHint(item) }}</p>
             </div>
 
-            <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="emit('edit', item)">
+            <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="emit('edit', item)">
                 <Pencil class="w-4 h-4" :stroke-width="2" />
             </AppIconButton>
             <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="emit('delete', item)">

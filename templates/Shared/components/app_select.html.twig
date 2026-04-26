@@ -21,7 +21,7 @@
     <select
         name="{{ name }}"
         {% if required ?? false %}required{% endif %}
-        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition{% if error is defined and error %} border-rose-500 focus:border-rose-500 focus:ring-rose-500{% endif %}"
+        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition{% if error is defined and error %} border-rose-500 focus:border-rose-500 focus:ring-rose-500{% endif %}"
     >
         {% if placeholder is defined and placeholder %}
             <option value="">{{ placeholder|trans }}</option>

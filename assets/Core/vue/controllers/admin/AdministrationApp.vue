@@ -112,7 +112,7 @@ function onAuditModuleChange(value) {
                 :aria-current="props.tab === tabItem.key ? 'page' : undefined"
                 class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap"
                 :class="props.tab === tabItem.key
-                    ? 'border-indigo-500 text-indigo-400'
+                    ? 'border-accent-500 text-accent-400'
                     : 'border-transparent text-secondary hover:text-primary hover:border-line'"
             >
                 <component :is="tabItem.icon" class="w-4 h-4" :stroke-width="2" />
@@ -136,7 +136,7 @@ function onAuditModuleChange(value) {
                 <div v-for="parameter in parameters.items.value" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
+                            <p class="font-mono text-sm text-accent-400 font-medium break-all">{{ parameter.key }}</p>
                             <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>
                         </div>
                         <AppBadge v-if="parameter.group" color="gray" class="shrink-0">{{ parameter.group }}</AppBadge>
@@ -176,7 +176,7 @@ function onAuditModuleChange(value) {
                     <tbody class="divide-y divide-line">
                         <tr v-for="parameter in parameters.items.value" :key="parameter.key" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-5 py-3 align-top w-1/3">
-                                <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
+                                <p class="font-mono text-sm text-accent-400 font-medium break-all">{{ parameter.key }}</p>
                                 <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>
                                 <AppBadge v-if="parameter.group" color="gray" class="mt-1">{{ parameter.group }}</AppBadge>
                             </td>
@@ -266,12 +266,12 @@ function onAuditModuleChange(value) {
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary inline-flex items-center gap-1.5">
                                     {{ user.name }}
-                                    <AppBadge v-if="user.isCurrent" color="indigo">{{ t('admin.users.you') }}</AppBadge>
+                                    <AppBadge v-if="user.isCurrent" color="accent">{{ t('admin.users.you') }}</AppBadge>
                                 </p>
                             </td>
                             <td class="px-6 py-3 text-secondary">{{ user.email }}</td>
                             <td class="px-6 py-3 hidden md:table-cell">
-                                <AppBadge :color="user.isDevRole ? 'indigo' : 'gray'">
+                                <AppBadge :color="user.isDevRole ? 'accent' : 'gray'">
                                     {{ user.isDevRole ? t('admin.users.role_dev') : t('admin.users.role_user') }}
                                 </AppBadge>
                             </td>
@@ -523,7 +523,7 @@ function onAuditModuleChange(value) {
                     </thead>
                     <tbody class="divide-y divide-line">
                         <tr v-for="permission in moduleEntry.permissions" :key="permission.name">
-                            <td class="px-4 py-2"><span class="font-mono text-xs text-indigo-400">{{ permission.name }}</span></td>
+                            <td class="px-4 py-2"><span class="font-mono text-xs text-accent-400">{{ permission.name }}</span></td>
                             <td class="px-4 py-2"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-surface-2 text-secondary">{{ permission.role }}</span></td>
                         </tr>
                     </tbody>
@@ -557,7 +557,7 @@ function onAuditModuleChange(value) {
                     <tbody class="divide-y divide-line">
                         <tr v-for="log in props.audit.items" :key="log.id" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-4 py-3">
-                                <span class="font-mono text-xs text-indigo-400">{{ log.action }}</span>
+                                <span class="font-mono text-xs text-accent-400">{{ log.action }}</span>
                                 <span v-if="log.entityType" class="ml-2 text-muted text-xs">{{ log.entityType }} #{{ log.entityId }}</span>
                                 <span v-if="log.data?.name" class="ml-2 text-secondary text-xs truncate">— {{ log.data.name }}</span>
                             </td>

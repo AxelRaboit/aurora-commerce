@@ -1,5 +1,5 @@
 {% set logoSize = size ?? 64 %}
-{% set logoGradientId = gradientId ?? 'velox-logo-gradient' %}
+{% set logoGradientId = gradientId ?? 'aurora-logo-gradient' %}
 {% set logoHref = href ?? null %}
 {% set logoLinkClass = linkClass ?? 'inline-flex items-center gap-3' %}
 {% set logoWithText = withText ?? false %}
@@ -7,13 +7,13 @@
 {% set logoVersionClass = versionClass ?? 'text-xs text-muted/50 leading-none' %}
 {% set logoTextLayout = textLayout ?? 'flex flex-col' %}
 
-{# `currentColor` + Tailwind text-indigo-* makes the logo follow the active theme primary colour
+{# `currentColor` + Tailwind text-accent-* makes the logo follow the active theme primary colour
    automatically. The two stops use the same hue at slightly different lightness for the gradient. #}
 {% set logoSvg %}
-    <svg width="{{ logoSize }}" height="{{ logoSize }}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-indigo-500/30 rounded-2xl text-indigo-500">
+    <svg width="{{ logoSize }}" height="{{ logoSize }}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-accent-500/30 rounded-2xl text-accent-500">
         <defs><linearGradient id="{{ logoGradientId }}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0.85"/></linearGradient></defs>
         <rect width="64" height="64" rx="14" fill="url(#{{ logoGradientId }})"/>
-        <text x="32" y="45" font-family="'Inter','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">V</text>
+        <text x="32" y="45" font-family="'Inter','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">A</text>
         <line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
 {% endset %}
@@ -21,7 +21,7 @@
 {% set logoText %}
     {% if logoWithText %}
         <div class="{{ logoTextLayout }}">
-            <span class="{{ logoTextClass }}">Velox</span>
+            <span class="{{ logoTextClass }}">Aurora</span>
             {% if appVersion is defined and appVersion %}
                 <span class="{{ logoVersionClass }}">{{ appVersion }}</span>
             {% endif %}

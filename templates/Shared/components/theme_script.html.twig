@@ -1,6 +1,6 @@
 <script>
     (function () {
-        var s = localStorage.getItem('velox-theme');
+        var s = localStorage.getItem('aurora-theme');
         if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             {% if colorScheme is defined and colorScheme %}
@@ -8,7 +8,7 @@
             {% endif %}
         }
         {% if sidebar is defined and sidebar %}
-        var c = localStorage.getItem('velox-sidebar');
+        var c = localStorage.getItem('aurora-sidebar');
         if (c === 'collapsed') {
             document.documentElement.classList.add('sidebar-collapsed');
         }

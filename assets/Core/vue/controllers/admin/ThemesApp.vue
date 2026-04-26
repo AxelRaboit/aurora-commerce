@@ -25,7 +25,7 @@ const themeList = ref(props.themes.map((theme) => ({ ...theme })));
 
 function accentColor(theme) {
     // Prefer the new primary_color field, fall back to the legacy --th-accent CSS var,
-    // then to the indigo-500 default if neither is set.
+    // then to the default accent hue if neither is set.
     return theme.config?.["primary_color"] ?? theme.config?.["--th-accent"] ?? "#6366f1";
 }
 
@@ -265,7 +265,7 @@ async function confirmDelete() {
                 v-for="theme in themeList"
                 :key="theme.id"
                 class="bg-surface border border-line rounded-xl p-5 flex flex-col gap-4"
-                :class="theme.active ? 'border-indigo-500/50 ring-1 ring-indigo-500/30' : ''"
+                :class="theme.active ? 'border-accent-500/50 ring-1 ring-accent-500/30' : ''"
             >
                 <div class="flex items-start justify-between gap-2">
                     <div class="flex flex-col gap-1 min-w-0">
@@ -412,7 +412,7 @@ async function confirmDelete() {
                                     :key="mode.k"
                                     type="button"
                                     class="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-                                    :class="headerMode === mode.k ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-surface-2 text-secondary border-line hover:text-primary'"
+                                    :class="headerMode === mode.k ? 'bg-accent-600 text-white border-accent-600' : 'bg-surface-2 text-secondary border-line hover:text-primary'"
                                     v-on:click="headerMode = mode.k"
                                 >
                                     {{ mode.l }}

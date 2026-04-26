@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{ 'shared.mail.access_request_approved.heading'|trans }}</h1>
 <p>{{ 'shared.mail.access_request_approved.greeting'|trans({'{name}': request.requesterName ?? request.requesterEmail}) }}</p>
-<p>{{ 'shared.mail.access_request_approved.intro'|trans({'{siteName}': siteName ?? 'Velox'}) }}</p>
+<p>{{ 'shared.mail.access_request_approved.intro'|trans({'{siteName}': siteName ?? 'Aurora'}) }}</p>
 
 {% if generatedPassword %}
 <p>{{ 'shared.mail.access_request_approved.credentials_intro'|trans }}</p>

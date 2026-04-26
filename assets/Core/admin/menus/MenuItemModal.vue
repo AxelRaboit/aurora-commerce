@@ -292,7 +292,7 @@ const targetTypeOptions = computed(() =>
                             v-model="pickerQuery"
                             type="text"
                             :placeholder="t('admin.menus.searchPostsPlaceholder')"
-                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
                         >
@@ -339,7 +339,7 @@ const targetTypeOptions = computed(() =>
                             v-model="pickerQuery"
                             type="text"
                             :placeholder="t('admin.menus.searchTermsPlaceholder')"
-                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
                         >
@@ -394,7 +394,7 @@ const targetTypeOptions = computed(() =>
                         :key="locale"
                         type="button"
                         class="px-3 py-1 rounded-md text-xs font-medium transition-colors"
-                        :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                        :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                         v-on:click="activeLocale = locale"
                     >
                         {{ locale.toUpperCase() }}
@@ -405,7 +405,7 @@ const targetTypeOptions = computed(() =>
                     :value="form.translations[activeLocale] ?? ''"
                     type="text"
                     :placeholder="t('admin.menus.translationPlaceholder')"
-                    class="w-full px-3 py-2 rounded-md border border-line bg-surface text-sm text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    class="w-full px-3 py-2 rounded-md border border-line bg-surface text-sm text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                     v-on:input="setTranslation(activeLocale, $event.target.value)"
                 >
                 <p v-if="errors.translations" class="text-xs text-rose-400">{{ errors.translations }}</p>
@@ -423,7 +423,7 @@ const targetTypeOptions = computed(() =>
                 <AppInput
                     v-model="form.cssClass"
                     :label="t('admin.menus.cssClass')"
-                    placeholder="font-bold text-indigo-500"
+                    placeholder="font-bold text-accent-500"
                 />
             </div>
 

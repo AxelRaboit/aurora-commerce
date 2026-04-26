@@ -26,7 +26,7 @@ defineEmits(["select"]);
                     type="button"
                     class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors"
                     :class="selectedId === menu.id
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-accent-600 text-white'
                         : 'hover:bg-surface-2 text-primary'"
                     v-on:click="$emit('select', menu)"
                 >
@@ -35,7 +35,7 @@ defineEmits(["select"]);
                         <p class="font-medium truncate">{{ menu.name }}</p>
                         <p class="text-xs opacity-70 font-mono truncate">{{ menu.location }}</p>
                     </div>
-                    <AppBadge :color="selectedId === menu.id ? 'gray' : 'indigo'" class="shrink-0">
+                    <AppBadge :color="selectedId === menu.id ? 'gray' : 'accent'" class="shrink-0">
                         {{ menu.itemCount }}
                     </AppBadge>
                 </button>

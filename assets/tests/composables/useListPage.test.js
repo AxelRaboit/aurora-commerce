@@ -67,15 +67,15 @@ describe("useListPage", () => {
             api = useListPage("/list", { initialData: PAYLOAD });
             return api;
         });
-        api.onSearch("velox");
+        api.onSearch("aurora");
         await nextTick();
         expect(new URL(window.location.href).searchParams.get("search")).toBe(
-            "velox",
+            "aurora",
         );
-        expect(api.search.value).toBe("velox");
+        expect(api.search.value).toBe("aurora");
         expect(fetch).toHaveBeenCalled();
         const url = fetch.mock.calls[0][0];
-        expect(url).toContain("search=velox");
+        expect(url).toContain("search=aurora");
         expect(url).toContain("page=1");
     });
 

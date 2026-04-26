@@ -768,8 +768,8 @@ function forceSave() {
                         :key="term.id"
                         class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
                         :class="form.termIds.includes(term.id)
-                            ? 'bg-indigo-600 border-indigo-600 text-white'
-                            : 'bg-surface-2 border-line text-secondary hover:border-indigo-400 hover:text-primary'"
+                            ? 'bg-accent-600 border-accent-600 text-white'
+                            : 'bg-surface-2 border-line text-secondary hover:border-accent-400 hover:text-primary'"
                     >
                         <input type="checkbox" class="sr-only" :checked="form.termIds.includes(term.id)" v-on:change="toggleTerm(term.id)">
                         {{ termLabel(term) }}
@@ -788,7 +788,7 @@ function forceSave() {
                     >
                         <input
                             type="checkbox"
-                            class="w-4 h-4 rounded border-line bg-surface text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0"
+                            class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0"
                             :checked="form.termIds.includes(term.id)"
                             v-on:change="toggleTerm(term.id)"
                         >
@@ -884,7 +884,7 @@ function forceSave() {
             </div>
             <label
                 v-else
-                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-line rounded-lg cursor-pointer hover:border-indigo-400 transition-colors"
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-line rounded-lg cursor-pointer hover:border-accent-400 transition-colors"
                 :class="uploadingFeatured ? 'opacity-50 pointer-events-none' : ''"
             >
                 <ImagePlus class="w-6 h-6 text-muted mb-1.5" :stroke-width="1.5" />
@@ -923,7 +923,7 @@ function forceSave() {
                 type="button"
                 class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap shrink-0"
                 :class="activeLocale === locale
-                    ? 'border-indigo-500 text-indigo-400'
+                    ? 'border-accent-500 text-accent-400'
                     : 'border-transparent text-secondary hover:text-primary'"
                 v-on:click="switchLocale(locale)"
             >
@@ -960,7 +960,7 @@ function forceSave() {
             </div>
             <p v-if="frontUrl" class="text-xs text-muted">
                 <span class="text-secondary">URL :</span>
-                <a v-if="form.status === 'published'" :href="frontUrl" target="_blank" class="ml-1 font-mono text-indigo-400 hover:underline break-all">{{ frontUrl }}</a>
+                <a v-if="form.status === 'published'" :href="frontUrl" target="_blank" class="ml-1 font-mono text-accent-400 hover:underline break-all">{{ frontUrl }}</a>
                 <span v-else class="ml-1 font-mono text-muted break-all">{{ frontUrl }}</span>
             </p>
         </div>
@@ -1151,7 +1151,7 @@ function forceSave() {
                             :key="cat"
                             type="button"
                             class="px-3 py-1 rounded-full text-xs font-medium transition-colors"
-                            :class="activeCategory === cat ? 'bg-indigo-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            :class="activeCategory === cat ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                             v-on:click="activeCategory = cat; confirmingTemplate = null"
                         >
                             {{ t("admin.editor.templates.categories." + cat) }}
@@ -1168,8 +1168,8 @@ function forceSave() {
                                 type="button"
                                 class="relative text-left p-4 rounded-xl border transition-all group overflow-hidden"
                                 :class="confirmingTemplate?.id === template.id
-                                    ? 'border-indigo-500 bg-indigo-500/10'
-                                    : 'border-line bg-surface-2 hover:border-indigo-500 hover:bg-indigo-500/5'"
+                                    ? 'border-accent-500 bg-accent-500/10'
+                                    : 'border-line bg-surface-2 hover:border-accent-500 hover:bg-accent-500/5'"
                                 v-on:click="confirmingTemplate = confirmingTemplate?.id === template.id ? null : template"
                                 v-on:mouseenter="hoveredTemplate = template"
                             >
@@ -1194,7 +1194,7 @@ function forceSave() {
                                 <!-- Card content -->
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="text-2xl">{{ template.icon }}</span>
-                                    <span class="font-medium text-primary text-sm group-hover:text-indigo-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
+                                    <span class="font-medium text-primary text-sm group-hover:text-accent-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
                                 </div>
                                 <p class="text-xs text-muted">{{ t("admin.editor.templates." + template.id + ".description") }}</p>
                             </button>

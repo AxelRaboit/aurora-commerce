@@ -28,7 +28,7 @@ defineProps({
             <template v-else>
                 <p class="text-sm text-secondary mb-3">{{ t('admin.auth.register_confirm.resend_hint') }}</p>
                 <form method="POST" :action="resendPath">
-                    <button type="submit" class="text-sm text-indigo-400 hover:underline font-medium">
+                    <button type="submit" class="text-sm text-accent-400 hover:underline font-medium">
                         {{ t('admin.auth.register_confirm.resend_link') }}
                     </button>
                 </form>

@@ -97,14 +97,14 @@ class AppFixtures extends Fixture
         $theme = (new Theme())
             ->setSlug('default')
             ->setName('Default')
-            ->setDescription('Thème par défaut de Velox')
+            ->setDescription('Thème par défaut de Aurora')
             ->setActive(true);
         $manager->persist($theme);
 
         // Settings
         $settings = [
             ['site_name', 'Mon Site', 'string', 'general'],
-            ['site_description', 'Propulsé par Velox CMS', 'string', 'general'],
+            ['site_description', 'Propulsé par Aurora CMS', 'string', 'general'],
             ['default_locale', LocaleEnum::French->value, 'string', 'general'],
             ['posts_per_page', '10', 'int', 'reading'],
         ];
@@ -116,7 +116,7 @@ class AppFixtures extends Fixture
 
         // Admin user
         $user = new User();
-        $user->setEmail('admin@velox.app')
+        $user->setEmail('admin@aurora.app')
              ->setName('Admin User')
              ->setRoles([UserRoleEnum::Admin->value])
              ->setPassword($this->hasher->hashPassword($user, 'password'));
@@ -130,7 +130,7 @@ class AppFixtures extends Fixture
             ->setTitle('Accueil')
             ->setSlug('accueil')
             ->setBlocks([
-                ['type' => 'heading', 'data' => ['text' => 'Bienvenue sur Velox', 'level' => 1]],
+                ['type' => 'heading', 'data' => ['text' => 'Bienvenue sur Aurora', 'level' => 1]],
                 ['type' => 'paragraph', 'data' => ['text' => 'Votre CMS moderne propulsé par Symfony et Vue 3.']],
             ]);
         $homePageEnglish = (new PostTranslation())
@@ -139,7 +139,7 @@ class AppFixtures extends Fixture
             ->setTitle('Home')
             ->setSlug('home')
             ->setBlocks([
-                ['type' => 'heading', 'data' => ['text' => 'Welcome to Velox', 'level' => 1]],
+                ['type' => 'heading', 'data' => ['text' => 'Welcome to Aurora', 'level' => 1]],
                 ['type' => 'paragraph', 'data' => ['text' => 'Your modern CMS powered by Symfony and Vue 3.']],
             ]);
         $homePageFrench->setSearchContent($this->textExtractor->extract($homePageFrench));

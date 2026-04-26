@@ -16,10 +16,10 @@ describe("AppBadge", () => {
         expect(wrapper.find("span").classes()).toContain("text-secondary");
     });
 
-    it("applies indigo color", () => {
-        const wrapper = mount(AppBadge, { props: { color: "indigo" } });
-        expect(wrapper.find("span").classes()).toContain("bg-indigo-600/15");
-        expect(wrapper.find("span").classes()).toContain("text-indigo-400");
+    it("applies accent color", () => {
+        const wrapper = mount(AppBadge, { props: { color: "accent" } });
+        expect(wrapper.find("span").classes()).toContain("bg-accent-600/15");
+        expect(wrapper.find("span").classes()).toContain("text-accent-400");
     });
 
     it("applies rose color", () => {

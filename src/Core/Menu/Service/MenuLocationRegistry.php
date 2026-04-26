@@ -12,7 +12,7 @@ use App\Core\Menu\Enum\MenuItemVisibilityEnum;
  *
  * Each location has a slug (used as Menu.location), a default name, an
  * optional description, and an optional list of `defaultItems` seeded the
- * first time the menu is created via `velox:menus:sync`.
+ * first time the menu is created via `aurora:menus:sync`.
  */
 final class MenuLocationRegistry
 {

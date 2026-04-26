@@ -172,7 +172,7 @@ async function openPreview(post) {
             <button
                 type="button"
                 class="px-4 py-2 border-b-2 font-medium transition-colors"
-                :class="!trashed ? 'border-indigo-500 text-primary' : 'border-transparent text-muted hover:text-secondary'"
+                :class="!trashed ? 'border-accent-500 text-primary' : 'border-transparent text-muted hover:text-secondary'"
                 v-on:click="setTrashedFilter(false)"
             >
                 <FileText class="inline w-4 h-4 mr-1.5 -mt-0.5" :stroke-width="2" />
@@ -227,7 +227,7 @@ async function openPreview(post) {
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
                         <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
-                        <p v-if="frontUrl(post) && !trashed" class="text-xs text-indigo-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
+                        <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
                     </div>
                     <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
                         {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
@@ -248,7 +248,7 @@ async function openPreview(post) {
                         <AppIconButton color="sky" v-on:click="openPreview(post)">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="!trashed" color="indigo" v-on:click="openEdit(post)">
+                        <AppIconButton v-if="!trashed" color="accent" v-on:click="openEdit(post)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
@@ -286,7 +286,7 @@ async function openPreview(post) {
                                 <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
                                 <div class="min-w-0 flex-1">
                                     <p class="font-medium text-primary text-sm truncate">{{ post.title ?? "-" }}</p>
-                                    <p v-if="frontUrl(post) && !trashed" class="text-xs text-indigo-400 truncate font-mono">{{ frontUrl(post) }}</p>
+                                    <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate font-mono">{{ frontUrl(post) }}</p>
                                 </div>
                             </div>
                         </td>
@@ -311,7 +311,7 @@ async function openPreview(post) {
                                 <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="!trashed" color="indigo" v-on:click="openEdit(post)">
+                                <AppIconButton v-if="!trashed" color="accent" v-on:click="openEdit(post)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">

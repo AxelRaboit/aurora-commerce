@@ -35,7 +35,7 @@ const emit = defineEmits(["resend", "edit", "toggle-disabled", "delete"]);
         </AppIconButton>
         <AppIconButton
             v-if="canAct"
-            color="indigo"
+            color="accent"
             :title="t('shared.common.edit')"
             v-on:click="emit('edit', user)"
         >

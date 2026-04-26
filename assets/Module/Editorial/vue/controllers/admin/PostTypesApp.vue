@@ -220,7 +220,7 @@ function toggleIn(list, value) {
                     type="button"
                     class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
                     :class="selectedId === postType.id
-                        ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-600/30'
+                        ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30'
                         : 'bg-surface hover:bg-surface-2 text-primary border border-line/60'"
                     v-on:click="selectedId = postType.id"
                 >
@@ -308,7 +308,7 @@ function toggleIn(list, value) {
                             <AppBadge v-if="field.required" color="rose">{{ t("admin.postTypes.fields.required") }}</AppBadge>
                             <AppBadge v-if="field.translatable" color="sky">{{ t("admin.postTypes.fields.translatable") }}</AppBadge>
                             <div class="flex items-center gap-0.5">
-                                <AppIconButton color="indigo" v-on:click="openEditField(field)">
+                                <AppIconButton color="accent" v-on:click="openEditField(field)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton color="rose" v-on:click="deletingField = field">
@@ -355,8 +355,8 @@ function toggleIn(list, value) {
                             :key="support"
                             class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors"
                             :class="postTypeForm.supports.includes(support)
-                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                : 'bg-surface-2 border-line text-secondary hover:border-indigo-400'"
+                                ? 'bg-accent-600 border-accent-600 text-white'
+                                : 'bg-surface-2 border-line text-secondary hover:border-accent-400'"
                         >
                             <input
                                 type="checkbox"
@@ -377,8 +377,8 @@ function toggleIn(list, value) {
                             :key="taxonomy.id"
                             class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors"
                             :class="postTypeForm.taxonomyIds.includes(taxonomy.id)
-                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                : 'bg-surface-2 border-line text-secondary hover:border-indigo-400'"
+                                ? 'bg-accent-600 border-accent-600 text-white'
+                                : 'bg-surface-2 border-line text-secondary hover:border-accent-400'"
                         >
                             <input
                                 type="checkbox"
@@ -431,7 +431,7 @@ function toggleIn(list, value) {
                     <textarea
                         v-model="fieldForm.choicesText"
                         rows="5"
-                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted font-mono focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
                         :placeholder="t('admin.postTypes.fields.selectChoicesPlaceholder')"
                     />
                     <p class="text-xs text-muted mt-1">{{ t("admin.postTypes.fields.selectChoicesHint") }}</p>
