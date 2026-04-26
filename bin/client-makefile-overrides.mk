@@ -4,6 +4,7 @@
 install: install-dev ## Install the project (alias for install-dev)
 
 install-dev: ## Install for local development
+	git submodule update --init --recursive
 	$(COMPOSER) install --working-dir=$(AURORA)
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
