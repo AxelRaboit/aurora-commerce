@@ -10,7 +10,18 @@ const gradientId = `velox-bg-${instanceUid}`;
 </script>
 
 <template>
-    <svg :width="size" :height="size" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <!--
+        currentColor + Tailwind text-indigo-500 makes the logo follow the active theme primary
+        colour (which overrides --color-indigo-* at runtime). The gradient uses two opacities of
+        the same hue to keep the depth effect across any colour the admin picks.
+    -->
+    <svg
+        :width="size"
+        :height="size"
+        viewBox="0 0 64 64"
+        xmlns="http://www.w3.org/2000/svg"
+        class="text-indigo-500"
+    >
         <defs>
             <linearGradient
                 :id="gradientId"
@@ -19,8 +30,8 @@ const gradientId = `velox-bg-${instanceUid}`;
                 x2="100%"
                 y2="100%"
             >
-                <stop offset="0%" style="stop-color:#6366f1" />
-                <stop offset="100%" style="stop-color:#4f46e5" />
+                <stop offset="0%" stop-color="currentColor" stop-opacity="1" />
+                <stop offset="100%" stop-color="currentColor" stop-opacity="0.85" />
             </linearGradient>
         </defs>
         <rect width="64" height="64" rx="14" :fill="`url(#${gradientId})`" />

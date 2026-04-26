@@ -10,6 +10,9 @@ use App\Core\Theme\Repository\ThemeRepository;
 
 final class ThemeContext
 {
+    /** Default primary colour seed when the active theme has none configured (Tailwind indigo-500). */
+    public const string DEFAULT_PRIMARY_COLOR = '#6366f1';
+
     private ?Theme $cachedTheme = null;
 
     private bool $resolved = false;
@@ -17,6 +20,7 @@ final class ThemeContext
     public function __construct(
         private readonly ThemeRepository $themeRepository,
         private readonly MediaRepository $mediaRepository,
+        private readonly PrimaryColorPalette $primaryColorPalette,
     ) {}
 
     public function activeTheme(): ?Theme
@@ -59,6 +63,30 @@ final class ThemeContext
         $text = (is_string($custom) && '' !== $custom) ? $custom : '© {year} {siteName}';
 
         return str_replace(['{year}', '{siteName}'], [date('Y'), $siteName], $text);
+    }
+
+    /** Active theme's primary colour as hex (default: indigo-500). */
+    public function primaryColor(): string
+    {
+        $value = $this->activeTheme()?->getConfig()['primary_color'] ?? '';
+
+        return is_string($value) && '' !== $value ? $value : self::DEFAULT_PRIMARY_COLOR;
+    }
+
+    /**
+     * Generates the CSS that overrides Tailwind's default --color-indigo-* scale with
+     * the active theme's primary colour. Output goes inside a <style> in the layout
+     * head so every Tailwind class like `bg-indigo-600` automatically uses the new hue.
+     */
+    public function primaryColorCss(): string
+    {
+        $palette = $this->primaryColorPalette->generate($this->primaryColor());
+        $declarations = [];
+        foreach ($palette as $stop => $value) {
+            $declarations[] = sprintf('--color-indigo-%s: %s;', $stop, $value);
+        }
+
+        return ':root{'.implode('', $declarations).'}';
     }
 
     public function cssVariableOverrides(): string

@@ -754,6 +754,10 @@ export default {
             edit: "Bearbeiten",
             colors: "Farben",
             resetColor: "Zurücksetzen",
+            primaryColor: "Hauptfarbe",
+            primaryColorLabel: "Akzentfarbe",
+            primaryColorHint:
+                "Wird für Buttons, Links, Badges und das Logo verwendet. Die vollständige Palette wird automatisch erzeugt.",
             sections: {
                 general: "Allgemein",
                 header: "Kopfzeile",

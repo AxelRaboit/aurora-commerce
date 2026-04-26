@@ -745,6 +745,10 @@ export default {
             edit: "Edit",
             colors: "Colors",
             resetColor: "Reset",
+            primaryColor: "Primary color",
+            primaryColorLabel: "Accent colour",
+            primaryColorHint:
+                "Used for buttons, links, badges and the logo. The full palette is generated automatically.",
             sections: {
                 general: "General",
                 header: "Header",

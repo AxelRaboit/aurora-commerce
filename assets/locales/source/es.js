@@ -756,6 +756,10 @@ export default {
             edit: "Editar",
             colors: "Colores",
             resetColor: "Restablecer",
+            primaryColor: "Color principal",
+            primaryColorLabel: "Color de acento",
+            primaryColorHint:
+                "Se usa para botones, enlaces, insignias y el logo. La paleta completa se genera automáticamente.",
             sections: {
                 general: "General",
                 header: "Encabezado",

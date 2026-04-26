@@ -1,0 +1,3 @@
+{# Overrides Tailwind's --color-indigo-* scale with the active theme's primary colour. #}
+{# Inject in <head> so utility classes like bg-indigo-600 / text-indigo-400 pick it up app-wide. #}
+<style>{{ themeContext.primaryColorCss()|raw }}</style>

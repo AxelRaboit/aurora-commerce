@@ -44,3 +44,5 @@
 {% if cssOverrides %}
     <style>html[data-theme] { {{ cssOverrides|raw }} }</style>
 {% endif %}
+
+{{ include('@Shared/components/primary_color_style.html.twig') }}

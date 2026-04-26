@@ -757,6 +757,10 @@ export default {
             edit: "Modifier",
             colors: "Couleurs",
             resetColor: "Réinitialiser",
+            primaryColor: "Couleur principale",
+            primaryColorLabel: "Couleur d'accent",
+            primaryColorHint:
+                "Sert de base aux boutons, liens, badges et au logo. Toute la palette est dérivée automatiquement.",
             sections: {
                 general: "Général",
                 header: "En-tête",

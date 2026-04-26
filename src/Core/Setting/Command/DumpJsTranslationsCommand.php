@@ -99,11 +99,18 @@ final class DumpJsTranslationsCommand extends Command
         return $target;
     }
 
-    /** Recursively converts %var% placeholders to {var} in all leaf strings. */
+    /**
+     * Recursively prepares messages for vue-i18n consumption:
+     *  - Symfony `%var%` placeholders → `{var}`
+     *  - Bare `@` characters (e.g. in `you@example.com` placeholders) escaped as `{'@'}` so
+     *    vue-i18n's linked-message parser doesn't treat them as `@:other.key` syntax.
+     */
     private function convertPlaceholders(mixed $value): mixed
     {
         if (is_string($value)) {
-            return preg_replace('/%([A-Za-z_]\w*)%/', '{$1}', $value) ?? $value;
+            $converted = preg_replace('/%([A-Za-z_]\w*)%/', '{$1}', $value) ?? $value;
+
+            return str_replace('@', "{'@'}", $converted);
         }
 
         if (is_array($value)) {

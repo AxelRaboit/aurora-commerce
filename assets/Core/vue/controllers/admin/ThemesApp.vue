@@ -24,8 +24,9 @@ const props = defineProps({
 const themeList = ref(props.themes.map((theme) => ({ ...theme })));
 
 function accentColor(theme) {
-    const accent = theme.config?.["--th-accent"];
-    return accent ?? "#6366f1";
+    // Prefer the new primary_color field, fall back to the legacy --th-accent CSS var,
+    // then to the indigo-500 default if neither is set.
+    return theme.config?.["primary_color"] ?? theme.config?.["--th-accent"] ?? "#6366f1";
 }
 
 // ── Activate ─────────────────────────────────────────────────────────────────
@@ -139,6 +140,8 @@ const DEFAULTS = {
     "--th-footer-text":    "#9ca3af",
 };
 
+const DEFAULT_PRIMARY_COLOR = "#6366f1";
+
 const editModal = reactive({ open: false, editing: null, saving: false, errors: {}, advanced: false });
 const editForm = reactive({ name: "", description: "" });
 const colorFields = reactive(Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, ""])));
@@ -146,6 +149,7 @@ const footerText = ref("");
 const headerLogoMediaId = ref("");
 const headerCustomText = ref("");
 const headerMode = ref("default");
+const primaryColor = ref(DEFAULT_PRIMARY_COLOR);
 
 const configFromColors = computed(() => {
     const result = {};
@@ -160,6 +164,9 @@ const configFromColors = computed(() => {
     }
     if (headerMode.value === "text" && headerCustomText.value.trim()) {
         result["header_custom_text"] = headerCustomText.value.trim();
+    }
+    if (primaryColor.value && primaryColor.value.toLowerCase() !== DEFAULT_PRIMARY_COLOR) {
+        result["primary_color"] = primaryColor.value;
     }
     return result;
 });
@@ -177,7 +184,12 @@ function openEdit(theme) {
     headerLogoMediaId.value = theme.config?.["header_logo_media_id"] ?? "";
     headerCustomText.value = theme.config?.["header_custom_text"] ?? "";
     headerMode.value = theme.config?.["header_logo_media_id"] ? "image" : (theme.config?.["header_custom_text"] ? "text" : "default");
+    primaryColor.value = theme.config?.["primary_color"] ?? DEFAULT_PRIMARY_COLOR;
     editModal.open = true;
+}
+
+function resetPrimaryColor() {
+    primaryColor.value = DEFAULT_PRIMARY_COLOR;
 }
 
 async function submitEdit() {
@@ -356,8 +368,26 @@ async function confirmDelete() {
                     :rows="2"
                 />
 
-                <div v-for="section in CSS_SECTIONS" :key="section.key" class="space-y-2">
-                    <span class="text-xs text-secondary uppercase tracking-wide font-semibold">{{ section.label }}</span>
+                <div class="space-y-1.5 pt-6 border-t border-line/60">
+                    <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ t('admin.themes.primaryColor') }}</span>
+                    <div class="flex items-center gap-3 bg-surface-2 rounded-lg px-3 py-2">
+                        <input
+                            type="color"
+                            :value="primaryColor"
+                            class="w-8 h-8 rounded cursor-pointer border border-line bg-transparent p-0.5"
+                            v-on:input="primaryColor = $event.target.value"
+                        >
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="text-xs font-medium text-primary">{{ t('admin.themes.primaryColorLabel') }}</span>
+                            <span class="text-xs text-muted">{{ t('admin.themes.primaryColorHint') }}</span>
+                        </div>
+                        <span class="text-xs font-mono text-muted">{{ primaryColor }}</span>
+                        <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('admin.themes.resetColor')" v-on:click="resetPrimaryColor">↺</button>
+                    </div>
+                </div>
+
+                <div v-for="section in CSS_SECTIONS" :key="section.key" class="space-y-1.5 pt-6 border-t border-line/60">
+                    <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ section.label }}</span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div v-for="cssVar in section.vars" :key="cssVar.key" class="flex items-center gap-3 bg-surface-2 rounded-lg px-3 py-2">
                             <input

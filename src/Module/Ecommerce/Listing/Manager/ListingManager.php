@@ -97,7 +97,7 @@ final readonly class ListingManager implements ListingManagerInterface
         return $product;
     }
 
-    private function assertProductHasNoListing($product): void
+    private function assertProductHasNoListing(object $product): void
     {
         $existing = $this->listingRepository->findOneByProduct($product);
         if ($existing instanceof Listing) {
