@@ -36,7 +36,7 @@ PROJECT_NAME="$1"
 DEST="${2:-$(dirname "$(pwd)")/${PROJECT_NAME}}"
 AURORA_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AURORA_REMOTE="$(git -C "$AURORA_DIR" remote get-url origin 2>/dev/null || echo 'git@github.com:AxelRaboit/aurora.git')"
-VENDOR_NAME="$(basename "$(dirname "$AURORA_REMOTE")" | tr '[:upper:]' '[:lower:]')"
+VENDOR_NAME="$(echo "$AURORA_REMOTE" | sed 's|.*[:/]\([^/]*\)/[^/]*$|\1|' | tr '[:upper:]' '[:lower:]')"
 
 if [[ -d "$DEST" ]]; then
     error "Directory already exists: $DEST"
