@@ -37,6 +37,7 @@ DEST="${2:-$(dirname "$(pwd)")/${PROJECT_NAME}}"
 AURORA_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AURORA_REMOTE="$(git -C "$AURORA_DIR" remote get-url origin 2>/dev/null || echo 'git@github.com:AxelRaboit/aurora.git')"
 VENDOR_NAME="$(echo "$AURORA_REMOTE" | sed 's|.*[:/]\([^/]*\)/[^/]*$|\1|' | tr '[:upper:]' '[:lower:]')"
+AURORA_ENV_LOCAL="${AURORA_DIR}/.env.local"
 
 if [[ -d "$DEST" ]]; then
     error "Directory already exists: $DEST"
@@ -132,7 +133,7 @@ APP_NAME=${PROJECT_NAME}
 EOF
 
 # ---------------------------------------------------------------------------
-# .env.local.example
+# .env.local.example + .env.local (pre-filled from aurora's .env.local)
 # ---------------------------------------------------------------------------
 
 cat > "$DEST/.env.local.example" <<EOF
@@ -142,6 +143,25 @@ cat > "$DEST/.env.local.example" <<EOF
 APP_SECRET=your-random-secret-here
 DATABASE_URL="postgresql://app:password@127.0.0.1:5432/${PROJECT_NAME}?serverVersion=18&charset=utf8"
 EOF
+
+if [[ -f "$AURORA_ENV_LOCAL" ]]; then
+    info "Pre-filling .env.local from aurora's .env.local..."
+
+    # Extract DB connection parts from aurora's DATABASE_URL
+    AURORA_DB_URL="$(grep '^DATABASE_URL=' "$AURORA_ENV_LOCAL" | cut -d= -f2- | tr -d '"')"
+    AURORA_SECRET="$(grep '^APP_SECRET=' "$AURORA_ENV_LOCAL" | cut -d= -f2-)"
+
+    # Swap the DB name for the client project name (replace last path segment before ?)
+    CLIENT_DB_URL="$(echo "$AURORA_DB_URL" | sed "s|/[^/?]*?|/${PROJECT_NAME//-/_}_dev?|")"
+
+    cat > "$DEST/.env.local" <<EOF
+APP_SECRET=${AURORA_SECRET}
+DATABASE_URL="${CLIENT_DB_URL}"
+EOF
+    success ".env.local created"
+else
+    info "No aurora .env.local found — skipping .env.local pre-fill (copy .env.local.example manually)"
+fi
 
 # ---------------------------------------------------------------------------
 # .gitignore
@@ -283,6 +303,104 @@ cat > "$DEST/config/packages-custom.yaml" <<'EOF'
 EOF
 
 # ---------------------------------------------------------------------------
+# Makefile
+# ---------------------------------------------------------------------------
+
+info "Writing Makefile..."
+cat > "$DEST/Makefile" <<'MAKEFILE'
+SHELL := /bin/bash
+
+PHP_BIN  = php
+CONSOLE  = $(PHP_BIN) bin/console
+COMPOSER = composer
+
+# === Setup ===
+install: ## Install dependencies and set up the project
+	$(COMPOSER) install --working-dir=vendor/aurora
+	$(COMPOSER) install
+	make db-create
+	make migrate
+
+setup-dirs: ## Create required runtime directories
+	@mkdir -p var/cache var/log
+	@echo "✅ Runtime directories created"
+
+# === Symfony ===
+about: ## Show app info
+	$(CONSOLE) about
+
+cc: ## Clear cache (dev)
+	$(CONSOLE) cache:clear
+
+cc-prod: ## Clear and warm up production cache
+	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod
+
+routes: ## List all registered routes
+	$(CONSOLE) debug:router --show-controllers
+
+sf: ## Run any Symfony console command (usage: make sf CMD="debug:container")
+	$(CONSOLE) $(CMD)
+
+# === Database ===
+db-create: ## Create the database
+	$(CONSOLE) doctrine:database:create --if-not-exists
+
+db-drop: ## Drop the database
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+
+migrate: ## Run pending migrations
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+
+migration-diff: ## Generate a migration from entity changes
+	$(CONSOLE) doctrine:migrations:diff
+
+migration-generate: ## Generate a blank migration
+	$(CONSOLE) doctrine:migrations:generate
+
+schema-validate: ## Validate the Doctrine schema
+	$(CONSOLE) doctrine:schema:validate -vvv
+
+fixtures: ## Drop DB, re-run migrations and load fixtures
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+	$(CONSOLE) doctrine:database:create --if-not-exists
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	$(CONSOLE) doctrine:fixtures:load --no-interaction
+	@echo "✅ Fixtures loaded"
+
+# === Tests ===
+test: db-test ## Run all backend tests
+	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox
+
+test-unit: ## Run unit tests
+	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox --testsuite=Unit
+
+test-integration: db-test ## Run integration tests
+	$(PHP_BIN) vendor/aurora/bin/phpunit --testdox --testsuite=Integration
+
+db-test: ## Create and migrate the test database
+	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
+	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
+
+# === Aurora ===
+aurora-update: ## Pull latest Aurora changes
+	git submodule update --remote vendor/aurora
+	$(COMPOSER) install --working-dir=vendor/aurora
+	make migrate
+	@echo "✅ Aurora updated"
+
+aurora-sync-params: ## Synchronise Aurora application parameters
+	$(CONSOLE) aurora:application-parameter
+
+aurora-sync-menus: ## Sync Aurora menu locations
+	$(CONSOLE) aurora:menus:sync
+
+# === Help ===
+.PHONY: help
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-28s\033[0m %s\n", $$1, $$2}'
+MAKEFILE
+
+# ---------------------------------------------------------------------------
 # README.md
 # ---------------------------------------------------------------------------
 
@@ -376,7 +494,12 @@ success "Project created at ${BOLD}${DEST}${RESET}"
 echo ""
 echo -e "  Next steps:"
 echo -e "    1. ${CYAN}cd ${DEST}${RESET}"
-echo -e "    2. ${CYAN}cp .env.local.example .env.local${RESET}  — set your DB credentials"
-echo -e "    3. ${CYAN}php bin/console doctrine:migrations:migrate${RESET}"
-echo -e "    4. ${CYAN}php bin/console about${RESET}  — verify the app boots"
+if [[ ! -f "$DEST/.env.local" ]]; then
+echo -e "    2. ${CYAN}cp .env.local.example .env.local${RESET}  — fill in your DB credentials"
+echo -e "    3. ${CYAN}make db-create && make migrate${RESET}"
+echo -e "    4. ${CYAN}make about${RESET}  — verify the app boots"
+else
+echo -e "    2. ${CYAN}make db-create && make migrate${RESET}"
+echo -e "    3. ${CYAN}make about${RESET}  — verify the app boots"
+fi
 echo ""
