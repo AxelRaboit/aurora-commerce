@@ -1,0 +1,19 @@
+{% extends '@Core/admin/base_guest.html.twig' %}
+
+{% block title %}{{ 'admin.auth.register.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block hero %}
+    {% if registrationEnabled %}
+        {{ include('@Shared/components/auth_hero.html.twig') }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div {{ vue_component('core/admin/auth/RegisterApp', {
+        registerPath: path('admin_register'),
+        loginPath: path('admin_login'),
+        registrationEnabled: registrationEnabled,
+        initialErrors: errors,
+        values: {name: values.name ?? '', email: values.email ?? ''},
+    }) }}></div>
+{% endblock %}

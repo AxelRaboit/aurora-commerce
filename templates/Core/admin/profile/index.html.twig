@@ -1,0 +1,21 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.profile'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.profile'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/ProfileApp', {
+    userName: app.user.name,
+    userEmail: app.user.email,
+    locale: app.request.locale,
+    updatePath: path('profile_update'),
+    passwordPath: path('profile_password'),
+    localePath: path('profile_locale'),
+    deletePath: path('profile_delete'),
+    loginPath: path('admin_login'),
+    deleteCsrf: csrf_token('profile_delete'),
+}) }} class="flex-1"></div>
+{% endblock %}

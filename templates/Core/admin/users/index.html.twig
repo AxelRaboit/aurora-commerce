@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.users'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.users'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/UsersApp', {
+    roles: roles,
+    isDev: isDev,
+    currentUserPriority: currentUserPriority,
+    listPath: path('admin_users_list'),
+    invitePath: path('admin_users_invite'),
+    updatePath: path('admin_users_update', {id: '__id__'}),
+    resendInvitationPath: path('admin_users_resend_invitation', {id: '__id__'}),
+    toggleDisabledPath: path('admin_users_toggle_disabled', {id: '__id__'}),
+    impersonatePath: path('admin_dashboard', {_switch_user: '__email__'}),
+    deletePath: path('admin_users_delete', {id: '__id__'}),
+    currentUserId: app.user.id,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

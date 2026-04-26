@@ -1,0 +1,76 @@
+{% extends 'Front/themes/default/layout.html.twig' %}
+
+{% block title %}{{ listing.seoTitle ?? listing.displayTitle }} — {{ context.siteName }}{% endblock %}
+{% block pageDescription %}{{ listing.seoDescription ?? listing.marketingDescription ?? '' }}{% endblock %}
+
+{% block body %}
+    <article class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+            {% if listing.displayImage %}
+                <div class="aspect-square bg-surface-2 rounded-xl overflow-hidden">
+                    <img
+                        src="{{ listing.displayImage.url }}"
+                        alt="{{ listing.displayImage.alt ?? listing.displayTitle }}"
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+            {% else %}
+                <div class="aspect-square bg-surface-2 rounded-xl flex items-center justify-center text-muted">
+                    {{ 'front.shop.no_image'|trans }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <p class="text-xs font-mono text-muted">{{ listing.product.sku }}</p>
+                <h1 class="text-3xl font-bold text-primary mt-1">{{ listing.displayTitle }}</h1>
+            </div>
+
+            {% if listing.product.price is not null %}
+                <p class="text-2xl font-bold text-accent">
+                    {{ listing.product.price|number_format(2, ',', ' ') }} {{ listing.product.currencySymbol }}
+                </p>
+            {% endif %}
+
+            {% if listing.product.stockTracked %}
+                {% if not listing.product.inStock %}
+                    <p class="inline-flex items-center px-3 py-1.5 rounded text-sm font-medium bg-rose-500/15 text-rose-400">
+                        {{ 'front.shop.out_of_stock'|trans }}
+                    </p>
+                {% elseif listing.product.isLowStock %}
+                    <p class="text-sm text-amber-400">{{ 'front.shop.low_stock'|trans({'%count%': listing.product.stockQuantity}) }}</p>
+                {% else %}
+                    <p class="text-sm text-emerald-400">{{ 'front.shop.in_stock'|trans }}</p>
+                {% endif %}
+            {% endif %}
+
+            {% if not listing.product.stockTracked or listing.product.inStock %}
+                <form method="post" action="{{ path('front_cart_add', {locale: locale}) }}" class="flex items-center gap-3">
+                    <input type="hidden" name="listingId" value="{{ listing.id }}">
+                    <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        {% if listing.product.stockTracked %}max="{{ listing.product.stockQuantity }}"{% endif %}
+                        class="w-20 px-3 py-2 rounded-md bg-surface-2 border border-line text-primary"
+                    >
+                    <button type="submit" class="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-md hover:opacity-90 transition-opacity">
+                        {{ 'front.shop.add_to_cart'|trans }}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if listing.marketingDescription %}
+                <div class="prose prose-invert max-w-none">
+                    <p class="whitespace-pre-line text-secondary">{{ listing.marketingDescription }}</p>
+                </div>
+            {% endif %}
+
+            <a href="{{ path('front_shop_index', {locale: locale}) }}" class="inline-block text-sm text-accent hover:underline">
+                ← {{ 'front.shop.back_to_list'|trans }}
+            </a>
+        </div>
+    </article>
+{% endblock %}

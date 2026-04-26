@@ -29,10 +29,12 @@ export function usePaginatedFetch(
 
         loading.value = true;
         try {
-            const params = new URLSearchParams({
-                page: String(targetPage),
-                ...getExtraParams(),
-            });
+            const params = new URLSearchParams({ page: String(targetPage) });
+            for (const [key, value] of Object.entries(getExtraParams())) {
+                if (value !== undefined && value !== null && value !== "") {
+                    params.set(key, String(value));
+                }
+            }
             const response = await fetch(`${path}?${params}`, {
                 headers: { "X-Requested-With": "XMLHttpRequest" },
             });

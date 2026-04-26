@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ order.number }} - {{ 'admin.nav.orders'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: order.number,
+        crumbs: [
+            {label: 'admin.nav.orders'|trans, href: backPath},
+            {label: order.number},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ecommerce/admin/OrderDetailApp', {
+    order: order,
+    activity: activity,
+    backPath: backPath,
+    updateStatusPath: updateStatusPath,
+    canManage: is_granted('ecommerce.orders.manage'),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

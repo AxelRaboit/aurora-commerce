@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ deal.name }} - {{ 'admin.nav.deals'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: deal.name,
+        crumbs: [
+            {label: 'admin.nav.deals'|trans, href: backPath},
+            {label: deal.name},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/DealDetailApp', {
+    deal: deal,
+    backPath: backPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    updateStagePath: updateStagePath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

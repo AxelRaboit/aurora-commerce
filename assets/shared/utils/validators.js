@@ -12,6 +12,16 @@ export const email = (msg) => (value) => {
     return EMAIL_REGEX.test(String(value).trim()) ? null : msg;
 };
 
+export const url = (msg) => (value) => {
+    if (!value || !String(value).trim()) return null;
+    try {
+        new URL(String(value).trim());
+        return null;
+    } catch {
+        return msg;
+    }
+};
+
 export const compose =
     (...validators) =>
     (value) => {

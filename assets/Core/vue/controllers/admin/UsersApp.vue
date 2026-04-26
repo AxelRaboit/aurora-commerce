@@ -1,0 +1,386 @@
+<script setup>
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { UserPlus } from "lucide-vue-next";
+import AppPagination from "@/shared/components/AppPagination.vue";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppInput from "@/shared/components/AppInput.vue";
+import AppSearchInput from "@/shared/components/AppSearchInput.vue";
+import AppSelect from "@/shared/components/AppSelect.vue";
+import AppMultiselect from "@/shared/components/AppMultiselect.vue";
+import AppModal from "@/shared/components/AppModal.vue";
+import AppModalFooter from "@/shared/components/AppModalFooter.vue";
+import AppNoData from "@/shared/components/AppNoData.vue";
+import AppBadge from "@/shared/components/AppBadge.vue";
+import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import UserRowActions from "@core/admin/users/UserRowActions.vue";
+
+const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
+
+const props = defineProps({
+    roles: { type: Array, default: () => [] },
+    isDev: { type: Boolean, default: false },
+    currentUserPriority: { type: Number, default: 0 },
+    listPath: { type: String, required: true },
+    invitePath: { type: String, required: true },
+    updatePath: { type: String, required: true },
+    resendInvitationPath: { type: String, required: true },
+    toggleDisabledPath: { type: String, required: true },
+    impersonatePath: { type: String, default: "" },
+    deletePath: { type: String, required: true },
+    currentUserId: { type: Number, default: 0 },
+});
+
+const search = ref("");
+const roleFilter = ref("");
+
+const { items: users, loading, page, totalPages, total, load: fetchUsers, goToPage, reset: resetUsers } = usePaginatedFetch(
+    () => props.listPath,
+    () => ({
+        ...(search.value && { search: search.value }),
+        ...(roleFilter.value && { role: roleFilter.value }),
+    }),
+);
+
+onMounted(fetchUsers);
+
+watch([search, roleFilter], useDebounce(resetUsers, 300));
+
+// ── Invite modal ─────────────────────────────────────────────────────────────
+const inviteModal = reactive({ open: false, errors: {}, saving: false });
+const inviteForm = reactive({
+    name: "",
+    email: "",
+    role: props.roles[0]?.value ?? "",
+    message: "",
+});
+
+function openInvite() {
+    inviteModal.errors = {};
+    inviteForm.name = "";
+    inviteForm.email = "";
+    inviteForm.role = props.roles[0]?.value ?? "";
+    inviteForm.message = "";
+    inviteModal.open = true;
+}
+
+async function submitInvite() {
+    inviteModal.saving = true;
+    inviteModal.errors = {};
+    try {
+        const response = await fetch(props.invitePath, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(inviteForm),
+        });
+        const data = await response.json();
+        if (!data.ok) {
+            inviteModal.errors = data.errors ?? {};
+            return;
+        }
+        toast.success(t("admin.users.invitationSent"));
+        inviteModal.open = false;
+        fetchUsers();
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        inviteModal.saving = false;
+    }
+}
+
+// ── Edit modal ───────────────────────────────────────────────────────────────
+const editModal = reactive({ open: false, editing: null, errors: {}, saving: false });
+const editForm = reactive({ name: "", email: "", role: "" });
+
+function openEdit(user) {
+    editModal.editing = user;
+    editModal.errors = {};
+    editForm.name = user.name;
+    editForm.email = user.email;
+    editForm.role = user.role ?? props.roles[0]?.value ?? "";
+    editModal.open = true;
+}
+
+async function submitEdit() {
+    if (!editModal.editing) return;
+    editModal.saving = true;
+    editModal.errors = {};
+    try {
+        const url = props.updatePath.replace("__id__", editModal.editing.id);
+        const response = await fetch(url, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editForm),
+        });
+        const data = await response.json();
+        if (!data.ok) {
+            editModal.errors = data.errors ?? {};
+            return;
+        }
+        toast.success(t("shared.common.saved"));
+        editModal.open = false;
+        fetchUsers();
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        editModal.saving = false;
+    }
+}
+
+// ── Row actions ──────────────────────────────────────────────────────────────
+async function resendInvitation(user) {
+    try {
+        const response = await fetch(props.resendInvitationPath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("admin.users.invitationResent"));
+            fetchUsers();
+        } else {
+            toast.error(t("shared.common.error"));
+        }
+    } catch {
+        toast.error(t("shared.common.error"));
+    }
+}
+
+const togglingUser = ref(null);
+function askToggleDisabled(user) {
+    togglingUser.value = user;
+}
+async function confirmToggleDisabled() {
+    const user = togglingUser.value;
+    if (!user) return;
+    try {
+        const response = await fetch(props.toggleDisabledPath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("shared.common.saved"));
+            fetchUsers();
+        } else {
+            toast.error(t("shared.common.error"));
+        }
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        togglingUser.value = null;
+    }
+}
+
+const deletingUser = ref(null);
+async function confirmDelete() {
+    const user = deletingUser.value;
+    if (!user) return;
+    try {
+        const response = await fetch(props.deletePath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const data = await response.json();
+        if (data.ok) {
+            toast.success(t("shared.common.deleted"));
+            fetchUsers();
+        } else {
+            toast.error(t("shared.common.error"));
+        }
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        deletingUser.value = null;
+    }
+}
+
+function statusBadgeColor(status) {
+    if ("active" === status) return "emerald";
+    if ("invited" === status) return "amber";
+    return "rose";
+}
+
+const isCurrent = (user) => user.id === props.currentUserId;
+const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user.rolePriority;
+</script>
+
+<template>
+    <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex-1 max-w-md">
+                <AppSearchInput v-model="search" :placeholder="t('admin.users.searchPlaceholder')" />
+            </div>
+            <AppMultiselect
+                v-model="roleFilter"
+                :options="roles"
+                :placeholder="t('admin.users.allRoles')"
+                :allow-empty="true"
+                class="sm:max-w-xs"
+            />
+            <AppButton variant="primary" size="md" class="sm:ml-auto" v-on:click="openInvite">
+                <UserPlus class="w-4 h-4" :stroke-width="2" />
+                {{ t('admin.users.invite') }}
+            </AppButton>
+        </div>
+
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
+            <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-primary text-sm">
+                            {{ user.name }}
+                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                        </p>
+                        <p class="text-xs text-muted mt-0.5">{{ user.email }}</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                        <div class="flex items-center gap-1">
+                            <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                            <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                    <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
+                    <UserRowActions
+                        :user="user"
+                        :is-dev="isDev"
+                        :can-act="canActOn(user)"
+                        :impersonate-path="impersonatePath"
+                        v-on:resend="resendInvitation"
+                        v-on:edit="openEdit"
+                        v-on:toggle-disabled="askToggleDisabled"
+                        v-on:delete="deletingUser = $event"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
+            <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
+            <table v-else class="w-full text-sm">
+                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
+                    <tr>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.name') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.email') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.users.role') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.status') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.created') }}</th>
+                        <th class="text-right px-4 py-3 font-semibold">{{ t('admin.users.actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
+                        <td class="px-4 py-3 text-primary font-medium">
+                            {{ user.name }}
+                            <AppBadge v-if="isCurrent(user)" color="indigo" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                        </td>
+                        <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
+                        <td class="px-4 py-3 hidden md:table-cell">
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                                <AppBadge v-if="user.roleLabel" color="indigo">{{ user.roleLabel }}</AppBadge>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex justify-end">
+                                <UserRowActions
+                                    :user="user"
+                                    :is-dev="isDev"
+                                    :can-act="canActOn(user)"
+                                    :impersonate-path="impersonatePath"
+                                    v-on:resend="resendInvitation"
+                                    v-on:edit="openEdit"
+                                    v-on:toggle-disabled="askToggleDisabled"
+                                    v-on:delete="deletingUser = $event"
+                                />
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+
+        <!-- Invite modal -->
+        <AppModal :show="inviteModal.open" max-width="md" v-on:close="inviteModal.open = false">
+            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.invite') }}</h3>
+            <form class="space-y-4" v-on:submit.prevent="submitInvite">
+                <AppInput v-model="inviteForm.name" :label="t('admin.users.name')" :placeholder="t('admin.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
+                <AppInput
+                    v-model="inviteForm.email"
+                    :label="t('admin.users.email')"
+                    type="email"
+                    :placeholder="t('admin.users.emailPlaceholder')"
+                    :error="inviteModal.errors.email ?? ''"
+                />
+                <AppMultiselect
+                    v-model="inviteForm.role"
+                    :options="roles"
+                    :label="t('admin.users.role')"
+                    :error="inviteModal.errors.role ?? ''"
+                />
+                <div>
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.inviteMessage') }}</label>
+                    <textarea
+                        v-model="inviteForm.message"
+                        rows="3"
+                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                        :placeholder="t('admin.users.inviteMessagePlaceholder')"
+                    />
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving">{{ t('admin.users.sendInvite') }}</AppButton>
+                </div>
+            </form>
+        </AppModal>
+
+        <!-- Edit modal -->
+        <AppModal :show="editModal.open" max-width="md" v-on:close="editModal.open = false">
+            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
+            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+                <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
+                <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
+                <AppMultiselect
+                    v-model="editForm.role"
+                    :options="roles"
+                    :label="t('admin.users.role')"
+                    :error="editModal.errors.role ?? ''"
+                />
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">{{ t('shared.common.save') }}</AppButton>
+                </div>
+            </form>
+        </AppModal>
+
+        <!-- Delete confirm -->
+        <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
+            <p class="text-sm text-primary">{{ t('admin.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="deletingUser = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t('shared.common.delete') }}</AppButton>
+            </AppModalFooter>
+        </AppModal>
+
+        <!-- Toggle disabled confirm -->
+        <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
+            <p class="text-sm text-primary">
+                {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
+            </p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="togglingUser = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton :variant="togglingUser?.status === 'disabled' ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
+                    {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enable' : 'admin.users.disable') }}
+                </AppButton>
+            </AppModalFooter>
+        </AppModal>
+    </div>
+</template>

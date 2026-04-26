@@ -1,0 +1,29 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.menus'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.menus'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/MenusApp', {
+    initialMenus: menus,
+    locales: locales,
+    targetTypes: targetTypes,
+    visibilities: visibilities,
+    listPath: path('admin_menus_list'),
+    createPath: path('admin_menus_create'),
+    showPath: path('admin_menus_show', {id: '__id__'}),
+    updatePath: path('admin_menus_update', {id: '__id__'}),
+    deletePath: path('admin_menus_delete', {id: '__id__'}),
+    itemCreatePath: path('admin_menus_items_create', {id: '__id__'}),
+    itemUpdatePath: path('admin_menus_items_update', {id: '__id__'}),
+    itemDeletePath: path('admin_menus_items_delete', {id: '__id__'}),
+    itemReorderPath: path('admin_menus_items_reorder', {id: '__id__'}),
+    pickerPostsPath: path('admin_menus_picker_posts'),
+    pickerTermsPath: path('admin_menus_picker_terms'),
+    pickerPostTypesPath: path('admin_menus_picker_post_types'),
+    pickerTaxonomiesPath: path('admin_menus_picker_taxonomies'),
+}) }} class="flex-1"></div>
+{% endblock %}

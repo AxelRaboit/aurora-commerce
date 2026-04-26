@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\MessageHandler;
 
-use App\Entity\Post;
-use App\Enum\PostStatusEnum;
-use App\Message\PurgeTrashedPostsMessage;
-use App\MessageHandler\PurgeTrashedPostsHandler;
-use App\Repository\Post\PostRepository;
-use App\Repository\Post\PostTypeRepository;
-use App\Repository\SettingRepository;
+use App\Core\Setting\Repository\SettingRepository;
+use App\Module\Editorial\Post\Entity\Post;
+use App\Module\Editorial\Post\Enum\PostStatusEnum;
+use App\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
+use App\Module\Editorial\Post\MessageHandler\PurgeTrashedPostsHandler;
+use App\Module\Editorial\Post\Repository\PostRepository;
+use App\Module\Editorial\Post\Repository\PostTypeRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

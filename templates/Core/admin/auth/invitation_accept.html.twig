@@ -1,0 +1,11 @@
+{% extends '@Core/admin/base_guest.html.twig' %}
+
+{% block title %}{{ 'admin.auth.invitation.accept_title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div {{ vue_component('core/admin/auth/InvitationAcceptApp', {
+        submitPath: path('admin_invitation_accept', {selector: selector, token: token}),
+        userName: user.name,
+        initialErrors: errors,
+    }) }}></div>
+{% endblock %}

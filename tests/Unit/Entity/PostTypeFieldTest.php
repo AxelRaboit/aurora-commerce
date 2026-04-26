@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\PostTypeField;
+use App\Module\Editorial\Post\Entity\PostTypeField;
 use PHPUnit\Framework\TestCase;
 
 final class PostTypeFieldTest extends TestCase

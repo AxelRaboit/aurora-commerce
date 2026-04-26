@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
-use App\Entity\Post;
-use App\Repository\Post\PostRepository;
-use App\Repository\Post\PostTypeRepository;
+use App\Module\Editorial\Post\Entity\Post;
+use App\Module\Editorial\Post\Repository\PostRepository;
+use App\Module\Editorial\Post\Repository\PostTypeRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;

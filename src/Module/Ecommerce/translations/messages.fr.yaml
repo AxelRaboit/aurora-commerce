@@ -1,0 +1,71 @@
+admin:
+  nav:
+    listings: Boutique
+    orders: Commandes
+  ecommerce:
+    listings:
+      errors:
+        slug_taken: Ce slug est déjà utilisé pour un autre listing.
+        product_already_listed: Ce produit a déjà un listing dans la boutique.
+        product_not_found: Produit introuvable.
+front:
+  shop:
+    title: Boutique
+    empty: Aucun produit disponible pour le moment.
+    no_image: Pas d'image
+    back_to_list: Retour à la boutique
+    add_to_cart: Ajouter au panier
+    in_stock: En stock
+    low_stock: 'Plus que %count% en stock'
+    out_of_stock: Rupture de stock
+    type:
+      digital: Numérique
+      service: Service
+  cart:
+    title: Mon panier
+    empty: Votre panier est vide.
+    browse_shop: Découvrir la boutique
+    total: Total
+    continue_shopping: Continuer mes achats
+    checkout: Passer la commande
+  checkout:
+    title: Finaliser la commande
+    contact: Contact
+    email: Adresse e-mail
+    name: Nom complet
+    shipping: Adresse de livraison
+    address_line_1: Adresse
+    address_line_2: Complément (optionnel)
+    city: Ville
+    postal_code: Code postal
+    country: Pays
+    country_placeholder: Sélectionner un pays
+    notes: Notes pour la commande (optionnel)
+    summary: Récapitulatif
+    confirm: Confirmer la commande
+    payment_stub: Mode démo — aucun paiement réel n'est effectué.
+    digital_delivery: Livraison numérique
+    digital_delivery_hint: Cette commande ne contient que des produits non-physiques. Aucune adresse de livraison n'est requise.
+    errors:
+      country_invalid: Le pays sélectionné n'est pas pris en charge.
+      country_required: Le pays est requis.
+  order:
+    title: Commande
+    thanks: Merci pour votre commande !
+    confirmation_intro: 'Votre commande %number% a bien été enregistrée. Un email de confirmation va vous être envoyé.'
+    number: Numéro
+    status: Statut
+    date: Date
+    product: Produit
+    qty: Qté
+    subtotal: Sous-total
+    view: Voir
+    status_pending: En attente
+    status_paid: Payée
+    status_shipped: Expédiée
+    status_delivered: Livrée
+    status_cancelled: Annulée
+  account:
+    orders: Mes commandes
+    no_orders: Vous n'avez encore passé aucune commande.
+    back: Retour à mon compte

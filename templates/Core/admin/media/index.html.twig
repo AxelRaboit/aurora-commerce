@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.media'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.media'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/MediaApp', {
+    folders: folders,
+    media: media,
+    currentFolderId: currentFolderId,
+    search: search,
+    uploadPath: path('admin_media_upload'),
+    editPath: path('admin_media_edit', {id: '__id__'}),
+    deletePath: path('admin_media_delete', {id: '__id__'}),
+    movePath: path('admin_media_move', {id: '__id__'}),
+    folderCreatePath: path('admin_media_folder_create'),
+    folderEditPath: path('admin_media_folder_edit', {id: '__id__'}),
+    folderDeletePath: path('admin_media_folder_delete', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

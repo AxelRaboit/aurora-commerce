@@ -43,6 +43,7 @@ install-dev:
 	make migrate
 	make sync-params
 	make sync-menus
+	make i18n
 	make dev
 
 install-prod:
@@ -50,6 +51,7 @@ install-prod:
 	$(PNPM) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
+	make i18n
 	make build
 	make cc-prod
 
@@ -66,6 +68,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) velox:application-parameter; \
 	$(CONSOLE) velox:menus:sync; \
+	$(CONSOLE) app:translations:dump-js; \
 	$(PNPM) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
@@ -182,6 +185,9 @@ sync-params: ## Synchronise application parameters (creates missing, deletes obs
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) velox:menus:sync
 
+i18n: ## Dump Symfony YAML translations to assets/locales/generated/*.json (consumed by vue-i18n)
+	$(CONSOLE) app:translations:dump-js
+
 schema-validate:
 	$(CONSOLE) doctrine:schema:validate -vvv
 
@@ -197,7 +203,7 @@ test-backend-unit: ## Run backend unit tests
 test-backend-integration: db-test ## Run backend integration tests
 	$(PHP_BIN) bin/phpunit --testdox --testsuite=Integration
 
-test-frontend: ## Run frontend unit tests (Vitest)
+test-frontend: i18n ## Run frontend unit tests (Vitest)
 	$(PNPM) run test
 
 test-e2e: ## Run end-to-end tests (Playwright)

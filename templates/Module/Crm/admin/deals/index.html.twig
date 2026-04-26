@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.deals'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.deals'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/DealsApp', {
+    deals: deals,
+    search: search,
+    stages: stages,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    listPath: listPath,
+    contactsListPath: contactsListPath,
+    companiesListPath: companiesListPath,
+    kanbanPath: path('crm_deals_kanban'),
+    showPath: path('crm_deals_show', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

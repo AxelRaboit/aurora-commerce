@@ -1,0 +1,23 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ contact.fullName }} - {{ 'admin.nav.contacts'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: contact.fullName,
+        crumbs: [
+            {label: 'admin.nav.contacts'|trans, href: backPath},
+            {label: contact.fullName},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/ContactDetailApp', {
+    contact: contact,
+    activity: activity,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    backPath: backPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

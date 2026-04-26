@@ -1,0 +1,7 @@
+admin:
+  nav:
+    products: Productos
+  erp:
+    products:
+      errors:
+        sku_taken: Este SKU ya está en uso.

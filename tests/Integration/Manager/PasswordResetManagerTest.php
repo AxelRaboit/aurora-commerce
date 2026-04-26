@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Manager;
 
-use App\Entity\ResetPasswordRequest;
-use App\Entity\User;
-use App\Enum\User\UserStatusEnum;
-use App\Enum\User\UserTypeEnum;
-use App\Manager\Auth\PasswordResetManager;
+use App\Core\Auth\Entity\ResetPasswordRequest;
+use App\Core\Auth\Manager\PasswordResetManager;
+use App\Core\User\Entity\User;
+use App\Core\User\Enum\UserStatusEnum;
+use App\Core\User\Enum\UserTypeEnum;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

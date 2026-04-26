@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" data-theme>
+<head>
+    {% set pageDescription = pageDescription|default(context.siteDescription ?? '') %}
+    {% set alternates = alternates|default([]) %}
+    {{ include('Front/themes/default/partials/head.html.twig') }}
+</head>
+<body class="min-h-screen bg-bg text-primary flex flex-col">
+    {{ include('Front/themes/default/partials/header.html.twig') }}
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+        {% block body %}{% endblock %}
+    </main>
+
+    {{ include('Front/themes/default/partials/footer.html.twig') }}
+</body>
+</html>

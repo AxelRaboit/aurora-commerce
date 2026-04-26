@@ -1,0 +1,19 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.contacts'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.contacts'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/ContactsApp', {
+    contacts: contacts,
+    search: search,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    listPath: path('crm_contacts_list'),
+    showPath: path('crm_contacts_show', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

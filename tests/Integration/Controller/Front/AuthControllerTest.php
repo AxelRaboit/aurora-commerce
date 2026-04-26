@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller\Front;
 
-use App\Entity\User;
-use App\Enum\User\UserRoleEnum;
-use App\Enum\User\UserStatusEnum;
-use App\Enum\User\UserTypeEnum;
-use App\Repository\SettingRepository;
-use App\Repository\User\UserRepository;
+use App\Core\Setting\Repository\SettingRepository;
+use App\Core\User\Entity\User;
+use App\Core\User\Enum\UserRoleEnum;
+use App\Core\User\Enum\UserStatusEnum;
+use App\Core\User\Enum\UserTypeEnum;
+use App\Core\User\Repository\UserRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

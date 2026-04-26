@@ -1,0 +1,71 @@
+admin:
+  nav:
+    listings: Tienda
+    orders: Pedidos
+  ecommerce:
+    listings:
+      errors:
+        slug_taken: Este slug ya está en uso por otro listing.
+        product_already_listed: Este producto ya tiene un listing.
+        product_not_found: Producto no encontrado.
+front:
+  shop:
+    title: Tienda
+    empty: Sin productos disponibles todavía.
+    no_image: Sin imagen
+    back_to_list: Volver a la tienda
+    add_to_cart: Añadir al carrito
+    in_stock: En stock
+    low_stock: 'Solo quedan %count%'
+    out_of_stock: Sin stock
+    type:
+      digital: Digital
+      service: Servicio
+  cart:
+    title: Mi carrito
+    empty: Tu carrito está vacío.
+    browse_shop: Explorar la tienda
+    total: Total
+    continue_shopping: Seguir comprando
+    checkout: Finalizar pedido
+  checkout:
+    title: Finalizar compra
+    contact: Contacto
+    email: Correo electrónico
+    name: Nombre completo
+    shipping: Dirección de envío
+    address_line_1: Dirección
+    address_line_2: Línea 2 (opcional)
+    city: Ciudad
+    postal_code: Código postal
+    country: País
+    country_placeholder: Seleccionar un país
+    notes: Notas (opcional)
+    summary: Resumen
+    confirm: Confirmar pedido
+    payment_stub: Modo demo — no se procesa ningún pago real.
+    digital_delivery: Entrega digital
+    digital_delivery_hint: Este pedido solo contiene productos no físicos. No se requiere dirección de envío.
+    errors:
+      country_invalid: El país seleccionado no es compatible.
+      country_required: El país es obligatorio.
+  order:
+    title: Pedido
+    thanks: ¡Gracias por tu pedido!
+    confirmation_intro: 'Tu pedido %number% ha sido registrado. Recibirás un email de confirmación.'
+    number: Número
+    status: Estado
+    date: Fecha
+    product: Producto
+    qty: Cant.
+    subtotal: Subtotal
+    view: Ver
+    status_pending: Pendiente
+    status_paid: Pagado
+    status_shipped: Enviado
+    status_delivered: Entregado
+    status_cancelled: Cancelado
+  account:
+    orders: Mis pedidos
+    no_orders: Todavía no has realizado ningún pedido.
+    back: Volver a mi cuenta

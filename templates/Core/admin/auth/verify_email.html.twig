@@ -1,0 +1,11 @@
+{% extends '@Core/admin/base_guest.html.twig' %}
+
+{% block title %}{{ 'admin.auth.verify_email.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div {{ vue_component('core/admin/auth/VerifyEmailApp', {
+        success: success,
+        loginPath: path('admin_login'),
+        registerPath: path('admin_register'),
+    }) }}></div>
+{% endblock %}

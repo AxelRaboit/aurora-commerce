@@ -1,0 +1,29 @@
+{% extends '@Shared/email/layout/base.html.twig' %}
+
+{% block content %}
+<h1>{{ 'shared.mail.access_request_approved.heading'|trans }}</h1>
+<p>{{ 'shared.mail.access_request_approved.greeting'|trans({'{name}': request.requesterName ?? request.requesterEmail}) }}</p>
+<p>{{ 'shared.mail.access_request_approved.intro'|trans({'{siteName}': siteName ?? 'Velox'}) }}</p>
+
+{% if generatedPassword %}
+<p>{{ 'shared.mail.access_request_approved.credentials_intro'|trans }}</p>
+<table class="panel" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td class="panel-content">
+            <p style="margin:0 0 6px;"><strong>{{ 'shared.mail.access_request_approved.label_email'|trans }} :</strong> {{ request.requesterEmail }}</p>
+            <p style="margin:0;"><strong>{{ 'shared.mail.access_request_approved.label_password'|trans }} :</strong> <code>{{ generatedPassword }}</code></p>
+        </td>
+    </tr>
+</table>
+<p class="warning">{{ 'shared.mail.access_request_approved.password_note'|trans }}</p>
+{% else %}
+<p>{{ 'shared.mail.access_request_approved.existing_account'|trans }}</p>
+{% endif %}
+
+{{ include('@Shared/email/partials/action_button.html.twig', {
+    url: loginUrl,
+    label: 'shared.mail.access_request_approved.cta'|trans,
+}) }}
+
+<p class="warning">{{ 'shared.mail.access_request_approved.footer_note'|trans }}</p>
+{% endblock %}

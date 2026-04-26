@@ -12,14 +12,38 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
-        auto_mapping: true
+        auto_mapping: false
         mappings:
-            App:
+            AppCore:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                dir: '%kernel.project_dir%/src/Core'
+                prefix: 'App\Core'
+                alias: AppCore
+            AppEditorial:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Module/Editorial'
+                prefix: 'App\Module\Editorial'
+                alias: AppEditorial
+            AppCrm:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Module/Crm'
+                prefix: 'App\Module\Crm'
+                alias: AppCrm
+            AppErp:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Module/Erp'
+                prefix: 'App\Module\Erp'
+                alias: AppErp
+            AppEcommerce:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Module/Ecommerce'
+                prefix: 'App\Module\Ecommerce'
+                alias: AppEcommerce
 
 when@test:
     doctrine:

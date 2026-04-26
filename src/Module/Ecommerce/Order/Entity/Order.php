@@ -1,0 +1,288 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Ecommerce\Order\Entity;
+
+use App\Core\Trait\TimestampableTrait;
+use App\Core\User\Entity\User;
+use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use App\Module\Ecommerce\Order\Repository\OrderRepository;
+use App\Module\Erp\Product\Enum\CurrencyEnum;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: 'ecommerce_orders')]
+#[ORM\UniqueConstraint(name: 'uniq_ecommerce_order_number', columns: ['number'])]
+#[ORM\UniqueConstraint(name: 'uniq_ecommerce_order_token', columns: ['token'])]
+#[ORM\HasLifecycleCallbacks]
+class Order
+{
+    use TimestampableTrait;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 32)]
+    private string $number;
+
+    #[ORM\Column(length: 64)]
+    private string $token;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $customer = null;
+
+    #[ORM\Column(length: 16, enumType: OrderStatusEnum::class, options: ['default' => 'pending'])]
+    private OrderStatusEnum $status = OrderStatusEnum::Pending;
+
+    #[ORM\Column(length: 180)]
+    private string $email;
+
+    #[ORM\Column(length: 200)]
+    private string $name;
+
+    #[ORM\Column(length: 200, nullable: true)]
+    private ?string $addressLine1 = null;
+
+    #[ORM\Column(length: 200, nullable: true)]
+    private ?string $addressLine2 = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $postalCode = null;
+
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $country = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $notes = null;
+
+    #[ORM\Column]
+    private int $totalCents = 0;
+
+    #[ORM\Column(length: 3, enumType: CurrencyEnum::class)]
+    private CurrencyEnum $currency = CurrencyEnum::EUR;
+
+    /** @var Collection<int, OrderLine> */
+    #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $lines;
+
+    public function __construct()
+    {
+        $this->lines = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getNumber(): string
+    {
+        return $this->number;
+    }
+
+    public function setNumber(string $number): static
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getCustomer(): ?User
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?User $customer): static
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getStatus(): OrderStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(OrderStatusEnum $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAddressLine1(): ?string
+    {
+        return $this->addressLine1;
+    }
+
+    public function setAddressLine1(?string $v): static
+    {
+        $this->addressLine1 = $v;
+
+        return $this;
+    }
+
+    public function getAddressLine2(): ?string
+    {
+        return $this->addressLine2;
+    }
+
+    public function setAddressLine2(?string $v): static
+    {
+        $this->addressLine2 = $v;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $v): static
+    {
+        $this->city = $v;
+
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function setPostalCode(?string $v): static
+    {
+        $this->postalCode = $v;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?string $v): static
+    {
+        $this->country = $v;
+
+        return $this;
+    }
+
+    /** True if any line item is a physical product (i.e. needs a shipping address + shipped/delivered workflow). */
+    public function requiresShipping(): bool
+    {
+        foreach ($this->lines as $line) {
+            $listing = $line->getListing();
+            if (null === $listing) {
+                continue;
+            }
+
+            if ($listing->getProduct()->getType()->requiresShipping()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $v): static
+    {
+        $this->notes = $v;
+
+        return $this;
+    }
+
+    public function getTotalCents(): int
+    {
+        return $this->totalCents;
+    }
+
+    public function setTotalCents(int $v): static
+    {
+        $this->totalCents = $v;
+
+        return $this;
+    }
+
+    public function getCurrency(): CurrencyEnum
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(CurrencyEnum $v): static
+    {
+        $this->currency = $v;
+
+        return $this;
+    }
+
+    /** @return Collection<int, OrderLine> */
+    public function getLines(): Collection
+    {
+        return $this->lines;
+    }
+
+    public function addLine(OrderLine $line): static
+    {
+        if (!$this->lines->contains($line)) {
+            $this->lines->add($line);
+            $line->setOrder($this);
+        }
+
+        return $this;
+    }
+}

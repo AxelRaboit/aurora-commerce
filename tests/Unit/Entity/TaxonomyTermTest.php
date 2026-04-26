@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Taxonomy;
-use App\Entity\TaxonomyTerm;
+use App\Module\Editorial\Taxonomy\Entity\Taxonomy;
+use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use PHPUnit\Framework\TestCase;
 
 final class TaxonomyTermTest extends TestCase

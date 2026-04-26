@@ -1,0 +1,26 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ company.name }} - {{ 'admin.nav.companies'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: company.name,
+        crumbs: [
+            {label: 'admin.nav.companies'|trans, href: backPath},
+            {label: company.name},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/CompanyDetailApp', {
+    company: company,
+    contacts: contacts,
+    companyId: company.id,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    backPath: backPath,
+    createContactPath: createContactPath,
+    contactsListPath: contactsListPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

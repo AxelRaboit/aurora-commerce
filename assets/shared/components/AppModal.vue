@@ -81,6 +81,8 @@ const panelClass = computed(() => [
             >
                 <div
                     v-show="show"
+                    role="dialog"
+                    aria-modal="true"
                     class="relative z-10 w-full bg-surface border border-line rounded-xl shadow-xl"
                     :class="panelClass"
                 >

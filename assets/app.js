@@ -4,6 +4,7 @@ import {
 } from "vite-plugin-symfony/stimulus/helpers";
 import { registerVueControllerComponents } from "@symfony/ux-vue";
 import { createAppI18n } from "@/i18n.js";
+import "@/Module/Ecommerce/scripts/cartBadge.js";
 import "./css/app.css";
 
 document.addEventListener("vue:before-mount", (event) => {
@@ -21,13 +22,49 @@ registerControllers(
     }),
 );
 
-const vueModules = import.meta.glob("./vue/controllers/**/*.vue");
-const vueContext = Object.fromEntries(
-    Object.entries(vueModules).map(([key, loader]) => [
-        key.replace("./vue/controllers/", "./"),
-        loader,
-    ]),
+const coreModules = import.meta.glob("./Core/vue/controllers/**/*.vue");
+const editorialModules = import.meta.glob(
+    "./Module/Editorial/vue/controllers/**/*.vue",
 );
+const crmModules = import.meta.glob("./Module/Crm/vue/controllers/**/*.vue");
+const erpModules = import.meta.glob("./Module/Erp/vue/controllers/**/*.vue");
+const ecommerceModules = import.meta.glob(
+    "./Module/Ecommerce/vue/controllers/**/*.vue",
+);
+
+const vueContext = {
+    ...Object.fromEntries(
+        Object.entries(coreModules).map(([key, loader]) => [
+            key.replace("./Core/vue/controllers/", "./core/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(editorialModules).map(([key, loader]) => [
+            key.replace("./Module/Editorial/vue/controllers/", "./editorial/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(crmModules).map(([key, loader]) => [
+            key.replace("./Module/Crm/vue/controllers/", "./crm/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(erpModules).map(([key, loader]) => [
+            key.replace("./Module/Erp/vue/controllers/", "./erp/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(ecommerceModules).map(([key, loader]) => [
+            key.replace("./Module/Ecommerce/vue/controllers/", "./ecommerce/"),
+            loader,
+        ]),
+    ),
+};
+
 const vueContextFn = (key) => vueContext[key]();
 vueContextFn.keys = () => Object.keys(vueContext);
 registerVueControllerComponents(vueContextFn);

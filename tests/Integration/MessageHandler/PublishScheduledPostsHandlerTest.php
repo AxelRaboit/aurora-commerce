@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\MessageHandler;
 
-use App\Entity\Post;
-use App\Enum\PostStatusEnum;
-use App\Message\PublishScheduledPostsMessage;
-use App\MessageHandler\PublishScheduledPostsHandler;
-use App\Repository\Post\PostRepository;
-use App\Repository\Post\PostTypeRepository;
+use App\Module\Editorial\Post\Entity\Post;
+use App\Module\Editorial\Post\Enum\PostStatusEnum;
+use App\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
+use App\Module\Editorial\Post\MessageHandler\PublishScheduledPostsHandler;
+use App\Module\Editorial\Post\Repository\PostRepository;
+use App\Module\Editorial\Post\Repository\PostTypeRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

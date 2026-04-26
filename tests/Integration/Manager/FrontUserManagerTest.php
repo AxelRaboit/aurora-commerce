@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Manager;
 
-use App\DTO\Auth\FrontRegisterInput;
-use App\Entity\User;
-use App\Enum\User\UserStatusEnum;
-use App\Enum\User\UserTypeEnum;
-use App\Manager\User\FrontUserManager;
-use App\Repository\User\UserRepository;
+use App\Core\Auth\DTO\FrontRegisterInput;
+use App\Core\User\Entity\User;
+use App\Core\User\Enum\UserStatusEnum;
+use App\Core\User\Enum\UserTypeEnum;
+use App\Core\User\Manager\FrontUserManager;
+use App\Core\User\Repository\UserRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

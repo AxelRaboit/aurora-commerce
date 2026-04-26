@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
-use App\Entity\Media;
-use App\Entity\MediaFolder;
-use App\Entity\User;
-use App\Repository\Media\MediaFolderRepository;
-use App\Repository\Media\MediaRepository;
-use App\Repository\User\UserRepository;
+use App\Core\Media\Entity\Media;
+use App\Core\Media\Entity\MediaFolder;
+use App\Core\Media\Repository\MediaFolderRepository;
+use App\Core\Media\Repository\MediaRepository;
+use App\Core\User\Entity\User;
+use App\Core\User\Repository\UserRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

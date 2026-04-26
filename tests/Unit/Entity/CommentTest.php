@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Comment;
-use App\Enum\Comment\CommentStatusEnum;
+use App\Module\Editorial\Comment\Entity\Comment;
+use App\Module\Editorial\Comment\Enum\CommentStatusEnum;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

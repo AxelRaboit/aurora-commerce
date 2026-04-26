@@ -1,0 +1,22 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ listing.displayTitle }} - {{ 'admin.nav.listings'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: listing.displayTitle,
+        crumbs: [
+            {label: 'admin.nav.listings'|trans, href: backPath},
+            {label: listing.displayTitle},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ecommerce/admin/ListingDetailApp', {
+    listing: listing,
+    backPath: backPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

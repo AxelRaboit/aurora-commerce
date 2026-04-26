@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Enum;
 
-use App\Enum\PostStatusEnum;
+use App\Module\Editorial\Post\Enum\PostStatusEnum;
 use PHPUnit\Framework\TestCase;
 
 final class PostStatusEnumTest extends TestCase

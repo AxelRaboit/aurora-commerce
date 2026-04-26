@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Entity\Form;
-use App\Entity\FormField;
-use App\Entity\FormFieldTranslation;
-use App\Enum\FormFieldTypeEnum;
-use App\Service\Form\FormSubmissionValidator;
+use App\Module\Editorial\Form\Entity\Form;
+use App\Module\Editorial\Form\Entity\FormField;
+use App\Module\Editorial\Form\Entity\FormFieldTranslation;
+use App\Module\Editorial\Form\Enum\FormFieldTypeEnum;
+use App\Module\Editorial\Form\Service\FormSubmissionValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 

@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Ecommerce\Cart\Controller\Front;
+
+use App\Core\Frontend\Controller\FrontLocaleTrait;
+use App\Core\Frontend\Service\FrontContext;
+use App\Core\Theme\Service\ThemeContext;
+use App\Core\Theme\Service\ThemeResolver;
+use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use App\Module\Ecommerce\Cart\Entity\Cart;
+use App\Module\Ecommerce\Cart\Serializer\CartSerializer;
+use App\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+class CartController extends AbstractController
+{
+    use FrontLocaleTrait;
+
+    public function __construct(
+        private readonly CartManagerInterface $cartManager,
+        private readonly CartSerializer $cartSerializer,
+        private readonly ListingRepository $listingRepository,
+        private readonly FrontContext $frontContext,
+        private readonly ThemeResolver $themeResolver,
+        private readonly ThemeContext $themeContext,
+    ) {}
+
+    #[Route('/{locale}/cart', name: 'front_cart', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
+    public function index(string $locale, Request $request): Response
+    {
+        $this->assertActiveLocale($this->frontContext, $locale);
+        $request->setLocale($locale);
+
+        $cart = $this->cartManager->getCurrentCart();
+
+        return $this->render($this->themeResolver->resolve('cart'), [
+            'cart' => $this->cartSerializer->serialize($cart),
+            'locale' => $locale,
+            'context' => $this->frontContext,
+            'themeContext' => $this->themeContext,
+        ]);
+    }
+
+    #[Route('/{locale}/cart/add', name: 'front_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    public function add(string $locale, Request $request): Response
+    {
+        $this->assertActiveLocale($this->frontContext, $locale);
+        $payload = $this->payload($request);
+        $listingId = (int) ($payload['listingId'] ?? 0);
+        $quantity = max(1, (int) ($payload['quantity'] ?? 1));
+        $listing = $this->listingRepository->find($listingId);
+
+        if (null === $listing || !$listing->isVisibleOnShop()) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->cartManager->addItem($listing, $quantity);
+
+        return $this->respond($request, $locale);
+    }
+
+    #[Route('/{locale}/cart/update', name: 'front_cart_update', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    public function update(string $locale, Request $request): Response
+    {
+        $this->assertActiveLocale($this->frontContext, $locale);
+        $payload = $this->payload($request);
+        $listingId = (int) ($payload['listingId'] ?? 0);
+        $quantity = (int) ($payload['quantity'] ?? 0);
+        $listing = $this->listingRepository->find($listingId);
+
+        if (null !== $listing) {
+            $this->cartManager->updateItemQuantity($listing, $quantity);
+        }
+
+        return $this->respond($request, $locale);
+    }
+
+    #[Route('/{locale}/cart/remove', name: 'front_cart_remove', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    public function remove(string $locale, Request $request): Response
+    {
+        $this->assertActiveLocale($this->frontContext, $locale);
+        $payload = $this->payload($request);
+        $listingId = (int) ($payload['listingId'] ?? 0);
+        $listing = $this->listingRepository->find($listingId);
+
+        if (null !== $listing) {
+            $this->cartManager->removeItem($listing);
+        }
+
+        return $this->respond($request, $locale);
+    }
+
+    #[Route('/cart/count', name: 'front_cart_count', methods: ['GET'])]
+    public function count(): JsonResponse
+    {
+        $cart = $this->cartManager->getCurrentCart(false);
+
+        return $this->json(['count' => $cart instanceof Cart ? $cart->getTotalQuantity() : 0]);
+    }
+
+    private function isXhr(Request $request): bool
+    {
+        if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
+            return true;
+        }
+
+        return str_contains((string) $request->headers->get('Accept', ''), 'application/json');
+    }
+
+    private function payload(Request $request): array
+    {
+        if (str_contains((string) $request->headers->get('Content-Type', ''), 'application/json')) {
+            return json_decode((string) $request->getContent(), true) ?? [];
+        }
+
+        return $request->request->all();
+    }
+
+    private function respond(Request $request, string $locale): Response
+    {
+        if ($this->isXhr($request)) {
+            $cart = $this->cartManager->getCurrentCart();
+
+            return $this->json(['ok' => true, 'cart' => $this->cartSerializer->serialize($cart)]);
+        }
+
+        return $this->redirectToRoute('front_cart', ['locale' => $locale]);
+    }
+}

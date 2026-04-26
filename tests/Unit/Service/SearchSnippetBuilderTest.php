@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service;
 
-use App\Service\SearchSnippetBuilder;
+use App\Core\Search\Service\SearchSnippetBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class SearchSnippetBuilderTest extends TestCase

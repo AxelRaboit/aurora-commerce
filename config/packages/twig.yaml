@@ -2,6 +2,12 @@ twig:
     file_name_pattern: '*.twig'
     paths:
         '%kernel.project_dir%/assets/styles': styles
+        '%kernel.project_dir%/templates/Core': Core
+        '%kernel.project_dir%/templates/Module/Editorial': Editorial
+        '%kernel.project_dir%/templates/Shared': Shared
+        '%kernel.project_dir%/templates/Module/Crm': Crm
+        '%kernel.project_dir%/templates/Module/Erp': Erp
+        '%kernel.project_dir%/templates/Module/Ecommerce': Ecommerce
 
 when@test:
     twig:

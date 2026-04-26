@@ -1,0 +1,23 @@
+{% extends '@Shared/email/layout/base.html.twig' %}
+
+{% block content %}
+<h1>{{ 'shared.mail.verify_email.heading'|trans }}</h1>
+<p>{{ 'shared.mail.verify_email.greeting'|trans({'{name}': userName}) }}</p>
+<p>{{ 'shared.mail.verify_email.intro'|trans({'{siteName}': siteName ?? 'Velox'}) }}</p>
+
+{{ include('@Shared/email/partials/action_button.html.twig', {
+    url: verifyUrl,
+    label: 'shared.mail.verify_email.cta'|trans,
+}) }}
+
+{% if expiresAt %}
+<p class="warning">{{ 'shared.mail.verify_email.expires'|trans({'{date}': expiresAt|date('d/m/Y H:i')}) }}</p>
+{% endif %}
+
+<div class="subcopy">
+    <p class="sub">{{ 'shared.mail.verify_email.fallback_intro'|trans }}</p>
+    <p class="fallback"><a href="{{ verifyUrl }}">{{ verifyUrl }}</a></p>
+</div>
+
+<p class="warning">{{ 'shared.mail.verify_email.footer_note'|trans }}</p>
+{% endblock %}

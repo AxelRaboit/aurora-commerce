@@ -1,0 +1,162 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\Dashboard\Service;
+
+use App\Core\Media\Repository\MediaRepository;
+use App\Core\Menu\Repository\MenuRepository;
+use App\Core\User\Repository\UserRepository;
+use App\Module\Crm\Company\Repository\CompanyRepository;
+use App\Module\Crm\Contact\Repository\ContactRepository;
+use App\Module\Crm\Deal\Enum\DealStageEnum;
+use App\Module\Crm\Deal\Repository\DealRepository;
+use App\Module\Editorial\Post\Enum\PostStatusEnum;
+use App\Module\Editorial\Post\Repository\PostRepository;
+use App\Module\Editorial\Post\Repository\PostTypeRepository;
+use App\Module\Erp\Product\Repository\ProductRepository;
+use DateTimeImmutable;
+use DateTimeInterface;
+
+final readonly class AdminStatsService
+{
+    public function __construct(
+        private PostRepository $postRepository,
+        private PostTypeRepository $postTypeRepository,
+        private MediaRepository $mediaRepository,
+        private MenuRepository $menuRepository,
+        private UserRepository $userRepository,
+        private ContactRepository $contactRepository,
+        private CompanyRepository $companyRepository,
+        private DealRepository $dealRepository,
+        private ProductRepository $productRepository,
+    ) {}
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getStats(): array
+    {
+        return [
+            'posts' => $this->getPostStats(),
+            'media' => $this->getMediaStats(),
+            'menus' => [
+                'total' => $this->menuRepository->count([]),
+            ],
+            'users' => [
+                'total' => $this->userRepository->count([]),
+            ],
+            'crm' => $this->getCrmStats(),
+            'erp' => $this->getErpStats(),
+            'postsByMonth' => $this->getPostsByMonth(),
+            'recentPosts' => $this->getRecentPosts(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function getCrmStats(): array
+    {
+        $byStage = $this->dealRepository->countByStage();
+        $stages = [];
+        foreach (DealStageEnum::cases() as $stage) {
+            $stages[] = ['stage' => $stage->value, 'count' => $byStage[$stage->value] ?? 0];
+        }
+
+        return [
+            'contacts' => $this->contactRepository->count([]),
+            'companies' => $this->companyRepository->count([]),
+            'deals' => array_sum($byStage),
+            'dealsByStage' => $stages,
+            'pipelineValue' => $this->dealRepository->getTotalValue(),
+            'wonValue' => $this->dealRepository->getTotalValue(DealStageEnum::Won),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function getErpStats(): array
+    {
+        $byStatus = $this->productRepository->countByStatus();
+
+        return [
+            'products' => array_sum($byStatus),
+            'draft' => $byStatus['draft'] ?? 0,
+            'active' => $byStatus['active'] ?? 0,
+            'archived' => $byStatus['archived'] ?? 0,
+            'inventoryCents' => $this->productRepository->getTotalInventoryCents(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getPostStats(): array
+    {
+        $byType = [];
+        foreach ($this->postTypeRepository->findAll() as $type) {
+            $byType[] = [
+                'slug' => $type->getSlug(),
+                'label' => $type->getLabel(),
+                'count' => $this->postRepository->count(['postType' => $type]),
+            ];
+        }
+
+        return [
+            'total' => $this->postRepository->count([]),
+            'published' => $this->postRepository->count(['status' => PostStatusEnum::Published, 'deletedAt' => null]),
+            'draft' => $this->postRepository->count(['status' => PostStatusEnum::Draft, 'deletedAt' => null]),
+            'pendingReview' => $this->postRepository->count(['status' => PostStatusEnum::PendingReview, 'deletedAt' => null]),
+            'scheduled' => $this->postRepository->count(['status' => PostStatusEnum::Scheduled, 'deletedAt' => null]),
+            'archived' => $this->postRepository->count(['status' => PostStatusEnum::Archived, 'deletedAt' => null]),
+            'trashed' => $this->postRepository->countTrashed(),
+            'byType' => $byType,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getMediaStats(): array
+    {
+        return [
+            'total' => $this->mediaRepository->count([]),
+            'totalSize' => $this->mediaRepository->getTotalStorageSize(),
+        ];
+    }
+
+    /**
+     * @return array<int, array{month: string, count: int}>
+     */
+    private function getPostsByMonth(): array
+    {
+        $since = (new DateTimeImmutable('-5 months'))->modify('first day of this month')->setTime(0, 0);
+        $monthCountMap = $this->postRepository->countByMonthSince($since);
+
+        $result = [];
+        for ($monthOffset = 5; $monthOffset >= 0; --$monthOffset) {
+            $monthKey = (new DateTimeImmutable(sprintf('-%d months', $monthOffset)))->format('Y-m');
+            $result[] = ['month' => $monthKey, 'count' => $monthCountMap[$monthKey] ?? 0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<int, array{id: int, title: string, status: string, updatedAt: string, postType: string}>
+     */
+    private function getRecentPosts(): array
+    {
+        $result = [];
+        foreach ($this->postRepository->findRecent(5) as $post) {
+            $firstTranslation = $post->getTranslations()->first() ?: null;
+            $result[] = [
+                'id' => $post->getId(),
+                'title' => $firstTranslation ? $firstTranslation->getTitle() : '(sans titre)',
+                'status' => $post->getStatus()->value,
+                'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
+                'postType' => $post->getPostType()->getLabel(),
+            ];
+        }
+
+        return $result;
+    }
+}

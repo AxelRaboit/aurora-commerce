@@ -1,0 +1,9 @@
+admin:
+  nav:
+    contacts: Contactos
+    companies: Empresas
+    deals: Negocios
+    deals_kanban: Pipeline Kanban
+  crm:
+    deals:
+      kanban: Pipeline Kanban

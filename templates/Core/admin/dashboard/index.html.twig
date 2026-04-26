@@ -1,0 +1,11 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.dashboard'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.dashboard'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/DashboardApp') }}></div>
+{% endblock %}

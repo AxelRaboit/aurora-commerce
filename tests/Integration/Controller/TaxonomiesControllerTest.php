@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
-use App\Entity\User;
-use App\Repository\Taxonomy\TaxonomyRepository;
-use App\Repository\Taxonomy\TaxonomyTermRepository;
-use App\Repository\User\UserRepository;
+use App\Core\User\Entity\User;
+use App\Core\User\Repository\UserRepository;
+use App\Module\Editorial\Taxonomy\Repository\TaxonomyRepository;
+use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

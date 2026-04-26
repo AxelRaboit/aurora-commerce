@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Enum;
 
-use App\Enum\Comment\ReactionTypeEnum;
+use App\Module\Editorial\Comment\Enum\ReactionTypeEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ReactionTypeEnumTest extends TestCase

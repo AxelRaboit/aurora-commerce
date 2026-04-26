@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Ecommerce\Cart\Serializer;
+
+use App\Module\Ecommerce\Cart\Entity\Cart;
+use App\Module\Ecommerce\Cart\Entity\CartItem;
+use App\Module\Erp\Product\Enum\CurrencyEnum;
+
+final readonly class CartSerializer
+{
+    public function serialize(Cart $cart): array
+    {
+        $currency = CurrencyEnum::EUR;
+        $items = [];
+        foreach ($cart->getItems() as $item) {
+            $currency = $item->getCurrency();
+            $items[] = $this->serializeItem($item);
+        }
+
+        $totalCents = $cart->getTotalCents();
+
+        return [
+            'id' => $cart->getId(),
+            'items' => $items,
+            'totalQuantity' => $cart->getTotalQuantity(),
+            'totalCents' => $totalCents,
+            'total' => $totalCents / (10 ** $currency->decimals()),
+            'currency' => $currency->value,
+            'currencySymbol' => $currency->symbol(),
+            'currencyDecimals' => $currency->decimals(),
+        ];
+    }
+
+    private function serializeItem(CartItem $item): array
+    {
+        $listing = $item->getListing();
+        $featured = $listing->getFeaturedImage() ?? $listing->getProduct()->getImage();
+        $unit = $item->getUnitPriceCents() / (10 ** $item->getCurrency()->decimals());
+        $subtotal = $item->getSubtotalCents() / (10 ** $item->getCurrency()->decimals());
+
+        return [
+            'id' => $item->getId(),
+            'listingId' => $listing->getId(),
+            'slug' => $listing->getSlug(),
+            'title' => $listing->getDisplayTitle(),
+            'sku' => $listing->getProduct()->getSku(),
+            'unitPrice' => $unit,
+            'unitPriceCents' => $item->getUnitPriceCents(),
+            'quantity' => $item->getQuantity(),
+            'subtotal' => $subtotal,
+            'subtotalCents' => $item->getSubtotalCents(),
+            'currency' => $item->getCurrency()->value,
+            'currencySymbol' => $item->getCurrency()->symbol(),
+            'imageUrl' => $featured?->getPublicUrl(),
+        ];
+    }
+}

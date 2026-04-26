@@ -21,36 +21,63 @@ services:
     App\:
         resource: '../src/'
 
-    App\Manager\Auth\AccessRequestManager:
+    App\Core\Auth\Manager\AccessRequestManager:
         arguments:
             $adminEmail: '%app.admin_email%'
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\Auth\InvitationManager:
+    App\Core\Auth\Manager\InvitationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\Form\FormManager:
+    App\Module\Editorial\Form\Manager\FormManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
 
-    App\Manager\Auth\PasswordResetManager:
+    App\Core\Auth\Manager\PasswordResetManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\Auth\EmailVerificationManager:
+    App\Core\Auth\Manager\EmailVerificationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    App\Twig\VersionExtension:
+    App\Core\Twig\VersionExtension:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    App\Service\Theme\ThemeResolver:
+    App\Core\Theme\Service\ThemeResolver:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    App\Manager\ThemeManager:
+    App\Core\Theme\Manager\ThemeManager:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
+    App\Core\Setting\Command\DumpJsTranslationsCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Core\Module\ModuleRegistry:
+        arguments:
+            $modules: !tagged_iterator velox.module
+
+    App\Core\Module\PermissionRegistry:
+        arguments:
+            $modules: !tagged_iterator velox.module
+
+    App\Core\CoreModule:
+        tags: [velox.module]
+
+    App\Module\Editorial\EditorialModule:
+        tags: [velox.module]
+
+    App\Module\Crm\CrmModule:
+        tags: [velox.module]
+
+    App\Module\Erp\ErpModule:
+        tags: [velox.module]
+
+    App\Module\Ecommerce\EcommerceModule:
+        tags: [velox.module]

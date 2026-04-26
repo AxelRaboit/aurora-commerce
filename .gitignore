@@ -47,3 +47,6 @@ yarn.lock
 # Tools vendors
 /tools/*/vendor/
 /tools/*/composer.lock
+
+# Generated translation catalogues (run `pnpm i18n` to rebuild)
+/assets/locales/generated/

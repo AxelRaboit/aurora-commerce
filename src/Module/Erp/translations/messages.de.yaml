@@ -1,0 +1,7 @@
+admin:
+  nav:
+    products: Produkte
+  erp:
+    products:
+      errors:
+        sku_taken: Diese SKU ist bereits vergeben.

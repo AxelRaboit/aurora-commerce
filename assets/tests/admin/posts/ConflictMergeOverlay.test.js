@@ -11,7 +11,7 @@ vi.mock("vue-sonner", () => ({
     toast: { error: vi.fn(), success: vi.fn() },
 }));
 
-import ConflictMergeOverlay from "@/admin/posts/ConflictMergeOverlay.vue";
+import ConflictMergeOverlay from "@editorial/admin/posts/ConflictMergeOverlay.vue";
 import { MergeKind } from "@/shared/utils/mergeBlocks.js";
 import { toast } from "vue-sonner";
 

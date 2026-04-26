@@ -1,0 +1,22 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.taxonomies'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.taxonomies'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('editorial/admin/TaxonomiesApp', {
+    taxonomies: taxonomies,
+    postTypes: postTypes,
+    locales: locales,
+    createPath: path('admin_taxonomies_create'),
+    editPath: path('admin_taxonomies_edit', {id: '__id__'}),
+    deletePath: path('admin_taxonomies_delete', {id: '__id__'}),
+    termCreatePath: path('admin_taxonomies_term_create', {id: '__id__'}),
+    termEditPath: path('admin_taxonomies_term_edit', {id: '__id__', termId: '__termId__'}),
+    termDeletePath: path('admin_taxonomies_term_delete', {id: '__id__', termId: '__termId__'}),
+    termReorderPath: path('admin_taxonomies_term_reorder', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

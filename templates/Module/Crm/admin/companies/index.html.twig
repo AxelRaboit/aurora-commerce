@@ -1,0 +1,19 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.companies'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.companies'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/admin/CompaniesApp', {
+    companies: companies,
+    search: search,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    listPath: listPath,
+    showPath: path('crm_companies_show', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

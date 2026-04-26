@@ -1,0 +1,18 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.orders'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.orders'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ecommerce/admin/OrdersApp', {
+    orders: orders,
+    search: search,
+    currentStatus: currentStatus,
+    stats: stats,
+    showPath: showPath,
+    listPath: listPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

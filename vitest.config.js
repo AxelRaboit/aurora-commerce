@@ -7,6 +7,12 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "assets"),
+            "@core": path.resolve(__dirname, "assets/Core"),
+            "@editorial": path.resolve(__dirname, "assets/Module/Editorial"),
+            "@crm": path.resolve(__dirname, "assets/Module/Crm"),
+            "@erp": path.resolve(__dirname, "assets/Module/Erp"),
+            "@ecommerce": path.resolve(__dirname, "assets/Module/Ecommerce"),
+            "@shared": path.resolve(__dirname, "assets/shared"),
         },
     },
     test: {

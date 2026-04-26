@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
-use App\Entity\User;
-use App\Repository\Post\PostTypeRepository;
-use App\Repository\User\UserRepository;
+use App\Core\User\Entity\User;
+use App\Core\User\Repository\UserRepository;
+use App\Module\Editorial\Post\Repository\PostTypeRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

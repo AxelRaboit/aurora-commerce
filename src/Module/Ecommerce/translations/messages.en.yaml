@@ -1,0 +1,71 @@
+admin:
+  nav:
+    listings: Shop
+    orders: Orders
+  ecommerce:
+    listings:
+      errors:
+        slug_taken: This slug is already used by another listing.
+        product_already_listed: This product already has a shop listing.
+        product_not_found: Product not found.
+front:
+  shop:
+    title: Shop
+    empty: No products available yet.
+    no_image: No image
+    back_to_list: Back to shop
+    add_to_cart: Add to cart
+    in_stock: In stock
+    low_stock: 'Only %count% left'
+    out_of_stock: Out of stock
+    type:
+      digital: Digital
+      service: Service
+  cart:
+    title: My cart
+    empty: Your cart is empty.
+    browse_shop: Browse the shop
+    total: Total
+    continue_shopping: Continue shopping
+    checkout: Checkout
+  checkout:
+    title: Checkout
+    contact: Contact
+    email: Email address
+    name: Full name
+    shipping: Shipping address
+    address_line_1: Address
+    address_line_2: Address line 2 (optional)
+    city: City
+    postal_code: Postal code
+    country: Country
+    country_placeholder: Select a country
+    notes: Order notes (optional)
+    summary: Summary
+    confirm: Confirm order
+    payment_stub: Demo mode — no real payment is processed.
+    digital_delivery: Digital delivery
+    digital_delivery_hint: This order contains only non-physical products. No shipping address required.
+    errors:
+      country_invalid: The selected country is not supported.
+      country_required: Country is required.
+  order:
+    title: Order
+    thanks: Thank you for your order!
+    confirmation_intro: 'Your order %number% has been recorded. A confirmation email will be sent.'
+    number: Number
+    status: Status
+    date: Date
+    product: Product
+    qty: Qty
+    subtotal: Subtotal
+    view: View
+    status_pending: Pending
+    status_paid: Paid
+    status_shipped: Shipped
+    status_delivered: Delivered
+    status_cancelled: Cancelled
+  account:
+    orders: My orders
+    no_orders: You haven't placed any order yet.
+    back: Back to my account

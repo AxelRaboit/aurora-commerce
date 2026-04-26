@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Service;
 
-use App\Entity\Post;
-use App\Entity\TaxonomyTerm;
-use App\Entity\User;
-use App\Enum\Menu\MenuItemTargetTypeEnum;
-use App\Enum\Menu\MenuItemVisibilityEnum;
-use App\Manager\MenuManager;
-use App\Repository\Menu\MenuRepository;
-use App\Repository\Post\PostRepository;
-use App\Repository\Taxonomy\TaxonomyTermRepository;
-use App\Service\Menu\MenuRenderer;
+use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use App\Core\Menu\Enum\MenuItemVisibilityEnum;
+use App\Core\Menu\Manager\MenuManager;
+use App\Core\Menu\Repository\MenuRepository;
+use App\Core\Menu\Service\MenuRenderer;
+use App\Core\User\Entity\User;
+use App\Module\Editorial\Post\Entity\Post;
+use App\Module\Editorial\Post\Repository\PostRepository;
+use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 

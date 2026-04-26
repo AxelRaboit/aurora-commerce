@@ -1,0 +1,71 @@
+admin:
+  nav:
+    listings: Shop
+    orders: Bestellungen
+  ecommerce:
+    listings:
+      errors:
+        slug_taken: Dieser Slug wird bereits von einem anderen Listing verwendet.
+        product_already_listed: Dieses Produkt hat bereits ein Listing.
+        product_not_found: Produkt nicht gefunden.
+front:
+  shop:
+    title: Shop
+    empty: Noch keine Produkte verfügbar.
+    no_image: Kein Bild
+    back_to_list: Zurück zum Shop
+    add_to_cart: In den Warenkorb
+    in_stock: Auf Lager
+    low_stock: 'Nur noch %count% verfügbar'
+    out_of_stock: Nicht auf Lager
+    type:
+      digital: Digital
+      service: Dienstleistung
+  cart:
+    title: Mein Warenkorb
+    empty: Dein Warenkorb ist leer.
+    browse_shop: Shop ansehen
+    total: Gesamt
+    continue_shopping: Weiter einkaufen
+    checkout: Zur Kasse
+  checkout:
+    title: Bestellung abschließen
+    contact: Kontakt
+    email: E-Mail-Adresse
+    name: Vollständiger Name
+    shipping: Lieferadresse
+    address_line_1: Adresse
+    address_line_2: Adresse Zeile 2 (optional)
+    city: Stadt
+    postal_code: PLZ
+    country: Land
+    country_placeholder: Land auswählen
+    notes: Bestellnotizen (optional)
+    summary: Zusammenfassung
+    confirm: Bestellung bestätigen
+    payment_stub: Demo-Modus — es wird keine echte Zahlung verarbeitet.
+    digital_delivery: Digitale Lieferung
+    digital_delivery_hint: Diese Bestellung enthält nur nicht-physische Produkte. Keine Lieferadresse erforderlich.
+    errors:
+      country_invalid: Das ausgewählte Land wird nicht unterstützt.
+      country_required: Land ist erforderlich.
+  order:
+    title: Bestellung
+    thanks: Vielen Dank für deine Bestellung!
+    confirmation_intro: 'Deine Bestellung %number% wurde registriert. Eine Bestätigungs-E-Mail wird dir gesendet.'
+    number: Nummer
+    status: Status
+    date: Datum
+    product: Produkt
+    qty: Anz.
+    subtotal: Zwischensumme
+    view: Anzeigen
+    status_pending: Ausstehend
+    status_paid: Bezahlt
+    status_shipped: Versendet
+    status_delivered: Geliefert
+    status_cancelled: Storniert
+  account:
+    orders: Meine Bestellungen
+    no_orders: Du hast noch keine Bestellung aufgegeben.
+    back: Zurück zu meinem Konto

@@ -12,12 +12,12 @@ security:
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: App\Core\User\Entity\User
                 property: email
         admin_user_provider:
-            id: App\Security\AdminUserProvider
+            id: App\Core\Auth\Security\AdminUserProvider
         front_user_provider:
-            id: App\Security\FrontUserProvider
+            id: App\Core\Auth\Security\FrontUserProvider
 
     firewalls:
         dev:
@@ -29,7 +29,7 @@ security:
             context: admin
             pattern: ^/(admin|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
             provider: admin_user_provider
-            user_checker: App\Security\AdminUserChecker
+            user_checker: App\Core\Auth\Security\AdminUserChecker
             form_login:
                 login_path: admin_login
                 check_path: admin_login
@@ -53,10 +53,10 @@ security:
             context: front
             lazy: true
             provider: front_user_provider
-            user_checker: App\Security\FrontUserChecker
+            user_checker: App\Core\Auth\Security\FrontUserChecker
             custom_authenticators:
-                - App\Security\FrontLoginAuthenticator
-            entry_point: App\Security\FrontAuthEntryPoint
+                - App\Core\Auth\Security\FrontLoginAuthenticator
+            entry_point: App\Core\Auth\Security\FrontAuthEntryPoint
             login_throttling:
                 max_attempts: 5
                 interval: '15 minutes'

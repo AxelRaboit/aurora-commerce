@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Concern;
 
-use App\Entity\Post;
+use App\Module\Editorial\Post\Entity\Post;
 
 /**
  * Helpers for integration tests that interact with the Posts API.

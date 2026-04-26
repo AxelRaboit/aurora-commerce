@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
-use App\Entity\User;
-use App\Manager\MenuManager;
-use App\Repository\Menu\MenuRepository;
-use App\Repository\User\UserRepository;
+use App\Core\Menu\Manager\MenuManager;
+use App\Core\Menu\Repository\MenuRepository;
+use App\Core\User\Entity\User;
+use App\Core\User\Repository\UserRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

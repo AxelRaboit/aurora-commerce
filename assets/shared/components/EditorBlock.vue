@@ -16,10 +16,11 @@ import Marker from "@editorjs/marker";
 import InlineCode from "@editorjs/inline-code";
 import DragDrop from "editorjs-drag-drop";
 import Undo from "editorjs-undo";
-import MediaTextBlock from "@/shared/utils/editorjs/MediaTextBlock.js";
-import TwoColumnBlock from "@/shared/utils/editorjs/TwoColumnBlock.js";
-import CalloutBlock from "@/shared/utils/editorjs/CalloutBlock.js";
-import PostsListBlock from "@/shared/utils/editorjs/PostsListBlock.js";
+import MediaTextBlock from "@editorial/utils/editorjs/MediaTextBlock.js";
+import TwoColumnBlock from "@editorial/utils/editorjs/TwoColumnBlock.js";
+import CalloutBlock from "@editorial/utils/editorjs/CalloutBlock.js";
+import PostsListBlock from "@editorial/utils/editorjs/PostsListBlock.js";
+import ProductGridBlock from "@ecommerce/utils/editorjs/ProductGridBlock.js";
 import { configureMediaPickerLabels } from "@/shared/utils/mediaPicker.js";
 
 const { t } = useI18n();
@@ -260,6 +261,17 @@ onMounted(async () => {
                     selectedLabel: t("admin.editor.postsList.selectedLabel"),
                     emptyLabel: t("admin.editor.postsList.emptyLabel"),
                     noResultsLabel: t("admin.editor.postsList.noResultsLabel"),
+                },
+            },
+            productGrid: {
+                class: ProductGridBlock,
+                config: {
+                    titleLabel: t("admin.editor.productGrid.titleLabel"),
+                    columnsLabel: t("admin.editor.productGrid.columnsLabel"),
+                    searchPlaceholderLabel: t("admin.editor.productGrid.searchPlaceholderLabel"),
+                    selectedLabel: t("admin.editor.productGrid.selectedLabel"),
+                    emptyLabel: t("admin.editor.productGrid.emptyLabel"),
+                    noResultsLabel: t("admin.editor.productGrid.noResultsLabel"),
                 },
             },
         },
