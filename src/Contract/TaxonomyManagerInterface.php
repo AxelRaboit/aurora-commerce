@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Contract;
 
-use App\DTO\TaxonomyInput;
-use App\DTO\TaxonomyTermInput;
+use App\DTO\Taxonomy\TaxonomyInput;
+use App\DTO\Taxonomy\TaxonomyTermInput;
 use App\Entity\Taxonomy;
 use App\Entity\TaxonomyTerm;
 

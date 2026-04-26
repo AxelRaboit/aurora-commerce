@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 
-vi.mock("@/utils/blocksRenderer.js", () => ({
+vi.mock("@/shared/utils/blocksRenderer.js", () => ({
     renderBlocks: (blocks) =>
         blocks.map((b) => `<p>${b?.data?.text ?? ""}</p>`).join(""),
 }));
@@ -12,7 +12,7 @@ vi.mock("vue-sonner", () => ({
 }));
 
 import ConflictMergeOverlay from "@/admin/posts/ConflictMergeOverlay.vue";
-import { MergeKind } from "@/utils/mergeBlocks.js";
+import { MergeKind } from "@/shared/utils/mergeBlocks.js";
 import { toast } from "vue-sonner";
 
 function makeBlock(id, text) {

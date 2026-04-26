@@ -1,15 +1,15 @@
-{% extends 'base_guest.html.twig' %}
+{% extends 'admin/base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.register.title'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.auth.register.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block hero %}
     {% if registrationEnabled %}
-        {{ include('components/auth_hero.html.twig') }}
+        {{ include('shared/components/auth_hero.html.twig') }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div {{ vue_component('AdminRegisterApp', {
+    <div {{ vue_component('admin/auth/RegisterApp', {
         registerPath: path('admin_register'),
         loginPath: path('admin_login'),
         registrationEnabled: registrationEnabled,

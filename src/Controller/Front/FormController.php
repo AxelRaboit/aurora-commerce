@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Front;
 
-use App\Contract\FormManagerInterface;
+use App\Contract\Form\FormManagerInterface;
 use App\Controller\Trait\FrontLocaleTrait;
 use App\Entity\FormTranslation;
-use App\Repository\FormTranslationRepository;
+use App\Repository\Form\FormTranslationRepository;
 use App\Serializer\FormSerializer;
-use App\Service\FormSubmissionValidator;
+use App\Service\Form\FormSubmissionValidator;
 use App\Service\FrontContext;
-use App\Service\ThemeContext;
-use App\Service\ThemeResolver;
+use App\Service\Theme\ThemeContext;
+use App\Service\Theme\ThemeResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

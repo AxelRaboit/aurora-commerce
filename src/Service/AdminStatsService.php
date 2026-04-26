@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Enum\PostStatusEnum;
-use App\Repository\MediaRepository;
-use App\Repository\MenuRepository;
-use App\Repository\PostRepository;
-use App\Repository\PostTypeRepository;
-use App\Repository\UserRepository;
+use App\Repository\Media\MediaRepository;
+use App\Repository\Menu\MenuRepository;
+use App\Repository\Post\PostRepository;
+use App\Repository\Post\PostTypeRepository;
+use App\Repository\User\UserRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 

@@ -94,12 +94,17 @@ class SettingRepository extends ServiceEntityRepository
     /**
      * @return array{items: Setting[], total: int, page: int, totalPages: int}
      */
-    public function findPaginated(int $page, int $limit = 20): array
+    public function findPaginated(int $page, int $limit = 20, ?string $search = null): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->orderBy('s.group', Order::Ascending->value)
             ->addOrderBy('s.key', Order::Ascending->value);
         $countQueryBuilder = $this->createQueryBuilder('s')->select('COUNT(s.key)');
+
+        if (null !== $search && '' !== $search) {
+            $queryBuilder->andWhere('LOWER(s.key) LIKE :search')->setParameter('search', '%'.mb_strtolower($search).'%');
+            $countQueryBuilder->andWhere('LOWER(s.key) LIKE :search')->setParameter('search', '%'.mb_strtolower($search).'%');
+        }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }

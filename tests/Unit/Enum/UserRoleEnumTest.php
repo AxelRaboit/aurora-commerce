@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Enum;
 
-use App\Enum\UserRoleEnum;
+use App\Enum\User\UserRoleEnum;
 use PHPUnit\Framework\TestCase;
 
 final class UserRoleEnumTest extends TestCase

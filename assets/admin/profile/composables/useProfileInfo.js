@@ -1,9 +1,9 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useForm } from "@/composables/useForm.js";
-import { required, email, compose } from "@/utils/validators.js";
+import { useForm } from "@/shared/composables/useForm.js";
+import { required, email, compose } from "@/shared/utils/validators.js";
 
 export function useProfileInfo(updatePath, initialName, initialEmail) {
     const { t } = useI18n();
@@ -21,11 +21,13 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
     async function saveInfo() {
         const isValid = validateInfo({
             name: () =>
-                required(t("profile.errors.name_required"))(infoName.value),
+                required(t("admin.profile.errors.name_required"))(
+                    infoName.value,
+                ),
             email: () =>
                 compose(
-                    required(t("profile.errors.email_invalid")),
-                    email(t("profile.errors.email_invalid")),
+                    required(t("admin.profile.errors.email_invalid")),
+                    email(t("admin.profile.errors.email_invalid")),
                 )(infoEmail.value),
         });
 
@@ -44,7 +46,7 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
             const data = await response.json();
             if (data.success) {
                 clearInfoErrors();
-                toast.success(t("profile.info.saved"));
+                toast.success(t("admin.profile.info.saved"));
             } else {
                 setInfoErrors(data.errors ?? {});
             }

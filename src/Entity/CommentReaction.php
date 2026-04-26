@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\ReactionTypeEnum;
-use App\Repository\CommentReactionRepository;
+use App\Enum\Comment\ReactionTypeEnum;
+use App\Repository\Comment\CommentReactionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentReactionRepository::class)]

@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Front;
 
-use App\Contract\CommentManagerInterface;
+use App\Contract\Comment\CommentManagerInterface;
 use App\Controller\Trait\FrontLocaleTrait;
 use App\Entity\Comment;
 use App\Entity\Post;
-use App\Enum\ReactionTypeEnum;
-use App\Manager\CommentReactionManager;
-use App\Repository\CommentReactionRepository;
-use App\Repository\CommentRepository;
-use App\Repository\PostRepository;
+use App\Enum\Comment\ReactionTypeEnum;
+use App\Manager\Comment\CommentReactionManager;
+use App\Repository\Comment\CommentReactionRepository;
+use App\Repository\Comment\CommentRepository;
+use App\Repository\Post\PostRepository;
 use App\Repository\SettingRepository;
 use App\Serializer\CommentSerializer;
 use App\Service\CommentSubmissionValidator;
 use App\Service\FrontContext;
-use App\Service\PostPageRenderer;
+use App\Service\Post\PostPageRenderer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -1,13 +1,13 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.taxonomies'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.taxonomies'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'nav.taxonomies'|trans}) }}
+    {{ include('shared/components/page_header.html.twig', {title: 'admin.nav.taxonomies'|trans}) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('TaxonomiesApp', {
+<div {{ vue_component('admin/TaxonomiesApp', {
     taxonomies: taxonomies,
     postTypes: postTypes,
     locales: locales,

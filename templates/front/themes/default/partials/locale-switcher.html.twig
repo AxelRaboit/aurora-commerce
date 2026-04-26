@@ -1,0 +1,21 @@
+{% if context.activeLocales|length > 1 %}
+    {% set alternatesByLocale = {} %}
+    {% for alt in alternates %}
+        {% set alternatesByLocale = alternatesByLocale|merge({(alt.locale): alt.url}) %}
+    {% endfor %}
+    {% set localeFlagCodes = {fr: 'fr', en: 'gb', es: 'es', de: 'de', it: 'it', pt: 'pt', nl: 'nl'} %}
+    {% set localeNames = {fr: 'Français', en: 'English', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands'} %}
+    {% set switcherLocales = [] %}
+    {% for loc in context.activeLocales %}
+        {% set switcherLocales = switcherLocales|merge([{
+            code: loc.code,
+            name: localeNames[loc.code] ?? loc.code|upper,
+            flagCode: localeFlagCodes[loc.code] ?? loc.code,
+            url: alternatesByLocale[loc.code] ?? path('front_home', {locale: loc.code}),
+        }]) %}
+    {% endfor %}
+    <div {{ vue_component('front/LocaleSwitcher', {
+        currentLocale: locale,
+        locales: switcherLocales,
+    }) }}></div>
+{% endif %}

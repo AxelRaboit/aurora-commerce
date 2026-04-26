@@ -4,10 +4,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Trash2, Pencil, ListTree } from "lucide-vue-next";
-import AppButton from "@/components/AppButton.vue";
-import AppNoData from "@/components/AppNoData.vue";
-import AppBadge from "@/components/AppBadge.vue";
-import AppIconButton from "@/components/AppIconButton.vue";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppNoData from "@/shared/components/AppNoData.vue";
+import AppBadge from "@/shared/components/AppBadge.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
 import MenuItemRow from "@/admin/menus/MenuItemRow.vue";
 
 const { t } = useI18n();
@@ -60,13 +60,13 @@ function onChildReordered({ item, children }) {
                     <AppBadge v-if="menu.protected" color="amber" :title="t('admin.menus.protectedHint')">
                         {{ t('admin.menus.protected') }}
                     </AppBadge>
-                    <AppIconButton color="indigo" :title="t('common.edit')" v-on:click="$emit('edit-menu', menu)">
+                    <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="$emit('edit-menu', menu)">
                         <Pencil class="w-4 h-4" :stroke-width="2" />
                     </AppIconButton>
                     <AppIconButton
                         v-if="!menu.protected"
                         color="rose"
-                        :title="t('common.delete')"
+                        :title="t('shared.common.delete')"
                         v-on:click="$emit('delete-menu', menu)"
                     >
                         <Trash2 class="w-4 h-4" :stroke-width="2" />

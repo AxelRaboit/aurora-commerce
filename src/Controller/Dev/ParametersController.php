@@ -7,7 +7,7 @@ namespace App\Controller\Dev;
 use App\DTO\PaginationRequest;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
-use App\Enum\UserRoleEnum;
+use App\Enum\User\UserRoleEnum;
 use App\Repository\SettingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +25,7 @@ final class ParametersController extends AbstractController
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $result = $this->settingRepository->findPaginated($pagination->page);
+        $result = $this->settingRepository->findPaginated($pagination->page, search: $pagination->search);
 
         $labelsByKey = [];
         foreach (ApplicationParameterEnum::cases() as $case) {
@@ -53,6 +53,7 @@ final class ParametersController extends AbstractController
         return $this->render('admin/administration/index.html.twig', [
             'tab' => 'parameters',
             'parameters' => $payload,
+            'search' => $pagination->search ?? '',
         ]);
     }
 

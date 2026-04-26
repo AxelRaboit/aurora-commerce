@@ -1,4 +1,4 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -48,10 +48,10 @@ export function useMenuEditor(paths, initialMenus) {
             if (data.ok) {
                 selectedMenu.value = data.menu;
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
             }
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } finally {
             loadingMenu.value = false;
         }
@@ -73,7 +73,7 @@ export function useMenuEditor(paths, initialMenus) {
             body: JSON.stringify(payload),
         });
         if (data.ok) {
-            toast.success(t("common.saved"));
+            toast.success(t("shared.common.saved"));
             await refreshList();
             if (data.menu) await selectMenu(data.menu);
             return true;
@@ -88,15 +88,15 @@ export function useMenuEditor(paths, initialMenus) {
                 method: HttpMethod.Post,
             });
             if (data.ok) {
-                toast.success(t("common.deleted"));
+                toast.success(t("shared.common.deleted"));
                 if (selectedMenu.value?.id === menu.id)
                     selectedMenu.value = null;
                 await refreshList();
                 return true;
             }
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         }
         return false;
     }
@@ -125,11 +125,11 @@ export function useMenuEditor(paths, initialMenus) {
             if (data.ok) {
                 selectedMenu.value = data.menu;
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
                 await refreshMenu();
             }
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
             await refreshMenu();
         }
     }
@@ -145,14 +145,14 @@ export function useMenuEditor(paths, initialMenus) {
                 body: JSON.stringify(payload),
             });
             if (data.ok) {
-                toast.success(t("common.saved"));
+                toast.success(t("shared.common.saved"));
                 selectedMenu.value = data.menu;
                 await refreshList();
                 return true;
             }
             toast.error(t(data.error ?? "common.error"));
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         }
         return false;
     }
@@ -164,13 +164,13 @@ export function useMenuEditor(paths, initialMenus) {
                 { method: HttpMethod.Post },
             );
             if (data.ok) {
-                toast.success(t("common.deleted"));
+                toast.success(t("shared.common.deleted"));
                 selectedMenu.value = data.menu;
                 return true;
             }
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         }
         return false;
     }

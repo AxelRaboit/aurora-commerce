@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use App\Repository\TaxonomyRepository;
-use App\Repository\TaxonomyTermRepository;
+use App\Repository\Taxonomy\TaxonomyRepository;
+use App\Repository\Taxonomy\TaxonomyTermRepository;
 
 final class TaxonomyMigrationTest extends IntegrationTestCase
 {

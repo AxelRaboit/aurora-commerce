@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\FrontContext;
-use App\Service\RssFeedBuilder;
-use App\Service\SitemapBuilder;
+use App\Service\Seo\RssFeedBuilder;
+use App\Service\Seo\SitemapBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

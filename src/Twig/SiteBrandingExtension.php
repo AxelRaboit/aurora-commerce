@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
-use App\Repository\MediaRepository;
+use App\Repository\Media\MediaRepository;
 use App\Repository\SettingRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;

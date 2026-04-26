@@ -2,8 +2,8 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
-import { renderBlocks } from "@/utils/blocksRenderer.js";
-import AppButton from "@/components/AppButton.vue";
+import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
+import AppButton from "@/shared/components/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -52,7 +52,7 @@ const previewHtml = computed(() =>
                                 : 'text-secondary hover:bg-surface-2'"
                             v-on:click="activeLocale = locale"
                         >
-                            {{ t("locales." + locale) }}
+                            {{ t("shared.locales." + locale) }}
                         </button>
                     </div>
                     <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="$emit('close')">
@@ -61,7 +61,7 @@ const previewHtml = computed(() =>
                 </div>
 
                 <div class="flex-1 w-full max-w-6xl mx-auto px-12 py-12">
-                    <div v-if="loading" class="text-secondary text-sm">{{ t("common.loading") }}</div>
+                    <div v-if="loading" class="text-secondary text-sm">{{ t("shared.common.loading") }}</div>
                     <template v-else-if="post">
                         <img v-if="post.featuredMediaUrl" :src="post.featuredMediaUrl" class="w-full max-h-80 object-cover rounded-xl mb-8" alt="">
                         <h1 v-if="post.translations?.[activeLocale]?.title" class="text-3xl font-bold text-primary mb-8">

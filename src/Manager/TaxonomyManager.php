@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Manager;
 
 use App\Contract\TaxonomyManagerInterface;
-use App\DTO\TaxonomyInput;
-use App\DTO\TaxonomyTermInput;
+use App\DTO\Taxonomy\TaxonomyInput;
+use App\DTO\Taxonomy\TaxonomyTermInput;
 use App\Entity\Taxonomy;
 use App\Entity\TaxonomyTerm;
-use App\Repository\PostTypeRepository;
-use App\Repository\TaxonomyRepository;
-use App\Repository\TaxonomyTermRepository;
+use App\Repository\Post\PostTypeRepository;
+use App\Repository\Taxonomy\TaxonomyRepository;
+use App\Repository\Taxonomy\TaxonomyTermRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use RuntimeException;

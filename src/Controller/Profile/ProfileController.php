@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Profile;
 
-use App\Contract\UserManagerInterface;
+use App\Contract\User\UserManagerInterface;
 use App\Controller\Trait\JsonRequestTrait;
-use App\DTO\ChangePasswordInput;
-use App\DTO\UpdateProfileInput;
+use App\DTO\Auth\ChangePasswordInput;
+use App\DTO\User\UpdateProfileInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\LocaleEnum;
-use App\Enum\UserRoleEnum;
+use App\Enum\User\UserRoleEnum;
 use App\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -73,7 +73,7 @@ final class ProfileController extends AbstractController
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
             return $this->json(['success' => false, 'errors' => [
-                'current_password' => $this->translator->trans('profile.errors.current_password_invalid'),
+                'current_password' => $this->translator->trans('admin.profile.errors.current_password_invalid'),
             ]]);
         }
 
@@ -92,7 +92,7 @@ final class ProfileController extends AbstractController
         if (!$this->isCsrfTokenValid('profile_delete', $data['_token'] ?? '')) {
             return $this->json([
                 'success' => false,
-                'error' => $this->translator->trans('profile.errors.invalid_csrf'),
+                'error' => $this->translator->trans('admin.profile.errors.invalid_csrf'),
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -114,7 +114,7 @@ final class ProfileController extends AbstractController
         if (null === $locale) {
             return $this->json([
                 'success' => false,
-                'error' => $this->translator->trans('profile.errors.invalid_locale'),
+                'error' => $this->translator->trans('admin.profile.errors.invalid_locale'),
             ], Response::HTTP_BAD_REQUEST);
         }
 

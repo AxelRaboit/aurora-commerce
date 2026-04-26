@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Auth;
 
-use App\Contract\UserManagerInterface;
-use App\DTO\UserSetPasswordInput;
+use App\Contract\User\UserManagerInterface;
+use App\DTO\User\UserSetPasswordInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Service\PayloadValidator;
@@ -31,7 +31,7 @@ final class InvitationController extends AbstractController
     {
         $user = $this->userManager->findValidInvitation($selector, $token);
         if (!$user instanceof User) {
-            $this->addFlash('error', $this->translator->trans('auth.invitation.expired'));
+            $this->addFlash('error', $this->translator->trans('admin.auth.invitation.expired'));
 
             return $this->redirectToRoute('admin_login');
         }
@@ -56,7 +56,7 @@ final class InvitationController extends AbstractController
 
             $this->security->login($user);
 
-            $this->addFlash('success', $this->translator->trans('auth.invitation.success'));
+            $this->addFlash('success', $this->translator->trans('admin.auth.invitation.success'));
 
             return new RedirectResponse($this->generateUrl('admin_dashboard'));
         }

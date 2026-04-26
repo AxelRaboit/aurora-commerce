@@ -20,6 +20,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case CommentModerationEnabled = 'comment_moderation_enabled';
     case MaintenanceMode = 'maintenance_mode';
     case AdminRegistrationEnabled = 'admin_registration_enabled';
+    case AdminAccessRequestEnabled = 'admin_access_request_enabled';
     case FrontRegistrationEnabled = 'front_registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';
@@ -51,6 +52,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentModerationEnabled => 'Modération des commentaires',
             self::MaintenanceMode => 'Mode maintenance',
             self::AdminRegistrationEnabled => 'Inscriptions admin ouvertes',
+            self::AdminAccessRequestEnabled => "Demandes d'accès admin ouvertes",
             self::FrontRegistrationEnabled => 'Inscriptions front ouvertes',
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
@@ -79,6 +81,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentModerationEnabled => 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)',
             self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = site fermé au public)',
             self::AdminRegistrationEnabled => 'Autoriser les inscriptions via /register (interface admin) — désactiver après la création du premier compte admin',
+            self::AdminAccessRequestEnabled => "Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)",
             self::FrontRegistrationEnabled => 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)',
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
             self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
@@ -107,6 +110,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentModerationEnabled => '1',
             self::MaintenanceMode => '0',
             self::AdminRegistrationEnabled => '0',
+            self::AdminAccessRequestEnabled => '1',
             self::FrontRegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
             self::TrashAutoPurgeDays => '30',
@@ -123,7 +127,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
             self::HomepagePostId => 'post',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::FrontRegistrationEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'bool',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -144,7 +148,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
             self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
-            self::MaintenanceMode, self::AdminRegistrationEnabled, self::FrontRegistrationEnabled => 'system',
+            self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
         };

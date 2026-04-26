@@ -1,13 +1,13 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.users'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.users'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'nav.users'|trans}) }}
+    {{ include('shared/components/page_header.html.twig', {title: 'admin.nav.users'|trans}) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('UsersApp', {
+<div {{ vue_component('admin/UsersApp', {
     roles: roles,
     isDev: isDev,
     currentUserPriority: currentUserPriority,

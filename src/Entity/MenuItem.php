@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\MenuItemTargetTypeEnum;
-use App\Enum\MenuItemVisibilityEnum;
-use App\Repository\MenuItemRepository;
+use App\Enum\Menu\MenuItemTargetTypeEnum;
+use App\Enum\Menu\MenuItemVisibilityEnum;
+use App\Repository\Menu\MenuItemRepository;
 use App\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

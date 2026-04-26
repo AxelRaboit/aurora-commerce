@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Auth;
 
-use App\Contract\UserManagerInterface;
-use App\DTO\RegisterInput;
+use App\Contract\User\UserManagerInterface;
+use App\DTO\Auth\RegisterInput;
 use App\Entity\User;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;

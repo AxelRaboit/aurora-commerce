@@ -21,25 +21,25 @@ services:
     App\:
         resource: '../src/'
 
-    App\Manager\AccessRequestManager:
+    App\Manager\Auth\AccessRequestManager:
         arguments:
             $adminEmail: '%app.admin_email%'
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\InvitationManager:
+    App\Manager\Auth\InvitationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\FormManager:
+    App\Manager\Form\FormManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
 
-    App\Manager\PasswordResetManager:
+    App\Manager\Auth\PasswordResetManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    App\Manager\EmailVerificationManager:
+    App\Manager\Auth\EmailVerificationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
@@ -47,7 +47,7 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    App\Service\ThemeResolver:
+    App\Service\Theme\ThemeResolver:
         arguments:
             $projectDir: '%kernel.project_dir%'
 

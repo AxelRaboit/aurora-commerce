@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Service\MenuRenderer;
+use App\Service\Menu\MenuRenderer;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class MenuExtension

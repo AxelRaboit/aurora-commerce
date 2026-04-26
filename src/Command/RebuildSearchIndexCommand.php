@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\PostTranslation;
-use App\Repository\PostTranslationRepository;
-use App\Service\PostTextExtractor;
+use App\Repository\Post\PostTranslationRepository;
+use App\Service\Post\PostTextExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

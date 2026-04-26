@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Comment;
-use App\Enum\CommentStatusEnum;
+use App\Enum\Comment\CommentStatusEnum;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

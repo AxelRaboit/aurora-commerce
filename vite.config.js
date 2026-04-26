@@ -21,7 +21,7 @@ export default defineConfig({
                 app: './assets/app.js',
                 flash: './assets/flash.js',
                 theme: './assets/theme.js',
-                guest: './assets/guest/index.js',
+                guest: './assets/admin/guest/index.js',
             },
             output: {
                 manualChunks(id) {

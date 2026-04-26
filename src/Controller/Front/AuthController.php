@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Front;
 
-use App\DTO\FrontRegisterInput;
+use App\DTO\Auth\FrontRegisterInput;
 use App\Entity\ResetPasswordRequest;
 use App\Entity\User;
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
-use App\Enum\UserTypeEnum;
-use App\Manager\FrontUserManager;
+use App\Enum\User\UserTypeEnum;
+use App\Manager\User\FrontUserManager;
 use App\Repository\SettingRepository;
-use App\Repository\UserRepository;
+use App\Repository\User\UserRepository;
 use App\Security\FrontLoginAuthenticator;
 use App\Service\FrontContext;
 use App\Service\PayloadValidator;
-use App\Service\ThemeContext;
-use App\Service\ThemeResolver;
+use App\Service\Theme\ThemeContext;
+use App\Service\Theme\ThemeResolver;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Contract\FormManagerInterface;
+use App\Contract\Form\FormManagerInterface;
 use App\Controller\Trait\JsonRequestTrait;
-use App\DTO\FormFieldInput;
-use App\DTO\FormInput;
+use App\DTO\Form\FormFieldInput;
+use App\DTO\Form\FormInput;
 use App\DTO\PaginationRequest;
 use App\Entity\Form;
 use App\Entity\FormField;
 use App\Enum\HttpMethodEnum;
-use App\Enum\UserRoleEnum;
-use App\Repository\FormRepository;
-use App\Repository\FormSubmissionRepository;
+use App\Enum\User\UserRoleEnum;
+use App\Repository\Form\FormRepository;
+use App\Repository\Form\FormSubmissionRepository;
 use App\Serializer\FormSerializer;
-use App\Service\FormSubmissionExporter;
+use App\Service\Form\FormSubmissionExporter;
 use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

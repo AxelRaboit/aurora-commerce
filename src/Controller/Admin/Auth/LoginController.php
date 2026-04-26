@@ -28,6 +28,7 @@ final class LoginController extends AbstractController
             'last_username' => $authenticationUtils->getLastUsername(),
             'error' => $authenticationUtils->getLastAuthenticationError(),
             'registrationEnabled' => $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminRegistrationEnabled->value),
+            'accessRequestEnabled' => $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true),
         ]);
     }
 

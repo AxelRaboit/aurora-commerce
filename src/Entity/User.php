@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\LocaleEnum;
-use App\Enum\UserRoleEnum;
-use App\Enum\UserStatusEnum;
-use App\Enum\UserTypeEnum;
-use App\Repository\UserRepository;
+use App\Enum\User\UserRoleEnum;
+use App\Enum\User\UserStatusEnum;
+use App\Enum\User\UserTypeEnum;
+use App\Repository\User\UserRepository;
 use App\Trait\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

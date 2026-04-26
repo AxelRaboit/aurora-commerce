@@ -1,12 +1,12 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
 import {
     accessRequestStatusBadge,
     accessRequestStatusBadgeColor,
-} from "@/utils/statusStyles.js";
+} from "@/shared/utils/statusStyles.js";
 
 export function useAdminAccessRequests(
     accessRequestsPath,
@@ -67,10 +67,10 @@ export function useAdminAccessRequests(
                 pendingApprove.value = null;
                 await reset();
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
             }
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } finally {
             acting.value = false;
         }
@@ -96,10 +96,10 @@ export function useAdminAccessRequests(
                 pendingReject.value = null;
                 await reset();
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
             }
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } finally {
             acting.value = false;
         }
@@ -124,10 +124,10 @@ export function useAdminAccessRequests(
                 confirmPurge.value = false;
                 await reset();
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
             }
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } finally {
             acting.value = false;
         }

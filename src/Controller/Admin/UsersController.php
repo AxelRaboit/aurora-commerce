@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Contract\UserManagerInterface;
+use App\Contract\User\UserManagerInterface;
 use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\PaginationRequest;
-use App\DTO\UserInput;
-use App\DTO\UserInviteInput;
+use App\DTO\User\UserInput;
+use App\DTO\User\UserInviteInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
-use App\Enum\UserRoleEnum;
-use App\Repository\UserRepository;
+use App\Enum\User\UserRoleEnum;
+use App\Repository\User\UserRepository;
 use App\Serializer\UserSerializer;
 use App\Service\PayloadValidator;
 use InvalidArgumentException;

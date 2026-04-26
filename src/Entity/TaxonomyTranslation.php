@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\TaxonomyTranslationRepository;
+use App\Repository\Taxonomy\TaxonomyTranslationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaxonomyTranslationRepository::class)]

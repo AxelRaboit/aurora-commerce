@@ -2,8 +2,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Check } from "lucide-vue-next";
-import { renderBlocks } from "@/utils/blocksRenderer.js";
-import { MergeKind } from "@/utils/mergeBlocks.js";
+import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
+import { MergeKind } from "@/shared/utils/mergeBlocks.js";
 
 const { t } = useI18n();
 

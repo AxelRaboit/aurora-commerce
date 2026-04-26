@@ -1,8 +1,8 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Menu as MenuIcon } from "lucide-vue-next";
-import AppNoData from "@/components/AppNoData.vue";
-import AppBadge from "@/components/AppBadge.vue";
+import AppNoData from "@/shared/components/AppNoData.vue";
+import AppBadge from "@/shared/components/AppBadge.vue";
 
 const { t } = useI18n();
 

@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useApiRequest } from "@/composables/useApiRequest.js";
+import { useApiRequest } from "@/shared/composables/useApiRequest.js";
 
 export function usePostSave(createPath, editPath, onSuccess) {
     const { loading, request } = useApiRequest();

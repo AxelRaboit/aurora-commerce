@@ -10,8 +10,8 @@ import {
     countConflicts,
     summarize,
     MergeKind,
-} from "@/utils/mergeBlocks.js";
-import AppButton from "@/components/AppButton.vue";
+} from "@/shared/utils/mergeBlocks.js";
+import AppButton from "@/shared/components/AppButton.vue";
 import MergeBlockEntry from "./MergeBlockEntry.vue";
 
 const { t } = useI18n();
@@ -128,7 +128,7 @@ function apply() {
                     </span>
                     <AppButton variant="ghost" size="md" v-on:click="$emit('close')">
                         <X class="w-4 h-4" :stroke-width="2" />
-                        {{ t("common.cancel") }}
+                        {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="primary" size="md" :disabled="totalUnresolved > 0" v-on:click="apply">
                         <Save class="w-4 h-4" :stroke-width="2" />
@@ -146,7 +146,7 @@ function apply() {
                         :class="activeLocale === locale ? 'bg-indigo-600 text-white' : 'text-secondary hover:bg-surface-3'"
                         v-on:click="activeLocale = locale"
                     >
-                        {{ t("locales." + locale) }}
+                        {{ t("shared.locales." + locale) }}
                         <span
                             v-if="conflictBadgeFor(locale) > 0"
                             class="px-1.5 py-0.5 rounded-full text-xs font-semibold"

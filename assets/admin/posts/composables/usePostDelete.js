@@ -1,1 +1,1 @@
-export { useDelete as usePostDelete } from "@/composables/useDelete.js";
+export { useDelete as usePostDelete } from "@/shared/composables/useDelete.js";

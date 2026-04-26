@@ -8,7 +8,7 @@ use App\Entity\Form;
 use App\Entity\FormField;
 use App\Entity\FormFieldTranslation;
 use App\Enum\FormFieldTypeEnum;
-use App\Service\FormSubmissionValidator;
+use App\Service\Form\FormSubmissionValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 

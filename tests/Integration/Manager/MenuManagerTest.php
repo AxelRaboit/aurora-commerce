@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Manager;
 
 use App\Entity\MenuItem;
-use App\Enum\MenuItemTargetTypeEnum;
-use App\Enum\MenuItemVisibilityEnum;
+use App\Enum\Menu\MenuItemTargetTypeEnum;
+use App\Enum\Menu\MenuItemVisibilityEnum;
 use App\Manager\MenuManager;
-use App\Repository\MenuRepository;
+use App\Repository\Menu\MenuRepository;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

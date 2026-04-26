@@ -1,0 +1,21 @@
+{% if items %}
+    <div class="relative group">
+        <button
+            type="button"
+            class="inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80"
+            style="color: var(--th-header-text, var(--th-primary));"
+        >
+            {{ include('shared/components/icon.html.twig', {name: 'user', size: 16}) }}
+            <span class="hidden sm:inline">{{ app.user ? app.user.name : 'front.menu.account'|trans }}</span>
+            {{ include('shared/components/icon.html.twig', {name: 'chevron-down', size: 14, stroke: '2.5'}) }}
+        </button>
+
+        <div class="absolute right-0 top-full pt-1 min-w-45 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50">
+            <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
+                {% for item in items %}
+                    {{ include('front/themes/default/partials/menus/_dropdown_item.html.twig', {item: item}) }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}

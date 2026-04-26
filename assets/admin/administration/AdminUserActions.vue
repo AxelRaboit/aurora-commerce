@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { LogIn, Pencil, Shield, Trash2, UserRound } from "lucide-vue-next";
-import AppIconButton from "@/components/AppIconButton.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
 
 const { t } = useI18n();
 
@@ -39,7 +39,7 @@ const emit = defineEmits(["edit", "toggle-role", "delete"]);
     <AppIconButton
         v-if="!user.isCurrent"
         color="rose"
-        :title="t('common.delete')"
+        :title="t('shared.common.delete')"
         v-on:click="emit('delete', props.user)"
     >
         <Trash2 class="w-4 h-4" :stroke-width="2" />

@@ -1,17 +1,17 @@
 <script setup>
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { computed, ref, watch } from "vue";
-import { useDebounce } from "@/composables/useDebounce.js";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { X, ImagePlus } from "lucide-vue-next";
-import AppInput from "@/components/AppInput.vue";
-import AppTextarea from "@/components/AppTextarea.vue";
-import AppSelect from "@/components/AppSelect.vue";
-import AppCheckbox from "@/components/AppCheckbox.vue";
-import AppButton from "@/components/AppButton.vue";
-import AppIconButton from "@/components/AppIconButton.vue";
-import { statusBadge } from "@/utils/statusStyles.js";
+import AppInput from "@/shared/components/AppInput.vue";
+import AppTextarea from "@/shared/components/AppTextarea.vue";
+import AppSelect from "@/shared/components/AppSelect.vue";
+import AppCheckbox from "@/shared/components/AppCheckbox.vue";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
+import { statusBadge } from "@/shared/utils/statusStyles.js";
 
 const { t } = useI18n();
 
@@ -124,7 +124,7 @@ async function uploadMedia(event) {
         const data = await response.json();
         if (data.success) update(data.file?.id ?? null);
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         uploading.value = false;
         if (mediaInput.value) mediaInput.value.value = "";
@@ -274,7 +274,7 @@ async function uploadMedia(event) {
                     v-if="open && (results.length || loading)"
                     class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-line bg-surface shadow-lg"
                 >
-                    <div v-if="loading" class="px-3 py-2 text-xs text-muted">{{ t("common.loading") }}</div>
+                    <div v-if="loading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
                     <button
                         v-for="result in results"
                         :key="result.id"

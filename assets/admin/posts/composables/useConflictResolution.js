@@ -43,7 +43,7 @@ export function useConflictResolution({ showPath, postId }) {
             const data = await response.json();
             if (data.success) return data.post;
         } catch {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         } finally {
             remoteLoading.value = false;
         }

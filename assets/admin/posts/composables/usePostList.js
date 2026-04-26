@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
 
 export function usePostList(
     postsPath,

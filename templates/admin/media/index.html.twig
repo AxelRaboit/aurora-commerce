@@ -1,13 +1,13 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.media'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.media'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'nav.media'|trans}) }}
+    {{ include('shared/components/page_header.html.twig', {title: 'admin.nav.media'|trans}) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('MediaApp', {
+<div {{ vue_component('admin/MediaApp', {
     folders: folders,
     media: media,
     currentFolderId: currentFolderId,

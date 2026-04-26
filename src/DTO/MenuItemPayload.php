@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use App\Enum\MenuItemTargetTypeEnum;
-use App\Enum\MenuItemVisibilityEnum;
+use App\Enum\Menu\MenuItemTargetTypeEnum;
+use App\Enum\Menu\MenuItemVisibilityEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class MenuItemPayload

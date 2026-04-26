@@ -1,17 +1,17 @@
 <script setup>
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";
-import { renderBlocks } from "@/utils/blocksRenderer.js";
-import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/utils/revisionDiff.js";
-import { statusBadgeColor } from "@/utils/statusStyles.js";
-import AppButton from "@/components/AppButton.vue";
-import AppIconButton from "@/components/AppIconButton.vue";
-import AppCheckbox from "@/components/AppCheckbox.vue";
-import AppBadge from "@/components/AppBadge.vue";
+import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
+import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/shared/utils/revisionDiff.js";
+import { statusBadgeColor } from "@/shared/utils/statusStyles.js";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppCheckbox from "@/shared/components/AppCheckbox.vue";
+import AppBadge from "@/shared/components/AppBadge.vue";
 import { toast } from "vue-sonner";
-import { useDateFormat } from "@/composables/useDateFormat.js";
+import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -50,7 +50,7 @@ async function fetchRevisions() {
         const data = await response.json();
         revisions.value = data.revisions ?? [];
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         loadingList.value = false;
     }
@@ -65,7 +65,7 @@ async function selectRevision(revision) {
         const data = await response.json();
         selectedRevision.value = data.revision ?? null;
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         loadingSelected.value = false;
     }
@@ -85,10 +85,10 @@ async function restore() {
             toast.success(t("admin.posts.revisions.restored"));
             emit("restored");
         } else {
-            toast.error(t("common.error"));
+            toast.error(t("shared.common.error"));
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         restoring.value = false;
     }
@@ -155,7 +155,7 @@ const visibleEntries = computed(() =>
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
                         {{ t("admin.posts.revisions.title") }}
                     </span>
-                    <AppIconButton :title="t('common.close')" v-on:click="emit('close')">
+                    <AppIconButton :title="t('shared.common.close')" v-on:click="emit('close')">
                         <X class="w-5 h-5" :stroke-width="2" />
                     </AppIconButton>
                 </div>
@@ -164,7 +164,7 @@ const visibleEntries = computed(() =>
                 <div class="flex-1 flex min-h-0">
                     <!-- Revisions list -->
                     <aside class="w-80 shrink-0 border-r border-line bg-surface overflow-y-auto scrollbar-thin">
-                        <div v-if="loadingList" class="p-4 text-sm text-muted">{{ t("common.loading") }}</div>
+                        <div v-if="loadingList" class="p-4 text-sm text-muted">{{ t("shared.common.loading") }}</div>
                         <div v-else-if="revisions.length === 0" class="p-4 text-sm text-muted">
                             {{ t("admin.posts.revisions.empty") }}
                         </div>
@@ -196,7 +196,7 @@ const visibleEntries = computed(() =>
                             {{ t("admin.posts.revisions.selectHint") }}
                         </div>
                         <div v-else-if="loadingSelected" class="p-8 text-sm text-muted text-center">
-                            {{ t("common.loading") }}
+                            {{ t("shared.common.loading") }}
                         </div>
                         <div v-else class="p-6 space-y-4">
                             <!-- Locale tabs + stats + restore -->

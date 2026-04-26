@@ -1,13 +1,13 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.profile'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.profile'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'nav.profile'|trans}) }}
+    {{ include('shared/components/page_header.html.twig', {title: 'admin.nav.profile'|trans}) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('ProfileApp', {
+<div {{ vue_component('admin/ProfileApp', {
     userName: app.user.name,
     userEmail: app.user.email,
     locale: app.request.locale,

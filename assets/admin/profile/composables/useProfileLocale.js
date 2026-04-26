@@ -1,4 +1,4 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref } from "vue";
 
 export function useProfileLocale(localePath, initialLocale) {

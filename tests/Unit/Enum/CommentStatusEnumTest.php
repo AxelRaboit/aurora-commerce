@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Enum;
 
-use App\Enum\CommentStatusEnum;
+use App\Enum\Comment\CommentStatusEnum;
 use PHPUnit\Framework\TestCase;
 
 final class CommentStatusEnumTest extends TestCase

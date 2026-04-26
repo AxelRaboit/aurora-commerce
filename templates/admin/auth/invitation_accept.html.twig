@@ -1,9 +1,9 @@
-{% extends 'base_guest.html.twig' %}
+{% extends 'admin/base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.invitation.accept_title'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.auth.invitation.accept_title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block content %}
-    <div {{ vue_component('AdminInvitationAcceptApp', {
+    <div {{ vue_component('admin/auth/InvitationAcceptApp', {
         submitPath: path('admin_invitation_accept', {selector: selector, token: token}),
         userName: user.name,
         initialErrors: errors,

@@ -1,22 +1,22 @@
 <script setup>
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
-import { useDebounce } from "@/composables/useDebounce.js";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History, ExternalLink } from "lucide-vue-next";
-import { renderBlocks } from "@/utils/blocksRenderer.js";
-import AppButton from "@/components/AppButton.vue";
-import AppIconButton from "@/components/AppIconButton.vue";
-import AppInput from "@/components/AppInput.vue";
-import AppMessage from "@/components/AppMessage.vue";
-import AppCheckbox from "@/components/AppCheckbox.vue";
-import AppToggle from "@/components/AppToggle.vue";
-import AppTextarea from "@/components/AppTextarea.vue";
-import AppSelect from "@/components/AppSelect.vue";
-import AppMultiselect from "@/components/AppMultiselect.vue";
-import EditorBlock from "@/components/EditorBlock.vue";
-import PreviewOverlay from "@/components/PreviewOverlay.vue";
+import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppInput from "@/shared/components/AppInput.vue";
+import AppMessage from "@/shared/components/AppMessage.vue";
+import AppCheckbox from "@/shared/components/AppCheckbox.vue";
+import AppToggle from "@/shared/components/AppToggle.vue";
+import AppTextarea from "@/shared/components/AppTextarea.vue";
+import AppSelect from "@/shared/components/AppSelect.vue";
+import AppMultiselect from "@/shared/components/AppMultiselect.vue";
+import EditorBlock from "@/shared/components/EditorBlock.vue";
+import PreviewOverlay from "@/shared/components/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
@@ -24,11 +24,11 @@ import GoogleSerpPreview from "./GoogleSerpPreview.vue";
 import PostCustomField from "./PostCustomField.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
-import { TEMPLATES } from "@/utils/editorjs/templates.js";
-import { slugify } from "@/utils/slugify.js";
-import { statusBadge } from "@/utils/statusStyles.js";
-import { DEFAULT_LOCALES } from "@/utils/lang.js";
-import { useDateFormat } from "@/composables/useDateFormat.js";
+import { TEMPLATES } from "@/shared/utils/editorjs/templates.js";
+import { slugify } from "@/shared/utils/slugify.js";
+import { statusBadge } from "@/shared/utils/statusStyles.js";
+import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
+import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -196,7 +196,7 @@ async function uploadFeaturedImage(event) {
             featuredMediaFocalPosition.value = data.media?.focalPositionCss ?? "50% 50%";
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         uploadingFeatured.value = false;
         if (featuredInputRef.value) featuredInputRef.value.value = "";
@@ -315,7 +315,7 @@ async function uploadOgImage(event) {
             tr.ogImageFocalPosition = data.media?.focalPositionCss ?? "50% 50%";
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         uploadingOg.value = false;
         if (ogInputRef.value) ogInputRef.value.value = "";
@@ -367,7 +367,7 @@ onMounted(async () => {
             snapshotBase(form.translations);
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
         emit("back");
     } finally {
         fetching.value = false;
@@ -518,7 +518,7 @@ async function reloadAfterRestore() {
             nextTick(() => { isDirty.value = false; });
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     }
 }
 
@@ -627,7 +627,7 @@ function forceSave() {
 
 <template>
     <div v-if="fetching" class="flex items-center justify-center py-20 text-secondary text-sm">
-        {{ t("common.loading") }}
+        {{ t("shared.common.loading") }}
     </div>
 
     <div v-else class="space-y-6">
@@ -710,7 +710,7 @@ function forceSave() {
                     target="_blank"
                 >
                     <ExternalLink class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("common.view") }}</span>
+                    <span>{{ t("shared.common.view") }}</span>
                 </AppButton>
                 <AppButton
                     variant="primary"
@@ -720,7 +720,7 @@ function forceSave() {
                     v-on:click="handleSave"
                 >
                     <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("common.save") }}</span>
+                    <span>{{ t("shared.common.save") }}</span>
                     <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
                 </AppButton>
             </div>
@@ -843,7 +843,7 @@ function forceSave() {
                     v-if="relatedSearchOpen && (relatedSearchResults.length || relatedSearchLoading)"
                     class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto scrollbar-thin rounded-md border border-line bg-surface shadow-lg"
                 >
-                    <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("common.loading") }}</div>
+                    <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
                     <button
                         v-for="result in relatedSearchResults"
                         :key="result.id"
@@ -888,7 +888,7 @@ function forceSave() {
                 :class="uploadingFeatured ? 'opacity-50 pointer-events-none' : ''"
             >
                 <ImagePlus class="w-6 h-6 text-muted mb-1.5" :stroke-width="1.5" />
-                <span class="text-sm text-muted">{{ uploadingFeatured ? t("common.loading") : t("admin.posts.addImage") }}</span>
+                <span class="text-sm text-muted">{{ uploadingFeatured ? t("shared.common.loading") : t("admin.posts.addImage") }}</span>
                 <input
                     ref="featuredInputRef"
                     type="file"
@@ -927,7 +927,7 @@ function forceSave() {
                     : 'border-transparent text-secondary hover:text-primary'"
                 v-on:click="switchLocale(locale)"
             >
-                {{ t("locales." + locale) }}
+                {{ t("shared.locales." + locale) }}
             </button>
         </div>
 
@@ -1186,7 +1186,7 @@ function forceSave() {
                                         <p class="text-sm font-medium text-primary text-center">{{ t("admin.editor.templates.confirmReplace") }}</p>
                                         <div class="flex gap-2">
                                             <AppButton variant="primary" size="md" v-on:click.stop="applyTemplate(template)">{{ t("admin.editor.templates.apply") }}</AppButton>
-                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("common.cancel") }}</AppButton>
+                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("shared.common.cancel") }}</AppButton>
                                         </div>
                                     </div>
                                 </Transition>
@@ -1306,7 +1306,7 @@ function forceSave() {
         :title="form.translations[activeLocale]?.title"
         :html="previewHtml"
         :featured-media-url="featuredMediaUrl"
-        :label="t('admin.posts.preview') + ' - ' + t('locales.' + activeLocale)"
+        :label="t('admin.posts.preview') + ' - ' + t('shared.locales.' + activeLocale)"
         v-on:close="showPreview = false"
     />
 

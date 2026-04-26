@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>404 — {{ 'errors.page_not_found.title'|trans }}</title>
+    <title>404 — {{ 'shared.errors.page_not_found.title'|trans }}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     {{ vite_entry_link_tags('app') }}
     <style>:root{--th-bg:#f9fafb;--th-surface:#ffffff;--th-primary:#111827;--th-secondary:#4b5563;--th-muted:#9ca3af;--th-accent:#6366f1}</style>
@@ -12,16 +12,16 @@
 
     <p class="text-8xl font-black text-indigo-400/30 leading-none select-none mb-6">404</p>
 
-    <h1 class="text-2xl font-bold text-primary mb-2">{{ 'errors.page_not_found.title'|trans }}</h1>
+    <h1 class="text-2xl font-bold text-primary mb-2">{{ 'shared.errors.page_not_found.title'|trans }}</h1>
     <p class="text-secondary mb-8 max-w-sm">
-        {{ 'errors.page_not_found.message'|trans }}
+        {{ 'shared.errors.page_not_found.message'|trans }}
     </p>
 
     <a
         href="/"
         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-colors"
     >
-        ← {{ 'errors.page_not_found.back'|trans }}
+        ← {{ 'shared.errors.page_not_found.back'|trans }}
     </a>
 
 </body>

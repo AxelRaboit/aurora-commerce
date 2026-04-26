@@ -1,19 +1,20 @@
-{% extends 'base_guest.html.twig' %}
+{% extends 'admin/base_guest.html.twig' %}
 
-{% block title %}{{ 'auth.login.title'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.auth.login.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block hero %}
-    {{ include('components/auth_hero.html.twig') }}
+    {{ include('shared/components/auth_hero.html.twig') }}
 {% endblock %}
 
 {% block content %}
-    <div {{ vue_component('AdminLoginApp', {
+    <div {{ vue_component('admin/auth/LoginApp', {
         checkPath: path('admin_login'),
         csrfToken: csrf_token('authenticate'),
         forgotPath: path('admin_forgot_password'),
         registerPath: path('admin_register'),
         accessRequestPath: path('admin_access_request'),
         registrationEnabled: registrationEnabled,
+        accessRequestEnabled: accessRequestEnabled,
         lastUsername: last_username,
         errorMessage: error ? error.messageKey|trans(error.messageData, 'security') : '',
     }) }}></div>

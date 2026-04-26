@@ -6,7 +6,7 @@ namespace App\MessageHandler;
 
 use App\Enum\PostStatusEnum;
 use App\Message\PublishScheduledPostsMessage;
-use App\Repository\PostRepository;
+use App\Repository\Post\PostRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;

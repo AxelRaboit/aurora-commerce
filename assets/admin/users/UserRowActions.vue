@@ -1,6 +1,6 @@
 <script setup>
 import { Mail, Pencil, Trash2, Power, LogIn } from "lucide-vue-next";
-import AppIconButton from "@/components/AppIconButton.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -36,7 +36,7 @@ const emit = defineEmits(["resend", "edit", "toggle-disabled", "delete"]);
         <AppIconButton
             v-if="canAct"
             color="indigo"
-            :title="t('common.edit')"
+            :title="t('shared.common.edit')"
             v-on:click="emit('edit', user)"
         >
             <Pencil class="w-4 h-4" :stroke-width="2" />
@@ -52,7 +52,7 @@ const emit = defineEmits(["resend", "edit", "toggle-disabled", "delete"]);
         <AppIconButton
             v-if="canAct"
             color="rose"
-            :title="t('common.delete')"
+            :title="t('shared.common.delete')"
             v-on:click="emit('delete', user)"
         >
             <Trash2 class="w-4 h-4" :stroke-width="2" />

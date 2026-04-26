@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\AccessRequestStatusEnum;
-use App\Repository\AccessRequestRepository;
+use App\Repository\Auth\AccessRequestRepository;
 use App\Trait\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

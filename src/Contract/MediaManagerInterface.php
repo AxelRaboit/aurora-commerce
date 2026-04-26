@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Contract;
 
-use App\DTO\MediaFolderInput;
-use App\DTO\MediaInput;
+use App\DTO\Media\MediaFolderInput;
+use App\DTO\Media\MediaInput;
 use App\Entity\Media;
 use App\Entity\MediaFolder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

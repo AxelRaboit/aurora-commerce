@@ -1,4 +1,4 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -8,7 +8,7 @@ export function useProfileDelete(deletePath, loginPath, deleteCsrf) {
     const deleteLoading = ref(false);
 
     async function deleteAccount() {
-        if (!confirm(t("profile.danger.confirm"))) return;
+        if (!confirm(t("admin.profile.danger.confirm"))) return;
         deleteLoading.value = true;
         try {
             const response = await fetch(deletePath, {

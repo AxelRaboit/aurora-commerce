@@ -11,9 +11,12 @@ admin:
     sent: Invitación enviada a {email}.
   media:
     errors:
-      folder_not_found: 'Carpeta #{id} no encontrada.'
-      parent_folder_not_found: 'Carpeta padre #{id} no encontrada.'
-      folder_self_nested: Una carpeta no puede anidarse bajo sí misma o uno de sus descendientes.
+      alt_required: El texto alternativo es obligatorio.
+      focal_out_of_range: El punto focal debe estar entre 0 y 1.
+      folder_name_required: El nombre de la carpeta es obligatorio.
+      folder_not_found: La carpeta {id} no se encuentra.
+      folder_self_nested: Una carpeta no se puede mover dentro de sí misma o de una de sus subcarpetas.
+      parent_folder_not_found: La carpeta padre {id} no se encuentra.
   menus:
     preview:
       untitled: (sin título)
@@ -37,16 +40,16 @@ admin:
       authenticated_only: Solo autenticados
   postTypes:
     errors:
-      slug_taken: 'Ya existe un tipo de contenido con el slug "{slug}".'
+      slug_taken: Ya existe un tipo de contenido con el slug "{slug}".
       builtin_protected: Los tipos de contenido integrados no se pueden eliminar.
       has_posts: Este tipo de contenido tiene contenidos y no se puede eliminar.
-      field_name_taken: 'Ya existe un campo con el nombre "{name}" en este tipo de contenido.'
+      field_name_taken: Ya existe un campo con el nombre "{name}" en este tipo de contenido.
   posts:
     errors:
       post_type_not_found: 'Tipo de contenido #{id} no encontrado.'
   taxonomies:
     errors:
-      slug_taken: 'Ya existe una taxonomía con el slug "{slug}".'
+      slug_taken: Ya existe una taxonomía con el slug "{slug}".
       builtin_protected: Las taxonomías integradas no se pueden eliminar.
       term_self_nested: Un término no puede anidarse bajo sí mismo o uno de sus descendientes.
       reorder_cycle: 'La reorganización crearía un ciclo que involucra al término #{id}.'
@@ -59,8 +62,7 @@ admin:
     users: Usuarios
   users:
     cannot_delete_self: No puedes eliminar tu propia cuenta.
-    cannot_modify_higher_role: No puedes modificar un usuario con un rol superior
-      al tuyo.
+    cannot_modify_higher_role: No puedes modificar un usuario con un rol superior al tuyo.
     cannot_modify_self: No puedes modificar tu propio rol.
     created: Usuario creado con éxito.
     deleted: Usuario eliminado.
@@ -76,194 +78,124 @@ admin:
       role_invalid: Rol inválido.
       role_required: El rol es obligatorio.
     updated: Usuario actualizado.
-auth:
-  access_request:
-    already_account: ¿Ya tienes cuenta?
-    description: Rellena este formulario para solicitar acceso a la administración.
-    email: Correo electrónico
-    login_link: Iniciar sesión
-    message: Mensaje (opcional)
-    message_placeholder: Describe tu necesidad...
-    name: Nombre (opcional)
-    name_placeholder: Juan García
-    submit: Enviar solicitud
-    success_toast: Tu solicitud de acceso ha sido enviada.
-    title: Solicitar acceso
-  forgot_password:
-    back_login: Volver al inicio de sesión
-    instructions: Introduce tu dirección de correo y te enviaremos un enlace para
-      restablecer tu contraseña.
-    sent: Si esta dirección está asociada a una cuenta, recibirás un correo en breve.
-    submit: Enviar enlace
-    title: Contraseña olvidada
-  hero:
-    description: Una interfaz moderna para crear, gestionar y publicar contenido web.
-    feature_1: Gestión de contenido flexible
-    feature_2: Tipos de contenido personalizables
-    feature_3: Gestión de medios integrada
-    feature_4: Interfaz moderna y rápida
-    heading: Gestiona tu contenido
-    heading_accent: con Velox.
-  invitation:
-    accept_title: Aceptar invitación
-    confirm_password: Confirmar contraseña
+  auth:
+    access_request:
+      already_account: ¿Ya tienes cuenta?
+      description: Rellena este formulario para solicitar acceso a la administración.
+      email: Correo electrónico
+      login_link: Iniciar sesión
+      message: Mensaje (opcional)
+      message_placeholder: Describe tu necesidad...
+      name: Nombre (opcional)
+      name_placeholder: Juan García
+      submit: Enviar solicitud
+      success_toast: Tu solicitud de acceso ha sido enviada.
+      title: Solicitar acceso
+    forgot_password:
+      back_login: Volver al inicio de sesión
+      instructions: Introduce tu dirección de correo y te enviaremos un enlace para restablecer tu contraseña.
+      sent: Si esta dirección está asociada a una cuenta, recibirás un correo en breve.
+      submit: Enviar enlace
+      title: Contraseña olvidada
+    hero:
+      description: Una interfaz moderna para crear, gestionar y publicar contenido web.
+      feature_1: Gestión de contenido flexible
+      feature_2: Tipos de contenido personalizables
+      feature_3: Gestión de medios integrada
+      feature_4: Interfaz moderna y rápida
+      heading: Gestiona tu contenido
+      heading_accent: con Velox.
+    invitation:
+      accept_title: Aceptar invitación
+      confirm_password: Confirmar contraseña
+      errors:
+        password_confirm_required: La confirmación es obligatoria.
+        password_mismatch: Las contraseñas no coinciden.
+        password_required: La contraseña es obligatoria.
+        password_too_short: La contraseña debe tener al menos 8 caracteres.
+      expired: Este enlace de invitación es inválido o ha expirado.
+      password: Contraseña
+      set_password: Defina su contraseña para activar su cuenta.
+      submit: Activar mi cuenta
+      success: Tu cuenta está activa, ¡bienvenido/a!
+      welcome: Bienvenido/a {name}
+    login:
+      email: Correo electrónico
+      email_placeholder: tu@email.com
+      forgot: ¿Olvidaste tu contraseña?
+      no_account: ¿No tienes cuenta?
+      password: Contraseña
+      remember: Recordarme
+      request_access: Solicitar acceso
+      submit: Iniciar sesión
+      title: Iniciar sesión
+    register:
+      already_account: ¿Ya tienes cuenta?
+      closed_desc: Los nuevos registros están desactivados actualmente.
+      closed_title: Registro cerrado
+      email: Correo electrónico
+      error_email_invalid: Dirección de correo electrónico inválida.
+      error_email_required: La dirección de correo es obligatoria.
+      error_email_taken: Esta dirección de correo ya está en uso.
+      error_name_required: El nombre es obligatorio.
+      error_password_length: La contraseña debe tener al menos 8 caracteres.
+      error_password_mismatch: Las contraseñas no coinciden.
+      heading: Crear una cuenta
+      login_link: Iniciar sesión
+      name: Nombre
+      name_placeholder: Juan García
+      password: Contraseña
+      password_confirm: Confirmar contraseña
+      submit: Crear cuenta
+      title: Crear una cuenta
+    register_confirm:
+      title: Revisa tu correo
+      heading: Revisa tu correo
+      message: Se ha enviado un correo de confirmación. Haz clic en el enlace para activar tu cuenta.
+      login_link: Ir a iniciar sesión
+      resend_hint: ¿No recibiste el correo?
+      resend_link: Reenviar correo de confirmación
+      resent_success: El correo de confirmación ha sido reenviado.
+    reset_password:
+      instructions: Elige una nueva contraseña para tu cuenta.
+      invalid_link: Este enlace es inválido o ha expirado.
+      submit: Restablecer contraseña
+      success: Tu contraseña ha sido restablecida con éxito.
+      title: Restablecer contraseña
+    verify_email:
+      title: Verificación de correo
+      success_heading: ¡Correo confirmado!
+      success_message: Tu dirección de correo ha sido verificada. Ahora puedes iniciar sesión.
+      error_heading: Enlace inválido o expirado
+      error_message: Este enlace de verificación es inválido o ha expirado. Por favor regístrate de nuevo.
+  nav:
+    administration: Administración
+    comments: Comentarios
+    forms: Formularios
+    dashboard: Panel de control
+    media: Medios
+    menus: Menús
+    postTypes: Tipos de contenido
+    posts: Contenido
+    profile: Mi perfil
+    settings: Ajustes
+    tags: Etiquetas
+    taxonomies: Taxonomías
+    themes: Temas
+    users: Usuarios
+  profile:
     errors:
-      password_confirm_required: La confirmación es obligatoria.
+      current_password_invalid: La contraseña actual es incorrecta.
+      email_invalid: Dirección de correo electrónico inválida.
+      email_taken: Esta dirección de correo ya está en uso.
+      invalid_csrf: Token de seguridad inválido.
+      invalid_locale: Idioma no compatible.
+      name_required: El nombre es obligatorio.
       password_mismatch: Las contraseñas no coinciden.
-      password_required: La contraseña es obligatoria.
       password_too_short: La contraseña debe tener al menos 8 caracteres.
-    expired: Este enlace de invitación es inválido o ha expirado.
-    password: Contraseña
-    set_password: Defina su contraseña para activar su cuenta.
-    submit: Activar mi cuenta
-    success: Tu cuenta está activa, ¡bienvenido/a!
-    welcome: Bienvenido/a {name}
-  login:
-    email: Correo electrónico
-    email_placeholder: tu@email.com
-    forgot: ¿Olvidaste tu contraseña?
-    no_account: ¿No tienes cuenta?
-    password: Contraseña
-    remember: Recordarme
-    request_access: Solicitar acceso
-    submit: Iniciar sesión
-    title: Iniciar sesión
-  register:
-    already_account: ¿Ya tienes cuenta?
-    closed_desc: Los nuevos registros están desactivados actualmente.
-    closed_title: Registro cerrado
-    email: Correo electrónico
-    error_email_invalid: Dirección de correo electrónico inválida.
-    error_email_required: La dirección de correo es obligatoria.
-    error_email_taken: Esta dirección de correo ya está en uso.
-    error_name_required: El nombre es obligatorio.
-    error_password_length: La contraseña debe tener al menos 8 caracteres.
-    error_password_mismatch: Las contraseñas no coinciden.
-    heading: Crear una cuenta
-    login_link: Iniciar sesión
-    name: Nombre
-    name_placeholder: Juan García
-    password: Contraseña
-    password_confirm: Confirmar contraseña
-    submit: Crear cuenta
-    title: Crear una cuenta
-  register_confirm:
-    title: Revisa tu correo
-    heading: Revisa tu correo
-    message: Se ha enviado un correo de confirmación. Haz clic en el enlace para activar tu cuenta.
-    login_link: Ir a iniciar sesión
-    resend_hint: ¿No recibiste el correo?
-    resend_link: Reenviar correo de confirmación
-    resent_success: El correo de confirmación ha sido reenviado.
-  reset_password:
-    instructions: Elige una nueva contraseña para tu cuenta.
-    invalid_link: Este enlace es inválido o ha expirado.
-    submit: Restablecer contraseña
-    success: Tu contraseña ha sido restablecida con éxito.
-    title: Restablecer contraseña
-  verify_email:
-    title: Verificación de correo
-    success_heading: ¡Correo confirmado!
-    success_message: Tu dirección de correo ha sido verificada. Ahora puedes iniciar sesión.
-    error_heading: Enlace inválido o expirado
-    error_message: Este enlace de verificación es inválido o ha expirado. Por favor regístrate de nuevo.
-impersonation:
-  banner: Has iniciado sesión como {name}
-  leave: Salir
-mail:
-  invitation:
-    cta: Activar mi cuenta
-    expires: Este enlace expira el {date}.
-    fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
-    footer_note: Si no esperabas esta invitación, puedes ignorar este correo.
-    greeting: Hola {name},
-    heading: Invitación para unirte a Velox
-    intro: Has sido invitado a unirte a {siteName}. Haz clic en el botón de abajo
-      para activar tu cuenta y definir tu contraseña.
-  verify_email:
-    cta: Confirmar mi correo
-    expires: Este enlace expira el {date}.
-    fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
-    footer_note: Si no creaste una cuenta, puedes ignorar este correo.
-    greeting: Hola {name},
-    heading: Confirma tu dirección de correo
-    intro: Gracias por registrarte en {siteName}. Haz clic en el botón de abajo para
-      confirmar tu dirección de correo y activar tu cuenta.
-  reset_password:
-    cta: Restablecer mi contraseña
-    expires: Este enlace expira en 1 hora.
-    expires_at: Este enlace expira el {date}.
-    fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
-    footer_note: Si no solicitaste un restablecimiento de contraseña, puedes ignorar
-      este correo.
-    greeting: Hola {name},
-    heading: Restablecer tu contraseña
-    intro: Solicitaste un restablecimiento de contraseña en {siteName}. Haz clic en
-      el botón de abajo para elegir una nueva contraseña.
-  access_request_admin:
-    heading: Nueva solicitud de acceso
-    intro: Se ha recibido una nueva solicitud de acceso.
-    label_name: Nombre
-    label_email: Correo
-    label_message: Mensaje
-    cta: Ver en la administración
-    footer_note: Este correo fue enviado automáticamente, por favor no respondas.
-  access_request_approved:
-    heading: Tu solicitud ha sido aprobada
-    greeting: Hola {name},
-    intro: Tu solicitud de acceso a {siteName} ha sido aprobada.
-    credentials_intro: 'Se ha creado una cuenta para ti con las siguientes credenciales:'
-    label_email: Correo
-    label_password: Contraseña
-    password_note: Recuerda cambiar tu contraseña después de tu primer inicio de sesión.
-    existing_account: Puedes iniciar sesión con tu cuenta existente.
-    cta: Ir a la administración
-    footer_note: Este correo fue enviado automáticamente, por favor no respondas.
-  access_request_rejected:
-    heading: Solicitud de acceso no concedida
-    greeting: Hola {name},
-    intro: Después de la revisión, tu solicitud de acceso no pudo ser concedida.
-    retry: Si crees que esto es un error, no dudes en enviar una nueva solicitud.
-    footer_note: Este correo fue enviado automáticamente, por favor no respondas.
-media:
-  errors:
-    alt_required: El texto alternativo es obligatorio.
-    focal_out_of_range: El punto focal debe estar entre 0 y 1.
-    folder_name_required: El nombre de la carpeta es obligatorio.
-nav:
-  administration: Administración
-  comments: Comentarios
-  forms: Formularios
-  dashboard: Panel de control
-  media: Medios
-  menus: Menús
-  postTypes: Tipos de contenido
-  posts: Contenido
-  profile: Mi perfil
-  settings: Ajustes
-  tags: Etiquetas
-  taxonomies: Taxonomías
-  themes: Temas
-  users: Usuarios
-profile:
-  errors:
-    current_password_invalid: La contraseña actual es incorrecta.
-    email_invalid: Dirección de correo electrónico inválida.
-    email_taken: Esta dirección de correo ya está en uso.
-    invalid_csrf: Token de seguridad inválido.
-    invalid_locale: Idioma no compatible.
-    name_required: El nombre es obligatorio.
-    password_mismatch: Las contraseñas no coinciden.
-    password_too_short: La contraseña debe tener al menos 8 caracteres.
-errors:
-  page_not_found:
-    title: Página no encontrada
-    message: La página que buscas no existe o ha sido movida.
-    back: Volver al inicio
-  server_error:
-    title: Se ha producido un error
-    message: El servidor ha encontrado un problema inesperado. Nuestro equipo ha sido notificado. Por favor, inténtalo de nuevo en unos instantes.
-    back: Volver al inicio
+  impersonation:
+    banner: Has iniciado sesión como {name}
+    leave: Salir
 front:
   menu:
     home: Inicio
@@ -280,7 +212,7 @@ front:
     heading: Iniciar sesión
     subtitle: Accede a tu espacio personal.
     email: Correo electrónico
-    email_placeholder: "tú@ejemplo.com"
+    email_placeholder: tú@ejemplo.com
     password: Contraseña
     forgot_password: ¿Olvidaste tu contraseña?
     remember_me: Recordarme
@@ -294,7 +226,7 @@ front:
     name: Nombre completo
     name_placeholder: Juan García
     email: Correo electrónico
-    email_placeholder: "tú@ejemplo.com"
+    email_placeholder: tú@ejemplo.com
     password: Contraseña
     submit: Crear cuenta
     already_account: ¿Ya tienes cuenta?
@@ -345,3 +277,64 @@ front:
     passwords_mismatch: Las contraseñas no coinciden.
     email_not_verified: Por favor verifica tu correo antes de iniciar sesión.
     account_disabled: Tu cuenta ha sido desactivada.
+shared:
+  mail:
+    invitation:
+      cta: Activar mi cuenta
+      expires: Este enlace expira el {date}.
+      fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
+      footer_note: Si no esperabas esta invitación, puedes ignorar este correo.
+      greeting: Hola {name},
+      heading: Invitación para unirte a Velox
+      intro: Has sido invitado a unirte a {siteName}. Haz clic en el botón de abajo para activar tu cuenta y definir tu contraseña.
+    verify_email:
+      cta: Confirmar mi correo
+      expires: Este enlace expira el {date}.
+      fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
+      footer_note: Si no creaste una cuenta, puedes ignorar este correo.
+      greeting: Hola {name},
+      heading: Confirma tu dirección de correo
+      intro: Gracias por registrarte en {siteName}. Haz clic en el botón de abajo para confirmar tu dirección de correo y activar tu cuenta.
+    reset_password:
+      cta: Restablecer mi contraseña
+      expires: Este enlace expira en 1 hora.
+      expires_at: Este enlace expira el {date}.
+      fallback_intro: 'Si el botón no funciona, copia y pega este enlace en tu navegador:'
+      footer_note: Si no solicitaste un restablecimiento de contraseña, puedes ignorar este correo.
+      greeting: Hola {name},
+      heading: Restablecer tu contraseña
+      intro: Solicitaste un restablecimiento de contraseña en {siteName}. Haz clic en el botón de abajo para elegir una nueva contraseña.
+    access_request_admin:
+      heading: Nueva solicitud de acceso
+      intro: Se ha recibido una nueva solicitud de acceso.
+      label_name: Nombre
+      label_email: Correo
+      label_message: Mensaje
+      cta: Ver en la administración
+      footer_note: Este correo fue enviado automáticamente, por favor no respondas.
+    access_request_approved:
+      heading: Tu solicitud ha sido aprobada
+      greeting: Hola {name},
+      intro: Tu solicitud de acceso a {siteName} ha sido aprobada.
+      credentials_intro: 'Se ha creado una cuenta para ti con las siguientes credenciales:'
+      label_email: Correo
+      label_password: Contraseña
+      password_note: Recuerda cambiar tu contraseña después de tu primer inicio de sesión.
+      existing_account: Puedes iniciar sesión con tu cuenta existente.
+      cta: Ir a la administración
+      footer_note: Este correo fue enviado automáticamente, por favor no respondas.
+    access_request_rejected:
+      heading: Solicitud de acceso no concedida
+      greeting: Hola {name},
+      intro: Después de la revisión, tu solicitud de acceso no pudo ser concedida.
+      retry: Si crees que esto es un error, no dudes en enviar una nueva solicitud.
+      footer_note: Este correo fue enviado automáticamente, por favor no respondas.
+  errors:
+    page_not_found:
+      title: Página no encontrada
+      message: La página que buscas no existe o ha sido movida.
+      back: Volver al inicio
+    server_error:
+      title: Se ha producido un error
+      message: El servidor ha encontrado un problema inesperado. Nuestro equipo ha sido notificado. Por favor, inténtalo de nuevo en unos instantes.
+      back: Volver al inicio

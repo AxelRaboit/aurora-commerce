@@ -1,6 +1,6 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.administration'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.administration'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {% set tabLabels = {
@@ -9,16 +9,16 @@
         parameters: 'admin.tabs.parameters'|trans,
         access_requests: 'admin.tabs.access_requests'|trans,
     } %}
-    {{ include('components/page_header.html.twig', {
+    {{ include('shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'nav.administration'|trans, href: path('dev_dashboard')},
+            {label: 'admin.nav.administration'|trans, href: path('dev_dashboard')},
             {label: tabLabels[tab] ?? tab},
         ],
     }) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('AdministrationApp', {
+<div {{ vue_component('admin/AdministrationApp', {
     tab: tab,
     stats: tab == 'overview' ? stats : {},
     parameters: tab == 'parameters' ? parameters : {},

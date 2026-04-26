@@ -1,9 +1,9 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useForm } from "@/composables/useForm.js";
-import { useApiRequest } from "@/composables/useApiRequest.js";
-import { submitForm } from "@/utils/formSubmit.js";
-import { required, email, compose } from "@/utils/validators.js";
+import { useForm } from "@/shared/composables/useForm.js";
+import { useApiRequest } from "@/shared/composables/useApiRequest.js";
+import { submitForm } from "@/shared/utils/formSubmit.js";
+import { required, email, compose } from "@/shared/utils/validators.js";
 
 const DEFAULT_LOCALE = "fr";
 
@@ -60,18 +60,20 @@ export function useAdminUsers(
     async function submitCreate() {
         const isValid = validateCreate({
             name: () =>
-                required(t("profile.errors.name_required"))(newUser.value.name),
+                required(t("admin.profile.errors.name_required"))(
+                    newUser.value.name,
+                ),
             email: () =>
                 compose(
-                    required(t("profile.errors.email_invalid")),
-                    email(t("profile.errors.email_invalid")),
+                    required(t("admin.profile.errors.email_invalid")),
+                    email(t("admin.profile.errors.email_invalid")),
                 )(newUser.value.email),
             password: () => {
                 if (
                     !newUser.value.password ||
                     newUser.value.password.length < 8
                 )
-                    return t("profile.errors.password_too_short");
+                    return t("admin.profile.errors.password_too_short");
                 return null;
             },
         });
@@ -125,20 +127,20 @@ export function useAdminUsers(
 
         const isValid = validateEdit({
             name: () =>
-                required(t("profile.errors.name_required"))(
+                required(t("admin.profile.errors.name_required"))(
                     editUserForm.value.name,
                 ),
             email: () =>
                 compose(
-                    required(t("profile.errors.email_invalid")),
-                    email(t("profile.errors.email_invalid")),
+                    required(t("admin.profile.errors.email_invalid")),
+                    email(t("admin.profile.errors.email_invalid")),
                 )(editUserForm.value.email),
             password: () => {
                 if (
                     editUserForm.value.password &&
                     editUserForm.value.password.length < 8
                 )
-                    return t("profile.errors.password_too_short");
+                    return t("admin.profile.errors.password_too_short");
                 return null;
             },
         });

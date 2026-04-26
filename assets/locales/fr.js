@@ -1,148 +1,4 @@
 export default {
-    pagination: {
-        results: "{from} à {to} sur {total} résultats",
-        previous: "Précédent",
-        next: "Suivant",
-    },
-    search: {
-        button: "Rechercher",
-        placeholder: "Rechercher (contenus, termes, médias)…",
-        hint: "Tape pour rechercher…",
-        empty: "Aucun résultat.",
-        sections: {
-            posts: "Contenus",
-            terms: "Termes",
-            media: "Médias",
-        },
-        keys: {
-            navigate: "naviguer",
-            select: "sélectionner",
-            close: "fermer",
-        },
-    },
-    common: {
-        save: "Enregistrer",
-        cancel: "Annuler",
-        delete: "Supprimer",
-        edit: "Modifier",
-        create: "Créer",
-        loading: "Chargement…",
-        confirm: "Confirmer",
-        error: "Une erreur est survenue.",
-        saved: "Enregistré.",
-        deleted: "Supprimé.",
-        or: "ou",
-        pagination: "Page {page} sur {totalPages}",
-        name: "Nom",
-        description: "Description",
-        view: "Voir",
-        close: "Fermer",
-        expand: "Déplier",
-        collapse: "Replier",
-        select_placeholder: "Sélectionner…",
-        select_to_pick: "Appuyez sur Entrée pour sélectionner",
-        select_selected: "Sélectionné",
-        select_to_remove: "Appuyez sur Entrée pour retirer",
-        remove: "Retirer",
-    },
-    auth: {
-        register: {
-            heading: "Créer un compte",
-            name: "Nom",
-            name_placeholder: "Jean Dupont",
-            email: "Email",
-            password: "Mot de passe",
-            password_confirm: "Confirmer le mot de passe",
-            submit: "Créer le compte",
-            already_account: "Déjà un compte ?",
-            login_link: "Se connecter",
-            closed_title: "Inscriptions fermées",
-            closed_desc:
-                "Les nouvelles inscriptions sont désactivées pour le moment.",
-            error_name_required: "Le nom est requis.",
-            error_email_required: "L'adresse email est requise.",
-            error_email_invalid: "Adresse email invalide.",
-            error_email_taken: "Cette adresse email est déjà utilisée.",
-            error_password_mismatch: "Les mots de passe ne correspondent pas.",
-        },
-    },
-    password: {
-        criteria: {
-            length: "8 caractères minimum",
-            uppercase: "Une lettre majuscule",
-            number: "Un chiffre",
-            special: "Un caractère spécial",
-        },
-        errors: {
-            too_short: "Le mot de passe doit contenir au moins 8 caractères.",
-            no_uppercase:
-                "Le mot de passe doit contenir au moins une majuscule.",
-            no_number: "Le mot de passe doit contenir au moins un chiffre.",
-            no_special:
-                "Le mot de passe doit contenir au moins un caractère spécial.",
-        },
-    },
-    nav: {
-        dashboard: "Tableau de bord",
-        posts: "Contenus",
-        postTypes: "Types de contenu",
-        media: "Médias",
-        menus: "Menus",
-        taxonomies: "Taxonomies",
-        tags: "Tags",
-        users: "Utilisateurs",
-        comments: "Commentaires",
-        forms: "Formulaires",
-        settings: "Réglages",
-        themes: "Thèmes",
-        viewSite: "Voir le site",
-        administration: "Administration",
-        profile: "Mon profil",
-        logout: "Déconnexion",
-        lightMode: "Mode clair",
-        darkMode: "Mode sombre",
-    },
-    profile: {
-        locale: {
-            title: "Langue",
-            subtitle: "Choisissez la langue d'affichage de l'administration.",
-            field: "Langue",
-        },
-        info: {
-            title: "Informations du profil",
-            subtitle: "Mettez à jour votre nom et adresse e-mail.",
-            name: "Nom complet",
-            namePlaceholder: "Jean Dupont",
-            email: "Adresse e-mail",
-            emailPlaceholder: "vous{'@'}exemple.com",
-            saved: "Profil mis à jour avec succès.",
-        },
-        password: {
-            title: "Modifier le mot de passe",
-            subtitle:
-                "Utilisez un mot de passe long et aléatoire pour sécuriser votre compte.",
-            current: "Mot de passe actuel",
-            new: "Nouveau mot de passe",
-            confirm: "Confirmer le mot de passe",
-            saved: "Mot de passe mis à jour avec succès.",
-            error_current: "Le mot de passe actuel est incorrect.",
-        },
-        danger: {
-            title: "Zone de danger",
-            description:
-                "La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.",
-            submit: "Supprimer mon compte",
-            confirm:
-                "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
-        },
-        errors: {
-            name_required: "Le nom est requis.",
-            email_invalid: "Adresse e-mail invalide.",
-            email_taken: "Cette adresse e-mail est déjà utilisée.",
-            current_password_invalid: "Le mot de passe actuel est incorrect.",
-            password_mismatch: "Les mots de passe ne correspondent pas.",
-        },
-    },
     admin: {
         title: "Administration",
         tabs: {
@@ -288,6 +144,8 @@ export default {
             description: "Description",
             empty: "Aucun paramètre.",
             saved: "Paramètre enregistré.",
+            searchPlaceholder: "Rechercher par clé…",
+            search: "Rechercher",
         },
         settings: {
             tabs: {
@@ -386,6 +244,9 @@ export default {
             status_pending: "En attente",
             status_approved: "Approuvé",
             status_rejected: "Rejeté",
+            approved_toast: "Demande d'accès approuvée.",
+            rejected_toast: "Demande d'accès rejetée.",
+            purged_toast: "Demandes traitées supprimées.",
         },
         editor: {
             placeholder: "Commencez à rédiger…",
@@ -920,26 +781,178 @@ export default {
                 name_required: "Le nom est requis.",
             },
         },
-    },
-    comment: {
-        title: "Commentaires",
-        form_title: "Laisser un commentaire",
-        name: "Nom",
-        email: "Email",
-        content: "Commentaire",
-        submit: "Envoyer",
-        success:
-            "Votre commentaire a été soumis et est en attente de modération.",
-        empty: "Aucun commentaire pour le moment.",
-        reply: "Répondre",
-        react: "Réagir",
-    },
-    form: {
-        submit: "Envoyer",
-        submitting: "Envoi en cours…",
-        success: "Merci, votre message a bien été envoyé !",
-        error: "Une erreur est survenue. Veuillez réessayer.",
-        selectPlaceholder: "Choisir…",
+        auth: {
+            login: {
+                email: "Adresse e-mail",
+                email_placeholder: "vous{'@'}exemple.com",
+                password: "Mot de passe",
+                remember: "Se souvenir de moi",
+                forgot: "Mot de passe oublié ?",
+                submit: "Se connecter",
+                no_account: "Pas encore de compte ?",
+                request_access: "Demander un accès",
+            },
+            register: {
+                heading: "Créer un compte",
+                name: "Nom",
+                name_placeholder: "Jean Dupont",
+                email: "Email",
+                password: "Mot de passe",
+                password_confirm: "Confirmer le mot de passe",
+                submit: "Créer le compte",
+                already_account: "Déjà un compte ?",
+                login_link: "Se connecter",
+                closed_title: "Inscriptions fermées",
+                closed_desc:
+                    "Les nouvelles inscriptions sont désactivées pour le moment.",
+                error_name_required: "Le nom est requis.",
+                error_email_required: "L'adresse email est requise.",
+                error_email_invalid: "Adresse email invalide.",
+                error_email_taken: "Cette adresse email est déjà utilisée.",
+                error_password_mismatch:
+                    "Les mots de passe ne correspondent pas.",
+            },
+            register_confirm: {
+                heading: "Vérifiez votre e-mail",
+                message:
+                    "Un e-mail de confirmation vous a été envoyé. Cliquez sur le lien dans cet e-mail pour activer votre compte.",
+                login_link: "Retour à la connexion",
+                resend_hint: "Vous n'avez pas reçu l'e-mail ?",
+                resend_link: "Renvoyer le lien",
+                resent_success:
+                    "Un nouvel e-mail de confirmation vous a été envoyé.",
+            },
+            forgot_password: {
+                instructions:
+                    "Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+                submit: "Envoyer le lien",
+                back_login: "Retour à la connexion",
+            },
+            reset_password: {
+                instructions:
+                    "Choisissez un nouveau mot de passe pour votre compte.",
+                submit: "Réinitialiser le mot de passe",
+            },
+            verify_email: {
+                success_heading: "E-mail confirmé !",
+                success_message:
+                    "Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.",
+                error_heading: "Lien invalide ou expiré",
+                error_message:
+                    "Ce lien de vérification est invalide ou a expiré. Veuillez vous réinscrire.",
+            },
+            invitation: {
+                welcome: "Bienvenue {name}",
+                set_password:
+                    "Définissez votre mot de passe pour activer votre compte d'administration.",
+                password: "Mot de passe",
+                confirm_password: "Confirmer le mot de passe",
+                submit: "Activer mon compte",
+                errors: {
+                    password_required: "Le mot de passe est requis.",
+                    password_mismatch:
+                        "Les mots de passe ne correspondent pas.",
+                },
+            },
+            access_request: {
+                title: "Demande d'accès",
+                description:
+                    "Demandez un accès à l'espace d'administration. Un administrateur examinera votre demande.",
+                name: "Nom complet",
+                name_placeholder: "Jean Dupont",
+                email: "Adresse e-mail",
+                message: "Message",
+                message_placeholder:
+                    "Présentez-vous et expliquez la raison de votre demande…",
+                submit: "Envoyer la demande",
+                already_account: "Déjà un compte ?",
+                login_link: "Se connecter",
+                closed_title: "Demandes d'accès fermées",
+                closed_desc:
+                    "Les demandes d'accès sont actuellement désactivées.",
+            },
+        },
+        nav: {
+            dashboard: "Tableau de bord",
+            posts: "Contenus",
+            postTypes: "Types de contenu",
+            media: "Médias",
+            menus: "Menus",
+            taxonomies: "Taxonomies",
+            tags: "Tags",
+            users: "Utilisateurs",
+            comments: "Commentaires",
+            forms: "Formulaires",
+            settings: "Réglages",
+            themes: "Thèmes",
+            viewSite: "Voir le site",
+            administration: "Administration",
+            profile: "Mon profil",
+            logout: "Déconnexion",
+            lightMode: "Mode clair",
+            darkMode: "Mode sombre",
+        },
+        profile: {
+            locale: {
+                title: "Langue",
+                subtitle:
+                    "Choisissez la langue d'affichage de l'administration.",
+                field: "Langue",
+            },
+            info: {
+                title: "Informations du profil",
+                subtitle: "Mettez à jour votre nom et adresse e-mail.",
+                name: "Nom complet",
+                namePlaceholder: "Jean Dupont",
+                email: "Adresse e-mail",
+                emailPlaceholder: "vous{'@'}exemple.com",
+                saved: "Profil mis à jour avec succès.",
+            },
+            password: {
+                title: "Modifier le mot de passe",
+                subtitle:
+                    "Utilisez un mot de passe long et aléatoire pour sécuriser votre compte.",
+                current: "Mot de passe actuel",
+                new: "Nouveau mot de passe",
+                confirm: "Confirmer le mot de passe",
+                saved: "Mot de passe mis à jour avec succès.",
+                error_current: "Le mot de passe actuel est incorrect.",
+            },
+            danger: {
+                title: "Zone de danger",
+                description:
+                    "La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.",
+                submit: "Supprimer mon compte",
+                confirm:
+                    "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+            },
+            errors: {
+                name_required: "Le nom est requis.",
+                email_invalid: "Adresse e-mail invalide.",
+                email_taken: "Cette adresse e-mail est déjà utilisée.",
+                current_password_invalid:
+                    "Le mot de passe actuel est incorrect.",
+                password_mismatch: "Les mots de passe ne correspondent pas.",
+                password_too_short:
+                    "Le mot de passe doit contenir au moins 8 caractères.",
+            },
+        },
+        search: {
+            button: "Rechercher",
+            placeholder: "Rechercher (contenus, termes, médias)…",
+            hint: "Tape pour rechercher…",
+            empty: "Aucun résultat.",
+            sections: {
+                posts: "Contenus",
+                terms: "Termes",
+                media: "Médias",
+            },
+            keys: {
+                navigate: "naviguer",
+                select: "sélectionner",
+                close: "fermer",
+            },
+        },
     },
     front: {
         login: {
@@ -1020,10 +1033,85 @@ export default {
             password_required: "Le mot de passe est requis.",
             password_too_short:
                 "Le mot de passe doit contenir au moins 8 caractères.",
+            passwords_mismatch: "Les mots de passe ne correspondent pas.",
             email_not_verified:
                 "Veuillez confirmer votre adresse e-mail avant de vous connecter.",
             account_disabled: "Votre compte a été désactivé.",
         },
     },
-    locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+    shared: {
+        pagination: {
+            results: "{from} à {to} sur {total} résultats",
+            previous: "Précédent",
+            next: "Suivant",
+        },
+        common: {
+            save: "Enregistrer",
+            cancel: "Annuler",
+            delete: "Supprimer",
+            edit: "Modifier",
+            create: "Créer",
+            loading: "Chargement…",
+            confirm: "Confirmer",
+            error: "Une erreur est survenue.",
+            saved: "Enregistré.",
+            deleted: "Supprimé.",
+            or: "ou",
+            pagination: "Page {page} sur {totalPages}",
+            name: "Nom",
+            description: "Description",
+            view: "Voir",
+            close: "Fermer",
+            expand: "Déplier",
+            collapse: "Replier",
+            select_placeholder: "Sélectionner…",
+            select_to_pick: "Appuyez sur Entrée pour sélectionner",
+            select_selected: "Sélectionné",
+            select_to_remove: "Appuyez sur Entrée pour retirer",
+            remove: "Retirer",
+        },
+        password: {
+            criteria: {
+                length: "8 caractères minimum",
+                uppercase: "Une lettre majuscule",
+                number: "Un chiffre",
+                special: "Un caractère spécial",
+            },
+            errors: {
+                too_short:
+                    "Le mot de passe doit contenir au moins 8 caractères.",
+                no_uppercase:
+                    "Le mot de passe doit contenir au moins une majuscule.",
+                no_number: "Le mot de passe doit contenir au moins un chiffre.",
+                no_special:
+                    "Le mot de passe doit contenir au moins un caractère spécial.",
+            },
+        },
+        comment: {
+            title: "Commentaires",
+            form_title: "Laisser un commentaire",
+            name: "Nom",
+            email: "Email",
+            content: "Commentaire",
+            submit: "Envoyer",
+            success:
+                "Votre commentaire a été soumis et est en attente de modération.",
+            empty: "Aucun commentaire pour le moment.",
+            reply: "Répondre",
+            react: "Réagir",
+        },
+        form: {
+            submit: "Envoyer",
+            submitting: "Envoi en cours…",
+            success: "Merci, votre message a bien été envoyé !",
+            error: "Une erreur est survenue. Veuillez réessayer.",
+            selectPlaceholder: "Choisir…",
+        },
+        locales: {
+            fr: "Français",
+            en: "English",
+            es: "Español",
+            de: "Deutsch",
+        },
+    },
 };

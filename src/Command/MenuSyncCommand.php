@@ -6,8 +6,8 @@ namespace App\Command;
 
 use App\Entity\Menu;
 use App\Manager\MenuManager;
-use App\Repository\MenuRepository;
-use App\Service\MenuLocationRegistry;
+use App\Repository\Menu\MenuRepository;
+use App\Service\Menu\MenuLocationRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

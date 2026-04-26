@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Dev;
 
-use App\Contract\AccessRequestManagerInterface;
-use App\Contract\UserManagerInterface;
+use App\Contract\Auth\AccessRequestManagerInterface;
+use App\Contract\User\UserManagerInterface;
 use App\DTO\PaginationRequest;
 use App\Entity\AccessRequest;
 use App\Enum\HttpMethodEnum;
-use App\Enum\UserRoleEnum;
-use App\Repository\AccessRequestRepository;
+use App\Enum\User\UserRoleEnum;
+use App\Repository\Auth\AccessRequestRepository;
 use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

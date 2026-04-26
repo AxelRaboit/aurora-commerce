@@ -3,8 +3,8 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { GripVertical, Pencil, Trash2, ChevronRight, ExternalLink, EyeOff, Eye } from "lucide-vue-next";
-import AppIconButton from "@/components/AppIconButton.vue";
-import AppBadge from "@/components/AppBadge.vue";
+import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppBadge from "@/shared/components/AppBadge.vue";
 
 const props = defineProps({
     item: { type: Object, required: true },
@@ -43,7 +43,7 @@ function visibilityIcon(item) {
                 v-if="item.children?.length"
                 type="button"
                 class="shrink-0 p-0.5 rounded hover:bg-surface-2 transition-colors"
-                :title="expanded ? t('common.collapse') : t('common.expand')"
+                :title="expanded ? t('shared.common.collapse') : t('shared.common.expand')"
                 v-on:click="expanded = !expanded"
             >
                 <ChevronRight class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-90': expanded }" :stroke-width="2" />
@@ -68,10 +68,10 @@ function visibilityIcon(item) {
                 <p v-if="targetHint(item)" class="text-xs text-muted truncate font-mono mt-0.5">{{ targetHint(item) }}</p>
             </div>
 
-            <AppIconButton color="indigo" :title="t('common.edit')" v-on:click="emit('edit', item)">
+            <AppIconButton color="indigo" :title="t('shared.common.edit')" v-on:click="emit('edit', item)">
                 <Pencil class="w-4 h-4" :stroke-width="2" />
             </AppIconButton>
-            <AppIconButton color="rose" :title="t('common.delete')" v-on:click="emit('delete', item)">
+            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="emit('delete', item)">
                 <Trash2 class="w-4 h-4" :stroke-width="2" />
             </AppIconButton>
         </div>

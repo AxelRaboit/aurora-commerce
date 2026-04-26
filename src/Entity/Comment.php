@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\CommentStatusEnum;
-use App\Repository\CommentRepository;
+use App\Enum\Comment\CommentStatusEnum;
+use App\Repository\Comment\CommentRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

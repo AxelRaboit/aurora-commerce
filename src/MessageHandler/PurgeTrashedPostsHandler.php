@@ -6,7 +6,7 @@ namespace App\MessageHandler;
 
 use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Message\PurgeTrashedPostsMessage;
-use App\Repository\PostRepository;
+use App\Repository\Post\PostRepository;
 use App\Repository\SettingRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

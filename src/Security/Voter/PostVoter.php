@@ -6,7 +6,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Post;
 use App\Entity\User;
-use App\Enum\UserRoleEnum;
+use App\Enum\User\UserRoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;

@@ -72,7 +72,7 @@ final readonly class ThemeManager
 
     public function countTemplates(string $slug): int
     {
-        $dir = sprintf('%s/templates/themes/%s', $this->projectDir, $slug);
+        $dir = sprintf('%s/templates/front/themes/%s', $this->projectDir, $slug);
         if (!is_dir($dir)) {
             return 0;
         }

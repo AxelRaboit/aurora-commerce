@@ -17,13 +17,20 @@ export function createTestI18n(messages = {}, locale = "fr") {
 }
 
 const baseMessages = {
-    common: {
-        cancel: "Annuler",
-        save: "Enregistrer",
-        confirm: "Confirmer",
-        error: "Erreur",
+    shared: {
+        common: {
+            cancel: "Annuler",
+            save: "Enregistrer",
+            confirm: "Confirmer",
+            error: "Erreur",
+        },
+        locales: {
+            fr: "Français",
+            en: "English",
+            es: "Español",
+            de: "Deutsch",
+        },
     },
-    locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };
 
 function deepMerge(target, source) {

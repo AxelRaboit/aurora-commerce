@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Auth;
 
-use App\Contract\AccessRequestManagerInterface;
-use App\DTO\AccessRequestInput;
+use App\Contract\Auth\AccessRequestManagerInterface;
+use App\DTO\Auth\AccessRequestInput;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Enum\HttpMethodEnum;
+use App\Repository\SettingRepository;
 use App\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +23,7 @@ final class AccessRequestController extends AbstractController
         private readonly AccessRequestManagerInterface $accessRequestManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
+        private readonly SettingRepository $settingRepository,
     ) {}
 
     #[Route('/access-request', name: 'admin_access_request')]
@@ -30,8 +33,11 @@ final class AccessRequestController extends AbstractController
             return $this->redirectToRoute('admin_dashboard');
         }
 
-        if (!$request->isMethod(HttpMethodEnum::Post->value)) {
+        $accessRequestEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true);
+
+        if (!$accessRequestEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
             return $this->render('admin/auth/access_request.html.twig', [
+                'accessRequestEnabled' => $accessRequestEnabled,
                 'errors' => [],
                 'values' => [],
             ]);
@@ -42,13 +48,14 @@ final class AccessRequestController extends AbstractController
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->render('admin/auth/access_request.html.twig', [
+                'accessRequestEnabled' => true,
                 'errors' => $errors,
                 'values' => $request->request->all(),
             ]);
         }
 
         $this->accessRequestManager->create($input->email, $input->name, $input->message);
-        $this->addFlash('success', $this->translator->trans('auth.access_request.success_toast'));
+        $this->addFlash('success', $this->translator->trans('admin.auth.access_request.success_toast'));
 
         return $this->redirectToRoute('admin_login');
     }

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Manager;
 
 use App\Contract\MediaManagerInterface;
-use App\DTO\MediaFolderInput;
-use App\DTO\MediaInput;
+use App\DTO\Media\MediaFolderInput;
+use App\DTO\Media\MediaInput;
 use App\Entity\Media;
 use App\Entity\MediaFolder;
-use App\Repository\MediaFolderRepository;
+use App\Repository\Media\MediaFolderRepository;
 use App\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

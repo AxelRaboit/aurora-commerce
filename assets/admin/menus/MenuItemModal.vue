@@ -1,14 +1,14 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick } from "vue";
-import { useDebounce } from "@/composables/useDebounce.js";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Search, Check, X } from "lucide-vue-next";
-import AppModal from "@/components/AppModal.vue";
-import AppButton from "@/components/AppButton.vue";
-import AppInput from "@/components/AppInput.vue";
-import AppMultiselect from "@/components/AppMultiselect.vue";
-import AppCheckbox from "@/components/AppCheckbox.vue";
+import AppModal from "@/shared/components/AppModal.vue";
+import AppButton from "@/shared/components/AppButton.vue";
+import AppInput from "@/shared/components/AppInput.vue";
+import AppMultiselect from "@/shared/components/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/AppCheckbox.vue";
 
 const { t } = useI18n();
 
@@ -112,7 +112,7 @@ async function loadFilters() {
             if (data.ok) postTypeOptions.value = data.items;
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     }
 }
 
@@ -152,7 +152,7 @@ async function runSearch() {
             pickerOpen.value = true;
         }
     } catch {
-        toast.error(t("common.error"));
+        toast.error(t("shared.common.error"));
     } finally {
         pickerLoading.value = false;
     }
@@ -430,8 +430,8 @@ const targetTypeOptions = computed(() =>
             <AppCheckbox v-model="form.openInNewTab" :label="t('admin.menus.openInNewTab')" />
 
             <div class="flex justify-end gap-2 pt-3 border-t border-line">
-                <AppButton variant="ghost" v-on:click="close">{{ t("common.cancel") }}</AppButton>
-                <AppButton type="submit" variant="primary" :loading="saving">{{ t("common.save") }}</AppButton>
+                <AppButton variant="ghost" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton type="submit" variant="primary" :loading="saving">{{ t("shared.common.save") }}</AppButton>
             </div>
         </form>
     </AppModal>

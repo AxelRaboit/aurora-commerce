@@ -6,9 +6,9 @@ namespace App\Tests\Integration\Manager;
 
 use App\Entity\ResetPasswordRequest;
 use App\Entity\User;
-use App\Enum\UserStatusEnum;
-use App\Enum\UserTypeEnum;
-use App\Manager\PasswordResetManager;
+use App\Enum\User\UserStatusEnum;
+use App\Enum\User\UserTypeEnum;
+use App\Manager\Auth\PasswordResetManager;
 use App\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

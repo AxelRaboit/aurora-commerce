@@ -1,19 +1,29 @@
-import { HttpMethod } from "@/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
 
 export function useAdminParameters(
     parametersPath,
     parameterUpdatePath,
     initialParameters,
+    initialSearch,
 ) {
     const { t } = useI18n();
 
+    const searchInput = ref(initialSearch ?? "");
+
+    function performSearch() {
+        const url = new URL(parametersPath, window.location.origin);
+        if (searchInput.value)
+            url.searchParams.set("search", searchInput.value);
+        window.location.href = url.toString();
+    }
+
     const { items, page, totalPages, goToPage } = usePaginatedFetch(
         parametersPath,
-        () => ({}),
+        () => ({ search: searchInput.value || undefined }),
         null,
         initialParameters,
     );
@@ -50,7 +60,7 @@ export function useAdminParameters(
                 editingKey.value = null;
                 toast.success(t("admin.parameters.saved"));
             } else {
-                toast.error(t("common.error"));
+                toast.error(t("shared.common.error"));
             }
         } finally {
             editSaving.value = false;
@@ -62,6 +72,8 @@ export function useAdminParameters(
         page,
         totalPages,
         goToPage,
+        searchInput,
+        performSearch,
         editingKey,
         editingValue,
         editSaving,

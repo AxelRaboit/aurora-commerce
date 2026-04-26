@@ -11,7 +11,7 @@
     {% endif %}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
-    {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
+    {{ include('shared/components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
         {{ vite_entry_link_tags('flash') }}
@@ -26,7 +26,7 @@
 
 <div class="min-h-screen bg-bg">
 
-    <div {{ vue_component('AppSidebar', {
+    <div {{ vue_component('admin/AppSidebar', {
         userName: app.user.name,
         userEmail: app.user.email,
         activeRoute: app.request.attributes.get('_route'),
@@ -60,14 +60,14 @@
         {% block page_header_slot %}{% endblock %}
 
         {% if is_granted('IS_IMPERSONATOR') %}
-            {% embed 'components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
-                {% block content %}{{ 'impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
+            {% embed 'shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
+                {% block content %}{{ 'admin.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
                 {% block actions %}
-                    {{ include('components/app_link.html.twig', {
+                    {{ include('shared/components/app_link.html.twig', {
                         href: path('admin_dashboard', {_switch_user: '_exit'}),
                         variant: 'inherit',
                         extraClass: 'ml-2 font-medium',
-                        label: 'impersonation.leave'|trans,
+                        label: 'admin.impersonation.leave'|trans,
                     }) }}
                 {% endblock %}
             {% endembed %}

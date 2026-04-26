@@ -1,0 +1,11 @@
+{% extends 'front/themes/default/layout.html.twig' %}
+
+{% block title %}{{ 'front.verify_email.title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('front/auth/VerifyEmailApp', {
+    success: success,
+    loginPath: path('front_login', {locale: locale}),
+    registerPath: path('front_register', {locale: locale}),
+}) }}></div>
+{% endblock %}

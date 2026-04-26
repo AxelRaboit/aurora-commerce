@@ -1,13 +1,13 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block title %}{{ 'nav.postTypes'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.postTypes'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'nav.postTypes'|trans}) }}
+    {{ include('shared/components/page_header.html.twig', {title: 'admin.nav.postTypes'|trans}) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('PostTypesApp', {
+<div {{ vue_component('admin/PostTypesApp', {
     postTypes: postTypes,
     taxonomies: taxonomies,
     createPath: path('admin_post_types_create'),
