@@ -397,17 +397,11 @@ info "Adding Aurora as git submodule..."
 git -C "$DEST" submodule add "$AURORA_REMOTE" vendor/aurora
 
 # ---------------------------------------------------------------------------
-# composer install
+# make install
 # ---------------------------------------------------------------------------
 
-info "Running composer install in Aurora..."
-composer install -q --working-dir="$DEST/vendor/aurora"
-
-info "Running pnpm install in Aurora..."
-pnpm install -C "$DEST/vendor/aurora" --silent
-
-info "Running composer install in client..."
-composer install -q --working-dir="$DEST"
+info "Running make install..."
+make -C "$DEST" install
 
 # ---------------------------------------------------------------------------
 # Done
@@ -416,14 +410,6 @@ composer install -q --working-dir="$DEST"
 echo ""
 success "Project created at ${BOLD}${DEST}${RESET}"
 echo ""
-echo -e "  Next steps:"
-echo -e "    1. ${CYAN}cd ${DEST}${RESET}"
-if [[ ! -f "$DEST/.env.local" ]]; then
-echo -e "    2. ${CYAN}cp .env.local.example .env.local${RESET}  — fill in your DB credentials"
-echo -e "    3. ${CYAN}make db-create && make migrate${RESET}"
-echo -e "    4. ${CYAN}make about${RESET}  — verify the app boots"
-else
-echo -e "    2. ${CYAN}make db-create && make migrate${RESET}"
-echo -e "    3. ${CYAN}make about${RESET}  — verify the app boots"
-fi
+echo -e "  ${GREEN}✓${RESET} Admin user: ${CYAN}admin@aurora.app${RESET} / ${CYAN}password${RESET}"
+echo -e "  Run ${CYAN}make start${RESET} in ${CYAN}${DEST}${RESET} to launch."
 echo ""
