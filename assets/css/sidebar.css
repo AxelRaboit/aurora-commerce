@@ -33,3 +33,5 @@
 
 .si-tooltip { display: none; }
 .sidebar-collapsed .si:hover .si-tooltip { display: block; }
+
+.sidebar-collapsed .sh-search-section { padding-left: 0.5rem; padding-right: 0.5rem; }

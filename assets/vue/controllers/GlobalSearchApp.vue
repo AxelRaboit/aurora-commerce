@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { useDebounce } from "@/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { Search, FileText, Tags as TagsIcon, Image, Loader2, X } from "lucide-vue-next";
 import { statusBadge } from "@/utils/statusStyles.js";
@@ -19,7 +20,6 @@ const results = ref({ posts: [], terms: [], media: [] });
 const loading = ref(false);
 const highlightedIndex = ref(0);
 const inputRef = ref(null);
-let debounceTimer = null;
 
 const isMac = typeof navigator !== "undefined" && /Mac|iP(hone|od|ad)/.test(navigator.platform);
 const modKeyLabel = isMac ? "⌘" : "Ctrl";
@@ -66,10 +66,7 @@ function onGlobalKeydown(event) {
     }
 }
 
-watch(query, () => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(runSearch, 180);
-});
+watch(query, useDebounce(runSearch, 180));
 
 async function runSearch() {
     const trimmed = query.value.trim();

@@ -20,10 +20,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final readonly class RedirectAuthenticatedFromGuestRoutesListener
 {
     private const GUEST_ONLY_ROUTES = [
-        'app_login',
-        'app_register',
-        'app_forgot_password',
-        'app_access_request',
+        'admin_login',
+        'admin_register',
+        'admin_forgot_password',
+        'admin_access_request',
     ];
 
     private const AUTHENTICATED_TARGET_ROUTE = 'admin_dashboard';

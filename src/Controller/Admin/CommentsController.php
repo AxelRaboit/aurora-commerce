@@ -35,7 +35,7 @@ final class CommentsController extends AbstractController
     public function index(): Response
     {
         $stats = $this->commentRepository->countByStatus();
-        $moderationEnabled = '1' === $this->settingRepository->get(ApplicationParameterEnum::CommentModerationEnabled->value, '1');
+        $moderationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::CommentModerationEnabled->value, true);
 
         return $this->render('admin/comments/index.html.twig', [
             'stats' => $stats,
@@ -46,7 +46,7 @@ final class CommentsController extends AbstractController
     #[Route('/toggle-moderation', name: '_toggle_moderation', methods: [HttpMethodEnum::Post->value])]
     public function toggleModeration(): JsonResponse
     {
-        $current = '1' === $this->settingRepository->get(ApplicationParameterEnum::CommentModerationEnabled->value, '1');
+        $current = $this->settingRepository->getBoolean(ApplicationParameterEnum::CommentModerationEnabled->value, true);
         $this->settingRepository->set(ApplicationParameterEnum::CommentModerationEnabled->value, $current ? '0' : '1');
 
         return $this->json(['ok' => true, 'moderationEnabled' => !$current]);

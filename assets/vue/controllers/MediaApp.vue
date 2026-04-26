@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -7,7 +8,7 @@ import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
-import AppSelect from "@/components/AppSelect.vue";
+import AppMultiselect from "@/components/AppMultiselect.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import AppNoData from "@/components/AppNoData.vue";
@@ -143,7 +144,7 @@ async function uploadFiles(event) {
             const body = new FormData();
             body.append("image", file);
             if (currentFolderId.value) body.append("folderId", String(currentFolderId.value));
-            const response = await fetch(props.uploadPath, { method: "POST", body });
+            const response = await fetch(props.uploadPath, { method: HttpMethod.Post, body });
             if (!response.ok) throw new Error();
             const data = await response.json();
             if (data.media) media.value.unshift(data.media);
@@ -186,7 +187,7 @@ async function submitMediaEdit() {
     try {
         const url = props.editPath.replace("__id__", editingMedia.value.id);
         const response = await fetch(url, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(editForm),
         });
@@ -226,7 +227,7 @@ async function confirmDeleteMedia() {
     const item = deletingMedia.value;
     if (!item) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", item.id), { method: "POST" });
+        const response = await fetch(props.deletePath.replace("__id__", item.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("common.error"));
@@ -269,7 +270,7 @@ async function submitFolder() {
             ? props.folderEditPath.replace("__id__", folderModal.editing.id)
             : props.folderCreatePath;
         const response = await fetch(url, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(folderForm),
         });
@@ -299,7 +300,7 @@ async function confirmDeleteFolder() {
     const folder = deletingFolder.value;
     if (!folder) return;
     try {
-        const response = await fetch(props.folderDeletePath.replace("__id__", folder.id), { method: "POST" });
+        const response = await fetch(props.folderDeletePath.replace("__id__", folder.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("common.error"));
@@ -332,6 +333,12 @@ const folderParentOptions = computed(() => {
     addDescendants(folderModal.editing.id);
     return allFlatFolders.value.filter((f) => !forbidden.has(f.id));
 });
+
+function withDepthLabel(folders) {
+    return folders.map((f) => ({ ...f, displayLabel: "— ".repeat(f.depth) + f.name }));
+}
+const folderEditOptions = computed(() => withDepthLabel(allFlatFolders.value));
+const folderParentSelectOptions = computed(() => withDepthLabel(folderParentOptions.value));
 
 // ── Drag & drop ──────────────────────────────────────────────────────────────
 const dragOverFolderId = ref(null);
@@ -385,7 +392,7 @@ async function onFolderDrop(event, targetFolderId) {
 async function moveMedia(mediaId, folderId) {
     try {
         const response = await fetch(props.movePath.replace("__id__", mediaId), {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ folderId }),
         });
@@ -413,7 +420,7 @@ async function moveFolder(folderId, newParentId) {
     if (!folder) return;
     try {
         const response = await fetch(props.folderEditPath.replace("__id__", folderId), {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: folder.name, parentId: newParentId }),
         });
@@ -644,15 +651,15 @@ async function moveFolder(folderId, newParentId) {
                         :label="t('admin.media.caption')"
                         :rows="3"
                     />
-                    <div>
-                        <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.media.folder") }}</label>
-                        <AppSelect v-model="editForm.folderId">
-                            <option :value="null">{{ t("admin.media.rootFolder") }}</option>
-                            <option v-for="folder in allFlatFolders" :key="folder.id" :value="folder.id">
-                                {{ "— ".repeat(folder.depth) }}{{ folder.name }}
-                            </option>
-                        </AppSelect>
-                    </div>
+                    <AppMultiselect
+                        v-model="editForm.folderId"
+                        :options="folderEditOptions"
+                        :label="t('admin.media.folder')"
+                        :placeholder="t('admin.media.rootFolder')"
+                        :allow-empty="true"
+                        track-by="id"
+                        option-label="displayLabel"
+                    />
 
                     <dl class="text-xs text-muted space-y-0.5 pt-2 border-t border-line">
                         <div class="flex justify-between"><dt>ID</dt><dd class="font-mono select-all">{{ editingMedia?.id }}</dd></div>
@@ -693,15 +700,15 @@ async function moveFolder(folderId, newParentId) {
                     :label="t('admin.media.folderName')"
                     :error="folderModal.errors.name ?? ''"
                 />
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.media.parentFolder") }}</label>
-                    <AppSelect v-model="folderForm.parentId">
-                        <option :value="null">{{ t("admin.media.rootFolder") }}</option>
-                        <option v-for="folder in folderParentOptions" :key="folder.id" :value="folder.id">
-                            {{ "— ".repeat(folder.depth) }}{{ folder.name }}
-                        </option>
-                    </AppSelect>
-                </div>
+                <AppMultiselect
+                    v-model="folderForm.parentId"
+                    :options="folderParentSelectOptions"
+                    :label="t('admin.media.parentFolder')"
+                    :placeholder="t('admin.media.rootFolder')"
+                    :allow-empty="true"
+                    track-by="id"
+                    option-label="displayLabel"
+                />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="folderModal.open = false">{{ t("common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving">{{ t("common.save") }}</AppButton>

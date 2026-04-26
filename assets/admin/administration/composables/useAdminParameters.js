@@ -1,11 +1,22 @@
-import { ref, computed } from "vue";
+import { HttpMethod } from "@/utils/httpMethod.js";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
 
-export function useAdminParameters(parameterUpdatePath, initialParameters) {
+export function useAdminParameters(
+    parametersPath,
+    parameterUpdatePath,
+    initialParameters,
+) {
     const { t } = useI18n();
 
-    const parsedParameters = computed(() => initialParameters ?? { items: [] });
+    const { items, page, totalPages, goToPage } = usePaginatedFetch(
+        parametersPath,
+        () => ({}),
+        null,
+        initialParameters,
+    );
 
     const editingKey = ref(null);
     const editingValue = ref("");
@@ -30,7 +41,7 @@ export function useAdminParameters(parameterUpdatePath, initialParameters) {
                 encodeURIComponent(param.key),
             );
             const response = await fetch(url, {
-                method: "PATCH",
+                method: HttpMethod.Patch,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ value: editingValue.value }),
             });
@@ -47,7 +58,10 @@ export function useAdminParameters(parameterUpdatePath, initialParameters) {
     }
 
     return {
-        parsedParameters,
+        items,
+        page,
+        totalPages,
+        goToPage,
         editingKey,
         editingValue,
         editSaving,

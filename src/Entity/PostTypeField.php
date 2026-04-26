@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use App\Repository\PostTypeFieldRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostTypeFieldRepository::class)]
 #[ORM\Table(name: 'post_type_fields')]
@@ -20,16 +19,12 @@ class PostTypeField
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
-    #[Assert\Regex('/^[a-z0-9_]+$/')]
     private string $name;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
     private string $label;
 
     #[ORM\Column(length: 50)]
-    #[Assert\Choice(choices: self::TYPES)]
     private string $type = 'text';
 
     #[ORM\Column]

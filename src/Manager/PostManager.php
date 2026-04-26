@@ -26,6 +26,7 @@ use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use const DATE_ATOM;
 
@@ -43,6 +44,7 @@ final readonly class PostManager implements PostManagerInterface
         private SluggerInterface $slugger,
         private Security $security,
         private PostTextExtractor $textExtractor,
+        private TranslatorInterface $translator,
     ) {}
 
     public function create(PostInput $input): Post
@@ -149,7 +151,7 @@ final readonly class PostManager implements PostManagerInterface
     {
         $postType = $this->postTypeRepository->find($input->postTypeId);
         if (null === $postType) {
-            throw new InvalidArgumentException(sprintf('PostType with id %d not found.', $input->postTypeId));
+            throw new InvalidArgumentException($this->translator->trans('admin.posts.errors.post_type_not_found', ['{id}' => $input->postTypeId]));
         }
 
         $post->setPostType($postType);
@@ -172,6 +174,7 @@ final readonly class PostManager implements PostManagerInterface
             : null;
         $post->setFeaturedMedia($featuredMedia);
 
+        $post->setCommentsEnabled($input->commentsEnabled);
         $this->syncTerms($post, $input->termIds);
         $this->syncRelatedPosts($post, $input->relatedPostIds);
 

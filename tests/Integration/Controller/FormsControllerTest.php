@@ -22,7 +22,7 @@ final class FormsControllerTest extends IntegrationTestCase
 
         $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin@velox.app']);
         self::assertInstanceOf(User::class, $admin);
-        $this->client->loginUser($admin);
+        $this->client->loginUser($admin, 'admin');
     }
 
     private function jsonRequest(string $method, string $url, array $payload = []): array

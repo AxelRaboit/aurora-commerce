@@ -23,7 +23,7 @@ final class ParametersController extends AbstractController
     public function __construct(private readonly SettingRepository $settingRepository) {}
 
     #[Route('', name: '')]
-    public function index(PaginationRequest $pagination): Response
+    public function index(PaginationRequest $pagination, Request $request): Response
     {
         $result = $this->settingRepository->findPaginated($pagination->page);
 
@@ -44,14 +44,15 @@ final class ParametersController extends AbstractController
             $result['items'],
         );
 
+        $payload = ['ok' => true, 'items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']];
+
+        if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
+            return $this->json($payload);
+        }
+
         return $this->render('admin/administration/index.html.twig', [
             'tab' => 'parameters',
-            'parameters' => [
-                'items' => $items,
-                'total' => $result['total'],
-                'page' => $result['page'],
-                'totalPages' => $result['totalPages'],
-            ],
+            'parameters' => $payload,
         ]);
     }
 

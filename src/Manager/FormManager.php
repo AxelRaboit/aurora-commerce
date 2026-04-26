@@ -12,6 +12,7 @@ use App\Entity\FormField;
 use App\Entity\FormFieldTranslation;
 use App\Entity\FormSubmission;
 use App\Entity\FormTranslation;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Repository\FormTranslationRepository;
 use App\Repository\SettingRepository;
 use DateTimeImmutable;
@@ -20,6 +21,7 @@ use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(FormManagerInterface::class)]
 final readonly class FormManager implements FormManagerInterface
@@ -29,6 +31,7 @@ final readonly class FormManager implements FormManagerInterface
         private FormTranslationRepository $formTranslationRepository,
         private MailerInterface $mailer,
         private SettingRepository $settingRepository,
+        private TranslatorInterface $translator,
         private string $mailerFrom,
     ) {}
 
@@ -195,7 +198,7 @@ final readonly class FormManager implements FormManagerInterface
     private function assertSlugValid(string $locale, string $slug, ?int $excludeFormId): void
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
-            throw new InvalidArgumentException(sprintf('translations.%s.slug|Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.', $locale));
+            throw new InvalidArgumentException(sprintf('translations.%s.slug|%s', $locale, $this->translator->trans('admin.forms.errors.slug_format')));
         }
 
         $existing = null === $excludeFormId
@@ -203,13 +206,13 @@ final readonly class FormManager implements FormManagerInterface
             : $this->formTranslationRepository->findOneByLocaleAndSlugExcluding($locale, $slug, $excludeFormId);
 
         if ($existing instanceof FormTranslation) {
-            throw new InvalidArgumentException(sprintf('translations.%s.slug|Ce slug est déjà utilisé pour cette langue.', $locale));
+            throw new InvalidArgumentException(sprintf('translations.%s.slug|%s', $locale, $this->translator->trans('admin.forms.errors.slug_taken')));
         }
     }
 
     private function sendNotification(Form $form, FormSubmission $submission, string $locale): void
     {
-        $siteName = $this->settingRepository->get('site_name', 'Velox');
+        $siteName = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
         $formTranslation = $this->resolveTranslation($form->getTranslation($locale), $form->getTranslations()->first());
         $formTitle = $formTranslation?->getTitle() ?? '';
 

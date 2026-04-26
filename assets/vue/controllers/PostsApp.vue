@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -10,7 +11,7 @@ import AppBadge from "@/components/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/utils/lang.js";
 import { usePostList } from "@/admin/posts/composables/usePostList.js";
 import { usePostDelete } from "@/admin/posts/composables/usePostDelete.js";
-import { Pencil, Trash2, Plus, FileText, Search, Eye, Inbox, RotateCcw } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, FileText, Search, Eye, Inbox, RotateCcw, ExternalLink } from "lucide-vue-next";
 import PostEditor from "@/admin/posts/PostEditor.vue";
 import PostPreviewOverlay from "@/admin/posts/PostPreviewOverlay.vue";
 import AppButton from "@/components/AppButton.vue";
@@ -34,7 +35,31 @@ const props = defineProps({
     deletePath: { type: String, required: true },
     restorePath: { type: String, required: true },
     forceDeletePath: { type: String, required: true },
+    emptyTrashPath: { type: String, default: "" },
 });
+
+const emptyingTrash = ref(false);
+const confirmEmptyTrash = ref(false);
+
+async function emptyTrash() {
+    if (!props.emptyTrashPath) return;
+    emptyingTrash.value = true;
+    try {
+        const response = await fetch(props.emptyTrashPath, { method: HttpMethod.Post });
+        const data = await response.json();
+        if (data.success) {
+            toast.success(t("admin.posts.emptyTrashDone", { count: data.count }));
+            setTrashedFilter(true);
+        } else {
+            toast.error(t("common.error"));
+        }
+    } catch {
+        toast.error(t("common.error"));
+    } finally {
+        emptyingTrash.value = false;
+        confirmEmptyTrash.value = false;
+    }
+}
 
 function setTrashedFilter(trashed) {
     const url = new URL(props.postsPath, window.location.origin);
@@ -44,7 +69,7 @@ function setTrashedFilter(trashed) {
 
 async function restorePost(post) {
     try {
-        const response = await fetch(props.restorePath.replace("__id__", post.id), { method: "POST" });
+        const response = await fetch(props.restorePath.replace("__id__", post.id), { method: HttpMethod.Post });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
@@ -84,7 +109,7 @@ function onEditorSaved(post, isNew) {
 }
 
 const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
-    usePostList(props.postsPath, props.posts, props.search);
+    usePostList(props.postsPath, props.posts, props.search, () => (props.trashed ? { trashed: "1" } : {}));
 
 const deletePost = usePostDelete(
     props.trashed ? props.forceDeletePath : props.deletePath,
@@ -94,6 +119,12 @@ const deletePost = usePostDelete(
 
 const previewPost = ref(null);
 const previewLoading = ref(false);
+
+function frontUrl(post) {
+    const locale = props.locales[0] ?? "fr";
+    if (!post.slug || !post.postType?.slug) return null;
+    return `/${locale}/${post.postType.slug}/${post.slug}`;
+}
 
 async function openPreview(post) {
     previewLoading.value = true;
@@ -176,6 +207,17 @@ async function openPreview(post) {
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("admin.posts.add") }}
             </AppButton>
+            <AppButton
+                v-if="trashed && posts.length"
+                variant="danger"
+                size="md"
+                class="w-full sm:w-auto"
+                :loading="emptyingTrash"
+                v-on:click="confirmEmptyTrash = true"
+            >
+                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                {{ t("admin.posts.emptyTrash") }}
+            </AppButton>
         </div>
 
         <!-- Mobile cards -->
@@ -186,14 +228,24 @@ async function openPreview(post) {
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
                         <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
+                        <p v-if="frontUrl(post) && !trashed" class="text-xs text-indigo-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
                     </div>
-                    <AppBadge :color="statusBadgeColor(post.status)" class="shrink-0">
-                        {{ t("admin.stats.postStatus." + post.status) }}
+                    <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
+                        {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
                     </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
                     <div class="flex items-center gap-0.5">
+                        <AppIconButton
+                            v-if="frontUrl(post) && !trashed && post.status === 'published'"
+                            color="emerald"
+                            :title="t('common.view')"
+                            :href="frontUrl(post)"
+                            target="_blank"
+                        >
+                            <ExternalLink class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
                         <AppIconButton color="sky" v-on:click="openPreview(post)">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
@@ -216,6 +268,7 @@ async function openPreview(post) {
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
@@ -225,24 +278,37 @@ async function openPreview(post) {
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-if="!posts.length">
-                        <td colspan="5"><AppNoData :message="t('admin.posts.empty')" /></td>
+                        <td colspan="6"><AppNoData :message="t('admin.posts.empty')" /></td>
                     </tr>
                     <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-4 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-2.5">
                                 <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
-                                <span class="font-medium text-primary text-sm">{{ post.title ?? "-" }}</span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-medium text-primary text-sm truncate">{{ post.title ?? "-" }}</p>
+                                    <p v-if="frontUrl(post) && !trashed" class="text-xs text-indigo-400 truncate font-mono">{{ frontUrl(post) }}</p>
+                                </div>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
                         <td class="px-4 py-3">
-                            <AppBadge :color="statusBadgeColor(post.status)">
-                                {{ t("admin.stats.postStatus." + post.status) }}
+                            <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)">
+                                {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
                             </AppBadge>
                         </td>
                         <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton
+                                    v-if="frontUrl(post) && !trashed && post.status === 'published'"
+                                    color="emerald"
+                                    :title="t('common.view')"
+                                    :href="frontUrl(post)"
+                                    target="_blank"
+                                >
+                                    <ExternalLink class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
                                 <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
@@ -277,6 +343,20 @@ async function openPreview(post) {
                 <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
                     {{ t(trashed ? "admin.posts.forceDelete" : "common.delete") }}
                 </AppButton>
+            </div>
+        </AppModal>
+
+        <AppModal :show="confirmEmptyTrash" max-width="sm" v-on:close="confirmEmptyTrash = false">
+            <div class="space-y-4">
+                <p class="text-sm text-primary">{{ t("admin.posts.emptyTrashConfirm") }}</p>
+                <div class="flex justify-end gap-2">
+                    <AppButton variant="secondary" size="md" v-on:click="confirmEmptyTrash = false">
+                        {{ t("common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="emptyingTrash" v-on:click="emptyTrash">
+                        {{ t("admin.posts.emptyTrash") }}
+                    </AppButton>
+                </div>
             </div>
         </AppModal>
     </div>

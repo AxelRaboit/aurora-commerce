@@ -1,0 +1,30 @@
+<header
+    class="border-b"
+    style="background-color: var(--th-header-bg, var(--th-surface)); border-color: var(--th-header-border, var(--color-border)); color: var(--th-header-text, var(--th-primary));"
+>
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-6 flex-wrap">
+        <a href="{{ path('front_home', {locale: locale}) }}"
+            class="flex items-center gap-2 text-lg font-bold"
+            style="color: var(--th-header-text, var(--th-primary));">
+            {% set themeLogoUrl = themeContext.headerLogoUrl() %}
+            {% set themeText = themeContext.headerCustomText() %}
+            {% if themeLogoUrl %}
+                <img src="{{ themeLogoUrl }}" alt="{{ context.siteName }}" class="h-8 w-auto object-contain">
+            {% elseif themeText %}
+                {{ themeText }}
+            {% elseif siteLogoUrl %}
+                <img src="{{ siteLogoUrl }}" alt="{{ context.siteName }}" class="h-8 w-auto object-contain">
+            {% else %}
+                {{ context.siteName }}
+            {% endif %}
+        </a>
+
+        {{ include('themes/default/partials/menus/primary.html.twig', {items: menu_items('primary', locale)}) }}
+
+        <div class="ml-auto flex items-center gap-4 text-sm">
+            {{ include('themes/default/partials/menus/account.html.twig', {items: menu_items('account', locale)}) }}
+        </div>
+
+        {{ include('themes/default/partials/locale-switcher.html.twig') }}
+    </div>
+</header>

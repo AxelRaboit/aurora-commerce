@@ -1,13 +1,14 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { HttpStatus } from "@/enums/HttpStatus.js";
 
 export function useApiRequest() {
     const { t } = useI18n();
     const loading = ref(false);
 
-    async function request(url, body = null, method = "POST") {
+    async function request(url, body = null, method = HttpMethod.Post) {
         if (loading.value) return null;
         loading.value = true;
         try {

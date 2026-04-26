@@ -1,14 +1,16 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, computed, reactive, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useFormModal } from "@/composables/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
-import AppSelect from "@/components/AppSelect.vue";
+import AppMultiselect from "@/components/AppMultiselect.vue";
 import AppCheckbox from "@/components/AppCheckbox.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppMessage from "@/components/AppMessage.vue";
@@ -93,60 +95,35 @@ watch(flatTerms, (terms) => {
 }, { deep: true });
 
 // ── Taxonomy form (modal) ────────────────────────────────────────────────────
-const taxonomyModal = reactive({ open: false, editing: null, errors: {}, saving: false });
+const { modal: taxonomyModal, openCreate: taxonomyModalCreate, openEdit: taxonomyModalEdit, submit: taxonomyModalSubmit } = useFormModal();
 const taxonomyForm = reactive({ slug: "", hierarchical: false, translations: {}, postTypeIds: [] });
 
 function openCreateTaxonomy() {
-    taxonomyModal.editing = null;
-    taxonomyModal.errors = {};
-    taxonomyForm.slug = "";
-    taxonomyForm.hierarchical = false;
-    taxonomyForm.postTypeIds = props.postTypes.map((pt) => pt.id);
-    taxonomyForm.translations = Object.fromEntries(props.locales.map((l) => [l, { label: "", description: "" }]));
-    taxonomyModal.open = true;
+    taxonomyModalCreate(() => Object.assign(taxonomyForm, {
+        slug: "", hierarchical: false,
+        postTypeIds: props.postTypes.map((pt) => pt.id),
+        translations: Object.fromEntries(props.locales.map((l) => [l, { label: "", description: "" }])),
+    }));
 }
 
 function openEditTaxonomy(taxonomy) {
-    taxonomyModal.editing = taxonomy;
-    taxonomyModal.errors = {};
-    taxonomyForm.slug = taxonomy.slug;
-    taxonomyForm.hierarchical = taxonomy.hierarchical;
-    taxonomyForm.postTypeIds = [...(taxonomy.postTypeIds ?? [])];
-    taxonomyForm.translations = Object.fromEntries(
-        props.locales.map((l) => [l, {
-            label: taxonomy.translations?.[l]?.label ?? "",
-            description: taxonomy.translations?.[l]?.description ?? "",
-        }]),
-    );
-    taxonomyModal.open = true;
+    taxonomyModalEdit(taxonomy, (tx) => Object.assign(taxonomyForm, {
+        slug: tx.slug, hierarchical: tx.hierarchical, postTypeIds: [...(tx.postTypeIds ?? [])],
+        translations: Object.fromEntries(props.locales.map((l) => [l, {
+            label: tx.translations?.[l]?.label ?? "",
+            description: tx.translations?.[l]?.description ?? "",
+        }])),
+    }));
 }
 
 async function submitTaxonomy() {
-    taxonomyModal.saving = true;
-    taxonomyModal.errors = {};
-    try {
-        const url = taxonomyModal.editing
-            ? props.editPath.replace("__id__", taxonomyModal.editing.id)
-            : props.createPath;
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(taxonomyForm),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            taxonomyModal.errors = data.errors ?? {};
-            return;
-        }
+    const url = taxonomyModal.editing
+        ? props.editPath.replace("__id__", taxonomyModal.editing.id)
+        : props.createPath;
+    await taxonomyModalSubmit(url, taxonomyForm, (data) => {
         replaceTaxonomy(data.taxonomy);
         selectedId.value = data.taxonomy.id;
-        taxonomyModal.open = false;
-        toast.success(t("common.saved"));
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        taxonomyModal.saving = false;
-    }
+    });
 }
 
 const deletingTaxonomy = ref(null);
@@ -154,7 +131,7 @@ async function confirmDeleteTaxonomy() {
     const taxonomy = deletingTaxonomy.value;
     if (!taxonomy) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", taxonomy.id), { method: "POST" });
+        const response = await fetch(props.deletePath.replace("__id__", taxonomy.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(data.error ?? t("common.error"));
@@ -173,67 +150,42 @@ async function confirmDeleteTaxonomy() {
 }
 
 // ── Term form (modal) ────────────────────────────────────────────────────────
-const termModal = reactive({ open: false, editing: null, errors: {}, saving: false });
+const { modal: termModal, openCreate: termModalCreate, openEdit: termModalEdit, submit: termModalSubmit } = useFormModal();
 const termForm = reactive({ parentId: null, translations: {} });
 
 function openCreateTerm(parentId = null) {
-    termModal.editing = null;
-    termModal.errors = {};
-    termForm.parentId = parentId;
-    termForm.translations = Object.fromEntries(props.locales.map((l) => [l, { name: "", slug: "", description: "" }]));
-    termModal.open = true;
+    termModalCreate(() => Object.assign(termForm, {
+        parentId,
+        translations: Object.fromEntries(props.locales.map((l) => [l, { name: "", slug: "", description: "" }])),
+    }));
 }
 
 function openEditTerm(term) {
-    termModal.editing = term;
-    termModal.errors = {};
-    termForm.parentId = term.parentId;
-    termForm.translations = Object.fromEntries(props.locales.map((l) => [l, {
-        name: term.translations?.[l]?.name ?? "",
-        slug: term.translations?.[l]?.slug ?? "",
-        description: term.translations?.[l]?.description ?? "",
-    }]));
-    termModal.open = true;
+    termModalEdit(term, (tr) => Object.assign(termForm, {
+        parentId: tr.parentId,
+        translations: Object.fromEntries(props.locales.map((l) => [l, {
+            name: tr.translations?.[l]?.name ?? "",
+            slug: tr.translations?.[l]?.slug ?? "",
+            description: tr.translations?.[l]?.description ?? "",
+        }])),
+    }));
 }
 
 function autoSlugTerm(locale) {
     const entry = termForm.translations[locale];
-    if (!entry) return;
-    if (!entry.slug) entry.slug = slugify(entry.name);
+    if (entry && !entry.slug) entry.slug = slugify(entry.name);
 }
 
 async function submitTerm() {
     if (!selected.value) return;
-    termModal.saving = true;
-    termModal.errors = {};
-
     for (const locale of props.locales) {
         const entry = termForm.translations[locale];
         if (entry?.name && !entry.slug) entry.slug = slugify(entry.name);
     }
-
-    try {
-        const url = termModal.editing
-            ? props.termEditPath.replace("__id__", selected.value.id).replace("__termId__", termModal.editing.id)
-            : props.termCreatePath.replace("__id__", selected.value.id);
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(termForm),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            termModal.errors = data.errors ?? {};
-            return;
-        }
-        replaceTaxonomy(data.taxonomy);
-        termModal.open = false;
-        toast.success(t("common.saved"));
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        termModal.saving = false;
-    }
+    const url = termModal.editing
+        ? props.termEditPath.replace("__id__", selected.value.id).replace("__termId__", termModal.editing.id)
+        : props.termCreatePath.replace("__id__", selected.value.id);
+    await termModalSubmit(url, termForm, (data) => replaceTaxonomy(data.taxonomy));
 }
 
 const deletingTerm = ref(null);
@@ -244,7 +196,7 @@ async function confirmDeleteTerm() {
         const url = props.termDeletePath
             .replace("__id__", selected.value.id)
             .replace("__termId__", term.id);
-        const response = await fetch(url, { method: "POST" });
+        const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("common.error"));
@@ -278,7 +230,7 @@ async function persistTreeOrder() {
     const entries = flattenTreeForReorder(tree.value);
     try {
         const response = await fetch(props.termReorderPath.replace("__id__", selected.value.id), {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ entries }),
         });
@@ -559,13 +511,15 @@ function findNodeInTree(nodes, id) {
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitTerm">
                 <div v-if="selected?.hierarchical">
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.taxonomies.terms.parent") }}</label>
-                    <AppSelect v-model="termForm.parentId">
-                        <option :value="null">{{ t("admin.taxonomies.terms.noParent") }}</option>
-                        <option v-for="opt in parentOptions" :key="opt.id" :value="opt.id">
-                            {{ opt.label }}
-                        </option>
-                    </AppSelect>
+                    <AppMultiselect
+                        v-model="termForm.parentId"
+                        :options="parentOptions"
+                        :label="t('admin.taxonomies.terms.parent')"
+                        :placeholder="t('admin.taxonomies.terms.noParent')"
+                        :allow-empty="true"
+                        track-by="id"
+                        option-label="label"
+                    />
                 </div>
 
                 <div class="flex gap-1">

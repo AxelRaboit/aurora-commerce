@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\MenuItemTargetTypeEnum;
+use App\Enum\MenuItemVisibilityEnum;
 use App\Repository\MenuItemRepository;
+use App\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Order;
@@ -12,33 +15,47 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuItemRepository::class)]
 #[ORM\Table(name: 'menu_items')]
+#[ORM\HasLifecycleCallbacks]
 class MenuItem
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 10)]
-    private string $locale;
+    #[ORM\Column(length: 30, enumType: MenuItemTargetTypeEnum::class)]
+    private MenuItemTargetTypeEnum $targetType = MenuItemTargetTypeEnum::CustomUrl;
 
-    #[ORM\Column(length: 255)]
-    private string $label;
+    /**
+     * Soft FK: ID of the target post / term / post_type. No physical FK
+     * so we don't cascade-delete the menu item if the target disappears —
+     * the renderer handles missing targets gracefully.
+     */
+    #[ORM\Column(nullable: true)]
+    private ?int $targetId = null;
 
-    #[ORM\Column(length: 500)]
-    private string $url;
+    #[ORM\Column(length: 1000, nullable: true)]
+    private ?string $customUrl = null;
 
     #[ORM\Column]
     private bool $openInNewTab = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cssClass = null;
+
+    #[ORM\Column(length: 30, enumType: MenuItemVisibilityEnum::class)]
+    private MenuItemVisibilityEnum $visibility = MenuItemVisibilityEnum::Always;
 
     #[ORM\Column]
     private int $position = 0;
 
     #[ORM\ManyToOne(targetEntity: MenuItem::class, inversedBy: 'children')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?MenuItem $parent = null;
 
-    #[ORM\OneToMany(targetEntity: MenuItem::class, mappedBy: 'parent')]
+    #[ORM\OneToMany(targetEntity: MenuItem::class, mappedBy: 'parent', cascade: ['remove'])]
     #[ORM\OrderBy(['position' => Order::Ascending->value])]
     private Collection $children;
 
@@ -46,9 +63,14 @@ class MenuItem
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Menu $menu;
 
+    /** @var Collection<string, MenuItemTranslation> */
+    #[ORM\OneToMany(targetEntity: MenuItemTranslation::class, mappedBy: 'menuItem', cascade: ['persist', 'remove'], orphanRemoval: true, indexBy: 'locale')]
+    private Collection $translations;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->translations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,38 +78,38 @@ class MenuItem
         return $this->id;
     }
 
-    public function getLocale(): string
+    public function getTargetType(): MenuItemTargetTypeEnum
     {
-        return $this->locale;
+        return $this->targetType;
     }
 
-    public function setLocale(string $locale): static
+    public function setTargetType(MenuItemTargetTypeEnum $targetType): static
     {
-        $this->locale = $locale;
+        $this->targetType = $targetType;
 
         return $this;
     }
 
-    public function getLabel(): string
+    public function getTargetId(): ?int
     {
-        return $this->label;
+        return $this->targetId;
     }
 
-    public function setLabel(string $label): static
+    public function setTargetId(?int $targetId): static
     {
-        $this->label = $label;
+        $this->targetId = $targetId;
 
         return $this;
     }
 
-    public function getUrl(): string
+    public function getCustomUrl(): ?string
     {
-        return $this->url;
+        return $this->customUrl;
     }
 
-    public function setUrl(string $url): static
+    public function setCustomUrl(?string $customUrl): static
     {
-        $this->url = $url;
+        $this->customUrl = $customUrl;
 
         return $this;
     }
@@ -100,6 +122,30 @@ class MenuItem
     public function setOpenInNewTab(bool $openInNewTab): static
     {
         $this->openInNewTab = $openInNewTab;
+
+        return $this;
+    }
+
+    public function getCssClass(): ?string
+    {
+        return $this->cssClass;
+    }
+
+    public function setCssClass(?string $cssClass): static
+    {
+        $this->cssClass = $cssClass;
+
+        return $this;
+    }
+
+    public function getVisibility(): MenuItemVisibilityEnum
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(MenuItemVisibilityEnum $visibility): static
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }
@@ -142,6 +188,34 @@ class MenuItem
     public function setMenu(Menu $menu): static
     {
         $this->menu = $menu;
+
+        return $this;
+    }
+
+    /** @return Collection<string, MenuItemTranslation> */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function getTranslation(string $locale): ?MenuItemTranslation
+    {
+        return $this->translations->get($locale);
+    }
+
+    public function addTranslation(MenuItemTranslation $translation): static
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->set($translation->getLocale(), $translation);
+            $translation->setMenuItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTranslation(MenuItemTranslation $translation): static
+    {
+        $this->translations->removeElement($translation);
 
         return $this;
     }

@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(TaxonomyManagerInterface::class)]
 final readonly class TaxonomyManager implements TaxonomyManagerInterface
@@ -27,12 +28,13 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         private TaxonomyTermRepository $termRepository,
         private PostTypeRepository $postTypeRepository,
         private SluggerInterface $slugger,
+        private TranslatorInterface $translator,
     ) {}
 
     public function create(TaxonomyInput $input): Taxonomy
     {
         if ($this->taxonomyRepository->findOneBySlug($input->slug) instanceof Taxonomy) {
-            throw new InvalidArgumentException(sprintf('Taxonomy with slug "%s" already exists.', $input->slug));
+            throw new InvalidArgumentException($this->translator->trans('admin.taxonomies.errors.slug_taken', ['{slug}' => $input->slug]));
         }
 
         $taxonomy = (new Taxonomy())
@@ -54,7 +56,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
         if (!$taxonomy->isBuiltIn()) {
             if ($input->slug !== $taxonomy->getSlug()) {
                 if ($this->taxonomyRepository->findOneBySlug($input->slug) instanceof Taxonomy) {
-                    throw new InvalidArgumentException(sprintf('Taxonomy with slug "%s" already exists.', $input->slug));
+                    throw new InvalidArgumentException($this->translator->trans('admin.taxonomies.errors.slug_taken', ['{slug}' => $input->slug]));
                 }
 
                 $taxonomy->setSlug($input->slug);
@@ -72,7 +74,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
     public function delete(Taxonomy $taxonomy): void
     {
         if ($taxonomy->isBuiltIn()) {
-            throw new RuntimeException('Built-in taxonomies cannot be deleted.');
+            throw new RuntimeException($this->translator->trans('admin.taxonomies.errors.builtin_protected'));
         }
 
         $this->entityManager->remove($taxonomy);
@@ -102,7 +104,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
 
         if ($parent !== $term->getParent()) {
             if ($parent instanceof TaxonomyTerm && ($parent === $term || $parent->isDescendantOf($term))) {
-                throw new InvalidArgumentException('A term cannot be nested under itself or one of its descendants.');
+                throw new InvalidArgumentException($this->translator->trans('admin.taxonomies.errors.term_self_nested'));
             }
 
             $term->setParent($parent);
@@ -148,7 +150,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
             $current = $initialParentId;
             while (null !== $current) {
                 if (isset($visited[$current])) {
-                    throw new InvalidArgumentException(sprintf('Reorder would create a cycle involving term #%d.', $id));
+                    throw new InvalidArgumentException($this->translator->trans('admin.taxonomies.errors.reorder_cycle', ['{id}' => $id]));
                 }
 
                 $visited[$current] = true;
@@ -232,7 +234,7 @@ final readonly class TaxonomyManager implements TaxonomyManagerInterface
 
         $parent = $this->termRepository->find($parentId);
         if (null === $parent || $parent->getTaxonomy() !== $taxonomy) {
-            throw new InvalidArgumentException(sprintf('Parent term #%d does not belong to taxonomy "%s".', $parentId, $taxonomy->getSlug()));
+            throw new InvalidArgumentException($this->translator->trans('admin.taxonomies.errors.parent_wrong_taxonomy', ['{parentId}' => $parentId, '{taxonomy}' => $taxonomy->getSlug()]));
         }
 
         return $parent;

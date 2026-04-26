@@ -5,28 +5,32 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\MenuRepository;
+use App\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MenuRepository::class)]
 #[ORM\Table(name: 'menus')]
+#[ORM\HasLifecycleCallbacks]
 class Menu
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
     private string $name;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Assert\NotBlank]
     private string $location;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\OneToMany(targetEntity: MenuItem::class, mappedBy: 'menu', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => Order::Ascending->value])]
@@ -62,6 +66,18 @@ class Menu
     public function setLocation(string $location): static
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

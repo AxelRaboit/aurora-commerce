@@ -41,6 +41,8 @@ install-dev:
 	$(PNPM) install
 	make setup-dirs
 	make migrate
+	make sync-params
+	make sync-menus
 	make dev
 
 install-prod:
@@ -62,6 +64,8 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
 	$(PNPM) install --frozen-lockfile; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
+	$(CONSOLE) velox:application-parameter; \
+	$(CONSOLE) velox:menus:sync; \
 	$(PNPM) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
@@ -171,6 +175,12 @@ migration-generate:
 
 migration-diff:
 	$(CONSOLE) doctrine:migrations:diff
+
+sync-params: ## Synchronise application parameters (creates missing, deletes obsolete)
+	$(CONSOLE) velox:application-parameter
+
+sync-menus: ## Create missing menus for registered locations (primary, footer, …)
+	$(CONSOLE) velox:menus:sync
 
 schema-validate:
 	$(CONSOLE) doctrine:schema:validate -vvv

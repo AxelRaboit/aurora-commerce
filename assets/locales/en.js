@@ -35,6 +35,15 @@ export default {
         pagination: "Page {page} of {totalPages}",
         name: "Name",
         description: "Description",
+        view: "View",
+        close: "Close",
+        expand: "Expand",
+        collapse: "Collapse",
+        select_placeholder: "Select…",
+        select_to_pick: "Press enter to select",
+        select_selected: "Selected",
+        select_to_remove: "Press enter to remove",
+        remove: "Remove",
     },
     auth: {
         register: {
@@ -145,6 +154,8 @@ export default {
             add: "Add",
             editPostType: "Edit post type",
             deleteConfirm: 'Delete "{label}"?',
+            deleteHasPosts:
+                "Cannot delete a post type that still contains posts.",
             empty: "Select a post type on the left.",
             builtIn: "Built-in",
             slug: "Slug",
@@ -281,10 +292,15 @@ export default {
                 localization: "Localization",
                 branding: "Branding",
                 seo: "SEO",
+                system: "System",
             },
             save: "Save",
             saved: "Settings saved.",
             browseMedia: "Browse media",
+            noPageSelected:
+                "No page selected — showing the article list by default.",
+            searchPost: "Search a page…",
+            orId: "or enter ID:",
         },
         users: {
             searchPlaceholder: "Search by name or email…",
@@ -326,6 +342,9 @@ export default {
             dev_granted: "Dev role granted.",
             dev_revoked: "Dev role revoked.",
             deleteConfirm: "Delete {name}? This action cannot be undone.",
+            disableConfirm:
+                "Disable {name}'s account? They will no longer be able to sign in.",
+            enableConfirm: "Re-enable {name}'s account?",
             cannot_delete_self: "You cannot delete your own account.",
         },
         invitations: {
@@ -380,6 +399,7 @@ export default {
                 callout: "Callout",
                 mediaText: "Image + Text",
                 twoColumn: "2 Columns",
+                postsList: "Posts list",
             },
             ui: {
                 blockTunes: {
@@ -402,6 +422,8 @@ export default {
                     Filter: "Filter",
                     "Nothing found": "Nothing found",
                     "Nothing found. Try searching for something else.":
+                        "Nothing found. Try searching for something else.",
+                    nothingFoundExtended:
                         "Nothing found. Try searching for something else.",
                 },
             },
@@ -448,6 +470,19 @@ export default {
             callout: {
                 titlePlaceholder: "Title…",
                 messagePlaceholder: "Message…",
+            },
+            postsList: {
+                titleLabel: "Title (optional)",
+                postTypeLabel: "Content type",
+                columnsLabel: "Columns",
+                modeLabel: "Mode",
+                modeAutoLabel: "Full paginated list",
+                modeManualLabel: "Manual selection",
+                perPageLabel: "Posts per page",
+                searchPlaceholderLabel: "Search a post…",
+                selectedLabel: "Selected posts",
+                emptyLabel: "No post selected",
+                noResultsLabel: "No results",
             },
             templates: {
                 title: "Choose a template",
@@ -533,6 +568,11 @@ export default {
             deletedForever: "Content permanently deleted.",
             restored: "Content restored.",
             trashedBanner: "This post is in the trash.",
+            statusTrashed: "Trash",
+            emptyTrash: "Empty trash",
+            emptyTrashConfirm:
+                "Permanently delete all posts in the trash? This action cannot be undone.",
+            emptyTrashDone: "{count} post(s) permanently deleted.",
             tabs: {
                 active: "Active",
                 trash: "Trash",
@@ -545,6 +585,7 @@ export default {
             postType: "Content type",
             terms: "Terms",
             termsPickerEmpty: "No terms in this taxonomy yet.",
+            commentsEnabled: "Comments",
             relatedPosts: {
                 title: "Related posts",
                 searchPlaceholder: "Search for a post to link…",
@@ -573,7 +614,7 @@ export default {
                 },
                 jsonLd: "JSON-LD (schema.org)",
                 jsonLdPlaceholder:
-                    'JSON-LD object to embed inside <script type="application/ld+json">',
+                    "JSON-LD object embedded in a script application/ld+json tag",
                 jsonLdMustBeObject: "JSON-LD must be an object.",
                 generateArticle: "Generate Article",
             },
@@ -684,6 +725,7 @@ export default {
             content: "Comment",
             date: "Date",
             status: "Status",
+            reactions: "Reactions",
             deleteConfirm: "Delete this comment?",
             approveSuccess: "Comment approved.",
             spamSuccess: "Comment marked as spam.",
@@ -754,6 +796,59 @@ export default {
                 labelRequired: "Label is required.",
             },
         },
+        menus: {
+            title: "Menus",
+            empty: "No menus yet.",
+            createMenu: "Create menu",
+            editMenu: "Edit menu",
+            name: "Name",
+            location: "Location",
+            locationPlaceholder: "header, footer, sidebar…",
+            description: "Description",
+            items: "Items",
+            addItem: "Add item",
+            itemsEmpty: "No items in this menu.",
+            selectHint: "Select a menu on the left or create a new one.",
+            deleteConfirm:
+                'Delete menu "{name}"? All its items will be removed.',
+            deleteItemConfirm: "Delete this menu item?",
+            editItem: "Edit item",
+            targetType: "Target type",
+            target: "Target",
+            customUrl: "Custom URL",
+            translations: "Per-language labels",
+            translationsHint:
+                "Default label is taken from the target. Override per language if needed.",
+            translationPlaceholder: "Custom label (optional)",
+            visibility: "Visibility",
+            cssClass: "CSS classes",
+            openInNewTab: "Open in a new tab",
+            allTypes: "All types",
+            allTaxonomies: "All taxonomies",
+            searchPostsPlaceholder: "Search a post or page…",
+            searchTermsPlaceholder: "Search a term…",
+            protected: "System",
+            protectedHint: "Essential menu — cannot be deleted.",
+            locationLockedHint: "Location is locked for system menus.",
+            errors: {
+                translation_required_for_custom_url:
+                    "At least one language label is required for a custom URL.",
+                menu_protected: "This menu is essential and cannot be deleted.",
+                location_locked:
+                    "The location of a system menu cannot be changed.",
+                name_required: "Name is required.",
+                location_format:
+                    "Location must only contain lowercase letters, digits, dashes or underscores.",
+                location_taken:
+                    "This location is already used by another menu.",
+                target_required: "A target is required for this item type.",
+                custom_url_required: "A URL is required.",
+                target_type_invalid: "Invalid target type.",
+                parent_invalid: "Invalid parent.",
+                parent_cycle:
+                    "Cannot: this would create a cycle in the hierarchy.",
+            },
+        },
         themes: {
             title: "Themes",
             new: "New theme",
@@ -779,6 +874,14 @@ export default {
                 border: "Border",
                 text: "Text",
             },
+            headerContent: "Content",
+            headerModeDefault: "Site name",
+            headerModeText: "Custom text",
+            headerModeImage: "Media image",
+            headerCustomText: "Custom text",
+            headerLogoMediaId: "Media ID",
+            footerText: "Footer text",
+            slugLabel: "Slug",
             headerMediaHint: "Find the ID in Media → open a media → ID field.",
             headerTextPlaceholder: "My site",
             configHint:
@@ -822,4 +925,85 @@ export default {
         selectPlaceholder: "Choose…",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+    front: {
+        login: {
+            title: "Sign in",
+            heading: "Sign in",
+            subtitle: "Sign in to your personal space.",
+            email: "Email address",
+            email_placeholder: "you{'@'}example.com",
+            password: "Password",
+            forgot_password: "Forgot password?",
+            remember_me: "Remember me",
+            submit: "Sign in",
+            no_account: "Don't have an account?",
+            register_link: "Create an account",
+        },
+        register: {
+            title: "Create an account",
+            heading: "Create an account",
+            subtitle: "Join our community.",
+            name: "Full name",
+            name_placeholder: "John Doe",
+            email: "Email address",
+            email_placeholder: "you{'@'}example.com",
+            password: "Password",
+            submit: "Create account",
+            already_account: "Already have an account?",
+            login_link: "Sign in",
+            confirm_title: "Check your email",
+            confirm_heading: "Check your email",
+            confirm_message:
+                "A confirmation email has been sent. Click the link to activate your account.",
+            closed_title: "Registrations closed",
+            closed_desc: "New registrations are disabled at the moment.",
+        },
+        forgot_password: {
+            title: "Forgot password",
+            heading: "Forgot your password?",
+            subtitle:
+                "Enter your email address and we'll send you a link to reset your password.",
+            submit: "Send reset link",
+            sent: "A password reset email has been sent. Check your inbox.",
+            back_login: "Back to sign in",
+        },
+        reset_password: {
+            title: "Reset password",
+            heading: "Reset your password",
+            subtitle: "Choose a new password for your account.",
+            new_password: "New password",
+            confirm_password: "Confirm password",
+            submit: "Reset password",
+            invalid_link:
+                "This link is invalid or has expired. Please submit a new request.",
+            success: "Your password has been reset. You can now sign in.",
+        },
+        verify_email: {
+            title: "Email verification",
+            success_heading: "Email confirmed!",
+            success_message:
+                "Your email address has been verified. You can now sign in.",
+            error_heading: "Invalid or expired link",
+            error_message:
+                "This verification link is invalid or has expired. Please register again.",
+        },
+        account: {
+            title: "My account",
+            heading: "My account",
+            name: "Name",
+            email: "Email",
+            logout: "Sign out",
+        },
+        errors: {
+            name_required: "Name is required.",
+            email_required: "Email address is required.",
+            email_invalid: "Invalid email address.",
+            email_taken: "This email address is already in use.",
+            password_required: "Password is required.",
+            password_too_short: "Password must be at least 8 characters.",
+            email_not_verified:
+                "Please verify your email address before signing in.",
+            account_disabled: "Your account has been disabled.",
+        },
+    },
 };

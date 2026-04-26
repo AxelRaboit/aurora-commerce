@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\ThemeInput;
 use App\Entity\Theme;
 use App\Enum\HttpMethodEnum;
@@ -12,6 +12,7 @@ use App\Enum\UserRoleEnum;
 use App\Manager\ThemeManager;
 use App\Repository\ThemeRepository;
 use App\Serializer\ThemeSerializer;
+use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,19 +21,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/themes', name: 'admin_themes')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 final class ThemesController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly ThemeRepository $themeRepository,
         private readonly ThemeManager $themeManager,
         private readonly ThemeSerializer $themeSerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,9 +50,9 @@ final class ThemesController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $input = ThemeInput::fromArray($this->decodeJson($request));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['ok' => false, 'errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
@@ -78,9 +78,9 @@ final class ThemesController extends AbstractController
     public function update(Theme $theme, Request $request): JsonResponse
     {
         $input = ThemeInput::fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['ok' => false, 'errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->themeManager->update($theme, $input);

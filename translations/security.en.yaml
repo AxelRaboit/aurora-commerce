@@ -10,3 +10,7 @@
 'User account is expired.': 'User account has expired.'
 'User credentials have expired.': 'User credentials have expired.'
 'User does not exist.': 'User does not exist.'
+admin.errors.email_not_verified: 'Please verify your email address before signing in.'
+admin.errors.account_disabled: 'Your account has been disabled.'
+front.errors.email_not_verified: 'Please verify your email address before signing in.'
+front.errors.account_disabled: 'Your account has been disabled.'

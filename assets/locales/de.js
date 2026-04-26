@@ -35,6 +35,15 @@ export default {
         pagination: "Seite {page} von {totalPages}",
         name: "Name",
         description: "Beschreibung",
+        view: "Ansehen",
+        close: "Schließen",
+        expand: "Erweitern",
+        collapse: "Einklappen",
+        select_placeholder: "Auswählen…",
+        select_to_pick: "Enter zum Auswählen",
+        select_selected: "Ausgewählt",
+        select_to_remove: "Enter zum Entfernen",
+        remove: "Entfernen",
     },
     auth: {
         register: {
@@ -147,6 +156,8 @@ export default {
             add: "Hinzufügen",
             editPostType: "Inhaltstyp bearbeiten",
             deleteConfirm: '„{label}" löschen?',
+            deleteHasPosts:
+                "Ein Inhaltstyp mit vorhandenen Inhalten kann nicht gelöscht werden.",
             empty: "Wähle links einen Inhaltstyp aus.",
             builtIn: "Integriert",
             slug: "Slug",
@@ -288,6 +299,10 @@ export default {
             save: "Speichern",
             saved: "Einstellungen gespeichert.",
             browseMedia: "Medien durchsuchen",
+            noPageSelected:
+                "Keine Seite ausgewählt — zeigt standardmäßig die Artikelliste.",
+            searchPost: "Seite suchen…",
+            orId: "oder ID eingeben:",
         },
         users: {
             searchPlaceholder: "Nach Name oder E-Mail suchen…",
@@ -330,6 +345,9 @@ export default {
             dev_revoked: "Dev-Rolle entzogen.",
             deleteConfirm:
                 "{name} löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+            disableConfirm:
+                "Konto von {name} deaktivieren? Der Benutzer kann sich nicht mehr anmelden.",
+            enableConfirm: "Konto von {name} reaktivieren?",
             cannot_delete_self: "Du kannst dein eigenes Konto nicht löschen.",
         },
         invitations: {
@@ -384,6 +402,7 @@ export default {
                 callout: "Callout",
                 mediaText: "Bild + Text",
                 twoColumn: "2 Spalten",
+                postsList: "Beitragsliste",
             },
             ui: {
                 blockTunes: {
@@ -406,6 +425,8 @@ export default {
                     Filter: "Filtern",
                     "Nothing found": "Nichts gefunden",
                     "Nothing found. Try searching for something else.":
+                        "Nichts gefunden. Versuche einen anderen Begriff.",
+                    nothingFoundExtended:
                         "Nichts gefunden. Versuche einen anderen Begriff.",
                 },
             },
@@ -452,6 +473,19 @@ export default {
             callout: {
                 titlePlaceholder: "Titel…",
                 messagePlaceholder: "Nachricht…",
+            },
+            postsList: {
+                titleLabel: "Titel (optional)",
+                postTypeLabel: "Inhaltstyp",
+                columnsLabel: "Spalten",
+                modeLabel: "Modus",
+                modeAutoLabel: "Vollständige paginierte Liste",
+                modeManualLabel: "Manuelle Auswahl",
+                perPageLabel: "Beiträge pro Seite",
+                searchPlaceholderLabel: "Beitrag suchen…",
+                selectedLabel: "Ausgewählte Beiträge",
+                emptyLabel: "Kein Beitrag ausgewählt",
+                noResultsLabel: "Keine Ergebnisse",
             },
             templates: {
                 title: "Vorlage auswählen",
@@ -539,6 +573,11 @@ export default {
             deletedForever: "Inhalt endgültig gelöscht.",
             restored: "Inhalt wiederhergestellt.",
             trashedBanner: "Dieser Beitrag befindet sich im Papierkorb.",
+            statusTrashed: "Papierkorb",
+            emptyTrash: "Papierkorb leeren",
+            emptyTrashConfirm:
+                "Alle Inhalte im Papierkorb endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+            emptyTrashDone: "{count} Inhalt(e) endgültig gelöscht.",
             tabs: {
                 active: "Aktiv",
                 trash: "Papierkorb",
@@ -551,6 +590,7 @@ export default {
             postType: "Inhaltstyp",
             terms: "Begriffe",
             termsPickerEmpty: "Noch keine Begriffe in dieser Taxonomie.",
+            commentsEnabled: "Kommentare",
             relatedPosts: {
                 title: "Verwandte Beiträge",
                 searchPlaceholder: "Beitrag zum Verknüpfen suchen…",
@@ -579,7 +619,7 @@ export default {
                 },
                 jsonLd: "JSON-LD (schema.org)",
                 jsonLdPlaceholder:
-                    'JSON-LD-Objekt zum Einbetten in <script type="application/ld+json">',
+                    "JSON-LD-Objekt, eingebettet in einen script application/ld+json-Tag",
                 jsonLdMustBeObject: "JSON-LD muss ein Objekt sein.",
                 generateArticle: "Artikel generieren",
             },
@@ -691,6 +731,7 @@ export default {
             content: "Kommentar",
             date: "Datum",
             status: "Status",
+            reactions: "Reaktionen",
             deleteConfirm: "Diesen Kommentar löschen?",
             approveSuccess: "Kommentar genehmigt.",
             spamSuccess: "Kommentar als Spam markiert.",
@@ -763,6 +804,61 @@ export default {
                 labelRequired: "Die Bezeichnung ist erforderlich.",
             },
         },
+        menus: {
+            title: "Menüs",
+            empty: "Noch keine Menüs.",
+            createMenu: "Menü erstellen",
+            editMenu: "Menü bearbeiten",
+            name: "Name",
+            location: "Position",
+            locationPlaceholder: "header, footer, sidebar…",
+            description: "Beschreibung",
+            items: "Einträge",
+            addItem: "Eintrag hinzufügen",
+            itemsEmpty: "Keine Einträge in diesem Menü.",
+            selectHint: "Wähle links ein Menü aus oder erstelle ein neues.",
+            deleteConfirm:
+                'Menü „{name}" löschen? Alle Einträge werden entfernt.',
+            deleteItemConfirm: "Diesen Menüeintrag löschen?",
+            editItem: "Eintrag bearbeiten",
+            targetType: "Zieltyp",
+            target: "Ziel",
+            customUrl: "Benutzerdefinierte URL",
+            translations: "Bezeichnungen pro Sprache",
+            translationsHint:
+                "Die Standard-Bezeichnung kommt vom Ziel. Hier pro Sprache überschreiben falls nötig.",
+            translationPlaceholder: "Benutzerdefinierte Bezeichnung (optional)",
+            visibility: "Sichtbarkeit",
+            cssClass: "CSS-Klassen",
+            openInNewTab: "In neuem Tab öffnen",
+            allTypes: "Alle Typen",
+            allTaxonomies: "Alle Taxonomien",
+            searchPostsPlaceholder: "Beitrag oder Seite suchen…",
+            searchTermsPlaceholder: "Begriff suchen…",
+            protected: "System",
+            protectedHint: "Wesentliches Menü — kann nicht gelöscht werden.",
+            locationLockedHint: "Position ist für Systemmenüs gesperrt.",
+            errors: {
+                translation_required_for_custom_url:
+                    "Mindestens eine Sprachbezeichnung ist für eine benutzerdefinierte URL erforderlich.",
+                menu_protected:
+                    "Dieses Menü ist wesentlich und kann nicht gelöscht werden.",
+                location_locked:
+                    "Die Position eines Systemmenüs kann nicht geändert werden.",
+                name_required: "Name ist erforderlich.",
+                location_format:
+                    "Position darf nur Kleinbuchstaben, Ziffern, Bindestriche oder Unterstriche enthalten.",
+                location_taken:
+                    "Diese Position wird bereits von einem anderen Menü verwendet.",
+                target_required:
+                    "Ein Ziel ist für diesen Eintragstyp erforderlich.",
+                custom_url_required: "Eine URL ist erforderlich.",
+                target_type_invalid: "Ungültiger Zieltyp.",
+                parent_invalid: "Ungültiger übergeordneter Eintrag.",
+                parent_cycle:
+                    "Nicht möglich: würde eine Schleife in der Hierarchie erzeugen.",
+            },
+        },
         themes: {
             title: "Designs",
             new: "Neues Design",
@@ -788,6 +884,14 @@ export default {
                 border: "Rahmen",
                 text: "Text",
             },
+            headerContent: "Inhalt",
+            headerModeDefault: "Website-Name",
+            headerModeText: "Eigener Text",
+            headerModeImage: "Medienbild",
+            headerCustomText: "Eigener Text",
+            headerLogoMediaId: "Medien-ID",
+            footerText: "Fußzeilentext",
+            slugLabel: "Slug",
             headerMediaHint:
                 "Die ID finden Sie unter Medien → Medium öffnen → ID-Feld.",
             headerTextPlaceholder: "Meine Website",
@@ -833,4 +937,87 @@ export default {
         selectPlaceholder: "Auswählen…",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+    front: {
+        login: {
+            title: "Anmelden",
+            heading: "Anmelden",
+            subtitle: "Melde dich in deinem persönlichen Bereich an.",
+            email: "E-Mail-Adresse",
+            email_placeholder: "du{'@'}beispiel.de",
+            password: "Passwort",
+            forgot_password: "Passwort vergessen?",
+            remember_me: "Angemeldet bleiben",
+            submit: "Anmelden",
+            no_account: "Noch kein Konto?",
+            register_link: "Konto erstellen",
+        },
+        register: {
+            title: "Konto erstellen",
+            heading: "Konto erstellen",
+            subtitle: "Werde Teil unserer Community.",
+            name: "Vollständiger Name",
+            name_placeholder: "Max Mustermann",
+            email: "E-Mail-Adresse",
+            email_placeholder: "du{'@'}beispiel.de",
+            password: "Passwort",
+            submit: "Konto erstellen",
+            already_account: "Bereits ein Konto?",
+            login_link: "Anmelden",
+            confirm_title: "E-Mail überprüfen",
+            confirm_heading: "E-Mail überprüfen",
+            confirm_message:
+                "Eine Bestätigungs-E-Mail wurde gesendet. Klicke auf den Link, um dein Konto zu aktivieren.",
+            closed_title: "Registrierungen geschlossen",
+            closed_desc: "Neue Registrierungen sind derzeit deaktiviert.",
+        },
+        forgot_password: {
+            title: "Passwort vergessen",
+            heading: "Passwort vergessen?",
+            subtitle:
+                "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.",
+            submit: "Link senden",
+            sent: "Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet. Überprüfe deinen Posteingang.",
+            back_login: "Zurück zur Anmeldung",
+        },
+        reset_password: {
+            title: "Passwort zurücksetzen",
+            heading: "Neues Passwort festlegen",
+            subtitle: "Wähle ein neues Passwort für dein Konto.",
+            new_password: "Neues Passwort",
+            confirm_password: "Passwort bestätigen",
+            submit: "Passwort zurücksetzen",
+            invalid_link:
+                "Dieser Link ist ungültig oder abgelaufen. Bitte stelle eine neue Anfrage.",
+            success:
+                "Dein Passwort wurde zurückgesetzt. Du kannst dich jetzt anmelden.",
+        },
+        verify_email: {
+            title: "E-Mail-Verifizierung",
+            success_heading: "E-Mail bestätigt!",
+            success_message:
+                "Deine E-Mail-Adresse wurde verifiziert. Du kannst dich jetzt anmelden.",
+            error_heading: "Ungültiger oder abgelaufener Link",
+            error_message:
+                "Dieser Verifizierungslink ist ungültig oder abgelaufen. Bitte registriere dich erneut.",
+        },
+        account: {
+            title: "Mein Konto",
+            heading: "Mein Konto",
+            name: "Name",
+            email: "E-Mail",
+            logout: "Abmelden",
+        },
+        errors: {
+            name_required: "Name ist erforderlich.",
+            email_required: "E-Mail-Adresse ist erforderlich.",
+            email_invalid: "Ungültige E-Mail-Adresse.",
+            email_taken: "Diese E-Mail-Adresse wird bereits verwendet.",
+            password_required: "Passwort ist erforderlich.",
+            password_too_short:
+                "Das Passwort muss mindestens 8 Zeichen lang sein.",
+            email_not_verified:
+                "Bitte verifiziere deine E-Mail-Adresse vor der Anmeldung.",
+            account_disabled: "Dein Konto wurde deaktiviert.",
+        },
+    },
 };

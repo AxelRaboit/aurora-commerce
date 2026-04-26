@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\PostTypeManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\PostTypeFieldInput;
 use App\DTO\PostTypeInput;
 use App\Entity\PostType;
@@ -16,6 +16,7 @@ use App\Repository\PostTypeRepository;
 use App\Repository\TaxonomyRepository;
 use App\Serializer\PostTypeSerializer;
 use App\Serializer\TaxonomySerializer;
+use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/post-types', name: 'admin_post_types')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 class PostTypesController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly PostTypeRepository $postTypeRepository,
@@ -38,7 +38,7 @@ class PostTypesController extends AbstractController
         private readonly PostTypeManagerInterface $postTypeManager,
         private readonly PostTypeSerializer $postTypeSerializer,
         private readonly TaxonomySerializer $taxonomySerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -64,9 +64,9 @@ class PostTypesController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $input = PostTypeInput::fromArray($this->decodeJson($request));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -82,9 +82,9 @@ class PostTypesController extends AbstractController
     public function edit(PostType $postType, Request $request): JsonResponse
     {
         $input = PostTypeInput::fromArray($this->decodeJson($request));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -112,9 +112,9 @@ class PostTypesController extends AbstractController
     public function createField(PostType $postType, Request $request): JsonResponse
     {
         $input = PostTypeFieldInput::fromArray($this->decodeJson($request));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -129,15 +129,15 @@ class PostTypesController extends AbstractController
     #[Route('/{id}/fields/{fieldId}/edit', name: '_field_edit', methods: [HttpMethodEnum::Post->value])]
     public function editField(PostType $postType, int $fieldId, Request $request): JsonResponse
     {
-        $field = $this->findField($postType, $fieldId);
+        $field = $postType->findFieldById($fieldId);
         if (!$field instanceof PostTypeField) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 
         $input = PostTypeFieldInput::fromArray($this->decodeJson($request));
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -152,7 +152,7 @@ class PostTypesController extends AbstractController
     #[Route('/{id}/fields/{fieldId}/delete', name: '_field_delete', methods: [HttpMethodEnum::Post->value])]
     public function deleteField(PostType $postType, int $fieldId): JsonResponse
     {
-        $field = $this->findField($postType, $fieldId);
+        $field = $postType->findFieldById($fieldId);
         if (!$field instanceof PostTypeField) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
@@ -174,16 +174,5 @@ class PostTypesController extends AbstractController
         $this->postTypeManager->reorderFields($postType, $orderedIds);
 
         return $this->json(['success' => true, 'postType' => $this->postTypeSerializer->serialize($postType)]);
-    }
-
-    private function findField(PostType $postType, int $fieldId): ?PostTypeField
-    {
-        foreach ($postType->getFields() as $field) {
-            if ($field->getId() === $fieldId) {
-                return $field;
-            }
-        }
-
-        return null;
     }
 }

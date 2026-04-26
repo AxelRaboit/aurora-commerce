@@ -1,5 +1,7 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { computed, ref, watch } from "vue";
+import { useDebounce } from "@/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { X, ImagePlus } from "lucide-vue-next";
@@ -41,12 +43,8 @@ const search = ref("");
 const results = ref([]);
 const loading = ref(false);
 const open = ref(false);
-let timer = null;
 
-watch(search, () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(runSearch, 200);
-});
+watch(search, useDebounce(runSearch, 200));
 
 async function runSearch() {
     loading.value = true;
@@ -121,7 +119,7 @@ async function uploadMedia(event) {
     try {
         const body = new FormData();
         body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: "POST", body });
+        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (data.success) update(data.file?.id ?? null);
@@ -132,6 +130,7 @@ async function uploadMedia(event) {
         if (mediaInput.value) mediaInput.value.value = "";
     }
 }
+
 </script>
 
 <template>

@@ -1,0 +1,17 @@
+{% extends 'themes/default/layout.html.twig' %}
+
+{% block title %}{{ 'front.login.title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+    <div {{ vue_component('FrontLoginApp', {
+        checkPath: checkPath,
+        csrfToken: csrf_token('front_authenticate'),
+        locale: locale,
+        forgotPath: path('front_forgot_password', {locale: locale}),
+        registerPath: path('front_register', {locale: locale}),
+        registrationEnabled: context.setting('front_registration_enabled') == '1',
+        lastEmail: lastEmail,
+        errorMessage: error ? error.messageKey|trans(error.messageData, 'security') : '',
+        resetSuccess: app.request.query.get('reset') ? true : false,
+    }) }}></div>
+{% endblock %}

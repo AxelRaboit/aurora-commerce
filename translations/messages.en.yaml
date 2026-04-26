@@ -3,8 +3,54 @@ admin:
     approved: Request from {name} approved.
     purged: Processed requests deleted.
     rejected: Request from {name} rejected.
+  forms:
+    errors:
+      slug_format: The slug can only contain lowercase letters, numbers and hyphens.
+      slug_taken: This slug is already used for this language.
   invitations:
     sent: Invitation sent to {email}.
+  media:
+    errors:
+      folder_not_found: 'Folder #{id} not found.'
+      parent_folder_not_found: 'Parent folder #{id} not found.'
+      folder_self_nested: A folder cannot be nested under itself or one of its descendants.
+  menus:
+    preview:
+      untitled: (untitled)
+      unnamed: (unnamed)
+      post_deleted: ⚠ Post deleted
+      term_deleted: ⚠ Term deleted
+      post_type_deleted: ⚠ Post type deleted
+    targetTypes:
+      post: Post / Page
+      term: Taxonomy term
+      post_type_archive: Post type archive
+      home: Home
+      custom_url: Custom URL
+      front_login: Login page
+      front_register: Register page
+      front_account: My account
+      front_logout: Sign out
+    visibilities:
+      always: Always visible
+      guests_only: Guests only
+      authenticated_only: Authenticated only
+  postTypes:
+    errors:
+      slug_taken: 'A post type with slug "{slug}" already exists.'
+      builtin_protected: Built-in post types cannot be deleted.
+      has_posts: This post type contains posts and cannot be deleted.
+      field_name_taken: 'A field named "{name}" already exists on this post type.'
+  posts:
+    errors:
+      post_type_not_found: 'Post type #{id} not found.'
+  taxonomies:
+    errors:
+      slug_taken: 'A taxonomy with slug "{slug}" already exists.'
+      builtin_protected: Built-in taxonomies cannot be deleted.
+      term_self_nested: A term cannot be nested under itself or one of its descendants.
+      reorder_cycle: 'Reorder would create a cycle involving term #{id}.'
+      parent_wrong_taxonomy: 'Parent term #{parentId} does not belong to taxonomy "{taxonomy}".'
   tabs:
     access_requests: Access Requests
     invitations: Invitations
@@ -100,12 +146,26 @@ auth:
     password_confirm: Confirm password
     submit: Create account
     title: Create an account
+  register_confirm:
+    title: Check your email
+    heading: Check your email
+    message: A confirmation email has been sent. Click the link to activate your account.
+    login_link: Go to sign in
+    resend_hint: Didn't receive the email?
+    resend_link: Resend confirmation email
+    resent_success: The confirmation email has been resent.
   reset_password:
     instructions: Choose a new password for your account.
     invalid_link: This link is invalid or has expired.
     submit: Reset password
     success: Your password has been reset successfully.
     title: Reset password
+  verify_email:
+    title: Email verification
+    success_heading: Email confirmed!
+    success_message: Your email address has been verified. You can now sign in.
+    error_heading: Invalid or expired link
+    error_message: This verification link is invalid or has expired. Please register again.
 impersonation:
   banner: You are impersonating {name}
   leave: Leave
@@ -121,6 +181,53 @@ mail:
     heading: Invitation to join Velox
     intro: You have been invited to join {siteName}. Click the button below to activate
       your account and set your password.
+  verify_email:
+    cta: Confirm my email
+    expires: This link expires on {date}.
+    fallback_intro: 'If the button does not work, copy and paste this link into your
+      browser:'
+    footer_note: If you did not create an account, you can safely ignore this email.
+    greeting: Hi {name},
+    heading: Confirm your email address
+    intro: Thanks for signing up at {siteName}. Click the button below to confirm
+      your email address and activate your account.
+  reset_password:
+    cta: Reset my password
+    expires: This link expires in 1 hour.
+    expires_at: This link expires on {date}.
+    fallback_intro: 'If the button does not work, copy and paste this link into your
+      browser:'
+    footer_note: If you did not request a password reset, you can safely ignore this
+      email.
+    greeting: Hi {name},
+    heading: Reset your password
+    intro: You requested a password reset on {siteName}. Click the button below to
+      choose a new password.
+  access_request_admin:
+    heading: New access request
+    intro: A new access request has been received.
+    label_name: Name
+    label_email: Email
+    label_message: Message
+    cta: View in admin
+    footer_note: This email was sent automatically, please do not reply.
+  access_request_approved:
+    heading: Your request has been approved
+    greeting: Hi {name},
+    intro: Your access request for {siteName} has been approved.
+    credentials_intro: 'An account has been created for you with the following credentials:'
+    label_email: Email
+    label_password: Password
+    password_note: Remember to change your password after your first login.
+    existing_account: You can sign in with your existing account.
+    cta: Go to admin
+    footer_note: This email was sent automatically, please do not reply.
+  access_request_rejected:
+    heading: Access request not granted
+    greeting: Hi {name},
+    intro: After review, your access request could not be granted.
+    retry: If you think this is a mistake, feel free to submit a new request.
+    footer_note: This email was sent automatically, please do not reply.
 media:
   errors:
     alt_required: Alternative text is required.
@@ -151,3 +258,93 @@ profile:
     name_required: Name is required.
     password_mismatch: Passwords do not match.
     password_too_short: The password must be at least 8 characters long.
+errors:
+  page_not_found:
+    title: Page not found
+    message: The page you are looking for does not exist or has been moved.
+    back: Back to home
+  server_error:
+    title: An error occurred
+    message: The server encountered an unexpected problem. Our team has been notified. Please try again in a few moments.
+    back: Back to home
+front:
+  menu:
+    home: Home
+    login: Sign in
+    register: Sign up
+    account: My account
+    logout: Sign out
+    label: Menu
+  theme:
+    no_posts: No posts published yet.
+    no_content: No content.
+  login:
+    title: Sign in
+    heading: Sign in
+    subtitle: Sign in to your personal space.
+    email: Email address
+    email_placeholder: "you@example.com"
+    password: Password
+    forgot_password: Forgot password?
+    remember_me: Remember me
+    submit: Sign in
+    no_account: Don't have an account?
+    register_link: Create an account
+  register:
+    title: Create an account
+    heading: Create an account
+    subtitle: Join our community.
+    name: Full name
+    name_placeholder: John Doe
+    email: Email address
+    email_placeholder: "you@example.com"
+    password: Password
+    submit: Create account
+    already_account: Already have an account?
+    login_link: Sign in
+    confirm_title: Check your email
+    confirm_heading: Check your email
+    confirm_message: A confirmation email has been sent. Click the link to activate your account.
+    closed_title: Registrations closed
+    closed_desc: New registrations are disabled at the moment.
+    resend_hint: Didn't receive the email?
+    resend_link: Resend confirmation email
+    resent_success: The confirmation email has been resent.
+  forgot_password:
+    title: Forgot password
+    heading: Forgot your password?
+    subtitle: Enter your email address and we'll send you a link to reset your password.
+    submit: Send reset link
+    sent: A password reset email has been sent. Check your inbox.
+    back_login: Back to sign in
+  reset_password:
+    title: Reset password
+    heading: Reset your password
+    subtitle: Choose a new password for your account.
+    new_password: New password
+    confirm_password: Confirm password
+    submit: Reset password
+    invalid_link: This link is invalid or has expired. Please submit a new request.
+    success: Your password has been reset. You can now sign in.
+  verify_email:
+    title: Email verification
+    success_heading: Email confirmed!
+    success_message: Your email address has been verified. You can now sign in.
+    error_heading: Invalid or expired link
+    error_message: This verification link is invalid or has expired. Please register again.
+  account:
+    title: My account
+    heading: My account
+    name: Name
+    email: Email
+    logout: Sign out
+  errors:
+    name_required: Name is required.
+    email_required: Email address is required.
+    email_invalid: Invalid email address.
+    email_taken: This email address is already in use.
+    password_required: Password is required.
+    password_too_short: Password must be at least 8 characters.
+    passwords_mismatch: Passwords do not match.
+    email_not_verified: Please verify your email address before signing in.
+    account_disabled: Your account has been disabled.

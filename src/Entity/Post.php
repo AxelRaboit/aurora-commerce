@@ -41,6 +41,9 @@ class Post implements TimestampableInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $deletedAt = null;
 
+    #[ORM\Column(options: ['default' => true])]
+    private bool $commentsEnabled = true;
+
     #[ORM\ManyToOne(targetEntity: PostType::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private PostType $postType;
@@ -223,6 +226,18 @@ class Post implements TimestampableInterface
     public function isTrashed(): bool
     {
         return $this->deletedAt instanceof DateTimeImmutable;
+    }
+
+    public function isCommentsEnabled(): bool
+    {
+        return $this->commentsEnabled;
+    }
+
+    public function setCommentsEnabled(bool $commentsEnabled): static
+    {
+        $this->commentsEnabled = $commentsEnabled;
+
+        return $this;
     }
 
     /**

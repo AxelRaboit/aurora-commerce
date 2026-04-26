@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/composables/useDateFormat.js";
@@ -63,7 +64,7 @@ async function submitComment(parentId, activeForm) {
     errors.value = {};
     try {
         const response = await fetch(props.submitPath, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 authorName: activeForm.authorName,
@@ -94,7 +95,7 @@ async function react(commentId, type) {
     const url = props.reactPathTemplate.replace("__commentId__", String(commentId));
     try {
         const response = await fetch(url, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type }),
         });

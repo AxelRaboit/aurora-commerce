@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\UserManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\PaginationRequest;
 use App\DTO\UserInput;
 use App\DTO\UserInviteInput;
@@ -14,6 +14,7 @@ use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use App\Serializer\UserSerializer;
+use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,19 +22,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/users', name: 'admin_users')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 final class UsersController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
         private readonly UserSerializer $userSerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -81,13 +81,9 @@ final class UsersController extends AbstractController
     {
         $input = UserInviteInput::fromRequest($request);
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)]);
-        }
-
-        if ($this->userManager->isEmailTaken($input->email)) {
-            return $this->json(['ok' => false, 'errors' => ['email' => 'admin.users.errors.email_taken']]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['ok' => false, 'errors' => $errors]);
         }
 
         try {
@@ -109,19 +105,17 @@ final class UsersController extends AbstractController
 
         $input = UserInput::fromRequest($request);
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['ok' => false, 'errors' => $this->formatViolations($violations)]);
-        }
-
-        if ($this->userManager->isEmailTaken($input->email, $user)) {
-            return $this->json(['ok' => false, 'errors' => ['email' => 'admin.users.errors.email_taken']]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['ok' => false, 'errors' => $errors]);
         }
 
         try {
             $this->userManager->updateWithRole($user, $input->name, $input->email, $input->role);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['ok' => false, 'errors' => ['role' => $invalidArgumentException->getMessage()]]);
+            $field = str_contains($invalidArgumentException->getMessage(), 'email') ? 'email' : 'role';
+
+            return $this->json(['ok' => false, 'errors' => [$field => $invalidArgumentException->getMessage()]]);
         }
 
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);

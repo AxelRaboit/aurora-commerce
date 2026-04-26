@@ -35,6 +35,15 @@ export default {
         pagination: "Página {page} de {totalPages}",
         name: "Nombre",
         description: "Descripción",
+        view: "Ver",
+        close: "Cerrar",
+        expand: "Expandir",
+        collapse: "Contraer",
+        select_placeholder: "Seleccionar…",
+        select_to_pick: "Pulsa Enter para seleccionar",
+        select_selected: "Seleccionado",
+        select_to_remove: "Pulsa Enter para quitar",
+        remove: "Quitar",
     },
     auth: {
         register: {
@@ -147,6 +156,8 @@ export default {
             add: "Añadir",
             editPostType: "Editar tipo de contenido",
             deleteConfirm: "¿Eliminar «{label}»?",
+            deleteHasPosts:
+                "No se puede eliminar un tipo de contenido que aún contiene contenidos.",
             empty: "Selecciona un tipo de contenido a la izquierda.",
             builtIn: "Integrado",
             slug: "Slug",
@@ -288,6 +299,10 @@ export default {
             save: "Guardar",
             saved: "Ajustes guardados.",
             browseMedia: "Explorar medios",
+            noPageSelected:
+                "Ninguna página seleccionada — muestra la lista de artículos por defecto.",
+            searchPost: "Buscar una página…",
+            orId: "o introducir el ID:",
         },
         users: {
             searchPlaceholder: "Buscar por nombre o email…",
@@ -330,6 +345,9 @@ export default {
             dev_revoked: "Rol Dev retirado.",
             deleteConfirm:
                 "¿Eliminar {name}? Esta acción no se puede deshacer.",
+            disableConfirm:
+                "¿Desactivar la cuenta de {name}? El usuario no podrá iniciar sesión.",
+            enableConfirm: "¿Reactivar la cuenta de {name}?",
             cannot_delete_self: "No puedes eliminar tu propia cuenta.",
         },
         invitations: {
@@ -386,6 +404,7 @@ export default {
                 callout: "Callout",
                 mediaText: "Imagen + Texto",
                 twoColumn: "2 Columnas",
+                postsList: "Lista de artículos",
             },
             ui: {
                 blockTunes: {
@@ -408,6 +427,8 @@ export default {
                     Filter: "Filtrar",
                     "Nothing found": "Sin resultados",
                     "Nothing found. Try searching for something else.":
+                        "Sin resultados. Prueba con otro término.",
+                    nothingFoundExtended:
                         "Sin resultados. Prueba con otro término.",
                 },
             },
@@ -454,6 +475,19 @@ export default {
             callout: {
                 titlePlaceholder: "Título…",
                 messagePlaceholder: "Mensaje…",
+            },
+            postsList: {
+                titleLabel: "Título (opcional)",
+                postTypeLabel: "Tipo de contenido",
+                columnsLabel: "Columnas",
+                modeLabel: "Modo",
+                modeAutoLabel: "Lista completa paginada",
+                modeManualLabel: "Selección manual",
+                perPageLabel: "Artículos por página",
+                searchPlaceholderLabel: "Buscar un artículo…",
+                selectedLabel: "Artículos seleccionados",
+                emptyLabel: "Ningún artículo seleccionado",
+                noResultsLabel: "Sin resultados",
             },
             templates: {
                 title: "Elegir una plantilla",
@@ -541,6 +575,12 @@ export default {
             deletedForever: "Contenido eliminado definitivamente.",
             restored: "Contenido restaurado.",
             trashedBanner: "Este artículo está en la papelera.",
+            statusTrashed: "Papelera",
+            emptyTrash: "Vaciar papelera",
+            emptyTrashConfirm:
+                "¿Eliminar definitivamente todos los contenidos de la papelera? Esta acción es irreversible.",
+            emptyTrashDone:
+                "{count} contenido(s) eliminado(s) definitivamente.",
             tabs: {
                 active: "Activos",
                 trash: "Papelera",
@@ -553,6 +593,7 @@ export default {
             postType: "Tipo de contenido",
             terms: "Términos",
             termsPickerEmpty: "Sin términos en esta taxonomía todavía.",
+            commentsEnabled: "Comentarios",
             relatedPosts: {
                 title: "Artículos relacionados",
                 searchPlaceholder: "Buscar un artículo para vincular…",
@@ -581,7 +622,7 @@ export default {
                 },
                 jsonLd: "JSON-LD (schema.org)",
                 jsonLdPlaceholder:
-                    'Objeto JSON-LD para inyectar en <script type="application/ld+json">',
+                    "Objeto JSON-LD incrustado en una etiqueta script application/ld+json",
                 jsonLdMustBeObject: "El JSON-LD debe ser un objeto.",
                 generateArticle: "Generar Artículo",
             },
@@ -693,6 +734,7 @@ export default {
             content: "Comentario",
             date: "Fecha",
             status: "Estado",
+            reactions: "Reacciones",
             deleteConfirm: "¿Eliminar este comentario?",
             approveSuccess: "Comentario aprobado.",
             spamSuccess: "Comentario marcado como spam.",
@@ -765,6 +807,60 @@ export default {
                 labelRequired: "La etiqueta es obligatoria.",
             },
         },
+        menus: {
+            title: "Menús",
+            empty: "Aún no hay menús.",
+            createMenu: "Crear menú",
+            editMenu: "Editar menú",
+            name: "Nombre",
+            location: "Ubicación",
+            locationPlaceholder: "header, footer, sidebar…",
+            description: "Descripción",
+            items: "Elementos",
+            addItem: "Añadir elemento",
+            itemsEmpty: "No hay elementos en este menú.",
+            selectHint: "Selecciona un menú a la izquierda o crea uno nuevo.",
+            deleteConfirm:
+                "¿Eliminar el menú «{name}»? Todos sus elementos serán eliminados.",
+            deleteItemConfirm: "¿Eliminar este elemento del menú?",
+            editItem: "Editar elemento",
+            targetType: "Tipo de destino",
+            target: "Destino",
+            customUrl: "URL personalizada",
+            translations: "Etiquetas por idioma",
+            translationsHint:
+                "La etiqueta por defecto viene del destino. Sobreescríbela por idioma si lo necesitas.",
+            translationPlaceholder: "Etiqueta personalizada (opcional)",
+            visibility: "Visibilidad",
+            cssClass: "Clases CSS",
+            openInNewTab: "Abrir en una nueva pestaña",
+            allTypes: "Todos los tipos",
+            allTaxonomies: "Todas las taxonomías",
+            searchPostsPlaceholder: "Buscar un artículo o página…",
+            searchTermsPlaceholder: "Buscar un término…",
+            protected: "Sistema",
+            protectedHint: "Menú esencial — no se puede eliminar.",
+            locationLockedHint:
+                "La ubicación está bloqueada para menús del sistema.",
+            errors: {
+                translation_required_for_custom_url:
+                    "Se requiere al menos una etiqueta de idioma para una URL personalizada.",
+                menu_protected: "Este menú es esencial y no se puede eliminar.",
+                location_locked:
+                    "La ubicación de un menú del sistema no se puede cambiar.",
+                name_required: "El nombre es obligatorio.",
+                location_format:
+                    "La ubicación solo puede contener letras minúsculas, dígitos, guiones o guiones bajos.",
+                location_taken: "Esta ubicación ya está en uso por otro menú.",
+                target_required:
+                    "Se requiere un destino para este tipo de elemento.",
+                custom_url_required: "Se requiere una URL.",
+                target_type_invalid: "Tipo de destino inválido.",
+                parent_invalid: "Padre inválido.",
+                parent_cycle:
+                    "No es posible: crearía un ciclo en la jerarquía.",
+            },
+        },
         themes: {
             title: "Temas",
             new: "Nuevo tema",
@@ -790,6 +886,14 @@ export default {
                 border: "Borde",
                 text: "Texto",
             },
+            headerContent: "Contenido",
+            headerModeDefault: "Nombre del sitio",
+            headerModeText: "Texto personalizado",
+            headerModeImage: "Imagen del medio",
+            headerCustomText: "Texto personalizado",
+            headerLogoMediaId: "ID del medio",
+            footerText: "Texto del pie de página",
+            slugLabel: "Slug",
             headerMediaHint:
                 "Encuentra el ID en Medios → abre un medio → campo ID.",
             headerTextPlaceholder: "Mi sitio",
@@ -835,4 +939,88 @@ export default {
         selectPlaceholder: "Elegir…",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+    front: {
+        login: {
+            title: "Iniciar sesión",
+            heading: "Iniciar sesión",
+            subtitle: "Accede a tu espacio personal.",
+            email: "Correo electrónico",
+            email_placeholder: "tú{'@'}ejemplo.com",
+            password: "Contraseña",
+            forgot_password: "¿Olvidaste tu contraseña?",
+            remember_me: "Recordarme",
+            submit: "Iniciar sesión",
+            no_account: "¿No tienes cuenta?",
+            register_link: "Crear una cuenta",
+        },
+        register: {
+            title: "Crear una cuenta",
+            heading: "Crear una cuenta",
+            subtitle: "Únete a nuestra comunidad.",
+            name: "Nombre completo",
+            name_placeholder: "Juan García",
+            email: "Correo electrónico",
+            email_placeholder: "tú{'@'}ejemplo.com",
+            password: "Contraseña",
+            submit: "Crear cuenta",
+            already_account: "¿Ya tienes cuenta?",
+            login_link: "Iniciar sesión",
+            confirm_title: "Revisa tu correo",
+            confirm_heading: "Revisa tu correo",
+            confirm_message:
+                "Se ha enviado un correo de confirmación. Haz clic en el enlace para activar tu cuenta.",
+            closed_title: "Registros cerrados",
+            closed_desc:
+                "Los nuevos registros están desactivados por el momento.",
+        },
+        forgot_password: {
+            title: "Contraseña olvidada",
+            heading: "¿Olvidaste tu contraseña?",
+            subtitle:
+                "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+            submit: "Enviar enlace",
+            sent: "Se ha enviado un correo para restablecer la contraseña. Revisa tu bandeja de entrada.",
+            back_login: "Volver al inicio de sesión",
+        },
+        reset_password: {
+            title: "Restablecer contraseña",
+            heading: "Nueva contraseña",
+            subtitle: "Elige una nueva contraseña para tu cuenta.",
+            new_password: "Nueva contraseña",
+            confirm_password: "Confirmar contraseña",
+            submit: "Restablecer contraseña",
+            invalid_link:
+                "Este enlace es inválido o ha expirado. Por favor realiza una nueva solicitud.",
+            success:
+                "Tu contraseña ha sido restablecida. Ahora puedes iniciar sesión.",
+        },
+        verify_email: {
+            title: "Verificación de correo",
+            success_heading: "¡Correo confirmado!",
+            success_message:
+                "Tu dirección de correo ha sido verificada. Ahora puedes iniciar sesión.",
+            error_heading: "Enlace inválido o expirado",
+            error_message:
+                "Este enlace de verificación es inválido o ha expirado. Por favor regístrate de nuevo.",
+        },
+        account: {
+            title: "Mi cuenta",
+            heading: "Mi cuenta",
+            name: "Nombre",
+            email: "Correo electrónico",
+            logout: "Cerrar sesión",
+        },
+        errors: {
+            name_required: "El nombre es obligatorio.",
+            email_required: "La dirección de correo es obligatoria.",
+            email_invalid: "Dirección de correo inválida.",
+            email_taken: "Esta dirección de correo ya está en uso.",
+            password_required: "La contraseña es obligatoria.",
+            password_too_short:
+                "La contraseña debe tener al menos 8 caracteres.",
+            email_not_verified:
+                "Por favor verifica tu correo antes de iniciar sesión.",
+            account_disabled: "Tu cuenta ha sido desactivada.",
+        },
+    },
 };

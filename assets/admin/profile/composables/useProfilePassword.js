@@ -1,3 +1,4 @@
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -25,7 +26,7 @@ export function useProfilePassword(passwordPath) {
                 required(t("profile.errors.current_password_invalid"))(
                     currentPassword.value,
                 ),
-            password: () => passwordValidator(translate)(newPassword.value),
+            password: () => passwordValidator(t)(newPassword.value),
             password_confirmation: () => {
                 if (
                     newPassword.value &&
@@ -41,7 +42,7 @@ export function useProfilePassword(passwordPath) {
         passwordLoading.value = true;
         try {
             const response = await fetch(passwordPath, {
-                method: "POST",
+                method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     current_password: currentPassword.value,

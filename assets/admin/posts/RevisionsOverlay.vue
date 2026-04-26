@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";
@@ -75,7 +76,7 @@ async function restore() {
     restoring.value = true;
     try {
         const response = await fetch(`/admin/posts/${props.postId}/revisions/${selectedRevision.value.id}/restore`, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);

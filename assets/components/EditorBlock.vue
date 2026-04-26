@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, onMounted, onBeforeUnmount, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import EditorJS from "@editorjs/editorjs";
@@ -18,6 +19,7 @@ import Undo from "editorjs-undo";
 import MediaTextBlock from "@/utils/editorjs/MediaTextBlock.js";
 import TwoColumnBlock from "@/utils/editorjs/TwoColumnBlock.js";
 import CalloutBlock from "@/utils/editorjs/CalloutBlock.js";
+import PostsListBlock from "@/utils/editorjs/PostsListBlock.js";
 import { configureMediaPickerLabels } from "@/utils/mediaPicker.js";
 
 const { t } = useI18n();
@@ -36,6 +38,7 @@ const props = defineProps({
     modelValue: { type: Array, default: () => [] },
     placeholder: { type: String, default: "" },
     uploadUrl: { type: String, default: "/admin/media/upload" },
+    postTypes: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -46,11 +49,19 @@ const registerRender = inject("registerEditorRender", null);
 
 let editor = null;
 let ready = false;
+let lastEmittedJson = JSON.stringify(props.modelValue);
+
+function emitIfChanged(blocks) {
+    const json = JSON.stringify(blocks);
+    if (json === lastEmittedJson) return;
+    lastEmittedJson = json;
+    emit("update:modelValue", blocks);
+}
 
 async function flush() {
     if (editor && ready) {
         const data = await editor.save();
-        emit("update:modelValue", data.blocks);
+        emitIfChanged(data.blocks);
     }
 }
 
@@ -58,7 +69,7 @@ async function renderBlocks(blocks) {
     if (!editor || !ready) return;
     await editor.render({ blocks });
     const data = await editor.save();
-    emit("update:modelValue", data.blocks);
+    emitIfChanged(data.blocks);
 }
 
 onMounted(async () => {
@@ -88,7 +99,7 @@ onMounted(async () => {
                     popover: {
                         Filter:           t("admin.editor.ui.popover.Filter"),
                         "Nothing found":  t("admin.editor.ui.popover.Nothing found"),
-                        "Nothing found. Try searching for something else.": t("admin.editor.ui.popover.Nothing found. Try searching for something else."),
+                        "Nothing found. Try searching for something else.": t("admin.editor.ui.popover.nothingFoundExtended"),
                     },
                 },
                 toolNames: {
@@ -109,6 +120,7 @@ onMounted(async () => {
                     "Callout":        t("admin.editor.toolNames.callout"),
                     "Image + Text":   t("admin.editor.toolNames.mediaText"),
                     "Two Columns":    t("admin.editor.toolNames.twoColumn"),
+                    "Liste d'articles": t("admin.editor.toolNames.postsList"),
                 },
                 blockTunes: {
                     delete: {
@@ -155,7 +167,7 @@ onMounted(async () => {
                             const body = new FormData();
                             body.append("image", file);
                             try {
-                                const response = await fetch(props.uploadUrl, { method: "POST", body });
+                                const response = await fetch(props.uploadUrl, { method: HttpMethod.Post, body });
                                 if (!response.ok) return { success: 0 };
                                 return response.json();
                             } catch {
@@ -233,11 +245,28 @@ onMounted(async () => {
             twoColumn: {
                 class: TwoColumnBlock,
             },
+            postsList: {
+                class: PostsListBlock,
+                config: {
+                    postTypes: props.postTypes,
+                    titleLabel: t("admin.editor.postsList.titleLabel"),
+                    postTypeLabel: t("admin.editor.postsList.postTypeLabel"),
+                    columnsLabel: t("admin.editor.postsList.columnsLabel"),
+                    modeLabel: t("admin.editor.postsList.modeLabel"),
+                    modeAutoLabel: t("admin.editor.postsList.modeAutoLabel"),
+                    modeManualLabel: t("admin.editor.postsList.modeManualLabel"),
+                    perPageLabel: t("admin.editor.postsList.perPageLabel"),
+                    searchPlaceholderLabel: t("admin.editor.postsList.searchPlaceholderLabel"),
+                    selectedLabel: t("admin.editor.postsList.selectedLabel"),
+                    emptyLabel: t("admin.editor.postsList.emptyLabel"),
+                    noResultsLabel: t("admin.editor.postsList.noResultsLabel"),
+                },
+            },
         },
         onChange: async () => {
             if (!editor) return;
             const data = await editor.save();
-            emit("update:modelValue", data.blocks);
+            emitIfChanged(data.blocks);
         },
     });
     const localEditor = editor;

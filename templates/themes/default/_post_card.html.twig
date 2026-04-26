@@ -1,10 +1,10 @@
 {% set translation = post.getTranslation(locale) %}
-{% if translation %}
+{% if translation and translation.slug %}
     {% set featured = post.featuredMedia %}
-    <article class="bg-surface border border-line/60 rounded-xl overflow-hidden hover:border-indigo-400 transition-colors">
+    <article class="bg-surface border border-line/60 rounded-xl overflow-hidden hover:border-accent transition-colors">
         <a href="{{ path('front_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}) }}" class="block">
             {% if featured %}
-                <div class="aspect-[16/9] bg-surface-2 overflow-hidden">
+                <div class="aspect-video bg-surface-2 overflow-hidden">
                     <img
                         src="{{ featured.variantUrl('medium') ?? featured.publicUrl }}"
                         alt="{{ featured.alt ?? translation.title ?? '' }}"

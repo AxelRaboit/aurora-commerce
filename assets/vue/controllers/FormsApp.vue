@@ -1,5 +1,7 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, computed, onMounted } from "vue";
+import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { VueDraggable } from "vue-draggable-plus";
@@ -42,11 +44,9 @@ const props = defineProps({
 });
 
 // ── Forms list ───────────────────────────────────────────────────────────────
-const forms = ref([]);
-const loading = ref(false);
-const page = ref(1);
-const totalPages = ref(1);
-const total = ref(0);
+const { items: forms, loading, page, totalPages, total, load: fetchForms, goToPage, reset: resetForms } = usePaginatedFetch(
+    () => props.listPath,
+);
 
 // ── Selected form ────────────────────────────────────────────────────────────
 const selectedForm = ref(null);
@@ -98,13 +98,23 @@ const FIELD_TYPES = computed(() => [
 const fieldHasOptions = computed(() => ["select", "radio", "checkbox"].includes(editingField.value.type));
 
 // ── Submissions ──────────────────────────────────────────────────────────────
-const submissions = ref([]);
-const submissionsLoading = ref(false);
-const submissionsPage = ref(1);
-const submissionsTotalPages = ref(1);
-const submissionsTotal = ref(0);
 const submissionFields = ref([]);
 const viewingSubmission = ref(null);
+
+const {
+    items: submissions,
+    loading: submissionsLoading,
+    page: submissionsPage,
+    totalPages: submissionsTotalPages,
+    total: submissionsTotal,
+    load: fetchSubmissions,
+    goToPage: goToSubmissionsPage,
+    reset: resetSubmissions,
+} = usePaginatedFetch(
+    () => selectedForm.value ? props.submissionsPath.replace("__id__", selectedForm.value.id) : null,
+    () => ({}),
+    (data) => { submissionFields.value = data.fields ?? []; },
+);
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function emptyTranslations() {
@@ -162,30 +172,7 @@ function localeFieldError(scope, locale, key) {
 }
 
 // ── Forms list operations ────────────────────────────────────────────────────
-async function fetchForms() {
-    loading.value = true;
-    try {
-        const params = new URLSearchParams({ page: String(page.value) });
-        const data = await jsonRequest(`${props.listPath}?${params}`);
-        if (data.ok) {
-            forms.value = data.items;
-            total.value = data.total;
-            totalPages.value = data.totalPages;
-            page.value = data.page;
-        }
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        loading.value = false;
-    }
-}
-
 onMounted(fetchForms);
-
-function goToPage(newPage) {
-    page.value = newPage;
-    fetchForms();
-}
 
 // ── Form selection ───────────────────────────────────────────────────────────
 function startCreate() {
@@ -284,7 +271,7 @@ async function saveForm() {
     };
 
     try {
-        const data = await jsonRequest(url, { method: "POST", body: JSON.stringify(payload) });
+        const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify(payload) });
         if (data.ok) {
             toast.success(t("common.saved"));
             applyFormResponse(data.form);
@@ -306,7 +293,7 @@ async function saveForm() {
 async function confirmDelete() {
     deleting.value = true;
     try {
-        const data = await jsonRequest(props.deletePath.replace("__id__", selectedForm.value.id), { method: "POST" });
+        const data = await jsonRequest(props.deletePath.replace("__id__", selectedForm.value.id), { method: HttpMethod.Post });
         if (data.ok) {
             toast.success(t("common.deleted"));
             selectedForm.value = null;
@@ -389,7 +376,7 @@ async function submitField() {
         : props.fieldCreatePath.replace("__id__", selectedForm.value.id);
 
     try {
-        const data = await jsonRequest(url, { method: "POST", body: JSON.stringify(payload) });
+        const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify(payload) });
         if (data.ok) {
             toast.success(t("common.saved"));
             if (isUpdate) {
@@ -422,7 +409,7 @@ async function deleteField(field) {
         .replace("__fieldId__", field.id);
 
     try {
-        const data = await jsonRequest(url, { method: "POST" });
+        const data = await jsonRequest(url, { method: HttpMethod.Post });
         if (data.ok) {
             toast.success(t("common.deleted"));
             editingForm.value.fields = editingForm.value.fields.filter((f) => f.id !== field.id);
@@ -439,7 +426,7 @@ async function onFieldsReordered() {
     const orderedIds = editingForm.value.fields.map((f) => f.id);
     const url = props.fieldReorderPath.replace("__id__", selectedForm.value.id);
     try {
-        const data = await jsonRequest(url, { method: "POST", body: JSON.stringify({ orderedIds }) });
+        const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify({ orderedIds }) });
         if (!data.ok) toast.error(t("common.error"));
     } catch {
         toast.error(t("common.error"));
@@ -447,38 +434,11 @@ async function onFieldsReordered() {
 }
 
 // ── Submissions ──────────────────────────────────────────────────────────────
-async function fetchSubmissions() {
-    if (!selectedForm.value) return;
-    submissionsLoading.value = true;
-    try {
-        const params = new URLSearchParams({ page: String(submissionsPage.value) });
-        const path = props.submissionsPath.replace("__id__", selectedForm.value.id);
-        const data = await jsonRequest(`${path}?${params}`);
-        if (data.ok) {
-            submissions.value = data.items;
-            submissionsTotal.value = data.total;
-            submissionsTotalPages.value = data.totalPages;
-            submissionsPage.value = data.page;
-            submissionFields.value = data.fields;
-        }
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        submissionsLoading.value = false;
-    }
-}
-
 function onTabChange(tab) {
     activeTab.value = tab;
     if (tab === "submissions") {
-        submissionsPage.value = 1;
-        fetchSubmissions();
+        resetSubmissions();
     }
-}
-
-function goToSubmissionsPage(newPage) {
-    submissionsPage.value = newPage;
-    fetchSubmissions();
 }
 
 function exportCsv() {

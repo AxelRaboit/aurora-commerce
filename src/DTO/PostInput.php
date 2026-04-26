@@ -32,7 +32,28 @@ final readonly class PostInput
         public ?string $scheduledAt = null,
         public ?int $version = null,
         public bool $force = false,
+        public bool $commentsEnabled = true,
     ) {}
+
+    /**
+     * Returns a copy with a different status. Used to downgrade Published →
+     * PendingReview when the current user lacks the publish permission.
+     */
+    public function withStatus(string $status): self
+    {
+        return new self(
+            postTypeId: $this->postTypeId,
+            status: $status,
+            featuredMediaId: $this->featuredMediaId,
+            termIds: $this->termIds,
+            translations: $this->translations,
+            relatedPostIds: $this->relatedPostIds,
+            scheduledAt: $this->scheduledAt,
+            version: $this->version,
+            force: $this->force,
+            commentsEnabled: $this->commentsEnabled,
+        );
+    }
 
     public static function fromArray(array $data): self
     {
@@ -64,6 +85,7 @@ final readonly class PostInput
             scheduledAt: Str::trimOrNull((string) ($data['scheduledAt'] ?? '')),
             version: isset($data['version']) ? (int) $data['version'] : null,
             force: (bool) ($data['force'] ?? false),
+            commentsEnabled: (bool) ($data['commentsEnabled'] ?? true),
         );
     }
 

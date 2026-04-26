@@ -26,7 +26,7 @@ services:
             $adminEmail: '%app.admin_email%'
             $mailerFrom: '%app.mailer_from%'
 
-    App\Service\InvitationService:
+    App\Manager\InvitationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
@@ -34,7 +34,12 @@ services:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
+
     App\Manager\PasswordResetManager:
+        arguments:
+            $mailerFrom: '%app.mailer_from%'
+
+    App\Manager\EmailVerificationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 

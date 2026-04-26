@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Media;
+use App\Entity\Post;
+use App\Entity\PostTranslation;
+use App\Enum\PostStatusEnum;
+use App\Repository\PostRepository;
+use App\Repository\PostTypeRepository;
+use DateTimeImmutable;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 /**
  * Render Editor.js blocks to HTML for public front-end output.
  * Mirrors the minimal behaviour of the admin-side blocksRenderer.js but
@@ -11,20 +21,27 @@ namespace App\Service;
  */
 final readonly class BlocksRenderer
 {
+    public function __construct(
+        private PostRepository $postRepository,
+        private PostTypeRepository $postTypeRepository,
+        private UrlGeneratorInterface $urlGenerator,
+        private RequestStack $requestStack,
+    ) {}
+
     /**
      * @param array<int, array<string, mixed>> $blocks
      */
-    public function render(array $blocks): string
+    public function render(array $blocks, string $locale = 'fr'): string
     {
         $output = '';
         foreach ($blocks as $block) {
-            $output .= $this->renderBlock($block);
+            $output .= $this->renderBlock($block, $locale);
         }
 
         return $output;
     }
 
-    private function renderBlock(array $block): string
+    private function renderBlock(array $block, string $locale): string
     {
         $type = (string) ($block['type'] ?? '');
         $data = is_array($block['data'] ?? null) ? $block['data'] : [];
@@ -41,8 +58,9 @@ final readonly class BlocksRenderer
             'embed' => $this->renderEmbed($data),
             'table' => $this->renderTable($data),
             'callout' => $this->renderCallout($data),
-            'twoColumn' => $this->renderTwoColumn($data),
+            'twoColumn' => $this->renderTwoColumn($data, $locale),
             'mediaText' => $this->renderMediaText($data),
+            'postsList' => $this->renderPostsList($data, $locale),
             default => '',
         };
     }
@@ -176,10 +194,10 @@ final readonly class BlocksRenderer
         return sprintf('<aside class="callout callout-%s">%s</aside>', htmlspecialchars($type, ENT_QUOTES, 'UTF-8'), $text);
     }
 
-    private function renderTwoColumn(array $data): string
+    private function renderTwoColumn(array $data, string $locale): string
     {
-        $left = is_array($data['left'] ?? null) ? $this->render($data['left']) : '';
-        $right = is_array($data['right'] ?? null) ? $this->render($data['right']) : '';
+        $left = is_array($data['left'] ?? null) ? $this->render($data['left'], $locale) : '';
+        $right = is_array($data['right'] ?? null) ? $this->render($data['right'], $locale) : '';
 
         return sprintf('<div class="two-column"><div>%s</div><div>%s</div></div>', $left, $right);
     }
@@ -194,6 +212,172 @@ final readonly class BlocksRenderer
             '<div class="media-text">%s<div>%s</div></div>',
             '' !== $url ? sprintf('<figure><img src="%s" alt="" loading="lazy"></figure>', $url) : '',
             $text,
+        );
+    }
+
+    /**
+     * Renders a grid of posts inline within a post's content.
+     *
+     * Block data shape:
+     *   {
+     *     mode: "manual" | "auto",
+     *     postTypeSlug?: string,
+     *     postIds?: int[],          // when mode = manual
+     *     perPage?: int,            // when mode = auto
+     *     columns?: int (1..4),
+     *     title?: string,
+     *   }
+     *
+     * Backwards-compatible with legacy { limit } shape.
+     */
+    private function renderPostsList(array $data, string $locale): string
+    {
+        $mode = ('manual' === ($data['mode'] ?? null)) ? 'manual' : 'auto';
+        $postTypeSlug = (string) ($data['postTypeSlug'] ?? 'article');
+        $columns = max(1, min(4, (int) ($data['columns'] ?? 3)));
+        $title = $this->safeHtml($data['title'] ?? '');
+
+        $postType = $this->postTypeRepository->findOneBy(['slug' => $postTypeSlug]);
+        if (null === $postType) {
+            return '';
+        }
+
+        $items = [];
+        $paginationHtml = '';
+
+        if ('manual' === $mode) {
+            $postIds = array_values(array_filter(
+                array_map(intval(...), (array) ($data['postIds'] ?? [])),
+                static fn (int $id): bool => $id > 0,
+            ));
+            if ([] === $postIds) {
+                return '' !== $title ? sprintf('<section class="posts-list my-8"><h2 class="text-2xl font-bold mb-4">%s</h2></section>', $title) : '';
+            }
+
+            $found = $this->postRepository->findByIds($postIds);
+            $byId = [];
+            foreach ($found as $post) {
+                if (PostStatusEnum::Published === $post->getStatus() && !$post->getDeletedAt() instanceof DateTimeImmutable) {
+                    $byId[$post->getId()] = $post;
+                }
+            }
+
+            // preserve admin-defined order
+            foreach ($postIds as $id) {
+                if (isset($byId[$id])) {
+                    $items[] = $byId[$id];
+                }
+            }
+        } else {
+            $perPage = max(1, min(100, (int) ($data['perPage'] ?? $data['limit'] ?? 12)));
+            $page = max(1, (int) ($this->requestStack->getCurrentRequest()?->query->get('page') ?? 1));
+            $result = $this->postRepository->findPublishedByPostType($postType->getId(), $page, $perPage, $locale);
+            $items = $result['items'];
+            $totalPages = (int) $result['totalPages'];
+            if ($totalPages > 1) {
+                $paginationHtml = $this->renderPagination($page, $totalPages);
+            }
+        }
+
+        if ([] === $items) {
+            return '' !== $title ? sprintf('<section class="posts-list my-8"><h2 class="text-2xl font-bold mb-4">%s</h2></section>', $title) : '';
+        }
+
+        $gridClass = match ($columns) {
+            1 => 'grid-cols-1',
+            2 => 'grid-cols-1 sm:grid-cols-2',
+            3 => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+            default => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+        };
+
+        $cards = '';
+        foreach ($items as $post) {
+            $cards .= $this->renderPostCard($post, $locale);
+        }
+
+        return sprintf(
+            '<section class="posts-list my-8">%s<div class="grid %s gap-4">%s</div>%s</section>',
+            '' !== $title ? sprintf('<h2 class="text-2xl font-bold mb-4">%s</h2>', $title) : '',
+            $gridClass,
+            $cards,
+            $paginationHtml,
+        );
+    }
+
+    private function renderPagination(int $page, int $totalPages): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $basePath = $request?->getPathInfo() ?? '';
+        $buildUrl = (static fn (int $targetPage): string => 1 === $targetPage ? $basePath : $basePath.'?page='.$targetPage);
+
+        $prev = $page > 1
+            ? sprintf('<a href="%s" class="px-3 py-1.5 rounded border border-line text-sm hover:bg-surface-2">&larr;</a>', htmlspecialchars($buildUrl($page - 1), ENT_QUOTES, 'UTF-8'))
+            : '<span class="px-3 py-1.5 rounded border border-line text-sm text-muted opacity-50">&larr;</span>';
+
+        $next = $page < $totalPages
+            ? sprintf('<a href="%s" class="px-3 py-1.5 rounded border border-line text-sm hover:bg-surface-2">&rarr;</a>', htmlspecialchars($buildUrl($page + 1), ENT_QUOTES, 'UTF-8'))
+            : '<span class="px-3 py-1.5 rounded border border-line text-sm text-muted opacity-50">&rarr;</span>';
+
+        return sprintf(
+            '<nav class="mt-6 flex items-center justify-center gap-2"><span class="text-sm text-muted">%d / %d</span>%s%s</nav>',
+            $page,
+            $totalPages,
+            $prev,
+            $next,
+        );
+    }
+
+    private function renderPostCard(Post $post, string $locale): string
+    {
+        $translation = $post->getTranslation($locale) ?? $post->getTranslations()->first();
+        if (!$translation instanceof PostTranslation) {
+            return '';
+        }
+
+        $slug = $translation->getSlug();
+        if (null === $slug || '' === $slug) {
+            return '';
+        }
+
+        $url = $this->urlGenerator->generate('front_post', [
+            'locale' => $locale,
+            'postTypeSlug' => $post->getPostType()->getSlug(),
+            'slug' => $slug,
+        ]);
+
+        $title = htmlspecialchars($translation->getTitle() ?? '—', ENT_QUOTES, 'UTF-8');
+        $description = htmlspecialchars($translation->getMetaDescription() ?? '', ENT_QUOTES, 'UTF-8');
+
+        $featured = $post->getFeaturedMedia();
+        $imageHtml = '';
+        if ($featured instanceof Media) {
+            $src = htmlspecialchars($featured->getVariantUrl('medium') ?? $featured->getPublicUrl(), ENT_QUOTES, 'UTF-8');
+            $alt = htmlspecialchars($featured->getAlt() ?? $title, ENT_QUOTES, 'UTF-8');
+            $imageHtml = sprintf(
+                '<div class="aspect-[16/9] bg-surface-2 overflow-hidden"><img src="%s" alt="%s" class="w-full h-full object-cover" loading="lazy"></div>',
+                $src,
+                $alt,
+            );
+        }
+
+        $dateHtml = '';
+        if ($post->getPublishedAt() instanceof DateTimeImmutable) {
+            $iso = $post->getPublishedAt()->format('c');
+            $human = $post->getPublishedAt()->format('d/m/Y');
+            $dateHtml = sprintf('<time datetime="%s" class="block text-xs text-muted">%s</time>', $iso, $human);
+        }
+
+        return sprintf(
+            '<article class="post-card bg-surface border border-line/60 rounded-xl overflow-hidden">'
+                .'<a href="%s" class="block">%s<div class="p-4 space-y-2">'
+                .'<h3 class="text-lg font-semibold text-primary">%s</h3>'
+                .'%s%s'
+                .'</div></a></article>',
+            htmlspecialchars($url, ENT_QUOTES, 'UTF-8'),
+            $imageHtml,
+            $title,
+            '' !== $description ? sprintf('<p class="text-sm text-muted line-clamp-3">%s</p>', $description) : '',
+            $dateHtml,
         );
     }
 

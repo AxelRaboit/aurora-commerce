@@ -17,4 +17,22 @@ class PostTypeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, PostType::class);
     }
+
+    /**
+     * @param list<int> $ids
+     *
+     * @return list<PostType>
+     */
+    public function findByIds(array $ids): array
+    {
+        if ([] === $ids) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('pt')
+            ->where('pt.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Setting;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
 use App\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
@@ -30,6 +31,22 @@ class SettingRepository extends ServiceEntityRepository
         $this->warmUp();
 
         return array_key_exists($key, $this->cache) ? ($this->cache[$key] ?? $default) : $default;
+    }
+
+    /**
+     * Returns the stored value for the given parameter, falling back to its
+     * declared default when missing or null. Always returns a non-null string.
+     */
+    public function getOrDefault(ApplicationParameterEnum $parameter): string
+    {
+        $default = $parameter->getDefaultValue();
+
+        return $this->get($parameter->value, $default) ?? $default;
+    }
+
+    public function getBoolean(string $key, bool $default = false): bool
+    {
+        return '1' === $this->get($key, $default ? '1' : '0');
     }
 
     public function set(string $key, ?string $value): void

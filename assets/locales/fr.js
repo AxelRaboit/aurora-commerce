@@ -35,6 +35,15 @@ export default {
         pagination: "Page {page} sur {totalPages}",
         name: "Nom",
         description: "Description",
+        view: "Voir",
+        close: "Fermer",
+        expand: "Déplier",
+        collapse: "Replier",
+        select_placeholder: "Sélectionner…",
+        select_to_pick: "Appuyez sur Entrée pour sélectionner",
+        select_selected: "Sélectionné",
+        select_to_remove: "Appuyez sur Entrée pour retirer",
+        remove: "Retirer",
     },
     auth: {
         register: {
@@ -148,6 +157,8 @@ export default {
             add: "Ajouter",
             editPostType: "Modifier le type de contenu",
             deleteConfirm: "Supprimer « {label} » ?",
+            deleteHasPosts:
+                "Impossible de supprimer un type de contenu qui contient encore des contenus.",
             empty: "Sélectionne un type de contenu à gauche.",
             builtIn: "Intégré",
             slug: "Slug",
@@ -285,10 +296,15 @@ export default {
                 localization: "Localisation",
                 branding: "Identité visuelle",
                 seo: "SEO",
+                system: "Système",
             },
             save: "Enregistrer",
             saved: "Réglages sauvegardés.",
             browseMedia: "Parcourir les médias",
+            noPageSelected:
+                "Aucune page sélectionnée — affichage de la liste des articles par défaut.",
+            searchPost: "Rechercher une page…",
+            orId: "ou saisir l'ID :",
         },
         users: {
             searchPlaceholder: "Rechercher par nom ou email…",
@@ -331,6 +347,9 @@ export default {
             dev_granted: "Rôle Dev attribué.",
             dev_revoked: "Rôle Dev retiré.",
             deleteConfirm: "Supprimer {name} ? Cette action est irréversible.",
+            disableConfirm:
+                "Désactiver le compte de {name} ? L'utilisateur ne pourra plus se connecter.",
+            enableConfirm: "Réactiver le compte de {name} ?",
             cannot_delete_self:
                 "Vous ne pouvez pas supprimer votre propre compte.",
         },
@@ -388,6 +407,7 @@ export default {
                 callout: "Callout",
                 mediaText: "Image + Texte",
                 twoColumn: "2 Colonnes",
+                postsList: "Liste d'articles",
             },
             ui: {
                 blockTunes: {
@@ -410,6 +430,8 @@ export default {
                     Filter: "Filtrer",
                     "Nothing found": "Aucun résultat",
                     "Nothing found. Try searching for something else.":
+                        "Aucun résultat. Essayez un autre terme.",
+                    nothingFoundExtended:
                         "Aucun résultat. Essayez un autre terme.",
                 },
             },
@@ -456,6 +478,19 @@ export default {
             callout: {
                 titlePlaceholder: "Titre…",
                 messagePlaceholder: "Message…",
+            },
+            postsList: {
+                titleLabel: "Titre (optionnel)",
+                postTypeLabel: "Type de contenu",
+                columnsLabel: "Colonnes",
+                modeLabel: "Mode",
+                modeAutoLabel: "Liste complète paginée",
+                modeManualLabel: "Sélection manuelle",
+                perPageLabel: "Articles par page",
+                searchPlaceholderLabel: "Rechercher un article…",
+                selectedLabel: "Articles sélectionnés",
+                emptyLabel: "Aucun article sélectionné",
+                noResultsLabel: "Aucun résultat",
             },
             templates: {
                 title: "Choisir un template",
@@ -541,6 +576,11 @@ export default {
             deletedForever: "Contenu supprimé définitivement.",
             restored: "Contenu restauré.",
             trashedBanner: "Cet article est dans la corbeille.",
+            statusTrashed: "Corbeille",
+            emptyTrash: "Vider la corbeille",
+            emptyTrashConfirm:
+                "Supprimer définitivement tous les contenus de la corbeille ? Cette action est irréversible.",
+            emptyTrashDone: "{count} contenu(s) supprimé(s) définitivement.",
             tabs: {
                 active: "Actifs",
                 trash: "Corbeille",
@@ -554,6 +594,7 @@ export default {
             terms: "Termes",
             termsPickerEmpty:
                 "Aucun terme dans cette taxonomie pour l'instant.",
+            commentsEnabled: "Commentaires",
             relatedPosts: {
                 title: "Articles liés",
                 searchPlaceholder: "Rechercher un article à lier…",
@@ -582,7 +623,7 @@ export default {
                 },
                 jsonLd: "JSON-LD (schema.org)",
                 jsonLdPlaceholder:
-                    'Objet JSON-LD qui sera injecté dans <script type="application/ld+json">',
+                    "Objet JSON-LD injecté dans une balise script application/ld+json",
                 jsonLdMustBeObject: "Le JSON-LD doit être un objet.",
                 generateArticle: "Générer Article",
             },
@@ -694,6 +735,7 @@ export default {
             content: "Commentaire",
             date: "Date",
             status: "Statut",
+            reactions: "Réactions",
             deleteConfirm: "Supprimer ce commentaire ?",
             approveSuccess: "Commentaire approuvé.",
             spamSuccess: "Commentaire marqué comme spam.",
@@ -767,6 +809,61 @@ export default {
                 labelRequired: "Le libellé est requis.",
             },
         },
+        menus: {
+            title: "Menus",
+            empty: "Aucun menu pour le moment.",
+            createMenu: "Créer un menu",
+            editMenu: "Modifier le menu",
+            name: "Nom",
+            location: "Emplacement",
+            locationPlaceholder: "header, footer, sidebar…",
+            description: "Description",
+            items: "Items",
+            addItem: "Ajouter un item",
+            itemsEmpty: "Aucun item dans ce menu.",
+            selectHint: "Sélectionnez un menu à gauche ou créez-en un nouveau.",
+            deleteConfirm:
+                "Supprimer le menu « {name} » ? Tous ses items seront supprimés.",
+            deleteItemConfirm: "Supprimer cet item du menu ?",
+            editItem: "Modifier l'item",
+            targetType: "Type de cible",
+            target: "Cible",
+            customUrl: "URL personnalisée",
+            translations: "Libellés par langue",
+            translationsHint:
+                "Le libellé par défaut est tiré de la cible. Surcharge-le ici par langue si besoin.",
+            translationPlaceholder: "Libellé personnalisé (optionnel)",
+            visibility: "Visibilité",
+            cssClass: "Classes CSS",
+            openInNewTab: "Ouvrir dans un nouvel onglet",
+            allTypes: "Tous les types",
+            allTaxonomies: "Toutes les taxonomies",
+            searchPostsPlaceholder: "Rechercher un article ou une page…",
+            searchTermsPlaceholder: "Rechercher un terme…",
+            protected: "Système",
+            protectedHint: "Menu essentiel — non supprimable.",
+            locationLockedHint:
+                "L'emplacement est verrouillé pour les menus système.",
+            errors: {
+                translation_required_for_custom_url:
+                    "Au moins un libellé de langue est requis pour une URL personnalisée.",
+                menu_protected:
+                    "Ce menu est essentiel et ne peut pas être supprimé.",
+                location_locked:
+                    "L'emplacement d'un menu système ne peut pas être modifié.",
+                name_required: "Le nom est requis.",
+                location_format:
+                    "L'emplacement doit contenir uniquement des lettres minuscules, chiffres, tirets ou underscores.",
+                location_taken:
+                    "Cet emplacement est déjà utilisé par un autre menu.",
+                target_required: "Une cible est requise pour ce type d'item.",
+                custom_url_required: "Une URL est requise.",
+                target_type_invalid: "Type de cible invalide.",
+                parent_invalid: "Parent invalide.",
+                parent_cycle:
+                    "Impossible : cela créerait une boucle dans la hiérarchie.",
+            },
+        },
         themes: {
             title: "Thèmes",
             new: "Nouveau thème",
@@ -792,6 +889,14 @@ export default {
                 border: "Bordure",
                 text: "Texte",
             },
+            headerContent: "Contenu",
+            headerModeDefault: "Nom du site",
+            headerModeText: "Texte custom",
+            headerModeImage: "Image média",
+            headerCustomText: "Texte personnalisé",
+            headerLogoMediaId: "ID du média",
+            footerText: "Texte du pied de page",
+            slugLabel: "Slug",
             headerMediaHint:
                 "Trouvez l'ID dans Médias → ouvrez un média → champ ID.",
             headerTextPlaceholder: "Mon site",
@@ -835,6 +940,90 @@ export default {
         success: "Merci, votre message a bien été envoyé !",
         error: "Une erreur est survenue. Veuillez réessayer.",
         selectPlaceholder: "Choisir…",
+    },
+    front: {
+        login: {
+            title: "Connexion",
+            heading: "Connexion",
+            subtitle: "Connectez-vous à votre espace personnel.",
+            email: "Adresse e-mail",
+            email_placeholder: "vous{'@'}exemple.com",
+            password: "Mot de passe",
+            forgot_password: "Mot de passe oublié ?",
+            remember_me: "Se souvenir de moi",
+            submit: "Se connecter",
+            no_account: "Pas encore de compte ?",
+            register_link: "Créer un compte",
+        },
+        register: {
+            title: "Créer un compte",
+            heading: "Créer un compte",
+            subtitle: "Rejoignez notre espace personnel.",
+            name: "Nom complet",
+            name_placeholder: "Jean Dupont",
+            email: "Adresse e-mail",
+            email_placeholder: "vous{'@'}exemple.com",
+            password: "Mot de passe",
+            submit: "Créer le compte",
+            already_account: "Déjà un compte ?",
+            login_link: "Se connecter",
+            confirm_title: "Vérifiez votre e-mail",
+            confirm_heading: "Vérifiez votre e-mail",
+            confirm_message:
+                "Un e-mail de confirmation vous a été envoyé. Cliquez sur le lien dans cet e-mail pour activer votre compte.",
+            closed_title: "Inscriptions fermées",
+            closed_desc:
+                "Les nouvelles inscriptions sont désactivées pour le moment.",
+        },
+        forgot_password: {
+            title: "Mot de passe oublié",
+            heading: "Mot de passe oublié",
+            subtitle:
+                "Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+            submit: "Envoyer le lien",
+            sent: "Un e-mail de réinitialisation vous a été envoyé. Vérifiez votre boîte de réception.",
+            back_login: "Retour à la connexion",
+        },
+        reset_password: {
+            title: "Nouveau mot de passe",
+            heading: "Nouveau mot de passe",
+            subtitle: "Choisissez un nouveau mot de passe pour votre compte.",
+            new_password: "Nouveau mot de passe",
+            confirm_password: "Confirmer le mot de passe",
+            submit: "Réinitialiser le mot de passe",
+            invalid_link:
+                "Ce lien est invalide ou a expiré. Veuillez faire une nouvelle demande.",
+            success:
+                "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.",
+        },
+        verify_email: {
+            title: "Vérification de l'e-mail",
+            success_heading: "E-mail confirmé !",
+            success_message:
+                "Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.",
+            error_heading: "Lien invalide ou expiré",
+            error_message:
+                "Ce lien de vérification est invalide ou a expiré. Veuillez vous réinscrire.",
+        },
+        account: {
+            title: "Mon compte",
+            heading: "Mon compte",
+            name: "Nom",
+            email: "E-mail",
+            logout: "Se déconnecter",
+        },
+        errors: {
+            name_required: "Le nom est requis.",
+            email_required: "L'adresse e-mail est requise.",
+            email_invalid: "Adresse e-mail invalide.",
+            email_taken: "Cette adresse e-mail est déjà utilisée.",
+            password_required: "Le mot de passe est requis.",
+            password_too_short:
+                "Le mot de passe doit contenir au moins 8 caractères.",
+            email_not_verified:
+                "Veuillez confirmer votre adresse e-mail avant de vous connecter.",
+            account_disabled: "Votre compte a été désactivé.",
+        },
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

@@ -1,0 +1,10 @@
+{% extends 'themes/default/layout.html.twig' %}
+
+{% block title %}{{ 'front.account.title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('FrontAccountApp', {
+    logoutPath: path('front_logout', {locale: locale}),
+    user: {name: user.name, email: user.email},
+}) }}></div>
+{% endblock %}

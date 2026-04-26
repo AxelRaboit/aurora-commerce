@@ -6,8 +6,13 @@
 @custom-variant hover (&:hover);
 
 @import "./theme.css";
+@import "./theme-transition.css";
 @import "./base.css";
+@import "./scrollbar.css";
+@import "./input.css";
+@import "./modal.css";
 @import "./editor.css";
 @import "./prose.css";
 @import "./blocks.css";
 @import "./media-picker.css";
+@import "flag-icons/css/flag-icons.min.css";

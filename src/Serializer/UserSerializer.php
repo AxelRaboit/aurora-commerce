@@ -29,6 +29,8 @@ final readonly class UserSerializer
             'roleLabel' => $primaryRole?->label(),
             'rolePriority' => $primaryRole?->priority() ?? 0,
             'isDev' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
+            'type' => $user->getType()->value,
+            'typeLabel' => $user->getType()->label(),
             'status' => $user->getStatus()->value,
             'statusLabel' => $user->getStatus()->label(),
             'locale' => $user->getLocale()->value,

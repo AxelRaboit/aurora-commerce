@@ -26,7 +26,10 @@ const inputType = computed(() => {
 <template>
     <div class="flex flex-col gap-1.5">
         <AppFieldLabel :label="label" :required="required" />
-        <div :class="toggleable ? 'relative' : ''">
+        <div class="relative">
+            <div v-if="$slots.prefix" class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted">
+                <slot name="prefix" />
+            </div>
             <input
                 :type="inputType"
                 :name="name || undefined"
@@ -34,7 +37,7 @@ const inputType = computed(() => {
                 :placeholder="placeholder"
                 :required="required"
                 class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                :class="[{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }, toggleable ? 'pr-10' : '']"
+                :class="[{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }, toggleable ? 'pr-10' : '', $slots.prefix ? 'pl-8' : '']"
                 v-on:input="$emit('update:modelValue', $event.target.value)"
             >
             <button

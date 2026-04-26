@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Controller\Profile;
 
 use App\Contract\UserManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\ChangePasswordInput;
 use App\DTO\UpdateProfileInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\LocaleEnum;
 use App\Enum\UserRoleEnum;
+use App\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,18 +20,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin/profile', name: 'profile')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 final class ProfileController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly UserManagerInterface $userManager,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
     ) {}
 
@@ -48,9 +48,9 @@ final class ProfileController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
         $input = UpdateProfileInput::fromArray($data);
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         $this->userManager->update($user, $input->name, $input->email);
@@ -66,9 +66,9 @@ final class ProfileController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
         $input = ChangePasswordInput::fromArray($data);
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {

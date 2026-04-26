@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\MediaManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\MediaFolderInput;
 use App\DTO\MediaInput;
 use App\Entity\Media;
@@ -17,6 +17,7 @@ use App\Repository\MediaFolderRepository;
 use App\Repository\MediaRepository;
 use App\Serializer\MediaFolderSerializer;
 use App\Serializer\MediaSerializer;
+use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,13 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/media', name: 'admin_media')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 class MediaController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly MediaRepository $mediaRepository,
@@ -38,7 +38,7 @@ class MediaController extends AbstractController
         private readonly MediaManagerInterface $mediaManager,
         private readonly MediaSerializer $mediaSerializer,
         private readonly MediaFolderSerializer $folderSerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -129,9 +129,9 @@ class MediaController extends AbstractController
     {
         $input = MediaInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -168,9 +168,9 @@ class MediaController extends AbstractController
     {
         $input = MediaFolderInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -187,9 +187,9 @@ class MediaController extends AbstractController
     {
         $input = MediaFolderInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {

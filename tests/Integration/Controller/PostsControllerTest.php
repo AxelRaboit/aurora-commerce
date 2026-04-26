@@ -29,7 +29,7 @@ final class PostsControllerTest extends IntegrationTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $admin = $userRepository->findOneBy(['email' => 'admin@velox.app']);
         self::assertInstanceOf(User::class, $admin);
-        $this->client->loginUser($admin);
+        $this->client->loginUser($admin, 'admin');
     }
 
     private function firstPost(): Post

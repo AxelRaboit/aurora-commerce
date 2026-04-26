@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostTypeRepository::class)]
 #[ORM\Table(name: 'post_types')]
@@ -21,12 +20,9 @@ class PostType
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Regex('/^[a-z0-9_]+$/')]
     private string $slug;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
     private string $label;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -147,6 +143,11 @@ class PostType
     public function getFields(): Collection
     {
         return $this->fields;
+    }
+
+    public function findFieldById(int $fieldId): ?PostTypeField
+    {
+        return $this->fields->filter(static fn (PostTypeField $field): bool => $field->getId() === $fieldId)->first() ?: null;
     }
 
     public function addField(PostTypeField $field): static

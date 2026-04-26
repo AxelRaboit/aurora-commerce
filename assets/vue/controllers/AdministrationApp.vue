@@ -10,6 +10,7 @@ import { useDateFormat } from "@/composables/useDateFormat.js";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { statusBadge, statusBadgeColor } from "@/utils/statusStyles.js";
 import AppBadge from "@/components/AppBadge.vue";
+import AppPagination from "@/components/AppPagination.vue";
 import { useAdminUsers } from "@/admin/administration/composables/useAdminUsers.js";
 import { useAdminParameters } from "@/admin/administration/composables/useAdminParameters.js";
 import { useAdminAccessRequests } from "@/admin/administration/composables/useAdminAccessRequests.js";
@@ -79,7 +80,7 @@ const tabs = [
 ];
 
 const users = useAdminUsers(props.usersPath, props.userCreatePath, props.userUpdatePath, props.userToggleRolePath, props.userDeletePath, props.impersonatePath, props.csrfToken, props.users, props.search);
-const parameters = useAdminParameters(props.parameterUpdatePath, props.parameters);
+const parameters = useAdminParameters(props.parametersPath, props.parameterUpdatePath, props.parameters);
 const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.accessRequestApprovePath, props.accessRequestRejectPath, props.accessRequestPurgePath, props.csrfToken, props.accessRequests);
 </script>
 
@@ -151,25 +152,27 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                 </div>
             </div>
 
-            <div v-if="parsedStats.posts?.byType?.length" class="bg-surface border border-line/60 rounded-xl p-5">
-                <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.stats.byType') }}</h3>
-                <div class="space-y-2">
-                    <div v-for="item in parsedStats.posts.byType" :key="item.slug" class="flex items-center justify-between text-sm">
-                        <span class="text-secondary">{{ item.label }}</span>
-                        <span class="font-medium text-primary tabular-nums">{{ item.count }}</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-if="parsedStats.posts?.byType?.length" class="bg-surface border border-line/60 rounded-xl p-5">
+                    <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.stats.byType') }}</h3>
+                    <div class="space-y-2">
+                        <div v-for="item in parsedStats.posts.byType" :key="item.slug" class="flex items-center justify-between text-sm">
+                            <span class="text-secondary">{{ item.label }}</span>
+                            <span class="font-medium text-primary tabular-nums">{{ item.count }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div v-if="parsedStats.recentPosts?.length" class="bg-surface border border-line/60 rounded-xl p-5">
-                <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.stats.recent') }}</h3>
-                <div class="space-y-3">
-                    <div v-for="post in parsedStats.recentPosts" :key="post.id" class="flex items-center justify-between gap-3 text-sm">
-                        <div class="min-w-0 flex-1">
-                            <div class="font-medium text-primary truncate">{{ post.title }}</div>
-                            <div class="text-xs text-muted">{{ post.postType }} · {{ formatDateTime(post.updatedAt) }}</div>
+                <div v-if="parsedStats.recentPosts?.length" class="bg-surface border border-line/60 rounded-xl p-5">
+                    <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.stats.recent') }}</h3>
+                    <div class="space-y-3">
+                        <div v-for="post in parsedStats.recentPosts" :key="post.id" class="flex items-center justify-between gap-3 text-sm">
+                            <div class="min-w-0 flex-1">
+                                <div class="font-medium text-primary truncate">{{ post.title }}</div>
+                                <div class="text-xs text-muted">{{ post.postType }} · {{ formatDateTime(post.updatedAt) }}</div>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs rounded-md" :class="statusBadge(post.status)">{{ t(`admin.stats.postStatus.${post.status}`, post.status) }}</span>
                         </div>
-                        <span class="px-2 py-0.5 text-xs rounded-md" :class="statusBadge(post.status)">{{ t(`admin.stats.postStatus.${post.status}`, post.status) }}</span>
                     </div>
                 </div>
             </div>
@@ -177,8 +180,8 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
 
         <div v-if="props.tab === 'parameters'" class="space-y-3">
             <div class="sm:hidden space-y-3">
-                <p v-if="!parameters.parsedParameters.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</p>
-                <div v-for="parameter in parameters.parsedParameters.value.items" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
+                <p v-if="!parameters.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</p>
+                <div v-for="parameter in parameters.items.value" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
@@ -219,17 +222,19 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line">
-                        <tr v-for="parameter in parameters.parsedParameters.value.items" :key="parameter.key" class="hover:bg-surface-2/50 transition-colors">
+                        <tr v-for="parameter in parameters.items.value" :key="parameter.key" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-5 py-3 align-top w-1/3">
                                 <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ parameter.key }}</p>
                                 <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>
                                 <AppBadge v-if="parameter.group" color="gray" class="mt-1">{{ parameter.group }}</AppBadge>
                             </td>
                             <td class="px-5 py-3 align-top w-1/4">
-                                <div v-if="parameters.editingKey.value === parameter.key" class="flex items-center gap-2">
-                                    <AppInput v-model="parameters.editingValue.value" class="flex-1" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
-                                    <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</AppButton>
-                                    <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
+                                <div v-if="parameters.editingKey.value === parameter.key" class="space-y-2">
+                                    <AppInput v-model="parameters.editingValue.value" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
+                                    <div class="flex gap-2">
+                                        <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('common.save') }}</AppButton>
+                                        <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('common.cancel') }}</AppButton>
+                                    </div>
                                 </div>
                                 <button v-else type="button" class="text-left w-full px-2 py-1 rounded-md text-primary hover:bg-surface-2 transition-colors font-medium" v-on:click="parameters.startEdit(parameter)">
                                     <span v-if="parameter.value !== null && parameter.value !== ''">{{ parameter.value }}</span>
@@ -238,12 +243,18 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                             </td>
                             <td class="px-5 py-3 align-top text-sm text-secondary hidden md:table-cell max-w-md">{{ parameter.description }}</td>
                         </tr>
-                        <tr v-if="!parameters.parsedParameters.value.items?.length">
+                        <tr v-if="!parameters.items.value?.length">
                             <td colspan="3" class="px-5 py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <AppPagination
+                v-if="parameters.totalPages.value > 1"
+                :page="parameters.page.value"
+                :total-pages="parameters.totalPages.value"
+                v-on:change="parameters.goToPage"
+            />
         </div>
 
         <div v-if="props.tab === 'users'" class="space-y-4">
@@ -433,15 +444,15 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
 
         <div v-if="props.tab === 'access_requests'" class="space-y-4">
             <div class="flex justify-end">
-                <AppButton variant="danger-outline" size="md" v-on:click="accessRequests.confirmPurge.value = true">
+                <AppButton variant="danger" size="md" v-on:click="accessRequests.confirmPurge.value = true">
                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('admin.access_requests.purge') }}
                 </AppButton>
             </div>
 
             <div class="sm:hidden space-y-3">
-                <p v-if="!accessRequests.parsedAccessRequests.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</p>
-                <div v-for="accessRequest in accessRequests.parsedAccessRequests.value.items" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</p>
+                <div v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '-' }}</p>
@@ -480,7 +491,7 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line">
-                        <tr v-for="accessRequest in accessRequests.parsedAccessRequests.value.items" :key="accessRequest.id" class="hover:bg-surface-2/50 transition-colors">
+                        <tr v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '-' }}</p>
                                 <p class="text-xs text-secondary">{{ accessRequest.requesterEmail }}</p>
@@ -506,12 +517,19 @@ const accessRequests = useAdminAccessRequests(props.accessRequestsPath, props.ac
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="!accessRequests.parsedAccessRequests.value.items?.length">
+                        <tr v-if="!accessRequests.items.value?.length">
                             <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
+            <AppPagination
+                v-if="accessRequests.totalPages.value > 1"
+                :page="accessRequests.page.value"
+                :total-pages="accessRequests.totalPages.value"
+                v-on:change="accessRequests.goToPage"
+            />
 
             <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" v-on:close="accessRequests.pendingApprove.value = null">
                 <p class="text-sm text-primary">{{ t('admin.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>

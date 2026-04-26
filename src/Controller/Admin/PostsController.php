@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\PostManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\PaginationRequest;
 use App\DTO\PostInput;
 use App\Entity\Post;
@@ -23,6 +23,7 @@ use App\Serializer\PostRevisionSerializer;
 use App\Serializer\PostSerializer;
 use App\Serializer\PostTypeSerializer;
 use App\Serializer\TaxonomySerializer;
+use App\Service\PayloadValidator;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
@@ -32,13 +33,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/posts', name: 'admin_posts')]
 #[IsGranted(UserRoleEnum::Contributor->value)]
 class PostsController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly PostRepository $postRepository,
@@ -50,7 +50,7 @@ class PostsController extends AbstractController
         private readonly TaxonomySerializer $taxonomySerializer,
         private readonly PostRevisionRepository $revisionRepository,
         private readonly PostRevisionSerializer $revisionSerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
@@ -83,8 +83,14 @@ class PostsController extends AbstractController
             $this->taxonomyRepository->findBy([], ['slug' => 'ASC']),
         );
 
+        $payload = ['ok' => true, 'items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']];
+
+        if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
+            return $this->json($payload);
+        }
+
         return $this->render('admin/posts/index.html.twig', [
-            'posts' => ['items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']],
+            'posts' => $payload,
             'search' => $pagination->search ?? '',
             'postTypes' => $postTypes,
             'taxonomies' => $taxonomies,
@@ -133,22 +139,12 @@ class PostsController extends AbstractController
         $input = PostInput::fromArray($this->decodeJson($request));
 
         if (!$this->isGranted(UserRoleEnum::Author->value) && PostStatusEnum::Published->value === $input->status) {
-            $input = new PostInput(
-                postTypeId: $input->postTypeId,
-                status: PostStatusEnum::PendingReview->value,
-                featuredMediaId: $input->featuredMediaId,
-                termIds: $input->termIds,
-                translations: $input->translations,
-                relatedPostIds: $input->relatedPostIds,
-                scheduledAt: $input->scheduledAt,
-                version: $input->version,
-                force: $input->force,
-            );
+            $input = $input->withStatus(PostStatusEnum::PendingReview->value);
         }
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         $post = $this->postManager->create($input);
@@ -169,17 +165,7 @@ class PostsController extends AbstractController
         $input = PostInput::fromArray($this->decodeJson($request));
 
         if (!$this->isGranted(PostVoter::PUBLISH, $post) && PostStatusEnum::Published->value === $input->status) {
-            $input = new PostInput(
-                postTypeId: $input->postTypeId,
-                status: PostStatusEnum::PendingReview->value,
-                featuredMediaId: $input->featuredMediaId,
-                termIds: $input->termIds,
-                translations: $input->translations,
-                relatedPostIds: $input->relatedPostIds,
-                scheduledAt: $input->scheduledAt,
-                version: $input->version,
-                force: $input->force,
-            );
+            $input = $input->withStatus(PostStatusEnum::PendingReview->value);
         }
 
         if (!$input->force && null !== $input->version) {
@@ -190,9 +176,9 @@ class PostsController extends AbstractController
             }
         }
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         $this->postManager->update($post, $input);
@@ -224,6 +210,17 @@ class PostsController extends AbstractController
         $this->postManager->forceDelete($post);
 
         return $this->json(['success' => true]);
+    }
+
+    #[Route('/empty-trash', name: '_empty_trash', methods: [HttpMethodEnum::Post->value])]
+    public function emptyTrash(): JsonResponse
+    {
+        $posts = $this->postRepository->findAllTrashed();
+        foreach ($posts as $post) {
+            $this->postManager->forceDelete($post);
+        }
+
+        return $this->json(['success' => true, 'count' => count($posts)]);
     }
 
     #[Route('/{id}/revisions', name: '_revisions', methods: [HttpMethodEnum::Get->value])]

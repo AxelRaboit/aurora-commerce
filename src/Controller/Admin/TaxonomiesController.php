@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Contract\TaxonomyManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\TaxonomyInput;
 use App\DTO\TaxonomyTermInput;
 use App\Entity\Taxonomy;
@@ -16,6 +16,7 @@ use App\Repository\PostTypeRepository;
 use App\Repository\TaxonomyRepository;
 use App\Serializer\PostTypeSerializer;
 use App\Serializer\TaxonomySerializer;
+use App\Service\PayloadValidator;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/taxonomies', name: 'admin_taxonomies')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 class TaxonomiesController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly TaxonomyRepository $taxonomyRepository,
@@ -38,7 +38,7 @@ class TaxonomiesController extends AbstractController
         private readonly TaxonomyManagerInterface $taxonomyManager,
         private readonly TaxonomySerializer $taxonomySerializer,
         private readonly PostTypeSerializer $postTypeSerializer,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -66,9 +66,9 @@ class TaxonomiesController extends AbstractController
     {
         $input = TaxonomyInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -85,9 +85,9 @@ class TaxonomiesController extends AbstractController
     {
         $input = TaxonomyInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -116,9 +116,9 @@ class TaxonomiesController extends AbstractController
     {
         $input = TaxonomyTermInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -133,16 +133,16 @@ class TaxonomiesController extends AbstractController
     #[Route('/{id}/terms/{termId}/edit', name: '_term_edit', methods: [HttpMethodEnum::Post->value])]
     public function editTerm(Taxonomy $taxonomy, int $termId, Request $request): JsonResponse
     {
-        $term = $this->findTermForTaxonomy($taxonomy, $termId);
+        $term = $taxonomy->findTermById($termId);
         if (!$term instanceof TaxonomyTerm) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
 
         $input = TaxonomyTermInput::fromArray($this->decodeJson($request));
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         try {
@@ -157,7 +157,7 @@ class TaxonomiesController extends AbstractController
     #[Route('/{id}/terms/{termId}/delete', name: '_term_delete', methods: [HttpMethodEnum::Post->value])]
     public function deleteTerm(Taxonomy $taxonomy, int $termId): JsonResponse
     {
-        $term = $this->findTermForTaxonomy($taxonomy, $termId);
+        $term = $taxonomy->findTermById($termId);
         if (!$term instanceof TaxonomyTerm) {
             return $this->json(['success' => false], Response::HTTP_NOT_FOUND);
         }
@@ -196,16 +196,5 @@ class TaxonomiesController extends AbstractController
         }
 
         return $this->json(['success' => true, 'taxonomy' => $this->taxonomySerializer->serializeFull($taxonomy)]);
-    }
-
-    private function findTermForTaxonomy(Taxonomy $taxonomy, int $termId): ?TaxonomyTerm
-    {
-        foreach ($taxonomy->getTerms() as $term) {
-            if ($term->getId() === $termId) {
-                return $term;
-            }
-        }
-
-        return null;
     }
 }

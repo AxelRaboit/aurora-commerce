@@ -145,3 +145,13 @@ forms:
     translations_required: At least one language must be filled in.
     type_required: Field type is required.
     field_label_required: At least one label is required.
+front:
+  errors:
+    name_required: Name is required.
+    email_required: Email address is required.
+    email_invalid: Invalid email address.
+    email_taken: This email address is already in use.
+    password_required: Password is required.
+    password_too_short: Password must be at least 8 characters.
+    email_not_verified: Please verify your email address before logging in.
+    account_disabled: Your account has been disabled.

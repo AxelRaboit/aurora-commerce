@@ -1,0 +1,46 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ context.siteName }}{% endblock %}</title>
+
+{% block meta %}
+    <meta name="description" content="{{ pageDescription }}">
+    <meta property="og:title" content="{{ block('title') }}">
+    <meta property="og:description" content="{{ pageDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ context.siteName }}">
+    <meta property="og:locale" content="{{ locale }}">
+    {% for alt in alternates %}
+        {% if alt.locale != locale %}
+            <meta property="og:locale:alternate" content="{{ alt.locale }}">
+        {% endif %}
+    {% endfor %}
+    {% for alt in alternates %}
+        <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ context.siteUrl }}{{ alt.url }}">
+        {% if alt.locale == context.defaultLocale %}
+            <link rel="alternate" hreflang="x-default" href="{{ context.siteUrl }}{{ alt.url }}">
+        {% endif %}
+    {% endfor %}
+    {% block og_image %}{% endblock %}
+    {% block canonical %}{% endblock %}
+    {% block robots %}{% endblock %}
+    {% block jsonld %}{% endblock %}
+{% endblock %}
+
+{% if siteFaviconUrl %}
+    <link rel="icon" href="{{ siteFaviconUrl }}">
+{% else %}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+{% endif %}
+
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
+
+{{ vite_entry_link_tags('app') }}
+{{ vite_entry_script_tags('app') }}
+
+<link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
+
+{% set cssOverrides = themeContext.cssVariableOverrides() %}
+{% if cssOverrides %}
+    <style>html[data-theme] { {{ cssOverrides|raw }} }</style>
+{% endif %}

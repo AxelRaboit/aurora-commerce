@@ -23,7 +23,7 @@ final readonly class CommentManager implements CommentManagerInterface
 
     public function submit(Post $post, string $authorName, string $authorEmail, string $content, ?Comment $parent = null): Comment
     {
-        $moderationEnabled = '1' === $this->settingRepository->get(ApplicationParameterEnum::CommentModerationEnabled->value, '1');
+        $moderationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::CommentModerationEnabled->value, true);
 
         $comment = new Comment();
         $comment->setPost($post);

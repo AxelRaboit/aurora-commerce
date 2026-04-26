@@ -1,0 +1,12 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}{{ 'auth.register_confirm.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div {{ vue_component('AdminRegisterConfirmApp', {
+        loginPath: path('admin_login'),
+        resendPath: path('admin_resend_verification'),
+        pendingEmail: pendingEmail ?? '',
+        resent: resent,
+    }) }}></div>
+{% endblock %}

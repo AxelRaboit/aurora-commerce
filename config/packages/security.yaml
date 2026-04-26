@@ -14,28 +14,55 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+        admin_user_provider:
+            id: App\Security\AdminUserProvider
+        front_user_provider:
+            id: App\Security\FrontUserProvider
 
     firewalls:
         dev:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
-        main:
-            lazy: true
-            provider: app_user_provider
+
+        # ── Admin / CMS backend ───────────────────────────────────────────────
+        admin:
+            context: admin
+            pattern: ^/(admin|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
+            provider: admin_user_provider
+            user_checker: App\Security\AdminUserChecker
             form_login:
-                login_path: app_login
-                check_path: app_login
+                login_path: admin_login
+                check_path: admin_login
                 enable_csrf: true
                 default_target_path: admin_dashboard
                 username_parameter: email
                 password_parameter: password
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
             logout:
-                path: app_logout
-                target: app_login
+                path: admin_logout
+                target: admin_login
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
             switch_user: { role: ROLE_ADMIN }
+
+        # ── Front / Public users ──────────────────────────────────────────────
+        main:
+            context: front
+            lazy: true
+            provider: front_user_provider
+            user_checker: App\Security\FrontUserChecker
+            custom_authenticators:
+                - App\Security\FrontLoginAuthenticator
+            entry_point: App\Security\FrontAuthEntryPoint
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000
 
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
@@ -44,8 +71,18 @@ security:
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/access-request, roles: PUBLIC_ACCESS }
         - { path: ^/invitation, roles: PUBLIC_ACCESS }
+        - { path: ^/front-login-check, roles: PUBLIC_ACCESS }
+        - { path: ^/verify-email, roles: PUBLIC_ACCESS }
+        - { path: ^/resend-verification, roles: PUBLIC_ACCESS }
+        - { path: ^/register/confirm, roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/forgot-password', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/reset-password', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/resend-verification', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/verify-email', roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_CONTRIBUTOR }
         - { path: ^/dev, roles: ROLE_DEV }
+        - { path: '^/[a-z]{2}/account', roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:

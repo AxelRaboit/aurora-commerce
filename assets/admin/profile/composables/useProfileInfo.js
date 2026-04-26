@@ -1,3 +1,4 @@
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -33,7 +34,7 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
         infoLoading.value = true;
         try {
             const response = await fetch(updatePath, {
-                method: "POST",
+                method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name: infoName.value,

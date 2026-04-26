@@ -122,6 +122,11 @@ class Taxonomy implements TimestampableInterface
         return $this->terms;
     }
 
+    public function findTermById(int $termId): ?TaxonomyTerm
+    {
+        return $this->terms->filter(static fn (TaxonomyTerm $term): bool => $term->getId() === $termId)->first() ?: null;
+    }
+
     /** @return Collection<int, PostType> */
     public function getPostTypes(): Collection
     {

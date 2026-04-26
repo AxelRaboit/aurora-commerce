@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dev;
 
 use App\Contract\UserManagerInterface;
-use App\Controller\Trait\JsonValidationTrait;
+use App\Controller\Trait\JsonRequestTrait;
 use App\DTO\CreateUserInput;
 use App\DTO\PaginationRequest;
 use App\DTO\UpdateUserInput;
@@ -13,26 +13,27 @@ use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
+use App\Service\PayloadValidator;
 use DateTimeInterface;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/dev/dashboard/users', name: 'dev_users')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class UsersController extends AbstractController
 {
-    use JsonValidationTrait;
+    use JsonRequestTrait;
 
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
-        private readonly ValidatorInterface $validator,
+        private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
     ) {}
 
@@ -75,9 +76,9 @@ final class UsersController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
         $input = CreateUserInput::fromArray($data);
 
-        $violations = $this->validator->validate($input);
-        if (count($violations) > 0) {
-            return $this->json(['success' => false, 'errors' => $this->formatViolations($violations)]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
         $user = $this->userManager->create($input->name, $input->email, $input->password);
@@ -93,22 +94,17 @@ final class UsersController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
         $input = UpdateUserInput::fromArray($data);
 
-        $violations = $this->validator->validate($input);
-        $errors = $this->formatViolations($violations);
-
-        if ('' !== $input->password && mb_strlen($input->password) < 8) {
-            $errors['password'] = $this->translator->trans('profile.errors.password_too_short');
-        }
-
-        if ('' !== $input->email && $this->userManager->isEmailTaken($input->email, $user)) {
-            $errors['email'] = $this->translator->trans('profile.errors.email_taken');
-        }
-
+        $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->json(['success' => false, 'errors' => $errors]);
         }
 
-        $this->userManager->update($user, $input->name, $input->email);
+        try {
+            $this->userManager->update($user, $input->name, $input->email);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['email' => $invalidArgumentException->getMessage()]]);
+        }
+
         $this->userManager->changeLocale($user, $input->locale);
 
         if ('' !== $input->password) {

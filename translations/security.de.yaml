@@ -10,3 +10,7 @@
 'User account is expired.': 'Das Benutzerkonto ist abgelaufen.'
 'User credentials have expired.': 'Die Anmeldedaten des Benutzers sind abgelaufen.'
 'User does not exist.': 'Der Benutzer existiert nicht.'
+admin.errors.email_not_verified: 'Bitte bestätige deine E-Mail-Adresse vor der Anmeldung.'
+admin.errors.account_disabled: 'Dein Konto wurde deaktiviert.'
+front.errors.email_not_verified: 'Bitte bestätige deine E-Mail-Adresse vor der Anmeldung.'
+front.errors.account_disabled: 'Dein Konto wurde deaktiviert.'

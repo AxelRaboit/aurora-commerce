@@ -15,6 +15,10 @@ final readonly class UpdateUserInput
         #[Assert\NotBlank(message: 'profile.errors.email_invalid')]
         #[Assert\Email(message: 'profile.errors.email_invalid')]
         public string $email,
+        #[Assert\AtLeastOneOf(constraints: [
+            new Assert\Blank(),
+            new Assert\Length(min: 8, minMessage: 'profile.errors.password_too_short'),
+        ], message: 'profile.errors.password_too_short', includeInternalMessages: false)]
         public string $password,
         public LocaleEnum $locale,
     ) {}

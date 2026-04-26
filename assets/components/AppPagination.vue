@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 
 const props = defineProps({
@@ -22,14 +23,15 @@ function go(newPage) {
 </script>
 
 <template>
-    <div v-if="totalPages > 1" class="flex items-center justify-between gap-4 text-sm">
-        <span class="text-secondary shrink-0">
+    <div v-if="totalPages > 1" class="flex flex-col sm:flex-row items-center sm:justify-between gap-3 text-sm">
+        <span class="text-secondary shrink-0 order-2 sm:order-1">
             {{ t("common.pagination", { page, totalPages }) }}
         </span>
 
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1 order-1 sm:order-2">
             <AppButton variant="ghost" size="sm" :disabled="page <= 1" v-on:click="go(page - 1)">
-                {{ t("pagination.previous") }}
+                <ChevronLeft class="w-4 h-4 sm:hidden" />
+                <span class="hidden sm:inline">{{ t("pagination.previous") }}</span>
             </AppButton>
 
             <template v-if="showNumbers">
@@ -46,7 +48,8 @@ function go(newPage) {
             </template>
 
             <AppButton variant="ghost" size="sm" :disabled="page >= totalPages" v-on:click="go(page + 1)">
-                {{ t("pagination.next") }}
+                <ChevronRight class="w-4 h-4 sm:hidden" />
+                <span class="hidden sm:inline">{{ t("pagination.next") }}</span>
             </AppButton>
         </div>
     </div>

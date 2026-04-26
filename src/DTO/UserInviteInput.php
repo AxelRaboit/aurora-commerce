@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTO;
 
 use App\Enum\UserRoleEnum;
+use App\Validator\Constraint\UniqueEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,6 +18,7 @@ final readonly class UserInviteInput
         #[Assert\NotBlank(message: 'admin.users.errors.email_required')]
         #[Assert\Email(message: 'admin.users.errors.email_invalid')]
         #[Assert\Length(max: 180, maxMessage: 'admin.users.errors.email_too_long')]
+        #[UniqueEmail(message: 'admin.users.errors.email_taken')]
         public string $email,
         #[Assert\NotBlank(message: 'admin.users.errors.role_required')]
         #[Assert\Choice(callback: [UserRoleEnum::class, 'allAssignableValues'], message: 'admin.users.errors.role_invalid')]

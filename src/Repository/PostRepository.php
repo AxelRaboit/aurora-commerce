@@ -106,6 +106,15 @@ class PostRepository extends ServiceEntityRepository
     /**
      * @return list<Post>
      */
+    /** @return list<Post> */
+    public function findAllTrashed(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.deletedAt IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findPurgeable(DateTimeImmutable $cutoff): array
     {
         return $this->createQueryBuilder('p')

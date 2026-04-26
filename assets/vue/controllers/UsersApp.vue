@@ -1,17 +1,21 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useDebounce } from "@/composables/useDebounce.js";
+import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Mail, UserPlus, Pencil, Trash2, Power, Search, LogIn } from "lucide-vue-next";
+import { UserPlus, Search } from "lucide-vue-next";
 import AppPagination from "@/components/AppPagination.vue";
 import AppButton from "@/components/AppButton.vue";
-import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppSelect from "@/components/AppSelect.vue";
+import AppMultiselect from "@/components/AppMultiselect.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppNoData from "@/components/AppNoData.vue";
 import AppBadge from "@/components/AppBadge.vue";
 import { useDateFormat } from "@/composables/useDateFormat.js";
+import UserRowActions from "@/admin/users/UserRowActions.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -30,53 +34,20 @@ const props = defineProps({
     currentUserId: { type: Number, default: 0 },
 });
 
-const users = ref([]);
-const loading = ref(false);
-const page = ref(1);
-const totalPages = ref(1);
-const total = ref(0);
 const search = ref("");
 const roleFilter = ref("");
 
-async function fetchUsers() {
-    loading.value = true;
-    try {
-        const params = new URLSearchParams();
-        params.set("page", String(page.value));
-        if (search.value) params.set("search", search.value);
-        if (roleFilter.value) params.set("role", roleFilter.value);
-        const response = await fetch(`${props.listPath}?${params.toString()}`);
-        const data = await response.json();
-        if (data.ok) {
-            users.value = data.items;
-            total.value = data.total;
-            totalPages.value = data.totalPages;
-            page.value = data.page;
-        } else {
-            toast.error(t("common.error"));
-        }
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        loading.value = false;
-    }
-}
+const { items: users, loading, page, totalPages, total, load: fetchUsers, goToPage, reset: resetUsers } = usePaginatedFetch(
+    () => props.listPath,
+    () => ({
+        ...(search.value && { search: search.value }),
+        ...(roleFilter.value && { role: roleFilter.value }),
+    }),
+);
 
 onMounted(fetchUsers);
 
-let searchTimeout;
-watch([search, roleFilter], () => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        page.value = 1;
-        fetchUsers();
-    }, 300);
-});
-
-function goToPage(newPage) {
-    page.value = newPage;
-    fetchUsers();
-}
+watch([search, roleFilter], useDebounce(resetUsers, 300));
 
 // ── Invite modal ─────────────────────────────────────────────────────────────
 const inviteModal = reactive({ open: false, errors: {}, saving: false });
@@ -101,7 +72,7 @@ async function submitInvite() {
     inviteModal.errors = {};
     try {
         const response = await fetch(props.invitePath, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(inviteForm),
         });
@@ -140,7 +111,7 @@ async function submitEdit() {
     try {
         const url = props.updatePath.replace("__id__", editModal.editing.id);
         const response = await fetch(url, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(editForm),
         });
@@ -162,7 +133,7 @@ async function submitEdit() {
 // ── Row actions ──────────────────────────────────────────────────────────────
 async function resendInvitation(user) {
     try {
-        const response = await fetch(props.resendInvitationPath.replace("__id__", user.id), { method: "POST" });
+        const response = await fetch(props.resendInvitationPath.replace("__id__", user.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("admin.users.invitationResent"));
@@ -175,9 +146,15 @@ async function resendInvitation(user) {
     }
 }
 
-async function toggleDisabled(user) {
+const togglingUser = ref(null);
+function askToggleDisabled(user) {
+    togglingUser.value = user;
+}
+async function confirmToggleDisabled() {
+    const user = togglingUser.value;
+    if (!user) return;
     try {
-        const response = await fetch(props.toggleDisabledPath.replace("__id__", user.id), { method: "POST" });
+        const response = await fetch(props.toggleDisabledPath.replace("__id__", user.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("common.saved"));
@@ -187,6 +164,8 @@ async function toggleDisabled(user) {
         }
     } catch {
         toast.error(t("common.error"));
+    } finally {
+        togglingUser.value = null;
     }
 }
 
@@ -195,7 +174,7 @@ async function confirmDelete() {
     const user = deletingUser.value;
     if (!user) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", user.id), { method: "DELETE" });
+        const response = await fetch(props.deletePath.replace("__id__", user.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("common.deleted"));
@@ -223,19 +202,20 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
 <template>
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1 max-w-md">
-                <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" :stroke-width="2" />
-                <input
-                    v-model="search"
-                    type="text"
-                    :placeholder="t('admin.users.searchPlaceholder')"
-                    class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
+            <div class="flex-1 max-w-md">
+                <AppInput v-model="search" :placeholder="t('admin.users.searchPlaceholder')">
+                    <template #prefix>
+                        <Search class="w-4 h-4" :stroke-width="2" />
+                    </template>
+                </AppInput>
             </div>
-            <AppSelect v-model="roleFilter" class="sm:max-w-xs">
-                <option value="">{{ t('admin.users.allRoles') }}</option>
-                <option v-for="r in roles" :key="r.value" :value="r.value">{{ r.label }}</option>
-            </AppSelect>
+            <AppMultiselect
+                v-model="roleFilter"
+                :options="roles"
+                :placeholder="t('admin.users.allRoles')"
+                :allow-empty="true"
+                class="sm:max-w-xs"
+            />
             <AppButton variant="primary" size="md" class="sm:ml-auto" v-on:click="openInvite">
                 <UserPlus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.users.invite') }}
@@ -264,23 +244,16 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="user.status === 'invited' && canActOn(user)" color="amber" :title="t('admin.users.resendInvitation')" v-on:click="resendInvitation(user)">
-                            <Mail class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="isDev && canActOn(user)" color="amber" :title="t('admin.users.impersonate', {name: user.name})" :href="impersonatePath.replace('__email__', encodeURIComponent(user.email))">
-                            <LogIn class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="canActOn(user)" color="indigo" :title="t('common.edit')" v-on:click="openEdit(user)">
-                            <Pencil class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="canActOn(user)" color="amber" :title="user.status === 'disabled' ? t('admin.users.enable') : t('admin.users.disable')" v-on:click="toggleDisabled(user)">
-                            <Power class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="canActOn(user)" color="rose" :title="t('common.delete')" v-on:click="deletingUser = user">
-                            <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                    </div>
+                    <UserRowActions
+                        :user="user"
+                        :is-dev="isDev"
+                        :can-act="canActOn(user)"
+                        :impersonate-path="impersonatePath"
+                        v-on:resend="resendInvitation"
+                        v-on:edit="openEdit"
+                        v-on:toggle-disabled="askToggleDisabled"
+                        v-on:delete="deletingUser = $event"
+                    />
                 </div>
             </div>
         </div>
@@ -317,22 +290,17 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                         </td>
                         <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="user.status === 'invited' && canActOn(user)" color="amber" :title="t('admin.users.resendInvitation')" v-on:click="resendInvitation(user)">
-                                    <Mail class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="isDev && canActOn(user)" color="amber" :title="t('admin.users.impersonate', {name: user.name})" :href="impersonatePath.replace('__email__', encodeURIComponent(user.email))">
-                                    <LogIn class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="canActOn(user)" color="indigo" :title="t('common.edit')" v-on:click="openEdit(user)">
-                                    <Pencil class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="canActOn(user)" color="amber" :title="user.status === 'disabled' ? t('admin.users.enable') : t('admin.users.disable')" v-on:click="toggleDisabled(user)">
-                                    <Power class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="canActOn(user)" color="rose" :title="t('common.delete')" v-on:click="deletingUser = user">
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
+                            <div class="flex justify-end">
+                                <UserRowActions
+                                    :user="user"
+                                    :is-dev="isDev"
+                                    :can-act="canActOn(user)"
+                                    :impersonate-path="impersonatePath"
+                                    v-on:resend="resendInvitation"
+                                    v-on:edit="openEdit"
+                                    v-on:toggle-disabled="askToggleDisabled"
+                                    v-on:delete="deletingUser = $event"
+                                />
                             </div>
                         </td>
                     </tr>
@@ -354,13 +322,12 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     :placeholder="t('admin.users.emailPlaceholder')"
                     :error="inviteModal.errors.email ?? ''"
                 />
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.role') }}</label>
-                    <AppSelect v-model="inviteForm.role">
-                        <option v-for="r in roles" :key="r.value" :value="r.value">{{ r.label }}</option>
-                    </AppSelect>
-                    <p v-if="inviteModal.errors.role" class="mt-1 text-xs text-rose-500">{{ inviteModal.errors.role }}</p>
-                </div>
+                <AppMultiselect
+                    v-model="inviteForm.role"
+                    :options="roles"
+                    :label="t('admin.users.role')"
+                    :error="inviteModal.errors.role ?? ''"
+                />
                 <div>
                     <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.inviteMessage') }}</label>
                     <textarea
@@ -383,13 +350,12 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
                 <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.role') }}</label>
-                    <AppSelect v-model="editForm.role">
-                        <option v-for="r in roles" :key="r.value" :value="r.value">{{ r.label }}</option>
-                    </AppSelect>
-                    <p v-if="editModal.errors.role" class="mt-1 text-xs text-rose-500">{{ editModal.errors.role }}</p>
-                </div>
+                <AppMultiselect
+                    v-model="editForm.role"
+                    :options="roles"
+                    :label="t('admin.users.role')"
+                    :error="editModal.errors.role ?? ''"
+                />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">{{ t('common.save') }}</AppButton>
@@ -403,6 +369,19 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             <div class="flex justify-end gap-2 pt-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingUser = null">{{ t('common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t('common.delete') }}</AppButton>
+            </div>
+        </AppModal>
+
+        <!-- Toggle disabled confirm -->
+        <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
+            <p class="text-sm text-primary">
+                {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
+            </p>
+            <div class="flex justify-end gap-2 pt-2">
+                <AppButton variant="ghost" size="md" v-on:click="togglingUser = null">{{ t('common.cancel') }}</AppButton>
+                <AppButton :variant="togglingUser?.status === 'disabled' ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
+                    {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enable' : 'admin.users.disable') }}
+                </AppButton>
             </div>
         </AppModal>
     </div>

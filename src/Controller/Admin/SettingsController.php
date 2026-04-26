@@ -46,6 +46,7 @@ final class SettingsController extends AbstractController
         return $this->render('admin/settings/index.html.twig', [
             'groups' => $groups,
             'mediaPickerPath' => $this->generateUrl('admin_media'),
+            'postSearchPath' => $this->generateUrl('admin_posts_search'),
         ]);
     }
 

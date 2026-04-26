@@ -5,12 +5,17 @@ const props = defineProps({
     title: { type: String, default: "" },
     description: { type: String, default: "" },
     slug: { type: String, default: "" },
+    locale: { type: String, default: "" },
+    postTypeSlug: { type: String, default: "" },
     siteUrl: { type: String, default: window.location.origin },
 });
 
 const displayUrl = computed(() => {
     try {
-        const url = new URL(props.slug || "/", props.siteUrl);
+        const path = [props.locale, props.postTypeSlug, props.slug]
+            .filter(Boolean)
+            .join("/");
+        const url = new URL(path ? `/${path}` : "/", props.siteUrl);
         return url.hostname + (url.pathname === "/" ? "" : url.pathname);
     } catch {
         return props.siteUrl;

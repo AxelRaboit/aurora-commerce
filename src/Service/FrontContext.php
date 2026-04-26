@@ -71,7 +71,7 @@ final class FrontContext
 
     public function siteName(): string
     {
-        return $this->setting(ApplicationParameterEnum::SiteName->value, 'Velox') ?? 'Velox';
+        return $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
     }
 
     public function siteDescription(): ?string

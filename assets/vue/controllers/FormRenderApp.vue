@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -40,7 +41,7 @@ async function handleSubmit() {
 
     try {
         const response = await fetch(props.submitPath, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...formData }),
         });

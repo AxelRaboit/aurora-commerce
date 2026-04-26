@@ -30,12 +30,21 @@ final readonly class AlternatesBuilder
                 continue;
             }
 
+            $slug = $translation->getSlug();
+            if (null === $slug) {
+                continue;
+            }
+
+            if ('' === $slug) {
+                continue;
+            }
+
             $alternates[] = [
                 'locale' => $code,
                 'url' => $this->urlGenerator->generate('front_post', [
                     'locale' => $code,
                     'postTypeSlug' => $post->getPostType()->getSlug(),
-                    'slug' => $translation->getSlug(),
+                    'slug' => $slug,
                 ]),
             ];
         }

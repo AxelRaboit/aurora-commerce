@@ -30,6 +30,7 @@ final readonly class PostSerializer
             'scheduledAt' => $post->getScheduledAt()?->format(DateTimeInterface::ATOM),
             'deletedAt' => $post->getDeletedAt()?->format(DateTimeInterface::ATOM),
             'trashed' => $post->isTrashed(),
+            'commentsEnabled' => $post->isCommentsEnabled(),
             'createdAt' => $post->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $post->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

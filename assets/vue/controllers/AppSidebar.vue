@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { useDebounce } from "@/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
@@ -28,7 +29,10 @@ import {
     Palette,
     MessageSquare,
     ClipboardList,
+    Search,
+    Loader2,
 } from "lucide-vue-next";
+import { statusBadge } from "@/utils/statusStyles.js";
 
 const props = defineProps({
     userName: { type: String, default: "" },
@@ -56,6 +60,7 @@ const props = defineProps({
     mailpitUrl: { type: String, default: "" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
+    searchPath: { type: String, default: "/admin/search" },
 });
 
 const { t } = useI18n();
@@ -107,6 +112,124 @@ function isActive(route) {
     if ("__front" === route) return false;
     return props.activeRoute?.startsWith(route);
 }
+
+// Search palette
+const searchOpen = ref(false);
+const searchQuery = ref("");
+const searchResults = ref({ posts: [], terms: [], media: [] });
+const searchLoading = ref(false);
+const searchHighlightedIndex = ref(0);
+const searchInputRef = ref(null);
+
+const isMac = typeof navigator !== "undefined" && /Mac|iP(hone|od|ad)/.test(navigator.platform);
+const modKeyLabel = isMac ? "⌘" : "Ctrl";
+
+const flatResults = computed(() => [
+    ...searchResults.value.posts.map((item) => ({ kind: "post", item })),
+    ...searchResults.value.terms.map((item) => ({ kind: "term", item })),
+    ...searchResults.value.media.map((item) => ({ kind: "media", item })),
+]);
+
+const totalResults = computed(() => flatResults.value.length);
+
+function openPalette() {
+    searchOpen.value = true;
+    searchQuery.value = "";
+    searchResults.value = { posts: [], terms: [], media: [] };
+    searchHighlightedIndex.value = 0;
+    nextTick(() => searchInputRef.value?.focus());
+}
+
+function closePalette() {
+    searchOpen.value = false;
+}
+
+function openSearchFromMobile() {
+    closeMobile();
+    openPalette();
+}
+
+function onGlobalKeydown(event) {
+    if ((event.ctrlKey || event.metaKey) && "k" === event.key.toLowerCase()) {
+        event.preventDefault();
+        searchOpen.value ? closePalette() : openPalette();
+        return;
+    }
+    if (!searchOpen.value) return;
+    if ("Escape" === event.key) {
+        event.preventDefault();
+        closePalette();
+    } else if ("ArrowDown" === event.key) {
+        event.preventDefault();
+        if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value + 1) % totalResults.value;
+    } else if ("ArrowUp" === event.key) {
+        event.preventDefault();
+        if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value - 1 + totalResults.value) % totalResults.value;
+    } else if ("Enter" === event.key) {
+        event.preventDefault();
+        activateResult(flatResults.value[searchHighlightedIndex.value]);
+    }
+}
+
+watch(searchQuery, useDebounce(runSearch, 180));
+
+async function runSearch() {
+    const trimmed = searchQuery.value.trim();
+    if ("" === trimmed) {
+        searchResults.value = { posts: [], terms: [], media: [] };
+        return;
+    }
+    searchLoading.value = true;
+    try {
+        const url = new URL(props.searchPath, window.location.origin);
+        url.searchParams.set("q", trimmed);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        searchResults.value = {
+            posts: data.posts ?? [],
+            terms: data.terms ?? [],
+            media: data.media ?? [],
+        };
+        searchHighlightedIndex.value = 0;
+    } catch {
+        searchResults.value = { posts: [], terms: [], media: [] };
+    } finally {
+        searchLoading.value = false;
+    }
+}
+
+function activateResult(entry) {
+    if (!entry) return;
+    if ("post" === entry.kind) {
+        const url = new URL(props.postsPath, window.location.origin);
+        if (entry.item.trashed) url.searchParams.set("trashed", "1");
+        window.location.href = url.toString();
+    } else if ("term" === entry.kind) {
+        window.location.href = props.taxonomiesPath;
+    } else if ("media" === entry.kind) {
+        window.location.href = props.mediaPath;
+    }
+}
+
+function highlightMatch(text) {
+    if (!text || !searchQuery.value) return text ?? "";
+    const tokens = searchQuery.value
+        .trim()
+        .split(/\s+/)
+        .filter((token) => token.length > 1)
+        .map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    if (!tokens.length) return text;
+    const regex = new RegExp(`(${tokens.join("|")})`, "ig");
+    return text.replace(regex, '<mark class="bg-indigo-400/30 text-primary rounded px-0.5">$1</mark>');
+}
+
+function entryIndex(kind, item) {
+    return flatResults.value.findIndex((entry) => entry.kind === kind && entry.item.id === item.id);
+}
+
+onMounted(() => window.addEventListener("keydown", onGlobalKeydown));
+onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
 </script>
 
 <template>
@@ -150,6 +273,29 @@ function isActive(route) {
                     {{ t("nav.viewSite") }}
                 </span>
             </a>
+        </div>
+
+        <!-- Search -->
+        <div class="sh-search-section px-3 py-2 border-b border-line shrink-0">
+            <button
+                type="button"
+                class="sh-logo-expanded w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted border border-line/60 hover:border-line hover:text-primary hover:bg-surface-2 transition-colors"
+                v-on:click="openPalette"
+            >
+                <Search class="w-4 h-4 shrink-0" :stroke-width="2" />
+                <span class="flex-1 text-left">{{ t("search.button") }}</span>
+                <kbd class="px-1.5 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
+            </button>
+            <button
+                type="button"
+                class="sh-logo-collapsed si items-center rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
+                v-on:click="openPalette"
+            >
+                <Search class="w-5 h-5 shrink-0" :stroke-width="2" />
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("search.button") }}
+                </span>
+            </button>
         </div>
 
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
@@ -238,9 +384,14 @@ function isActive(route) {
             <AppLogo :size="28" />
             <span class="text-primary font-bold text-base tracking-tight">Velox</span>
         </a>
-        <AppButton variant="ghost" size="none" class="p-2" v-on:click="openMobile">
-            <MenuIcon class="w-5 h-5" :stroke-width="2" />
-        </AppButton>
+        <div class="flex items-center gap-1">
+            <AppButton variant="ghost" size="none" class="p-2" v-on:click="openPalette">
+                <Search class="w-5 h-5" :stroke-width="2" />
+            </AppButton>
+            <AppButton variant="ghost" size="none" class="p-2" v-on:click="openMobile">
+                <MenuIcon class="w-5 h-5" :stroke-width="2" />
+            </AppButton>
+        </div>
     </div>
 
     <!-- Mobile drawer -->
@@ -267,6 +418,14 @@ function isActive(route) {
             </div>
 
             <div class="shrink-0 px-3 pt-3 pb-1 space-y-1">
+                <button
+                    type="button"
+                    class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted border border-line/60 hover:border-line hover:text-primary hover:bg-surface-2 transition-colors"
+                    v-on:click="openSearchFromMobile"
+                >
+                    <Search class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    <span class="flex-1 text-left">{{ t("search.button") }}</span>
+                </button>
                 <a :href="frontPath" target="_blank" rel="noopener" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
                     <Globe class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("nav.viewSite") }}
@@ -316,4 +475,119 @@ function isActive(route) {
             </div>
         </div>
     </div>
+
+    <!-- Search palette modal -->
+    <Teleport to="body">
+        <Transition
+            enter-active-class="transition ease-out duration-150"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition ease-in duration-100"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div v-if="searchOpen" class="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4" v-on:click.self="closePalette">
+                <div class="fixed inset-0 bg-black/60" v-on:click="closePalette" />
+
+                <div class="relative w-full max-w-2xl bg-surface border border-line rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh]">
+                    <div class="flex items-center gap-3 px-4 py-3 border-b border-line">
+                        <Search class="w-4 h-4 text-muted shrink-0" :stroke-width="2" />
+                        <input
+                            ref="searchInputRef"
+                            v-model="searchQuery"
+                            type="text"
+                            :placeholder="t('search.placeholder')"
+                            class="flex-1 bg-transparent border-0 outline-none text-primary placeholder-muted text-sm"
+                        >
+                        <Loader2 v-if="searchLoading" class="w-4 h-4 text-muted animate-spin" :stroke-width="2" />
+                        <AppButton variant="ghost" size="none" class="p-1" v-on:click="closePalette">
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </AppButton>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto">
+                        <div v-if="!searchQuery.trim()" class="px-4 py-8 text-sm text-muted text-center">
+                            {{ t("search.hint") }}
+                        </div>
+                        <div v-else-if="!searchLoading && totalResults === 0" class="px-4 py-8 text-sm text-muted text-center">
+                            {{ t("search.empty") }}
+                        </div>
+
+                        <div v-if="searchResults.posts.length" class="px-2 py-2 space-y-1">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                                <FileText class="w-3 h-3" :stroke-width="2" />
+                                {{ t("search.sections.posts") }}
+                            </p>
+                            <button
+                                v-for="post in searchResults.posts"
+                                :key="`post-${post.id}`"
+                                type="button"
+                                class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-start gap-3"
+                                :class="entryIndex('post', post) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                v-on:mouseenter="searchHighlightedIndex = entryIndex('post', post)"
+                                v-on:click="activateResult({ kind: 'post', item: post })"
+                            >
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5" :class="statusBadge(post.status)">
+                                    {{ t("admin.stats.postStatus." + post.status) }}
+                                </span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(post.title ?? '(—)')" />
+                                    <div v-if="post.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(post.snippet)" />
+                                    <div class="text-xs text-muted mt-0.5">{{ post.postType }}</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div v-if="searchResults.terms.length" class="px-2 py-2 space-y-1 border-t border-line">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                                <TagsIcon class="w-3 h-3" :stroke-width="2" />
+                                {{ t("search.sections.terms") }}
+                            </p>
+                            <button
+                                v-for="term in searchResults.terms"
+                                :key="`term-${term.id}`"
+                                type="button"
+                                class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
+                                :class="entryIndex('term', term) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                v-on:mouseenter="searchHighlightedIndex = entryIndex('term', term)"
+                                v-on:click="activateResult({ kind: 'term', item: term })"
+                            >
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(term.name ?? '(—)')" />
+                                    <div class="text-xs text-muted">{{ term.taxonomy }}</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div v-if="searchResults.media.length" class="px-2 py-2 space-y-1 border-t border-line">
+                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
+                                <Image class="w-3 h-3" :stroke-width="2" />
+                                {{ t("search.sections.media") }}
+                            </p>
+                            <button
+                                v-for="media in searchResults.media"
+                                :key="`media-${media.id}`"
+                                type="button"
+                                class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
+                                :class="entryIndex('media', media) === searchHighlightedIndex ? 'bg-indigo-600/15 text-indigo-400' : 'hover:bg-surface-2'"
+                                v-on:mouseenter="searchHighlightedIndex = entryIndex('media', media)"
+                                v-on:click="activateResult({ kind: 'media', item: media })"
+                            >
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(media.name ?? '(—)')" />
+                                    <div class="text-xs text-muted">{{ media.mimeType }}</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="px-4 py-2 border-t border-line bg-surface-2/50 text-xs text-muted flex items-center gap-4">
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">↑↓</kbd> {{ t("search.keys.navigate") }}</span>
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Enter</kbd> {{ t("search.keys.select") }}</span>
+                        <span class="ml-auto"><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Esc</kbd> {{ t("search.keys.close") }}</span>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 </template>

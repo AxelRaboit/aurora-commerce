@@ -1,0 +1,21 @@
+{% set itemClass = 'block px-4 py-2 text-sm transition-colors hover:bg-surface-2 ' ~ item.cssClass %}
+{% if item.targetType == 'front_logout' %}
+    <form method="POST" action="{{ item.url }}">
+        <button
+            type="submit"
+            class="w-full text-left {{ itemClass }}"
+            style="color: var(--th-primary);"
+        >
+            {{ item.label }}
+        </button>
+    </form>
+{% else %}
+    <a
+        href="{{ item.url }}"
+        {% if item.openInNewTab %}target="_blank" rel="noopener"{% endif %}
+        class="{{ itemClass }}"
+        style="color: var(--th-primary);"
+    >
+        {{ item.label }}
+    </a>
+{% endif %}

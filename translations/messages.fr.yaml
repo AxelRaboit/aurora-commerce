@@ -3,8 +3,54 @@ admin:
     approved: Demande de {name} approuvée.
     purged: Demandes traitées supprimées.
     rejected: Demande de {name} rejetée.
+  forms:
+    errors:
+      slug_format: Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.
+      slug_taken: Ce slug est déjà utilisé pour cette langue.
   invitations:
     sent: Invitation envoyée à {email}.
+  media:
+    errors:
+      folder_not_found: 'Dossier #{id} introuvable.'
+      parent_folder_not_found: 'Dossier parent #{id} introuvable.'
+      folder_self_nested: Un dossier ne peut pas être placé sous lui-même ou un de ses descendants.
+  menus:
+    preview:
+      untitled: (sans titre)
+      unnamed: (sans nom)
+      post_deleted: ⚠ Article supprimé
+      term_deleted: ⚠ Terme supprimé
+      post_type_deleted: ⚠ Type supprimé
+    targetTypes:
+      post: Article / Page
+      term: Terme de taxonomie
+      post_type_archive: Archive de type
+      home: Accueil
+      custom_url: URL personnalisée
+      front_login: Page de connexion
+      front_register: Page d'inscription
+      front_account: Mon compte
+      front_logout: Se déconnecter
+    visibilities:
+      always: Toujours visible
+      guests_only: Invités uniquement
+      authenticated_only: Connectés uniquement
+  postTypes:
+    errors:
+      slug_taken: 'Un type de contenu avec le slug "{slug}" existe déjà.'
+      builtin_protected: Les types de contenu intégrés ne peuvent pas être supprimés.
+      has_posts: Ce type de contenu contient des contenus et ne peut pas être supprimé.
+      field_name_taken: 'Un champ nommé "{name}" existe déjà sur ce type de contenu.'
+  posts:
+    errors:
+      post_type_not_found: 'Type de contenu #{id} introuvable.'
+  taxonomies:
+    errors:
+      slug_taken: 'Une taxonomie avec le slug "{slug}" existe déjà.'
+      builtin_protected: Les taxonomies intégrées ne peuvent pas être supprimées.
+      term_self_nested: Un terme ne peut pas être placé sous lui-même ou un de ses descendants.
+      reorder_cycle: 'La réorganisation créerait un cycle impliquant le terme #{id}.'
+      parent_wrong_taxonomy: 'Le terme parent #{parentId} n''appartient pas à la taxonomie "{taxonomy}".'
   tabs:
     access_requests: Demandes d'accès
     invitations: Invitations
@@ -101,12 +147,26 @@ auth:
     password_confirm: Confirmer le mot de passe
     submit: Créer le compte
     title: Créer un compte
+  register_confirm:
+    title: Vérifiez votre e-mail
+    heading: Vérifiez votre e-mail
+    message: "Un e-mail de confirmation vous a été envoyé. Cliquez sur le lien pour activer votre compte."
+    login_link: Aller à la connexion
+    resend_hint: Vous n'avez pas reçu l'e-mail ?
+    resend_link: Renvoyer l'e-mail de confirmation
+    resent_success: L'e-mail de confirmation a été renvoyé.
   reset_password:
     instructions: Choisissez un nouveau mot de passe pour votre compte.
     invalid_link: Ce lien est invalide ou a expiré.
     submit: Réinitialiser
     success: Votre mot de passe a été réinitialisé avec succès.
     title: Réinitialiser le mot de passe
+  verify_email:
+    title: Vérification de l'e-mail
+    success_heading: E-mail confirmé !
+    success_message: Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.
+    error_heading: Lien invalide ou expiré
+    error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
 impersonation:
   banner: Vous êtes connecté en tant que {name}
   leave: Quitter
@@ -122,6 +182,54 @@ mail:
     heading: Invitation à rejoindre Velox
     intro: Vous avez été invité à rejoindre {siteName}. Cliquez sur le bouton ci-dessous
       pour activer votre compte et définir votre mot de passe.
+  verify_email:
+    cta: Confirmer mon adresse e-mail
+    expires: Ce lien expire le {date}.
+    fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre
+      navigateur :'
+    footer_note: Si vous n'avez pas créé de compte, vous pouvez ignorer cet e-mail.
+    greeting: Bonjour {name},
+    heading: Confirmez votre adresse e-mail
+    intro: Merci de vous être inscrit sur {siteName}. Cliquez sur le bouton ci-dessous
+      pour confirmer votre adresse e-mail et activer votre compte.
+  reset_password:
+    cta: Réinitialiser mon mot de passe
+    expires: Ce lien expire dans 1 heure.
+    expires_at: Ce lien expire le {date}.
+    fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre
+      navigateur :'
+    footer_note: Si vous n'avez pas demandé de réinitialisation, vous pouvez ignorer
+      cet e-mail.
+    greeting: Bonjour {name},
+    heading: Réinitialisation de votre mot de passe
+    intro: Vous avez demandé à réinitialiser votre mot de passe sur {siteName}. Cliquez
+      sur le bouton ci-dessous pour choisir un nouveau mot de passe.
+  access_request_admin:
+    heading: Nouvelle demande d'accès
+    intro: Une nouvelle demande d'accès vient d'être reçue.
+    label_name: Nom
+    label_email: E-mail
+    label_message: Message
+    cta: Voir dans l'administration
+    footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
+  access_request_approved:
+    heading: Votre demande a été approuvée
+    greeting: Bonjour {name},
+    intro: Votre demande d'accès à {siteName} a été approuvée.
+    credentials_intro: 'Un compte a été créé pour vous avec les identifiants suivants :'
+    label_email: E-mail
+    label_password: Mot de passe
+    password_note: Pensez à changer votre mot de passe après votre première connexion.
+    existing_account: Vous pouvez vous connecter avec votre compte existant.
+    cta: Accéder à l'administration
+    footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
+  access_request_rejected:
+    heading: Demande d'accès non accordée
+    greeting: Bonjour {name},
+    intro: Après examen, votre demande d'accès n'a pas pu être accordée.
+    retry: Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à en soumettre une
+      nouvelle.
+    footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
 media:
   errors:
     alt_required: Le texte alternatif est requis.
@@ -152,3 +260,93 @@ profile:
     name_required: Le nom est requis.
     password_mismatch: Les mots de passe ne correspondent pas.
     password_too_short: Le mot de passe doit contenir au moins 8 caractères.
+errors:
+  page_not_found:
+    title: Page introuvable
+    message: La page que vous cherchez n'existe pas ou a été déplacée.
+    back: Retour à l'accueil
+  server_error:
+    title: Une erreur est survenue
+    message: Le serveur a rencontré un problème inattendu. Notre équipe a été notifiée. Veuillez réessayer dans quelques instants.
+    back: Retour à l'accueil
+front:
+  menu:
+    home: Accueil
+    login: Connexion
+    register: Inscription
+    account: Mon compte
+    logout: Se déconnecter
+    label: Menu
+  theme:
+    no_posts: Aucun article publié pour le moment.
+    no_content: Aucun contenu.
+  login:
+    title: Connexion
+    heading: Connexion
+    subtitle: Connectez-vous à votre espace personnel.
+    email: Adresse e-mail
+    email_placeholder: "vous@exemple.com"
+    password: Mot de passe
+    forgot_password: Mot de passe oublié ?
+    remember_me: Se souvenir de moi
+    submit: Se connecter
+    no_account: Pas encore de compte ?
+    register_link: Créer un compte
+  register:
+    title: Créer un compte
+    heading: Créer un compte
+    subtitle: Rejoignez notre espace personnel.
+    name: Nom complet
+    name_placeholder: Jean Dupont
+    email: Adresse e-mail
+    email_placeholder: "vous@exemple.com"
+    password: Mot de passe
+    submit: Créer le compte
+    already_account: Déjà un compte ?
+    login_link: Se connecter
+    confirm_title: Vérifiez votre e-mail
+    confirm_heading: Vérifiez votre e-mail
+    confirm_message: "Un e-mail de confirmation vous a été envoyé. Cliquez sur le lien pour activer votre compte."
+    closed_title: Inscriptions fermées
+    closed_desc: Les nouvelles inscriptions sont désactivées pour le moment.
+    resend_hint: Vous n'avez pas reçu l'e-mail ?
+    resend_link: Renvoyer l'e-mail de confirmation
+    resent_success: L'e-mail de confirmation a été renvoyé.
+  verify_email:
+    title: Vérification de l'e-mail
+    success_heading: E-mail confirmé !
+    success_message: Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.
+    error_heading: Lien invalide ou expiré
+    error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
+  account:
+    title: Mon compte
+    heading: Mon compte
+    name: Nom
+    email: E-mail
+    logout: Se déconnecter
+  forgot_password:
+    title: Mot de passe oublié
+    heading: Mot de passe oublié
+    subtitle: Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+    submit: Envoyer le lien
+    sent: "Un e-mail de réinitialisation vous a été envoyé. Vérifiez votre boîte de réception."
+    back_login: Retour à la connexion
+  reset_password:
+    title: Nouveau mot de passe
+    heading: Nouveau mot de passe
+    subtitle: Choisissez un nouveau mot de passe pour votre compte.
+    new_password: Nouveau mot de passe
+    confirm_password: Confirmer le mot de passe
+    submit: Réinitialiser le mot de passe
+    invalid_link: Ce lien est invalide ou a expiré. Veuillez faire une nouvelle demande.
+    success: Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.
+  errors:
+    name_required: Le nom est requis.
+    email_required: L'adresse e-mail est requise.
+    email_invalid: Adresse e-mail invalide.
+    email_taken: Cette adresse e-mail est déjà utilisée.
+    password_required: Le mot de passe est requis.
+    password_too_short: Le mot de passe doit contenir au moins 8 caractères.
+    passwords_mismatch: Les mots de passe ne correspondent pas.
+    email_not_verified: Veuillez confirmer votre adresse e-mail avant de vous connecter.
+    account_disabled: Votre compte a été désactivé.

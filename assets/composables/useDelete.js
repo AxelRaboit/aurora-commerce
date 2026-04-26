@@ -1,3 +1,4 @@
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -22,7 +23,7 @@ export function useDelete(deletePath, onSuccess, successMessageKey) {
         loading.value = true;
         try {
             const url = deletePath.replace("__id__", pendingDelete.value.id);
-            const response = await fetch(url, { method: "POST" });
+            const response = await fetch(url, { method: HttpMethod.Post });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             if (data.success) {

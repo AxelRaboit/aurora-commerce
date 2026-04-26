@@ -1,0 +1,61 @@
+<script setup>
+import { Mail, Pencil, Trash2, Power, LogIn } from "lucide-vue-next";
+import AppIconButton from "@/components/AppIconButton.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+const props = defineProps({
+    user: { type: Object, required: true },
+    isDev: { type: Boolean, default: false },
+    canAct: { type: Boolean, required: true },
+    impersonatePath: { type: String, default: "" },
+});
+
+const emit = defineEmits(["resend", "edit", "toggle-disabled", "delete"]);
+</script>
+
+<template>
+    <div class="flex items-center gap-0.5">
+        <AppIconButton
+            v-if="user.status === 'invited' && canAct"
+            color="amber"
+            :title="t('admin.users.resendInvitation')"
+            v-on:click="emit('resend', user)"
+        >
+            <Mail class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="isDev && canAct"
+            color="amber"
+            :title="t('admin.users.impersonate', { name: user.name })"
+            :href="impersonatePath.replace('__email__', encodeURIComponent(user.email))"
+        >
+            <LogIn class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="canAct"
+            color="indigo"
+            :title="t('common.edit')"
+            v-on:click="emit('edit', user)"
+        >
+            <Pencil class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="canAct"
+            color="amber"
+            :title="user.status === 'disabled' ? t('admin.users.enable') : t('admin.users.disable')"
+            v-on:click="emit('toggle-disabled', user)"
+        >
+            <Power class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="canAct"
+            color="rose"
+            :title="t('common.delete')"
+            v-on:click="emit('delete', user)"
+        >
+            <Trash2 class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+    </div>
+</template>

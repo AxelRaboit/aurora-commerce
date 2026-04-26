@@ -7,12 +7,15 @@ namespace App\Manager;
 use App\Contract\AccessRequestManagerInterface;
 use App\Entity\AccessRequest;
 use App\Enum\AccessRequestStatusEnum;
+use App\Enum\ApplicationParameter\ApplicationParameterEnum;
+use App\Repository\SettingRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 #[AsAlias(AccessRequestManagerInterface::class)]
@@ -23,6 +26,8 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
         private MailerInterface $mailer,
         private TwigEnvironment $twig,
         private UrlGeneratorInterface $urlGenerator,
+        private SettingRepository $settingRepository,
+        private TranslatorInterface $translator,
         private string $adminEmail,
         private string $mailerFrom,
     ) {}
@@ -57,46 +62,67 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
         $this->sendRequesterRejection($request);
     }
 
+    private function siteName(): string
+    {
+        return $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
+    }
+
     private function sendAdminNotification(AccessRequest $request): void
     {
+        $siteName = $this->siteName();
+        $adminUrl = $this->urlGenerator->generate('dev_access_requests', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $body = $this->twig->render('email/access_request_admin.html.twig', [
             'request' => $request,
+            'siteName' => $siteName,
+            'adminUrl' => $adminUrl,
         ]);
+
+        $subject = $this->translator->trans('mail.access_request_admin.heading');
 
         $this->mailer->send((new Email())
             ->from($this->mailerFrom)
             ->to($this->adminEmail)
-            ->subject(sprintf("Demande d'accès de %s", $request->getRequesterName() ?? $request->getRequesterEmail()))
+            ->subject(sprintf('[%s] %s', $siteName, $subject))
             ->html($body));
     }
 
     private function sendRequesterApproval(AccessRequest $request, ?string $generatedPassword = null): void
     {
-        $loginUrl = $this->urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $siteName = $this->siteName();
+        $loginUrl = $this->urlGenerator->generate('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $body = $this->twig->render('email/access_request_approved.html.twig', [
             'request' => $request,
             'loginUrl' => $loginUrl,
             'generatedPassword' => $generatedPassword,
+            'siteName' => $siteName,
         ]);
+
+        $subject = $this->translator->trans('mail.access_request_approved.heading');
 
         $this->mailer->send((new Email())
             ->from($this->mailerFrom)
             ->to($request->getRequesterEmail())
-            ->subject("Votre demande d'accès a été approuvée")
+            ->subject(sprintf('[%s] %s', $siteName, $subject))
             ->html($body));
     }
 
     private function sendRequesterRejection(AccessRequest $request): void
     {
+        $siteName = $this->siteName();
+
         $body = $this->twig->render('email/access_request_rejected.html.twig', [
             'request' => $request,
+            'siteName' => $siteName,
         ]);
+
+        $subject = $this->translator->trans('mail.access_request_rejected.heading');
 
         $this->mailer->send((new Email())
             ->from($this->mailerFrom)
             ->to($request->getRequesterEmail())
-            ->subject("Votre demande d'accès")
+            ->subject(sprintf('[%s] %s', $siteName, $subject))
             ->html($body));
     }
 }

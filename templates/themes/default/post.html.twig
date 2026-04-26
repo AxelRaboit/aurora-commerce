@@ -4,7 +4,7 @@
 {% set pageDescription = translation.metaDescription ?? context.siteDescription ?? '' %}
 {% set featuredMedia = post.featuredMedia %}
 {% set ogMedia = translation.ogImage ?? featuredMedia %}
-{% set canonicalUrl = translation.canonicalUrl ?: (context.siteUrl ~ path('front_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug})) %}
+{% set canonicalUrl = translation.canonicalUrl ?: (translation.slug ? (context.siteUrl ~ path('front_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug})) : null) %}
 
 {% block title %}{{ pageTitle }} — {{ context.siteName }}{% endblock %}
 
@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block canonical %}
-    <link rel="canonical" href="{{ canonicalUrl }}">
+    {% if canonicalUrl %}<link rel="canonical" href="{{ canonicalUrl }}">{% endif %}
 {% endblock %}
 
 {% block robots %}
@@ -54,15 +54,17 @@
             {% endif %}
         </header>
 
-        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-primary prose-a:text-indigo-500 hover:prose-a:text-indigo-600 prose-code:text-primary prose-pre:bg-surface-2 prose-pre:border prose-pre:border-line prose-blockquote:border-indigo-500 prose-blockquote:bg-surface-2 prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-line">
+        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-primary prose-a:text-accent hover:prose-a:text-accent-hover prose-a:no-underline prose-code:text-primary prose-pre:bg-surface-2 prose-pre:border prose-pre:border-line prose-blockquote:border-accent prose-blockquote:bg-surface-2 prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-line">
             {{ content|raw }}
         </div>
     </article>
 
-    <div {{ vue_component('PostCommentsApp', {
-        listPath: path('front_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
-        submitPath: path('front_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
-        reactPathTemplate: path('front_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),
-        commentsEnabled: commentsEnabled,
-    }) }}></div>
+    {% if translation.slug %}
+        <div {{ vue_component('PostCommentsApp', {
+            listPath: path('front_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+            submitPath: path('front_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+            reactPathTemplate: path('front_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),
+            commentsEnabled: commentsEnabled,
+        }) }}></div>
+    {% endif %}
 {% endblock %}

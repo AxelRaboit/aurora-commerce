@@ -1,4 +1,5 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -30,7 +31,7 @@ function accentColor(theme) {
 async function activateTheme(theme) {
     try {
         const url = props.activatePath.replace("__id__", theme.id);
-        const response = await fetch(url, { method: "POST" });
+        const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.ok) {
             toast.error(t("common.error"));
@@ -63,7 +64,7 @@ async function submitCreate() {
     createModal.errors = {};
     try {
         const response = await fetch(props.createPath, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(createForm),
         });
@@ -186,7 +187,7 @@ async function submitEdit() {
     try {
         const url = props.updatePath.replace("__id__", editModal.editing.id);
         const response = await fetch(url, {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: editForm.name,
@@ -220,7 +221,7 @@ async function confirmDelete() {
     if (!theme) return;
     try {
         const url = props.deletePath.replace("__id__", theme.id);
-        const response = await fetch(url, { method: "POST" });
+        const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.ok) {
             toast.error(t(data.error ?? "common.error"));
@@ -246,7 +247,7 @@ async function confirmDelete() {
             </AppButton>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             <div
                 v-for="theme in themeList"
                 :key="theme.id"
@@ -321,7 +322,7 @@ async function confirmDelete() {
                 />
                 <AppInput
                     v-model="createForm.slug"
-                    label="Slug"
+                    :label="t('admin.themes.slugLabel')"
                     :error="createModal.errors.slug ?? ''"
                     :required="true"
                 />
@@ -373,10 +374,10 @@ async function confirmDelete() {
                     </div>
                     <template v-if="section.key === 'header'">
                         <div class="space-y-2">
-                            <span class="text-xs text-secondary uppercase tracking-wide">Contenu</span>
+                            <span class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.themes.headerContent') }}</span>
                             <div class="flex gap-2">
                                 <button
-                                    v-for="mode in [{k:'default',l:'Nom du site'},{k:'text',l:'Texte custom'},{k:'image',l:'Image média'}]"
+                                    v-for="mode in [{k:'default',l:t('admin.themes.headerModeDefault')},{k:'text',l:t('admin.themes.headerModeText')},{k:'image',l:t('admin.themes.headerModeImage')}]"
                                     :key="mode.k"
                                     type="button"
                                     class="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
@@ -386,15 +387,15 @@ async function confirmDelete() {
                                     {{ mode.l }}
                                 </button>
                             </div>
-                            <AppInput v-if="headerMode === 'text'" v-model="headerCustomText" label="Texte personnalisé" :placeholder="t('admin.themes.headerTextPlaceholder')" />
-                            <AppInput v-if="headerMode === 'image'" v-model="headerLogoMediaId" label="ID du média" placeholder="42" />
+                            <AppInput v-if="headerMode === 'text'" v-model="headerCustomText" :label="t('admin.themes.headerCustomText')" :placeholder="t('admin.themes.headerTextPlaceholder')" />
+                            <AppInput v-if="headerMode === 'image'" v-model="headerLogoMediaId" :label="t('admin.themes.headerLogoMediaId')" placeholder="42" />
                             <p v-if="headerMode === 'image'" class="text-xs text-muted">{{ t('admin.themes.headerMediaHint') }}</p>
                         </div>
                     </template>
                     <AppInput
                         v-if="section.key === 'footer'"
                         v-model="footerText"
-                        label="Texte du pied de page"
+                        :label="t('admin.themes.footerText')"
                         placeholder="© {year} {siteName}"
                     />
                 </div>

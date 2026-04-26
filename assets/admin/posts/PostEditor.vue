@@ -1,16 +1,20 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
+import { useDebounce } from "@/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History } from "lucide-vue-next";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History, ExternalLink } from "lucide-vue-next";
 import { renderBlocks } from "@/utils/blocksRenderer.js";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import AppCheckbox from "@/components/AppCheckbox.vue";
+import AppToggle from "@/components/AppToggle.vue";
 import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
+import AppMultiselect from "@/components/AppMultiselect.vue";
 import EditorBlock from "@/components/EditorBlock.vue";
 import PreviewOverlay from "@/components/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
@@ -81,6 +85,10 @@ function makeEmptyTranslation() {
     };
 }
 
+const postTypeOptions = computed(() =>
+    props.postTypes.map((pt) => ({ value: String(pt.id), label: pt.label })),
+);
+
 const form = reactive({
     postTypeId: String(props.postTypes[0]?.id ?? ""),
     status: "draft",
@@ -89,6 +97,7 @@ const form = reactive({
     termIds: [],
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
     relatedPostIds: [],
+    commentsEnabled: true,
 });
 
 const publishedAt = ref(null);
@@ -100,12 +109,8 @@ const relatedSearchQuery = ref("");
 const relatedSearchResults = ref([]);
 const relatedSearchLoading = ref(false);
 const relatedSearchOpen = ref(false);
-let relatedSearchTimer = null;
 
-watch(relatedSearchQuery, () => {
-    if (relatedSearchTimer) clearTimeout(relatedSearchTimer);
-    relatedSearchTimer = setTimeout(runRelatedSearch, 200);
-});
+watch(relatedSearchQuery, useDebounce(runRelatedSearch, 200));
 
 async function runRelatedSearch() {
     relatedSearchLoading.value = true;
@@ -182,7 +187,7 @@ async function uploadFeaturedImage(event) {
     try {
         const body = new FormData();
         body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: "POST", body });
+        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (data.success) {
@@ -301,7 +306,7 @@ async function uploadOgImage(event) {
     try {
         const body = new FormData();
         body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: "POST", body });
+        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (data.success) {
@@ -351,6 +356,7 @@ onMounted(async () => {
             featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
             form.termIds = [...(data.post.termIds ?? [])];
             form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
+            form.commentsEnabled = data.post.commentsEnabled ?? true;
             relatedPosts.value = [...(data.post.relatedPosts ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
@@ -395,6 +401,18 @@ const customFieldsDefs = computed(() => {
     const pt = props.postTypes.find((postType) => postType.id === currentPostTypeId);
     if (!pt) return [];
     return [...(pt.fields ?? [])].sort((a, b) => a.position - b.position);
+});
+
+const currentPostTypeSlug = computed(() => {
+    const currentPostTypeId = Number(form.postTypeId);
+    const pt = props.postTypes.find((postType) => postType.id === currentPostTypeId);
+    return pt?.slug ?? "";
+});
+
+const frontUrl = computed(() => {
+    const slug = form.translations[activeLocale.value]?.slug;
+    if (!slug || !currentPostTypeSlug.value) return null;
+    return `/${activeLocale.value}/${currentPostTypeSlug.value}/${slug}`;
 });
 
 function defaultValueForField(field) {
@@ -482,6 +500,7 @@ async function reloadAfterRestore() {
             featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
             form.termIds = [...(data.post.termIds ?? [])];
             form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
+            form.commentsEnabled = data.post.commentsEnabled ?? true;
             relatedPosts.value = [...(data.post.relatedPosts ?? [])];
             version.value = data.post.version ?? null;
             for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
@@ -579,6 +598,7 @@ async function handleSave({ force = false } = {}) {
         featuredMediaId: form.featuredMediaId,
         termIds: form.termIds,
         relatedPostIds: form.relatedPostIds,
+        commentsEnabled: form.commentsEnabled,
         translations: form.translations,
         version: version.value,
         force,
@@ -682,6 +702,17 @@ function forceSave() {
                     <span>{{ t("admin.posts.preview") }}</span>
                 </AppButton>
                 <AppButton
+                    v-if="frontUrl && form.status === 'published'"
+                    variant="secondary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :href="frontUrl"
+                    target="_blank"
+                >
+                    <ExternalLink class="w-4 h-4" :stroke-width="2" />
+                    <span>{{ t("common.view") }}</span>
+                </AppButton>
+                <AppButton
                     variant="primary"
                     size="md"
                     class="relative w-full sm:w-auto"
@@ -700,6 +731,9 @@ function forceSave() {
             <p v-for="(message, field) in errors" :key="field">{{ message }}</p>
         </AppMessage>
 
+        <!-- Post ID -->
+        <p v-if="postId" class="px-1 text-xs text-muted font-mono">ID : {{ postId }}</p>
+
         <!-- Published at info -->
         <p v-if="publishedAt" class="px-1 text-xs text-muted">
             {{ t("admin.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
@@ -710,11 +744,12 @@ function forceSave() {
             <div v-if="postTypes.length" class="flex items-center gap-2 shrink-0">
                 <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.postType") }}</span>
                 <div class="min-w-40">
-                    <AppSelect v-model="form.postTypeId">
-                        <option v-for="postType in postTypes" :key="postType.id" :value="String(postType.id)">
-                            {{ postType.label }}
-                        </option>
-                    </AppSelect>
+                    <AppMultiselect
+                        v-model="form.postTypeId"
+                        :options="postTypeOptions"
+                        track-by="value"
+                        option-label="label"
+                    />
                 </div>
             </div>
             <!-- Terms picker, grouped by taxonomy -->
@@ -761,6 +796,15 @@ function forceSave() {
                     </label>
                 </div>
             </div>
+        </div>
+
+        <!-- Comments toggle -->
+        <div class="px-1">
+            <AppToggle
+                :model-value="form.commentsEnabled"
+                :label="t('admin.posts.commentsEnabled')"
+                v-on:update:model-value="form.commentsEnabled = $event"
+            />
         </div>
 
         <!-- Related posts -->
@@ -914,6 +958,11 @@ function forceSave() {
                     <Unlock v-else class="w-4 h-4" :stroke-width="2" />
                 </AppButton>
             </div>
+            <p v-if="frontUrl" class="text-xs text-muted">
+                <span class="text-secondary">URL :</span>
+                <a v-if="form.status === 'published'" :href="frontUrl" target="_blank" class="ml-1 font-mono text-indigo-400 hover:underline break-all">{{ frontUrl }}</a>
+                <span v-else class="ml-1 font-mono text-muted break-all">{{ frontUrl }}</span>
+            </p>
         </div>
 
         <!-- Custom fields defined on the post type -->
@@ -1019,6 +1068,8 @@ function forceSave() {
                             :title="form.translations[activeLocale].metaTitle || form.translations[activeLocale].title"
                             :description="form.translations[activeLocale].metaDescription"
                             :slug="form.translations[activeLocale].slug"
+                            :locale="activeLocale"
+                            :post-type-slug="currentPostTypeSlug"
                         />
                     </div>
 
@@ -1064,6 +1115,7 @@ function forceSave() {
                 <EditorBlock
                     :key="`${activeLocale}-${editorKey}`"
                     v-model="form.translations[activeLocale].blocks"
+                    :post-types="postTypes"
                 />
             </div>
         </div>

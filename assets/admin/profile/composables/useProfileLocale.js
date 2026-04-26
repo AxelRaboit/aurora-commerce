@@ -1,3 +1,4 @@
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 
 export function useProfileLocale(localePath, initialLocale) {
@@ -9,7 +10,7 @@ export function useProfileLocale(localePath, initialLocale) {
         localeLoading.value = true;
         try {
             const response = await fetch(localePath, {
-                method: "POST",
+                method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ locale: selectedLocale.value }),
             });

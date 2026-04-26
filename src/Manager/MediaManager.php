@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(MediaManagerInterface::class)]
 final readonly class MediaManager implements MediaManagerInterface
@@ -26,6 +27,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private SluggerInterface $slugger,
         private MediaFolderRepository $folderRepository,
         private ImageVariantGenerator $variantGenerator,
+        private TranslatorInterface $translator,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -72,7 +74,7 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->folderId) {
             $folder = $this->folderRepository->find($input->folderId);
             if (null === $folder) {
-                throw new InvalidArgumentException(sprintf('Folder #%d not found.', $input->folderId));
+                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.folder_not_found', ['{id}' => $input->folderId]));
             }
         }
 
@@ -107,7 +109,7 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->parentId) {
             $parent = $this->folderRepository->find($input->parentId);
             if (null === $parent) {
-                throw new InvalidArgumentException(sprintf('Parent folder #%d not found.', $input->parentId));
+                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
             }
 
             $folder->setParent($parent);
@@ -127,11 +129,11 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->parentId) {
             $newParent = $this->folderRepository->find($input->parentId);
             if (null === $newParent) {
-                throw new InvalidArgumentException(sprintf('Parent folder #%d not found.', $input->parentId));
+                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
             }
 
             if ($newParent === $folder || $newParent->isDescendantOf($folder)) {
-                throw new InvalidArgumentException('A folder cannot be nested under itself or one of its descendants.');
+                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.folder_self_nested'));
             }
         }
 

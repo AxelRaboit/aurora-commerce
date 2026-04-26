@@ -3,7 +3,7 @@
         {% for pageNum in 1..totalPages %}
             {% set routeParams = params|merge({page: pageNum}) %}
             {% if pageNum == page %}
-                <span class="w-9 h-9 flex items-center justify-center rounded-md bg-indigo-600 text-white text-sm font-medium">{{ pageNum }}</span>
+                <span class="w-9 h-9 flex items-center justify-center rounded-md bg-accent text-white text-sm font-medium">{{ pageNum }}</span>
             {% else %}
                 <a href="{{ path(route, routeParams) }}" class="w-9 h-9 flex items-center justify-center rounded-md bg-surface text-secondary hover:text-primary text-sm font-medium">{{ pageNum }}</a>
             {% endif %}

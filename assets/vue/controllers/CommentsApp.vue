@@ -1,5 +1,7 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, computed, onMounted } from "vue";
+import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { MessageSquare, Check, Ban, Trash2, Eye } from "lucide-vue-next";
@@ -25,11 +27,6 @@ const props = defineProps({
     stats: { type: Object, default: () => ({ pending: 0, approved: 0, spam: 0 }) },
 });
 
-const comments = ref([]);
-const loading = ref(false);
-const page = ref(1);
-const totalPages = ref(1);
-const total = ref(0);
 const statusFilter = ref("");
 const localStats = ref({ ...props.stats });
 
@@ -40,45 +37,21 @@ const tabs = computed(() => [
     { key: "spam", label: t("admin.comments.spam"), count: localStats.value.spam },
 ]);
 
-async function fetchComments() {
-    loading.value = true;
-    try {
-        const params = new URLSearchParams();
-        params.set("page", String(page.value));
-        if (statusFilter.value) params.set("status", statusFilter.value);
-        const response = await fetch(`${props.listPath}?${params.toString()}`);
-        const data = await response.json();
-        if (data.ok) {
-            comments.value = data.items;
-            total.value = data.total;
-            totalPages.value = data.totalPages;
-            page.value = data.page;
-        } else {
-            toast.error(t("common.error"));
-        }
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        loading.value = false;
-    }
-}
+const { items: comments, loading, page, totalPages, total, load: fetchComments, goToPage, reset: resetComments } = usePaginatedFetch(
+    () => props.listPath,
+    () => ({ ...(statusFilter.value && { status: statusFilter.value }) }),
+);
 
 onMounted(fetchComments);
 
 function selectTab(key) {
     statusFilter.value = key;
-    page.value = 1;
-    fetchComments();
-}
-
-function goToPage(newPage) {
-    page.value = newPage;
-    fetchComments();
+    resetComments();
 }
 
 async function moderateComment(comment, path, successKey, statsUpdate) {
     try {
-        const response = await fetch(path.replace("__id__", comment.id), { method: "POST" });
+        const response = await fetch(path.replace("__id__", comment.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t(successKey));
@@ -109,7 +82,7 @@ function spamComment(comment) {
 async function deleteComment(comment) {
     if (!confirm(t("admin.comments.deleteConfirm"))) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: "POST" });
+        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("common.deleted"));
@@ -137,7 +110,7 @@ const isModerationEnabled = ref(props.moderationEnabled);
 
 async function toggleModeration() {
     try {
-        const response = await fetch(props.toggleModerationPath, { method: "POST" });
+        const response = await fetch(props.toggleModerationPath, { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             isModerationEnabled.value = data.moderationEnabled;
@@ -291,7 +264,7 @@ async function toggleModeration() {
                     <p class="text-sm text-primary whitespace-pre-wrap bg-surface-2 rounded-lg px-3 py-2.5">{{ viewingComment?.content }}</p>
                 </div>
                 <div v-if="viewingComment?.reactionCount > 0" class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">Réactions</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.reactions') }}</label>
                     <p class="text-sm text-secondary">{{ viewingComment?.reactionCount }}</p>
                 </div>
             </div>

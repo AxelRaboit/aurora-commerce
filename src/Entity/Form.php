@@ -117,6 +117,11 @@ class Form
         return $this->fields;
     }
 
+    public function findFieldById(int $fieldId): ?FormField
+    {
+        return $this->fields->filter(static fn (FormField $field): bool => $field->getId() === $fieldId)->first() ?: null;
+    }
+
     public function addField(FormField $field): static
     {
         if (!$this->fields->contains($field)) {

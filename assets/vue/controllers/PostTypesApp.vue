@@ -1,13 +1,16 @@
 <script setup>
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref, reactive, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useFormModal } from "@/composables/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Pencil, Trash2, Layers, Lock, GripVertical } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppIconButton from "@/components/AppIconButton.vue";
 import AppInput from "@/components/AppInput.vue";
 import AppSelect from "@/components/AppSelect.vue";
+import AppMultiselect from "@/components/AppMultiselect.vue";
 import AppCheckbox from "@/components/AppCheckbox.vue";
 import AppModal from "@/components/AppModal.vue";
 import AppMessage from "@/components/AppMessage.vue";
@@ -42,70 +45,30 @@ function replacePostType(fresh) {
 }
 
 // ── Post type modal ──────────────────────────────────────────────────────────
-const postTypeModal = reactive({ open: false, editing: null, errors: {}, saving: false });
-const postTypeForm = reactive({
-    slug: "",
-    label: "",
-    icon: "",
-    hasArchive: false,
-    supports: [],
-    taxonomyIds: [],
-});
+const { modal: postTypeModal, openCreate: postTypeModalCreate, openEdit: postTypeModalEdit, submit: postTypeModalSubmit } = useFormModal();
+const postTypeForm = reactive({ slug: "", label: "", icon: "", hasArchive: false, supports: [], taxonomyIds: [] });
 
 function openCreatePostType() {
-    postTypeModal.editing = null;
-    postTypeModal.errors = {};
-    Object.assign(postTypeForm, {
-        slug: "",
-        label: "",
-        icon: "",
-        hasArchive: false,
-        supports: [...SUPPORTS],
-        taxonomyIds: [],
-    });
-    postTypeModal.open = true;
+    postTypeModalCreate(() => Object.assign(postTypeForm, {
+        slug: "", label: "", icon: "", hasArchive: false, supports: [...SUPPORTS], taxonomyIds: [],
+    }));
 }
 
 function openEditPostType(postType) {
-    postTypeModal.editing = postType;
-    postTypeModal.errors = {};
-    Object.assign(postTypeForm, {
-        slug: postType.slug,
-        label: postType.label,
-        icon: postType.icon ?? "",
-        hasArchive: postType.hasArchive,
-        supports: [...(postType.supports ?? [])],
-        taxonomyIds: [...(postType.taxonomyIds ?? [])],
-    });
-    postTypeModal.open = true;
+    postTypeModalEdit(postType, (pt) => Object.assign(postTypeForm, {
+        slug: pt.slug, label: pt.label, icon: pt.icon ?? "",
+        hasArchive: pt.hasArchive, supports: [...(pt.supports ?? [])], taxonomyIds: [...(pt.taxonomyIds ?? [])],
+    }));
 }
 
 async function submitPostType() {
-    postTypeModal.saving = true;
-    postTypeModal.errors = {};
-    try {
-        const url = postTypeModal.editing
-            ? props.editPath.replace("__id__", postTypeModal.editing.id)
-            : props.createPath;
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(postTypeForm),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            postTypeModal.errors = data.errors ?? {};
-            return;
-        }
+    const url = postTypeModal.editing
+        ? props.editPath.replace("__id__", postTypeModal.editing.id)
+        : props.createPath;
+    await postTypeModalSubmit(url, postTypeForm, (data) => {
         replacePostType(data.postType);
         selectedId.value = data.postType.id;
-        postTypeModal.open = false;
-        toast.success(t("common.saved"));
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        postTypeModal.saving = false;
-    }
+    });
 }
 
 const deletingPostType = ref(null);
@@ -113,10 +76,10 @@ async function confirmDeletePostType() {
     const pt = deletingPostType.value;
     if (!pt) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", pt.id), { method: "POST" });
+        const response = await fetch(props.deletePath.replace("__id__", pt.id), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
-            toast.error(data.error ?? t("common.error"));
+            toast.error(data.error ? t(data.error) : t("common.error"));
             return;
         }
         postTypes.value = postTypes.value.filter((p) => p.id !== pt.id);
@@ -130,72 +93,42 @@ async function confirmDeletePostType() {
 }
 
 // ── Field modal ──────────────────────────────────────────────────────────────
-const fieldModal = reactive({ open: false, editing: null, errors: {}, saving: false });
+const { modal: fieldModal, openCreate: fieldModalCreate, openEdit: fieldModalEdit, submit: fieldModalSubmit } = useFormModal();
 const fieldForm = reactive({
-    name: "",
-    label: "",
-    type: "text",
-    required: false,
-    translatable: false,
-    choicesText: "",
-    referencePostTypeId: null,
-    referenceMultiple: false,
+    name: "", label: "", type: "text", required: false, translatable: false,
+    choicesText: "", referencePostTypeId: null, referenceMultiple: false,
 });
 
 function openCreateField() {
     if (!selected.value) return;
-    fieldModal.editing = null;
-    fieldModal.errors = {};
-    Object.assign(fieldForm, {
-        name: "",
-        label: "",
-        type: "text",
-        required: false,
-        translatable: false,
-        choicesText: "",
-        referencePostTypeId: null,
-        referenceMultiple: false,
-    });
-    fieldModal.open = true;
+    fieldModalCreate(() => Object.assign(fieldForm, {
+        name: "", label: "", type: "text", required: false, translatable: false,
+        choicesText: "", referencePostTypeId: null, referenceMultiple: false,
+    }));
 }
 
 function openEditField(field) {
-    fieldModal.editing = field;
-    fieldModal.errors = {};
-    const options = field.options ?? {};
-    const choicesText = (options.choices ?? [])
-        .map((choice) => `${choice.value}|${choice.label}`)
-        .join("\n");
-    Object.assign(fieldForm, {
-        name: field.name,
-        label: field.label,
-        type: field.type,
-        required: field.required,
-        translatable: field.translatable,
-        choicesText,
-        referencePostTypeId: options.postTypeId ?? null,
-        referenceMultiple: options.multiple ?? false,
+    fieldModalEdit(field, (f) => {
+        const options = f.options ?? {};
+        Object.assign(fieldForm, {
+            name: f.name, label: f.label, type: f.type, required: f.required, translatable: f.translatable,
+            choicesText: (options.choices ?? []).map((c) => `${c.value}|${c.label}`).join("\n"),
+            referencePostTypeId: options.postTypeId ?? null,
+            referenceMultiple: options.multiple ?? false,
+        });
     });
-    fieldModal.open = true;
 }
 
 function buildFieldOptions() {
     if (fieldForm.type === "select") {
-        const choices = fieldForm.choicesText
-            .split("\n")
-            .map((line) => line.trim())
-            .filter((line) => line.length)
-            .map((line) => {
-                const [value, ...rest] = line.split("|");
-                return { value: value.trim(), label: (rest.join("|").trim() || value.trim()) };
-            });
-        return { choices };
+        return { choices: fieldForm.choicesText.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
+            const [value, ...rest] = l.split("|");
+            return { value: value.trim(), label: rest.join("|").trim() || value.trim() };
+        }) };
     }
     if (fieldForm.type === "reference") {
         const options = { multiple: fieldForm.referenceMultiple };
-        if (fieldForm.referencePostTypeId) {
-            options.postTypeId = Number(fieldForm.referencePostTypeId);
-        }
+        if (fieldForm.referencePostTypeId) options.postTypeId = Number(fieldForm.referencePostTypeId);
         return options;
     }
     return {};
@@ -203,38 +136,14 @@ function buildFieldOptions() {
 
 async function submitField() {
     if (!selected.value) return;
-    fieldModal.saving = true;
-    fieldModal.errors = {};
-    try {
-        const payload = {
-            name: fieldForm.name,
-            label: fieldForm.label,
-            type: fieldForm.type,
-            required: fieldForm.required,
-            translatable: fieldForm.translatable,
-            options: buildFieldOptions(),
-        };
-        const url = fieldModal.editing
-            ? props.fieldEditPath.replace("__id__", selected.value.id).replace("__fieldId__", fieldModal.editing.id)
-            : props.fieldCreatePath.replace("__id__", selected.value.id);
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            fieldModal.errors = data.errors ?? {};
-            return;
-        }
-        replacePostType(data.postType);
-        fieldModal.open = false;
-        toast.success(t("common.saved"));
-    } catch {
-        toast.error(t("common.error"));
-    } finally {
-        fieldModal.saving = false;
-    }
+    const url = fieldModal.editing
+        ? props.fieldEditPath.replace("__id__", selected.value.id).replace("__fieldId__", fieldModal.editing.id)
+        : props.fieldCreatePath.replace("__id__", selected.value.id);
+    const payload = {
+        name: fieldForm.name, label: fieldForm.label, type: fieldForm.type,
+        required: fieldForm.required, translatable: fieldForm.translatable, options: buildFieldOptions(),
+    };
+    await fieldModalSubmit(url, payload, (data) => replacePostType(data.postType));
 }
 
 const deletingField = ref(null);
@@ -243,7 +152,7 @@ async function confirmDeleteField() {
     if (!field || !selected.value) return;
     try {
         const url = props.fieldDeletePath.replace("__id__", selected.value.id).replace("__fieldId__", field.id);
-        const response = await fetch(url, { method: "POST" });
+        const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("common.error"));
@@ -273,7 +182,7 @@ async function persistFieldOrder() {
     if (!selected.value) return;
     try {
         const response = await fetch(props.fieldReorderPath.replace("__id__", selected.value.id), {
-            method: "POST",
+            method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderedIds: orderedFields.value.map((f) => f.id) }),
         });
@@ -529,13 +438,15 @@ function toggleIn(list, value) {
                 </div>
 
                 <div v-if="fieldForm.type === 'reference'" class="space-y-2">
-                    <div>
-                        <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.postTypes.fields.referenceTargetType") }}</label>
-                        <AppSelect v-model="fieldForm.referencePostTypeId">
-                            <option :value="null">{{ t("admin.postTypes.fields.referenceAnyType") }}</option>
-                            <option v-for="pt in postTypes" :key="pt.id" :value="pt.id">{{ pt.label }}</option>
-                        </AppSelect>
-                    </div>
+                    <AppMultiselect
+                        v-model="fieldForm.referencePostTypeId"
+                        :options="postTypes"
+                        :label="t('admin.postTypes.fields.referenceTargetType')"
+                        :placeholder="t('admin.postTypes.fields.referenceAnyType')"
+                        :allow-empty="true"
+                        track-by="id"
+                        option-label="label"
+                    />
                     <AppCheckbox v-model="fieldForm.referenceMultiple" :label="t('admin.postTypes.fields.referenceMultiple')" />
                 </div>
 

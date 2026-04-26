@@ -18,6 +18,7 @@ const variants = {
     danger: 'bg-rose-600 hover:bg-rose-500 text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500 font-bold',
     'danger-outline': 'bg-transparent hover:bg-rose-500/10 text-rose-400 border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500 font-bold',
     'danger-subtle': 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-900/40 font-medium',
+    accent: 'bg-accent hover:bg-accent-hover text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-accent font-bold',
     ghost: 'bg-transparent hover:bg-surface-2 text-secondary hover:text-primary',
     link: 'bg-transparent text-muted hover:text-secondary underline p-0',
     icon: 'bg-transparent p-0',

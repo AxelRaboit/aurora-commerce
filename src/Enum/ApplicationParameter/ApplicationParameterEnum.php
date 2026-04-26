@@ -19,7 +19,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case CommentsEnabled = 'comments_enabled';
     case CommentModerationEnabled = 'comment_moderation_enabled';
     case MaintenanceMode = 'maintenance_mode';
-    case RegistrationEnabled = 'registration_enabled';
+    case AdminRegistrationEnabled = 'admin_registration_enabled';
+    case FrontRegistrationEnabled = 'front_registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';
     case HomepagePostId = 'homepage_post_id';
@@ -49,7 +50,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentsEnabled => 'Commentaires activés',
             self::CommentModerationEnabled => 'Modération des commentaires',
             self::MaintenanceMode => 'Mode maintenance',
-            self::RegistrationEnabled => 'Inscriptions ouvertes',
+            self::AdminRegistrationEnabled => 'Inscriptions admin ouvertes',
+            self::FrontRegistrationEnabled => 'Inscriptions front ouvertes',
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
             self::HomepagePostId => "Page d'accueil (ID du post)",
@@ -76,7 +78,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentsEnabled => 'Commentaires activés (0 = désactivés, 1 = activés)',
             self::CommentModerationEnabled => 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)',
             self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = site fermé au public)',
-            self::RegistrationEnabled => 'Autoriser les nouvelles inscriptions (0 = désactivé, 1 = activé)',
+            self::AdminRegistrationEnabled => 'Autoriser les inscriptions via /register (interface admin) — désactiver après la création du premier compte admin',
+            self::FrontRegistrationEnabled => 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)',
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
             self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
             self::HomepagePostId => 'ID d\'un post affiché sur la page d\'accueil. Vide = liste des derniers articles.',
@@ -103,7 +106,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentsEnabled => '0',
             self::CommentModerationEnabled => '1',
             self::MaintenanceMode => '0',
-            self::RegistrationEnabled => '0',
+            self::AdminRegistrationEnabled => '0',
+            self::FrontRegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
             self::TrashAutoPurgeDays => '30',
             self::HomepagePostId => '',
@@ -117,8 +121,9 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'int',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::RegistrationEnabled => 'bool',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
+            self::HomepagePostId => 'post',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::FrontRegistrationEnabled => 'bool',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -127,7 +132,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system' => true,
             default => false,
         };
     }
@@ -139,7 +144,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
             self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
-            self::MaintenanceMode, self::RegistrationEnabled => 'system',
+            self::MaintenanceMode, self::AdminRegistrationEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
         };

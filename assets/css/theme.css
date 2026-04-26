@@ -28,6 +28,15 @@
     --color-accent-hover: var(--th-accent-hover);
     --color-accent-text: var(--th-accent-text);
 
+    --color-danger:       var(--th-danger);
+    --color-danger-soft:  var(--th-danger-soft);
+    --color-success:      var(--th-success);
+    --color-success-soft: var(--th-success-soft);
+    --color-warning:      var(--th-warning);
+    --color-warning-soft: var(--th-warning-soft);
+    --color-info:         var(--th-info);
+    --color-info-soft:    var(--th-info-soft);
+
     --color-badge-danger-bg:    var(--th-badge-danger-bg);
     --color-badge-danger-text:  var(--th-badge-danger-text);
     --color-badge-warning-bg:   var(--th-badge-warning-bg);
@@ -58,6 +67,15 @@
     --th-accent-hover: rgb(79  70 229);
     --th-accent-text:  rgb(255 255 255);
 
+    --th-danger:       rgb(244  63  94);
+    --th-danger-soft:  rgb(244  63  94 / 0.10);
+    --th-success:      rgb( 16 185 129);
+    --th-success-soft: rgb( 16 185 129 / 0.10);
+    --th-warning:      rgb(245 158  11);
+    --th-warning-soft: rgb(245 158  11 / 0.10);
+    --th-info:         rgb( 56 189 248);
+    --th-info-soft:    rgb( 56 189 248 / 0.10);
+
     --th-badge-danger-bg:    rgb(254 226 226);
     --th-badge-danger-text:  rgb(185  28  28);
     --th-badge-warning-bg:   rgb(254 243 199);
@@ -87,6 +105,15 @@
     --th-accent:       rgb(129 140 248);
     --th-accent-hover: rgb(99 102 241);
     --th-accent-text:  rgb(255 255 255);
+
+    --th-danger:       rgb(251 113 133);
+    --th-danger-soft:  rgb(251 113 133 / 0.15);
+    --th-success:      rgb( 52 211 153);
+    --th-success-soft: rgb( 52 211 153 / 0.15);
+    --th-warning:      rgb(251 191  36);
+    --th-warning-soft: rgb(251 191  36 / 0.15);
+    --th-info:         rgb(125 211 252);
+    --th-info-soft:    rgb(125 211 252 / 0.15);
 
     --th-badge-danger-bg:    rgb(127  29  29);
     --th-badge-danger-text:  rgb(252 165 165);

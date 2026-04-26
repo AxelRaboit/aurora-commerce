@@ -1,13 +1,60 @@
-import { useList } from "@/composables/useList.js";
+import { ref } from "vue";
+import { usePaginatedFetch } from "@/composables/usePaginatedFetch.js";
 
-export function usePostList(postsPath, initialPosts, initialSearch) {
+export function usePostList(
+    postsPath,
+    initialPosts,
+    initialSearch,
+    getExtraParams = () => ({}),
+) {
+    const search = ref(initialSearch ?? "");
+
     const {
         items: posts,
-        addItem: addPost,
-        updateItem: updatePost,
-        removeItem: removePost,
-        ...rest
-    } = useList(postsPath, initialPosts, initialSearch);
+        page,
+        totalPages,
+        total,
+        load,
+        goToPage,
+        reset,
+    } = usePaginatedFetch(
+        postsPath,
+        () => ({
+            ...(search.value && { search: search.value }),
+            ...getExtraParams(),
+        }),
+        null,
+        initialPosts,
+    );
 
-    return { posts, addPost, updatePost, removePost, ...rest };
+    function performSearch() {
+        reset();
+    }
+
+    function addPost(post) {
+        posts.value.unshift(post);
+    }
+
+    function updatePost(updated) {
+        const index = posts.value.findIndex((post) => post.id === updated.id);
+        if (index !== -1) posts.value[index] = updated;
+    }
+
+    function removePost(id) {
+        posts.value = posts.value.filter((post) => post.id !== id);
+    }
+
+    return {
+        posts,
+        page,
+        totalPages,
+        total,
+        search,
+        performSearch,
+        goToPage,
+        addPost,
+        updatePost,
+        removePost,
+        load,
+    };
 }

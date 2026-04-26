@@ -11,6 +11,14 @@ interface UserManagerInterface
 {
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User;
 
+    public function register(string $name, string $email, string $password): User;
+
+    public function sendVerificationEmail(User $user): void;
+
+    public function verifyEmail(string $token): ?User;
+
+    public function resendVerificationEmail(string $email): void;
+
     public function update(User $user, string $name, string $email): void;
 
     public function updateWithRole(User $user, string $name, string $email, string $role): void;

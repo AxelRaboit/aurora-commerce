@@ -1,3 +1,4 @@
+import { HttpMethod } from "@/utils/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -11,7 +12,7 @@ export function useProfileDelete(deletePath, loginPath, deleteCsrf) {
         deleteLoading.value = true;
         try {
             const response = await fetch(deletePath, {
-                method: "POST",
+                method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ _token: deleteCsrf }),
             });
