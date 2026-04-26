@@ -19,10 +19,10 @@ jobs:
       extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, dom, filter, json, tokenizer
       APP_ENV: test
       APP_SECRET: ci_secret_not_used_in_prod
-      DATABASE_URL: postgresql://app:!ChangeMe!@127.0.0.1:5432/aurora?serverVersion=16&charset=utf8
+      DATABASE_URL: postgresql://app:!ChangeMe!@127.0.0.1:5432/aurora?serverVersion=18&charset=utf8
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: app
           POSTGRES_PASSWORD: "!ChangeMe!"
