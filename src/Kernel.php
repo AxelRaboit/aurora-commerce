@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use Override;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -25,6 +26,11 @@ class Kernel extends BaseKernel
 
         if (null === $clientDir) {
             return;
+        }
+
+        $customPackages = $clientDir.'/config/packages-custom.yaml';
+        if (is_file($customPackages)) {
+            $loader->load($customPackages);
         }
 
         $customServices = $clientDir.'/config/services-custom.yaml';
@@ -77,7 +83,7 @@ class Kernel extends BaseKernel
 
     private function resolveClientDir(): ?string
     {
-        $kernelFile = (new \ReflectionClass(static::class))->getFileName();
+        $kernelFile = new ReflectionClass(static::class)->getFileName();
         $dir = dirname((string) $kernelFile);
 
         while (($parent = dirname($dir)) !== $dir) {
