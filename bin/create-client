@@ -313,11 +313,13 @@ SHELL := /bin/bash
 PHP_BIN  = php
 CONSOLE  = $(PHP_BIN) bin/console
 COMPOSER = composer
+PNPM     = pnpm
 
 # === Setup ===
 install: ## Install dependencies and set up the project
 	$(COMPOSER) install --working-dir=vendor/aurora
 	$(COMPOSER) install
+	cd vendor/aurora && $(PNPM) install
 	make db-create
 	make migrate
 
@@ -326,11 +328,13 @@ setup-dirs: ## Create required runtime directories
 	@echo "✅ Runtime directories created"
 
 # === Server ===
-start: ## Start the Symfony dev server
+start: ## Start the Symfony dev server + Vite dev server
 	symfony server:start -d
+	cd vendor/aurora && $(PNPM) run dev
 
-start-no-tls: ## Start the Symfony dev server without TLS
+start-no-tls: ## Start without TLS + Vite dev server
 	symfony server:start --no-tls -d
+	cd vendor/aurora && $(PNPM) run dev
 
 stop: ## Stop the Symfony dev server
 	symfony server:stop
