@@ -245,7 +245,6 @@ cat > "$DEST/.gitignore" <<'EOF'
 /var/
 /vendor/
 /node_modules/
-/public/build/
 /public/bundles/
 /composer.lock
 EOF

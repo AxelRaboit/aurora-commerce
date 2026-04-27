@@ -18,6 +18,7 @@ install-dev: ## Install for local development
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) --dir=$(AURORA) install
+	@ln -sf ../$(AURORA)/public/build public/build
 	make setup-dirs
 	make db-create
 	make migrate
