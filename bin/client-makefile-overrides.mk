@@ -6,13 +6,13 @@ install: install-dev ## Install the project (alias for install-dev)
 start: ## Start dev server + Vite dev server
 	@docker compose up -d database 2>/dev/null || true
 	symfony server:start -d
-	@[ -d "$(AURORA)/vendor" ] || $(COMPOSER) install --working-dir=$(AURORA)
+	@[ -d "$(AURORA)/vendor" ] || $(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	@[ -d "$(AURORA)/node_modules" ] || $(PNPM) --dir=$(AURORA) install
 	$(PNPM) --dir=$(AURORA) run dev
 
 install-dev: ## Install for local development
 	$(COMPOSER) install --no-scripts
-	$(COMPOSER) install --working-dir=$(AURORA)
+	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
@@ -56,7 +56,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 
 aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) update axelraboit/aurora
-	$(COMPOSER) install --working-dir=$(AURORA)
+	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
