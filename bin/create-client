@@ -82,6 +82,14 @@ cat > "$DEST/composer.json" <<EOF
         "symfony/runtime": "7.4.*",
         "${AURORA_PACKAGE}": "${AURORA_VERSION}"
     },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.3.1",
+        "phpunit/phpunit": "^13.1.7",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/maker-bundle": "^1.67",
+        "symfony/web-profiler-bundle": "7.4.*"
+    },
     "autoload": {
         "psr-4": {
             "App\\\\": "src/"
