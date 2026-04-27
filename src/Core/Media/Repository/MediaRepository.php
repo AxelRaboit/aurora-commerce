@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Repository;
+namespace Aurora\Core\Media\Repository;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

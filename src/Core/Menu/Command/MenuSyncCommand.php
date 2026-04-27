@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Command;
+namespace Aurora\Core\Menu\Command;
 
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Manager\MenuManager;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\Menu\Service\MenuLocationRegistry;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Manager\MenuManager;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\Menu\Service\MenuLocationRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

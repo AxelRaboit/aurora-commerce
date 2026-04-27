@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Frontend\Service;
+namespace Aurora\Core\Frontend\Service;
 
 use DateTimeInterface;
 use Symfony\Component\HttpFoundation\Request;

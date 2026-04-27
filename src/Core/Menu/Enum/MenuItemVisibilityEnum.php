@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Enum;
+namespace Aurora\Core\Menu\Enum;
 
 enum MenuItemVisibilityEnum: string
 {

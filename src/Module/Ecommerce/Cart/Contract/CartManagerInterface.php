@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Contract;
+namespace Aurora\Module\Ecommerce\Cart\Contract;
 
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 
 interface CartManagerInterface
 {

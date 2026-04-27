@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Enum;
+namespace Aurora\Core\Media\Enum;
 
 enum MimeTypeEnum: string
 {

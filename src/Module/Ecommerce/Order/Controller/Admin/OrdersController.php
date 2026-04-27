@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Controller\Admin;
+namespace Aurora\Module\Ecommerce\Order\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use App\Module\Ecommerce\Order\Repository\OrderRepository;
-use App\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

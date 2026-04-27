@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dashboard\Controller\Admin;
+namespace Aurora\Core\Dashboard\Controller\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

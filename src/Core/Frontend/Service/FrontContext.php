@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Frontend\Service;
+namespace Aurora\Core\Frontend\Service;
 
-use App\Core\Locale\Entity\Locale;
-use App\Core\Locale\Repository\LocaleRepository;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Locale\Entity\Locale;
+use Aurora\Core\Locale\Repository\LocaleRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
  * Aggregates site-wide configuration used by public-facing controllers.

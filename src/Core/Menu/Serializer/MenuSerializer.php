@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Serializer;
+namespace Aurora\Core\Menu\Serializer;
 
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Service\MenuLocationRegistry;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Service\MenuLocationRegistry;
 
 final readonly class MenuSerializer
 {

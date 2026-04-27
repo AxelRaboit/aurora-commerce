@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Audit\Service;
+namespace Aurora\Core\Audit\Service;
 
-use App\Core\Audit\Entity\AuditLog;
-use App\Core\User\Entity\User;
+use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 

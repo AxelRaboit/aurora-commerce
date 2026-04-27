@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\DTO;
+namespace Aurora\Module\Erp\Product\DTO;
 
-use App\Core\Support\Str;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
-use App\Module\Erp\Product\Enum\ProductStatusEnum;
-use App\Module\Erp\Product\Enum\ProductTypeEnum;
+use Aurora\Core\Support\Str;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
+use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class ProductInput

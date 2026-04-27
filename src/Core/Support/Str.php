@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Support;
+namespace Aurora\Core\Support;
 
 final class Str
 {

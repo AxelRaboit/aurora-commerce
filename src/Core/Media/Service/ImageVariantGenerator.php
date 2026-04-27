@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Service;
+namespace Aurora\Core\Media\Service;
 
 use GdImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class ImageVariantGenerator
 {
-    public const VARIANT_SIZES = [
+    public const array VARIANT_SIZES = [
         'thumbnail' => 256,
         'medium' => 800,
         'large' => 1920,

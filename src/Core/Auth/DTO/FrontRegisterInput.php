@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\DTO;
+namespace Aurora\Core\Auth\DTO;
 
-use App\Core\Support\Str;
+use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class FrontRegisterInput

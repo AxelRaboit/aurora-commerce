@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Repository;
+namespace Aurora\Core\Setting\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Core\Setting\Entity\Setting;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Setting\Entity\Setting;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

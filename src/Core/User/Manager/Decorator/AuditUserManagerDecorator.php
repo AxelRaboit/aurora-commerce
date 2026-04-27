@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Manager\Decorator;
+namespace Aurora\Core\User\Manager\Decorator;
 
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\Entity\User;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;

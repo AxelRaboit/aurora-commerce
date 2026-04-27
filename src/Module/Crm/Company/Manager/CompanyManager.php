@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Manager;
+namespace Aurora\Module\Crm\Company\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Module\Crm\Company\Contract\CompanyManagerInterface;
-use App\Module\Crm\Company\DTO\CompanyInput;
-use App\Module\Crm\Company\Entity\Company;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
+use Aurora\Module\Crm\Company\DTO\CompanyInput;
+use Aurora\Module\Crm\Company\Entity\Company;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

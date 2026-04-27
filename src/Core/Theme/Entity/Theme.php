@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Entity;
+namespace Aurora\Core\Theme\Entity;
 
-use App\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Theme\Repository\ThemeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]

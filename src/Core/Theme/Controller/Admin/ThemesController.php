@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Controller\Admin;
+namespace Aurora\Core\Theme\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Theme\DTO\ThemeInput;
-use App\Core\Theme\Entity\Theme;
-use App\Core\Theme\Manager\ThemeManager;
-use App\Core\Theme\Repository\ThemeRepository;
-use App\Core\Theme\Serializer\ThemeSerializer;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Theme\DTO\ThemeInput;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Manager\ThemeManager;
+use Aurora\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Theme\Serializer\ThemeSerializer;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

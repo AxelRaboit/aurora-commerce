@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Repository;
+namespace Aurora\Core\User\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Core\User\Entity\User;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

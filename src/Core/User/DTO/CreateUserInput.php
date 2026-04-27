@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\DTO;
+namespace Aurora\Core\User\DTO;
 
-use App\Core\Auth\Validator\UniqueEmail;
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\Support\Str;
+use Aurora\Core\Auth\Validator\UniqueEmail;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class CreateUserInput

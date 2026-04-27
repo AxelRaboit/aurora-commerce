@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Controller\Admin;
+namespace Aurora\Module\Ecommerce\Listing\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Core\Validation\Service\PayloadValidator;
-use App\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
-use App\Module\Ecommerce\Listing\DTO\ListingInput;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Listing\Repository\ListingRepository;
-use App\Module\Ecommerce\Listing\Serializer\ListingSerializer;
-use App\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
+use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

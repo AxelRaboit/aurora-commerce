@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Module;
+namespace Aurora\Core\Module;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;

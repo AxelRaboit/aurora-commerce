@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Controller\Admin;
+namespace Aurora\Module\Crm\Contact\Controller\Admin;
 
-use App\Core\Audit\Repository\AuditLogRepository;
-use App\Core\Audit\Serializer\AuditLogSerializer;
-use App\Core\Enum\HttpMethodEnum;
-use App\Module\Crm\Contact\Entity\Contact;
-use App\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

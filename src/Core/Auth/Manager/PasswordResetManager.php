@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Manager;
+namespace Aurora\Core\Auth\Manager;
 
-use App\Core\Auth\Contract\PasswordResetManagerInterface;
-use App\Core\Auth\Entity\ResetPasswordRequest;
-use App\Core\Auth\Repository\ResetPasswordRequestRepository;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Repository\ResetPasswordRequestRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -94,7 +94,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
 
         $subject = $this->translator->trans('shared.mail.reset_password.heading');
 
-        $this->mailer->send((new Email())
+        $this->mailer->send(new Email()
             ->from($this->mailerFrom)
             ->to($user->getEmail())
             ->subject(sprintf('[%s] %s', $siteName, $subject))

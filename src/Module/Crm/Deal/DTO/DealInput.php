@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\DTO;
+namespace Aurora\Module\Crm\Deal\DTO;
 
-use App\Core\Support\Str;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Core\Support\Str;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class DealInput

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\DTO;
+namespace Aurora\Module\Ecommerce\Order\DTO;
 
-use App\Core\Locale\Enum\CountryEnum;
-use App\Core\Support\Str;
+use Aurora\Core\Locale\Enum\CountryEnum;
+use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class CheckoutInput

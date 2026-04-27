@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Entity;
+namespace Aurora\Core\Media\Entity;
 
-use App\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;

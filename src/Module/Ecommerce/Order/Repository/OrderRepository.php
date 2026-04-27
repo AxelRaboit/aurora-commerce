@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Repository;
+namespace Aurora\Module\Ecommerce\Order\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Order\Entity\Order;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order as SortOrder;
 use Doctrine\Persistence\ManagerRegistry;

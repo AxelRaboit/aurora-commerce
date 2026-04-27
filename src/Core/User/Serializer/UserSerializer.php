@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Serializer;
+namespace Aurora\Core\User\Serializer;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
 
 use const DATE_ATOM;
 
@@ -13,13 +13,7 @@ final readonly class UserSerializer
 {
     public function serialize(User $user): array
     {
-        $primaryRole = null;
-        foreach ([UserRoleEnum::Admin, UserRoleEnum::Editor, UserRoleEnum::Author, UserRoleEnum::Contributor] as $candidate) {
-            if (in_array($candidate->value, $user->getRoles(), true)) {
-                $primaryRole = $candidate;
-                break;
-            }
-        }
+        $primaryRole = array_find([UserRoleEnum::Admin, UserRoleEnum::Editor, UserRoleEnum::Author, UserRoleEnum::Contributor], fn ($candidate): bool => in_array($candidate->value, $user->getRoles(), true));
 
         return [
             'id' => $user->getId(),

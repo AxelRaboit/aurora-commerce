@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Service;
+namespace Aurora\Core\Menu\Service;
 
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Entity\MenuItem;
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Entity\PostType;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Post\Repository\PostTypeRepository;
-use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
-use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

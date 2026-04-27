@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Manager;
+namespace Aurora\Tests\Integration\Manager;
 
-use App\Core\Menu\Entity\MenuItem;
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
-use App\Core\Menu\Manager\MenuManager;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Manager\MenuManager;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 

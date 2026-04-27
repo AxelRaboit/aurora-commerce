@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Enum;
+namespace Aurora\Core\User\Enum;
 
 enum UserRoleEnum: string
 {

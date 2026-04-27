@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Service;
+namespace Aurora\Core\Menu\Service;
 
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 
 /**
  * Registry of menu locations expected by the application/theme.

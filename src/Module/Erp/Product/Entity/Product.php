@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Entity;
+namespace Aurora\Module\Erp\Product\Entity;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Trait\TimestampableTrait;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
-use App\Module\Erp\Product\Enum\ProductStatusEnum;
-use App\Module\Erp\Product\Enum\ProductTypeEnum;
-use App\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
+use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
+use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

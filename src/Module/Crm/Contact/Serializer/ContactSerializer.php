@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Serializer;
+namespace Aurora\Module\Crm\Contact\Serializer;
 
-use App\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Entity\Contact;
 use DateTimeInterface;
 
 final readonly class ContactSerializer

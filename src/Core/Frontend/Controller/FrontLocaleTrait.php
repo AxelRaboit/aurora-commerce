@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Frontend\Controller;
+namespace Aurora\Core\Frontend\Controller;
 
-use App\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\FrontContext;
 use Symfony\Component\HttpFoundation\Response;
 
 trait FrontLocaleTrait

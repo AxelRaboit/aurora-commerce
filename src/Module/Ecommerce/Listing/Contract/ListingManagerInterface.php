@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Contract;
+namespace Aurora\Module\Ecommerce\Listing\Contract;
 
-use App\Module\Ecommerce\Listing\DTO\ListingInput;
-use App\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 
 interface ListingManagerInterface
 {

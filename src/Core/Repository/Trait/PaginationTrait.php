@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Repository\Trait;
+namespace Aurora\Core\Repository\Trait;
 
 use Doctrine\ORM\QueryBuilder;
 

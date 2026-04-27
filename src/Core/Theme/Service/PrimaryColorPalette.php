@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Service;
+namespace Aurora\Core\Theme\Service;
 
 /**
  * Generates an 11-stop Tailwind-style colour scale (50 → 950) from a single hex seed.

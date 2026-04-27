@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Enum;
+namespace Aurora\Module\Erp\Product\Enum;
 
 enum ProductStatusEnum: string
 {

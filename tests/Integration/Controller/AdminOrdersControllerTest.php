@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller;
 
-use App\Core\Locale\Enum\CountryEnum;
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
-use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Order\Contract\OrderManagerInterface;
-use App\Module\Ecommerce\Order\DTO\CheckoutInput;
-use App\Module\Ecommerce\Order\Entity\Order;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use App\Module\Ecommerce\Order\Repository\OrderRepository;
-use App\Module\Erp\Product\Entity\Product;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
-use App\Module\Erp\Product\Enum\ProductStatusEnum;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Locale\Enum\CountryEnum;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Manager\Decorator;
+namespace Aurora\Core\Auth\Manager\Decorator;
 
-use App\Core\Auth\Contract\AccessRequestManagerInterface;
-use App\Core\Auth\Entity\AccessRequest;
-use App\Core\User\Entity\User;
+use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
+use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\User\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;

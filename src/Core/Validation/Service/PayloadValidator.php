@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Validation\Service;
+namespace Aurora\Core\Validation\Service;
 
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

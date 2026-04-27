@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Entity;
+namespace Aurora\Module\Ecommerce\Cart\Entity;
 
-use App\Core\Trait\TimestampableTrait;
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Cart\Repository\CartRepository;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

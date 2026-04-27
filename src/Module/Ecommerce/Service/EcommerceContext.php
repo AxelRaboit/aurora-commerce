@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Service;
+namespace Aurora\Module\Ecommerce\Service;
 
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
  * Single source of truth for ecommerce module activation.

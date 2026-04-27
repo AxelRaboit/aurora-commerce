@@ -4,13 +4,12 @@
 install: install-dev ## Install the project (alias for install-dev)
 
 install-dev: ## Install for local development
-	git submodule update --init --recursive
+	$(COMPOSER) install
 	$(COMPOSER) install --working-dir=$(AURORA)
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
-	$(COMPOSER) install
 	$(PNPM) --dir=$(AURORA) install
 	make setup-dirs
 	make db-create
@@ -22,7 +21,6 @@ install-dev: ## Install for local development
 	@echo "✅ Admin user: admin@aurora.app / password"
 
 install-prod: ## Install for production
-	$(COMPOSER) install --no-dev --optimize-autoloader --working-dir=$(AURORA)
 	$(COMPOSER) install --no-dev --optimize-autoloader
 	$(PNPM) --dir=$(AURORA) install --frozen-lockfile
 	make setup-dirs
@@ -40,7 +38,6 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	fi; \
 	echo "🚀 Deploying version $$APP_VERSION..."; \
 	echo "$$APP_VERSION" > VERSION; \
-	$(COMPOSER) install --no-dev --optimize-autoloader --working-dir=$(AURORA); \
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
 	$(PNPM) --dir=$(AURORA) install --frozen-lockfile; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
@@ -51,8 +48,11 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	echo "✅ Deployed $$APP_VERSION"
 
 aurora-update: ## Pull latest Aurora changes
-	git submodule update --remote $(AURORA)
-	$(COMPOSER) install --working-dir=$(AURORA)
+	$(COMPOSER) update axelraboit/aurora
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) --dir=$(AURORA) install
 	make migrate
 	@echo "✅ Aurora updated"

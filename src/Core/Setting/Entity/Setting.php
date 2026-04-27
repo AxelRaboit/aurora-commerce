@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Entity;
+namespace Aurora\Core\Setting\Entity;
 
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 

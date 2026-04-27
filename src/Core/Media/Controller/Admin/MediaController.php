@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Controller\Admin;
+namespace Aurora\Core\Media\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Media\Contract\MediaManagerInterface;
-use App\Core\Media\DTO\MediaFolderInput;
-use App\Core\Media\DTO\MediaInput;
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Entity\MediaFolder;
-use App\Core\Media\Enum\MimeTypeEnum;
-use App\Core\Media\Repository\MediaFolderRepository;
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Media\Serializer\MediaFolderSerializer;
-use App\Core\Media\Serializer\MediaSerializer;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Media\Contract\MediaManagerInterface;
+use Aurora\Core\Media\DTO\MediaFolderInput;
+use Aurora\Core\Media\DTO\MediaInput;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Repository\MediaFolderRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Serializer\MediaFolderSerializer;
+use Aurora\Core\Media\Serializer\MediaSerializer;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

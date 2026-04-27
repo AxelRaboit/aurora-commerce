@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Controller\Admin;
+namespace Aurora\Core\Auth\Controller\Admin;
 
-use App\Core\Auth\DTO\RegisterInput;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\Entity\User;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Auth\DTO\RegisterInput;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

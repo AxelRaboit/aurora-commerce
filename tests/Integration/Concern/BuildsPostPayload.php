@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Concern;
+namespace Aurora\Tests\Integration\Concern;
 
-use App\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Entity\Post;
 
 /**
  * Helpers for integration tests that interact with the Posts API.

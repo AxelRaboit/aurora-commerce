@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Contract;
+namespace Aurora\Core\Media\Contract;
 
-use App\Core\Media\DTO\MediaFolderInput;
-use App\Core\Media\DTO\MediaInput;
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\DTO\MediaFolderInput;
+use Aurora\Core\Media\DTO\MediaInput;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface MediaManagerInterface

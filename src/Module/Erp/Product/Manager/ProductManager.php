@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Manager;
+namespace Aurora\Module\Erp\Product\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Core\Media\Repository\MediaRepository;
-use App\Module\Erp\Product\Contract\ProductManagerInterface;
-use App\Module\Erp\Product\DTO\ProductInput;
-use App\Module\Erp\Product\Entity\Product;
-use App\Module\Erp\Product\Repository\ProductRepository;
-use App\Module\Erp\Product\Service\SkuGenerator;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Module\Erp\Product\Contract\ProductManagerInterface;
+use Aurora\Module\Erp\Product\DTO\ProductInput;
+use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Module\Erp\Product\Service\SkuGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

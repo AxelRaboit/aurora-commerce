@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Serializer;
+namespace Aurora\Core\Theme\Serializer;
 
-use App\Core\Theme\Entity\Theme;
-use App\Core\Theme\Manager\ThemeManager;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Manager\ThemeManager;
 
 final readonly class ThemeSerializer
 {

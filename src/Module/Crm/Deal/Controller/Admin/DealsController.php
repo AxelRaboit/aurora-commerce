@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Controller\Admin;
+namespace Aurora\Module\Crm\Deal\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Core\Validation\Service\PayloadValidator;
-use App\Module\Crm\Deal\Contract\DealManagerInterface;
-use App\Module\Crm\Deal\DTO\DealInput;
-use App\Module\Crm\Deal\Entity\Deal;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
-use App\Module\Crm\Deal\Repository\DealRepository;
-use App\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
+use Aurora\Module\Crm\Deal\DTO\DealInput;
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

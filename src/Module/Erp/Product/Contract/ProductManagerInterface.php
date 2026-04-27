@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Contract;
+namespace Aurora\Module\Erp\Product\Contract;
 
-use App\Module\Erp\Product\DTO\ProductInput;
-use App\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\DTO\ProductInput;
+use Aurora\Module\Erp\Product\Entity\Product;
 
 interface ProductManagerInterface
 {

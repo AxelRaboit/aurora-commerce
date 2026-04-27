@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Service;
+namespace Aurora\Tests\Unit\Service;
 
-use App\Module\Editorial\Form\Entity\Form;
-use App\Module\Editorial\Form\Entity\FormField;
-use App\Module\Editorial\Form\Entity\FormFieldTranslation;
-use App\Module\Editorial\Form\Enum\FormFieldTypeEnum;
-use App\Module\Editorial\Form\Service\FormSubmissionValidator;
+use Aurora\Module\Editorial\Form\Entity\Form;
+use Aurora\Module\Editorial\Form\Entity\FormField;
+use Aurora\Module\Editorial\Form\Entity\FormFieldTranslation;
+use Aurora\Module\Editorial\Form\Enum\FormFieldTypeEnum;
+use Aurora\Module\Editorial\Form\Service\FormSubmissionValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 

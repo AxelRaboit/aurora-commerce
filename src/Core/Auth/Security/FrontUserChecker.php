@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserStatusEnum;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

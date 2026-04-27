@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Search\Controller\Admin;
+namespace Aurora\Core\Search\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Search\Service\SearchSnippetBuilder;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
-use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Search\Service\SearchSnippetBuilder;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

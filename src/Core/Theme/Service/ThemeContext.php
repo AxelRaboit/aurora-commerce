@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Service;
+namespace Aurora\Core\Theme\Service;
 
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Theme\Entity\Theme;
-use App\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Repository\ThemeRepository;
 
 final class ThemeContext
 {

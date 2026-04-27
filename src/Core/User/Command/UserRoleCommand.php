@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Command;
+namespace Aurora\Core\User\Command;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UserRoleCommand extends Command
 {
-    private const ASSIGNABLE_ROLES = [
+    private const array ASSIGNABLE_ROLES = [
         UserRoleEnum::Admin->value,
         UserRoleEnum::Dev->value,
     ];

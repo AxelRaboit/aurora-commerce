@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Service;
+namespace Aurora\Module\Erp\Product\Service;
 
 final readonly class SkuGenerator
 {

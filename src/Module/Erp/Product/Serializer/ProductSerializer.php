@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Serializer;
+namespace Aurora\Module\Erp\Product\Serializer;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Module\Erp\Product\Entity\Product;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Module\Erp\Product\Entity\Product;
 use DateTimeInterface;
 
 final readonly class ProductSerializer

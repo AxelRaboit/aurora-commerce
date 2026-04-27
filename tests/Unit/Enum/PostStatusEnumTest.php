@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Enum;
+namespace Aurora\Tests\Unit\Enum;
 
-use App\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use PHPUnit\Framework\TestCase;
 
 final class PostStatusEnumTest extends TestCase

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\DTO;
+namespace Aurora\Module\Crm\Company\DTO;
 
-use App\Core\Support\Str;
+use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class CompanyInput

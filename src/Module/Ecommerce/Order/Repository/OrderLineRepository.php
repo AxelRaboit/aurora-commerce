@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Repository;
+namespace Aurora\Module\Ecommerce\Order\Repository;
 
-use App\Module\Ecommerce\Order\Entity\OrderLine;
+use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

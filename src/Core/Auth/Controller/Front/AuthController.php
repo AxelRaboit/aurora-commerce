@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Controller\Front;
+namespace Aurora\Core\Auth\Controller\Front;
 
-use App\Core\Auth\DTO\FrontRegisterInput;
-use App\Core\Auth\Entity\ResetPasswordRequest;
-use App\Core\Auth\Security\FrontLoginAuthenticator;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Service\FrontContext;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\Theme\Service\ThemeContext;
-use App\Core\Theme\Service\ThemeResolver;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Manager\FrontUserManager;
-use App\Core\User\Repository\UserRepository;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Security\FrontLoginAuthenticator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Manager\FrontUserManager;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Controller\Front;
+namespace Aurora\Module\Ecommerce\Listing\Controller\Front;
 
-use App\Core\Frontend\Controller\FrontLocaleTrait;
-use App\Core\Frontend\Service\FrontContext;
-use App\Core\Theme\Service\ThemeContext;
-use App\Core\Theme\Service\ThemeResolver;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Listing\Repository\ListingRepository;
-use App\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

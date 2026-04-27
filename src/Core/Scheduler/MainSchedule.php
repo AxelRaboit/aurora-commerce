@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Scheduler;
+namespace Aurora\Core\Scheduler;
 
-use App\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
-use App\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
+use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
+use Aurora\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;

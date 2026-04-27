@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Module\Controller\Dev;
+namespace Aurora\Core\Module\Controller\Dev;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Module\PermissionRegistry;
-use App\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Module\PermissionRegistry;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

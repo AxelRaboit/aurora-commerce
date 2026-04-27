@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Serializer;
+namespace Aurora\Module\Crm\Deal\Serializer;
 
-use App\Module\Crm\Company\Entity\Company;
-use App\Module\Crm\Contact\Entity\Contact;
-use App\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Deal\Entity\Deal;
 use DateTimeInterface;
 
 final readonly class DealSerializer

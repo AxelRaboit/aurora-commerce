@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Frontend\Controller;
+namespace Aurora\Core\Frontend\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 

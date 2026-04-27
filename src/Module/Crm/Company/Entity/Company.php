@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Entity;
+namespace Aurora\Module\Crm\Company\Entity;
 
-use App\Core\Trait\TimestampableTrait;
-use App\Module\Crm\Company\Repository\CompanyRepository;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

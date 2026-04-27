@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Manager;
+namespace Aurora\Module\Ecommerce\Listing\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Core\Media\Repository\MediaRepository;
-use App\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
-use App\Module\Ecommerce\Listing\DTO\ListingInput;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Listing\Repository\ListingRepository;
-use App\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
+use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

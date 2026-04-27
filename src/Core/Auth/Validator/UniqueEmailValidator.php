@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Validator;
+namespace Aurora\Core\Auth\Validator;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;

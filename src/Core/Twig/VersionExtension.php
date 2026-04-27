@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Twig;
+namespace Aurora\Core\Twig;
 
-use App\Core\Enum\AppVersionEnum;
+use Aurora\Core\Enum\AppVersionEnum;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 

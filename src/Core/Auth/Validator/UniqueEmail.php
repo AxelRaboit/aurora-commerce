@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Validator;
+namespace Aurora\Core\Auth\Validator;
 
 use Attribute;
 use Symfony\Component\Validator\Constraint;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Manager;
+namespace Aurora\Core\Media\Manager;
 
-use App\Core\Media\Contract\MediaManagerInterface;
-use App\Core\Media\DTO\MediaFolderInput;
-use App\Core\Media\DTO\MediaInput;
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Entity\MediaFolder;
-use App\Core\Media\Repository\MediaFolderRepository;
-use App\Core\Media\Service\ImageVariantGenerator;
+use Aurora\Core\Media\Contract\MediaManagerInterface;
+use Aurora\Core\Media\DTO\MediaFolderInput;
+use Aurora\Core\Media\DTO\MediaInput;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Repository\MediaFolderRepository;
+use Aurora\Core\Media\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -104,7 +104,7 @@ final readonly class MediaManager implements MediaManagerInterface
 
     public function createFolder(MediaFolderInput $input): MediaFolder
     {
-        $folder = (new MediaFolder())->setName($input->name);
+        $folder = new MediaFolder()->setName($input->name);
 
         if (null !== $input->parentId) {
             $parent = $this->folderRepository->find($input->parentId);

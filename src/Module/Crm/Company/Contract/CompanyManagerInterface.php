@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Contract;
+namespace Aurora\Module\Crm\Company\Contract;
 
-use App\Module\Crm\Company\DTO\CompanyInput;
-use App\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\DTO\CompanyInput;
+use Aurora\Module\Crm\Company\Entity\Company;
 
 interface CompanyManagerInterface
 {

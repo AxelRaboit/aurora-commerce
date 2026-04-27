@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Service;
+namespace Aurora\Module\Crm\Service;
 
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
  * Single source of truth for CRM module activation.

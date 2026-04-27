@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Controller\Admin;
+namespace Aurora\Module\Crm\Company\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Core\Validation\Service\PayloadValidator;
-use App\Module\Crm\Company\Contract\CompanyManagerInterface;
-use App\Module\Crm\Company\DTO\CompanyInput;
-use App\Module\Crm\Company\Entity\Company;
-use App\Module\Crm\Company\Repository\CompanyRepository;
-use App\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
+use Aurora\Module\Crm\Company\DTO\CompanyInput;
+use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
+use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

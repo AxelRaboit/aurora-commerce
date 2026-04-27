@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Serializer;
+namespace Aurora\Module\Ecommerce\Order\Serializer;
 
-use App\Module\Ecommerce\Order\Entity\Order;
-use App\Module\Ecommerce\Order\Entity\OrderLine;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use DateTimeInterface;
 
 final readonly class OrderSerializer

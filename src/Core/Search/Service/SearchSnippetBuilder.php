@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Search\Service;
+namespace Aurora\Core\Search\Service;
 
 final class SearchSnippetBuilder
 {

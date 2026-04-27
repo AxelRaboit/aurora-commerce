@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dashboard\Controller\Dev;
+namespace Aurora\Core\Dashboard\Controller\Dev;
 
-use App\Core\Dashboard\Service\AdminStatsService;
-use App\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Dashboard\Service\AdminStatsService;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

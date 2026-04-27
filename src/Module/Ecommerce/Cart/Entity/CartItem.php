@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Entity;
+namespace Aurora\Module\Ecommerce\Cart\Entity;
 
-use App\Module\Ecommerce\Cart\Repository\CartItemRepository;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Ecommerce\Cart\Repository\CartItemRepository;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]

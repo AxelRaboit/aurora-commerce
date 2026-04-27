@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Controller\Admin;
+namespace Aurora\Core\Setting\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

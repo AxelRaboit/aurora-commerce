@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller;
 
-use App\Core\Theme\Entity\Theme;
-use App\Core\Theme\Repository\ThemeRepository;
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

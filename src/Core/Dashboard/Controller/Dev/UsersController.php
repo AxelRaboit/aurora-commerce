@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dashboard\Controller\Dev;
+namespace Aurora\Core\Dashboard\Controller\Dev;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\DTO\CreateUserInput;
-use App\Core\User\DTO\UpdateUserInput;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\User\Repository\UserRepository;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\DTO\CreateUserInput;
+use Aurora\Core\User\DTO\UpdateUserInput;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use DateTimeInterface;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

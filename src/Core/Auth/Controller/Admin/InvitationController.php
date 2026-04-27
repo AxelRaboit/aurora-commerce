@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Controller\Admin;
+namespace Aurora\Core\Auth\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\DTO\UserSetPasswordInput;
-use App\Core\User\Entity\User;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\DTO\UserSetPasswordInput;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;

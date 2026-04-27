@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration;
+namespace Aurora\Tests\Integration;
 
-use App\Module\Editorial\Taxonomy\Repository\TaxonomyRepository;
-use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyRepository;
+use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 
 final class TaxonomyMigrationTest extends IntegrationTestCase
 {

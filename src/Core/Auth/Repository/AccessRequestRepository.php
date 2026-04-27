@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Repository;
+namespace Aurora\Core\Auth\Repository;
 
-use App\Core\Auth\Entity\AccessRequest;
-use App\Core\Auth\Enum\AccessRequestStatusEnum;
-use App\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
+use Aurora\Core\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

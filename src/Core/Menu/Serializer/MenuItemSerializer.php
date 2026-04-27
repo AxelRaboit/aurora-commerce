@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Serializer;
+namespace Aurora\Core\Menu\Serializer;
 
-use App\Core\Menu\Entity\MenuItem;
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Entity\PostType;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Post\Repository\PostTypeRepository;
-use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
-use App\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class MenuItemSerializer

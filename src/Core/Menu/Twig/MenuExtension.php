@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Twig;
+namespace Aurora\Core\Menu\Twig;
 
-use App\Core\Menu\Service\MenuRenderer;
+use Aurora\Core\Menu\Service\MenuRenderer;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class MenuExtension

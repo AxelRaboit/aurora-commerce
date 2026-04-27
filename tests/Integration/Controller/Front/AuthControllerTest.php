@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller\Front;
+namespace Aurora\Tests\Integration\Controller\Front;
 
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\User\Enum\UserStatusEnum;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Repository\UserRepository;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

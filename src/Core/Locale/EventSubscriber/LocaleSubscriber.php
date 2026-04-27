@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Locale\EventSubscriber;
+namespace Aurora\Core\Locale\EventSubscriber;
 
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\User\Entity\User;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

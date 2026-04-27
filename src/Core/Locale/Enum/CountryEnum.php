@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Locale\Enum;
+namespace Aurora\Core\Locale\Enum;
 
 use Symfony\Component\Intl\Countries;
 

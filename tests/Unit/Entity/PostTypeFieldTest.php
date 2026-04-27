@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Entity;
+namespace Aurora\Tests\Unit\Entity;
 
-use App\Module\Editorial\Post\Entity\PostTypeField;
+use Aurora\Module\Editorial\Post\Entity\PostTypeField;
 use PHPUnit\Framework\TestCase;
 
 final class PostTypeFieldTest extends TestCase

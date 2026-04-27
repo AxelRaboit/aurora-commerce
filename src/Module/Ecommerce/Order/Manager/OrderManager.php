@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Manager;
+namespace Aurora\Module\Ecommerce\Order\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Order\Contract\OrderManagerInterface;
-use App\Module\Ecommerce\Order\DTO\CheckoutInput;
-use App\Module\Ecommerce\Order\Entity\Order;
-use App\Module\Ecommerce\Order\Entity\OrderLine;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use App\Module\Ecommerce\Order\Repository\OrderRepository;
-use App\Module\Erp\Product\Entity\Product;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Erp\Product\Entity\Product;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -61,7 +61,7 @@ final readonly class OrderManager implements OrderManagerInterface
         $currency = null;
         foreach ($cart->getItems() as $cartItem) {
             $listing = $cartItem->getListing();
-            $line = (new OrderLine())
+            $line = new OrderLine()
                 ->setListing($listing)
                 ->setTitleSnapshot($listing->getDisplayTitle())
                 ->setSkuSnapshot($listing->getProduct()->getSku())

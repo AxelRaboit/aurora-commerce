@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dashboard\Service;
+namespace Aurora\Core\Dashboard\Service;
 
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\User\Repository\UserRepository;
-use App\Module\Crm\Company\Repository\CompanyRepository;
-use App\Module\Crm\Contact\Repository\ContactRepository;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
-use App\Module\Crm\Deal\Repository\DealRepository;
-use App\Module\Editorial\Post\Enum\PostStatusEnum;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Post\Repository\PostTypeRepository;
-use App\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
+use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 
@@ -128,12 +128,12 @@ final readonly class AdminStatsService
      */
     private function getPostsByMonth(): array
     {
-        $since = (new DateTimeImmutable('-5 months'))->modify('first day of this month')->setTime(0, 0);
+        $since = new DateTimeImmutable('-5 months')->modify('first day of this month')->setTime(0, 0);
         $monthCountMap = $this->postRepository->countByMonthSince($since);
 
         $result = [];
         for ($monthOffset = 5; $monthOffset >= 0; --$monthOffset) {
-            $monthKey = (new DateTimeImmutable(sprintf('-%d months', $monthOffset)))->format('Y-m');
+            $monthKey = new DateTimeImmutable(sprintf('-%d months', $monthOffset))->format('Y-m');
             $result[] = ['month' => $monthKey, 'count' => $monthCountMap[$monthKey] ?? 0];
         }
 

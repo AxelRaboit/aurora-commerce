@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Enum;
+namespace Aurora\Core\Setting\Enum;
 
 interface ApplicationParameterEnumInterface
 {

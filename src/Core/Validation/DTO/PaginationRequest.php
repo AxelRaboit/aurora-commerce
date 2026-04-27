@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Validation\DTO;
+namespace Aurora\Core\Validation\DTO;
 
 use Symfony\Component\HttpFoundation\Request;
 

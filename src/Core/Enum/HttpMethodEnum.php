@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Enum;
+namespace Aurora\Core\Enum;
 
 enum HttpMethodEnum: string
 {

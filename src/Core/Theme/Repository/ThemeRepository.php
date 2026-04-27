@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Repository;
+namespace Aurora\Core\Theme\Repository;
 
-use App\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Entity\Theme;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Repository;
+namespace Aurora\Module\Crm\Deal\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Module\Crm\Deal\Entity\Deal;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

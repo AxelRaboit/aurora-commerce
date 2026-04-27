@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\DTO;
+namespace Aurora\Core\Menu\DTO;
 
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class MenuItemPayload

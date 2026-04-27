@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Controller\Admin;
+namespace Aurora\Module\Erp\Product\Controller\Admin;
 
-use App\Core\Audit\Repository\AuditLogRepository;
-use App\Core\Enum\HttpMethodEnum;
-use App\Module\Erp\Product\Entity\Product;
-use App\Module\Erp\Product\Serializer\ProductActivitySerializer;
-use App\Module\Erp\Product\Serializer\ProductSerializer;
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Serializer\ProductActivitySerializer;
+use Aurora\Module\Erp\Product\Serializer\ProductSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

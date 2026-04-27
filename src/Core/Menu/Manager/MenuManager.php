@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Manager;
+namespace Aurora\Core\Menu\Manager;
 
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Entity\MenuItem;
-use App\Core\Menu\Entity\MenuItemTranslation;
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
-use App\Core\Menu\Repository\MenuItemRepository;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\Menu\Service\MenuLocationRegistry;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\MenuItemTranslation;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Repository\MenuItemRepository;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\Menu\Service\MenuLocationRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Throwable;

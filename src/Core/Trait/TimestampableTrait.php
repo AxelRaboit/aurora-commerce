@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Trait;
+namespace Aurora\Core\Trait;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

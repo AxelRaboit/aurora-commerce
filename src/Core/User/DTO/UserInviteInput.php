@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\DTO;
+namespace Aurora\Core\User\DTO;
 
-use App\Core\Auth\Validator\UniqueEmail;
-use App\Core\Support\Str;
-use App\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Auth\Validator\UniqueEmail;
+use Aurora\Core\Support\Str;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Contract;
+namespace Aurora\Core\User\Contract;
 
-use App\Core\Auth\DTO\FrontRegisterInput;
-use App\Core\Auth\Entity\ResetPasswordRequest;
-use App\Core\User\Entity\User;
+use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\User\Entity\User;
 
 interface FrontUserManagerInterface
 {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Manager;
+namespace Aurora\Module\Crm\Deal\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Module\Crm\Company\Repository\CompanyRepository;
-use App\Module\Crm\Contact\Repository\ContactRepository;
-use App\Module\Crm\Deal\Contract\DealManagerInterface;
-use App\Module\Crm\Deal\DTO\DealInput;
-use App\Module\Crm\Deal\Entity\Deal;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
+use Aurora\Module\Crm\Deal\DTO\DealInput;
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

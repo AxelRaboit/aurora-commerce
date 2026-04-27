@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Command;
+namespace Aurora\Core\Media\Command;
 
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Media\Service\ImageVariantGenerator;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

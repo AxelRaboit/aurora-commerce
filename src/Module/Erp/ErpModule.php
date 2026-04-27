@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp;
+namespace Aurora\Module\Erp;
 
-use App\Core\Module\ModuleInterface;
-use App\Core\Module\NavItem;
-use App\Core\Module\NavPermission;
-use App\Core\Module\NavSection;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Module\Erp\Service\ErpContext;
+use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\NavItem;
+use Aurora\Core\Module\NavPermission;
+use Aurora\Core\Module\NavSection;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Module\Erp\Service\ErpContext;
 
 final readonly class ErpModule implements ModuleInterface
 {

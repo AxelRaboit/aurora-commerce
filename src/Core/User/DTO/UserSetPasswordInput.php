@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\DTO;
+namespace Aurora\Core\User\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;

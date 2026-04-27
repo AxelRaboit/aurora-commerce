@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Enum;
+namespace Aurora\Core\Auth\Enum;
 
 enum AccessRequestStatusEnum: string
 {

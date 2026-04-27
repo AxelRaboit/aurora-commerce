@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Manager;
+namespace Aurora\Module\Ecommerce\Cart\Manager;
 
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Cart\Entity\CartItem;
-use App\Module\Ecommerce\Cart\Repository\CartRepository;
-use App\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
+use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -35,7 +35,7 @@ final readonly class CartManager implements CartManagerInterface
         if ($user instanceof User) {
             $cart = $this->cartRepository->findOneByUser($user);
             if (!$cart instanceof Cart && $createIfMissing) {
-                $cart = (new Cart())->setUser($user);
+                $cart = new Cart()->setUser($user);
                 $this->entityManager->persist($cart);
                 $this->entityManager->flush();
             }
@@ -46,7 +46,7 @@ final readonly class CartManager implements CartManagerInterface
         $sessionId = $this->getOrCreateSessionId();
         $cart = $this->cartRepository->findOneBySession($sessionId);
         if (!$cart instanceof Cart && $createIfMissing) {
-            $cart = (new Cart())->setSessionId($sessionId);
+            $cart = new Cart()->setSessionId($sessionId);
             $this->entityManager->persist($cart);
             $this->entityManager->flush();
         }
@@ -69,7 +69,7 @@ final readonly class CartManager implements CartManagerInterface
             $existing->setQuantity($existing->getQuantity() + max(1, $quantity));
         } else {
             $product = $listing->getProduct();
-            $item = (new CartItem())
+            $item = new CartItem()
                 ->setListing($listing)
                 ->setQuantity(max(1, $quantity))
                 ->setUnitPriceCents($product->getPriceCents() ?? 0)

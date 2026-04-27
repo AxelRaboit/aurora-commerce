@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\EventListener;
+namespace Aurora\Core\Auth\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;

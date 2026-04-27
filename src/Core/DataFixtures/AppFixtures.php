@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Core\DataFixtures;
+namespace Aurora\Core\DataFixtures;
 
-use App\Core\Locale\Entity\Locale;
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\Setting\Entity\Setting;
-use App\Core\Theme\Entity\Theme;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Entity\PostTranslation;
-use App\Module\Editorial\Post\Entity\PostType;
-use App\Module\Editorial\Post\Enum\PostStatusEnum;
-use App\Module\Editorial\Post\Service\PostTextExtractor;
-use App\Module\Editorial\Taxonomy\Entity\Taxonomy;
-use App\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Core\Locale\Entity\Locale;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Setting\Entity\Setting;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Entity\PostTranslation;
+use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
+use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -31,17 +31,17 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Locales
-        $frenchLocale = (new Locale())->setCode(LocaleEnum::French->value)->setName('Français')->setIsDefault(true)->setPosition(0);
-        $englishLocale = (new Locale())->setCode(LocaleEnum::English->value)->setName('English')->setPosition(1);
-        $spanishLocale = (new Locale())->setCode(LocaleEnum::Spanish->value)->setName('Español')->setPosition(2);
-        $germanLocale = (new Locale())->setCode(LocaleEnum::German->value)->setName('Deutsch')->setPosition(3);
+        $frenchLocale = new Locale()->setCode(LocaleEnum::French->value)->setName('Français')->setIsDefault(true)->setPosition(0);
+        $englishLocale = new Locale()->setCode(LocaleEnum::English->value)->setName('English')->setPosition(1);
+        $spanishLocale = new Locale()->setCode(LocaleEnum::Spanish->value)->setName('Español')->setPosition(2);
+        $germanLocale = new Locale()->setCode(LocaleEnum::German->value)->setName('Deutsch')->setPosition(3);
         $manager->persist($frenchLocale);
         $manager->persist($englishLocale);
         $manager->persist($spanishLocale);
         $manager->persist($germanLocale);
 
         // Built-in post types
-        $pageType = (new PostType())
+        $pageType = new PostType()
             ->setSlug('page')
             ->setLabel('Pages')
             ->setIcon('file')
@@ -49,7 +49,7 @@ class AppFixtures extends Fixture
             ->setIsBuiltIn(true)
             ->setSupports(['blocks', 'thumbnail', 'excerpt']);
 
-        $articleType = (new PostType())
+        $articleType = new PostType()
             ->setSlug('article')
             ->setLabel('Articles')
             ->setIcon('file-text')
@@ -67,7 +67,7 @@ class AppFixtures extends Fixture
         ];
 
         foreach ($taxonomyLabels as $slug => $labels) {
-            $taxonomy = (new Taxonomy())
+            $taxonomy = new Taxonomy()
                 ->setSlug($slug)
                 ->setHierarchical('category' === $slug)
                 ->setIsBuiltIn(true);
@@ -83,7 +83,7 @@ class AppFixtures extends Fixture
 
             if ('tag' === $slug) {
                 foreach (['Nouveauté' => 'nouveaute', 'Tutoriel' => 'tutoriel'] as $name => $termSlug) {
-                    $term = (new TaxonomyTerm())->setTaxonomy($taxonomy);
+                    $term = new TaxonomyTerm()->setTaxonomy($taxonomy);
                     foreach (array_keys($labels) as $locale) {
                         $term->translate($locale)->setName($name)->setSlug($termSlug);
                     }
@@ -94,7 +94,7 @@ class AppFixtures extends Fixture
         }
 
         // Default theme
-        $theme = (new Theme())
+        $theme = new Theme()
             ->setSlug('default')
             ->setName('Default')
             ->setDescription('Thème par défaut de Aurora')
@@ -110,7 +110,7 @@ class AppFixtures extends Fixture
         ];
 
         foreach ($settings as [$key, $value, $type, $group]) {
-            $setting = (new Setting())->setKey($key)->setValue($value)->setType($type)->setGroup($group);
+            $setting = new Setting()->setKey($key)->setValue($value)->setType($type)->setGroup($group);
             $manager->persist($setting);
         }
 
@@ -123,8 +123,8 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
         // Sample page
-        $homePage = (new Post())->setPostType($pageType)->setStatus(PostStatusEnum::Published);
-        $homePageFrench = (new PostTranslation())
+        $homePage = new Post()->setPostType($pageType)->setStatus(PostStatusEnum::Published);
+        $homePageFrench = new PostTranslation()
             ->setPost($homePage)
             ->setLocale(LocaleEnum::French->value)
             ->setTitle('Accueil')
@@ -133,7 +133,7 @@ class AppFixtures extends Fixture
                 ['type' => 'heading', 'data' => ['text' => 'Bienvenue sur Aurora', 'level' => 1]],
                 ['type' => 'paragraph', 'data' => ['text' => 'Votre CMS moderne propulsé par Symfony et Vue 3.']],
             ]);
-        $homePageEnglish = (new PostTranslation())
+        $homePageEnglish = new PostTranslation()
             ->setPost($homePage)
             ->setLocale(LocaleEnum::English->value)
             ->setTitle('Home')

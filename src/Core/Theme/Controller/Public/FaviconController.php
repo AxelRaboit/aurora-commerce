@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Controller\Public;
+namespace Aurora\Core\Theme\Controller\Public;
 
-use App\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 

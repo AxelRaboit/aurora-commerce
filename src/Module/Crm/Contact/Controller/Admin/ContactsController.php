@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Controller\Admin;
+namespace Aurora\Module\Crm\Contact\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Validation\DTO\PaginationRequest;
-use App\Core\Validation\Service\PayloadValidator;
-use App\Module\Crm\Contact\Contract\ContactManagerInterface;
-use App\Module\Crm\Contact\DTO\ContactInput;
-use App\Module\Crm\Contact\Entity\Contact;
-use App\Module\Crm\Contact\Repository\ContactRepository;
-use App\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
+use Aurora\Module\Crm\Contact\DTO\ContactInput;
+use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

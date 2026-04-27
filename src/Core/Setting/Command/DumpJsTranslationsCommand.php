@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Command;
+namespace Aurora\Core\Setting\Command;
 
-use App\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

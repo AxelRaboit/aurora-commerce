@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Media\Serializer;
+namespace Aurora\Core\Media\Serializer;
 
-use App\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\Media;
 
 final readonly class MediaSerializer
 {

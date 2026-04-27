@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Manager;
+namespace Aurora\Core\Theme\Manager;
 
-use App\Core\Theme\DTO\ThemeInput;
-use App\Core\Theme\Entity\Theme;
-use App\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Theme\DTO\ThemeInput;
+use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Repository;
+namespace Aurora\Module\Ecommerce\Cart\Repository;
 
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

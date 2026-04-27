@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm;
+namespace Aurora\Module\Crm;
 
-use App\Core\Module\ModuleInterface;
-use App\Core\Module\NavItem;
-use App\Core\Module\NavPermission;
-use App\Core\Module\NavSection;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Module\Crm\Service\CrmContext;
+use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\NavItem;
+use Aurora\Core\Module\NavPermission;
+use Aurora\Core\Module\NavSection;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Module\Crm\Service\CrmContext;
 
 final readonly class CrmModule implements ModuleInterface
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Module;
+namespace Aurora\Core\Module;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

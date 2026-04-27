@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Controller\Admin;
+namespace Aurora\Core\Auth\Controller\Admin;
 
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

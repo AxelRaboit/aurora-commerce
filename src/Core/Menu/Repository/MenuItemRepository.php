@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Repository;
+namespace Aurora\Core\Menu\Repository;
 
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

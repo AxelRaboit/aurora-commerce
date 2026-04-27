@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Audit\Controller\Dev;
+namespace Aurora\Core\Audit\Controller\Dev;
 
-use App\Core\Audit\Repository\AuditLogRepository;
-use App\Core\Audit\Serializer\AuditLogSerializer;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

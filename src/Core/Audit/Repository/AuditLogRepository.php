@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Audit\Repository;
+namespace Aurora\Core\Audit\Repository;
 
-use App\Core\Audit\Entity\AuditLog;
-use App\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

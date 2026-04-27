@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Repository;
+namespace Aurora\Module\Crm\Contact\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Module\Crm\Contact\Entity\Contact;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Crm\Contact\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Entity;
+namespace Aurora\Module\Crm\Deal\Entity;
 
-use App\Core\Trait\TimestampableTrait;
-use App\Module\Crm\Company\Entity\Company;
-use App\Module\Crm\Contact\Entity\Contact;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
-use App\Module\Crm\Deal\Repository\DealRepository;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

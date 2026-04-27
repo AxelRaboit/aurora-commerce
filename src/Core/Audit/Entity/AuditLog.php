@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Audit\Entity;
+namespace Aurora\Core\Audit\Entity;
 
-use App\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Repository\AuditLogRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

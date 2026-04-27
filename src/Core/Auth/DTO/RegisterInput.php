@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\DTO;
+namespace Aurora\Core\Auth\DTO;
 
-use App\Core\Auth\Validator\UniqueEmail;
+use Aurora\Core\Auth\Validator\UniqueEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Controller\Admin;
+namespace Aurora\Module\Ecommerce\Order\Controller\Admin;
 
-use App\Core\Audit\Repository\AuditLogRepository;
-use App\Core\Audit\Serializer\AuditLogSerializer;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Module\Ecommerce\Order\Contract\OrderManagerInterface;
-use App\Module\Ecommerce\Order\Entity\Order;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use App\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

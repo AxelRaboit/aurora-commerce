@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Enum;
+namespace Aurora\Tests\Unit\Enum;
 
-use App\Module\Editorial\Comment\Enum\ReactionTypeEnum;
+use Aurora\Module\Editorial\Comment\Enum\ReactionTypeEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ReactionTypeEnumTest extends TestCase

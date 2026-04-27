@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Contract;
+namespace Aurora\Core\Auth\Contract;
 
-use App\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Entity\AccessRequest;
 
 interface AccessRequestManagerInterface
 {

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\User\Enum\UserStatusEnum;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +26,11 @@ final class FrontLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const CHECK_PATH = '/front-login-check';
+    public const string CHECK_PATH = '/front-login-check';
 
     public function __construct(private readonly UrlGeneratorInterface $urlGenerator) {}
 
+    #[Override]
     public function supports(Request $request): bool
     {
         return $request->isMethod(HttpMethodEnum::Post->value)

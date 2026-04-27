@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Controller\Dev;
+namespace Aurora\Core\Setting\Controller\Dev;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Manager;
+namespace Aurora\Module\Crm\Contact\Manager;
 
-use App\Core\Audit\Service\AuditLogger;
-use App\Module\Crm\Company\Repository\CompanyRepository;
-use App\Module\Crm\Contact\Contract\ContactManagerInterface;
-use App\Module\Crm\Contact\DTO\ContactInput;
-use App\Module\Crm\Contact\Entity\Contact;
+use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
+use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
+use Aurora\Module\Crm\Contact\DTO\ContactInput;
+use Aurora\Module\Crm\Contact\Entity\Contact;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

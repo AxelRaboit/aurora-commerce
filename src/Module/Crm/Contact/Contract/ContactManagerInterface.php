@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Contract;
+namespace Aurora\Module\Crm\Contact\Contract;
 
-use App\Module\Crm\Contact\DTO\ContactInput;
-use App\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\DTO\ContactInput;
+use Aurora\Module\Crm\Contact\Entity\Contact;
 
 interface ContactManagerInterface
 {

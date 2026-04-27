@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Manager\Decorator;
+namespace Aurora\Core\Auth\Manager\Decorator;
 
-use App\Core\Auth\Contract\PasswordResetManagerInterface;
-use App\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;

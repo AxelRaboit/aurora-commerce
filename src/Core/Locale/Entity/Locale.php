@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Locale\Entity;
+namespace Aurora\Core\Locale\Entity;
 
-use App\Core\Locale\Repository\LocaleRepository;
+use Aurora\Core\Locale\Repository\LocaleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LocaleRepository::class)]

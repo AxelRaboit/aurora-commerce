@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\EventSubscriber;
+namespace Aurora\Module\Crm\EventSubscriber;
 
-use App\Module\Crm\Service\CrmContext;
+use Aurora\Module\Crm\Service\CrmContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

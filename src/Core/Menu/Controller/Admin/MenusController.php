@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Controller\Admin;
+namespace Aurora\Core\Menu\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Menu\DTO\MenuItemPayload;
-use App\Core\Menu\Entity\Menu;
-use App\Core\Menu\Entity\MenuItem;
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
-use App\Core\Menu\Manager\MenuManager;
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\Menu\Serializer\MenuSerializer;
-use App\Core\Menu\Service\MenuPickerService;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Menu\DTO\MenuItemPayload;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Manager\MenuManager;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\Menu\Serializer\MenuSerializer;
+use Aurora\Core\Menu\Service\MenuPickerService;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Entity;
+namespace Aurora\Module\Ecommerce\Order\Entity;
 
-use App\Core\Trait\TimestampableTrait;
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use App\Module\Ecommerce\Order\Repository\OrderRepository;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;

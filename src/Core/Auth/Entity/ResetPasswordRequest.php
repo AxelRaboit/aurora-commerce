@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Entity;
+namespace Aurora\Core\Auth\Entity;
 
-use App\Core\Auth\Repository\ResetPasswordRequestRepository;
-use App\Core\User\Entity\User;
+use Aurora\Core\Auth\Repository\ResetPasswordRequestRepository;
+use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 

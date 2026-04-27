@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Setting\Command;
+namespace Aurora\Core\Setting\Command;
 
-use App\Core\Setting\Entity\Setting;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Entity\Setting;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

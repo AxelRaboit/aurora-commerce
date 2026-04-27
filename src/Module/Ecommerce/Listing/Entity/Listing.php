@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Entity;
+namespace Aurora\Module\Ecommerce\Listing\Entity;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Trait\TimestampableTrait;
-use App\Module\Ecommerce\Listing\Repository\ListingRepository;
-use App\Module\Erp\Product\Entity\Product;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Erp\Product\Entity\Product;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

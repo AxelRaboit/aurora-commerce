@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Contract;
+namespace Aurora\Core\User\Contract;
 
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\User\Entity\User;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Entity\User;
 
 interface UserManagerInterface
 {

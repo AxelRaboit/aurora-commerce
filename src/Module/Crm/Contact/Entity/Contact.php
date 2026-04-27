@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Contact\Entity;
+namespace Aurora\Module\Crm\Contact\Entity;
 
-use App\Core\Trait\TimestampableTrait;
-use App\Module\Crm\Company\Entity\Company;
-use App\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

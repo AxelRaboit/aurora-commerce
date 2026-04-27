@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Serializer;
+namespace Aurora\Module\Crm\Company\Serializer;
 
-use App\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Entity\Company;
 use DateTimeInterface;
 
 final readonly class CompanySerializer

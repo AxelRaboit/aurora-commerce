@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\MessageHandler;
+namespace Aurora\Tests\Integration\MessageHandler;
 
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Enum\PostStatusEnum;
-use App\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
-use App\Module\Editorial\Post\MessageHandler\PublishScheduledPostsHandler;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Post\Repository\PostTypeRepository;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
+use Aurora\Module\Editorial\Post\MessageHandler\PublishScheduledPostsHandler;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Controller\Admin;
+namespace Aurora\Module\Ecommerce\Listing\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

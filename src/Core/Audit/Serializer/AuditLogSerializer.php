@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Audit\Serializer;
+namespace Aurora\Core\Audit\Serializer;
 
-use App\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Audit\Entity\AuditLog;
 use DateTimeInterface;
 
 final readonly class AuditLogSerializer

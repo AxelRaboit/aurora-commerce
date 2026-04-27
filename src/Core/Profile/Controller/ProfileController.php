@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Profile\Controller;
+namespace Aurora\Core\Profile\Controller;
 
-use App\Core\Auth\DTO\ChangePasswordInput;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Frontend\Controller\JsonRequestTrait;
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\DTO\UpdateProfileInput;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Auth\DTO\ChangePasswordInput;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\DTO\UpdateProfileInput;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

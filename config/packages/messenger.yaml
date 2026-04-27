@@ -12,7 +12,7 @@ framework:
 
         routing:
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            # 'Aurora\Message\YourMessage': async
 
 # when@test:
 #    framework:

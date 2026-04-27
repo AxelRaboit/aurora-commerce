@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Enum;
+namespace Aurora\Module\Crm\Deal\Enum;
 
 enum DealStageEnum: string
 {

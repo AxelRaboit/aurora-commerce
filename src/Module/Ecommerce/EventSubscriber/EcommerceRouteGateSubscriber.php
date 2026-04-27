@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\EventSubscriber;
+namespace Aurora\Module\Ecommerce\EventSubscriber;
 
-use App\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\Service\EcommerceContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -64,12 +64,6 @@ final readonly class EcommerceRouteGateSubscriber implements EventSubscriberInte
     /** @param array<int, string> $prefixes */
     private function matchesAny(string $route, array $prefixes): bool
     {
-        foreach ($prefixes as $prefix) {
-            if (str_starts_with($route, $prefix)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($prefixes, fn ($prefix): bool => str_starts_with($route, (string) $prefix));
     }
 }

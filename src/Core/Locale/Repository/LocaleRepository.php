@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Locale\Repository;
+namespace Aurora\Core\Locale\Repository;
 
-use App\Core\Locale\Entity\Locale;
+use Aurora\Core\Locale\Entity\Locale;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

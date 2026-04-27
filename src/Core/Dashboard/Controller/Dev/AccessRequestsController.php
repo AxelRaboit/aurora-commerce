@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Dashboard\Controller\Dev;
+namespace Aurora\Core\Dashboard\Controller\Dev;
 
-use App\Core\Auth\Contract\AccessRequestManagerInterface;
-use App\Core\Auth\Entity\AccessRequest;
-use App\Core\Auth\Repository\AccessRequestRepository;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
+use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Repository\AccessRequestRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Validation\DTO\PaginationRequest;
 use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

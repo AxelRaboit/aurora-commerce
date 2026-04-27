@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Manager;
+namespace Aurora\Core\User\Manager;
 
-use App\Core\Auth\Manager\EmailVerificationManager;
-use App\Core\Auth\Manager\InvitationManager;
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\User\Contract\UserManagerInterface;
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\User\Enum\UserStatusEnum;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\Auth\Manager\EmailVerificationManager;
+use Aurora\Core\Auth\Manager\InvitationManager;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

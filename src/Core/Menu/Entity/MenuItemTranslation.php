@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Entity;
+namespace Aurora\Core\Menu\Entity;
 
-use App\Core\Menu\Repository\MenuItemTranslationRepository;
+use Aurora\Core\Menu\Repository\MenuItemTranslationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuItemTranslationRepository::class)]

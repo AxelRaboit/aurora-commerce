@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Controller\Admin;
+namespace Aurora\Core\Auth\Controller\Admin;
 
-use App\Core\Auth\Contract\PasswordResetManagerInterface;
-use App\Core\Auth\DTO\ResetPasswordInput;
-use App\Core\Auth\Entity\ResetPasswordRequest;
-use App\Core\Enum\HttpMethodEnum;
-use App\Core\Validation\Service\PayloadValidator;
+use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
+use Aurora\Core\Auth\DTO\ResetPasswordInput;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

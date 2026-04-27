@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Repository;
+namespace Aurora\Core\Auth\Repository;
 
-use App\Core\Auth\Entity\ResetPasswordRequest;
-use App\Core\User\Entity\User;
+use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

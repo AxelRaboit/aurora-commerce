@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Contract;
+namespace Aurora\Module\Ecommerce\Order\Contract;
 
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Order\DTO\CheckoutInput;
-use App\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Entity\Order;
 
 interface OrderManagerInterface
 {

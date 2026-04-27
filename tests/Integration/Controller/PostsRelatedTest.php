@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Enum\PostStatusEnum;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Module\Editorial\Post\Repository\PostTypeRepository;
-use App\Tests\Integration\Concern\BuildsPostPayload;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Tests\Integration\Concern\BuildsPostPayload;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

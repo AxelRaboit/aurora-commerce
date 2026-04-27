@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller;
 
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
-use App\Module\Editorial\Post\Entity\Post;
-use App\Module\Editorial\Post\Repository\PostRepository;
-use App\Tests\Integration\Concern\BuildsPostPayload;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Repository\PostRepository;
+use Aurora\Tests\Integration\Concern\BuildsPostPayload;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class PostRevisionsControllerTest extends IntegrationTestCase

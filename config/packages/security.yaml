@@ -12,12 +12,12 @@ security:
     providers:
         app_user_provider:
             entity:
-                class: App\Core\User\Entity\User
+                class: Aurora\Core\User\Entity\User
                 property: email
         admin_user_provider:
-            id: App\Core\Auth\Security\AdminUserProvider
+            id: Aurora\Core\Auth\Security\AdminUserProvider
         front_user_provider:
-            id: App\Core\Auth\Security\FrontUserProvider
+            id: Aurora\Core\Auth\Security\FrontUserProvider
 
     firewalls:
         dev:
@@ -29,7 +29,7 @@ security:
             context: admin
             pattern: ^/(admin|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
             provider: admin_user_provider
-            user_checker: App\Core\Auth\Security\AdminUserChecker
+            user_checker: Aurora\Core\Auth\Security\AdminUserChecker
             form_login:
                 login_path: admin_login
                 check_path: admin_login
@@ -53,10 +53,10 @@ security:
             context: front
             lazy: true
             provider: front_user_provider
-            user_checker: App\Core\Auth\Security\FrontUserChecker
+            user_checker: Aurora\Core\Auth\Security\FrontUserChecker
             custom_authenticators:
-                - App\Core\Auth\Security\FrontLoginAuthenticator
-            entry_point: App\Core\Auth\Security\FrontAuthEntryPoint
+                - Aurora\Core\Auth\Security\FrontLoginAuthenticator
+            entry_point: Aurora\Core\Auth\Security\FrontAuthEntryPoint
             login_throttling:
                 max_attempts: 5
                 interval: '15 minutes'

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Theme\Twig;
+namespace Aurora\Core\Theme\Twig;
 
-use App\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeContext;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 

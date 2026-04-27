@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Product\Repository;
+namespace Aurora\Module\Erp\Product\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Module\Erp\Product\Entity\Product;
-use App\Module\Erp\Product\Enum\ProductStatusEnum;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

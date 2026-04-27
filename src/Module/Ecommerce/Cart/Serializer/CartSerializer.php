@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Serializer;
+namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Cart\Entity\CartItem;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 
 final readonly class CartSerializer
 {

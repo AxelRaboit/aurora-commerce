@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Contract;
+namespace Aurora\Module\Crm\Deal\Contract;
 
-use App\Module\Crm\Deal\DTO\DealInput;
-use App\Module\Crm\Deal\Entity\Deal;
-use App\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Module\Crm\Deal\DTO\DealInput;
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 
 interface DealManagerInterface
 {

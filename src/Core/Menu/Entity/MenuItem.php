@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Entity;
+namespace Aurora\Core\Menu\Entity;
 
-use App\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use App\Core\Menu\Enum\MenuItemVisibilityEnum;
-use App\Core\Menu\Repository\MenuItemRepository;
-use App\Core\Trait\TimestampableTrait;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Repository\MenuItemRepository;
+use Aurora\Core\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Order;

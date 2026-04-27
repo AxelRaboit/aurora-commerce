@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Search\Command;
+namespace Aurora\Core\Search\Command;
 
-use App\Module\Editorial\Post\Entity\PostTranslation;
-use App\Module\Editorial\Post\Repository\PostTranslationRepository;
-use App\Module\Editorial\Post\Service\PostTextExtractor;
+use Aurora\Module\Editorial\Post\Entity\PostTranslation;
+use Aurora\Module\Editorial\Post\Repository\PostTranslationRepository;
+use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class RebuildSearchIndexCommand extends Command
 {
-    private const BATCH_SIZE = 50;
+    private const int BATCH_SIZE = 50;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

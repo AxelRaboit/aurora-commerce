@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Twig;
+namespace Aurora\Module\Ecommerce\Cart\Twig;
 
-use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Service\EcommerceContext;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class CartExtension

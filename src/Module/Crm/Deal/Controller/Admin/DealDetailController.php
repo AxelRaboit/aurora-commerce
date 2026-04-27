@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Deal\Controller\Admin;
+namespace Aurora\Module\Crm\Deal\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Module\Crm\Deal\Entity\Deal;
-use App\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

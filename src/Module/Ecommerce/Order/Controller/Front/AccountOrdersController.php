@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Controller\Front;
+namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 
-use App\Core\Frontend\Controller\FrontLocaleTrait;
-use App\Core\Frontend\Service\FrontContext;
-use App\Core\Theme\Service\ThemeContext;
-use App\Core\Theme\Service\ThemeResolver;
-use App\Core\User\Entity\User;
-use App\Module\Ecommerce\Order\Repository\OrderRepository;
-use App\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Core\User\Entity\User;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;

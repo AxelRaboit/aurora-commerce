@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security;
 
-use App\Core\User\Entity\User;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Repository\UserRepository;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

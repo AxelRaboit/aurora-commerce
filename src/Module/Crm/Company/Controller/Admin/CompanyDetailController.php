@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Crm\Company\Controller\Admin;
+namespace Aurora\Module\Crm\Company\Controller\Admin;
 
-use App\Core\Enum\HttpMethodEnum;
-use App\Module\Crm\Company\Entity\Company;
-use App\Module\Crm\Company\Serializer\CompanySerializer;
-use App\Module\Crm\Contact\Repository\ContactRepository;
-use App\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

@@ -1,12 +1,4 @@
 framework:
-    default_locale: fr
-    enabled_locales: [fr, en, es, de]
     translator:
-        default_path: '%kernel.project_dir%/src/Core/translations'
-        paths:
-            - '%kernel.project_dir%/src/Module/Editorial/translations'
-            - '%kernel.project_dir%/src/Module/Crm/translations'
-            - '%kernel.project_dir%/src/Module/Erp/translations'
-            - '%kernel.project_dir%/src/Module/Ecommerce/translations'
         fallbacks:
             - fr

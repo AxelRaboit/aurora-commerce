@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

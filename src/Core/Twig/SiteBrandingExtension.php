@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Twig;
+namespace Aurora\Core\Twig;
 
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 

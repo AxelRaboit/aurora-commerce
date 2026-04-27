@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Twig;
+namespace Aurora\Core\Twig;
 
-use App\Core\Module\ModuleRegistry;
+use Aurora\Core\Module\ModuleRegistry;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class SidebarExtension

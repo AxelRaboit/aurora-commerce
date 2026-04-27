@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Manager;
+namespace Aurora\Core\Auth\Manager;
 
-use App\Core\Auth\Contract\AccessRequestManagerInterface;
-use App\Core\Auth\Entity\AccessRequest;
-use App\Core\Auth\Enum\AccessRequestStatusEnum;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
+use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -80,7 +80,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
 
         $subject = $this->translator->trans('shared.mail.access_request_admin.heading');
 
-        $this->mailer->send((new Email())
+        $this->mailer->send(new Email()
             ->from($this->mailerFrom)
             ->to($this->adminEmail)
             ->subject(sprintf('[%s] %s', $siteName, $subject))
@@ -101,7 +101,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
 
         $subject = $this->translator->trans('shared.mail.access_request_approved.heading');
 
-        $this->mailer->send((new Email())
+        $this->mailer->send(new Email()
             ->from($this->mailerFrom)
             ->to($request->getRequesterEmail())
             ->subject(sprintf('[%s] %s', $siteName, $subject))
@@ -119,7 +119,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
 
         $subject = $this->translator->trans('shared.mail.access_request_rejected.heading');
 
-        $this->mailer->send((new Email())
+        $this->mailer->send(new Email()
             ->from($this->mailerFrom)
             ->to($request->getRequesterEmail())
             ->subject(sprintf('[%s] %s', $siteName, $subject))

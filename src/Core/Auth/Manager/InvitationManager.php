@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\Manager;
+namespace Aurora\Core\Auth\Manager;
 
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Core\User\Entity\User;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Entity\User;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -46,7 +46,7 @@ final readonly class InvitationManager
             'siteName' => $siteName,
         ]);
 
-        $this->mailer->send((new Email())
+        $this->mailer->send(new Email()
             ->from($this->mailerFrom)
             ->to($user->getEmail())
             ->subject(sprintf('Vous avez été invité à rejoindre %s', $siteName))

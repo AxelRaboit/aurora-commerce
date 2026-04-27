@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Serializer;
+namespace Aurora\Module\Ecommerce\Listing\Serializer;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
-use App\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use DateTimeInterface;
 
 final readonly class ListingSerializer

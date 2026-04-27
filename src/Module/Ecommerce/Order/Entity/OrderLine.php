@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Order\Entity;
+namespace Aurora\Module\Ecommerce\Order\Entity;
 
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Ecommerce\Order\Repository\OrderLineRepository;
-use App\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Order\Repository\OrderLineRepository;
+use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderLineRepository::class)]

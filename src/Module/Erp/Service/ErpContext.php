@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Erp\Service;
+namespace Aurora\Module\Erp\Service;
 
-use App\Core\Setting\Enum\ApplicationParameterEnum;
-use App\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
  * Single source of truth for ERP module activation.

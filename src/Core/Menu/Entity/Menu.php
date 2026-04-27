@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Menu\Entity;
+namespace Aurora\Core\Menu\Entity;
 
-use App\Core\Menu\Repository\MenuRepository;
-use App\Core\Trait\TimestampableTrait;
+use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Core\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Order;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller;
 
-use App\Core\Media\Entity\Media;
-use App\Core\Media\Entity\MediaFolder;
-use App\Core\Media\Repository\MediaFolderRepository;
-use App\Core\Media\Repository\MediaRepository;
-use App\Core\User\Entity\User;
-use App\Core\User\Repository\UserRepository;
-use App\Tests\Integration\IntegrationTestCase;
+use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Repository\MediaFolderRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

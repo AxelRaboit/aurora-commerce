@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Core\User\Entity;
+namespace Aurora\Core\User\Entity;
 
-use App\Core\Locale\Enum\LocaleEnum;
-use App\Core\Trait\TimestampableTrait;
-use App\Core\User\Enum\UserRoleEnum;
-use App\Core\User\Enum\UserStatusEnum;
-use App\Core\User\Enum\UserTypeEnum;
-use App\Core\User\Repository\UserRepository;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

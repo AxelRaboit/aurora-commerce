@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Auth\EventListener;
+namespace Aurora\Core\Auth\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,14 +19,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[AsEventListener]
 final readonly class RedirectAuthenticatedFromGuestRoutesListener
 {
-    private const GUEST_ONLY_ROUTES = [
+    private const array GUEST_ONLY_ROUTES = [
         'admin_login',
         'admin_register',
         'admin_forgot_password',
         'admin_access_request',
     ];
 
-    private const AUTHENTICATED_TARGET_ROUTE = 'admin_dashboard';
+    private const string AUTHENTICATED_TARGET_ROUTE = 'admin_dashboard';
 
     public function __construct(
         private TokenStorageInterface $tokenStorage,

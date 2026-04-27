@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Cart\Controller\Front;
+namespace Aurora\Module\Ecommerce\Cart\Controller\Front;
 
-use App\Core\Frontend\Controller\FrontLocaleTrait;
-use App\Core\Frontend\Service\FrontContext;
-use App\Core\Theme\Service\ThemeContext;
-use App\Core\Theme\Service\ThemeResolver;
-use App\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use App\Module\Ecommerce\Cart\Entity\Cart;
-use App\Module\Ecommerce\Cart\Serializer\CartSerializer;
-use App\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

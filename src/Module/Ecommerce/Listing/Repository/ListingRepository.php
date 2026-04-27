@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ecommerce\Listing\Repository;
+namespace Aurora\Module\Ecommerce\Listing\Repository;
 
-use App\Core\Repository\Trait\PaginationTrait;
-use App\Module\Ecommerce\Listing\Entity\Listing;
-use App\Module\Erp\Product\Entity\Product;
+use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Erp\Product\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
