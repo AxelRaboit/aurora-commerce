@@ -68,7 +68,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install PHP dependencies
-        run: composer install --no-ansi --no-interaction --prefer-dist
+        run: composer install --no-ansi --no-interaction --prefer-dist --no-scripts
 
       - name: Check if any dependencies are compromised
         run: composer audit || true
