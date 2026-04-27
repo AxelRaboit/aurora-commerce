@@ -10,6 +10,7 @@ admin:
   invitations:
     sent: Einladung an {email} gesendet.
   media:
+    dropToUpload: Drop files to upload
     errors:
       alt_required: Alternativtext ist erforderlich.
       focal_out_of_range: Der Fokuspunkt muss zwischen 0 und 1 liegen.

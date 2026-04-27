@@ -137,9 +137,9 @@ const breadcrumbs = computed(() => {
 // ── Upload ───────────────────────────────────────────────────────────────────
 const uploadInput = ref(null);
 const uploading = ref(false);
+const filesDragOver = ref(false);
 
-async function uploadFiles(event) {
-    const files = Array.from(event.target.files ?? []);
+async function uploadFileList(files) {
     if (!files.length) return;
     uploading.value = true;
     try {
@@ -159,6 +159,30 @@ async function uploadFiles(event) {
         uploading.value = false;
         if (uploadInput.value) uploadInput.value.value = "";
     }
+}
+
+async function uploadFiles(event) {
+    await uploadFileList(Array.from(event.target.files ?? []));
+}
+
+function onMainDragOver(event) {
+    if (event.dataTransfer.types.includes("Files")) {
+        event.preventDefault();
+        filesDragOver.value = true;
+    }
+}
+
+function onMainDragLeave(event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+        filesDragOver.value = false;
+    }
+}
+
+async function onMainDrop(event) {
+    if (!event.dataTransfer.types.includes("Files")) return;
+    event.preventDefault();
+    filesDragOver.value = false;
+    await uploadFileList(Array.from(event.dataTransfer.files));
 }
 
 // ── Edit media ───────────────────────────────────────────────────────────────
@@ -607,7 +631,20 @@ async function moveFolder(folderId, newParentId) {
             </aside>
 
             <!-- Main -->
-            <main class="flex-1 min-w-0 space-y-4">
+            <main
+                class="flex-1 min-w-0 space-y-4 relative"
+                v-on:dragover="onMainDragOver"
+                v-on:dragleave="onMainDragLeave"
+                v-on:drop="onMainDrop"
+            >
+                <div
+                    v-if="filesDragOver"
+                    class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-2 pointer-events-none"
+                >
+                    <Upload class="w-10 h-10 text-accent-400" :stroke-width="1.5" />
+                    <span class="text-sm font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
+                </div>
+
                 <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">
                     {{ t("admin.media.altWarning") }}
                 </AppMessage>

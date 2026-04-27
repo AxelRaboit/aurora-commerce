@@ -10,6 +10,18 @@ admin:
   invitations:
     sent: Invitation envoyée à {email}.
   media:
+    upload: Téléverser
+    uploaded: "{count} fichier(s) téléversé(s)"
+    uploaded_one: Fichier téléversé
+    empty: Aucun média dans ce dossier
+    altWarning: Certains médias n'ont pas de texte alternatif
+    missingAlt: Alt manquant
+    editMedia: Modifier le média
+    moved: Média déplacé
+    rootFolder: Racine
+    expand: Déplier
+    collapse: Replier
+    dropToUpload: Déposer les fichiers pour les téléverser
     errors:
       alt_required: Le texte alternatif est requis.
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.

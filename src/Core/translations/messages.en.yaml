@@ -10,6 +10,17 @@ admin:
   invitations:
     sent: Invitation sent to {email}.
   media:
+    upload: Upload
+    uploaded: "{count} file(s) uploaded"
+    empty: No media in this folder
+    altWarning: Some media items are missing alternative text
+    missingAlt: Missing alt
+    editMedia: Edit media
+    moved: Media moved
+    rootFolder: Root
+    expand: Expand
+    collapse: Collapse
+    dropToUpload: Drop files here to upload
     errors:
       alt_required: Alternative text is required.
       focal_out_of_range: Focal point must be between 0 and 1.
