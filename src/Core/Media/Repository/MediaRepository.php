@@ -70,7 +70,8 @@ class MediaRepository extends ServiceEntityRepository
     public function findByFolder(?MediaFolder $folder, ?string $search = null): array
     {
         $queryBuilder = $this->createQueryBuilder('m')
-            ->orderBy('m.createdAt', Order::Descending->value);
+            ->orderBy('m.position', Order::Ascending->value)
+            ->addOrderBy('m.createdAt', Order::Descending->value);
 
         if (!$folder instanceof MediaFolder) {
             $queryBuilder->andWhere('m.folder IS NULL');

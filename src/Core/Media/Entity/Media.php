@@ -57,6 +57,9 @@ class Media implements TimestampableInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?MediaFolder $folder = null;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private int $position = 0;
+
     /** @var array<string, string> variant name (thumbnail/medium/large) → relative path under uploads */
     #[ORM\Column(type: 'json', options: ['default' => '{}'])]
     private array $variants = [];
@@ -251,5 +254,17 @@ class Media implements TimestampableInterface
     public function getPublicUrl(): string
     {
         return '/uploads/'.$this->path;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
     }
 }

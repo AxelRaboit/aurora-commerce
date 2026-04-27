@@ -36,6 +36,7 @@ final readonly class MediaSerializer
             'isImage' => $media->isImage(),
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
+            'position' => $media->getPosition(),
         ];
     }
 }

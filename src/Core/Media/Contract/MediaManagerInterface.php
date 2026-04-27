@@ -25,4 +25,7 @@ interface MediaManagerInterface
     public function updateFolder(MediaFolder $folder, MediaFolderInput $input): void;
 
     public function deleteFolder(MediaFolder $folder): void;
+
+    /** @param list<int> $orderedIds */
+    public function reorder(array $orderedIds): void;
 }

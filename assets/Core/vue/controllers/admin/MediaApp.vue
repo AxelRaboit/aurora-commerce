@@ -30,6 +30,7 @@ const props = defineProps({
     folderCreatePath: { type: String, default: "/admin/media/folders" },
     folderEditPath: { type: String, default: "/admin/media/folders/__id__/edit" },
     folderDeletePath: { type: String, default: "/admin/media/folders/__id__/delete" },
+    reorderPath: { type: String, default: "/admin/media/reorder" },
 });
 
 const folders = ref([...props.folders]);
@@ -344,6 +345,7 @@ const folderParentSelectOptions = computed(() => withDepthLabel(folderParentOpti
 
 // ── Drag & drop ──────────────────────────────────────────────────────────────
 const dragOverFolderId = ref(null);
+const dragOverMediaId = ref(null);
 const rootDragOver = ref(false);
 
 function onMediaDragStart(event, mediaItem) {
@@ -374,7 +376,46 @@ function onRootDragOver(event) {
 
 function onDragLeave() {
     dragOverFolderId.value = null;
+    dragOverMediaId.value = null;
     rootDragOver.value = false;
+}
+
+function onMediaItemDragOver(event, mediaItem) {
+    if (!event.dataTransfer.types.includes("application/x-aurora-media")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    dragOverMediaId.value = mediaItem.id;
+    dragOverFolderId.value = null;
+}
+
+async function onMediaItemDrop(event, targetItem) {
+    event.preventDefault();
+    event.stopPropagation();
+    dragOverMediaId.value = null;
+    const draggedId = Number(event.dataTransfer.getData("application/x-aurora-media"));
+    if (!draggedId || draggedId === targetItem.id) return;
+
+    const list = [...media.value];
+    const fromIdx = list.findIndex((m) => m.id === draggedId);
+    const toIdx = list.findIndex((m) => m.id === targetItem.id);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    list.splice(toIdx, 0, list.splice(fromIdx, 1)[0]);
+    media.value = list;
+
+    await reorderMedia(list.map((m) => m.id));
+}
+
+async function reorderMedia(ids) {
+    try {
+        await fetch(props.reorderPath, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids }),
+        });
+    } catch {
+        toast.error(t("shared.common.error"));
+    }
 }
 
 async function onFolderDrop(event, targetFolderId) {
@@ -576,10 +617,16 @@ async function moveFolder(folderId, newParentId) {
                     <div
                         v-for="item in media"
                         :key="item.id"
-                        class="group relative bg-surface border border-line/60 rounded-lg overflow-hidden cursor-pointer hover:border-accent-400 transition-colors"
+                        class="group relative bg-surface border rounded-lg overflow-hidden cursor-pointer transition-colors"
+                        :class="dragOverMediaId === item.id
+                            ? 'border-accent-400 ring-2 ring-accent-400/50'
+                            : 'border-line/60 hover:border-accent-400'"
                         draggable="true"
                         v-on:click="openEditMedia(item)"
                         v-on:dragstart="onMediaDragStart($event, item)"
+                        v-on:dragover="onMediaItemDragOver($event, item)"
+                        v-on:dragleave="dragOverMediaId = null"
+                        v-on:drop="onMediaItemDrop($event, item)"
                     >
                         <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
                             <img

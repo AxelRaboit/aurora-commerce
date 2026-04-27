@@ -158,6 +158,15 @@ class MediaController extends AbstractController
         return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
     }
 
+    #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
+    public function reorder(Request $request): JsonResponse
+    {
+        $ids = $this->decodeJson($request)['ids'] ?? [];
+        $this->mediaManager->reorder($ids);
+
+        return $this->json(['success' => true]);
+    }
+
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(Media $media): JsonResponse
     {

@@ -10,6 +10,7 @@ use Aurora\Core\Media\DTO\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
+use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -26,6 +27,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger,
         private MediaFolderRepository $folderRepository,
+        private MediaRepository $mediaRepository,
         private ImageVariantGenerator $variantGenerator,
         private TranslatorInterface $translator,
         #[Autowire('%kernel.project_dir%/public/uploads')]
@@ -146,6 +148,16 @@ final readonly class MediaManager implements MediaManagerInterface
     {
         // FK onDelete: SET NULL on media/media_folders children → they bubble up to root.
         $this->entityManager->remove($folder);
+        $this->entityManager->flush();
+    }
+
+    public function reorder(array $orderedIds): void
+    {
+        foreach ($orderedIds as $position => $id) {
+            $media = $this->mediaRepository->find($id);
+            $media?->setPosition($position);
+        }
+
         $this->entityManager->flush();
     }
 }
