@@ -119,6 +119,9 @@ admin:
       role_invalid: Invalid role.
       role_required: Role is required.
       password_too_short: Password must be at least 8 characters.
+      manager_self: A user cannot be their own manager.
+      manager_not_found: The selected manager does not exist.
+      manager_cycle: This assignment would create a reporting loop.
     newPassword: New password
     newPasswordPlaceholder: Leave empty to keep current
     toast:

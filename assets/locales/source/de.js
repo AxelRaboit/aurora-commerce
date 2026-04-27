@@ -229,6 +229,11 @@ export default {
                 createdAt: "Erstellt am",
                 invitedAt: "Eingeladen am",
             },
+            manager: {
+                label: "Vorgesetzter",
+                none: "Kein Vorgesetzter",
+                subordinates: "Direkt unterstellt ({count})",
+            },
             photo: {
                 upload: "Foto ändern",
                 remove: "Foto entfernen",

@@ -227,6 +227,11 @@ export default {
                 createdAt: "Created",
                 invitedAt: "Invited",
             },
+            manager: {
+                label: "Manager",
+                none: "No manager",
+                subordinates: "Direct reports ({count})",
+            },
             photo: {
                 upload: "Change photo",
                 remove: "Remove photo",

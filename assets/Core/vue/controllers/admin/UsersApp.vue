@@ -36,8 +36,23 @@ const props = defineProps({
     deletePath: { type: String, required: true },
     photoUploadPath: { type: String, required: true },
     photoDeletePath: { type: String, required: true },
+    selectablePath: { type: String, required: true },
+    showPath: { type: String, required: true },
     currentUserId: { type: Number, default: 0 },
 });
+
+const selectableUsers = ref([]);
+
+async function loadSelectableUsers() {
+    if (selectableUsers.value.length) return;
+    try {
+        const response = await fetch(props.selectablePath);
+        const data = await response.json();
+        selectableUsers.value = data.ok ? data.items : [];
+    } catch {
+        selectableUsers.value = [];
+    }
+}
 
 const search = ref("");
 const roleFilter = ref("");
@@ -98,14 +113,34 @@ async function submitInvite() {
 
 // ── View modal ───────────────────────────────────────────────────────────────
 const viewingUser = ref(null);
-function openView(user) {
-    viewingUser.value = user;
+async function openView(user) {
+    // Show the row data immediately, then enrich with subordinates from the detail endpoint.
+    viewingUser.value = { ...user, subordinates: [], subordinatesCount: 0 };
+    try {
+        const response = await fetch(props.showPath.replace("__id__", user.id));
+        const data = await response.json();
+        if (data.ok && viewingUser.value?.id === user.id) {
+            viewingUser.value = data.user;
+        }
+    } catch {
+        // Fail silent — the basic row data is already visible.
+    }
 }
 
 // ── Edit modal ───────────────────────────────────────────────────────────────
 const editModal = reactive({ open: false, editing: null, errors: {}, saving: false, photoUploading: false });
-const editForm = reactive({ name: "", email: "", role: "", password: "" });
+const editForm = reactive({ name: "", email: "", role: "", password: "", managerId: null });
 const photoInputRef = ref(null);
+
+const managerOptions = computed(() => {
+    const editingId = editModal.editing?.id ?? 0;
+    return [
+        { value: "", label: "—" },
+        ...selectableUsers.value
+            .filter((u) => u.id !== editingId)
+            .map((u) => ({ value: String(u.id), label: u.name })),
+    ];
+});
 
 function openEdit(user) {
     editModal.editing = user;
@@ -114,7 +149,9 @@ function openEdit(user) {
     editForm.email = user.email;
     editForm.role = user.role ?? props.roles[0]?.value ?? "";
     editForm.password = "";
+    editForm.managerId = user.managerId ? String(user.managerId) : "";
     editModal.open = true;
+    loadSelectableUsers();
 }
 
 function triggerPhotoSelect() {
@@ -174,10 +211,14 @@ async function submitEdit() {
     editModal.errors = {};
     try {
         const url = props.updatePath.replace("__id__", editModal.editing.id);
+        const payload = {
+            ...editForm,
+            managerId: editForm.managerId ? Number(editForm.managerId) : null,
+        };
         const response = await fetch(url, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(editForm),
+            body: JSON.stringify(payload),
         });
         const data = await response.json();
         if (!data.ok) {
@@ -456,6 +497,22 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     </div>
                 </dl>
 
+                <div class="border-t border-line/40 pt-4 space-y-4">
+                    <div>
+                        <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.manager.label') }}</p>
+                        <p v-if="viewingUser.manager" class="text-sm text-primary">{{ viewingUser.manager.name }}</p>
+                        <p v-else class="text-sm text-muted">{{ t('admin.users.manager.none') }}</p>
+                    </div>
+                    <div v-if="viewingUser.subordinates && viewingUser.subordinates.length">
+                        <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">
+                            {{ t('admin.users.manager.subordinates', { count: viewingUser.subordinatesCount }) }}
+                        </p>
+                        <div class="flex flex-wrap gap-1.5">
+                            <AppBadge v-for="sub in viewingUser.subordinates" :key="sub.id" color="accent">{{ sub.name }}</AppBadge>
+                        </div>
+                    </div>
+                </div>
+
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingUser = null">{{ t('shared.common.close') }}</AppButton>
                 </AppModalFooter>
@@ -503,6 +560,13 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     :label="t('admin.users.role')"
                     :allow-empty="false"
                     :error="editModal.errors.role ?? ''"
+                />
+                <AppMultiselect
+                    v-model="editForm.managerId"
+                    :options="managerOptions"
+                    :label="t('admin.users.manager.label')"
+                    :allow-empty="true"
+                    :error="editModal.errors.managerId ?? ''"
                 />
                 <AppInput
                     v-model="editForm.password"

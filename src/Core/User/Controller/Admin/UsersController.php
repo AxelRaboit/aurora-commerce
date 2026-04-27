@@ -11,6 +11,7 @@ use Aurora\Core\User\DTO\UserInput;
 use Aurora\Core\User\DTO\UserInviteInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Manager\UserHierarchyManager;
 use Aurora\Core\User\Manager\UserProfilePhotoManager;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\User\Serializer\UserSerializer;
@@ -33,6 +34,7 @@ final class UsersController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
+        private readonly UserHierarchyManager $userHierarchyManager,
         private readonly UserSerializer $userSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly UserProfilePhotoManager $userProfilePhotoManager,
@@ -78,6 +80,27 @@ final class UsersController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
+    public function show(User $user): JsonResponse
+    {
+        return $this->json(['ok' => true, 'user' => $this->userSerializer->serializeWithSubordinates($user)]);
+    }
+
+    #[Route('/selectable', name: '_selectable', methods: [HttpMethodEnum::Get->value])]
+    public function selectable(): JsonResponse
+    {
+        $items = array_map(
+            static fn (User $user): array => [
+                'id' => $user->getId(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+            ],
+            $this->userRepository->findAllAdminsAlphabetical(),
+        );
+
+        return $this->json(['ok' => true, 'items' => $items]);
+    }
+
     #[Route('/invite', name: '_invite', methods: [HttpMethodEnum::Post->value])]
     public function invite(Request $request): JsonResponse
     {
@@ -110,6 +133,12 @@ final class UsersController extends AbstractController
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->json(['ok' => false, 'errors' => $errors]);
+        }
+
+        try {
+            $this->userHierarchyManager->applyManager($user, $input->managerId);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['ok' => false, 'errors' => ['managerId' => $invalidArgumentException->getMessage()]]);
         }
 
         try {

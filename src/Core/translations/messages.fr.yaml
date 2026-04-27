@@ -120,6 +120,9 @@ admin:
       role_invalid: Rôle invalide.
       role_required: Le rôle est requis.
       password_too_short: Le mot de passe doit contenir au moins 8 caractères.
+      manager_self: Un utilisateur ne peut pas être son propre responsable.
+      manager_not_found: Le responsable sélectionné n'existe pas.
+      manager_cycle: Cette assignation créerait une boucle hiérarchique.
     newPassword: Nouveau mot de passe
     newPasswordPlaceholder: Laisser vide pour ne pas modifier
     toast:

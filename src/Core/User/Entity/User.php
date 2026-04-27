@@ -11,6 +11,8 @@ use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Core\User\Repository\UserRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -63,6 +65,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $profilePhotoPath = null;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subordinates')]
+    #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $manager = null;
+
+    /** @var Collection<int, User> */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'manager')]
+    private Collection $subordinates;
+
     #[ORM\Column(length: 20, unique: true, nullable: true)]
     private ?string $invitationSelector = null;
 
@@ -81,6 +91,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $emailVerificationExpiresAt = null;
+
+    public function __construct()
+    {
+        $this->subordinates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -286,6 +301,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getProfilePhotoUrl(): ?string
     {
         return null === $this->profilePhotoPath ? null : '/uploads/users/'.$this->profilePhotoPath;
+    }
+
+    public function getManager(): ?User
+    {
+        return $this->manager;
+    }
+
+    public function setManager(?User $manager): static
+    {
+        $this->manager = $manager;
+
+        return $this;
+    }
+
+    /** @return Collection<int, User> */
+    public function getSubordinates(): Collection
+    {
+        return $this->subordinates;
     }
 
     public function eraseCredentials(): void {}

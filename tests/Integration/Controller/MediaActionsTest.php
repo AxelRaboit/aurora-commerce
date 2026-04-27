@@ -11,18 +11,18 @@ use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Enum\UserStatusEnum;
-use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Tests\Integration\Concern\CreatesTestUsers;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class MediaActionsTest extends IntegrationTestCase
 {
+    use CreatesTestUsers;
+
     private KernelBrowser $client;
     private string $uploadDir;
     private Filesystem $filesystem;
@@ -208,7 +208,7 @@ final class MediaActionsTest extends IntegrationTestCase
 
     public function testNonAdminCannotAccessMediaAdmin(): void
     {
-        $editor = $this->createUser('editor-'.uniqid().'@aurora.test', UserRoleEnum::Editor);
+        $editor = $this->createTestUser('editor', role: UserRoleEnum::Editor);
         $this->client->loginUser($editor, 'admin');
 
         $this->client->request('GET', '/admin/media/list');
@@ -281,24 +281,6 @@ final class MediaActionsTest extends IntegrationTestCase
         self::assertInstanceOf(MediaFolder::class, $folder);
 
         return $folder;
-    }
-
-    private function createUser(string $email, UserRoleEnum $role): User
-    {
-        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
-        $user = new User();
-        $user->setName('Test '.$role->value);
-        $user->setEmail($email);
-        $user->setType(UserTypeEnum::Admin);
-        $user->setStatus(UserStatusEnum::Active);
-        $user->setRoles([$role->value]);
-        $user->setPassword($hasher->hashPassword($user, 'verysecure123'));
-
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return $user;
     }
 
     /** @return array{0: int, 1: array} */

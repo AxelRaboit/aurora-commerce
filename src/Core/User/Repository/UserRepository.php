@@ -6,6 +6,7 @@ namespace Aurora\Core\User\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserTypeEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -84,5 +85,16 @@ class UserRepository extends ServiceEntityRepository
     public function findByInvitationSelector(string $selector): ?User
     {
         return $this->findOneBy(['invitationSelector' => $selector]);
+    }
+
+    /** @return list<User> */
+    public function findAllAdminsAlphabetical(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.type = :type')
+            ->setParameter('type', UserTypeEnum::Admin->value)
+            ->orderBy('u.name', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
     }
 }

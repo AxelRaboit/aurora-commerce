@@ -229,6 +229,11 @@ export default {
                 createdAt: "Creado el",
                 invitedAt: "Invitado el",
             },
+            manager: {
+                label: "Responsable",
+                none: "Sin responsable",
+                subordinates: "Subordinados ({count})",
+            },
             photo: {
                 upload: "Cambiar foto",
                 remove: "Eliminar foto",
