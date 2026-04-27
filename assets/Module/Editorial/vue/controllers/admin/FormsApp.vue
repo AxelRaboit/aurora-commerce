@@ -15,7 +15,7 @@ import {
     Settings,
     Layers,
     Inbox,
-} from "lucide-vue-next";
+    Save, } from "lucide-vue-next";
 import AppPagination from "@/shared/components/AppPagination.vue";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
@@ -523,6 +523,7 @@ function submissionValue(submission, field) {
                         :disabled="saving"
                         v-on:click="saveForm"
                     >
+                        <Save v-if="!saving" class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ saving ? t("shared.common.loading") : t("shared.common.save") }}
                     </AppButton>
                 </div>
@@ -834,7 +835,7 @@ function submissionValue(submission, field) {
 
         <AppModalFooter bordered>
             <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false">{{ t("shared.common.cancel") }}</AppButton>
-            <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField">{{ t("shared.common.save") }}</AppButton>
+            <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
         </AppModalFooter>
     </AppModal>
 

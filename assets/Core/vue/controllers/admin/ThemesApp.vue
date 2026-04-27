@@ -3,7 +3,7 @@ import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Palette, Check, Pencil, Trash2, Plus } from "lucide-vue-next";
+import { Palette, Check, Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
 import AppTextarea from "@/shared/components/AppTextarea.vue";
@@ -433,7 +433,7 @@ async function confirmDelete() {
 
                 <AppModalFooter bordered>
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">{{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

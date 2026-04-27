@@ -160,7 +160,7 @@ async function submitItem(payload) {
                 <AppInput v-model="menuForm.description" :label="t('admin.menus.description')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" v-on:click="menuModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" :loading="menuModal.saving">{{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" :loading="menuModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

@@ -5,7 +5,7 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { UserPlus } from "lucide-vue-next";
+import { UserPlus, Save, } from "lucide-vue-next";
 import AppPagination from "@/shared/components/AppPagination.vue";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -356,7 +356,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </div>
             </form>
         </AppModal>

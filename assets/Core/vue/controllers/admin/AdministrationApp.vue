@@ -32,7 +32,7 @@ import {
     KeyRound,
     ScrollText,
     ShieldCheck,
-} from "lucide-vue-next";
+    Save, } from "lucide-vue-next";
 
 const LOCALE_OPTIONS = [
     { value: "fr", label: "Français" },
@@ -151,7 +151,7 @@ function onAuditModuleChange(value) {
                                 :loading="parameters.editSaving.value"
                                 v-on:click="parameters.saveEdit(parameter)"
                             >
-                                {{ t('shared.common.save') }}
+                                <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}
                             </AppButton>
                             <AppButton variant="ghost" size="md" class="flex-1" v-on:click="parameters.cancelEdit">{{ t('shared.common.cancel') }}</AppButton>
                         </div>
@@ -184,7 +184,7 @@ function onAuditModuleChange(value) {
                                 <div v-if="parameters.editingKey.value === parameter.key" class="space-y-2">
                                     <AppInput v-model="parameters.editingValue.value" v-on:keyup.enter="parameters.saveEdit(parameter)" v-on:keyup.esc="parameters.cancelEdit" />
                                     <div class="flex gap-2">
-                                        <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)">{{ t('shared.common.save') }}</AppButton>
+                                        <AppButton variant="primary" size="md" :loading="parameters.editSaving.value" v-on:click="parameters.saveEdit(parameter)"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                                         <AppButton variant="ghost" size="md" v-on:click="parameters.cancelEdit">{{ t('shared.common.cancel') }}</AppButton>
                                     </div>
                                 </div>
@@ -372,7 +372,7 @@ function onAuditModuleChange(value) {
                     </AppSelect>
                     <div class="flex items-center justify-end gap-2 pt-2">
                         <AppButton variant="ghost" size="md" v-on:click="users.closeEdit">{{ t('shared.common.cancel') }}</AppButton>
-                        <AppButton type="submit" variant="primary" size="md" :loading="users.editLoading.value">{{ t('shared.common.save') }}</AppButton>
+                        <AppButton type="submit" variant="primary" size="md" :loading="users.editLoading.value"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </div>
                 </form>
             </AppModal>

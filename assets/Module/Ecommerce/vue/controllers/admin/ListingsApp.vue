@@ -17,7 +17,7 @@ import AppPagination from "@/shared/components/AppPagination.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
 import AppSearchInput from "@/shared/components/AppSearchInput.vue";
 import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
-import { Pencil, Trash2, Plus, Eye } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
 import { computed } from "vue";
@@ -295,7 +295,7 @@ function formatPrice(product) {
                 </div>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
@@ -326,7 +326,7 @@ function formatPrice(product) {
                 </div>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

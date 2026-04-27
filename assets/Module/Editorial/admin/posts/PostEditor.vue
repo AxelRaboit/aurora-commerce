@@ -720,7 +720,7 @@ function forceSave() {
                     v-on:click="handleSave"
                 >
                     <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("shared.common.save") }}</span>
+                    <span><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</span>
                     <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
                 </AppButton>
             </div>

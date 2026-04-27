@@ -11,7 +11,7 @@ import AppTextarea from "@/shared/components/AppTextarea.vue";
 import AppLink from "@/shared/components/AppLink.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import { Pencil, Trash2, Plus } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
 import { required, url, email as emailValidator } from "@/shared/utils/validators.js";
 import { toast } from "vue-sonner";
 
@@ -219,7 +219,7 @@ async function submitContact() {
                 <AppInput v-model="editForm.address" :label="t('admin.crm.companies.address')" :placeholder="t('admin.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
@@ -266,7 +266,7 @@ async function submitContact() {
             <p class="text-xs text-muted">{{ t('admin.crm.companies.contactLinked', { name: company.name }) }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" type="button" v-on:click="showCreateContact = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" type="submit" :loading="contactLoading">{{ t('shared.common.save') }}</AppButton>
+                <AppButton variant="primary" size="md" type="submit" :loading="contactLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
             </AppModalFooter>
         </form>
     </AppModal>

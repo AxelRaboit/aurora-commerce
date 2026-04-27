@@ -77,7 +77,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                     required
                 />
                 <div class="pt-1">
-                    <AppButton type="submit" :loading="infoLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton type="submit" :loading="infoLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </div>
             </form>
         </div>
@@ -120,7 +120,7 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                     required
                 />
                 <div class="pt-1">
-                    <AppButton type="submit" :loading="passwordLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton type="submit" :loading="passwordLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </div>
             </form>
         </div>

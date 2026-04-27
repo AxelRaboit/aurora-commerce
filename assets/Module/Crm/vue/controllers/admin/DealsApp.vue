@@ -16,7 +16,7 @@ import AppPagination from "@/shared/components/AppPagination.vue";
 import AppNoData from "@/shared/components/AppNoData.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
-import { List, Columns2, Pencil, Trash2, Eye, Plus } from "lucide-vue-next";
+import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
 
@@ -204,7 +204,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppDatePicker v-model="newDeal.closingDate" :label="t('admin.crm.deals.closingDate')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
@@ -227,7 +227,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppDatePicker v-model="editForm.closingDate" :label="t('admin.crm.deals.closingDate')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

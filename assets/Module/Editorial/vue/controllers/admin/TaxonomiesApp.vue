@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useFormModal } from "@/shared/composables/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
-import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, } from "lucide-vue-next";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -499,7 +499,7 @@ function findNodeInTree(nodes, id) {
 
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="taxonomyModal.saving">{{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="taxonomyModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -557,7 +557,7 @@ function findNodeInTree(nodes, id) {
 
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="termModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="termModal.saving">{{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="termModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
         </AppModal>

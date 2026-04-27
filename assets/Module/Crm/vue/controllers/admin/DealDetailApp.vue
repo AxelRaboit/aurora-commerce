@@ -11,7 +11,7 @@ import AppSelect from "@/shared/components/AppSelect.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppDatePicker from "@/shared/components/AppDatePicker.vue";
-import { Pencil, Trash2 } from "lucide-vue-next";
+import { Pencil, Trash2, Save, } from "lucide-vue-next";
 import { required } from "@/shared/utils/validators.js";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
@@ -158,7 +158,7 @@ async function doDelete() {
                 <AppDatePicker v-model="editForm.closingDate" :label="t('admin.crm.deals.closingDate')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

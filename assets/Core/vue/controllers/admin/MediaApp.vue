@@ -3,7 +3,7 @@ import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, reactive, computed, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, } from "lucide-vue-next";
 import QRCode from "qrcode";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
@@ -1039,7 +1039,7 @@ async function moveFolder(folderId, newParentId) {
                         class="w-full sm:w-auto order-1 sm:order-2 sm:ms-auto"
                         :loading="editSaving"
                     >
-                        {{ t("shared.common.save") }}
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
                     </AppButton>
                     <AppButton variant="danger" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
@@ -1072,7 +1072,7 @@ async function moveFolder(folderId, newParentId) {
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="folderModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving">{{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -1146,7 +1146,7 @@ async function moveFolder(folderId, newParentId) {
             />
             <div class="flex justify-end gap-2 mt-4">
                 <AppButton variant="ghost" size="md" v-on:click="openBulkMove = false">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false">{{ t("shared.common.save") }}</AppButton>
+                <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
             </div>
         </AppModal>
     </div>

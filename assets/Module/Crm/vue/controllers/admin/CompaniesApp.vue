@@ -14,7 +14,7 @@ import AppPagination from "@/shared/components/AppPagination.vue";
 import AppNoData from "@/shared/components/AppNoData.vue";
 import AppLink from "@/shared/components/AppLink.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
-import { Plus, Pencil, Trash2, Eye } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required, url } from "@/shared/utils/validators.js";
 
@@ -182,7 +182,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput v-model="newCompany.address" :label="t('admin.crm.companies.address')" :placeholder="t('admin.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
@@ -204,7 +204,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput v-model="editForm.address" :label="t('admin.crm.companies.address')" :placeholder="t('admin.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

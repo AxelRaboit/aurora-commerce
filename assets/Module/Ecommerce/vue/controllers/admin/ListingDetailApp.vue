@@ -13,7 +13,7 @@ import AppBadge from "@/shared/components/AppBadge.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
-import { Pencil, Trash2, ShoppingBag, ExternalLink } from "lucide-vue-next";
+import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
 
@@ -187,7 +187,7 @@ async function doDelete() {
                 </div>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>

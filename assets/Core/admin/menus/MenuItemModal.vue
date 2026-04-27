@@ -3,7 +3,7 @@ import { ref, reactive, computed, watch, nextTick } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Search, Check, X } from "lucide-vue-next";
+import { Search, Check, X, Save, } from "lucide-vue-next";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -431,7 +431,7 @@ const targetTypeOptions = computed(() =>
 
             <div class="flex justify-end gap-2 pt-3 border-t border-line">
                 <AppButton variant="ghost" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton type="submit" variant="primary" :loading="saving">{{ t("shared.common.save") }}</AppButton>
+                <AppButton type="submit" variant="primary" :loading="saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
             </div>
         </form>
     </AppModal>
