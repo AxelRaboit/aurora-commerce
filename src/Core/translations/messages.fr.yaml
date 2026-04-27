@@ -46,6 +46,17 @@ admin:
     createdAt: Créé le
     updatedAt: Modifié le
     captionPlaceholder: Décrivez ce média…
+    favourites: Favoris
+    tabEdit: Édition
+    tabHistory: Historique
+    noHistory: Aucune modification enregistrée
+    action:
+      media.uploaded: Téléversé
+      media.updated: Modifié
+      media.moved: Déplacé
+      media.deleted: Supprimé
+    favourite: Ajouter aux favoris
+    unfavourite: Retirer des favoris
     errors:
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.
       folder_name_required: Le nom du dossier est requis.

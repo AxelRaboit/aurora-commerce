@@ -45,6 +45,17 @@ admin:
     createdAt: Created at
     updatedAt: Updated at
     captionPlaceholder: Describe this media…
+    favourites: Favourites
+    tabEdit: Edit
+    tabHistory: History
+    noHistory: No changes recorded
+    action:
+      media.uploaded: Uploaded
+      media.updated: Updated
+      media.moved: Moved
+      media.deleted: Deleted
+    favourite: Add to favourites
+    unfavourite: Remove from favourites
     errors:
       focal_out_of_range: Focal point must be between 0 and 1.
       folder_name_required: Folder name is required.

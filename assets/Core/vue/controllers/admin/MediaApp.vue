@@ -3,7 +3,7 @@ import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, reactive, computed, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star } from "lucide-vue-next";
 import QRCode from "qrcode";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
@@ -95,6 +95,27 @@ const folderTree = computed(() => buildFolderTree(folders.value));
 
 // Folders collapsed by the user (the ones whose children are hidden in the tree).
 const collapsedFolderIds = ref(loadCollapsedFolderIds());
+
+// ── Favourite folders ─────────────────────────────────────────────────────────
+const favouriteFolderIds = ref(loadFavouriteFolderIds());
+
+function loadFavouriteFolderIds() {
+    try {
+        const raw = localStorage.getItem("aurora-media-favourite-folders");
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { return new Set(); }
+}
+
+function toggleFavourite(folderId) {
+    const s = new Set(favouriteFolderIds.value);
+    if (s.has(folderId)) s.delete(folderId); else s.add(folderId);
+    favouriteFolderIds.value = s;
+    try { localStorage.setItem("aurora-media-favourite-folders", JSON.stringify([...s])); } catch {}
+}
+
+const favouriteFolders = computed(() =>
+    folders.value.filter((f) => favouriteFolderIds.value.has(f.id))
+);
 
 function loadCollapsedFolderIds() {
     try {
@@ -321,13 +342,18 @@ async function onMainDrop(event) {
 
 // ── Edit media ───────────────────────────────────────────────────────────────
 const editingMedia = ref(null);
+const editTab = ref("edit"); // "edit" | "history"
+const mediaHistory = ref([]);
+const historyLoading = ref(false);
 const editForm = reactive({ alt: "", caption: "", focalX: null, focalY: null, folderId: null });
 const editErrors = ref({});
 const editSaving = ref(false);
 
 function openEditMedia(item) {
     editingMedia.value = item;
+    editTab.value = "edit";
     editErrors.value = {};
+    mediaHistory.value = [];
     Object.assign(editForm, {
         alt: item.alt ?? "",
         caption: item.caption ?? "",
@@ -335,6 +361,23 @@ function openEditMedia(item) {
         focalY: item.focalY,
         folderId: item.folderId,
     });
+}
+
+async function loadHistory() {
+    if (!editingMedia.value || historyLoading.value) return;
+    historyLoading.value = true;
+    try {
+        const res = await fetch(`/admin/media/${editingMedia.value.id}/history`);
+        const data = await res.json();
+        mediaHistory.value = data.items ?? [];
+    } catch { /* ignore */ } finally {
+        historyLoading.value = false;
+    }
+}
+
+function openHistoryTab() {
+    editTab.value = "history";
+    if (!mediaHistory.value.length) loadHistory();
 }
 
 function closeEditMedia() {
@@ -686,6 +729,26 @@ async function moveFolder(folderId, newParentId) {
         <div class="flex flex-col lg:flex-row gap-4">
             <!-- Folder sidebar -->
             <aside class="lg:w-72 shrink-0 space-y-2">
+                <!-- Favourites section -->
+                <div v-if="favouriteFolders.length" class="space-y-0.5">
+                    <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide flex items-center gap-1.5 px-1">
+                        <Star class="w-3 h-3 text-amber-400" :stroke-width="2" fill="currentColor" />
+                        {{ t("admin.media.favourites") }}
+                    </h3>
+                    <button
+                        v-for="fav in favouriteFolders"
+                        :key="fav.id"
+                        type="button"
+                        class="w-full text-left px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2 text-sm min-w-0"
+                        :class="currentFolderId === fav.id ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2 text-primary'"
+                        v-on:click="navigateTo(fav.id)"
+                    >
+                        <Folder class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
+                        <span class="truncate flex-1">{{ fav.name }}</span>
+                    </button>
+                    <div class="border-t border-line/40 my-1" />
+                </div>
+
                 <div class="flex items-center gap-1.5">
                     <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.media.folders") }}</h2>
                     <button
@@ -753,6 +816,15 @@ async function moveFolder(folderId, newParentId) {
                             <span v-if="folder.mediaCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.mediaCount }}</span>
                         </button>
                         <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
+                            <button
+                                type="button"
+                                class="p-1 rounded transition-colors"
+                                :class="favouriteFolderIds.has(folder.id) ? 'text-amber-400' : 'text-muted hover:text-amber-400'"
+                                :title="favouriteFolderIds.has(folder.id) ? t('admin.media.unfavourite') : t('admin.media.favourite')"
+                                v-on:click.stop="toggleFavourite(folder.id)"
+                            >
+                                <Star class="w-3.5 h-3.5" :stroke-width="2" :fill="favouriteFolderIds.has(folder.id) ? 'currentColor' : 'none'" />
+                            </button>
                             <AppIconButton color="accent" v-on:click="openEditFolder(folder)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
@@ -915,6 +987,9 @@ async function moveFolder(folderId, newParentId) {
                         <div class="p-2 space-y-0.5">
                             <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
                             <div class="text-xs text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
+                            <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
+                                <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -947,7 +1022,12 @@ async function moveFolder(folderId, newParentId) {
                                     <div class="flex items-center gap-2">
                                         <img v-if="item.isImage" :src="item.thumbnailUrl ?? item.url" class="w-8 h-8 rounded object-cover shrink-0">
                                         <ImageIcon v-else class="w-8 h-8 text-muted shrink-0" :stroke-width="1.5" />
-                                        <span class="truncate font-medium text-primary">{{ item.originalName }}</span>
+                                        <div class="min-w-0">
+                                            <div class="truncate font-medium text-primary">{{ item.originalName }}</div>
+                                            <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 flex items-center gap-1">
+                                                <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                                            </div>
+                                        </div>
                                         <span v-if="!item.alt" class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500">alt</span>
                                     </div>
                                 </td>
@@ -969,8 +1049,30 @@ async function moveFolder(folderId, newParentId) {
 
         <!-- Edit media modal -->
         <AppModal :show="!!editingMedia" max-width="3xl" scrollable v-on:close="closeEditMedia">
-            <h3 class="text-lg font-semibold text-primary">{{ t("admin.media.editMedia") }}</h3>
-            <form class="grid grid-cols-1 md:grid-cols-2 gap-4" v-on:submit.prevent="submitMediaEdit">
+            <div class="flex items-center justify-between gap-4 mb-1">
+                <h3 class="text-lg font-semibold text-primary truncate">{{ t("admin.media.editMedia") }}</h3>
+                <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'edit' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'edit'">{{ t("admin.media.tabEdit") }}</button>
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'history' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="openHistoryTab">{{ t("admin.media.tabHistory") }}</button>
+                </div>
+            </div>
+
+            <!-- History tab -->
+            <div v-if="editTab === 'history'" class="space-y-2 min-h-32">
+                <div v-if="historyLoading" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
+                <div v-else-if="!mediaHistory.length" class="text-center py-8 text-muted text-sm">{{ t("admin.media.noHistory") }}</div>
+                <div v-else class="divide-y divide-line/40">
+                    <div v-for="entry in mediaHistory" :key="entry.id" class="py-2.5 flex items-start gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium text-primary">{{ t(`admin.media.action.${entry.action}`, entry.action) }}</div>
+                            <div class="text-xs text-muted">{{ entry.userName ?? entry.userEmail ?? t("shared.common.unknown") }}</div>
+                        </div>
+                        <div class="text-xs text-muted shrink-0">{{ formatDateTime(entry.createdAt) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <form v-else class="grid grid-cols-1 md:grid-cols-2 gap-4" v-on:submit.prevent="submitMediaEdit">
                 <div class="space-y-2">
                     <div
                         v-if="editingMedia?.isImage"

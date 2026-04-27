@@ -34,6 +34,7 @@ final readonly class MediaSerializer
             'focalY' => $media->getFocalY(),
             'focalPositionCss' => $media->getFocalPositionCss(),
             'folderId' => $media->getFolder()?->getId(),
+            'folderName' => $media->getFolder()?->getName(),
             'isImage' => $media->isImage(),
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),

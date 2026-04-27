@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Manager;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Contract\MediaManagerInterface;
 use Aurora\Core\Media\DTO\MediaFolderInput;
 use Aurora\Core\Media\DTO\MediaInput;
@@ -33,6 +34,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private ImageVariantGenerator $variantGenerator,
         private TranslatorInterface $translator,
         private Security $security,
+        private AuditLogger $auditLogger,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -70,6 +72,8 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->persist($media);
         $this->entityManager->flush();
 
+        $this->auditLogger->log('media', 'media.uploaded', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
+
         return $media;
     }
 
@@ -89,27 +93,35 @@ final readonly class MediaManager implements MediaManagerInterface
         }
 
         $media->setFolder($folder);
-
         $this->entityManager->flush();
+        $this->auditLogger->log('media', 'media.updated', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
     }
 
     public function move(Media $media, ?MediaFolder $folder): void
     {
         $media->setFolder($folder);
         $this->entityManager->flush();
+        $this->auditLogger->log('media', 'media.moved', 'Media', $media->getId(), [
+            'name' => $media->getOriginalName(),
+            'folder' => $folder?->getName(),
+        ]);
     }
 
     public function delete(Media $media): void
     {
+        $id = $media->getId();
+        $name = $media->getOriginalName();
+
         $filePath = sprintf('%s/%s', $this->uploadDir, $media->getPath());
         if (is_file($filePath)) {
             @unlink($filePath);
         }
 
         $this->variantGenerator->deleteVariants($media->getVariants());
-
         $this->entityManager->remove($media);
         $this->entityManager->flush();
+
+        $this->auditLogger->log('media', 'media.deleted', 'Media', $id, ['name' => $name]);
     }
 
     public function createFolder(MediaFolderInput $input): MediaFolder

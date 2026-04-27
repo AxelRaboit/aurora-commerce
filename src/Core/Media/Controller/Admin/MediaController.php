@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Controller\Admin;
 
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Media\Contract\MediaManagerInterface;
@@ -38,6 +40,8 @@ class MediaController extends AbstractController
         private readonly MediaSerializer $mediaSerializer,
         private readonly MediaFolderSerializer $folderSerializer,
         private readonly PayloadValidator $payloadValidator,
+        private readonly AuditLogRepository $auditLogRepository,
+        private readonly AuditLogSerializer $auditLogSerializer,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -72,6 +76,23 @@ class MediaController extends AbstractController
     public function info(Media $media): JsonResponse
     {
         return $this->json(['media' => $this->mediaSerializer->serialize($media)]);
+    }
+
+    #[Route('/{id}/history', name: '_history', methods: [HttpMethodEnum::Get->value])]
+    public function history(Media $media, Request $request): JsonResponse
+    {
+        $result = $this->auditLogRepository->findPaginatedForEntity(
+            'Media',
+            (int) $media->getId(),
+            $request->query->getInt('page', 1),
+            10,
+        );
+
+        return $this->json([
+            'items' => array_map($this->auditLogSerializer->serialize(...), $result['items']),
+            'total' => $result['total'],
+            'totalPages' => $result['totalPages'],
+        ]);
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
