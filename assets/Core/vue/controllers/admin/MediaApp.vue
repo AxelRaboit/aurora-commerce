@@ -307,9 +307,7 @@ function closeCrop() {
     cropSaving.value = false;
 }
 
-function historyActionLabel(action) {
-    return t(`admin.media.historyAction.${action}`, action);
-}
+const historyActionLabel = (action) => t(`admin.media.historyAction.${action}`);
 
 async function saveCrop() {
     if (!cropperInstance || !cropMedia.value) return;
