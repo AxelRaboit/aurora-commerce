@@ -1,8 +1,13 @@
 <script setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { Upload, Trash2 } from "lucide-vue-next";
+import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
 import PasswordStrength from "@/shared/components/PasswordStrength.vue";
+import UserAvatar from "@core/admin/users/UserAvatar.vue";
 import { useProfileLocale } from "@core/admin/profile/composables/useProfileLocale.js";
 import { useProfileInfo } from "@core/admin/profile/composables/useProfileInfo.js";
 import { useProfilePassword } from "@core/admin/profile/composables/useProfilePassword.js";
@@ -13,10 +18,13 @@ const { t } = useI18n();
 const props = defineProps({
     userName: { type: String, default: "" },
     userEmail: { type: String, default: "" },
+    userPhotoUrl: { type: String, default: "" },
     locale: { type: String, default: "fr" },
     updatePath: { type: String, required: true },
     passwordPath: { type: String, required: true },
     localePath: { type: String, required: true },
+    photoUploadPath: { type: String, required: true },
+    photoDeletePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     loginPath: { type: String, required: true },
     deleteCsrf: { type: String, default: "" },
@@ -26,6 +34,55 @@ const { selectedLocale, localeLoading, changeLocale } = useProfileLocale(props.l
 const { infoName, infoEmail, infoLoading, infoErrors, saveInfo } = useProfileInfo(props.updatePath, props.userName, props.userEmail);
 const { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword } = useProfilePassword(props.passwordPath);
 const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, props.loginPath, props.deleteCsrf);
+
+const photoUrl = ref(props.userPhotoUrl);
+const photoLoading = ref(false);
+const photoInputRef = ref(null);
+
+function triggerPhotoSelect() {
+    photoInputRef.value?.click();
+}
+
+async function onPhotoSelected(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    photoLoading.value = true;
+    try {
+        const formData = new FormData();
+        formData.append("photo", file);
+        const response = await fetch(props.photoUploadPath, { method: HttpMethod.Post, body: formData });
+        const data = await response.json();
+        if (!data.success) {
+            toast.error(t(data.errors?.photo ?? data.error ?? "shared.common.error"));
+            return;
+        }
+        photoUrl.value = data.profilePhotoUrl ?? "";
+        toast.success(t("admin.users.photo.uploaded"));
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        photoLoading.value = false;
+    }
+}
+
+async function removePhoto() {
+    photoLoading.value = true;
+    try {
+        const response = await fetch(props.photoDeletePath, { method: HttpMethod.Post });
+        const data = await response.json();
+        if (!data.success) {
+            toast.error(t(data.error ?? "shared.common.error"));
+            return;
+        }
+        photoUrl.value = "";
+        toast.success(t("admin.users.photo.removed"));
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        photoLoading.value = false;
+    }
+}
 </script>
 
 <template>
@@ -49,6 +106,31 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
                     <option value="es">{{ t('shared.locales.es') }}</option>
                     <option value="de">{{ t('shared.locales.de') }}</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- Photo -->
+        <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
+            <header class="mb-6">
+                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.photo.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.photo.subtitle') }}</p>
+            </header>
+            <div class="flex items-center gap-5">
+                <UserAvatar :name="userName" :photo-url="photoUrl" :size="80" />
+                <div class="flex flex-col gap-2">
+                    <input ref="photoInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" v-on:change="onPhotoSelected">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <AppButton variant="ghost" size="sm" :loading="photoLoading" v-on:click="triggerPhotoSelect">
+                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('admin.users.photo.upload') }}
+                        </AppButton>
+                        <AppButton v-if="photoUrl" variant="ghost" size="sm" :loading="photoLoading" v-on:click="removePhoto">
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('admin.users.photo.remove') }}
+                        </AppButton>
+                    </div>
+                    <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
+                </div>
             </div>
         </div>
 

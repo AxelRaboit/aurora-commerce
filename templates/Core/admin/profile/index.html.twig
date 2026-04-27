@@ -10,10 +10,13 @@
 <div {{ vue_component('core/admin/ProfileApp', {
     userName: app.user.name,
     userEmail: app.user.email,
+    userPhotoUrl: app.user.profilePhotoUrl ?? '',
     locale: app.request.locale,
     updatePath: path('profile_update'),
     passwordPath: path('profile_password'),
     localePath: path('profile_locale'),
+    photoUploadPath: path('profile_photo_upload'),
+    photoDeletePath: path('profile_photo_delete'),
     deletePath: path('profile_delete'),
     loginPath: path('admin_login'),
     deleteCsrf: csrf_token('profile_delete'),

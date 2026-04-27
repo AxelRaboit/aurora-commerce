@@ -59,6 +59,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private UserTypeEnum $type = UserTypeEnum::Admin;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $profilePhotoPath = null;
+
     #[ORM\Column(length: 20, unique: true, nullable: true)]
     private ?string $invitationSelector = null;
 
@@ -265,6 +269,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isFrontUser(): bool
     {
         return UserTypeEnum::FrontUser === $this->type;
+    }
+
+    public function getProfilePhotoPath(): ?string
+    {
+        return $this->profilePhotoPath;
+    }
+
+    public function setProfilePhotoPath(?string $profilePhotoPath): static
+    {
+        $this->profilePhotoPath = $profilePhotoPath;
+
+        return $this;
+    }
+
+    public function getProfilePhotoUrl(): ?string
+    {
+        return null === $this->profilePhotoPath ? null : '/uploads/users/'.$this->profilePhotoPath;
     }
 
     public function eraseCredentials(): void {}

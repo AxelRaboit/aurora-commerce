@@ -223,6 +223,19 @@ export default {
             enableConfirm: "Réactiver le compte de {name} ?",
             cannot_delete_self:
                 "Vous ne pouvez pas supprimer votre propre compte.",
+            photo: {
+                upload: "Changer la photo",
+                remove: "Supprimer la photo",
+                hint: "JPEG, PNG ou WebP. 5 Mo max.",
+                uploaded: "Photo mise à jour.",
+                removed: "Photo supprimée.",
+                errors: {
+                    invalid_type:
+                        "Format non supporté. Utilisez JPEG, PNG ou WebP.",
+                    too_large: "L'image est trop volumineuse (5 Mo max).",
+                    missing: "Aucune image sélectionnée.",
+                },
+            },
         },
         invitations: {
             description:
@@ -1199,6 +1212,10 @@ export default {
             },
         },
         profile: {
+            photo: {
+                title: "Photo de profil",
+                subtitle: "Cette image apparaît dans la barre latérale et la liste des utilisateurs.",
+            },
             locale: {
                 title: "Langue",
                 subtitle:

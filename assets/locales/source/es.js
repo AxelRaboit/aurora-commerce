@@ -222,6 +222,19 @@ export default {
                 "¿Desactivar la cuenta de {name}? El usuario no podrá iniciar sesión.",
             enableConfirm: "¿Reactivar la cuenta de {name}?",
             cannot_delete_self: "No puedes eliminar tu propia cuenta.",
+            photo: {
+                upload: "Cambiar foto",
+                remove: "Eliminar foto",
+                hint: "JPEG, PNG o WebP. 5 MB máx.",
+                uploaded: "Foto actualizada.",
+                removed: "Foto eliminada.",
+                errors: {
+                    invalid_type:
+                        "Formato no admitido. Usa JPEG, PNG o WebP.",
+                    too_large: "La imagen es demasiado grande (5 MB máx.).",
+                    missing: "No hay imagen seleccionada.",
+                },
+            },
         },
         invitations: {
             description:
@@ -1194,6 +1207,10 @@ export default {
             },
         },
         profile: {
+            photo: {
+                title: "Foto de perfil",
+                subtitle: "Aparece en la barra lateral y en la lista de usuarios.",
+            },
             locale: {
                 title: "Idioma",
                 subtitle: "Elige el idioma de la administración.",

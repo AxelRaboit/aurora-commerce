@@ -220,6 +220,19 @@ export default {
                 "Disable {name}'s account? They will no longer be able to sign in.",
             enableConfirm: "Re-enable {name}'s account?",
             cannot_delete_self: "You cannot delete your own account.",
+            photo: {
+                upload: "Change photo",
+                remove: "Remove photo",
+                hint: "JPEG, PNG or WebP. 5 MB max.",
+                uploaded: "Photo updated.",
+                removed: "Photo removed.",
+                errors: {
+                    invalid_type:
+                        "Unsupported format. Use JPEG, PNG or WebP.",
+                    too_large: "The image is too large (5 MB max).",
+                    missing: "No image selected.",
+                },
+            },
         },
         invitations: {
             description:
@@ -1177,6 +1190,10 @@ export default {
             },
         },
         profile: {
+            photo: {
+                title: "Profile photo",
+                subtitle: "Shown in the sidebar and user list.",
+            },
             locale: {
                 title: "Language",
                 subtitle: "Choose the display language of the administration.",

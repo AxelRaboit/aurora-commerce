@@ -18,6 +18,8 @@
     toggleDisabledPath: path('admin_users_toggle_disabled', {id: '__id__'}),
     impersonatePath: path('admin_dashboard', {_switch_user: '__email__'}),
     deletePath: path('admin_users_delete', {id: '__id__'}),
+    photoUploadPath: path('admin_users_photo_upload', {id: '__id__'}),
+    photoDeletePath: path('admin_users_photo_delete', {id: '__id__'}),
     currentUserId: app.user.id,
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

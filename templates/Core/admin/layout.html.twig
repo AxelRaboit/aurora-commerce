@@ -32,6 +32,7 @@
         navSections: sidebar_nav_sections(),
         userName: app.user.name,
         userEmail: app.user.email,
+        userPhotoUrl: app.user.profilePhotoUrl ?? '',
         activeRoute: app.request.attributes.get('_route'),
         logoutCsrf: csrf_token('logout'),
         frontPath: path('front_root'),

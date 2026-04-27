@@ -5,7 +5,7 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { UserPlus, Save, } from "lucide-vue-next";
+import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
 import AppPagination from "@/shared/components/AppPagination.vue";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -18,6 +18,7 @@ import AppNoData from "@/shared/components/AppNoData.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
 import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 import UserRowActions from "@core/admin/users/UserRowActions.vue";
+import UserAvatar from "@core/admin/users/UserAvatar.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -33,6 +34,8 @@ const props = defineProps({
     toggleDisabledPath: { type: String, required: true },
     impersonatePath: { type: String, default: "" },
     deletePath: { type: String, required: true },
+    photoUploadPath: { type: String, required: true },
+    photoDeletePath: { type: String, required: true },
     currentUserId: { type: Number, default: 0 },
 });
 
@@ -94,8 +97,9 @@ async function submitInvite() {
 }
 
 // ── Edit modal ───────────────────────────────────────────────────────────────
-const editModal = reactive({ open: false, editing: null, errors: {}, saving: false });
+const editModal = reactive({ open: false, editing: null, errors: {}, saving: false, photoUploading: false });
 const editForm = reactive({ name: "", email: "", role: "", password: "" });
+const photoInputRef = ref(null);
 
 function openEdit(user) {
     editModal.editing = user;
@@ -105,6 +109,57 @@ function openEdit(user) {
     editForm.role = user.role ?? props.roles[0]?.value ?? "";
     editForm.password = "";
     editModal.open = true;
+}
+
+function triggerPhotoSelect() {
+    photoInputRef.value?.click();
+}
+
+async function onPhotoSelected(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !editModal.editing) return;
+    editModal.photoUploading = true;
+    try {
+        const formData = new FormData();
+        formData.append("photo", file);
+        const url = props.photoUploadPath.replace("__id__", editModal.editing.id);
+        const response = await fetch(url, { method: HttpMethod.Post, body: formData });
+        const data = await response.json();
+        if (!data.ok) {
+            const message = data.errors?.photo ?? data.error ?? "shared.common.error";
+            toast.error(t(message));
+            return;
+        }
+        editModal.editing = data.user;
+        toast.success(t("admin.users.photo.uploaded"));
+        fetchUsers();
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        editModal.photoUploading = false;
+    }
+}
+
+async function removePhoto() {
+    if (!editModal.editing) return;
+    editModal.photoUploading = true;
+    try {
+        const url = props.photoDeletePath.replace("__id__", editModal.editing.id);
+        const response = await fetch(url, { method: HttpMethod.Post });
+        const data = await response.json();
+        if (!data.ok) {
+            toast.error(t(data.error ?? "shared.common.error"));
+            return;
+        }
+        editModal.editing = data.user;
+        toast.success(t("admin.users.photo.removed"));
+        fetchUsers();
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        editModal.photoUploading = false;
+    }
 }
 
 async function submitEdit() {
@@ -226,6 +281,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                 <div class="flex items-start gap-3">
+                    <UserAvatar :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="40" />
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary text-sm">
                             {{ user.name }}
@@ -274,8 +330,13 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                 <tbody>
                     <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
                         <td class="px-4 py-3 text-primary font-medium">
-                            {{ user.name }}
-                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                            <div class="flex items-center gap-3">
+                                <UserAvatar :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
+                                <span>
+                                    {{ user.name }}
+                                    <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                                </span>
+                            </div>
                         </td>
                         <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
                         <td class="px-4 py-3 hidden md:table-cell">
@@ -346,6 +407,35 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
         <!-- Edit modal -->
         <AppModal :show="editModal.open" max-width="md" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
+
+            <div class="flex items-center gap-4 py-4 border-b border-line/40 mb-4">
+                <UserAvatar
+                    :name="editModal.editing?.name ?? ''"
+                    :photo-url="editModal.editing?.profilePhotoUrl ?? ''"
+                    :size="64"
+                />
+                <div class="flex flex-col gap-2">
+                    <input ref="photoInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" v-on:change="onPhotoSelected">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <AppButton variant="ghost" size="sm" :loading="editModal.photoUploading" v-on:click="triggerPhotoSelect">
+                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('admin.users.photo.upload') }}
+                        </AppButton>
+                        <AppButton
+                            v-if="editModal.editing?.profilePhotoUrl"
+                            variant="ghost"
+                            size="sm"
+                            :loading="editModal.photoUploading"
+                            v-on:click="removePhoto"
+                        >
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('admin.users.photo.remove') }}
+                        </AppButton>
+                    </div>
+                    <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
+                </div>
+            </div>
+
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
                 <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />

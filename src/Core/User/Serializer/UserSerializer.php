@@ -28,6 +28,7 @@ final readonly class UserSerializer
             'status' => $user->getStatus()->value,
             'statusLabel' => $user->getStatus()->label(),
             'locale' => $user->getLocale()->value,
+            'profilePhotoUrl' => $user->getProfilePhotoUrl(),
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),
             'createdAt' => $user->getCreatedAt()->format(DATE_ATOM),
         ];

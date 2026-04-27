@@ -222,6 +222,19 @@ export default {
                 "Konto von {name} deaktivieren? Der Benutzer kann sich nicht mehr anmelden.",
             enableConfirm: "Konto von {name} reaktivieren?",
             cannot_delete_self: "Du kannst dein eigenes Konto nicht löschen.",
+            photo: {
+                upload: "Foto ändern",
+                remove: "Foto entfernen",
+                hint: "JPEG, PNG oder WebP. Max. 5 MB.",
+                uploaded: "Foto aktualisiert.",
+                removed: "Foto entfernt.",
+                errors: {
+                    invalid_type:
+                        "Format nicht unterstützt. Verwende JPEG, PNG oder WebP.",
+                    too_large: "Das Bild ist zu groß (max. 5 MB).",
+                    missing: "Kein Bild ausgewählt.",
+                },
+            },
         },
         invitations: {
             description:
@@ -1193,6 +1206,10 @@ export default {
             },
         },
         profile: {
+            photo: {
+                title: "Profilfoto",
+                subtitle: "Wird in der Seitenleiste und der Benutzerliste angezeigt.",
+            },
             locale: {
                 title: "Sprache",
                 subtitle: "Wähle die Anzeigesprache der Administration.",

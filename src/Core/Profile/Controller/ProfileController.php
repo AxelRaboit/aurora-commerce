@@ -12,7 +12,9 @@ use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\DTO\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Manager\UserProfilePhotoManager;
 use Aurora\Core\Validation\Service\PayloadValidator;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,7 @@ final class ProfileController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
+        private readonly UserProfilePhotoManager $userProfilePhotoManager,
     ) {}
 
     #[Route('', name: '')]
@@ -101,6 +104,36 @@ final class ProfileController extends AbstractController
         $this->userManager->delete($user);
 
         return $this->json(['success' => true]);
+    }
+
+    #[Route('/photo', name: '_photo_upload', methods: [HttpMethodEnum::Post->value])]
+    public function uploadPhoto(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $file = $request->files->get('photo');
+        if (null === $file) {
+            return $this->json(['success' => false, 'errors' => ['photo' => 'admin.users.photo.errors.missing']]);
+        }
+
+        try {
+            $this->userProfilePhotoManager->upload($user, $file);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['success' => false, 'errors' => ['photo' => $invalidArgumentException->getMessage()]]);
+        }
+
+        return $this->json(['success' => true, 'profilePhotoUrl' => $user->getProfilePhotoUrl()]);
+    }
+
+    #[Route('/photo/delete', name: '_photo_delete', methods: [HttpMethodEnum::Post->value])]
+    public function deletePhoto(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $this->userProfilePhotoManager->delete($user);
+
+        return $this->json(['success' => true, 'profilePhotoUrl' => null]);
     }
 
     #[Route('/locale', name: '_locale', methods: [HttpMethodEnum::Post->value])]

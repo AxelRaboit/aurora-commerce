@@ -11,6 +11,7 @@ use Aurora\Core\User\DTO\UserInput;
 use Aurora\Core\User\DTO\UserInviteInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Manager\UserProfilePhotoManager;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\User\Serializer\UserSerializer;
 use Aurora\Core\Validation\DTO\PaginationRequest;
@@ -34,6 +35,7 @@ final class UsersController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly UserSerializer $userSerializer,
         private readonly PayloadValidator $payloadValidator,
+        private readonly UserProfilePhotoManager $userProfilePhotoManager,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -147,6 +149,41 @@ final class UsersController extends AbstractController
         }
 
         $this->userManager->toggleDisabled($user);
+
+        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+    }
+
+    #[Route('/{id}/photo', name: '_photo_upload', methods: [HttpMethodEnum::Post->value])]
+    public function uploadPhoto(User $user, Request $request): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
+            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+        }
+
+        $file = $request->files->get('photo');
+        if (null === $file) {
+            return $this->json(['ok' => false, 'errors' => ['photo' => 'admin.users.photo.errors.missing']]);
+        }
+
+        try {
+            $this->userProfilePhotoManager->upload($user, $file);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->json(['ok' => false, 'errors' => ['photo' => $invalidArgumentException->getMessage()]]);
+        }
+
+        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+    }
+
+    #[Route('/{id}/photo/delete', name: '_photo_delete', methods: [HttpMethodEnum::Post->value])]
+    public function deletePhoto(User $user): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
+            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+        }
+
+        $this->userProfilePhotoManager->delete($user);
 
         return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
     }

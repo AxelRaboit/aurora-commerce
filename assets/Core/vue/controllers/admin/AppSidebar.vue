@@ -62,6 +62,7 @@ const props = defineProps({
     navSections: { type: Array, default: () => [] },
     userName: { type: String, default: "" },
     userEmail: { type: String, default: "" },
+    userPhotoUrl: { type: String, default: "" },
     activeRoute: { type: String, default: "" },
     logoutCsrf: { type: String, default: "" },
     frontPath: { type: String, default: "/" },
@@ -315,8 +316,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
 
         <div class="sh-logo-expanded items-center gap-3 border-b border-line px-4 py-3 shrink-0">
-            <div class="w-8 h-8 rounded-full bg-accent-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
-                {{ userInitial }}
+            <div class="w-8 h-8 rounded-full overflow-hidden bg-accent-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
+                <img v-if="userPhotoUrl" :src="userPhotoUrl" :alt="userName" class="w-full h-full object-cover">
+                <span v-else>{{ userInitial }}</span>
             </div>
             <div class="flex flex-col min-w-0">
                 <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
