@@ -352,6 +352,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     v-model="editForm.role"
                     :options="roles"
                     :label="t('admin.users.role')"
+                    :allow-empty="false"
                     :error="editModal.errors.role ?? ''"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
