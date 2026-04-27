@@ -3,6 +3,12 @@
 
 install: install-dev ## Install the project (alias for install-dev)
 
+start: ## Start dev server + Vite dev server
+	@docker compose up -d database 2>/dev/null || true
+	symfony server:start -d
+	@[ -d "$(AURORA)/node_modules" ] || $(PNPM) --dir=$(AURORA) install
+	$(PNPM) --dir=$(AURORA) run dev
+
 install-dev: ## Install for local development
 	$(COMPOSER) install --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)
