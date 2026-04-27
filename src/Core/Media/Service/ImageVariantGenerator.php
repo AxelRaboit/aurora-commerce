@@ -48,6 +48,17 @@ final readonly class ImageVariantGenerator
         $extension = pathinfo($sourceRelativePath, PATHINFO_EXTENSION);
         $baseName = pathinfo($sourceRelativePath, PATHINFO_FILENAME);
 
+        // Use WebP for all variants when supported (better compression, universal browser support).
+        // GIFs keep their original format to preserve animation.
+        $useWebP = function_exists('imagewebp') && 'image/gif' !== $mimeType;
+        $variantExtension = $useWebP ? 'webp' : $extension;
+        $variantMime = $useWebP ? 'image/webp' : $mimeType;
+
+        // Compress source JPEG on upload (re-encode at quality 85 to strip metadata & reduce size).
+        if (in_array($mimeType, ['image/jpeg', 'image/jpg'], true)) {
+            imagejpeg($source, $sourceAbsolute, 85);
+        }
+
         $generated = [];
         foreach (self::VARIANT_SIZES as $variantName => $maxSide) {
             if ($sourceWidth <= $maxSide && $sourceHeight <= $maxSide) {
@@ -57,18 +68,18 @@ final readonly class ImageVariantGenerator
             [$targetWidth, $targetHeight] = $this->fitDimensions($sourceWidth, $sourceHeight, $maxSide);
 
             $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
-            $this->preserveTransparency($targetImage, $mimeType);
+            $this->preserveTransparency($targetImage, $variantMime);
 
             imagecopyresampled($targetImage, $source, 0, 0, 0, 0, $targetWidth, $targetHeight, $sourceWidth, $sourceHeight);
 
-            $variantRelative = sprintf('variants/%s/%s.%s', $variantName, $baseName, $extension);
+            $variantRelative = sprintf('variants/%s/%s.%s', $variantName, $baseName, $variantExtension);
             $variantAbsolute = $this->uploadDir.'/'.$variantRelative;
 
             if (!is_dir(dirname($variantAbsolute))) {
                 @mkdir(dirname($variantAbsolute), 0o775, true);
             }
 
-            $this->save($targetImage, $variantAbsolute, $mimeType);
+            $this->save($targetImage, $variantAbsolute, $variantMime);
             imagedestroy($targetImage);
 
             $generated[$variantName] = $variantRelative;

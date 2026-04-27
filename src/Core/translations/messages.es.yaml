@@ -10,7 +10,52 @@ admin:
   invitations:
     sent: Invitación enviada a {email}.
   media:
-    dropToUpload: Drop files to upload
+    upload: Subir
+    uploaded: "{count} archivo(s) subido(s)"
+    empty: No hay archivos en esta carpeta
+    altWarning: Algunos archivos no tienen texto alternativo
+    missingAlt: Alt faltante
+    editMedia: Editar archivo
+    moved: Archivo movido
+    rootFolder: Raíz
+    expand: Expandir
+    collapse: Colapsar
+    dropToUpload: Soltar archivos para subir
+    filterAll: Todos
+    filterImages: Imágenes
+    filterVideos: Videos
+    filterPdf: PDF
+    filterOther: Otros
+    sortDate: Fecha
+    selected: seleccionado(s)
+    selectAll: Seleccionar todo
+    bulkDeleted: Archivos eliminados
+    bulkMoved: Archivos movidos
+    bulkDeleteConfirm: "¿Eliminar {count} archivo(s)?"
+    bulkMove: "Mover {count} archivo(s)"
+    urlCopied: URL copiada
+    copyUrl: Copiar URL
+    preview: Vista previa
+    open: Abrir
+    qrCode: Código QR
+    downloadQr: Descargar QR
+    storage: Almacenamiento usado
+    move: Mover
+    uploadedBy: Subido por
+    createdAt: Creado el
+    updatedAt: Modificado el
+    captionPlaceholder: Describe este archivo…
+    favourites: Favoritos
+    favourite: Añadir a favoritos
+    unfavourite: Quitar de favoritos
+    tabEdit: Edición
+    tabHistory: Historial
+    noHistory: Sin cambios registrados
+    action:
+      media.uploaded: Subido
+      media.updated: Modificado
+      media.moved: Movido
+      media.deleted: Eliminado
     errors:
       focal_out_of_range: El punto focal debe estar entre 0 y 1.
       folder_name_required: El nombre de la carpeta es obligatorio.

@@ -10,7 +10,52 @@ admin:
   invitations:
     sent: Einladung an {email} gesendet.
   media:
-    dropToUpload: Drop files to upload
+    upload: Hochladen
+    uploaded: "{count} Datei(en) hochgeladen"
+    empty: Keine Dateien in diesem Ordner
+    altWarning: Einige Dateien haben keinen Alternativtext
+    missingAlt: Alt fehlt
+    editMedia: Datei bearbeiten
+    moved: Datei verschoben
+    rootFolder: Stamm
+    expand: Erweitern
+    collapse: Einklappen
+    dropToUpload: Dateien zum Hochladen ablegen
+    filterAll: Alle
+    filterImages: Bilder
+    filterVideos: Videos
+    filterPdf: PDF
+    filterOther: Andere
+    sortDate: Datum
+    selected: ausgewählt
+    selectAll: Alle auswählen
+    bulkDeleted: Dateien gelöscht
+    bulkMoved: Dateien verschoben
+    bulkDeleteConfirm: "{count} Datei(en) löschen?"
+    bulkMove: "{count} Datei(en) verschieben"
+    urlCopied: URL kopiert
+    copyUrl: URL kopieren
+    preview: Vorschau
+    open: Öffnen
+    qrCode: QR-Code
+    downloadQr: QR herunterladen
+    storage: Speicher verwendet
+    move: Verschieben
+    uploadedBy: Hochgeladen von
+    createdAt: Erstellt am
+    updatedAt: Geändert am
+    captionPlaceholder: Beschreibe diese Datei…
+    favourites: Favoriten
+    favourite: Zu Favoriten hinzufügen
+    unfavourite: Aus Favoriten entfernen
+    tabEdit: Bearbeiten
+    tabHistory: Verlauf
+    noHistory: Keine Änderungen aufgezeichnet
+    action:
+      media.uploaded: Hochgeladen
+      media.updated: Geändert
+      media.moved: Verschoben
+      media.deleted: Gelöscht
     errors:
       focal_out_of_range: Der Fokuspunkt muss zwischen 0 und 1 liegen.
       folder_name_required: Ordnername ist erforderlich.
