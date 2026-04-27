@@ -53,6 +53,11 @@ admin:
     favourites: Favoris
     tabEdit: Édition
     tabHistory: Historique
+    tabUsage: Utilisation
+    usageTotal: Total
+    usageDirect: Image principale
+    usageContent: Dans le contenu
+    usageNone: Ce média n'est utilisé nulle part
     noHistory: Aucune modification enregistrée
     historyAction:
       media_uploaded: Téléversé

@@ -26,6 +26,7 @@ import PostCustomField from "./PostCustomField.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { TEMPLATES } from "@editorial/utils/editorjs/templates.js";
+import { openMediaPicker } from "@shared/utils/mediaPicker.js";
 import { slugify } from "@/shared/utils/slugify.js";
 import { statusBadge } from "@/shared/utils/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
@@ -209,6 +210,14 @@ function removeFeaturedImage() {
     featuredMediaUrl.value = null;
 }
 
+async function selectFeaturedFromLibrary() {
+    const media = await openMediaPicker({ imagesOnly: true });
+    if (!media) return;
+    form.featuredMediaId = media.id;
+    featuredMediaUrl.value = media.url;
+    featuredMediaFocalPosition.value = media.focalPositionCss ?? "50% 50%";
+}
+
 // ── SEO counters ─────────────────────────────────────────────────────────────
 const metaTitleLength = computed(() => form.translations[activeLocale.value]?.metaTitle?.length ?? 0);
 const metaDescLength  = computed(() => form.translations[activeLocale.value]?.metaDescription?.length ?? 0);
@@ -328,6 +337,15 @@ function removeOgImage() {
     if (!tr) return;
     tr.ogImageMediaId = null;
     tr.ogImageUrl = null;
+}
+
+async function selectOgFromLibrary() {
+    const media = await openMediaPicker({ imagesOnly: true });
+    const tr = activeTranslation.value;
+    if (!media || !tr) return;
+    tr.ogImageMediaId = media.id;
+    tr.ogImageUrl = media.url;
+    tr.ogImageFocalPosition = media.focalPositionCss ?? "50% 50%";
 }
 
 // ── Keyboard shortcut Ctrl+S ─────────────────────────────────────────────────
@@ -897,6 +915,13 @@ function forceSave() {
                     v-on:change="uploadFeaturedImage"
                 >
             </label>
+            <button
+                type="button"
+                class="mt-1 w-full text-xs text-accent-400 hover:underline text-center"
+                v-on:click="selectFeaturedFromLibrary"
+            >
+                {{ t("admin.posts.selectFromLibrary") }}
+            </button>
         </div>
 
         <!-- Featured image lightbox -->
@@ -1046,6 +1071,9 @@ function forceSave() {
                                 >
                                 <AppButton variant="secondary" size="sm" :loading="uploadingOg" v-on:click="ogInputRef?.click()">
                                     {{ t("admin.posts.seo.ogImageUpload") }}
+                                </AppButton>
+                                <AppButton variant="ghost" size="sm" v-on:click="selectOgFromLibrary">
+                                    {{ t("admin.posts.selectFromLibrary") }}
                                 </AppButton>
                                 <AppButton
                                     v-if="form.translations[activeLocale].ogImageUrl"

@@ -78,6 +78,12 @@ class MediaController extends AbstractController
         return $this->json(['media' => $this->mediaSerializer->serialize($media)]);
     }
 
+    #[Route('/{id}/usage', name: '_usage', methods: [HttpMethodEnum::Get->value])]
+    public function usage(Media $media): JsonResponse
+    {
+        return $this->json($this->mediaRepository->countUsages((int) $media->getId()));
+    }
+
     #[Route('/{id}/history', name: '_history', methods: [HttpMethodEnum::Get->value])]
     public function history(Media $media, Request $request): JsonResponse
     {

@@ -392,8 +392,9 @@ async function onMainDrop(event) {
 
 // ── Edit media ───────────────────────────────────────────────────────────────
 const editingMedia = ref(null);
-const editTab = ref("edit"); // "edit" | "history"
+const editTab = ref("edit"); // "edit" | "history" | "usage"
 const mediaHistory = ref([]);
+const mediaUsage = ref(null);
 const historyLoading = ref(false);
 const editForm = reactive({ alt: "", caption: "", focalX: null, focalY: null, folderId: null });
 const editErrors = ref({});
@@ -404,6 +405,7 @@ function openEditMedia(item) {
     editTab.value = "edit";
     editErrors.value = {};
     mediaHistory.value = [];
+    mediaUsage.value = null;
     Object.assign(editForm, {
         alt: item.alt ?? "",
         caption: item.caption ?? "",
@@ -423,6 +425,14 @@ async function loadHistory() {
     } catch { /* ignore */ } finally {
         historyLoading.value = false;
     }
+}
+
+async function loadUsage() {
+    if (!editingMedia.value) return;
+    try {
+        const res = await fetch(`/admin/media/${editingMedia.value.id}/usage`);
+        mediaUsage.value = await res.json();
+    } catch { /* ignore */ }
 }
 
 function openHistoryTab() {
@@ -1104,7 +1114,30 @@ async function moveFolder(folderId, newParentId) {
                 <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
                     <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'edit' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'edit'">{{ t("admin.media.tabEdit") }}</button>
                     <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'history' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="openHistoryTab">{{ t("admin.media.tabHistory") }}</button>
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'usage' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("admin.media.tabUsage") }}</button>
                 </div>
+            </div>
+
+            <!-- Usage tab -->
+            <div v-if="editTab === 'usage'" class="space-y-3 min-h-32">
+                <div v-if="!mediaUsage" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
+                <template v-else>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-surface-2 rounded-xl p-3 text-center">
+                            <div class="text-2xl font-bold text-primary">{{ mediaUsage.total }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageTotal") }}</div>
+                        </div>
+                        <div class="bg-surface-2 rounded-xl p-3 text-center">
+                            <div class="text-2xl font-bold text-primary">{{ mediaUsage.directCount }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageDirect") }}</div>
+                        </div>
+                        <div class="bg-surface-2 rounded-xl p-3 text-center">
+                            <div class="text-2xl font-bold text-primary">{{ mediaUsage.contentCount }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageContent") }}</div>
+                        </div>
+                    </div>
+                    <p v-if="mediaUsage.total === 0" class="text-xs text-muted text-center">{{ t("admin.media.usageNone") }}</p>
+                </template>
             </div>
 
             <!-- History tab -->

@@ -52,6 +52,11 @@ admin:
     favourites: Favourites
     tabEdit: Edit
     tabHistory: History
+    tabUsage: Usage
+    usageTotal: Total
+    usageDirect: Featured image
+    usageContent: In content
+    usageNone: This media is not used anywhere
     noHistory: No changes recorded
     historyAction:
       media_uploaded: Uploaded

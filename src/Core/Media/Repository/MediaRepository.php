@@ -45,6 +45,34 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
+     * Count all places a given media is directly referenced:
+     * - as a featured image on a post
+     * - inside EditorJS JSON blocks of post translations
+     *
+     * @return array{directCount: int, contentCount: int, total: int}
+     */
+    public function countUsages(int $mediaId): array
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $directCount = (int) $connection->fetchOne(
+            'SELECT COUNT(*) FROM posts WHERE featured_media_id = :id',
+            ['id' => $mediaId],
+        );
+
+        $contentCount = (int) $connection->fetchOne(
+            'SELECT COUNT(DISTINCT post_id) FROM post_translations WHERE blocks::text LIKE :pattern',
+            ['pattern' => '%"mediaId":'.$mediaId.'%'],
+        );
+
+        return [
+            'directCount' => $directCount,
+            'contentCount' => $contentCount,
+            'total' => $directCount + $contentCount,
+        ];
+    }
+
+    /**
      * @return array<int, int> map of folder_id => media count
      */
     public function countGroupedByFolders(): array

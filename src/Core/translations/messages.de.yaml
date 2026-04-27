@@ -54,6 +54,11 @@ admin:
     unfavourite: Aus Favoriten entfernen
     tabEdit: Bearbeiten
     tabHistory: Verlauf
+    tabUsage: Verwendung
+    usageTotal: Gesamt
+    usageDirect: Hauptbild
+    usageContent: Im Inhalt
+    usageNone: Diese Datei wird nirgends verwendet
     noHistory: Keine Änderungen aufgezeichnet
     historyAction:
       media_uploaded: Hochgeladen
