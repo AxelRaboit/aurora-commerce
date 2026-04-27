@@ -21,7 +21,7 @@ interface UserManagerInterface
 
     public function update(User $user, string $name, string $email): void;
 
-    public function updateWithRole(User $user, string $name, string $email, string $role): void;
+    public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void;
 
     public function toggleDevRole(User $user): bool;
 

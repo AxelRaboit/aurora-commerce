@@ -76,9 +76,9 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         ]);
     }
 
-    public function updateWithRole(User $user, string $name, string $email, string $role): void
+    public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void
     {
-        $this->inner->updateWithRole($user, $name, $email, $role);
+        $this->inner->updateWithRole($user, $name, $email, $role, $password);
 
         $this->logger->info('user.role_updated', [
             'userId' => $user->getId(),

@@ -111,7 +111,7 @@ final class UsersController extends AbstractController
         }
 
         try {
-            $this->userManager->updateWithRole($user, $input->name, $input->email, $input->role);
+            $this->userManager->updateWithRole($user, $input->name, $input->email, $input->role, $input->password);
         } catch (InvalidArgumentException $invalidArgumentException) {
             $field = str_contains($invalidArgumentException->getMessage(), 'email') ? 'email' : 'role';
 

@@ -120,7 +120,10 @@ admin:
       name_too_long: Name must not exceed 100 characters.
       role_invalid: Invalid role.
       role_required: Role is required.
+      password_too_short: Password must be at least 8 characters.
     updated: User updated.
+    newPassword: New password
+    newPasswordPlaceholder: Leave empty to keep current
   auth:
     access_request:
       already_account: Already have an account?
@@ -155,7 +158,6 @@ admin:
         password_confirm_required: Confirmation is required.
         password_mismatch: Passwords do not match.
         password_required: Password is required.
-        password_too_short: Password must be at least 8 characters.
       expired: This invitation link is invalid or has expired.
       password: Password
       set_password: Set your password to activate your account.

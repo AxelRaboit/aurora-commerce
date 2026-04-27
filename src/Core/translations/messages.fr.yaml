@@ -121,7 +121,10 @@ admin:
       name_too_long: Le nom ne doit pas dépasser 100 caractères.
       role_invalid: Rôle invalide.
       role_required: Le rôle est requis.
+      password_too_short: Le mot de passe doit contenir au moins 8 caractères.
     updated: Utilisateur mis à jour.
+    newPassword: Nouveau mot de passe
+    newPasswordPlaceholder: Laisser vide pour ne pas modifier
   auth:
     access_request:
       already_account: Déjà un compte ?
@@ -156,7 +159,6 @@ admin:
         password_confirm_required: La confirmation est requise.
         password_mismatch: Les mots de passe ne correspondent pas.
         password_required: Le mot de passe est requis.
-        password_too_short: Le mot de passe doit contenir au moins 8 caractères.
       expired: Ce lien d'invitation est invalide ou a expiré.
       password: Mot de passe
       set_password: Définissez votre mot de passe pour activer votre compte.
@@ -231,7 +233,6 @@ admin:
       invalid_locale: Langue non supportée.
       name_required: Le nom est requis.
       password_mismatch: Les mots de passe ne correspondent pas.
-      password_too_short: Le mot de passe doit contenir au moins 8 caractères.
   impersonation:
     banner: Vous êtes connecté en tant que {name}
     leave: Quitter

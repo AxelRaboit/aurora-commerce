@@ -23,6 +23,8 @@ final readonly class UserInput
         #[Assert\Choice(callback: [UserRoleEnum::class, 'allAssignableValues'], message: 'admin.users.errors.role_invalid')]
         public string $role,
         public string $locale = 'fr',
+        #[Assert\Length(min: 8, minMessage: 'admin.users.errors.password_too_short')]
+        public ?string $password = null,
     ) {}
 
     public static function fromRequest(Request $request): self
@@ -30,11 +32,14 @@ final readonly class UserInput
         $data = json_decode($request->getContent(), true);
         $data = is_array($data) ? $data : [];
 
+        $password = Str::trimOrNullFromArray($data, 'password');
+
         return new self(
             name: Str::trimFromArray($data, 'name'),
             email: Str::trimFromArray($data, 'email'),
             role: Str::trimFromArray($data, 'role'),
             locale: Str::trimFromArray($data, 'locale', 'fr') ?: 'fr',
+            password: '' === $password ? null : $password,
         );
     }
 }

@@ -123,7 +123,7 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
-    public function updateWithRole(User $user, string $name, string $email, string $role): void
+    public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void
     {
         if (!in_array($role, UserRoleEnum::allAssignableValues(), true)) {
             throw new InvalidArgumentException('admin.users.errors.role_invalid');
@@ -135,8 +135,11 @@ final readonly class UserManager implements UserManagerInterface
 
         $user->setName($name);
         $user->setEmail($email);
-
         $user->setRoles([$role]);
+
+        if (null !== $password && '' !== $password) {
+            $this->changePassword($user, $password);
+        }
 
         $this->entityManager->flush();
     }

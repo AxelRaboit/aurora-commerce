@@ -95,7 +95,7 @@ async function submitInvite() {
 
 // ── Edit modal ───────────────────────────────────────────────────────────────
 const editModal = reactive({ open: false, editing: null, errors: {}, saving: false });
-const editForm = reactive({ name: "", email: "", role: "" });
+const editForm = reactive({ name: "", email: "", role: "", password: "" });
 
 function openEdit(user) {
     editModal.editing = user;
@@ -103,6 +103,7 @@ function openEdit(user) {
     editForm.name = user.name;
     editForm.email = user.email;
     editForm.role = user.role ?? props.roles[0]?.value ?? "";
+    editForm.password = "";
     editModal.open = true;
 }
 
@@ -354,6 +355,13 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     :label="t('admin.users.role')"
                     :allow-empty="false"
                     :error="editModal.errors.role ?? ''"
+                />
+                <AppInput
+                    v-model="editForm.password"
+                    :label="t('admin.users.newPassword')"
+                    type="password"
+                    :placeholder="t('admin.users.newPasswordPlaceholder')"
+                    :error="editModal.errors.password ?? ''"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>

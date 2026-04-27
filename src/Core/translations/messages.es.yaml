@@ -120,7 +120,10 @@ admin:
       name_too_long: El nombre no debe superar los 100 caracteres.
       role_invalid: Rol inválido.
       role_required: El rol es obligatorio.
+      password_too_short: La contraseña debe tener al menos 8 caracteres.
     updated: Usuario actualizado.
+    newPassword: Nueva contraseña
+    newPasswordPlaceholder: Dejar vacío para no cambiar
   auth:
     access_request:
       already_account: ¿Ya tienes cuenta?
@@ -155,7 +158,9 @@ admin:
         password_confirm_required: La confirmación es obligatoria.
         password_mismatch: Las contraseñas no coinciden.
         password_required: La contraseña es obligatoria.
-        password_too_short: La contraseña debe tener al menos 8 caracteres.
+        newPassword: Nueva contraseña
+      newPasswordPlaceholder: Dejar vacío para no cambiar
+      password_too_short: La contraseña debe tener al menos 8 caracteres.
       expired: Este enlace de invitación es inválido o ha expirado.
       password: Contraseña
       set_password: Defina su contraseña para activar su cuenta.
