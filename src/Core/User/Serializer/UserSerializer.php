@@ -42,6 +42,7 @@ final readonly class UserSerializer
             'locale' => $user->getLocale()->value,
             'profilePhotoUrl' => $user->getProfilePhotoUrl(),
             'moodMessage' => $user->getMoodMessage(),
+            'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'managerId' => $manager?->getId(),
             'manager' => null === $manager ? null : ['id' => $manager->getId(), 'name' => $manager->getName()],
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),

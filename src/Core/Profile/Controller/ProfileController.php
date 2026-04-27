@@ -9,6 +9,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\DTO\MoodInput;
 use Aurora\Core\User\DTO\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -40,7 +41,9 @@ final class ProfileController extends AbstractController
     #[Route('', name: '')]
     public function index(): Response
     {
-        return $this->render('@Core/admin/profile/index.html.twig');
+        return $this->render('@Core/admin/profile/index.html.twig', [
+            'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
+        ]);
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -111,16 +114,14 @@ final class ProfileController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $data = json_decode($request->getContent(), true) ?? [];
-        $raw = is_string($data['moodMessage'] ?? null) ? mb_trim($data['moodMessage']) : '';
 
-        if (mb_strlen($raw) > 160) {
-            return $this->json(['success' => false, 'errors' => [
-                'moodMessage' => $this->translator->trans('admin.profile.mood.errors.too_long'),
-            ]]);
+        $input = MoodInput::fromRequest($request);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->json(['success' => false, 'errors' => $errors]);
         }
 
-        $this->userManager->changeMoodMessage($user, '' === $raw ? null : $raw);
+        $this->userManager->changeMoodMessage($user, $input->moodMessage);
 
         return $this->json(['success' => true, 'moodMessage' => $user->getMoodMessage()]);
     }

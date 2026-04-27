@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -26,6 +27,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
+
+    public const int MOOD_MESSAGE_MAX_LENGTH = 160;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -65,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $profilePhotoPath = null;
 
-    #[ORM\Column(length: 160, nullable: true)]
+    #[ORM\Column(length: self::MOOD_MESSAGE_MAX_LENGTH, nullable: true)]
     #[Groups(['user:read'])]
     private ?string $moodMessage = null;
 
@@ -314,6 +317,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setMoodMessage(?string $moodMessage): static
     {
+        if (null !== $moodMessage && mb_strlen($moodMessage) > self::MOOD_MESSAGE_MAX_LENGTH) {
+            throw new InvalidArgumentException(sprintf(
+                'Mood message exceeds %d characters.',
+                self::MOOD_MESSAGE_MAX_LENGTH,
+            ));
+        }
+
         $this->moodMessage = $moodMessage;
 
         return $this;

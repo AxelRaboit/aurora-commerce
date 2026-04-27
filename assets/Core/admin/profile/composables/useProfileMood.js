@@ -3,9 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 
-const MAX_LENGTH = 160;
-
-export function useProfileMood(moodPath, initialMessage) {
+export function useProfileMood(moodPath, initialMessage, maxLength) {
     const { t } = useI18n();
 
     const moodMessage = ref(initialMessage ?? "");
@@ -14,7 +12,7 @@ export function useProfileMood(moodPath, initialMessage) {
 
     async function saveMood() {
         const trimmed = moodMessage.value.trim();
-        if (trimmed.length > MAX_LENGTH) {
+        if (trimmed.length > maxLength) {
             moodError.value = t("admin.profile.mood.errors.too_long");
             return;
         }
@@ -41,5 +39,5 @@ export function useProfileMood(moodPath, initialMessage) {
         }
     }
 
-    return { moodMessage, moodLoading, moodError, saveMood, MAX_LENGTH };
+    return { moodMessage, moodLoading, moodError, saveMood };
 }

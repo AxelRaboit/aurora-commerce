@@ -22,6 +22,7 @@ const props = defineProps({
     userEmail: { type: String, default: "" },
     userPhotoUrl: { type: String, default: "" },
     userMoodMessage: { type: String, default: "" },
+    moodMessageMaxLength: { type: Number, required: true },
     locale: { type: String, default: "fr" },
     updatePath: { type: String, required: true },
     passwordPath: { type: String, required: true },
@@ -36,7 +37,7 @@ const props = defineProps({
 
 const { selectedLocale, localeLoading, changeLocale } = useProfileLocale(props.localePath, props.locale);
 const { infoName, infoEmail, infoLoading, infoErrors, saveInfo } = useProfileInfo(props.updatePath, props.userName, props.userEmail);
-const { moodMessage, moodLoading, moodError, saveMood, MAX_LENGTH: moodMaxLength } = useProfileMood(props.moodPath, props.userMoodMessage);
+const { moodMessage, moodLoading, moodError, saveMood } = useProfileMood(props.moodPath, props.userMoodMessage, props.moodMessageMaxLength);
 const { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword } = useProfilePassword(props.passwordPath);
 const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, props.loginPath, props.deleteCsrf);
 
@@ -150,13 +151,13 @@ async function removePhoto() {
                     <AppTextarea
                         v-model="moodMessage"
                         :rows="2"
-                        :maxlength="moodMaxLength"
+                        :maxlength="moodMessageMaxLength"
                         :placeholder="t('admin.profile.mood.placeholder')"
                         :error="moodError"
                     />
                     <div v-if="!moodError" class="mt-1 flex items-center justify-between">
                         <span class="text-xs text-muted">{{ t('admin.profile.mood.hint') }}</span>
-                        <span class="text-xs text-muted">{{ moodMessage.length }}/{{ moodMaxLength }}</span>
+                        <span class="text-xs text-muted">{{ moodMessage.length }}/{{ moodMessageMaxLength }}</span>
                     </div>
                 </div>
                 <div class="pt-1">
