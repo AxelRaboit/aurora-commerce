@@ -3,6 +3,11 @@
 
 install: install-dev ## Install the project (alias for install-dev)
 
+stop: ## Stop dev server and kill Vite
+	symfony server:stop
+	@pkill -f "pnpm.*$(AURORA).*dev" 2>/dev/null || true
+	@docker compose stop database 2>/dev/null || true
+
 start: ## Start dev server + Vite dev server
 	@docker compose up -d database 2>/dev/null || true
 	symfony server:start -d
