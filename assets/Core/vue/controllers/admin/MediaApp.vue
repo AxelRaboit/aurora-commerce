@@ -1,9 +1,10 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye } from "lucide-vue-next";
+import QRCode from "qrcode";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -31,6 +32,9 @@ const props = defineProps({
     folderEditPath: { type: String, default: "/admin/media/folders/__id__/edit" },
     folderDeletePath: { type: String, default: "/admin/media/folders/__id__/delete" },
     reorderPath: { type: String, default: "/admin/media/reorder" },
+    bulkDeletePath: { type: String, default: "/admin/media/bulk-delete" },
+    bulkMovePath: { type: String, default: "/admin/media/bulk-move" },
+    totalStorageBytes: { type: Number, default: 0 },
 });
 
 const folders = ref([...props.folders]);
@@ -134,22 +138,149 @@ const breadcrumbs = computed(() => {
     return chain;
 });
 
+// ── View preferences ─────────────────────────────────────────────────────────
+const viewMode = ref(localStorage.getItem("aurora-media-view") ?? "grid");
+function setViewMode(mode) { viewMode.value = mode; localStorage.setItem("aurora-media-view", mode); }
+
+// ── Type filter ───────────────────────────────────────────────────────────────
+const typeFilter = ref("all");
+const TYPE_FILTERS = [
+    { key: "all", label: "admin.media.filterAll" },
+    { key: "image", label: "admin.media.filterImages" },
+    { key: "video", label: "admin.media.filterVideos" },
+    { key: "application/pdf", label: "admin.media.filterPdf" },
+    { key: "other", label: "admin.media.filterOther" },
+];
+
+// ── Sort ─────────────────────────────────────────────────────────────────────
+const sortBy = ref(localStorage.getItem("aurora-media-sort") ?? "position");
+const sortDir = ref(localStorage.getItem("aurora-media-sort-dir") ?? "asc");
+function setSort(field) {
+    if (sortBy.value === field) {
+        sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
+    } else {
+        sortBy.value = field;
+        sortDir.value = "asc";
+    }
+    localStorage.setItem("aurora-media-sort", sortBy.value);
+    localStorage.setItem("aurora-media-sort-dir", sortDir.value);
+}
+
+// ── Filtered + sorted media ───────────────────────────────────────────────────
+const displayedMedia = computed(() => {
+    let list = [...media.value];
+    if (typeFilter.value !== "all") {
+        list = list.filter((m) => {
+            if (typeFilter.value === "image") return m.mimeType.startsWith("image/");
+            if (typeFilter.value === "video") return m.mimeType.startsWith("video/");
+            if (typeFilter.value === "application/pdf") return m.mimeType === "application/pdf";
+            return !m.mimeType.startsWith("image/") && !m.mimeType.startsWith("video/") && m.mimeType !== "application/pdf";
+        });
+    }
+    const dir = sortDir.value === "asc" ? 1 : -1;
+    list.sort((a, b) => {
+        if (sortBy.value === "name") return dir * a.originalName.localeCompare(b.originalName);
+        if (sortBy.value === "size") return dir * (a.size - b.size);
+        if (sortBy.value === "date") return dir * (new Date(a.createdAt ?? 0) - new Date(b.createdAt ?? 0));
+        return dir * (a.position - b.position);
+    });
+    return list;
+});
+
+// ── Multi-selection ───────────────────────────────────────────────────────────
+const selectedIds = ref(new Set());
+const isSelecting = ref(false);
+function toggleSelect(id) {
+    const s = new Set(selectedIds.value);
+    if (s.has(id)) s.delete(id); else s.add(id);
+    selectedIds.value = s;
+}
+function selectAll() { selectedIds.value = new Set(displayedMedia.value.map((m) => m.id)); }
+function clearSelection() { selectedIds.value = new Set(); isSelecting.value = false; }
+
+async function bulkDelete() {
+    if (!selectedIds.value.size || !confirm(t("admin.media.bulkDeleteConfirm", { count: selectedIds.value.size }))) return;
+    try {
+        const res = await fetch(props.bulkDeletePath, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids: [...selectedIds.value] }),
+        });
+        if (!(await res.json()).success) throw new Error();
+        media.value = media.value.filter((m) => !selectedIds.value.has(m.id));
+        clearSelection();
+        toast.success(t("admin.media.bulkDeleted"));
+    } catch { toast.error(t("shared.common.error")); }
+}
+
+const bulkMoveTargetId = ref(null);
+const openBulkMove = ref(false);
+const window = globalThis;
+async function bulkMove() {
+    if (!selectedIds.value.size) return;
+    try {
+        const res = await fetch(props.bulkMovePath, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids: [...selectedIds.value], folderId: bulkMoveTargetId.value }),
+        });
+        if (!(await res.json()).success) throw new Error();
+        if (bulkMoveTargetId.value !== currentFolderId.value) {
+            media.value = media.value.filter((m) => !selectedIds.value.has(m.id));
+        }
+        clearSelection();
+        bulkMoveTargetId.value = null;
+        toast.success(t("admin.media.bulkMoved"));
+    } catch { toast.error(t("shared.common.error")); }
+}
+
+// ── Preview ───────────────────────────────────────────────────────────────────
+const previewMedia = ref(null);
+
+// ── QR Code ───────────────────────────────────────────────────────────────────
+const qrMedia = ref(null);
+const qrDataUrl = ref("");
+async function openQr(item) {
+    qrMedia.value = item;
+    qrDataUrl.value = await QRCode.toDataURL(window.location.origin + item.url, { width: 256, margin: 2 });
+}
+
+// ── Copy URL ─────────────────────────────────────────────────────────────────
+async function copyUrl(url) {
+    try {
+        await navigator.clipboard.writeText(window.location.origin + url);
+        toast.success(t("admin.media.urlCopied"));
+    } catch { toast.error(t("shared.common.error")); }
+}
+
 // ── Upload ───────────────────────────────────────────────────────────────────
 const uploadInput = ref(null);
 const uploading = ref(false);
+const uploadProgress = ref([]); // [{name, percent}]
 const filesDragOver = ref(false);
+
+function uploadWithProgress(url, formData, onProgress) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100)); };
+        xhr.onload = () => { try { resolve(JSON.parse(xhr.responseText)); } catch { reject(); } };
+        xhr.onerror = reject;
+        xhr.open("POST", url);
+        xhr.send(formData);
+    });
+}
 
 async function uploadFileList(files) {
     if (!files.length) return;
     uploading.value = true;
+    uploadProgress.value = files.map((f) => ({ name: f.name, percent: 0 }));
     try {
-        for (const file of files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             const body = new FormData();
             body.append("image", file);
             if (currentFolderId.value) body.append("folderId", String(currentFolderId.value));
-            const response = await fetch(props.uploadPath, { method: HttpMethod.Post, body });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
+            const data = await uploadWithProgress(props.uploadPath, body, (p) => { uploadProgress.value[i].percent = p; });
             if (data.media) media.value.unshift(data.media);
         }
         toast.success(t("admin.media.uploaded", { count: files.length }));
@@ -157,6 +288,7 @@ async function uploadFileList(files) {
         toast.error(t("shared.common.error"));
     } finally {
         uploading.value = false;
+        uploadProgress.value = [];
         if (uploadInput.value) uploadInput.value.value = "";
     }
 }
@@ -628,43 +760,134 @@ async function moveFolder(folderId, newParentId) {
                         </div>
                     </div>
                 </div>
+                <!-- Storage indicator -->
+                <div v-if="totalStorageBytes > 0" class="pt-3 border-t border-line/40 space-y-1.5">
+                    <div class="flex items-center justify-between text-xs text-muted">
+                        <span class="flex items-center gap-1"><HardDrive class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.storage") }}</span>
+                        <span>{{ formatSize(totalStorageBytes) }}</span>
+                    </div>
+                </div>
             </aside>
 
             <!-- Main -->
             <main
-                class="flex-1 min-w-0 min-h-[60vh] space-y-4 relative"
+                class="flex-1 min-w-0 min-h-[60vh] space-y-3 relative"
                 v-on:dragover="onMainDragOver"
                 v-on:dragleave="onMainDragLeave"
                 v-on:drop="onMainDrop"
             >
-                <div
-                    v-if="filesDragOver"
-                    class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-3 pointer-events-none"
-                >
+                <!-- Drop overlay -->
+                <div v-if="filesDragOver" class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-3 pointer-events-none">
                     <Upload class="w-14 h-14 text-accent-400" :stroke-width="1.5" />
                     <span class="text-base font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
                 </div>
-                <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">
-                    {{ t("admin.media.altWarning") }}
-                </AppMessage>
 
-                <AppNoData v-if="!media.length" :message="t('admin.media.empty')" />
-                <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                <!-- Upload progress -->
+                <div v-if="uploadProgress.length" class="space-y-1.5 bg-surface border border-line/60 rounded-xl p-3">
+                    <div v-for="(f, i) in uploadProgress" :key="i" class="space-y-1">
+                        <div class="flex justify-between text-xs text-muted">
+                            <span class="truncate max-w-[80%]">{{ f.name }}</span>
+                            <span>{{ f.percent }}%</span>
+                        </div>
+                        <div class="h-1.5 bg-surface-3 rounded-full overflow-hidden">
+                            <div class="h-full bg-accent-500 transition-all duration-200 rounded-full" :style="{ width: f.percent + '%' }" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk action bar -->
+                <div v-if="selectedIds.size" class="flex flex-wrap items-center gap-2 bg-accent-500/10 border border-accent-400/30 rounded-xl px-4 py-2.5">
+                    <span class="text-sm font-medium text-accent-400">{{ selectedIds.size }} {{ t("admin.media.selected") }}</span>
+                    <div class="flex gap-2 ml-auto flex-wrap">
+                        <AppButton size="sm" variant="ghost" v-on:click="selectAll">{{ t("admin.media.selectAll") }}</AppButton>
+                        <AppButton size="sm" variant="ghost" v-on:click="() => { bulkMoveTargetId = null; }" v-on:click.prevent="openBulkMove = true">
+                            <Move class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("admin.media.move") }}
+                        </AppButton>
+                        <AppButton size="sm" variant="danger" v-on:click="bulkDelete">
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("shared.common.delete") }}
+                        </AppButton>
+                        <AppButton size="sm" variant="ghost" v-on:click="clearSelection">
+                            <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        </AppButton>
+                    </div>
+                </div>
+
+                <!-- Filters + sort + view toggle -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Type filters -->
+                    <div class="flex gap-1 flex-wrap">
+                        <button
+                            v-for="f in TYPE_FILTERS"
+                            :key="f.key"
+                            type="button"
+                            class="px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
+                            :class="typeFilter === f.key ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary hover:bg-surface-2'"
+                            v-on:click="typeFilter = f.key"
+                        >
+                            {{ t(f.label) }}
+                        </button>
+                    </div>
+                    <div class="ml-auto flex items-center gap-1.5">
+                        <!-- Sort -->
+                        <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
+                            <button
+                                v-for="s in [{k:'position',l:'#'},{k:'name',l:'A-Z'},{k:'size',l:'KB'},{k:'date',l:t('admin.media.sortDate')}]"
+                                :key="s.k"
+                                type="button"
+                                class="px-2 py-0.5 rounded text-xs transition-colors flex items-center gap-1"
+                                :class="sortBy === s.k ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                                v-on:click="setSort(s.k)"
+                            >
+                                {{ s.l }}
+                                <SortAsc v-if="sortBy === s.k && sortDir === 'asc'" class="w-3 h-3" :stroke-width="2" />
+                                <SortDesc v-else-if="sortBy === s.k" class="w-3 h-3" :stroke-width="2" />
+                            </button>
+                        </div>
+                        <!-- View toggle -->
+                        <div class="flex border border-line/60 rounded-lg p-0.5">
+                            <button type="button" :class="viewMode === 'grid' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" class="p-1 rounded transition-colors" v-on:click="setViewMode('grid')">
+                                <LayoutGrid class="w-4 h-4" :stroke-width="2" />
+                            </button>
+                            <button type="button" :class="viewMode === 'list' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" class="p-1 rounded transition-colors" v-on:click="setViewMode('list')">
+                                <List class="w-4 h-4" :stroke-width="2" />
+                            </button>
+                        </div>
+                        <!-- Select mode toggle -->
+                        <button type="button" class="p-1 rounded-lg border border-line/60 transition-colors" :class="isSelecting ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary'" v-on:click="isSelecting = !isSelecting; if (!isSelecting) clearSelection()">
+                            <CheckSquare class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+                </div>
+
+                <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">{{ t("admin.media.altWarning") }}</AppMessage>
+
+                <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
+
+                <!-- Grid view -->
+                <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                     <div
-                        v-for="item in media"
+                        v-for="item in displayedMedia"
                         :key="item.id"
-                        class="group relative bg-surface border rounded-lg overflow-hidden cursor-pointer transition-colors"
-                        :class="dragOverMediaId === item.id
-                            ? 'border-accent-400 ring-2 ring-accent-400/50'
-                            : 'border-line/60 hover:border-accent-400'"
+                        class="group relative bg-surface border rounded-lg overflow-hidden transition-colors"
+                        :class="[
+                            dragOverMediaId === item.id ? 'border-accent-400 ring-2 ring-accent-400/50' : 'border-line/60 hover:border-accent-400',
+                            selectedIds.has(item.id) ? 'ring-2 ring-accent-500' : '',
+                        ]"
                         draggable="true"
-                        v-on:click="openEditMedia(item)"
+                        v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
                         v-on:dragstart="onMediaDragStart($event, item)"
                         v-on:dragover="onMediaItemDragOver($event, item)"
                         v-on:dragleave="dragOverMediaId = null"
                         v-on:drop="onMediaItemDrop($event, item)"
                     >
-                        <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
+                        <!-- Selection checkbox -->
+                        <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(item.id)">
+                            <CheckSquare v-if="selectedIds.has(item.id)" class="w-5 h-5 text-accent-400 drop-shadow" :stroke-width="2" />
+                            <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
+                        </div>
+                        <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden cursor-pointer">
                             <img
                                 v-if="item.isImage"
                                 :src="item.thumbnailUrl ?? item.url"
@@ -673,8 +896,18 @@ async function moveFolder(folderId, newParentId) {
                                 :style="{ objectPosition: item.focalPositionCss ?? '50% 50%' }"
                             >
                             <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
-                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">
-                                {{ t("admin.media.missingAlt") }}
+                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
+                            <!-- Quick actions overlay -->
+                            <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
+                                    <Eye class="w-4 h-4" :stroke-width="2" />
+                                </button>
+                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item.url)">
+                                    <Copy class="w-4 h-4" :stroke-width="2" />
+                                </button>
+                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.qrCode')" v-on:click.stop="openQr(item)">
+                                    <QrCode class="w-4 h-4" :stroke-width="2" />
+                                </button>
                             </div>
                         </div>
                         <div class="p-2 space-y-0.5">
@@ -682,6 +915,52 @@ async function moveFolder(folderId, newParentId) {
                             <div class="text-xs text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
                         </div>
                     </div>
+                </div>
+
+                <!-- List view -->
+                <div v-else class="border border-line/60 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-surface-2 text-xs text-muted uppercase">
+                            <tr>
+                                <th v-if="isSelecting" class="w-8 px-3 py-2" />
+                                <th class="px-3 py-2 text-left">{{ t("admin.media.filename") }}</th>
+                                <th class="px-3 py-2 text-left hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
+                                <th class="px-3 py-2 text-right hidden md:table-cell">{{ t("admin.media.size") }}</th>
+                                <th class="px-3 py-2 text-right w-24">{{ t("shared.common.actions") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line/40">
+                            <tr
+                                v-for="item in displayedMedia"
+                                :key="item.id"
+                                class="hover:bg-surface-2 transition-colors cursor-pointer"
+                                :class="selectedIds.has(item.id) ? 'bg-accent-500/5' : ''"
+                                v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
+                            >
+                                <td v-if="isSelecting" class="px-3 py-2" v-on:click.stop="toggleSelect(item.id)">
+                                    <CheckSquare v-if="selectedIds.has(item.id)" class="w-4 h-4 text-accent-400" :stroke-width="2" />
+                                    <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
+                                </td>
+                                <td class="px-3 py-2">
+                                    <div class="flex items-center gap-2">
+                                        <img v-if="item.isImage" :src="item.thumbnailUrl ?? item.url" class="w-8 h-8 rounded object-cover shrink-0">
+                                        <ImageIcon v-else class="w-8 h-8 text-muted shrink-0" :stroke-width="1.5" />
+                                        <span class="truncate font-medium text-primary">{{ item.originalName }}</span>
+                                        <span v-if="!item.alt" class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500">alt</span>
+                                    </div>
+                                </td>
+                                <td class="px-3 py-2 text-muted hidden sm:table-cell">{{ item.mimeType }}</td>
+                                <td class="px-3 py-2 text-right text-muted hidden md:table-cell">{{ formatSize(item.size) }}</td>
+                                <td class="px-3 py-2 text-right">
+                                    <div class="flex justify-end gap-1" v-on:click.stop>
+                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item.url)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </main>
         </div>
@@ -811,6 +1090,63 @@ async function moveFolder(folderId, newParentId) {
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingFolder = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteFolder">{{ t("shared.common.delete") }}</AppButton>
+            </div>
+        </AppModal>
+
+        <!-- Preview modal -->
+        <AppModal :show="!!previewMedia" max-width="4xl" v-on:close="previewMedia = null">
+            <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="text-sm font-medium text-primary truncate">{{ previewMedia?.originalName }}</h3>
+                <div class="flex gap-2 shrink-0">
+                    <AppButton size="sm" variant="ghost" v-on:click="copyUrl(previewMedia.url)">
+                        <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.copyUrl") }}
+                    </AppButton>
+                    <AppButton size="sm" variant="ghost" v-on:click="openQr(previewMedia)">
+                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> QR
+                    </AppButton>
+                </div>
+            </div>
+            <div class="flex items-center justify-center bg-surface-2 rounded-xl min-h-48">
+                <img v-if="previewMedia?.isImage" :src="previewMedia.url" :alt="previewMedia.alt ?? ''" class="max-w-full max-h-[70vh] object-contain rounded-lg">
+                <div v-else class="flex flex-col items-center gap-3 py-12">
+                    <ImageIcon class="w-16 h-16 text-muted" :stroke-width="1.5" />
+                    <p class="text-sm text-muted">{{ previewMedia?.mimeType }}</p>
+                    <a :href="previewMedia?.url" target="_blank" class="text-sm text-accent-400 hover:underline">{{ t("admin.media.open") }}</a>
+                </div>
+            </div>
+            <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted">
+                <div class="flex justify-between"><dt>{{ t("admin.media.size") }}</dt><dd>{{ formatSize(previewMedia?.size ?? 0) }}</dd></div>
+                <div v-if="previewMedia?.width" class="flex justify-between"><dt>{{ t("admin.media.dimensions") }}</dt><dd>{{ previewMedia.width }}×{{ previewMedia.height }}</dd></div>
+            </dl>
+        </AppModal>
+
+        <!-- QR Code modal -->
+        <AppModal :show="!!qrMedia" max-width="sm" v-on:close="qrMedia = null; qrDataUrl = ''">
+            <h3 class="text-sm font-medium text-primary mb-4">{{ t("admin.media.qrCode") }} — {{ qrMedia?.originalName }}</h3>
+            <div class="flex flex-col items-center gap-4">
+                <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-48 h-48 rounded-xl border border-line/60">
+                <p class="text-xs text-muted text-center break-all">{{ qrMedia ? window.location.origin + qrMedia.url : '' }}</p>
+                <a v-if="qrDataUrl" :href="qrDataUrl" download="qrcode.png">
+                    <AppButton size="sm" variant="ghost">{{ t("admin.media.downloadQr") }}</AppButton>
+                </a>
+            </div>
+        </AppModal>
+
+        <!-- Bulk move modal -->
+        <AppModal :show="openBulkMove" max-width="sm" v-on:close="openBulkMove = false">
+            <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.bulkMove", { count: selectedIds.size }) }}</h3>
+            <AppMultiselect
+                v-model="bulkMoveTargetId"
+                :options="[{ id: null, displayLabel: t('admin.media.rootFolder') }, ...allFlatFolders.map(f => ({ id: f.id, displayLabel: '  '.repeat(f.depth) + f.name }))]"
+                :label="t('admin.media.folder')"
+                :placeholder="t('admin.media.rootFolder')"
+                :allow-empty="true"
+                track-by="id"
+                option-label="displayLabel"
+            />
+            <div class="flex justify-end gap-2 mt-4">
+                <AppButton variant="ghost" size="md" v-on:click="openBulkMove = false">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false">{{ t("shared.common.save") }}</AppButton>
             </div>
         </AppModal>
     </div>

@@ -64,6 +64,7 @@ class MediaController extends AbstractController
             'media' => $media,
             'currentFolderId' => $folderId,
             'search' => $search,
+            'totalStorageBytes' => $this->mediaRepository->getTotalStorageSize(),
         ]);
     }
 
@@ -163,6 +164,27 @@ class MediaController extends AbstractController
     {
         $ids = $this->decodeJson($request)['ids'] ?? [];
         $this->mediaManager->reorder($ids);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/bulk-delete', name: '_bulk_delete', methods: [HttpMethodEnum::Post->value])]
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $ids = $this->decodeJson($request)['ids'] ?? [];
+        $this->mediaManager->bulkDelete($ids);
+
+        return $this->json(['success' => true]);
+    }
+
+    #[Route('/bulk-move', name: '_bulk_move', methods: [HttpMethodEnum::Post->value])]
+    public function bulkMove(Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $ids = $data['ids'] ?? [];
+        $folderId = $data['folderId'] ?? null;
+        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+        $this->mediaManager->bulkMove($ids, $folder);
 
         return $this->json(['success' => true]);
     }

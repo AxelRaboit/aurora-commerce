@@ -160,4 +160,34 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $this->entityManager->flush();
     }
+
+    public function bulkDelete(array $ids): void
+    {
+        foreach ($ids as $id) {
+            $media = $this->mediaRepository->find($id);
+            if (null === $media) {
+                continue;
+            }
+
+            $filePath = sprintf('%s/%s', $this->uploadDir, $media->getPath());
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+
+            $this->variantGenerator->deleteVariants($media->getVariants());
+            $this->entityManager->remove($media);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    public function bulkMove(array $ids, ?MediaFolder $folder): void
+    {
+        foreach ($ids as $id) {
+            $media = $this->mediaRepository->find($id);
+            $media?->setFolder($folder);
+        }
+
+        $this->entityManager->flush();
+    }
 }

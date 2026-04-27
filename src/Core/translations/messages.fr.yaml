@@ -22,6 +22,26 @@ admin:
     expand: Déplier
     collapse: Replier
     dropToUpload: Déposer les fichiers pour les téléverser
+    filterAll: Tous
+    filterImages: Images
+    filterVideos: Vidéos
+    filterPdf: PDF
+    filterOther: Autres
+    sortDate: Date
+    selected: sélectionné(s)
+    selectAll: Tout sélectionner
+    bulkDeleted: Médias supprimés
+    bulkMoved: Médias déplacés
+    bulkDeleteConfirm: "Supprimer {count} média(s) ?"
+    bulkMove: "Déplacer {count} média(s)"
+    urlCopied: URL copiée
+    copyUrl: Copier l'URL
+    preview: Aperçu
+    open: Ouvrir
+    qrCode: QR Code
+    downloadQr: Télécharger le QR
+    storage: Stockage utilisé
+    move: Déplacer
     errors:
       alt_required: Le texte alternatif est requis.
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.

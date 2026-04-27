@@ -21,6 +21,26 @@ admin:
     expand: Expand
     collapse: Collapse
     dropToUpload: Drop files here to upload
+    filterAll: All
+    filterImages: Images
+    filterVideos: Videos
+    filterPdf: PDF
+    filterOther: Other
+    sortDate: Date
+    selected: selected
+    selectAll: Select all
+    bulkDeleted: Media deleted
+    bulkMoved: Media moved
+    bulkDeleteConfirm: "Delete {count} item(s)?"
+    bulkMove: "Move {count} item(s)"
+    urlCopied: URL copied
+    copyUrl: Copy URL
+    preview: Preview
+    open: Open
+    qrCode: QR Code
+    downloadQr: Download QR
+    storage: Storage used
+    move: Move
     errors:
       alt_required: Alternative text is required.
       focal_out_of_range: Focal point must be between 0 and 1.

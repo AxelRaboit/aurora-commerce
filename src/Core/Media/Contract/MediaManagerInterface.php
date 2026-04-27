@@ -28,4 +28,10 @@ interface MediaManagerInterface
 
     /** @param list<int> $orderedIds */
     public function reorder(array $orderedIds): void;
+
+    /** @param list<int> $ids */
+    public function bulkDelete(array $ids): void;
+
+    /** @param list<int> $ids */
+    public function bulkMove(array $ids, ?MediaFolder $folder): void;
 }
