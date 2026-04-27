@@ -10,11 +10,13 @@ use Aurora\Core\Media\DTO\MediaFolderInput;
 use Aurora\Core\Media\DTO\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
 use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use GdImage;
 use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -209,5 +211,66 @@ final readonly class MediaManager implements MediaManagerInterface
         }
 
         $this->entityManager->flush();
+    }
+
+    public function crop(Media $media, int $x, int $y, int $width, int $height): void
+    {
+        $mime = MimeTypeEnum::tryFrom($media->getMimeType());
+        $sourceAbsolute = $this->uploadDir.'/'.$media->getPath();
+
+        if (!$mime?->isRasterImage() || !is_file($sourceAbsolute)) {
+            return;
+        }
+
+        $source = match (true) {
+            $mime->isJpeg() => @imagecreatefromjpeg($sourceAbsolute),
+            MimeTypeEnum::Png === $mime => @imagecreatefrompng($sourceAbsolute),
+            MimeTypeEnum::Gif === $mime => @imagecreatefromgif($sourceAbsolute),
+            MimeTypeEnum::Webp === $mime => @imagecreatefromwebp($sourceAbsolute),
+            default => false,
+        };
+
+        if (!$source instanceof GdImage) {
+            return;
+        }
+
+        $sourceW = imagesx($source);
+        $sourceH = imagesy($source);
+
+        // Clamp to image bounds
+        $x = max(0, min($x, $sourceW - 1));
+        $y = max(0, min($y, $sourceH - 1));
+        $width = max(1, min($width, $sourceW - $x));
+        $height = max(1, min($height, $sourceH - $y));
+
+        $cropped = imagecreatetruecolor($width, $height);
+        imagecopy($cropped, $source, 0, 0, $x, $y, $width, $height);
+        imagedestroy($source);
+
+        match (true) {
+            $mime->isJpeg() => imagejpeg($cropped, $sourceAbsolute, 85),
+            MimeTypeEnum::Png === $mime => imagepng($cropped, $sourceAbsolute, 6),
+            MimeTypeEnum::Gif === $mime => imagegif($cropped, $sourceAbsolute),
+            MimeTypeEnum::Webp === $mime => imagewebp($cropped, $sourceAbsolute, 85),
+            default => null,
+        };
+
+        imagedestroy($cropped);
+
+        // Update dimensions and regenerate variants
+        [$newW, $newH] = @getimagesize($sourceAbsolute) ?: [$width, $height];
+        $media->setWidth($newW);
+        $media->setHeight($newH);
+
+        // Delete old variants and regenerate
+        $this->variantGenerator->deleteVariants($media->getVariants());
+        $newVariants = $this->variantGenerator->generate($media->getPath(), $mime->value);
+        $media->setVariants($newVariants);
+
+        $this->entityManager->flush();
+        $this->auditLogger->log('media', 'media.cropped', 'Media', $media->getId(), [
+            'name' => $media->getOriginalName(),
+            'crop' => ['x' => $x, 'y' => $y, 'w' => $width, 'h' => $height],
+        ]);
     }
 }

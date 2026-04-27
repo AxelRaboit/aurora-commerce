@@ -44,16 +44,21 @@ admin:
     uploadedBy: Uploaded by
     createdAt: Created at
     updatedAt: Updated at
+    crop: Crop
+    cropTitle: Crop image
+    applyCrop: Apply crop
+    cropped: Image cropped
     captionPlaceholder: Describe this media…
     favourites: Favourites
     tabEdit: Edit
     tabHistory: History
     noHistory: No changes recorded
-    action:
-      media.uploaded: Uploaded
-      media.updated: Updated
-      media.moved: Moved
-      media.deleted: Deleted
+    historyAction:
+      media_uploaded: Uploaded
+      media_updated: Updated
+      media_moved: Moved
+      media_deleted: Deleted
+      media_cropped: Recadré
     favourite: Add to favourites
     unfavourite: Remove from favourites
     errors:

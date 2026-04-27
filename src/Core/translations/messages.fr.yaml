@@ -45,16 +45,21 @@ admin:
     uploadedBy: Téléversé par
     createdAt: Créé le
     updatedAt: Modifié le
+    crop: Recadrer
+    cropTitle: Recadrer l'image
+    applyCrop: Appliquer le recadrage
+    cropped: Image recadrée
     captionPlaceholder: Décrivez ce média…
     favourites: Favoris
     tabEdit: Édition
     tabHistory: Historique
     noHistory: Aucune modification enregistrée
-    action:
-      media.uploaded: Téléversé
-      media.updated: Modifié
-      media.moved: Déplacé
-      media.deleted: Supprimé
+    historyAction:
+      media_uploaded: Téléversé
+      media_updated: Modifié
+      media_moved: Déplacé
+      media_deleted: Supprimé
+      media_cropped: Recadré
     favourite: Ajouter aux favoris
     unfavourite: Retirer des favoris
     errors:

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Service;
 
+use Aurora\Core\Media\Enum\MimeTypeEnum;
 use GdImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -22,14 +23,15 @@ final readonly class ImageVariantGenerator
 
     /**
      * Generate all variants for a given source image.
-     * Variants use the same extension as the source; for oversized source
-     * images only: variants smaller than source are produced, others skipped.
+     * Variants are generated as WebP when supported (better compression, universal browser support).
+     * GIFs keep their original format to preserve animation.
      *
      * @return array<string, string> variant name → relative path (under uploads/)
      */
     public function generate(string $sourceRelativePath, string $mimeType): array
     {
-        if (!str_starts_with($mimeType, 'image/')) {
+        $mime = MimeTypeEnum::tryFrom($mimeType);
+        if (!$mime?->isRasterImage()) {
             return [];
         }
 
@@ -38,7 +40,7 @@ final readonly class ImageVariantGenerator
             return [];
         }
 
-        $source = $this->load($sourceAbsolute, $mimeType);
+        $source = $this->load($sourceAbsolute, $mime);
         if (!$source instanceof GdImage) {
             return [];
         }
@@ -48,21 +50,19 @@ final readonly class ImageVariantGenerator
         $extension = pathinfo($sourceRelativePath, PATHINFO_EXTENSION);
         $baseName = pathinfo($sourceRelativePath, PATHINFO_FILENAME);
 
-        // Use WebP for all variants when supported (better compression, universal browser support).
-        // GIFs keep their original format to preserve animation.
-        $useWebP = function_exists('imagewebp') && 'image/gif' !== $mimeType;
+        $useWebP = function_exists('imagewebp') && !$mime->supportsAnimation();
+        $variantMime = $useWebP ? MimeTypeEnum::Webp : $mime;
         $variantExtension = $useWebP ? 'webp' : $extension;
-        $variantMime = $useWebP ? 'image/webp' : $mimeType;
 
-        // Compress source JPEG on upload (re-encode at quality 85 to strip metadata & reduce size).
-        if (in_array($mimeType, ['image/jpeg', 'image/jpg'], true)) {
+        // Re-encode JPEG at quality 85 to strip metadata and reduce file size.
+        if ($mime->isJpeg()) {
             imagejpeg($source, $sourceAbsolute, 85);
         }
 
         $generated = [];
         foreach (self::VARIANT_SIZES as $variantName => $maxSide) {
             if ($sourceWidth <= $maxSide && $sourceHeight <= $maxSide) {
-                continue; // no upscaling
+                continue;
             }
 
             [$targetWidth, $targetHeight] = $this->fitDimensions($sourceWidth, $sourceHeight, $maxSide);
@@ -117,33 +117,33 @@ final readonly class ImageVariantGenerator
         return [$targetWidth, $targetHeight];
     }
 
-    private function load(string $path, string $mimeType): ?GdImage
+    private function load(string $path, MimeTypeEnum $mime): ?GdImage
     {
-        $resource = match ($mimeType) {
-            'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($path),
-            'image/png' => @imagecreatefrompng($path),
-            'image/gif' => @imagecreatefromgif($path),
-            'image/webp' => @imagecreatefromwebp($path),
+        $resource = match (true) {
+            $mime->isJpeg() => @imagecreatefromjpeg($path),
+            MimeTypeEnum::Png === $mime => @imagecreatefrompng($path),
+            MimeTypeEnum::Gif === $mime => @imagecreatefromgif($path),
+            MimeTypeEnum::Webp === $mime => @imagecreatefromwebp($path),
             default => false,
         };
 
         return $resource instanceof GdImage ? $resource : null;
     }
 
-    private function save(GdImage $image, string $path, string $mimeType): void
+    private function save(GdImage $image, string $path, MimeTypeEnum $mime): void
     {
-        match ($mimeType) {
-            'image/jpeg', 'image/jpg' => imagejpeg($image, $path, 85),
-            'image/png' => imagepng($image, $path, 6),
-            'image/gif' => imagegif($image, $path),
-            'image/webp' => imagewebp($image, $path, 85),
+        match (true) {
+            $mime->isJpeg() => imagejpeg($image, $path, 85),
+            MimeTypeEnum::Png === $mime => imagepng($image, $path, 6),
+            MimeTypeEnum::Gif === $mime => imagegif($image, $path),
+            MimeTypeEnum::Webp === $mime => imagewebp($image, $path, 85),
             default => null,
         };
     }
 
-    private function preserveTransparency(GdImage $image, string $mimeType): void
+    private function preserveTransparency(GdImage $image, MimeTypeEnum $mime): void
     {
-        if (!in_array($mimeType, ['image/png', 'image/gif', 'image/webp'], true)) {
+        if (!$mime->supportsAlpha()) {
             return;
         }
 

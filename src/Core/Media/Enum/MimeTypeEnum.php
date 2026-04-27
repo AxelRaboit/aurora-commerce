@@ -7,8 +7,42 @@ namespace Aurora\Core\Media\Enum;
 enum MimeTypeEnum: string
 {
     case Jpeg = 'image/jpeg';
+    case Jpg = 'image/jpg';
     case Png = 'image/png';
     case Gif = 'image/gif';
     case Webp = 'image/webp';
     case Svg = 'image/svg+xml';
+
+    public function isRasterImage(): bool
+    {
+        return match ($this) {
+            self::Jpeg, self::Jpg, self::Png, self::Gif, self::Webp => true,
+            default => false,
+        };
+    }
+
+    public function isJpeg(): bool
+    {
+        return self::Jpeg === $this || self::Jpg === $this;
+    }
+
+    public function supportsAlpha(): bool
+    {
+        return match ($this) {
+            self::Png, self::Gif, self::Webp => true,
+            default => false,
+        };
+    }
+
+    public function supportsAnimation(): bool
+    {
+        return self::Gif === $this;
+    }
+
+    public static function isRasterMimeType(string $mimeType): bool
+    {
+        $case = self::tryFrom($mimeType);
+
+        return $case?->isRasterImage() ?? false;
+    }
 }

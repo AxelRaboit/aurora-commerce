@@ -34,4 +34,6 @@ interface MediaManagerInterface
 
     /** @param list<int> $ids */
     public function bulkMove(array $ids, ?MediaFolder $folder): void;
+
+    public function crop(Media $media, int $x, int $y, int $width, int $height): void;
 }

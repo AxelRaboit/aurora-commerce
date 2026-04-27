@@ -3,8 +3,9 @@ import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import { ref, reactive, computed, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop } from "lucide-vue-next";
 import QRCode from "qrcode";
+import Cropper from "cropperjs";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -36,6 +37,7 @@ const props = defineProps({
     reorderPath: { type: String, default: "/admin/media/reorder" },
     bulkDeletePath: { type: String, default: "/admin/media/bulk-delete" },
     bulkMovePath: { type: String, default: "/admin/media/bulk-move" },
+    cropPath: { type: String, default: "/admin/media/__id__/crop" },
     totalStorageBytes: { type: Number, default: 0 },
 });
 
@@ -259,6 +261,54 @@ async function bulkMove() {
 
 // ── Preview ───────────────────────────────────────────────────────────────────
 const previewMedia = ref(null);
+
+// ── Crop ─────────────────────────────────────────────────────────────────────
+const cropMedia = ref(null);
+const cropSaving = ref(false);
+const cropImageEl = ref(null);
+let cropperInstance = null;
+
+async function openCrop(item) {
+    cropMedia.value = item;
+    await nextTick();
+    if (cropImageEl.value) {
+        cropperInstance?.destroy();
+        cropperInstance = new Cropper(cropImageEl.value, { viewMode: 1, autoCropArea: 1 });
+    }
+}
+
+function closeCrop() {
+    cropperInstance?.destroy();
+    cropperInstance = null;
+    cropMedia.value = null;
+    cropSaving.value = false;
+}
+
+function historyActionLabel(action) {
+    const key = `admin.media.historyAction.${action.replace(".", "_")}`;
+    return t(key, action);
+}
+
+async function saveCrop() {
+    if (!cropperInstance || !cropMedia.value) return;
+    cropSaving.value = true;
+    try {
+        const d = cropperInstance.getData(true);
+        const url = props.cropPath.replace("__id__", cropMedia.value.id);
+        const res = await fetch(url, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ x: d.x, y: d.y, width: d.width, height: d.height }),
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error();
+        const idx = media.value.findIndex((m) => m.id === cropMedia.value.id);
+        if (idx !== -1) media.value[idx] = data.media;
+        if (editingMedia.value?.id === cropMedia.value.id) editingMedia.value = data.media;
+        closeCrop();
+        toast.success(t("admin.media.cropped"));
+    } catch { toast.error(t("shared.common.error")); } finally { cropSaving.value = false; }
+}
 
 // ── QR Code ───────────────────────────────────────────────────────────────────
 const qrMedia = ref(null);
@@ -1064,7 +1114,7 @@ async function moveFolder(folderId, newParentId) {
                 <div v-else class="divide-y divide-line/40">
                     <div v-for="entry in mediaHistory" :key="entry.id" class="py-2.5 flex items-start gap-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium text-primary">{{ t(`admin.media.action.${entry.action}`, entry.action) }}</div>
+                            <div class="text-sm font-medium text-primary">{{ historyActionLabel(entry.action) }}</div>
                             <div class="text-xs text-muted">{{ entry.userName ?? entry.userEmail ?? t("shared.common.unknown") }}</div>
                         </div>
                         <div class="text-xs text-muted shrink-0">{{ formatDateTime(entry.createdAt) }}</div>
@@ -1148,11 +1198,21 @@ async function moveFolder(folderId, newParentId) {
                     >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
                     </AppButton>
-                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
+                    <AppButton
+                        v-if="editingMedia?.isImage"
+                        variant="secondary"
+                        size="md"
+                        class="w-full sm:w-auto order-2 sm:order-1"
+                        v-on:click="openCrop(editingMedia); editingMedia = null"
+                    >
+                        <Crop class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("admin.media.crop") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>
-                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-3 sm:order-3" v-on:click="closeEditMedia">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-3" v-on:click="closeEditMedia">{{ t("shared.common.cancel") }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -1254,6 +1314,27 @@ async function moveFolder(folderId, newParentId) {
             <div class="flex justify-end gap-2 mt-4">
                 <AppButton variant="ghost" size="md" v-on:click="openBulkMove = false">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+            </div>
+        </AppModal>
+
+        <!-- Crop modal -->
+        <AppModal :show="!!cropMedia" max-width="4xl" scrollable v-on:close="closeCrop">
+            <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ cropMedia?.originalName }}</h3>
+            <div class="flex items-center justify-center bg-surface-2 rounded-xl overflow-hidden max-h-[65vh]">
+                <img
+                    v-if="cropMedia"
+                    ref="cropImageEl"
+                    :src="cropMedia.url"
+                    :alt="cropMedia.alt ?? ''"
+                    class="max-w-full"
+                    style="display: block;"
+                >
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+                <AppButton variant="ghost" size="md" v-on:click="closeCrop">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="primary" size="md" :loading="cropSaving" v-on:click="saveCrop">
+                    <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.applyCrop") }}
+                </AppButton>
             </div>
         </AppModal>
     </div>

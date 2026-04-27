@@ -44,6 +44,10 @@ admin:
     uploadedBy: Subido por
     createdAt: Creado el
     updatedAt: Modificado el
+    crop: Recortar
+    cropTitle: Recortar imagen
+    applyCrop: Aplicar recorte
+    cropped: Imagen recortada
     captionPlaceholder: Describe este archivo…
     favourites: Favoritos
     favourite: Añadir a favoritos
@@ -51,11 +55,12 @@ admin:
     tabEdit: Edición
     tabHistory: Historial
     noHistory: Sin cambios registrados
-    action:
-      media.uploaded: Subido
-      media.updated: Modificado
-      media.moved: Movido
-      media.deleted: Eliminado
+    historyAction:
+      media_uploaded: Subido
+      media_updated: Modificado
+      media_moved: Movido
+      media_deleted: Eliminado
+      media_cropped: Recadré
     errors:
       focal_out_of_range: El punto focal debe estar entre 0 y 1.
       folder_name_required: El nombre de la carpeta es obligatorio.

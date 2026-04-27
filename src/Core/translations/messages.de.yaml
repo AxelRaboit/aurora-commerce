@@ -44,6 +44,10 @@ admin:
     uploadedBy: Hochgeladen von
     createdAt: Erstellt am
     updatedAt: Geändert am
+    crop: Zuschneiden
+    cropTitle: Bild zuschneiden
+    applyCrop: Zuschnitt anwenden
+    cropped: Bild zugeschnitten
     captionPlaceholder: Beschreibe diese Datei…
     favourites: Favoriten
     favourite: Zu Favoriten hinzufügen
@@ -51,11 +55,12 @@ admin:
     tabEdit: Bearbeiten
     tabHistory: Verlauf
     noHistory: Keine Änderungen aufgezeichnet
-    action:
-      media.uploaded: Hochgeladen
-      media.updated: Geändert
-      media.moved: Verschoben
-      media.deleted: Gelöscht
+    historyAction:
+      media_uploaded: Hochgeladen
+      media_updated: Geändert
+      media_moved: Verschoben
+      media_deleted: Gelöscht
+      media_cropped: Recadré
     errors:
       focal_out_of_range: Der Fokuspunkt muss zwischen 0 und 1 liegen.
       folder_name_required: Ordnername ist erforderlich.

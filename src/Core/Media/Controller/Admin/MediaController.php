@@ -218,6 +218,21 @@ class MediaController extends AbstractController
         return $this->json(['success' => true]);
     }
 
+    #[Route('/{id}/crop', name: '_crop', methods: [HttpMethodEnum::Post->value])]
+    public function crop(Media $media, Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $this->mediaManager->crop(
+            $media,
+            (int) ($data['x'] ?? 0),
+            (int) ($data['y'] ?? 0),
+            (int) ($data['width'] ?? 1),
+            (int) ($data['height'] ?? 1),
+        );
+
+        return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
+    }
+
     #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
     public function createFolder(Request $request): JsonResponse
     {
