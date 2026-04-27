@@ -107,8 +107,6 @@ admin:
     cannot_delete_self: No puedes eliminar tu propia cuenta.
     cannot_modify_higher_role: No puedes modificar un usuario con un rol superior al tuyo.
     cannot_modify_self: No puedes modificar tu propio rol.
-    created: Usuario creado con éxito.
-    deleted: Usuario eliminado.
     dev_granted: Rol Dev otorgado.
     dev_revoked: Rol Dev retirado.
     errors:
@@ -121,9 +119,12 @@ admin:
       role_invalid: Rol inválido.
       role_required: El rol es obligatorio.
       password_too_short: La contraseña debe tener al menos 8 caracteres.
-    updated: Usuario actualizado.
     newPassword: Nueva contraseña
     newPasswordPlaceholder: Dejar vacío para no cambiar
+    toast:
+      created: Usuario creado con éxito.
+      updated: Usuario actualizado.
+      deleted: Usuario eliminado.
   auth:
     access_request:
       already_account: ¿Ya tienes cuenta?

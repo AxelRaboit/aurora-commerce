@@ -107,8 +107,6 @@ admin:
     cannot_delete_self: You cannot delete your own account.
     cannot_modify_higher_role: You cannot modify a user with a higher role than yours.
     cannot_modify_self: You cannot modify your own role.
-    created: User created successfully.
-    deleted: User deleted.
     dev_granted: Dev role granted.
     dev_revoked: Dev role revoked.
     errors:
@@ -121,9 +119,12 @@ admin:
       role_invalid: Invalid role.
       role_required: Role is required.
       password_too_short: Password must be at least 8 characters.
-    updated: User updated.
     newPassword: New password
     newPasswordPlaceholder: Leave empty to keep current
+    toast:
+      created: User created successfully.
+      updated: User updated.
+      deleted: User deleted.
   auth:
     access_request:
       already_account: Already have an account?

@@ -83,7 +83,7 @@ final class UsersController extends AbstractController
 
         $user = $this->userManager->create($input->name, $input->email, $input->password);
         $this->userManager->changeLocale($user, $input->locale);
-        $this->addFlash('success', $this->translator->trans('admin.users.created'));
+        $this->addFlash('success', $this->translator->trans('admin.users.toast.created'));
 
         return $this->json(['success' => true, 'id' => $user->getId()]);
     }
@@ -111,7 +111,7 @@ final class UsersController extends AbstractController
             $this->userManager->changePassword($user, $input->password);
         }
 
-        $this->addFlash('success', $this->translator->trans('admin.users.updated'));
+        $this->addFlash('success', $this->translator->trans('admin.users.toast.updated'));
 
         return $this->json(['success' => true, 'id' => $user->getId()]);
     }
@@ -150,7 +150,7 @@ final class UsersController extends AbstractController
         }
 
         $this->userManager->delete($user);
-        $this->addFlash('success', $this->translator->trans('admin.users.deleted'));
+        $this->addFlash('success', $this->translator->trans('admin.users.toast.deleted'));
 
         return $this->redirectToRoute('dev_users');
     }
