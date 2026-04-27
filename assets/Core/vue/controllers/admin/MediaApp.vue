@@ -632,19 +632,18 @@ async function moveFolder(folderId, newParentId) {
 
             <!-- Main -->
             <main
-                class="flex-1 min-w-0 space-y-4 relative"
+                class="flex-1 min-w-0 min-h-[60vh] space-y-4 relative"
                 v-on:dragover="onMainDragOver"
                 v-on:dragleave="onMainDragLeave"
                 v-on:drop="onMainDrop"
             >
                 <div
                     v-if="filesDragOver"
-                    class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-2 pointer-events-none"
+                    class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-3 pointer-events-none"
                 >
-                    <Upload class="w-10 h-10 text-accent-400" :stroke-width="1.5" />
-                    <span class="text-sm font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
+                    <Upload class="w-14 h-14 text-accent-400" :stroke-width="1.5" />
+                    <span class="text-base font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
                 </div>
-
                 <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">
                     {{ t("admin.media.altWarning") }}
                 </AppMessage>
