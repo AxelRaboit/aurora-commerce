@@ -31,6 +31,8 @@ interface UserManagerInterface
 
     public function changeLocale(User $user, LocaleEnum $locale): void;
 
+    public function changeMoodMessage(User $user, ?string $moodMessage): void;
+
     public function delete(User $user): void;
 
     public function isPasswordValid(User $user, string $plainPassword): bool;

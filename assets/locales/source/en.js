@@ -1206,6 +1206,16 @@ export default {
                 title: "Profile photo",
                 subtitle: "Shown in the sidebar and user list.",
             },
+            mood: {
+                title: "Mood",
+                subtitle: "A short line that captures how you're feeling right now.",
+                placeholder: "What's on your mind…",
+                hint: "160 characters max.",
+                saved: "Mood updated.",
+                errors: {
+                    too_long: "Mood must not exceed 160 characters.",
+                },
+            },
             locale: {
                 title: "Language",
                 subtitle: "Choose the display language of the administration.",

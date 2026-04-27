@@ -6,10 +6,12 @@ import { Upload, Trash2 } from "lucide-vue-next";
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
+import AppTextarea from "@/shared/components/AppTextarea.vue";
 import PasswordStrength from "@/shared/components/PasswordStrength.vue";
 import UserAvatar from "@core/admin/users/UserAvatar.vue";
 import { useProfileLocale } from "@core/admin/profile/composables/useProfileLocale.js";
 import { useProfileInfo } from "@core/admin/profile/composables/useProfileInfo.js";
+import { useProfileMood } from "@core/admin/profile/composables/useProfileMood.js";
 import { useProfilePassword } from "@core/admin/profile/composables/useProfilePassword.js";
 import { useProfileDelete } from "@core/admin/profile/composables/useProfileDelete.js";
 
@@ -19,10 +21,12 @@ const props = defineProps({
     userName: { type: String, default: "" },
     userEmail: { type: String, default: "" },
     userPhotoUrl: { type: String, default: "" },
+    userMoodMessage: { type: String, default: "" },
     locale: { type: String, default: "fr" },
     updatePath: { type: String, required: true },
     passwordPath: { type: String, required: true },
     localePath: { type: String, required: true },
+    moodPath: { type: String, required: true },
     photoUploadPath: { type: String, required: true },
     photoDeletePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -32,6 +36,7 @@ const props = defineProps({
 
 const { selectedLocale, localeLoading, changeLocale } = useProfileLocale(props.localePath, props.locale);
 const { infoName, infoEmail, infoLoading, infoErrors, saveInfo } = useProfileInfo(props.updatePath, props.userName, props.userEmail);
+const { moodMessage, moodLoading, moodError, saveMood, MAX_LENGTH: moodMaxLength } = useProfileMood(props.moodPath, props.userMoodMessage);
 const { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword } = useProfilePassword(props.passwordPath);
 const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, props.loginPath, props.deleteCsrf);
 
@@ -132,6 +137,32 @@ async function removePhoto() {
                     <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Mood -->
+        <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
+            <header class="mb-6">
+                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.mood.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.mood.subtitle') }}</p>
+            </header>
+            <form class="space-y-3" v-on:submit.prevent="saveMood">
+                <div>
+                    <AppTextarea
+                        v-model="moodMessage"
+                        :rows="2"
+                        :maxlength="moodMaxLength"
+                        :placeholder="t('admin.profile.mood.placeholder')"
+                        :error="moodError"
+                    />
+                    <div v-if="!moodError" class="mt-1 flex items-center justify-between">
+                        <span class="text-xs text-muted">{{ t('admin.profile.mood.hint') }}</span>
+                        <span class="text-xs text-muted">{{ moodMessage.length }}/{{ moodMaxLength }}</span>
+                    </div>
+                </div>
+                <div class="pt-1">
+                    <AppButton type="submit" :loading="moodLoading">{{ t('shared.common.save') }}</AppButton>
+                </div>
+            </form>
         </div>
 
         <!-- Informations -->

@@ -9,6 +9,7 @@ defineProps({
     required: { type: Boolean, default: false },
     rows: { type: Number, default: 3 },
     mono: { type: Boolean, default: false },
+    maxlength: { type: Number, default: null },
 });
 
 defineEmits(['update:modelValue']);
@@ -21,6 +22,7 @@ defineEmits(['update:modelValue']);
             :value="modelValue"
             :placeholder="placeholder"
             :rows="rows"
+            :maxlength="maxlength"
             class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
             :class="[
                 { 'border-red-500 focus:border-red-500 focus:ring-red-500': error },

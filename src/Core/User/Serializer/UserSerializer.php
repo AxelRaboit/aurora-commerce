@@ -41,6 +41,7 @@ final readonly class UserSerializer
             'statusLabel' => $user->getStatus()->label(),
             'locale' => $user->getLocale()->value,
             'profilePhotoUrl' => $user->getProfilePhotoUrl(),
+            'moodMessage' => $user->getMoodMessage(),
             'managerId' => $manager?->getId(),
             'manager' => null === $manager ? null : ['id' => $manager->getId(), 'name' => $manager->getName()],
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),

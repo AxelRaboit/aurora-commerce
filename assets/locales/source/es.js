@@ -1223,6 +1223,16 @@ export default {
                 title: "Foto de perfil",
                 subtitle: "Aparece en la barra lateral y en la lista de usuarios.",
             },
+            mood: {
+                title: "Estado de ánimo",
+                subtitle: "Una frase corta que describe tu estado de ánimo actual.",
+                placeholder: "Lo que quieras compartir…",
+                hint: "160 caracteres máx.",
+                saved: "Estado de ánimo actualizado.",
+                errors: {
+                    too_long: "El estado de ánimo no debe superar los 160 caracteres.",
+                },
+            },
             locale: {
                 title: "Idioma",
                 subtitle: "Elige el idioma de la administración.",

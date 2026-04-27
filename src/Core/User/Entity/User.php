@@ -65,6 +65,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $profilePhotoPath = null;
 
+    #[ORM\Column(length: 160, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $moodMessage = null;
+
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subordinates')]
     #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?User $manager = null;
@@ -301,6 +305,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getProfilePhotoUrl(): ?string
     {
         return null === $this->profilePhotoPath ? null : '/uploads/users/'.$this->profilePhotoPath;
+    }
+
+    public function getMoodMessage(): ?string
+    {
+        return $this->moodMessage;
+    }
+
+    public function setMoodMessage(?string $moodMessage): static
+    {
+        $this->moodMessage = $moodMessage;
+
+        return $this;
     }
 
     public function getManager(): ?User

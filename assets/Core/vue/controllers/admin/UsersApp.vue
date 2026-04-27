@@ -464,6 +464,10 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     </div>
                 </div>
 
+                <p v-if="viewingUser.moodMessage" class="text-sm text-secondary italic border-l-2 border-accent-500/40 pl-3">
+                    “{{ viewingUser.moodMessage }}”
+                </p>
+
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                     <div>
                         <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.status') }}</dt>

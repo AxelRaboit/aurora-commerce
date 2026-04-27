@@ -132,6 +132,11 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         $this->inner->changeLocale($user, $locale);
     }
 
+    public function changeMoodMessage(User $user, ?string $moodMessage): void
+    {
+        $this->inner->changeMoodMessage($user, $moodMessage);
+    }
+
     public function delete(User $user): void
     {
         $this->logger->warning('user.deleted', [

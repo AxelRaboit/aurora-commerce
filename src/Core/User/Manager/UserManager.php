@@ -176,6 +176,12 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
+    public function changeMoodMessage(User $user, ?string $moodMessage): void
+    {
+        $user->setMoodMessage($moodMessage);
+        $this->entityManager->flush();
+    }
+
     public function delete(User $user): void
     {
         $this->entityManager->remove($user);

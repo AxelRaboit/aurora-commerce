@@ -106,6 +106,25 @@ final class ProfileController extends AbstractController
         return $this->json(['success' => true]);
     }
 
+    #[Route('/mood', name: '_mood', methods: [HttpMethodEnum::Post->value])]
+    public function mood(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true) ?? [];
+        $raw = is_string($data['moodMessage'] ?? null) ? mb_trim($data['moodMessage']) : '';
+
+        if (mb_strlen($raw) > 160) {
+            return $this->json(['success' => false, 'errors' => [
+                'moodMessage' => $this->translator->trans('admin.profile.mood.errors.too_long'),
+            ]]);
+        }
+
+        $this->userManager->changeMoodMessage($user, '' === $raw ? null : $raw);
+
+        return $this->json(['success' => true, 'moodMessage' => $user->getMoodMessage()]);
+    }
+
     #[Route('/photo', name: '_photo_upload', methods: [HttpMethodEnum::Post->value])]
     public function uploadPhoto(Request $request): JsonResponse
     {
