@@ -21,7 +21,7 @@ final readonly class MediaSerializer
 
         return [
             'id' => $media->getId(),
-            'url' => $media->getPublicUrl(),
+            'url' => $media->getPublicUrl().'?v='.($media->getUpdatedAt()?->getTimestamp() ?? 0),
             'filename' => $media->getFilename(),
             'originalName' => $media->getOriginalName(),
             'mimeType' => $media->getMimeType(),

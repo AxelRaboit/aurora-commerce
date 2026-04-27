@@ -6,6 +6,7 @@ import { toast } from "vue-sonner";
 import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop } from "lucide-vue-next";
 import QRCode from "qrcode";
 import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import AppInput from "@/shared/components/AppInput.vue";
@@ -268,13 +269,34 @@ const cropSaving = ref(false);
 const cropImageEl = ref(null);
 let cropperInstance = null;
 
+const SNAP_THRESHOLD = 12;
+
 async function openCrop(item) {
     cropMedia.value = item;
     await nextTick();
-    if (cropImageEl.value) {
-        cropperInstance?.destroy();
-        cropperInstance = new Cropper(cropImageEl.value, { viewMode: 1, autoCropArea: 1 });
-    }
+    if (!cropImageEl.value) return;
+    cropperInstance?.destroy();
+    cropperInstance = new Cropper(cropImageEl.value, {
+        viewMode: 1,
+        autoCropArea: 0.9,
+        movable: true,
+        zoomable: true,
+        background: true,
+        cropmove: snapToEdges,
+    });
+}
+
+function snapToEdges() {
+    if (!cropperInstance) return;
+    const d = cropperInstance.getData(true);
+    const img = cropperInstance.getImageData();
+    let { x, y, width, height } = d;
+    let changed = false;
+    if (x < SNAP_THRESHOLD)                                   { x = 0; changed = true; }
+    if (y < SNAP_THRESHOLD)                                   { y = 0; changed = true; }
+    if (x + width > img.naturalWidth - SNAP_THRESHOLD)        { width = img.naturalWidth - x; changed = true; }
+    if (y + height > img.naturalHeight - SNAP_THRESHOLD)      { height = img.naturalHeight - y; changed = true; }
+    if (changed) cropperInstance.setData({ x, y, width, height });
 }
 
 function closeCrop() {
@@ -1350,16 +1372,16 @@ async function moveFolder(folderId, newParentId) {
         </AppModal>
 
         <!-- Crop modal -->
-        <AppModal :show="!!cropMedia" max-width="4xl" scrollable v-on:close="closeCrop">
+        <AppModal :show="!!cropMedia" max-width="5xl" v-on:close="closeCrop">
             <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ cropMedia?.originalName }}</h3>
-            <div class="flex items-center justify-center bg-surface-2 rounded-xl overflow-hidden max-h-[65vh]">
+            <!-- Container with explicit height so cropperjs v1 can fill it properly -->
+            <div style="height: 65vh; width: 100%; overflow: hidden;">
                 <img
                     v-if="cropMedia"
                     ref="cropImageEl"
                     :src="cropMedia.url"
                     :alt="cropMedia.alt ?? ''"
-                    class="max-w-full"
-                    style="display: block;"
+                    style="display: block; max-width: 100%;"
                 >
             </div>
             <div class="flex justify-end gap-2 mt-4">
