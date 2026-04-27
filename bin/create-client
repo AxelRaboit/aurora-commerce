@@ -328,6 +328,7 @@ EOF
 # ---------------------------------------------------------------------------
 
 cp "$AURORA_DIR/config/routes/security.yaml" "$DEST/config/routes/security.yaml" 2>/dev/null || true
+cp "$AURORA_DIR/config/routes/web_profiler.yaml" "$DEST/config/routes/web_profiler.yaml" 2>/dev/null || true
 
 cat > "$DEST/config/routes/framework.yaml" <<'EOF'
 when@dev:
