@@ -220,6 +220,13 @@ export default {
                 "Disable {name}'s account? They will no longer be able to sign in.",
             enableConfirm: "Re-enable {name}'s account?",
             cannot_delete_self: "You cannot delete your own account.",
+            view: "View profile",
+            detail: {
+                type: "Type",
+                locale: "Language",
+                createdAt: "Created",
+                invitedAt: "Invited",
+            },
             photo: {
                 upload: "Change photo",
                 remove: "Remove photo",

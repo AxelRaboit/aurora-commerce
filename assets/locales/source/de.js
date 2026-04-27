@@ -222,6 +222,13 @@ export default {
                 "Konto von {name} deaktivieren? Der Benutzer kann sich nicht mehr anmelden.",
             enableConfirm: "Konto von {name} reaktivieren?",
             cannot_delete_self: "Du kannst dein eigenes Konto nicht löschen.",
+            view: "Profil ansehen",
+            detail: {
+                type: "Typ",
+                locale: "Sprache",
+                createdAt: "Erstellt am",
+                invitedAt: "Eingeladen am",
+            },
             photo: {
                 upload: "Foto ändern",
                 remove: "Foto entfernen",

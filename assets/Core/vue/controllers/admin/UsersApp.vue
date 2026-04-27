@@ -21,7 +21,7 @@ import UserRowActions from "@core/admin/users/UserRowActions.vue";
 import UserAvatar from "@core/admin/users/UserAvatar.vue";
 
 const { t } = useI18n();
-const { formatDateShort } = useDateFormat();
+const { formatDate, formatDateShort } = useDateFormat();
 
 const props = defineProps({
     roles: { type: Array, default: () => [] },
@@ -94,6 +94,12 @@ async function submitInvite() {
     } finally {
         inviteModal.saving = false;
     }
+}
+
+// ── View modal ───────────────────────────────────────────────────────────────
+const viewingUser = ref(null);
+function openView(user) {
+    viewingUser.value = user;
 }
 
 // ── Edit modal ───────────────────────────────────────────────────────────────
@@ -304,6 +310,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                         :is-dev="isDev"
                         :can-act="canActOn(user)"
                         :impersonate-path="impersonatePath"
+                        v-on:view="openView"
                         v-on:resend="resendInvitation"
                         v-on:edit="openEdit"
                         v-on:toggle-disabled="askToggleDisabled"
@@ -356,6 +363,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                                     :is-dev="isDev"
                                     :can-act="canActOn(user)"
                                     :impersonate-path="impersonatePath"
+                                    v-on:view="openView"
                                     v-on:resend="resendInvitation"
                                     v-on:edit="openEdit"
                                     v-on:toggle-disabled="askToggleDisabled"
@@ -402,6 +410,56 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving">{{ t('admin.users.sendInvite') }}</AppButton>
                 </div>
             </form>
+        </AppModal>
+
+        <!-- View modal -->
+        <AppModal :show="!!viewingUser" max-width="md" v-on:close="viewingUser = null">
+            <div v-if="viewingUser" class="space-y-5">
+                <div class="flex items-center gap-4">
+                    <UserAvatar :name="viewingUser.name" :photo-url="viewingUser.profilePhotoUrl ?? ''" :size="64" />
+                    <div class="min-w-0">
+                        <h3 class="text-lg font-semibold text-primary truncate">{{ viewingUser.name }}</h3>
+                        <p class="text-sm text-muted truncate">{{ viewingUser.email }}</p>
+                    </div>
+                </div>
+
+                <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                    <div>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.status') }}</dt>
+                        <dd class="mt-1">
+                            <AppBadge :color="statusBadgeColor(viewingUser.status)">{{ viewingUser.statusLabel }}</AppBadge>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.role') }}</dt>
+                        <dd class="mt-1 flex items-center gap-1 flex-wrap">
+                            <AppBadge v-if="viewingUser.isDev" color="rose">Dev</AppBadge>
+                            <AppBadge v-if="viewingUser.roleLabel" color="accent">{{ viewingUser.roleLabel }}</AppBadge>
+                            <span v-if="!viewingUser.isDev && !viewingUser.roleLabel" class="text-muted">—</span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.type') }}</dt>
+                        <dd class="mt-1 text-primary">{{ viewingUser.typeLabel }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.locale') }}</dt>
+                        <dd class="mt-1 text-primary">{{ t('shared.locales.' + viewingUser.locale) }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.createdAt') }}</dt>
+                        <dd class="mt-1 text-primary">{{ formatDate(viewingUser.createdAt) }}</dd>
+                    </div>
+                    <div v-if="viewingUser.invitedAt">
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.invitedAt') }}</dt>
+                        <dd class="mt-1 text-primary">{{ formatDate(viewingUser.invitedAt) }}</dd>
+                    </div>
+                </dl>
+
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="viewingUser = null">{{ t('shared.common.close') }}</AppButton>
+                </AppModalFooter>
+            </div>
         </AppModal>
 
         <!-- Edit modal -->

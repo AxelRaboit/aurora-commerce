@@ -223,6 +223,13 @@ export default {
             enableConfirm: "Réactiver le compte de {name} ?",
             cannot_delete_self:
                 "Vous ne pouvez pas supprimer votre propre compte.",
+            view: "Voir le profil",
+            detail: {
+                type: "Type",
+                locale: "Langue",
+                createdAt: "Créé le",
+                invitedAt: "Invité le",
+            },
             photo: {
                 upload: "Changer la photo",
                 remove: "Supprimer la photo",

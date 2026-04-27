@@ -222,6 +222,13 @@ export default {
                 "¿Desactivar la cuenta de {name}? El usuario no podrá iniciar sesión.",
             enableConfirm: "¿Reactivar la cuenta de {name}?",
             cannot_delete_self: "No puedes eliminar tu propia cuenta.",
+            view: "Ver perfil",
+            detail: {
+                type: "Tipo",
+                locale: "Idioma",
+                createdAt: "Creado el",
+                invitedAt: "Invitado el",
+            },
             photo: {
                 upload: "Cambiar foto",
                 remove: "Eliminar foto",

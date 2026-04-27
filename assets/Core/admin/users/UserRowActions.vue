@@ -1,5 +1,5 @@
 <script setup>
-import { Mail, Pencil, Trash2, Power, LogIn } from "lucide-vue-next";
+import { Eye, Mail, Pencil, Trash2, Power, LogIn } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/AppIconButton.vue";
 import { useI18n } from "vue-i18n";
 
@@ -12,11 +12,18 @@ const props = defineProps({
     impersonatePath: { type: String, default: "" },
 });
 
-const emit = defineEmits(["resend", "edit", "toggle-disabled", "delete"]);
+const emit = defineEmits(["view", "resend", "edit", "toggle-disabled", "delete"]);
 </script>
 
 <template>
     <div class="flex items-center gap-0.5">
+        <AppIconButton
+            color="accent"
+            :title="t('admin.users.view')"
+            v-on:click="emit('view', user)"
+        >
+            <Eye class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
         <AppIconButton
             v-if="user.status === 'invited' && canAct"
             color="amber"
