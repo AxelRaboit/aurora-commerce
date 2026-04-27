@@ -42,7 +42,6 @@ admin:
     storage: Storage used
     move: Move
     errors:
-      alt_required: Alternative text is required.
       focal_out_of_range: Focal point must be between 0 and 1.
       folder_name_required: Folder name is required.
       folder_not_found: Folder {id} not found.

@@ -61,7 +61,7 @@ final class MediaControllerTest extends IntegrationTestCase
         return $media;
     }
 
-    public function testAltIsRequiredOnEdit(): void
+    public function testAltIsOptionalOnEdit(): void
     {
         $media = $this->createMedia();
 
@@ -70,8 +70,7 @@ final class MediaControllerTest extends IntegrationTestCase
         ]);
 
         self::assertSame(200, $status);
-        self::assertFalse($body['success']);
-        self::assertArrayHasKey('alt', $body['errors']);
+        self::assertTrue($body['success']);
     }
 
     public function testEditUpdatesFocalPointAndFolder(): void

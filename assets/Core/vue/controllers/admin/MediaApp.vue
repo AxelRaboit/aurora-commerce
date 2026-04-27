@@ -870,7 +870,7 @@ async function moveFolder(folderId, newParentId) {
                     <div
                         v-for="item in displayedMedia"
                         :key="item.id"
-                        class="group relative bg-surface border rounded-lg overflow-hidden transition-colors"
+                        class="group relative bg-surface border rounded-lg overflow-hidden transition-colors cursor-pointer"
                         :class="[
                             dragOverMediaId === item.id ? 'border-accent-400 ring-2 ring-accent-400/50' : 'border-line/60 hover:border-accent-400',
                             selectedIds.has(item.id) ? 'ring-2 ring-accent-500' : '',
@@ -1003,7 +1003,6 @@ async function moveFolder(folderId, newParentId) {
                     <AppInput
                         v-model="editForm.alt"
                         :label="t('admin.media.alt')"
-                        :required="true"
                         :error="editErrors.alt ?? ''"
                         :placeholder="t('admin.media.altPlaceholder')"
                     />

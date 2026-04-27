@@ -10,9 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class MediaInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'media.errors.alt_required')]
         #[Assert\Length(max: 255)]
-        public string $alt,
+        public ?string $alt = null,
         public ?string $caption = null,
         #[Assert\Range(notInRangeMessage: 'media.errors.focal_out_of_range', min: 0, max: 1)]
         public ?float $focalX = null,
@@ -27,7 +26,7 @@ final readonly class MediaInput
         $focalY = $data['focalY'] ?? null;
 
         return new self(
-            alt: Str::trimFromArray($data, 'alt'),
+            alt: Str::trimOrNullFromArray($data, 'alt'),
             caption: Str::trimOrNullFromArray($data, 'caption'),
             focalX: null !== $focalX && '' !== $focalX ? (float) $focalX : null,
             focalY: null !== $focalY && '' !== $focalY ? (float) $focalY : null,

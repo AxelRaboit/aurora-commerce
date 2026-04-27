@@ -12,7 +12,6 @@ admin:
   media:
     dropToUpload: Drop files to upload
     errors:
-      alt_required: Alternativtext ist erforderlich.
       focal_out_of_range: Der Fokuspunkt muss zwischen 0 und 1 liegen.
       folder_name_required: Ordnername ist erforderlich.
       folder_not_found: Ordner {id} nicht gefunden.
