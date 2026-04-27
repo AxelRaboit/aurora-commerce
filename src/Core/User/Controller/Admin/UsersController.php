@@ -80,12 +80,6 @@ final class UsersController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
-    public function show(User $user): JsonResponse
-    {
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serializeWithSubordinates($user)]);
-    }
-
     #[Route('/selectable', name: '_selectable', methods: [HttpMethodEnum::Get->value])]
     public function selectable(): JsonResponse
     {
@@ -99,6 +93,12 @@ final class UsersController extends AbstractController
         );
 
         return $this->json(['ok' => true, 'items' => $items]);
+    }
+
+    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
+    public function show(User $user): JsonResponse
+    {
+        return $this->json(['ok' => true, 'user' => $this->userSerializer->serializeWithSubordinates($user)]);
     }
 
     #[Route('/invite', name: '_invite', methods: [HttpMethodEnum::Post->value])]
