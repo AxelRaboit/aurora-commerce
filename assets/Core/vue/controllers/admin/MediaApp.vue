@@ -1272,6 +1272,10 @@ async function moveFolder(folderId, newParentId) {
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>
+                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="openQr(editingMedia)">
+                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("admin.media.qrCode") }}
+                    </AppButton>
                     <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-3" v-on:click="closeEditMedia">{{ t("shared.common.cancel") }}</AppButton>
                 </div>
             </form>
