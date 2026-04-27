@@ -20,7 +20,7 @@ function onLoadStart() { status.value = "loading"; }
 </script>
 
 <template>
-    <div class="relative overflow-hidden bg-surface-2 w-full h-full" :class="rounded">
+    <div class="relative overflow-hidden bg-surface-2" :class="rounded">
         <!-- Skeleton while loading -->
         <div
             v-if="status === 'loading'"
