@@ -15,9 +15,11 @@ import AppModal from "@/shared/components/AppModal.vue";
 import AppMessage from "@/shared/components/AppMessage.vue";
 import AppNoData from "@/shared/components/AppNoData.vue";
 import { useFileSize } from "@/shared/composables/useFileSize.js";
+import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatSize } = useFileSize();
+const { formatDateTime } = useDateFormat();
 
 const props = defineProps({
     folders: { type: Array, default: () => [] },
@@ -1027,6 +1029,9 @@ async function moveFolder(folderId, newParentId) {
                         <div class="flex justify-between"><dt>{{ t("admin.media.size") }}</dt><dd>{{ formatSize(editingMedia?.size ?? 0) }}</dd></div>
                         <div v-if="editingMedia?.width" class="flex justify-between"><dt>{{ t("admin.media.dimensions") }}</dt><dd>{{ editingMedia.width }}×{{ editingMedia.height }}</dd></div>
                         <div class="flex justify-between"><dt>{{ t("admin.media.mimeType") }}</dt><dd>{{ editingMedia?.mimeType }}</dd></div>
+                        <div v-if="editingMedia?.uploadedBy" class="flex justify-between"><dt>{{ t("admin.media.uploadedBy") }}</dt><dd>{{ editingMedia.uploadedBy }}</dd></div>
+                        <div v-if="editingMedia?.createdAt" class="flex justify-between"><dt>{{ t("admin.media.createdAt") }}</dt><dd>{{ formatDateTime(editingMedia.createdAt) }}</dd></div>
+                        <div v-if="editingMedia?.updatedAt" class="flex justify-between"><dt>{{ t("admin.media.updatedAt") }}</dt><dd>{{ formatDateTime(editingMedia.updatedAt) }}</dd></div>
                     </dl>
                 </div>
 

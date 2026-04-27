@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Entity;
 
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
@@ -56,6 +57,10 @@ class Media implements TimestampableInterface
     #[ORM\ManyToOne(targetEntity: MediaFolder::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?MediaFolder $folder = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $uploadedBy = null;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $position = 0;
@@ -264,6 +269,18 @@ class Media implements TimestampableInterface
     public function setPosition(int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getUploadedBy(): ?User
+    {
+        return $this->uploadedBy;
+    }
+
+    public function setUploadedBy(?User $user): static
+    {
+        $this->uploadedBy = $user;
 
         return $this;
     }

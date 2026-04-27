@@ -42,6 +42,9 @@ admin:
     downloadQr: Télécharger le QR
     storage: Stockage utilisé
     move: Déplacer
+    uploadedBy: Téléversé par
+    createdAt: Créé le
+    updatedAt: Modifié le
     errors:
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.
       folder_name_required: Le nom du dossier est requis.

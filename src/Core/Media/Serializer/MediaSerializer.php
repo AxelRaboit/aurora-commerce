@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Serializer;
 
 use Aurora\Core\Media\Entity\Media;
+use DateTimeInterface;
 
 final readonly class MediaSerializer
 {
@@ -37,6 +38,9 @@ final readonly class MediaSerializer
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
             'position' => $media->getPosition(),
+            'createdAt' => $media->getCreatedAt()?->format(DateTimeInterface::ATOM),
+            'updatedAt' => $media->getUpdatedAt()?->format(DateTimeInterface::ATOM),
+            'uploadedBy' => $media->getUploadedBy()?->getName(),
         ];
     }
 }

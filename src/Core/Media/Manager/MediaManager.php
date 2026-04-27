@@ -12,8 +12,10 @@ use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
+use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -30,6 +32,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private MediaRepository $mediaRepository,
         private ImageVariantGenerator $variantGenerator,
         private TranslatorInterface $translator,
+        private Security $security,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -58,6 +61,11 @@ final readonly class MediaManager implements MediaManagerInterface
         $media->setHeight($height);
         $media->setFolder($folder);
         $media->setVariants($this->variantGenerator->generate($newFilename, (string) $mimeType));
+
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $media->setUploadedBy($user);
+        }
 
         $this->entityManager->persist($media);
         $this->entityManager->flush();
