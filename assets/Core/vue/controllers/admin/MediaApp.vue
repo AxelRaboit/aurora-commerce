@@ -335,15 +335,19 @@ async function saveCrop() {
 // ── QR Code ───────────────────────────────────────────────────────────────────
 const qrMedia = ref(null);
 const qrDataUrl = ref("");
+function mediaPermalink(item) {
+    return item.permalink ?? (window.location.origin + item.url);
+}
+
 async function openQr(item) {
     qrMedia.value = item;
-    qrDataUrl.value = await QRCode.toDataURL(window.location.origin + item.url, { width: 256, margin: 2 });
+    qrDataUrl.value = await QRCode.toDataURL(mediaPermalink(item), { width: 256, margin: 2 });
 }
 
 // ── Copy URL ─────────────────────────────────────────────────────────────────
-async function copyUrl(url) {
+async function copyUrl(item) {
     try {
-        await navigator.clipboard.writeText(window.location.origin + url);
+        await navigator.clipboard.writeText(mediaPermalink(item));
         toast.success(t("admin.media.urlCopied"));
     } catch { toast.error(t("shared.common.error")); }
 }
@@ -1058,7 +1062,7 @@ async function moveFolder(folderId, newParentId) {
                                 <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </button>
-                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item.url)">
+                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item)">
                                     <Copy class="w-4 h-4" :stroke-width="2" />
                                 </button>
                                 <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.qrCode')" v-on:click.stop="openQr(item)">
@@ -1123,7 +1127,7 @@ async function moveFolder(folderId, newParentId) {
                                 <td class="px-3 py-2 text-right">
                                     <div class="flex justify-end gap-1" v-on:click.stop>
                                         <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item.url)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
                                         <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></button>
                                     </div>
                                 </td>
@@ -1245,6 +1249,10 @@ async function moveFolder(folderId, newParentId) {
                         <div v-if="editingMedia?.uploadedBy" class="flex justify-between"><dt>{{ t("admin.media.uploadedBy") }}</dt><dd>{{ editingMedia.uploadedBy }}</dd></div>
                         <div v-if="editingMedia?.createdAt" class="flex justify-between"><dt>{{ t("admin.media.createdAt") }}</dt><dd>{{ formatDateTime(editingMedia.createdAt) }}</dd></div>
                         <div v-if="editingMedia?.updatedAt" class="flex justify-between"><dt>{{ t("admin.media.updatedAt") }}</dt><dd>{{ formatDateTime(editingMedia.updatedAt) }}</dd></div>
+                        <div v-if="editingMedia?.permalink" class="flex justify-between items-center gap-2 pt-1 border-t border-line/40">
+                            <dt class="shrink-0">{{ t("admin.media.permalink") }}</dt>
+                            <dd class="font-mono text-xs text-accent-400 truncate cursor-pointer hover:underline" :title="editingMedia.permalink" v-on:click="copyUrl(editingMedia)">{{ editingMedia.permalink }}</dd>
+                        </div>
                     </dl>
                 </div>
 
@@ -1329,7 +1337,7 @@ async function moveFolder(folderId, newParentId) {
             <div class="flex items-start justify-between gap-4 mb-3">
                 <h3 class="text-sm font-medium text-primary truncate">{{ previewMedia?.originalName }}</h3>
                 <div class="flex gap-2 shrink-0">
-                    <AppButton size="sm" variant="ghost" v-on:click="copyUrl(previewMedia.url)">
+                    <AppButton size="sm" variant="ghost" v-on:click="copyUrl(previewMedia)">
                         <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.copyUrl") }}
                     </AppButton>
                     <AppButton size="sm" variant="ghost" v-on:click="openQr(previewMedia)">

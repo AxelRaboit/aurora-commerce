@@ -6,9 +6,14 @@ namespace Aurora\Core\Media\Serializer;
 
 use Aurora\Core\Media\Entity\Media;
 use DateTimeInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class MediaSerializer
 {
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+    ) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -22,6 +27,7 @@ final readonly class MediaSerializer
         return [
             'id' => $media->getId(),
             'url' => $media->getPublicUrl().'?v='.($media->getUpdatedAt()?->getTimestamp() ?? 0),
+            'permalink' => $this->urlGenerator->generate('media_view', ['id' => $media->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             'filename' => $media->getFilename(),
             'originalName' => $media->getOriginalName(),
             'mimeType' => $media->getMimeType(),

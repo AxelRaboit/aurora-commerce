@@ -44,6 +44,7 @@ admin:
     uploadedBy: Subido por
     createdAt: Creado el
     updatedAt: Modificado el
+    permalink: Enlace permanente
     crop: Recortar
     cropTitle: Recortar imagen
     applyCrop: Aplicar recorte

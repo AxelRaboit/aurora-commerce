@@ -44,6 +44,7 @@ admin:
     uploadedBy: Hochgeladen von
     createdAt: Erstellt am
     updatedAt: Geändert am
+    permalink: Permalink
     crop: Zuschneiden
     cropTitle: Bild zuschneiden
     applyCrop: Zuschnitt anwenden

@@ -45,6 +45,7 @@ admin:
     uploadedBy: Téléversé par
     createdAt: Créé le
     updatedAt: Modifié le
+    permalink: Lien permanent
     crop: Recadrer
     cropTitle: Recadrer l'image
     applyCrop: Appliquer le recadrage
