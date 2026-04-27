@@ -60,11 +60,11 @@ admin:
     usageNone: Ce média n'est utilisé nulle part
     noHistory: Aucune modification enregistrée
     historyAction:
-      media_uploaded: Téléversé
-      media_updated: Modifié
-      media_moved: Déplacé
-      media_deleted: Supprimé
-      media_cropped: Recadré
+      uploaded: Téléversé
+      updated: Modifié
+      moved: Déplacé
+      deleted: Supprimé
+      cropped: Recadré
     favourite: Ajouter aux favoris
     unfavourite: Retirer des favoris
     errors:

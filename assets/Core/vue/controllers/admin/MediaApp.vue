@@ -285,8 +285,7 @@ function closeCrop() {
 }
 
 function historyActionLabel(action) {
-    const key = `admin.media.historyAction.${action.replace(".", "_")}`;
-    return t(key, action);
+    return t(`admin.media.historyAction.${action}`, action);
 }
 
 async function saveCrop() {

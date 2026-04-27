@@ -74,7 +74,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->persist($media);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('media', 'media.uploaded', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
+        $this->auditLogger->log('media', 'uploaded', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
 
         return $media;
     }
@@ -96,14 +96,14 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $media->setFolder($folder);
         $this->entityManager->flush();
-        $this->auditLogger->log('media', 'media.updated', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
+        $this->auditLogger->log('media', 'updated', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
     }
 
     public function move(Media $media, ?MediaFolder $folder): void
     {
         $media->setFolder($folder);
         $this->entityManager->flush();
-        $this->auditLogger->log('media', 'media.moved', 'Media', $media->getId(), [
+        $this->auditLogger->log('media', 'moved', 'Media', $media->getId(), [
             'name' => $media->getOriginalName(),
             'folder' => $folder?->getName(),
         ]);
@@ -123,7 +123,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->remove($media);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('media', 'media.deleted', 'Media', $id, ['name' => $name]);
+        $this->auditLogger->log('media', 'deleted', 'Media', $id, ['name' => $name]);
     }
 
     public function createFolder(MediaFolderInput $input): MediaFolder
@@ -268,7 +268,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $media->setVariants($newVariants);
 
         $this->entityManager->flush();
-        $this->auditLogger->log('media', 'media.cropped', 'Media', $media->getId(), [
+        $this->auditLogger->log('media', 'cropped', 'Media', $media->getId(), [
             'name' => $media->getOriginalName(),
             'crop' => ['x' => $x, 'y' => $y, 'w' => $width, 'h' => $height],
         ]);

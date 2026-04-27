@@ -61,11 +61,11 @@ admin:
     usageNone: Diese Datei wird nirgends verwendet
     noHistory: Keine Änderungen aufgezeichnet
     historyAction:
-      media_uploaded: Hochgeladen
-      media_updated: Geändert
-      media_moved: Verschoben
-      media_deleted: Gelöscht
-      media_cropped: Recadré
+      uploaded: Hochgeladen
+      updated: Geändert
+      moved: Verschoben
+      deleted: Gelöscht
+      cropped: Recadré
     errors:
       focal_out_of_range: Der Fokuspunkt muss zwischen 0 und 1 liegen.
       folder_name_required: Ordnername ist erforderlich.

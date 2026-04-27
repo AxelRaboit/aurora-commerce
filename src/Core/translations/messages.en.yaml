@@ -59,11 +59,11 @@ admin:
     usageNone: This media is not used anywhere
     noHistory: No changes recorded
     historyAction:
-      media_uploaded: Uploaded
-      media_updated: Updated
-      media_moved: Moved
-      media_deleted: Deleted
-      media_cropped: Recadré
+      uploaded: Uploaded
+      updated: Updated
+      moved: Moved
+      deleted: Deleted
+      cropped: Recadré
     favourite: Add to favourites
     unfavourite: Remove from favourites
     errors:
