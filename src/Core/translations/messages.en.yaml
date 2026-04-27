@@ -44,6 +44,7 @@ admin:
     uploadedBy: Uploaded by
     createdAt: Created at
     updatedAt: Updated at
+    captionPlaceholder: Describe this media…
     errors:
       focal_out_of_range: Focal point must be between 0 and 1.
       folder_name_required: Folder name is required.

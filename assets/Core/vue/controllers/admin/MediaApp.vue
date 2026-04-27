@@ -1011,6 +1011,7 @@ async function moveFolder(folderId, newParentId) {
                     <AppTextarea
                         v-model="editForm.caption"
                         :label="t('admin.media.caption')"
+                        :placeholder="t('admin.media.captionPlaceholder')"
                         :rows="3"
                     />
                     <AppMultiselect

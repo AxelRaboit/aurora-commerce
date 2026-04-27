@@ -45,6 +45,7 @@ admin:
     uploadedBy: Téléversé par
     createdAt: Créé le
     updatedAt: Modifié le
+    captionPlaceholder: Décrivez ce média…
     errors:
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.
       folder_name_required: Le nom du dossier est requis.
