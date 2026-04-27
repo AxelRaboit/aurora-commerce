@@ -16,6 +16,7 @@ import AppMultiselect from "@/shared/components/AppMultiselect.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppMessage from "@/shared/components/AppMessage.vue";
 import AppNoData from "@/shared/components/AppNoData.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { useFileSize } from "@/shared/composables/useFileSize.js";
 import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 
@@ -1043,13 +1044,13 @@ async function moveFolder(folderId, newParentId) {
                             <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
                         </div>
                         <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden cursor-pointer">
-                            <img
+                            <AppImage
                                 v-if="item.isImage"
                                 :src="item.thumbnailUrl ?? item.url"
                                 :alt="item.alt ?? ''"
-                                class="w-full h-full object-cover"
-                                :style="{ objectPosition: item.focalPositionCss ?? '50% 50%' }"
-                            >
+                                object-fit="cover"
+                                :focal-point="item.focalPositionCss ?? '50% 50%'"
+                            />
                             <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
                             <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
                             <!-- Quick actions overlay -->
@@ -1101,8 +1102,13 @@ async function moveFolder(folderId, newParentId) {
                                 </td>
                                 <td class="px-3 py-2">
                                     <div class="flex items-center gap-2">
-                                        <img v-if="item.isImage" :src="item.thumbnailUrl ?? item.url" class="w-8 h-8 rounded object-cover shrink-0">
-                                        <ImageIcon v-else class="w-8 h-8 text-muted shrink-0" :stroke-width="1.5" />
+                                        <AppImage
+                                            :src="item.isImage ? (item.thumbnailUrl ?? item.url) : null"
+                                            :alt="item.alt ?? ''"
+                                            object-fit="cover"
+                                            rounded="rounded"
+                                            class="w-8 h-8 shrink-0"
+                                        />
                                         <div class="min-w-0">
                                             <div class="truncate font-medium text-primary">{{ item.originalName }}</div>
                                             <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 flex items-center gap-1">
@@ -1328,7 +1334,14 @@ async function moveFolder(folderId, newParentId) {
                 </div>
             </div>
             <div class="flex items-center justify-center bg-surface-2 rounded-xl min-h-48">
-                <img v-if="previewMedia?.isImage" :src="previewMedia.url" :alt="previewMedia.alt ?? ''" class="max-w-full max-h-[70vh] object-contain rounded-lg">
+                <AppImage
+                    v-if="previewMedia?.isImage"
+                    :src="previewMedia.url"
+                    :alt="previewMedia.alt ?? ''"
+                    object-fit="contain"
+                    rounded="rounded-lg"
+                    class="max-w-full max-h-[70vh]"
+                />
                 <div v-else class="flex flex-col items-center gap-3 py-12">
                     <ImageIcon class="w-16 h-16 text-muted" :stroke-width="1.5" />
                     <p class="text-sm text-muted">{{ previewMedia?.mimeType }}</p>

@@ -14,6 +14,7 @@ import AppBadge from "@/shared/components/AppBadge.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppLoadMore from "@/shared/components/AppLoadMore.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Package, Save, } from "lucide-vue-next";
 import { required } from "@/shared/utils/validators.js";
 import { toast } from "vue-sonner";
@@ -140,7 +141,7 @@ const actionLabel = (action) => {
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
                     <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                         <div v-if="product.image" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shrink-0">
-                            <img :src="product.image.url" :alt="product.image.alt ?? product.name" class="w-full h-full object-cover">
+                            <AppImage :src="product.image.url" :alt="product.image.alt ?? product.name" object-fit="cover" />
                         </div>
                         <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-accent-600/20 text-accent-400 flex items-center justify-center shrink-0">
                             <Package class="w-5 h-5 sm:w-6 sm:h-6" :stroke-width="2" />

@@ -17,6 +17,7 @@ import AppPagination from "@/shared/components/AppPagination.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
 import AppSearchInput from "@/shared/components/AppSearchInput.vue";
 import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
@@ -200,7 +201,7 @@ function formatPrice(product) {
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <img v-if="listing.displayImage" :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" class="w-full h-full object-cover">
+                                    <AppImage v-if="listing.displayImage" :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
                                     <span v-else class="text-muted text-xs">—</span>
                                 </div>
                                 <div class="min-w-0">

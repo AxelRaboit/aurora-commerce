@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
 import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
 import AppButton from "@/shared/components/AppButton.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 
 const { t } = useI18n();
 
@@ -63,7 +64,14 @@ const previewHtml = computed(() =>
                 <div class="flex-1 w-full max-w-6xl mx-auto px-12 py-12">
                     <div v-if="loading" class="text-secondary text-sm">{{ t("shared.common.loading") }}</div>
                     <template v-else-if="post">
-                        <img v-if="post.featuredMediaUrl" :src="post.featuredMediaUrl" class="w-full max-h-80 object-cover rounded-xl mb-8" alt="">
+                        <AppImage
+                            v-if="post.featuredMediaUrl"
+                            :src="post.featuredMediaUrl"
+                            object-fit="cover"
+                            rounded="rounded-xl"
+                            class="w-full max-h-80 mb-8"
+                            alt=""
+                        />
                         <h1 v-if="post.translations?.[activeLocale]?.title" class="text-3xl font-bold text-primary mb-8">
                             {{ post.translations[activeLocale].title }}
                         </h1>

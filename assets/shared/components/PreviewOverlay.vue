@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
 import AppButton from "@/shared/components/AppButton.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 
 const { t } = useI18n();
 
@@ -35,7 +36,14 @@ defineEmits(["close"]);
                 </div>
 
                 <div class="flex-1 w-full max-w-3xl mx-auto px-6 py-12">
-                    <img v-if="featuredMediaUrl" :src="featuredMediaUrl" class="w-full max-h-80 object-cover rounded-xl mb-8" alt="">
+                    <AppImage
+                        v-if="featuredMediaUrl"
+                        :src="featuredMediaUrl"
+                        object-fit="cover"
+                        rounded="rounded-xl"
+                        class="w-full max-h-80 mb-8"
+                        alt=""
+                    />
                     <h1 v-if="title" class="text-3xl font-bold text-primary mb-8">{{ title }}</h1>
                     <div v-if="html" class="prose-preview" v-html="html" />
                     <p v-else class="text-muted text-sm italic">{{ t("admin.posts.previewEmpty") }}</p>

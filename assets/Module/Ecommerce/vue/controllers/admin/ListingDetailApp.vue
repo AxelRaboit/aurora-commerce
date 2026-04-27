@@ -13,6 +13,7 @@ import AppBadge from "@/shared/components/AppBadge.vue";
 import AppModal from "@/shared/components/AppModal.vue";
 import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
@@ -96,7 +97,7 @@ async function doDelete() {
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
                     <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                         <div v-if="listing.displayImage" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shrink-0">
-                            <img :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" class="w-full h-full object-cover">
+                            <AppImage :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
                         </div>
                         <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-accent-600/20 text-accent-400 flex items-center justify-center shrink-0">
                             <ShoppingBag class="w-5 h-5 sm:w-6 sm:h-6" :stroke-width="2" />
@@ -150,7 +151,7 @@ async function doDelete() {
         <div class="space-y-4">
             <div v-if="listing.displayImage" class="bg-surface border border-line/60 rounded-lg overflow-hidden">
                 <div class="aspect-square bg-surface-2">
-                    <img :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" class="w-full h-full object-cover">
+                    <AppImage :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
                 </div>
                 <p v-if="listing.featuredImage" class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('admin.ecommerce.listings.featuredImageHint') }}</p>
                 <p v-else class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('admin.ecommerce.listings.productImageHint') }}</p>

@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { Image as ImageIcon, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/AppButton.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { openMediaPicker } from "@/shared/utils/mediaPicker.js";
 
 const props = defineProps({
@@ -40,7 +41,7 @@ function clear() {
                 :style="{ width: `${size}px`, height: `${size}px` }"
                 v-on:click="pick"
             >
-                <img :src="modelValue.url" alt="" class="w-full h-full object-cover">
+                <AppImage :src="modelValue.url" alt="" object-fit="cover" />
                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                     <span class="text-white text-xs font-medium">{{ changeLabel || t('shared.media.change') }}</span>
                 </div>

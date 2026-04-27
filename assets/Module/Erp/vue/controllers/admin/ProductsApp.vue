@@ -16,6 +16,7 @@ import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppPagination from "@/shared/components/AppPagination.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
+import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
@@ -208,7 +209,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <img v-if="product.image" :src="product.image.url" :alt="product.image.alt ?? product.name" class="w-full h-full object-cover">
+                                    <AppImage v-if="product.image" :src="product.image.url" :alt="product.image.alt ?? product.name" object-fit="cover" />
                                     <span v-else class="text-muted text-xs">—</span>
                                 </div>
                                 <span class="font-medium text-primary truncate">{{ product.name }}</span>

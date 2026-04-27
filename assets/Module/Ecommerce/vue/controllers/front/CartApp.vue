@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import AppImage from "@/shared/components/AppImage.vue";
 
 const { t } = useI18n();
 
@@ -108,7 +109,7 @@ function broadcastCartChange(count) {
         <div v-else class="space-y-4">
             <div v-for="item in items" :key="item.listingId" class="bg-surface border border-line rounded-xl p-4 flex items-center gap-4 transition-opacity" :class="{ 'opacity-60': pendingUpdates.has(item.listingId) }">
                 <div v-if="item.imageUrl" class="w-20 h-20 bg-surface-2 rounded-lg overflow-hidden shrink-0">
-                    <img :src="item.imageUrl" :alt="item.title" class="w-full h-full object-cover">
+                    <AppImage :src="item.imageUrl" :alt="item.title" object-fit="cover" />
                 </div>
                 <div v-else class="w-20 h-20 bg-surface-2 rounded-lg shrink-0" />
 
