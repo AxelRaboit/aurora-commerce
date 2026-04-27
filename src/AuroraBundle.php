@@ -83,6 +83,7 @@ class AuroraBundle extends AbstractBundle
         $builder->prependExtensionConfig('twig', [
             'file_name_pattern' => '*.twig',
             'paths' => [
+                $dir.'/templates' => null,
                 $dir.'/assets/styles' => 'styles',
                 $dir.'/templates/Core' => 'Core',
                 $dir.'/templates/Module/Editorial' => 'Editorial',
