@@ -43,8 +43,10 @@ class MediaController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(Request $request): Response
     {
+        $serializer = $this->folderSerializer->withMediaCounts($this->mediaRepository->countGroupedByFolders());
+
         $folders = array_map(
-            $this->folderSerializer->serialize(...),
+            $serializer->serialize(...),
             $this->folderRepository->findAllOrdered(),
         );
 
@@ -83,8 +85,10 @@ class MediaController extends AbstractController
             $this->mediaRepository->findByFolder($folder, $search ?: null),
         );
 
+        $serializer = $this->folderSerializer->withMediaCounts($this->mediaRepository->countGroupedByFolders());
+
         $folders = array_map(
-            $this->folderSerializer->serialize(...),
+            $serializer->serialize(...),
             $this->folderRepository->findAllOrdered(),
         );
 

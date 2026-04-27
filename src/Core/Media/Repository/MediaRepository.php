@@ -45,6 +45,26 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, int> map of folder_id => media count
+     */
+    public function countGroupedByFolders(): array
+    {
+        $rows = $this->createQueryBuilder('m')
+            ->select('IDENTITY(m.folder) AS folderId, COUNT(m.id) AS cnt')
+            ->where('m.folder IS NOT NULL')
+            ->groupBy('m.folder')
+            ->getQuery()
+            ->getArrayResult();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[(int) $row['folderId']] = (int) $row['cnt'];
+        }
+
+        return $map;
+    }
+
+    /**
      * @return list<Media>
      */
     public function findByFolder(?MediaFolder $folder, ?string $search = null): array

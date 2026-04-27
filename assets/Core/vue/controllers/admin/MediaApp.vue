@@ -74,6 +74,7 @@ function flattenFolders(nodes, depth = 0, skipDescendantsOf = null) {
             ...node,
             depth,
             childCount: node.children.length,
+            mediaCount: node.mediaCount ?? 0,
         });
         const collapsed = skipDescendantsOf?.has(node.id) ?? false;
         if (node.children.length && !collapsed) {
@@ -550,7 +551,7 @@ async function moveFolder(folderId, newParentId) {
                         >
                             <Folder class="w-4 h-4 shrink-0" :stroke-width="2" />
                             <span class="flex-1 text-sm truncate">{{ folder.name }}</span>
-                            <span v-if="folder.childCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.childCount }}</span>
+                            <span v-if="folder.mediaCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.mediaCount }}</span>
                         </button>
                         <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
                             <AppIconButton color="accent" v-on:click="openEditFolder(folder)">
