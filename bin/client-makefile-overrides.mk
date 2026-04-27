@@ -56,6 +56,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 
 aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) update axelraboit/aurora
+	$(COMPOSER) install --working-dir=$(AURORA)
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
