@@ -145,19 +145,20 @@ cat > "$DEST/bin/console" <<'EOF'
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-$_SERVER['APP_CACHE_DIR'] ??= dirname(__DIR__).'/var/cache';
-$_SERVER['APP_LOG_DIR'] ??= dirname(__DIR__).'/var/log';
-
-require_once dirname(__DIR__).'/vendor/autoload.php';
+if (!is_dir(dirname(__DIR__).'/vendor')) {
+    throw new LogicException('Dependencies are missing. Try running "composer install".');
+}
 
 if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {
-    throw new LogicException('Symfony Runtime is missing. Run "composer install".');
+    throw new LogicException('Symfony Runtime is missing. Try running "composer install".');
 }
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
-    return new Application(new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']));
+    $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+
+    return new Application($kernel);
 };
 EOF
 chmod +x "$DEST/bin/console"
@@ -170,10 +171,6 @@ info "Writing public/index.php..."
 cat > "$DEST/public/index.php" <<'EOF'
 <?php
 
-$_SERVER['APP_CACHE_DIR'] ??= dirname(__DIR__).'/var/cache';
-$_SERVER['APP_LOG_DIR'] ??= dirname(__DIR__).'/var/log';
-
-require_once dirname(__DIR__).'/vendor/autoload.php';
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return static function (array $context) {
