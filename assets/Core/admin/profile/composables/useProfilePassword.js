@@ -1,10 +1,10 @@
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useForm } from "@/shared/composables/useForm.js";
-import { required } from "@/shared/utils/validators.js";
-import { passwordValidator } from "@/shared/utils/passwordRules.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { required } from "@/shared/utils/validation/validators.js";
+import { passwordValidator } from "@/shared/utils/validation/passwordRules.js";
 
 export function useProfilePassword(passwordPath) {
     const { t } = useI18n();

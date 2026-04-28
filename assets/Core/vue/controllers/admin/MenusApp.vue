@@ -1,10 +1,10 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import MenuListPanel from "@core/admin/menus/MenuListPanel.vue";
 import MenuEditorPanel from "@core/admin/menus/MenuEditorPanel.vue";
 import MenuItemModal from "@core/admin/menus/MenuItemModal.vue";

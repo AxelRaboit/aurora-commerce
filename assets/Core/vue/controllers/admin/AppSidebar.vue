@@ -3,8 +3,8 @@ import { computed, ref, watch, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/shared/composables/useTheme.js";
-import AppLogo from "@/shared/components/AppLogo.vue";
-import AppButton from "@/shared/components/AppButton.vue";
+import AppLogo from "@/shared/components/display/AppLogo.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 import "@/css/sidebar.css";
 import {
     LayoutDashboard,
@@ -37,8 +37,8 @@ import {
     Loader2,
     ChevronDown,
 } from "lucide-vue-next";
-import { statusBadge } from "@/shared/utils/statusStyles.js";
-import { highlightMatch } from "@/shared/utils/highlightMatch.js";
+import { statusBadge } from "@/shared/utils/format/statusStyles.js";
+import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
 
 const ICON_MAP = {
     "layout-dashboard": LayoutDashboard,

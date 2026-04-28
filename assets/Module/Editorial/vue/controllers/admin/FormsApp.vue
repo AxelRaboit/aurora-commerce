@@ -1,7 +1,7 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, computed, onMounted } from "vue";
-import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { VueDraggable } from "vue-draggable-plus";
@@ -16,15 +16,15 @@ import {
     Layers,
     Inbox,
     Save, } from "lucide-vue-next";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import { slugify } from "@/shared/utils/slugify.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import { slugify } from "@/shared/utils/format/slugify.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();

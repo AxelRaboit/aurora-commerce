@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
 import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus } from "lucide-vue-next";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 
 const props = defineProps({
     node: { type: Object, required: true },

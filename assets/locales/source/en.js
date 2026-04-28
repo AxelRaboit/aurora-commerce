@@ -120,7 +120,8 @@ export default {
             deleteConfirm: 'Delete "{name}"? This action is irreversible.',
             bulkDelete: "Delete selection ({count})",
             bulkDeleteConfirm: "Delete {count} media file(s)?",
-            bulkDeleteConfirmDesc: "This action is irreversible. The files will be permanently deleted.",
+            bulkDeleteConfirmDesc:
+                "This action is irreversible. The files will be permanently deleted.",
             bulkDeleted: "Media deleted.",
             createFolder: "Create folder",
             editFolder: "Rename folder",
@@ -628,9 +629,11 @@ export default {
             moderationOn: "Moderation on",
             moderationOff: "Moderation off",
             moderationEnableConfirm: "Enable moderation?",
-            moderationEnableConfirmDesc: "New comments will be held for review before being published.",
+            moderationEnableConfirmDesc:
+                "New comments will be held for review before being published.",
             moderationDisableConfirm: "Disable moderation?",
-            moderationDisableConfirmDesc: "New comments will be approved automatically without review.",
+            moderationDisableConfirmDesc:
+                "New comments will be approved automatically without review.",
             moderationEnabled:
                 "Moderation enabled — comments will be held for review.",
             moderationDisabled:
@@ -650,7 +653,8 @@ export default {
             approveSuccess: "Comment approved.",
             spamSuccess: "Comment marked as spam.",
             spamConfirm: "Mark as spam?",
-            spamConfirmDesc: "This comment will be hidden and flagged as unwanted.",
+            spamConfirmDesc:
+                "This comment will be hidden and flagged as unwanted.",
         },
         forms: {
             create: "New form",

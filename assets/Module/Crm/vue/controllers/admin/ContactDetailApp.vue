@@ -1,18 +1,19 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppLink from "@/shared/components/AppLink.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Pencil, Trash2, Save, } from "lucide-vue-next";
-import { required, email as emailValidator } from "@/shared/utils/validators.js";
+import { required, email as emailValidator } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
 
 const { t } = useI18n();
@@ -60,12 +61,7 @@ async function submitEdit() {
 }
 
 // Delete
-const showDelete = ref(false);
-const { loading: deleteLoading, request: deleteRequest } = useApiRequest();
-async function doDelete() {
-    const data = await deleteRequest(props.deletePath, {});
-    if (data?.success) window.location.href = props.backPath;
-}
+const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
 
 const actionLabel = (action) => {
     const map = { 'contact.created': t('admin.crm.activity.created'), 'contact.updated': t('admin.crm.activity.updated'), 'contact.deleted': t('admin.crm.activity.deleted') };

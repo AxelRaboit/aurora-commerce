@@ -1,28 +1,28 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useListPage } from "@/shared/composables/useListPage.js";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useDelete } from "@/shared/composables/useDelete.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppToggle from "@/shared/components/AppToggle.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
-import AppImage from "@/shared/components/AppImage.vue";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validators.js";
-import { formatProductPrice } from "@/shared/utils/formatPrice.js";
-import { computed } from "vue";
+import { required } from "@/shared/utils/validation/validators.js";
+import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
+import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 
 const { t } = useI18n();
 
@@ -64,14 +64,6 @@ function makeImageRef(form) {
     });
 }
 
-function slugify(value) {
-    return (value ?? "")
-        .toLowerCase()
-        .normalize("NFD").replace(/[̀-ͯ]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-}
-
 // --- Create ---
 const showCreate = ref(false);
 const newListing = ref(emptyForm());
@@ -86,9 +78,7 @@ function openCreate() {
 }
 
 function onProductChange(product, form) {
-    if (product && !form.slug) {
-        form.slug = slugify(product.name);
-    }
+    if (product) form.slug = slugifyIfEmpty(form.slug, product.name);
 }
 
 async function submitCreate() {

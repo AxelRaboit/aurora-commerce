@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 
 const { t } = useI18n();
 

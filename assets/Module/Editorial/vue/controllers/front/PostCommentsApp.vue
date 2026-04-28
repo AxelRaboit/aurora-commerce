@@ -1,8 +1,8 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import PostCommentsForm from "./PostCommentsForm.vue";
 import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
 

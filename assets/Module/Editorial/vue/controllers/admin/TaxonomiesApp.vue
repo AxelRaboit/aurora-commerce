@@ -1,23 +1,23 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, computed, reactive, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useFormModal } from "@/shared/composables/useFormModal.js";
+import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, } from "lucide-vue-next";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppMessage from "@/shared/components/AppMessage.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import TermNode from "@editorial/admin/taxonomies/TermNode.vue";
-import { slugify } from "@/shared/utils/slugify.js";
+import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 
 const { t } = useI18n();
 
@@ -173,14 +173,14 @@ function openEditTerm(term) {
 
 function autoSlugTerm(locale) {
     const entry = termForm.translations[locale];
-    if (entry && !entry.slug) entry.slug = slugify(entry.name);
+    if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
 }
 
 async function submitTerm() {
     if (!selected.value) return;
     for (const locale of props.locales) {
         const entry = termForm.translations[locale];
-        if (entry?.name && !entry.slug) entry.slug = slugify(entry.name);
+        if (entry?.name) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
     }
     const url = termModal.editing
         ? props.termEditPath.replace("__id__", selected.value.id).replace("__termId__", termModal.editing.id)

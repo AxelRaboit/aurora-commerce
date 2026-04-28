@@ -1,11 +1,11 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppToggle from "@/shared/components/AppToggle.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppToggle from "@/shared/components/form/AppToggle.vue";
 import { Search, FileText } from "lucide-vue-next";
 
 const props = defineProps({

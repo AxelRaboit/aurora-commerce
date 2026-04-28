@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
-import AppImage from "@/shared/components/AppImage.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 
 const { t } = useI18n();
 

@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Check, X } from "lucide-vue-next";
-import AppButton from "@/shared/components/AppButton.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 

@@ -1,24 +1,25 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { statusBadgeColor } from "@/shared/utils/statusStyles.js";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { usePostList } from "@editorial/admin/posts/composables/usePostList.js";
 import { usePostDelete } from "@editorial/admin/posts/composables/usePostDelete.js";
 import { Pencil, Trash2, Plus, FileText, Eye, Inbox, RotateCcw, ExternalLink } from "lucide-vue-next";
 import PostEditor from "@editorial/admin/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/admin/posts/PostPreviewOverlay.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import { useUrlSearchSync } from "@/shared/composables/useUrlSearchSync.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
+import { PostStatus } from "@editorial/utils/postStatus.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -232,7 +233,7 @@ async function openPreview(post) {
                     <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton
-                            v-if="frontUrl(post) && !trashed && post.status === 'published'"
+                            v-if="frontUrl(post) && !trashed && post.status === PostStatus.Published"
                             color="emerald"
                             :title="t('shared.common.view')"
                             :href="frontUrl(post)"
@@ -294,7 +295,7 @@ async function openPreview(post) {
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton
-                                    v-if="frontUrl(post) && !trashed && post.status === 'published'"
+                                    v-if="frontUrl(post) && !trashed && post.status === PostStatus.Published"
                                     color="emerald"
                                     :title="t('shared.common.view')"
                                     :href="frontUrl(post)"

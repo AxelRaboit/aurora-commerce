@@ -1,24 +1,25 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { useLoadMore } from "@/shared/composables/useLoadMore.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppLoadMore from "@/shared/components/AppLoadMore.vue";
-import AppImage from "@/shared/components/AppImage.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useLoadMore } from "@/shared/composables/api/useLoadMore.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppLoadMore from "@/shared/components/nav/AppLoadMore.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Package, Save, } from "lucide-vue-next";
-import { required } from "@/shared/utils/validators.js";
-import { formatProductPrice } from "@/shared/utils/formatPrice.js";
-import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/currencies.js";
+import { required } from "@/shared/utils/validation/validators.js";
+import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
+import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
 import { toast } from "vue-sonner";
 
 const { t } = useI18n();
@@ -94,13 +95,7 @@ const { items: activityItems, hasMore: hasMoreActivity, loading: loadingActivity
     useLoadMore(props.activityPath, props.activity);
 
 // --- Delete ---
-const showDelete = ref(false);
-const { loading: deleteLoading, request: deleteRequest } = useApiRequest();
-
-async function doDelete() {
-    const data = await deleteRequest(props.deletePath, {});
-    if (data?.success) window.location.href = props.backPath;
-}
+const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
 
 const actionLabel = (action) => {
     const map = {

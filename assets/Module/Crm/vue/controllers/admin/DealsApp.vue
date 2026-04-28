@@ -1,24 +1,24 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useListPage } from "@/shared/composables/useListPage.js";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useDelete } from "@/shared/composables/useDelete.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppDatePicker from "@/shared/components/AppDatePicker.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validators.js";
+import { required } from "@/shared/utils/validation/validators.js";
 
 const { t } = useI18n();
 const props = defineProps({

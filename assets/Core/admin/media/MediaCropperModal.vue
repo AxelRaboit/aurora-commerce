@@ -1,0 +1,111 @@
+<script setup>
+import { nextTick, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { Save } from "lucide-vue-next";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
+import { toast } from "vue-sonner";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+
+const { t } = useI18n();
+
+const props = defineProps({
+    media: { type: Object, default: null },
+    cropPath: { type: String, required: true },
+});
+
+const emit = defineEmits(["close", "cropped"]);
+
+const SNAP_THRESHOLD = 12;
+const saving = ref(false);
+const imageEl = ref(null);
+let cropper = null;
+
+watch(
+    () => props.media,
+    async (item) => {
+        if (!item) {
+            cropper?.destroy();
+            cropper = null;
+            return;
+        }
+        await nextTick();
+        if (!imageEl.value) return;
+        cropper?.destroy();
+        cropper = new Cropper(imageEl.value, {
+            viewMode: 1,
+            autoCropArea: 0.9,
+            movable: true,
+            zoomable: true,
+            background: true,
+            cropmove: snapToEdges,
+        });
+    },
+);
+
+function snapToEdges() {
+    if (!cropper) return;
+    const d = cropper.getData(true);
+    const img = cropper.getImageData();
+    let { x, y, width, height } = d;
+    let changed = false;
+    if (x < SNAP_THRESHOLD) { x = 0; changed = true; }
+    if (y < SNAP_THRESHOLD) { y = 0; changed = true; }
+    if (x + width > img.naturalWidth - SNAP_THRESHOLD) { width = img.naturalWidth - x; changed = true; }
+    if (y + height > img.naturalHeight - SNAP_THRESHOLD) { height = img.naturalHeight - y; changed = true; }
+    if (changed) cropper.setData({ x, y, width, height });
+}
+
+function close() {
+    cropper?.destroy();
+    cropper = null;
+    saving.value = false;
+    emit("close");
+}
+
+async function save() {
+    if (!cropper || !props.media) return;
+    saving.value = true;
+    try {
+        const d = cropper.getData(true);
+        const url = props.cropPath.replace("__id__", props.media.id);
+        const res = await fetch(url, {
+            method: HttpMethod.Post,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ x: d.x, y: d.y, width: d.width, height: d.height }),
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error();
+        emit("cropped", data.media);
+        toast.success(t("admin.media.cropped"));
+        close();
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        saving.value = false;
+    }
+}
+</script>
+
+<template>
+    <AppModal :show="!!media" max-width="5xl" v-on:close="close">
+        <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ media?.originalName }}</h3>
+        <div style="height: 65vh; width: 100%; overflow: hidden;">
+            <img
+                v-if="media"
+                ref="imageEl"
+                :src="media.url"
+                :alt="media.alt ?? ''"
+                style="display: block; max-width: 100%;"
+            >
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+            <AppButton variant="ghost" size="md" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="primary" size="md" :loading="saving" v-on:click="save">
+                <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.applyCrop") }}
+            </AppButton>
+        </div>
+    </AppModal>
+</template>

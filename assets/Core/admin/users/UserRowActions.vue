@@ -1,6 +1,6 @@
 <script setup>
 import { Eye, Mail, Pencil, Trash2, Power, LogIn } from "lucide-vue-next";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

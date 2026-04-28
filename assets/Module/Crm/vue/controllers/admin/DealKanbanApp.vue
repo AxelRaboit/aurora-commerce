@@ -3,9 +3,9 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { List, Columns2 } from "lucide-vue-next";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { toast } from "vue-sonner";
 
 const { t } = useI18n();

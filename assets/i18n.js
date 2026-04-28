@@ -1,5 +1,5 @@
 import { createI18n } from "vue-i18n";
-import { deepMerge } from "@/shared/utils/deepMerge.js";
+import { deepMerge } from "@/shared/utils/data/deepMerge.js";
 
 // Manual JS sources (Vue-only keys: admin form labels, validation messages, etc.).
 import frSource from "@/locales/source/fr.js";

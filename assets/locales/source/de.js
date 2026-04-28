@@ -121,7 +121,8 @@ export default {
                 '„{name}" löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
             bulkDelete: "Auswahl löschen ({count})",
             bulkDeleteConfirm: "{count} Datei(en) löschen?",
-            bulkDeleteConfirmDesc: "Diese Aktion kann nicht rückgängig gemacht werden. Die Dateien werden dauerhaft gelöscht.",
+            bulkDeleteConfirmDesc:
+                "Diese Aktion kann nicht rückgängig gemacht werden. Die Dateien werden dauerhaft gelöscht.",
             bulkDeleted: "Dateien gelöscht.",
             createFolder: "Ordner erstellen",
             editFolder: "Ordner umbenennen",
@@ -634,9 +635,11 @@ export default {
             moderationOn: "Moderation aktiv",
             moderationOff: "Moderation inaktiv",
             moderationEnableConfirm: "Moderation aktivieren?",
-            moderationEnableConfirmDesc: "Neue Kommentare werden vor der Veröffentlichung zur Prüfung zurückgehalten.",
+            moderationEnableConfirmDesc:
+                "Neue Kommentare werden vor der Veröffentlichung zur Prüfung zurückgehalten.",
             moderationDisableConfirm: "Moderation deaktivieren?",
-            moderationDisableConfirmDesc: "Neue Kommentare werden automatisch ohne Prüfung genehmigt.",
+            moderationDisableConfirmDesc:
+                "Neue Kommentare werden automatisch ohne Prüfung genehmigt.",
             moderationEnabled:
                 "Moderation aktiviert — Kommentare werden zur Prüfung zurückgehalten.",
             moderationDisabled:
@@ -656,7 +659,8 @@ export default {
             approveSuccess: "Kommentar genehmigt.",
             spamSuccess: "Kommentar als Spam markiert.",
             spamConfirm: "Als Spam markieren?",
-            spamConfirmDesc: "Dieser Kommentar wird ausgeblendet und als unerwünscht eingestuft.",
+            spamConfirmDesc:
+                "Dieser Kommentar wird ausgeblendet und als unerwünscht eingestuft.",
         },
         forms: {
             create: "Neues Formular",

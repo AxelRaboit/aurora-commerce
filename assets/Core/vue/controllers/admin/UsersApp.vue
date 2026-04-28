@@ -1,23 +1,23 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
-import { usePaginatedFetch } from "@/shared/composables/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppFileInput from "@/shared/components/AppFileInput.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppFileInput from "@/shared/components/form/AppFileInput.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import UserRowActions from "@core/admin/users/UserRowActions.vue";
 import UserAvatar from "@core/admin/users/UserAvatar.vue";
 

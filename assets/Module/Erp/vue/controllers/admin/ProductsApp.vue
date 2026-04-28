@@ -1,27 +1,27 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useListPage } from "@/shared/composables/useListPage.js";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useDelete } from "@/shared/composables/useDelete.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
-import AppImage from "@/shared/components/AppImage.vue";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validators.js";
-import { formatProductPrice } from "@/shared/utils/formatPrice.js";
-import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/currencies.js";
+import { required } from "@/shared/utils/validation/validators.js";
+import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
+import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
 
 const { t } = useI18n();
 

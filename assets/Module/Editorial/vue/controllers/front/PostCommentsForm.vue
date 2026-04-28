@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import AppButton from "@/shared/components/AppButton.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 

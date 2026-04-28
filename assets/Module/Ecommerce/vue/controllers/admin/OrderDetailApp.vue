@@ -1,14 +1,14 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
-import { formatCurrency } from "@/shared/utils/formatPrice.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { formatCurrency } from "@/shared/utils/format/formatPrice.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Truck, PackageCheck, Ban, Clock } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 

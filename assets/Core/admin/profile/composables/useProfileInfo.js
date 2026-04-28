@@ -1,9 +1,13 @@
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useForm } from "@/shared/composables/useForm.js";
-import { required, email, compose } from "@/shared/utils/validators.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import {
+    required,
+    email,
+    compose,
+} from "@/shared/utils/validation/validators.js";
 
 export function useProfileInfo(updatePath, initialName, initialEmail) {
     const { t } = useI18n();

@@ -121,7 +121,8 @@ export default {
             deleteConfirm: "¿Eliminar «{name}»? Esta acción es irreversible.",
             bulkDelete: "Eliminar selección ({count})",
             bulkDeleteConfirm: "¿Eliminar {count} archivo(s)?",
-            bulkDeleteConfirmDesc: "Esta acción es irreversible. Los archivos se eliminarán definitivamente.",
+            bulkDeleteConfirmDesc:
+                "Esta acción es irreversible. Los archivos se eliminarán definitivamente.",
             bulkDeleted: "Archivos eliminados.",
             createFolder: "Crear carpeta",
             editFolder: "Renombrar carpeta",
@@ -636,9 +637,11 @@ export default {
             moderationOn: "Moderación activada",
             moderationOff: "Moderación desactivada",
             moderationEnableConfirm: "¿Activar la moderación?",
-            moderationEnableConfirmDesc: "Los nuevos comentarios quedarán pendientes antes de publicarse.",
+            moderationEnableConfirmDesc:
+                "Los nuevos comentarios quedarán pendientes antes de publicarse.",
             moderationDisableConfirm: "¿Desactivar la moderación?",
-            moderationDisableConfirmDesc: "Los nuevos comentarios se aprobarán automáticamente sin revisión.",
+            moderationDisableConfirmDesc:
+                "Los nuevos comentarios se aprobarán automáticamente sin revisión.",
             moderationEnabled:
                 "Moderación activada — los comentarios quedarán pendientes.",
             moderationDisabled:
@@ -658,7 +661,8 @@ export default {
             approveSuccess: "Comentario aprobado.",
             spamSuccess: "Comentario marcado como spam.",
             spamConfirm: "¿Marcar como spam?",
-            spamConfirmDesc: "Este comentario quedará oculto y clasificado como no deseado.",
+            spamConfirmDesc:
+                "Este comentario quedará oculto y clasificado como no deseado.",
         },
         forms: {
             create: "Nuevo formulario",

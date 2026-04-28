@@ -1,7 +1,7 @@
 <script setup>
 import { Check, Clock, ShieldCheck, X } from "lucide-vue-next";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import { accessRequestStatusBadgeColor } from "@/shared/utils/statusStyles.js";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import { accessRequestStatusBadgeColor } from "@/shared/utils/format/statusStyles.js";
 
 defineProps({
     accessRequest: { type: Object, required: true },

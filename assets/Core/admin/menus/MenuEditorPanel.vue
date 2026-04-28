@@ -4,10 +4,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Trash2, Pencil, ListTree } from "lucide-vue-next";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import MenuItemRow from "@core/admin/menus/MenuItemRow.vue";
 
 const { t } = useI18n();

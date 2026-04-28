@@ -1,15 +1,15 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Palette, Check, Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 
 const { t } = useI18n();
 

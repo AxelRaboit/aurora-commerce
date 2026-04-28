@@ -1,25 +1,26 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop } from "lucide-vue-next";
-import QRCode from "qrcode";
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppMessage from "@/shared/components/AppMessage.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppImage from "@/shared/components/AppImage.vue";
-import { useFileSize } from "@/shared/composables/useFileSize.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
+import { useFileSize } from "@/shared/composables/format/useFileSize.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { buildFolderTree, flattenFolders } from "@core/admin/media/utils/folderTree.js";
+import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
+import MediaQrModal from "@core/admin/media/MediaQrModal.vue";
+import MediaCropperModal from "@core/admin/media/MediaCropperModal.vue";
 
 const { t } = useI18n();
 const { formatSize } = useFileSize();
@@ -100,42 +101,6 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener("popstate", onPopState);
 });
-
-// ── Folder tree helpers ──────────────────────────────────────────────────────
-function buildFolderTree(list) {
-    const byId = new Map(list.map((f) => [f.id, { ...f, children: [] }]));
-    const roots = [];
-    for (const node of byId.values()) {
-        if (node.parentId && byId.has(node.parentId)) {
-            byId.get(node.parentId).children.push(node);
-        } else {
-            roots.push(node);
-        }
-    }
-    const sort = (nodes) => {
-        nodes.sort((a, b) => a.name.localeCompare(b.name));
-        nodes.forEach((n) => sort(n.children));
-    };
-    sort(roots);
-    return roots;
-}
-
-function flattenFolders(nodes, depth = 0, skipDescendantsOf = null) {
-    const result = [];
-    for (const node of nodes) {
-        result.push({
-            ...node,
-            depth,
-            childCount: node.children.length,
-            mediaCount: node.mediaCount ?? 0,
-        });
-        const collapsed = skipDescendantsOf?.has(node.id) ?? false;
-        if (node.children.length && !collapsed) {
-            result.push(...flattenFolders(node.children, depth + 1, skipDescendantsOf));
-        }
-    }
-    return result;
-}
 
 const folderTree = computed(() => buildFolderTree(folders.value));
 
@@ -257,15 +222,8 @@ const displayedMedia = computed(() => {
 });
 
 // ── Multi-selection ───────────────────────────────────────────────────────────
-const selectedIds = ref(new Set());
-const isSelecting = ref(false);
-function toggleSelect(id) {
-    const s = new Set(selectedIds.value);
-    if (s.has(id)) s.delete(id); else s.add(id);
-    selectedIds.value = s;
-}
+const { selectedIds, isSelecting, toggle: toggleSelect, clear: clearSelection } = useMultiSelection();
 function selectAll() { selectedIds.value = new Set(displayedMedia.value.map((m) => m.id)); }
-function clearSelection() { selectedIds.value = new Set(); isSelecting.value = false; }
 
 const pendingBulkDelete = ref(false);
 const bulkDeleteLoading = ref(false);
@@ -317,80 +275,27 @@ const previewMedia = ref(null);
 
 // ── Crop ─────────────────────────────────────────────────────────────────────
 const cropMedia = ref(null);
-const cropSaving = ref(false);
-const cropImageEl = ref(null);
-let cropperInstance = null;
 
-const SNAP_THRESHOLD = 12;
-
-async function openCrop(item) {
+function openCrop(item) {
     cropMedia.value = item;
-    await nextTick();
-    if (!cropImageEl.value) return;
-    cropperInstance?.destroy();
-    cropperInstance = new Cropper(cropImageEl.value, {
-        viewMode: 1,
-        autoCropArea: 0.9,
-        movable: true,
-        zoomable: true,
-        background: true,
-        cropmove: snapToEdges,
-    });
 }
 
-function snapToEdges() {
-    if (!cropperInstance) return;
-    const d = cropperInstance.getData(true);
-    const img = cropperInstance.getImageData();
-    let { x, y, width, height } = d;
-    let changed = false;
-    if (x < SNAP_THRESHOLD)                                   { x = 0; changed = true; }
-    if (y < SNAP_THRESHOLD)                                   { y = 0; changed = true; }
-    if (x + width > img.naturalWidth - SNAP_THRESHOLD)        { width = img.naturalWidth - x; changed = true; }
-    if (y + height > img.naturalHeight - SNAP_THRESHOLD)      { height = img.naturalHeight - y; changed = true; }
-    if (changed) cropperInstance.setData({ x, y, width, height });
-}
-
-function closeCrop() {
-    cropperInstance?.destroy();
-    cropperInstance = null;
-    cropMedia.value = null;
-    cropSaving.value = false;
+function onCropped(updatedMedia) {
+    const idx = media.value.findIndex((m) => m.id === updatedMedia.id);
+    if (idx !== -1) media.value[idx] = updatedMedia;
+    if (editingMedia.value?.id === updatedMedia.id) editingMedia.value = updatedMedia;
 }
 
 const historyActionLabel = (action) => t(`admin.media.historyAction.${action}`);
 
-async function saveCrop() {
-    if (!cropperInstance || !cropMedia.value) return;
-    cropSaving.value = true;
-    try {
-        const d = cropperInstance.getData(true);
-        const url = props.cropPath.replace("__id__", cropMedia.value.id);
-        const res = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ x: d.x, y: d.y, width: d.width, height: d.height }),
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error();
-        const idx = media.value.findIndex((m) => m.id === cropMedia.value.id);
-        if (idx !== -1) media.value[idx] = data.media;
-        if (editingMedia.value?.id === cropMedia.value.id) editingMedia.value = data.media;
-        closeCrop();
-        toast.success(t("admin.media.cropped"));
-    } catch { toast.error(t("shared.common.error")); } finally { cropSaving.value = false; }
-}
-
 // ── QR Code ───────────────────────────────────────────────────────────────────
 const qrMedia = ref(null);
-const qrDataUrl = ref("");
 function mediaPermalink(item) {
     return item.permalink ?? (window.location.origin + item.url);
 }
 
-async function openQr(item) {
+function openQr(item) {
     qrMedia.value = item;
-    qrDataUrl.value = await QRCode.toDataURL(mediaPermalink(item), { width: 256, margin: 2 });
 }
 
 // ── Copy URL ─────────────────────────────────────────────────────────────────
@@ -1064,7 +969,6 @@ async function moveFolder(folderId, newParentId) {
                 </div>
 
                 <template v-else>
-
                     <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
 
                     <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -1173,7 +1077,6 @@ async function moveFolder(folderId, newParentId) {
                             </tbody>
                         </table>
                     </div>
-
                 </template>
             </main>
         </div>
@@ -1410,16 +1313,7 @@ async function moveFolder(folderId, newParentId) {
             </dl>
         </AppModal>
 
-        <AppModal :show="!!qrMedia" max-width="sm" v-on:close="qrMedia = null; qrDataUrl = ''">
-            <h3 class="text-sm font-medium text-primary mb-4">{{ t("admin.media.qrCode") }} — {{ qrMedia?.originalName }}</h3>
-            <div class="flex flex-col items-center gap-4">
-                <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-48 h-48 rounded-xl border border-line/60">
-                <p class="text-xs text-muted text-center break-all">{{ qrMedia ? window.location.origin + qrMedia.url : '' }}</p>
-                <a v-if="qrDataUrl" :href="qrDataUrl" download="qrcode.png">
-                    <AppButton size="sm" variant="ghost">{{ t("admin.media.downloadQr") }}</AppButton>
-                </a>
-            </div>
-        </AppModal>
+        <MediaQrModal :media="qrMedia" v-on:close="qrMedia = null" />
 
         <AppModal :show="openBulkMove" max-width="sm" v-on:close="openBulkMove = false">
             <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.bulkMove", { count: selectedIds.size }) }}</h3>
@@ -1438,23 +1332,11 @@ async function moveFolder(folderId, newParentId) {
             </div>
         </AppModal>
 
-        <AppModal :show="!!cropMedia" max-width="5xl" v-on:close="closeCrop">
-            <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ cropMedia?.originalName }}</h3>
-            <div style="height: 65vh; width: 100%; overflow: hidden;">
-                <img
-                    v-if="cropMedia"
-                    ref="cropImageEl"
-                    :src="cropMedia.url"
-                    :alt="cropMedia.alt ?? ''"
-                    style="display: block; max-width: 100%;"
-                >
-            </div>
-            <div class="flex justify-end gap-2 mt-4">
-                <AppButton variant="ghost" size="md" v-on:click="closeCrop">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="cropSaving" v-on:click="saveCrop">
-                    <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.applyCrop") }}
-                </AppButton>
-            </div>
-        </AppModal>
+        <MediaCropperModal
+            :media="cropMedia"
+            :crop-path="cropPath"
+            v-on:close="cropMedia = null"
+            v-on:cropped="onCropped"
+        />
     </div>
 </template>

@@ -10,8 +10,8 @@ import {
     countConflicts,
     summarize,
     MergeKind,
-} from "@/shared/utils/mergeBlocks.js";
-import AppButton from "@/shared/components/AppButton.vue";
+} from "@/shared/utils/data/mergeBlocks.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
 import MergeBlockEntry from "./MergeBlockEntry.vue";
 
 const { t } = useI18n();

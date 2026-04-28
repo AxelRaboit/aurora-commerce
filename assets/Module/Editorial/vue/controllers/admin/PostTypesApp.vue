@@ -1,21 +1,21 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useFormModal } from "@/shared/composables/useFormModal.js";
+import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Pencil, Trash2, Layers, Lock, GripVertical, Save, } from "lucide-vue-next";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppMessage from "@/shared/components/AppMessage.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 
 const { t } = useI18n();
 

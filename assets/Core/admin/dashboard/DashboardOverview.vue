@@ -1,10 +1,10 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { useFileSize } from "@/shared/composables/useFileSize.js";
-import { statusBadge } from "@/shared/utils/statusStyles.js";
-import AppChart from "@/shared/components/AppChart.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useFileSize } from "@/shared/composables/format/useFileSize.js";
+import { statusBadge } from "@/shared/utils/format/statusStyles.js";
+import AppChart from "@/shared/components/display/AppChart.vue";
 import {
     FileText,
     Image as ImageIcon,

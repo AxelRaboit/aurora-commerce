@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useListPage } from "@/shared/composables/useListPage.js";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
 
 const PAYLOAD = {
     ok: true,

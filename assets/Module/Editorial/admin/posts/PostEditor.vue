@@ -1,39 +1,39 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
-import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, provide, nextTick } from "vue";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { ref, reactive, computed, onMounted, watch, provide, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, ImagePlus, Merge, History, ExternalLink } from "lucide-vue-next";
-import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppDatePicker from "@/shared/components/AppDatePicker.vue";
-import AppMessage from "@/shared/components/AppMessage.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
-import AppToggle from "@/shared/components/AppToggle.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import EditorBlock from "@/shared/components/EditorBlock.vue";
-import PreviewOverlay from "@/shared/components/PreviewOverlay.vue";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, Merge, History, ExternalLink } from "lucide-vue-next";
+import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import EditorBlock from "@/shared/components/display/EditorBlock.vue";
+import PreviewOverlay from "@/shared/components/overlay/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
-import GoogleSerpPreview from "./GoogleSerpPreview.vue";
 import PostCustomField from "./PostCustomField.vue";
+import PostSeoPanel from "./PostSeoPanel.vue";
+import PostTaxonomiesPanel from "./PostTaxonomiesPanel.vue";
+import PostFeaturedImagePanel from "./PostFeaturedImagePanel.vue";
+import PostTemplatesOverlay from "./PostTemplatesOverlay.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
-import { TEMPLATES } from "@editorial/utils/editorjs/templates.js";
-import { openMediaPicker } from "@shared/utils/mediaPicker.js";
-import { slugify } from "@/shared/utils/slugify.js";
-import { statusBadge } from "@/shared/utils/statusStyles.js";
+import { useRelatedSearch } from "./composables/useRelatedSearch.js";
+import { applyPostData } from "./utils/applyPostData.js";
+import { PostStatus, POST_STATUS_VALUES } from "@editorial/utils/postStatus.js";
+import { useSlugLock } from "@/shared/composables/form/useSlugLock.js";
+import { useKeyboardShortcut } from "@/shared/composables/useKeyboardShortcut.js";
+import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { seoCounterClass } from "@/shared/utils/seoCounter.js";
-import { parseJsonLd, buildArticleJsonLd } from "@/shared/utils/jsonLd.js";
-import { buildTermTree, flattenTreeWithDepth } from "@editorial/utils/termTree.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -96,7 +96,7 @@ const postTypeOptions = computed(() =>
 
 const form = reactive({
     postTypeId: String(props.postTypes[0]?.id ?? ""),
-    status: "draft",
+    status: PostStatus.Draft,
     scheduledAt: "",
     featuredMediaId: null,
     termIds: [],
@@ -109,64 +109,30 @@ const publishedAt = ref(null);
 const trashed = ref(false);
 
 // ── Related posts ────────────────────────────────────────────────────────────
-const relatedPosts = ref([]);
-const relatedSearchQuery = ref("");
-const relatedSearchResults = ref([]);
-const relatedSearchLoading = ref(false);
-const relatedSearchOpen = ref(false);
-
-watch(relatedSearchQuery, useDebounce(runRelatedSearch, 200));
-
-async function runRelatedSearch() {
-    relatedSearchLoading.value = true;
-    try {
-        const url = new URL("/admin/posts/search", window.location.origin);
-        if (relatedSearchQuery.value) url.searchParams.set("q", relatedSearchQuery.value);
-        if (props.postId) url.searchParams.set("excludeId", String(props.postId));
-        const response = await fetch(url);
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        relatedSearchResults.value = (data.results ?? []).filter(
-            (result) => !form.relatedPostIds.includes(result.id),
-        );
-    } catch {
-        relatedSearchResults.value = [];
-    } finally {
-        relatedSearchLoading.value = false;
-    }
-}
-
-function addRelatedPost(result) {
-    if (form.relatedPostIds.includes(result.id)) return;
-    form.relatedPostIds.push(result.id);
-    relatedPosts.value.push(result);
-    relatedSearchQuery.value = "";
-    relatedSearchResults.value = relatedSearchResults.value.filter((r) => r.id !== result.id);
-}
-
-function removeRelatedPost(id) {
-    form.relatedPostIds = form.relatedPostIds.filter((existing) => existing !== id);
-    relatedPosts.value = relatedPosts.value.filter((r) => r.id !== id);
-}
+const {
+    query: relatedSearchQuery,
+    results: relatedSearchResults,
+    loading: relatedSearchLoading,
+    open: relatedSearchOpen,
+    selected: relatedPosts,
+    add: addRelatedPost,
+    remove: removeRelatedPost,
+    setSelected: setRelatedPosts,
+} = useRelatedSearch({
+    excludeId: props.postId,
+    getSelectedIds: () => form.relatedPostIds,
+    addId: (id) => form.relatedPostIds.push(id),
+    removeId: (id) => { form.relatedPostIds = form.relatedPostIds.filter((existing) => existing !== id); },
+});
 
 // ── Slug lock ────────────────────────────────────────────────────────────────
-const slugLocked = ref(true);
-
-watch(
-    () => form.translations[activeLocale.value]?.title,
-    (newTitle) => {
-        const translation = form.translations[activeLocale.value];
-        if (translation && slugLocked.value) translation.slug = slugify(newTitle);
+const { locked: slugLocked, toggle: toggleSlugLock } = useSlugLock({
+    getTitle: () => form.translations[activeLocale.value]?.title ?? "",
+    setSlug: (value) => {
+        const tr = form.translations[activeLocale.value];
+        if (tr) tr.slug = value;
     },
-);
-
-function toggleSlugLock() {
-    slugLocked.value = !slugLocked.value;
-    if (slugLocked.value) {
-        const translation = form.translations[activeLocale.value];
-        if (translation) translation.slug = slugify(translation.title);
-    }
-}
+});
 
 async function switchLocale(locale) {
     if (locale === activeLocale.value) return;
@@ -181,172 +147,22 @@ watch(form, () => { isDirty.value = true; }, { deep: true });
 // ── Featured image ───────────────────────────────────────────────────────────
 const featuredMediaUrl = ref(null);
 const featuredMediaFocalPosition = ref("50% 50%");
-const uploadingFeatured = ref(false);
-const featuredInputRef = ref(null);
-const previewFeatured = ref(false);
 
-async function uploadFeaturedImage(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    uploadingFeatured.value = true;
-    try {
-        const body = new FormData();
-        body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        if (data.success) {
-            form.featuredMediaId = data.file?.id ?? null;
-            featuredMediaUrl.value = data.file?.url ?? null;
-            featuredMediaFocalPosition.value = data.media?.focalPositionCss ?? "50% 50%";
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        uploadingFeatured.value = false;
-        if (featuredInputRef.value) featuredInputRef.value.value = "";
-    }
-}
-
-function removeFeaturedImage() {
-    form.featuredMediaId = null;
-    featuredMediaUrl.value = null;
-}
-
-async function selectFeaturedFromLibrary() {
-    const media = await openMediaPicker({ imagesOnly: true });
-    if (!media) return;
-    form.featuredMediaId = media.id;
-    featuredMediaUrl.value = media.url;
-    featuredMediaFocalPosition.value = media.focalPositionCss ?? "50% 50%";
-}
-
-// ── SEO counters ─────────────────────────────────────────────────────────────
-const metaTitleLength = computed(() => form.translations[activeLocale.value]?.metaTitle?.length ?? 0);
-const metaDescLength  = computed(() => form.translations[activeLocale.value]?.metaDescription?.length ?? 0);
-
-// ── SEO quality checks ───────────────────────────────────────────────────────
 const activeTranslation = computed(() => form.translations[activeLocale.value] ?? null);
 
-function containsCI(haystack, needle) {
-    if (!haystack || !needle) return false;
-    return haystack.toLowerCase().includes(needle.toLowerCase());
-}
-
-const focusChecks = computed(() => {
-    const tr = activeTranslation.value;
-    const keyword = tr?.focusKeyword?.trim() ?? "";
-    if (!keyword || !tr) return [];
-    return [
-        { key: "title", ok: containsCI(tr.title, keyword) },
-        { key: "metaTitle", ok: containsCI(tr.metaTitle, keyword) },
-        { key: "metaDescription", ok: containsCI(tr.metaDescription, keyword) },
-        { key: "slug", ok: containsCI(tr.slug, keyword) },
-    ];
-});
-
-// ── JSON-LD helpers ──────────────────────────────────────────────────────────
-const jsonLdText = ref("");
-const jsonLdError = ref(null);
-
-watch(
-    () => activeTranslation.value?.jsonLd,
-    (value) => {
-        jsonLdText.value = value ? JSON.stringify(value, null, 2) : "";
-        jsonLdError.value = null;
-    },
-    { immediate: true },
-);
-
-watch(jsonLdText, (raw) => {
-    const tr = activeTranslation.value;
-    if (!tr) return;
-    const { value, error, empty } = parseJsonLd(raw);
-    if (empty) {
-        tr.jsonLd = null;
-        jsonLdError.value = null;
-        return;
-    }
-    if (error === "not-object") {
-        jsonLdError.value = t("admin.posts.seo.jsonLdMustBeObject");
-        return;
-    }
-    if (error) {
-        jsonLdError.value = error;
-        return;
-    }
-    tr.jsonLd = value;
-    jsonLdError.value = null;
-});
-
-function generateArticleJsonLd() {
-    const tr = activeTranslation.value;
-    if (!tr) return;
-    const template = buildArticleJsonLd({
-        title: tr.title,
-        description: tr.metaDescription,
-        imageUrl: tr.ogImageUrl,
-        datePublished: publishedAt.value,
-    });
-    tr.jsonLd = template;
-    jsonLdText.value = JSON.stringify(template, null, 2);
-    jsonLdError.value = null;
-}
-
-// ── OG image upload ──────────────────────────────────────────────────────────
-const ogInputRef = ref(null);
-const uploadingOg = ref(false);
-
-async function uploadOgImage(event) {
-    const file = event.target.files?.[0];
-    const tr = activeTranslation.value;
-    if (!file || !tr) return;
-    uploadingOg.value = true;
-    try {
-        const body = new FormData();
-        body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        if (data.success) {
-            tr.ogImageMediaId = data.file?.id ?? null;
-            tr.ogImageUrl = data.file?.url ?? null;
-            tr.ogImageFocalPosition = data.media?.focalPositionCss ?? "50% 50%";
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        uploadingOg.value = false;
-        if (ogInputRef.value) ogInputRef.value.value = "";
-    }
-}
-
-function removeOgImage() {
-    const tr = activeTranslation.value;
-    if (!tr) return;
-    tr.ogImageMediaId = null;
-    tr.ogImageUrl = null;
-}
-
-async function selectOgFromLibrary() {
-    const media = await openMediaPicker({ imagesOnly: true });
-    const tr = activeTranslation.value;
-    if (!media || !tr) return;
-    tr.ogImageMediaId = media.id;
-    tr.ogImageUrl = media.url;
-    tr.ogImageFocalPosition = media.focalPositionCss ?? "50% 50%";
-}
-
 // ── Keyboard shortcut Ctrl+S ─────────────────────────────────────────────────
-function onKeydown(event) {
-    if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-        event.preventDefault();
-        handleSave();
-    }
-}
+useKeyboardShortcut({ key: "s", ctrl: true }, () => handleSave());
+
+const sideState = {
+    publishedAt,
+    trashed,
+    featuredMediaUrl,
+    featuredMediaFocalPosition,
+    relatedPosts,
+    version,
+};
 
 onMounted(async () => {
-    window.addEventListener("keydown", onKeydown);
     if (!props.postId) return;
     fetching.value = true;
     try {
@@ -354,24 +170,8 @@ onMounted(async () => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
-            form.postTypeId = String(data.post.postType.id);
-            form.status = data.post.status;
-            form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
-            publishedAt.value = data.post.publishedAt ?? null;
-            trashed.value = data.post.trashed ?? false;
-            form.featuredMediaId = data.post.featuredMediaId ?? null;
-            featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
-            featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
-            form.termIds = [...(data.post.termIds ?? [])];
-            form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
-            form.commentsEnabled = data.post.commentsEnabled ?? true;
-            relatedPosts.value = [...(data.post.relatedPosts ?? [])];
-            version.value = data.post.version ?? null;
-            for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
-                if (form.translations[locale]) {
-                    Object.assign(form.translations[locale], translation);
-                }
-            }
+            applyPostData(data.post, form, sideState);
+            setRelatedPosts(data.post.relatedPosts ?? []);
             snapshotBase(form.translations);
         }
     } catch {
@@ -381,10 +181,6 @@ onMounted(async () => {
         fetching.value = false;
         nextTick(() => { isDirty.value = false; });
     }
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener("keydown", onKeydown);
 });
 
 function toggleTerm(termId) {
@@ -445,18 +241,6 @@ watch(
     { immediate: true },
 );
 
-function taxonomyLabel(taxonomy) {
-    return taxonomy.translations?.[activeLocale.value]?.label
-        ?? taxonomy.translations?.[props.locales[0]]?.label
-        ?? taxonomy.slug;
-}
-
-function termLabel(term) {
-    return term.translations?.[activeLocale.value]?.name
-        ?? term.translations?.[props.locales[0]]?.name
-        ?? "(—)";
-}
-
 const showPreview   = ref(false);
 const showTemplates = ref(false);
 const showRevisions = ref(false);
@@ -469,24 +253,8 @@ async function reloadAfterRestore() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
-            form.postTypeId = String(data.post.postType.id);
-            form.status = data.post.status;
-            form.scheduledAt = data.post.scheduledAt ? data.post.scheduledAt.slice(0, 16) : "";
-            publishedAt.value = data.post.publishedAt ?? null;
-            trashed.value = data.post.trashed ?? false;
-            form.featuredMediaId = data.post.featuredMediaId ?? null;
-            featuredMediaUrl.value = data.post.featuredMediaUrl ?? null;
-            featuredMediaFocalPosition.value = data.post.featuredMediaFocalPosition ?? "50% 50%";
-            form.termIds = [...(data.post.termIds ?? [])];
-            form.relatedPostIds = [...(data.post.relatedPostIds ?? [])];
-            form.commentsEnabled = data.post.commentsEnabled ?? true;
-            relatedPosts.value = [...(data.post.relatedPosts ?? [])];
-            version.value = data.post.version ?? null;
-            for (const [locale, translation] of Object.entries(data.post.translations ?? {})) {
-                if (form.translations[locale]) {
-                    Object.assign(form.translations[locale], translation);
-                }
-            }
+            applyPostData(data.post, form, sideState);
+            setRelatedPosts(data.post.relatedPosts ?? []);
             snapshotBase(form.translations);
             if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
                 await nextTick();
@@ -501,50 +269,10 @@ async function reloadAfterRestore() {
     }
 }
 
-// ── Template panel state ─────────────────────────────────────────────────────
-const activeCategory     = ref("all");
-const confirmingTemplate = ref(null);
-const hoveredTemplate    = ref(null);
-
-const TEMPLATE_CATEGORIES = ["article", "marketing", "layout", "technique"];
-
-
-const BLOCK_TYPE_TO_TOOL_NAME = {
-    header:    "heading",
-    paragraph: "text",
-    image:     "image",
-    list:      "list",
-    code:      "code",
-    callout:   "callout",
-    delimiter: "delimiter",
-    twoColumn: "twoColumn",
-    mediaText: "mediaText",
-    embed:     "embed",
-    table:     "table",
-    quote:     "quote",
-    checklist: "checklist",
-};
-
-const filteredTemplates = computed(() =>
-    activeCategory.value === "all"
-        ? TEMPLATES
-        : TEMPLATES.filter((tpl) => tpl.category === activeCategory.value),
-);
-
-function blockLabel(type) {
-    const key = BLOCK_TYPE_TO_TOOL_NAME[type];
-    return key ? t(`admin.editor.toolNames.${key}`) : type;
-}
-
-function closeTemplates() {
-    showTemplates.value    = false;
-    confirmingTemplate.value = null;
-    hoveredTemplate.value  = null;
-}
-
+// ── Template panel ───────────────────────────────────────────────────────────
 async function applyTemplate(template) {
     const blocks = structuredClone(template.blocks);
-    closeTemplates();
+    showTemplates.value = false;
     if (renderEditorBlocks) {
         await renderEditorBlocks(blocks);
     } else {
@@ -573,7 +301,7 @@ async function handleSave({ force = false } = {}) {
     const success = await savePost(props.postId, {
         postTypeId: Number(form.postTypeId),
         status: form.status,
-        scheduledAt: form.status === "scheduled" && form.scheduledAt ? form.scheduledAt : null,
+        scheduledAt: form.status === PostStatus.Scheduled && form.scheduledAt ? form.scheduledAt : null,
         featuredMediaId: form.featuredMediaId,
         termIds: form.termIds,
         relatedPostIds: form.relatedPostIds,
@@ -644,14 +372,10 @@ function forceSave() {
 
             <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-2">
                 <AppSelect v-model="form.status" class="w-full sm:w-auto">
-                    <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
-                    <option value="pending_review">{{ t("admin.posts.statusOptions.pending_review") }}</option>
-                    <option value="scheduled">{{ t("admin.posts.statusOptions.scheduled") }}</option>
-                    <option value="published">{{ t("admin.posts.statusOptions.published") }}</option>
-                    <option value="archived">{{ t("admin.posts.statusOptions.archived") }}</option>
+                    <option v-for="value in POST_STATUS_VALUES" :key="value" :value="value">{{ t(`admin.posts.statusOptions.${value}`) }}</option>
                 </AppSelect>
                 <AppDatePicker
-                    v-if="form.status === 'scheduled'"
+                    v-if="form.status === PostStatus.Scheduled"
                     v-model="form.scheduledAt"
                     :enable-time="true"
                     class="w-full sm:w-auto"
@@ -693,7 +417,7 @@ function forceSave() {
                     v-on:click="handleSave"
                 >
                     <Save v-if="!loading" class="w-4 h-4" :stroke-width="2" />
-                    <span><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</span>
+                    <span>{{ t("shared.common.save") }}</span>
                     <span v-if="isDirty && !loading" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white dark:border-surface" />
                 </AppButton>
             </div>
@@ -721,47 +445,13 @@ function forceSave() {
                     />
                 </div>
             </div>
-            <div v-for="taxonomy in availableTaxonomies" :key="taxonomy.id" class="space-y-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ taxonomyLabel(taxonomy) }}</span>
-                    <span v-if="taxonomy.hierarchical" class="text-xs px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">
-                        {{ t("admin.taxonomies.hierarchical") }}
-                    </span>
-                </div>
-
-                <div v-if="!taxonomy.hierarchical" class="flex items-center gap-2 flex-wrap">
-                    <label
-                        v-for="term in taxonomy.terms"
-                        :key="term.id"
-                        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
-                        :class="form.termIds.includes(term.id)
-                            ? 'bg-accent-600 border-accent-600 text-white'
-                            : 'bg-surface-2 border-line text-secondary hover:border-accent-400 hover:text-primary'"
-                    >
-                        <input type="checkbox" class="sr-only" :checked="form.termIds.includes(term.id)" v-on:change="toggleTerm(term.id)">
-                        {{ termLabel(term) }}
-                    </label>
-                    <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
-                </div>
-
-                <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
-                    <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
-                    <label
-                        v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
-                        :key="term.id"
-                        class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
-                        :style="{ paddingLeft: `${0.375 + term.depth * 1.25}rem` }"
-                    >
-                        <input
-                            type="checkbox"
-                            class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0"
-                            :checked="form.termIds.includes(term.id)"
-                            v-on:change="toggleTerm(term.id)"
-                        >
-                        <span class="text-primary">{{ termLabel(term) }}</span>
-                    </label>
-                </div>
-            </div>
+            <PostTaxonomiesPanel
+                :taxonomies="availableTaxonomies"
+                :selected-term-ids="form.termIds"
+                :active-locale="activeLocale"
+                :default-locale="locales[0]"
+                v-on:toggle-term="toggleTerm"
+            />
         </div>
 
         <div class="px-1">
@@ -825,62 +515,11 @@ function forceSave() {
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 px-1">
-            <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.featuredImage") }}</span>
-            <div v-if="featuredMediaUrl" class="relative group w-full h-48">
-                <img
-                    :src="featuredMediaUrl"
-                    class="w-full h-full object-cover rounded-lg border border-line cursor-zoom-in"
-                    :style="{ objectPosition: featuredMediaFocalPosition }"
-                    :alt="t('admin.posts.featuredImage')"
-                    v-on:click="previewFeatured = true"
-                >
-                <button
-                    type="button"
-                    class="absolute top-2 right-2 p-1 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    v-on:click="removeFeaturedImage"
-                >
-                    <X class="w-4 h-4" :stroke-width="2.5" />
-                </button>
-            </div>
-            <label
-                v-else
-                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-line rounded-lg cursor-pointer hover:border-accent-400 transition-colors"
-                :class="uploadingFeatured ? 'opacity-50 pointer-events-none' : ''"
-            >
-                <ImagePlus class="w-6 h-6 text-muted mb-1.5" :stroke-width="1.5" />
-                <span class="text-sm text-muted">{{ uploadingFeatured ? t("shared.common.loading") : t("admin.posts.addImage") }}</span>
-                <input
-                    ref="featuredInputRef"
-                    type="file"
-                    accept="image/*"
-                    class="sr-only"
-                    v-on:change="uploadFeaturedImage"
-                >
-            </label>
-            <button
-                type="button"
-                class="mt-1 w-full text-xs text-accent-400 hover:underline text-center"
-                v-on:click="selectFeaturedFromLibrary"
-            >
-                {{ t("admin.posts.selectFromLibrary") }}
-            </button>
-        </div>
-
-        <Teleport to="body">
-            <Transition
-                enter-active-class="transition ease-out duration-200"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition ease-in duration-150"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div v-if="previewFeatured" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" v-on:click="previewFeatured = false">
-                    <img :src="featuredMediaUrl" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" :alt="t('admin.posts.featuredImage')">
-                </div>
-            </Transition>
-        </Teleport>
+        <PostFeaturedImagePanel
+            v-model:media-id="form.featuredMediaId"
+            v-model:media-url="featuredMediaUrl"
+            v-model:focal-position="featuredMediaFocalPosition"
+        />
 
         <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
             <button
@@ -943,130 +582,13 @@ function forceSave() {
             </div>
         </div>
 
-        <div class="border-t border-line pt-4 space-y-4">
-            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">SEO</p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="space-y-3">
-                    <div>
-                        <AppInput
-                            v-model="form.translations[activeLocale].metaTitle"
-                            :label="t('admin.posts.metaTitle')"
-                        />
-                        <p class="text-right text-xs mt-1" :class="seoCounterClass(metaTitleLength, 60)">
-                            {{ metaTitleLength }}/60
-                        </p>
-                    </div>
-                    <div>
-                        <AppTextarea
-                            v-model="form.translations[activeLocale].metaDescription"
-                            :label="t('admin.posts.metaDescription')"
-                            :rows="3"
-                        />
-                        <p class="text-right text-xs mt-1" :class="seoCounterClass(metaDescLength, 160)">
-                            {{ metaDescLength }}/160
-                        </p>
-                    </div>
-                    <AppInput
-                        v-model="form.translations[activeLocale].focusKeyword"
-                        :label="t('admin.posts.seo.focusKeyword')"
-                        :placeholder="t('admin.posts.seo.focusKeywordPlaceholder')"
-                    />
-                    <AppInput
-                        v-model="form.translations[activeLocale].canonicalUrl"
-                        :label="t('admin.posts.seo.canonicalUrl')"
-                        placeholder="https://example.com/..."
-                    />
-                    <AppCheckbox
-                        v-model="form.translations[activeLocale].noindex"
-                        :label="t('admin.posts.seo.noindex')"
-                    />
-
-                    <div>
-                        <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">
-                            {{ t("admin.posts.seo.ogImage") }}
-                        </label>
-                        <div class="flex items-center gap-3">
-                            <div class="w-24 h-16 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                <img
-                                    v-if="form.translations[activeLocale].ogImageUrl"
-                                    :src="form.translations[activeLocale].ogImageUrl"
-                                    class="w-full h-full object-cover"
-                                    :style="{ objectPosition: form.translations[activeLocale].ogImageFocalPosition ?? '50% 50%' }"
-                                    alt=""
-                                >
-                                <ImagePlus v-else class="w-5 h-5 text-muted" :stroke-width="2" />
-                            </div>
-                            <div class="flex gap-2">
-                                <input
-                                    ref="ogInputRef"
-                                    type="file"
-                                    accept="image/*"
-                                    class="hidden"
-                                    v-on:change="uploadOgImage"
-                                >
-                                <AppButton variant="secondary" size="sm" :loading="uploadingOg" v-on:click="ogInputRef?.click()">
-                                    {{ t("admin.posts.seo.ogImageUpload") }}
-                                </AppButton>
-                                <AppButton variant="ghost" size="sm" v-on:click="selectOgFromLibrary">
-                                    {{ t("admin.posts.selectFromLibrary") }}
-                                </AppButton>
-                                <AppButton
-                                    v-if="form.translations[activeLocale].ogImageUrl"
-                                    variant="ghost"
-                                    size="sm"
-                                    v-on:click="removeOgImage"
-                                >
-                                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                                </AppButton>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-xs text-secondary uppercase tracking-wide mb-2">{{ t("admin.posts.seo.serpPreview") }}</p>
-                        <GoogleSerpPreview
-                            :title="form.translations[activeLocale].metaTitle || form.translations[activeLocale].title"
-                            :description="form.translations[activeLocale].metaDescription"
-                            :slug="form.translations[activeLocale].slug"
-                            :locale="activeLocale"
-                            :post-type-slug="currentPostTypeSlug"
-                        />
-                    </div>
-
-                    <AppMessage v-if="focusChecks.length" variant="info">
-                        <p class="font-medium mb-1">{{ t("admin.posts.seo.focusChecksTitle") }}</p>
-                        <ul class="space-y-0.5 text-xs">
-                            <li v-for="check in focusChecks" :key="check.key" class="flex items-center gap-1.5">
-                                <span v-if="check.ok" class="text-emerald-500">✓</span>
-                                <span v-else class="text-rose-500">✗</span>
-                                {{ t(`admin.posts.seo.focusChecks.${check.key}`) }}
-                            </li>
-                        </ul>
-                    </AppMessage>
-                </div>
-            </div>
-
-            <div class="border-t border-line pt-4 space-y-2">
-                <div class="flex items-center justify-between flex-wrap gap-2">
-                    <label class="text-xs text-secondary uppercase tracking-wide">
-                        {{ t("admin.posts.seo.jsonLd") }}
-                    </label>
-                    <AppButton variant="secondary" size="sm" v-on:click="generateArticleJsonLd">
-                        {{ t("admin.posts.seo.generateArticle") }}
-                    </AppButton>
-                </div>
-                <AppTextarea
-                    v-model="jsonLdText"
-                    :placeholder="t('admin.posts.seo.jsonLdPlaceholder')"
-                    :rows="8"
-                    :error="jsonLdError ?? ''"
-                    mono
-                />
-            </div>
-        </div>
+        <PostSeoPanel
+            v-if="form.translations[activeLocale]"
+            :translation="form.translations[activeLocale]"
+            :locale="activeLocale"
+            :post-type-slug="currentPostTypeSlug"
+            :published-at="publishedAt"
+        />
 
         <div class="border-t border-line pt-4">
             <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
@@ -1082,175 +604,7 @@ function forceSave() {
         </div>
     </div>
 
-    <Teleport to="body">
-        <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div v-if="showTemplates" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                <div class="w-full max-w-4xl bg-surface rounded-2xl border border-line shadow-2xl flex flex-col max-h-[85vh]">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
-                        <div>
-                            <h2 class="text-base font-semibold text-primary">{{ t("admin.editor.templates.title") }}</h2>
-                            <p class="text-xs text-muted mt-0.5">{{ t("admin.editor.templates.subtitle") }}</p>
-                        </div>
-                        <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="closeTemplates">
-                            <X class="w-5 h-5" :stroke-width="2" />
-                        </AppButton>
-                    </div>
-
-                    <div class="flex gap-2 px-6 py-3 border-b border-line shrink-0 flex-wrap">
-                        <button
-                            v-for="cat in ['all', ...TEMPLATE_CATEGORIES]"
-                            :key="cat"
-                            type="button"
-                            class="px-3 py-1 rounded-full text-xs font-medium transition-colors"
-                            :class="activeCategory === cat ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
-                            v-on:click="activeCategory = cat; confirmingTemplate = null"
-                        >
-                            {{ t("admin.editor.templates.categories." + cat) }}
-                        </button>
-                    </div>
-
-                    <div class="flex flex-1 min-h-0" v-on:mouseleave="hoveredTemplate = null">
-                        <div class="flex-1 overflow-y-auto scrollbar-thin p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
-                            <button
-                                v-for="template in filteredTemplates"
-                                :key="template.id"
-                                type="button"
-                                class="relative text-left p-4 rounded-xl border transition-all group overflow-hidden"
-                                :class="confirmingTemplate?.id === template.id
-                                    ? 'border-accent-500 bg-accent-500/10'
-                                    : 'border-line bg-surface-2 hover:border-accent-500 hover:bg-accent-500/5'"
-                                v-on:click="confirmingTemplate = confirmingTemplate?.id === template.id ? null : template"
-                                v-on:mouseenter="hoveredTemplate = template"
-                            >
-                                <Transition
-                                    enter-active-class="transition ease-out duration-150"
-                                    enter-from-class="opacity-0"
-                                    enter-to-class="opacity-100"
-                                    leave-active-class="transition ease-in duration-100"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <div v-if="confirmingTemplate?.id === template.id" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/95 backdrop-blur-sm rounded-xl p-4">
-                                        <p class="text-sm font-medium text-primary text-center">{{ t("admin.editor.templates.confirmReplace") }}</p>
-                                        <div class="flex gap-2">
-                                            <AppButton variant="primary" size="md" v-on:click.stop="applyTemplate(template)">{{ t("admin.editor.templates.apply") }}</AppButton>
-                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("shared.common.cancel") }}</AppButton>
-                                        </div>
-                                    </div>
-                                </Transition>
-
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span class="text-2xl">{{ template.icon }}</span>
-                                    <span class="font-medium text-primary text-sm group-hover:text-accent-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
-                                </div>
-                                <p class="text-xs text-muted">{{ t("admin.editor.templates." + template.id + ".description") }}</p>
-                            </button>
-                        </div>
-
-                        <div class="w-56 border-l border-line p-5 hidden md:flex flex-col gap-4 shrink-0 overflow-y-auto scrollbar-thin">
-                            <Transition
-                                enter-active-class="transition ease-out duration-150"
-                                enter-from-class="opacity-0"
-                                enter-to-class="opacity-100"
-                                leave-active-class="transition ease-in duration-100"
-                                leave-from-class="opacity-100"
-                                leave-to-class="opacity-0"
-                                mode="out-in"
-                            >
-                                <div v-if="hoveredTemplate" :key="hoveredTemplate.id" class="flex flex-col gap-4">
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-xl">{{ hoveredTemplate.icon }}</span>
-                                            <span class="font-semibold text-sm text-primary">{{ t("admin.editor.templates." + hoveredTemplate.id + ".label") }}</span>
-                                        </div>
-                                        <span class="inline-block px-2 py-0.5 rounded-full text-xs bg-surface-3 text-secondary">
-                                            {{ t("admin.editor.templates.categories." + hoveredTemplate.category) }}
-                                        </span>
-                                    </div>
-                                    <div v-if="hoveredTemplate.blocks.length" class="flex flex-col gap-1.5">
-                                        <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("admin.editor.templates.structure") }}</p>
-                                        <template v-for="(block, i) in hoveredTemplate.blocks" :key="i">
-                                            <div v-if="block.type === 'header'" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
-                                            <div v-else-if="block.type === 'paragraph'" class="flex flex-col gap-1">
-                                                <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
-                                                <div class="h-1.5 rounded-sm bg-surface-3 w-5/6" />
-                                                <div class="h-1.5 rounded-sm bg-surface-3 w-4/6" />
-                                            </div>
-                                            <div v-else-if="block.type === 'image'" class="h-10 rounded-sm bg-surface-3 w-full flex items-center justify-center">
-                                                <svg
-                                                    class="w-4 h-4 text-muted/50"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                    stroke-width="1.5"
-                                                ><rect
-                                                    x="3"
-                                                    y="3"
-                                                    width="18"
-                                                    height="18"
-                                                    rx="2"
-                                                /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
-                                            </div>
-                                            <div v-else-if="block.type === 'mediaText'" class="flex gap-1.5">
-                                                <div class="h-8 rounded-sm bg-surface-3 w-2/5 shrink-0" />
-                                                <div class="flex flex-col gap-1 flex-1 justify-center">
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
-                                                </div>
-                                            </div>
-                                            <div v-else-if="block.type === 'twoColumn'" class="flex gap-1.5">
-                                                <div class="flex flex-col gap-1 flex-1">
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
-                                                </div>
-                                                <div class="flex flex-col gap-1 flex-1">
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
-                                                    <div class="h-1.5 rounded-sm bg-surface-3 w-3/5" />
-                                                </div>
-                                            </div>
-                                            <div v-else-if="block.type === 'list'" class="flex flex-col gap-1">
-                                                <div v-for="n in 3" :key="n" class="flex items-center gap-1">
-                                                    <div class="w-1 h-1 rounded-full bg-surface-3 shrink-0" />
-                                                    <div class="h-1.5 rounded-sm bg-surface-3" :class="n === 1 ? 'w-4/5' : n === 2 ? 'w-3/5' : 'w-2/3'" />
-                                                </div>
-                                            </div>
-                                            <div v-else-if="block.type === 'code'" class="h-8 rounded-sm bg-surface-3 w-full px-2 flex flex-col justify-center gap-1">
-                                                <div class="h-1 rounded-sm bg-muted/20 w-2/3" />
-                                                <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
-                                            </div>
-                                            <div v-else-if="block.type === 'callout'" class="h-7 rounded-sm bg-surface-3 w-full border-l-2 border-muted/30 pl-2 flex flex-col justify-center gap-1">
-                                                <div class="h-1.5 rounded-sm bg-muted/30 w-3/4" />
-                                                <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
-                                            </div>
-                                            <div v-else-if="block.type === 'delimiter'" class="flex items-center gap-1.5 py-0.5">
-                                                <div class="h-px flex-1 bg-surface-3" />
-                                                <div class="w-1 h-1 rounded-full bg-surface-3" />
-                                                <div class="h-px flex-1 bg-surface-3" />
-                                            </div>
-                                            <div v-else class="h-2 rounded-sm bg-surface-3 w-2/3" />
-                                        </template>
-                                    </div>
-                                    <p v-else class="text-xs text-muted italic">{{ t("admin.editor.templates.emptyContent") }}</p>
-                                    <p class="text-xs text-muted mt-auto pt-2 border-t border-line">
-                                        {{ hoveredTemplate.blocks.length }}
-                                        {{ hoveredTemplate.blocks.length > 1 ? t("admin.editor.templates.blocks") : t("admin.editor.templates.block") }}
-                                    </p>
-                                </div>
-                                <p v-else key="empty" class="text-xs text-muted italic">{{ t("admin.editor.templates.subtitle") }}</p>
-                            </Transition>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-    </Teleport>
+    <PostTemplatesOverlay :show="showTemplates" v-on:close="showTemplates = false" v-on:apply="applyTemplate" />
 
     <PreviewOverlay
         :show="showPreview"

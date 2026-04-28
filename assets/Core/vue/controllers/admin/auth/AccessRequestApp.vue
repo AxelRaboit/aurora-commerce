@@ -1,11 +1,11 @@
 <script setup>
-import AppLink from "@/shared/components/AppLink.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import { useAuthForm } from "@/shared/composables/useAuthForm.js";
-import { required, email as emailValidator, compose } from "@/shared/utils/validators.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
+import { required, email as emailValidator, compose } from "@/shared/utils/validation/validators.js";
 
 const { t } = useI18n();
 

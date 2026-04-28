@@ -1,17 +1,17 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";
-import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
-import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/shared/utils/revisionDiff.js";
-import { statusBadgeColor } from "@/shared/utils/statusStyles.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
+import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "@/shared/utils/data/revisionDiff.js";
+import { statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { toast } from "vue-sonner";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();

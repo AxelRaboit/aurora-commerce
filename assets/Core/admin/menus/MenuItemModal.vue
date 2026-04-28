@@ -4,11 +4,11 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Search, Check, X, Save, } from "lucide-vue-next";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppMultiselect from "@/shared/components/AppMultiselect.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 
 const { t } = useI18n();
 

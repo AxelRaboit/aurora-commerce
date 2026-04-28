@@ -1,9 +1,13 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useForm } from "@/shared/composables/useForm.js";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { submitForm } from "@/shared/utils/formSubmit.js";
-import { required, email, compose } from "@/shared/utils/validators.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { submitForm } from "@/shared/utils/http/formSubmit.js";
+import {
+    required,
+    email,
+    compose,
+} from "@/shared/utils/validation/validators.js";
 
 const DEFAULT_LOCALE = "fr";
 

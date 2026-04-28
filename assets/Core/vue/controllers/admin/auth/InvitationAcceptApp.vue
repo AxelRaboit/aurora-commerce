@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import PasswordStrength from "@/shared/components/PasswordStrength.vue";
-import { useAuthForm } from "@/shared/composables/useAuthForm.js";
-import { passwordValidator } from "@/shared/utils/passwordRules.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
+import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
+import { passwordValidator } from "@/shared/utils/validation/passwordRules.js";
 
 const { t } = useI18n();
 

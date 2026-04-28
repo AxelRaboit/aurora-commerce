@@ -1,17 +1,17 @@
 <script setup>
 import { computed, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import { useDateFormat } from "@/shared/composables/useDateFormat.js";
-import { useFileSize } from "@/shared/composables/useFileSize.js";
-import { statusBadge, statusBadgeColor } from "@/shared/utils/statusStyles.js";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useFileSize } from "@/shared/composables/format/useFileSize.js";
+import { statusBadge, statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { useAdminUsers } from "@core/admin/administration/composables/useAdminUsers.js";
 import { useAdminParameters } from "@core/admin/administration/composables/useAdminParameters.js";
 import { useAdminAccessRequests } from "@core/admin/administration/composables/useAdminAccessRequests.js";

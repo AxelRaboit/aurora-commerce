@@ -2,9 +2,9 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
-import { renderBlocks } from "@/shared/utils/blocksRenderer.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppImage from "@/shared/components/AppImage.vue";
+import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 
 const { t } = useI18n();
 

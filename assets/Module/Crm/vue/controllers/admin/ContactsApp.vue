@@ -1,23 +1,23 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useListPage } from "@/shared/composables/useListPage.js";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useDelete } from "@/shared/composables/useDelete.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSearchInput from "@/shared/components/AppSearchInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppPagination from "@/shared/components/AppPagination.vue";
-import AppNoData from "@/shared/components/AppNoData.vue";
-import AppLink from "@/shared/components/AppLink.vue";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { required, email as emailValidator } from "@/shared/utils/validators.js";
+import { required, email as emailValidator } from "@/shared/utils/validation/validators.js";
 
 const { t } = useI18n();
 

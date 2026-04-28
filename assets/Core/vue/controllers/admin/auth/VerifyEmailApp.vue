@@ -1,5 +1,5 @@
 <script setup>
-import AppLink from "@/shared/components/AppLink.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 import { useI18n } from "vue-i18n";
 import { Check, X } from "lucide-vue-next";
 

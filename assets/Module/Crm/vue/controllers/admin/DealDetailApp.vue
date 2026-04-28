@@ -1,20 +1,21 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppStagePicker from "@/shared/components/AppStagePicker.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppDatePicker from "@/shared/components/AppDatePicker.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppStagePicker from "@/shared/components/nav/AppStagePicker.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import { Pencil, Trash2, Save, } from "lucide-vue-next";
-import { required } from "@/shared/utils/validators.js";
+import { required } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 const { t } = useI18n();
 
@@ -82,12 +83,7 @@ async function submitEdit() {
 }
 
 // Delete
-const showDelete = ref(false);
-const { loading: deleteLoading, request: deleteRequest } = useApiRequest();
-async function doDelete() {
-    const data = await deleteRequest(props.deletePath, {});
-    if (data?.success) window.location.href = props.backPath;
-}
+const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
 </script>
 
 <template>

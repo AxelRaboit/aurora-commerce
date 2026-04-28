@@ -1,5 +1,5 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 

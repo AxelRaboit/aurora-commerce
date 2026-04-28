@@ -1,18 +1,18 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { computed, ref, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { X, ImagePlus } from "lucide-vue-next";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppDatePicker from "@/shared/components/AppDatePicker.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppSelect from "@/shared/components/AppSelect.vue";
-import AppCheckbox from "@/shared/components/AppCheckbox.vue";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import { statusBadge } from "@/shared/utils/statusStyles.js";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 
 const { t } = useI18n();
 

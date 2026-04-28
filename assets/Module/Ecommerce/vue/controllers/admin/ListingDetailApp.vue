@@ -1,23 +1,24 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/useApiRequest.js";
-import { useForm } from "@/shared/composables/useForm.js";
-import AppButton from "@/shared/components/AppButton.vue";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppInput from "@/shared/components/AppInput.vue";
-import AppTextarea from "@/shared/components/AppTextarea.vue";
-import AppToggle from "@/shared/components/AppToggle.vue";
-import AppLink from "@/shared/components/AppLink.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
-import AppModal from "@/shared/components/AppModal.vue";
-import AppModalFooter from "@/shared/components/AppModalFooter.vue";
-import AppImagePickerField from "@/shared/components/AppImagePickerField.vue";
-import AppImage from "@/shared/components/AppImage.vue";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validators.js";
-import { formatProductPrice } from "@/shared/utils/formatPrice.js";
+import { required } from "@/shared/utils/validation/validators.js";
+import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 
 const { t } = useI18n();
 
@@ -73,12 +74,7 @@ async function submitEdit() {
 }
 
 // --- Delete ---
-const showDelete = ref(false);
-const { loading: deleteLoading, request: deleteRequest } = useApiRequest();
-async function doDelete() {
-    const data = await deleteRequest(props.deletePath, {});
-    if (data?.success) window.location.href = props.backPath;
-}
+const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
 </script>
 
 <template>

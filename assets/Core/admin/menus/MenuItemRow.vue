@@ -3,8 +3,8 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { GripVertical, Pencil, Trash2, ChevronRight, ExternalLink, EyeOff, Eye } from "lucide-vue-next";
-import AppIconButton from "@/shared/components/AppIconButton.vue";
-import AppBadge from "@/shared/components/AppBadge.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 
 const props = defineProps({
     item: { type: Object, required: true },
