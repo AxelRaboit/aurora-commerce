@@ -14,6 +14,7 @@ import AppSearchInput from "@/shared/components/AppSearchInput.vue";
 import AppTextarea from "@/shared/components/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/AppMultiselect.vue";
 import AppModal from "@/shared/components/AppModal.vue";
+import AppModalFooter from "@/shared/components/AppModalFooter.vue";
 import AppMessage from "@/shared/components/AppMessage.vue";
 import AppNoData from "@/shared/components/AppNoData.vue";
 import AppImage from "@/shared/components/AppImage.vue";
@@ -225,8 +226,12 @@ function toggleSelect(id) {
 function selectAll() { selectedIds.value = new Set(displayedMedia.value.map((m) => m.id)); }
 function clearSelection() { selectedIds.value = new Set(); isSelecting.value = false; }
 
-async function bulkDelete() {
-    if (!selectedIds.value.size || !confirm(t("admin.media.bulkDeleteConfirm", { count: selectedIds.value.size }))) return;
+const pendingBulkDelete = ref(false);
+const bulkDeleteLoading = ref(false);
+
+async function doBulkDelete() {
+    if (!selectedIds.value.size) return;
+    bulkDeleteLoading.value = true;
     try {
         const res = await fetch(props.bulkDeletePath, {
             method: HttpMethod.Post,
@@ -236,8 +241,13 @@ async function bulkDelete() {
         if (!(await res.json()).success) throw new Error();
         media.value = media.value.filter((m) => !selectedIds.value.has(m.id));
         clearSelection();
+        pendingBulkDelete.value = false;
         toast.success(t("admin.media.bulkDeleted"));
-    } catch { toast.error(t("shared.common.error")); }
+    } catch {
+        toast.error(t("shared.common.error"));
+    } finally {
+        bulkDeleteLoading.value = false;
+    }
 }
 
 const bulkMoveTargetId = ref(null);
@@ -954,7 +964,7 @@ async function moveFolder(folderId, newParentId) {
                             <Move class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("admin.media.move") }}
                         </AppButton>
-                        <AppButton size="sm" variant="danger" v-on:click="bulkDelete">
+                        <AppButton size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("shared.common.delete") }}
                         </AppButton>
@@ -1291,6 +1301,15 @@ async function moveFolder(folderId, newParentId) {
                     <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
+        </AppModal>
+
+        <AppModal :show="pendingBulkDelete" max-width="sm" v-on:close="pendingBulkDelete = false">
+            <h3 class="text-base font-semibold text-primary">{{ t("admin.media.bulkDeleteConfirm", { count: selectedIds.size }) }}</h3>
+            <p class="text-sm text-secondary">{{ t("admin.media.bulkDeleteConfirmDesc") }}</p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="doBulkDelete">{{ t("shared.common.delete") }}</AppButton>
+            </AppModalFooter>
         </AppModal>
 
         <AppModal :show="!!deletingMedia" max-width="sm" v-on:close="deletingMedia = null">

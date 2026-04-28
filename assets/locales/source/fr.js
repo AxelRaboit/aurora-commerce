@@ -119,6 +119,10 @@ export default {
             resetFocal: "Réinitialiser",
             deleteConfirm:
                 "Supprimer « {name} » ? Cette action est irréversible.",
+            bulkDelete: "Supprimer la sélection ({count})",
+            bulkDeleteConfirm: "Supprimer {count} média(s) ?",
+            bulkDeleteConfirmDesc: "Cette action est irréversible. Les fichiers seront définitivement supprimés.",
+            bulkDeleted: "Médias supprimés.",
             createFolder: "Créer un dossier",
             editFolder: "Renommer le dossier",
             folderName: "Nom du dossier",
@@ -631,6 +635,10 @@ export default {
             view: "Voir le commentaire",
             moderationOn: "Modération activée",
             moderationOff: "Modération désactivée",
+            moderationEnableConfirm: "Activer la modération ?",
+            moderationEnableConfirmDesc: "Les nouveaux commentaires seront mis en attente avant publication.",
+            moderationDisableConfirm: "Désactiver la modération ?",
+            moderationDisableConfirmDesc: "Les nouveaux commentaires seront approuvés automatiquement sans validation.",
             moderationEnabled:
                 "Modération activée — les commentaires seront en attente.",
             moderationDisabled:
@@ -649,6 +657,8 @@ export default {
             replyTo: "En réponse à",
             approveSuccess: "Commentaire approuvé.",
             spamSuccess: "Commentaire marqué comme spam.",
+            spamConfirm: "Marquer comme spam ?",
+            spamConfirmDesc: "Ce commentaire sera masqué et classé comme indésirable.",
         },
         forms: {
             create: "Nouveau formulaire",

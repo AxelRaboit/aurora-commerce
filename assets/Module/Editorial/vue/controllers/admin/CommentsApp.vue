@@ -80,6 +80,25 @@ function spamComment(comment) {
     });
 }
 
+const pendingSpam = ref(null);
+const spamLoading = ref(false);
+
+function confirmSpam(comment) {
+    pendingSpam.value = comment;
+}
+
+async function doSpam() {
+    if (!pendingSpam.value || spamLoading.value) return;
+    spamLoading.value = true;
+    const comment = pendingSpam.value;
+    try {
+        await spamComment(comment);
+        pendingSpam.value = null;
+    } finally {
+        spamLoading.value = false;
+    }
+}
+
 const pendingDelete = ref(null);
 const deleteLoading = ref(false);
 
@@ -120,17 +139,25 @@ function statusBadgeColor(status) {
 
 const viewingComment = ref(null);
 const isModerationEnabled = ref(props.moderationEnabled);
+const pendingToggleModeration = ref(false);
+const toggleModerationLoading = ref(false);
 
-async function toggleModeration() {
+async function doToggleModeration() {
+    toggleModerationLoading.value = true;
     try {
         const response = await fetch(props.toggleModerationPath, { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             isModerationEnabled.value = data.moderationEnabled;
             toast.success(data.moderationEnabled ? t("admin.comments.moderationEnabled") : t("admin.comments.moderationDisabled"));
+            pendingToggleModeration.value = false;
+        } else {
+            toast.error(t("shared.common.error"));
         }
     } catch {
         toast.error(t("shared.common.error"));
+    } finally {
+        toggleModerationLoading.value = false;
     }
 }
 </script>
@@ -155,7 +182,7 @@ async function toggleModeration() {
             <AppButton
                 :variant="isModerationEnabled ? 'primary' : 'secondary'"
                 size="md"
-                v-on:click="toggleModeration"
+                v-on:click="pendingToggleModeration = true"
             >
                 <span class="w-2 h-2 rounded-full" :class="isModerationEnabled ? 'bg-white' : 'bg-muted'" />
                 {{ isModerationEnabled ? t("admin.comments.moderationOn") : t("admin.comments.moderationOff") }}
@@ -185,7 +212,7 @@ async function toggleModeration() {
                         <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
                             <Check class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(comment)">
+                        <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
                             <Ban class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
@@ -231,7 +258,7 @@ async function toggleModeration() {
                                 <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
                                     <Check class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(comment)">
+                                <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
                                     <Ban class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
@@ -282,7 +309,7 @@ async function toggleModeration() {
                 <AppIconButton v-if="viewingComment?.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
                     <Check class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton v-if="viewingComment?.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="spamComment(viewingComment); viewingComment = null">
+                <AppIconButton v-if="viewingComment?.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(viewingComment); viewingComment = null">
                     <Ban class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(viewingComment); viewingComment = null">
@@ -291,6 +318,30 @@ async function toggleModeration() {
                 <AppIconButton color="default" :title="t('shared.common.cancel')" v-on:click="viewingComment = null">
                     <span class="text-xs px-1">✕</span>
                 </AppIconButton>
+            </AppModalFooter>
+        </AppModal>
+
+        <AppModal :show="pendingToggleModeration" max-width="sm" v-on:close="pendingToggleModeration = false">
+            <h3 class="text-base font-semibold text-primary">
+                {{ isModerationEnabled ? t('admin.comments.moderationDisableConfirm') : t('admin.comments.moderationEnableConfirm') }}
+            </h3>
+            <p class="text-sm text-secondary">
+                {{ isModerationEnabled ? t('admin.comments.moderationDisableConfirmDesc') : t('admin.comments.moderationEnableConfirmDesc') }}
+            </p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="pendingToggleModeration = false">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton :variant="isModerationEnabled ? 'danger' : 'primary'" size="md" :loading="toggleModerationLoading" v-on:click="doToggleModeration">
+                    {{ isModerationEnabled ? t('admin.comments.moderationOff') : t('admin.comments.moderationOn') }}
+                </AppButton>
+            </AppModalFooter>
+        </AppModal>
+
+        <AppModal :show="!!pendingSpam" max-width="sm" v-on:close="pendingSpam = null">
+            <h3 class="text-base font-semibold text-primary">{{ t('admin.comments.spamConfirm') }}</h3>
+            <p class="text-sm text-secondary">{{ t('admin.comments.spamConfirmDesc') }}</p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="pendingSpam = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="spamLoading" v-on:click="doSpam">{{ t('admin.comments.markSpam') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
