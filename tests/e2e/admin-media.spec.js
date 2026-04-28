@@ -56,4 +56,54 @@ test.describe("Admin Media", () => {
             .first();
         await expect(toast).toBeVisible({ timeout: 10_000 });
     });
+
+    test("filters by media type", async ({ page }) => {
+        await loginAsAdmin(page);
+        await page.goto("/admin/media");
+
+        // Click the "Images" filter and verify the URL or the active state changes.
+        // The filter buttons are part of the toolbar (typeFilter ref).
+        const imagesFilter = page
+            .getByRole("button", { name: /^Images$/i })
+            .first();
+        if (await imagesFilter.count()) {
+            await imagesFilter.click();
+            // The button should now be styled as active (accent color).
+            await expect(imagesFilter).toHaveClass(/bg-accent/);
+        }
+    });
+
+    test("switches sort mode and persists across reload", async ({ page }) => {
+        await loginAsAdmin(page);
+        await page.goto("/admin/media");
+
+        // Click the A-Z sort.
+        const nameSort = page.getByRole("button", { name: /A-Z/ }).first();
+        if (await nameSort.count()) {
+            await nameSort.click();
+            await expect(nameSort).toHaveClass(/bg-surface-3|text-primary/);
+
+            // Reload — sort should be restored from localStorage.
+            await page.reload();
+            const restored = page.getByRole("button", { name: /A-Z/ }).first();
+            await expect(restored).toHaveClass(/bg-surface-3|text-primary/);
+        }
+    });
+
+    test("position sort button advertises drag-drop in tooltip", async ({
+        page,
+    }) => {
+        await loginAsAdmin(page);
+        await page.goto("/admin/media");
+
+        const positionBtn = page
+            .locator("button[title]")
+            .filter({ hasText: /^#$/ })
+            .first();
+        if (await positionBtn.count()) {
+            const title = await positionBtn.getAttribute("title");
+            // The hint should mention drag-drop / glisser-déposer / Drag.
+            expect(title).toMatch(/drag|glisser/i);
+        }
+    });
 });

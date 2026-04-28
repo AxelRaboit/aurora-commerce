@@ -21,19 +21,8 @@ import TwoColumnBlock from "@editorial/utils/editorjs/TwoColumnBlock.js";
 import CalloutBlock from "@editorial/utils/editorjs/CalloutBlock.js";
 import PostsListBlock from "@editorial/utils/editorjs/PostsListBlock.js";
 import ProductGridBlock from "@ecommerce/utils/editorjs/ProductGridBlock.js";
-import { configureMediaPickerLabels } from "@/shared/utils/mediaPicker.js";
 
 const { t } = useI18n();
-
-configureMediaPickerLabels({
-    title: t("admin.editor.mediaPicker.title"),
-    search: t("admin.editor.mediaPicker.search"),
-    allFolders: t("admin.editor.mediaPicker.allFolders"),
-    empty: t("admin.editor.mediaPicker.empty"),
-    loading: t("admin.editor.mediaPicker.loading"),
-    cancel: t("shared.common.cancel"),
-    select: t("admin.editor.mediaPicker.select"),
-});
 
 const props = defineProps({
     modelValue: { type: Array, default: () => [] },

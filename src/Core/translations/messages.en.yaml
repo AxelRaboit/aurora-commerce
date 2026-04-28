@@ -27,6 +27,9 @@ admin:
     filterPdf: PDF
     filterOther: Other
     sortDate: Date
+    sortName: Name
+    sortSize: Size
+    sortPositionHint: "Custom order (drag and drop)"
     selected: selected
     selectAll: Select all
     bulkDeleted: Media deleted

@@ -621,8 +621,13 @@ function onDragLeave() {
     rootDragOver.value = false;
 }
 
+// Reorder via drag-drop only makes sense in "position" (#) sort — any other
+// sort would re-shuffle the items right after, so we skip the drop target.
+const reorderEnabled = computed(() => sortBy.value === "position");
+
 function onMediaItemDragOver(event, mediaItem) {
     if (!event.dataTransfer.types.includes("application/x-aurora-media")) return;
+    if (!reorderEnabled.value) return;
     event.preventDefault();
     event.stopPropagation();
     dragOverMediaId.value = mediaItem.id;
@@ -630,6 +635,7 @@ function onMediaItemDragOver(event, mediaItem) {
 }
 
 async function onMediaItemDrop(event, targetItem) {
+    if (!reorderEnabled.value) return;
     event.preventDefault();
     event.stopPropagation();
     dragOverMediaId.value = null;
@@ -642,6 +648,10 @@ async function onMediaItemDrop(event, targetItem) {
     if (fromIdx === -1 || toIdx === -1) return;
 
     list.splice(toIdx, 0, list.splice(fromIdx, 1)[0]);
+    // Reassign client-side `position` so the `displayedMedia` computed (which sorts
+    // by position when sortBy === "position") agrees with the new visual order.
+    // The backend will canonicalise positions in reorderMedia.
+    list.forEach((item, index) => { item.position = index; });
     media.value = list;
 
     await reorderMedia(list.map((m) => m.id));
@@ -936,11 +946,12 @@ async function moveFolder(folderId, newParentId) {
                     <div class="ml-auto flex items-center gap-1.5">
                         <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
                             <button
-                                v-for="s in [{k:'position',l:'#'},{k:'name',l:'A-Z'},{k:'size',l:'KB'},{k:'date',l:t('admin.media.sortDate')}]"
+                                v-for="s in [{k:'position',l:'#',title:t('admin.media.sortPositionHint')},{k:'name',l:'A-Z',title:t('admin.media.sortName')},{k:'size',l:'KB',title:t('admin.media.sortSize')},{k:'date',l:t('admin.media.sortDate'),title:t('admin.media.sortDate')}]"
                                 :key="s.k"
                                 type="button"
                                 class="px-2 py-0.5 rounded text-xs transition-colors flex items-center gap-1"
                                 :class="sortBy === s.k ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                                :title="s.title"
                                 v-on:click="setSort(s.k)"
                             >
                                 {{ s.l }}

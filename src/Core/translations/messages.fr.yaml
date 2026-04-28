@@ -28,6 +28,9 @@ admin:
     filterPdf: PDF
     filterOther: Autres
     sortDate: Date
+    sortName: Nom
+    sortSize: Taille
+    sortPositionHint: "Ordre personnalisé (glisser-déposer)"
     selected: sélectionné(s)
     selectAll: Tout sélectionner
     bulkDeleted: Médias supprimés

@@ -27,6 +27,9 @@ admin:
     filterPdf: PDF
     filterOther: Otros
     sortDate: Fecha
+    sortName: Nombre
+    sortSize: Tamaño
+    sortPositionHint: "Orden personalizado (arrastrar y soltar)"
     selected: seleccionado(s)
     selectAll: Seleccionar todo
     bulkDeleted: Archivos eliminados
