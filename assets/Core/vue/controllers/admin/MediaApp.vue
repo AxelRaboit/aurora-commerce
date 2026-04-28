@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -429,7 +430,7 @@ async function submitMediaEdit() {
     editSaving.value = true;
     editErrors.value = {};
     try {
-        const url = props.editPath.replace("__id__", editingMedia.value.id);
+        const url = buildPath(props.editPath, { id: editingMedia.value.id });
         const response = await fetch(url, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
@@ -471,7 +472,7 @@ async function confirmDeleteMedia() {
     const item = deletingMedia.value;
     if (!item) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", item.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.deletePath, { id: item.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("shared.common.error"));
@@ -511,7 +512,7 @@ async function submitFolder() {
     folderModal.errors = {};
     try {
         const url = folderModal.editing
-            ? props.folderEditPath.replace("__id__", folderModal.editing.id)
+            ? buildPath(props.folderEditPath, { id: folderModal.editing.id })
             : props.folderCreatePath;
         const response = await fetch(url, {
             method: HttpMethod.Post,
@@ -544,7 +545,7 @@ async function confirmDeleteFolder() {
     const folder = deletingFolder.value;
     if (!folder) return;
     try {
-        const response = await fetch(props.folderDeletePath.replace("__id__", folder.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.folderDeletePath, { id: folder.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(t("shared.common.error"));
@@ -685,7 +686,7 @@ async function onFolderDrop(event, targetFolderId) {
 
 async function moveMedia(mediaId, folderId) {
     try {
-        const response = await fetch(props.movePath.replace("__id__", mediaId), {
+        const response = await fetch(buildPath(props.movePath, { id: mediaId }), {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ folderId }),
@@ -713,7 +714,7 @@ async function moveFolder(folderId, newParentId) {
     const folder = folders.value.find((f) => f.id === folderId);
     if (!folder) return;
     try {
-        const response = await fetch(props.folderEditPath.replace("__id__", folderId), {
+        const response = await fetch(buildPath(props.folderEditPath, { id: folderId }), {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: folder.name, parentId: newParentId }),

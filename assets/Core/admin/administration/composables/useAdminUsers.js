@@ -1,8 +1,10 @@
 import { ref, computed } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
+import { toast } from "vue-sonner";
 import {
     required,
     email,
@@ -24,15 +26,32 @@ export function useAdminUsers(
 ) {
     const { t } = useI18n();
 
-    const parsedUsers = computed(() => initialUsers ?? { items: [] });
+    const usersData = ref(initialUsers ?? { items: [] });
+    const parsedUsers = computed(() => usersData.value ?? { items: [] });
 
     const searchInput = ref(initialSearch);
+    const loading = ref(false);
+
+    async function load() {
+        loading.value = true;
+        try {
+            const url = new URL(usersPath, window.location.origin);
+            if (searchInput.value)
+                url.searchParams.set("search", searchInput.value);
+            const response = await fetch(url, {
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+            });
+            if (!response.ok) throw new Error();
+            usersData.value = await response.json();
+        } catch {
+            toast.error(t("shared.common.error"));
+        } finally {
+            loading.value = false;
+        }
+    }
 
     function performSearch() {
-        const url = new URL(usersPath, window.location.origin);
-        if (searchInput.value)
-            url.searchParams.set("search", searchInput.value);
-        window.location.href = url.toString();
+        load();
     }
 
     const showCreateModal = ref(false);
@@ -151,7 +170,7 @@ export function useAdminUsers(
 
         if (!isValid) return;
 
-        const url = userUpdatePath.replace("__id__", editingUser.value.id);
+        const url = buildPath(userUpdatePath, { id: editingUser.value.id });
         const data = await editRequest(url, editUserForm.value);
         if (!data) return;
         if (data.success) {
@@ -169,7 +188,7 @@ export function useAdminUsers(
 
     function doDelete() {
         if (!pendingDelete.value) return;
-        const url = userDeletePath.replace("__id__", pendingDelete.value.id);
+        const url = buildPath(userDeletePath, { id: pendingDelete.value.id });
         submitForm(url, csrfToken);
         pendingDelete.value = null;
     }
@@ -192,6 +211,8 @@ export function useAdminUsers(
 
     return {
         parsedUsers,
+        loading,
+        load,
         searchInput,
         performSearch,
         showCreateModal,

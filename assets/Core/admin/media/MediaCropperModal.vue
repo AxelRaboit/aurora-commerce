@@ -1,5 +1,6 @@
 <script setup>
 import { nextTick, ref, watch } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { Save } from "lucide-vue-next";
 import Cropper from "cropperjs";
@@ -70,7 +71,7 @@ async function save() {
     saving.value = true;
     try {
         const d = cropper.getData(true);
-        const url = props.cropPath.replace("__id__", props.media.id);
+        const url = buildPath(props.cropPath, { id: props.media.id });
         const res = await fetch(url, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },

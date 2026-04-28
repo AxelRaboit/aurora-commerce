@@ -1,0 +1,69 @@
+<script setup>
+import { computed } from "vue";
+import { initials } from "@/shared/utils/format/initials.js";
+
+const props = defineProps({
+    name:      { type: String, default: "" },
+    firstName: { type: String, default: "" },
+    lastName:  { type: String, default: "" },
+    email:     { type: String, default: "" },
+    photoUrl:  { type: String, default: "" },
+    /** sm | md | lg | xl  OR  a number (pixels) */
+    size:      { type: [String, Number], default: "md" },
+    /** "soft" = bg-accent-600/20 text-accent-400 (lists, table rows)
+     *  "solid" = bg-accent-600 text-white (identity badge, sidebar) */
+    variant:   { type: String, default: "soft" },
+});
+
+const SIZE_CLASSES = {
+    sm: "w-7 h-7 text-xs",
+    md: "w-8 h-8 text-xs",
+    lg: "w-9 h-9 text-sm",
+    xl: "w-12 h-12 text-lg",
+};
+
+const VARIANT_CLASSES = {
+    soft: "bg-accent-600/20 text-accent-400 font-bold",
+    solid: "bg-accent-600 text-white font-semibold",
+};
+
+const isNumericSize = computed(() => typeof props.size === "number");
+
+const sizeClass = computed(() =>
+    isNumericSize.value ? "" : (SIZE_CLASSES[props.size] ?? SIZE_CLASSES.md),
+);
+
+const sizeStyle = computed(() => {
+    if (!isNumericSize.value) return null;
+    return {
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+        fontSize: `${Math.max(10, Math.round(props.size * 0.42))}px`,
+    };
+});
+
+const variantClass = computed(() => VARIANT_CLASSES[props.variant] ?? VARIANT_CLASSES.soft);
+
+const label = computed(() => initials({
+    name: props.name,
+    firstName: props.firstName,
+    lastName: props.lastName,
+    email: props.email,
+}));
+</script>
+
+<template>
+    <div
+        class="rounded-full overflow-hidden flex items-center justify-center shrink-0 uppercase"
+        :class="[sizeClass, variantClass]"
+        :style="sizeStyle"
+    >
+        <img
+            v-if="photoUrl"
+            :src="photoUrl"
+            :alt="name || `${firstName} ${lastName}`.trim() || email"
+            class="w-full h-full object-cover"
+        >
+        <span v-else>{{ label }}</span>
+    </div>
+</template>

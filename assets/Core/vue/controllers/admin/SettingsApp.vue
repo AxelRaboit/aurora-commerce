@@ -4,6 +4,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import { Search, FileText } from "lucide-vue-next";
@@ -139,33 +140,26 @@ async function saveGroup(groupName) {
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <button
+            <AppTab
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                type="button"
-                class="text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-                :class="activeTab === groupName
-                    ? 'bg-accent-600/15 text-accent-400'
-                    : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                :active="activeTab === groupName"
                 v-on:click="activeTab = groupName"
             >
                 {{ tabLabels[groupName]?.() ?? groupName }}
-            </button>
+            </AppTab>
         </nav>
 
         <div class="flex md:hidden gap-1 flex-wrap mb-4 w-full">
-            <button
+            <AppTab
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                :class="activeTab === groupName
-                    ? 'bg-accent-600/15 text-accent-400'
-                    : 'bg-surface-2 text-secondary hover:text-primary'"
+                :active="activeTab === groupName"
+                size="sm"
                 v-on:click="activeTab = groupName"
             >
                 {{ tabLabels[groupName]?.() ?? groupName }}
-            </button>
+            </AppTab>
         </div>
 
         <div class="flex-1 min-w-0">

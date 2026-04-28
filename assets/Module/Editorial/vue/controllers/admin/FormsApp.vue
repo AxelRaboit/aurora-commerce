@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, computed, onMounted } from "vue";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
@@ -18,6 +19,7 @@ import {
     Save, } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -112,7 +114,7 @@ const {
     goToPage: goToSubmissionsPage,
     reset: resetSubmissions,
 } = usePaginatedFetch(
-    () => selectedForm.value ? props.submissionsPath.replace("__id__", selectedForm.value.id) : null,
+    () => selectedForm.value ? buildPath(props.submissionsPath, { id: selectedForm.value.id }) : null,
     () => ({}),
     (data) => { submissionFields.value = data.fields ?? []; },
 );
@@ -192,7 +194,7 @@ async function selectForm(form) {
     activeLocale.value = defaultLocale();
     formErrors.value = {};
     try {
-        const data = await jsonRequest(props.getPath.replace("__id__", form.id));
+        const data = await jsonRequest(buildPath(props.getPath, { id: form.id }));
         if (data.ok) {
             applyFormResponse(data.form);
         }
@@ -264,7 +266,7 @@ async function saveForm() {
     formErrors.value = {};
 
     const isNew = isCreating.value;
-    const url = isNew ? props.createPath : props.updatePath.replace("__id__", selectedForm.value.id);
+    const url = isNew ? props.createPath : buildPath(props.updatePath, { id: selectedForm.value.id });
     const payload = {
         notifyEmail: editingForm.value.notifyEmail || null,
         active: editingForm.value.active,
@@ -294,7 +296,7 @@ async function saveForm() {
 async function confirmDelete() {
     deleting.value = true;
     try {
-        const data = await jsonRequest(props.deletePath.replace("__id__", selectedForm.value.id), { method: HttpMethod.Post });
+        const data = await jsonRequest(buildPath(props.deletePath, { id: selectedForm.value.id }), { method: HttpMethod.Post });
         if (data.ok) {
             toast.success(t("shared.common.deleted"));
             selectedForm.value = null;
@@ -371,10 +373,8 @@ async function submitField() {
 
     const isUpdate = editingFieldId.value !== null;
     const url = isUpdate
-        ? props.fieldUpdatePath
-            .replace("__id__", selectedForm.value.id)
-            .replace("__fieldId__", editingFieldId.value)
-        : props.fieldCreatePath.replace("__id__", selectedForm.value.id);
+        ? buildPath(props.fieldUpdatePath, { id: selectedForm.value.id, fieldId: editingFieldId.value })
+        : buildPath(props.fieldCreatePath, { id: selectedForm.value.id });
 
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify(payload) });
@@ -412,9 +412,7 @@ async function doDeleteField() {
     if (!selectedForm.value || !pendingDeleteField.value || deleteFieldLoading.value) return;
     deleteFieldLoading.value = true;
     const field = pendingDeleteField.value;
-    const url = props.fieldDeletePath
-        .replace("__id__", selectedForm.value.id)
-        .replace("__fieldId__", field.id);
+    const url = buildPath(props.fieldDeletePath, { id: selectedForm.value.id, fieldId: field.id });
 
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post });
@@ -435,7 +433,7 @@ async function doDeleteField() {
 async function onFieldsReordered() {
     if (!selectedForm.value) return;
     const orderedIds = editingForm.value.fields.map((f) => f.id);
-    const url = props.fieldReorderPath.replace("__id__", selectedForm.value.id);
+    const url = buildPath(props.fieldReorderPath, { id: selectedForm.value.id });
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify({ orderedIds }) });
         if (!data.ok) toast.error(t("shared.common.error"));
@@ -453,7 +451,7 @@ function onTabChange(tab) {
 }
 
 function exportCsv() {
-    const url = `${props.exportPath.replace("__id__", selectedForm.value.id)}?locale=${activeLocale.value}`;
+    const url = `${buildPath(props.exportPath, { id: selectedForm.value.id })}?locale=${activeLocale.value}`;
     window.location.href = url;
 }
 
@@ -527,16 +525,17 @@ function submissionValue(submission, field) {
             </div>
 
             <div class="flex gap-1 px-5 pt-3 border-b border-line/60">
-                <button
+                <AppTab
                     v-for="tab in tabs"
                     :key="tab.key"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-t-md transition-colors -mb-px border-b-2"
-                    :class="activeTab === tab.key ? 'text-accent-400 border-accent-400' : 'text-secondary hover:text-primary border-transparent'"
+                    variant="underline"
+                    size="sm"
+                    :active="activeTab === tab.key"
                     v-on:click="onTabChange(tab.key)"
                 >
                     <component :is="tab.icon" class="w-4 h-4" :stroke-width="2" />
                     {{ tab.label }}
-                </button>
+                </AppTab>
             </div>
 
             <div v-if="activeTab === 'settings'" class="p-5 space-y-4 overflow-y-auto flex-1">

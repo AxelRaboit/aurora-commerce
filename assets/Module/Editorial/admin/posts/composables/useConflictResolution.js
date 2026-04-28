@@ -1,6 +1,7 @@
 import { ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 /**
  * Manages optimistic-locking state for an edited post: tracks the version
@@ -26,7 +27,7 @@ export function useConflictResolution({ showPath, postId }) {
     function resolvePath() {
         const id = unref(postId);
         if (id === null || id === undefined) return null;
-        return unref(showPath).replace("__id__", id);
+        return buildPath(unref(showPath), { id });
     }
 
     function snapshotBase(translations) {

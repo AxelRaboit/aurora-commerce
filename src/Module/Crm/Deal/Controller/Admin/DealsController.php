@@ -37,7 +37,26 @@ final class DealsController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(PaginationRequest $pagination): Response
     {
+        return $this->renderApp($pagination, initialView: 'list', kanbanColumns: null);
+    }
+
+    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(PaginationRequest $pagination): JsonResponse
+    {
+        return $this->json($this->buildListPayload($pagination));
+    }
+
+    #[Route('/kanban-columns', name: '_kanban_columns', methods: [HttpMethodEnum::Get->value])]
+    public function kanbanColumns(): JsonResponse
+    {
+        return $this->json(['columns' => $this->buildKanbanColumns()]);
+    }
+
+    public function renderApp(PaginationRequest $pagination, string $initialView, ?array $kanbanColumns): Response
+    {
         return $this->render('@Crm/admin/deals/index.html.twig', [
+            'initialView' => $initialView,
+            'kanbanColumns' => $kanbanColumns,
             'deals' => $this->buildListPayload($pagination),
             'search' => $pagination->search ?? '',
             'stages' => array_map(static fn (DealStageEnum $stage): string => $stage->value, DealStageEnum::cases()),
@@ -45,15 +64,22 @@ final class DealsController extends AbstractController
             'updatePath' => $this->generateUrl('crm_deals_update', ['id' => '__id__']),
             'deletePath' => $this->generateUrl('crm_deals_delete', ['id' => '__id__']),
             'listPath' => $this->generateUrl('crm_deals_list'),
+            'kanbanColumnsPath' => $this->generateUrl('crm_deals_kanban_columns'),
             'contactsListPath' => $this->generateUrl('crm_contacts_list'),
             'companiesListPath' => $this->generateUrl('crm_companies_list'),
         ]);
     }
 
-    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
-    public function list(PaginationRequest $pagination): JsonResponse
+    public function buildKanbanColumns(): array
     {
-        return $this->json($this->buildListPayload($pagination));
+        $stages = DealStageEnum::cases();
+        $columns = [];
+        foreach ($stages as $stage) {
+            $result = $this->dealRepository->findPaginated(1, 100, stage: $stage);
+            $columns[$stage->value] = array_map($this->dealSerializer->serialize(...), $result['items']);
+        }
+
+        return $columns;
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]

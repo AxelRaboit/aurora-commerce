@@ -284,6 +284,7 @@ export default {
             approved_toast: "Access request approved.",
             rejected_toast: "Access request rejected.",
             purged_toast: "Processed requests deleted.",
+            searchPlaceholder: "Search by email, name or message…",
         },
         editor: {
             placeholder: "Start writing…",
@@ -539,6 +540,7 @@ export default {
             slugUnlock: "Edit slug",
             preview: "Preview",
             previewEmpty: "No content to preview.",
+            previewSavedHint: "Preview shows the last saved version.",
             statusOptions: {
                 draft: "Draft",
                 pending_review: "Pending review",
@@ -1279,6 +1281,56 @@ export default {
             module: "Module",
             user: "User",
             date: "Date",
+            actions: {
+                crm: {
+                    company: {
+                        created: "Company created",
+                        updated: "Company updated",
+                        deleted: "Company deleted",
+                    },
+                    contact: {
+                        created: "Contact created",
+                        updated: "Contact updated",
+                        deleted: "Contact deleted",
+                    },
+                    deal: {
+                        created: "Deal created",
+                        updated: "Deal updated",
+                        deleted: "Deal deleted",
+                        stage_changed: "Stage changed",
+                    },
+                },
+                ecommerce: {
+                    listing: {
+                        created: "Listing created",
+                        updated: "Listing updated",
+                        deleted: "Listing deleted",
+                    },
+                    order: {
+                        created: "Order created",
+                        paid: "Order paid",
+                        cancelled: "Order cancelled",
+                    },
+                },
+                erp: {
+                    product: {
+                        created: "Product created",
+                        updated: "Product updated",
+                        deleted: "Product deleted",
+                    },
+                },
+                media: {
+                    uploaded: "Media uploaded",
+                    updated: "Media updated",
+                    moved: "Media moved",
+                    deleted: "Media deleted",
+                    cropped: "Media cropped",
+                },
+                users: {
+                    photo_uploaded: "Profile photo uploaded",
+                    photo_removed: "Profile photo removed",
+                },
+            },
         },
         permissions: {
             intro: "Read-only listing of permissions declared by each module.",
@@ -1286,6 +1338,69 @@ export default {
             none: "No permissions for this module.",
             name: "Name",
             role: "Required role",
+            searchPlaceholder: "Search by name, module or role…",
+            names: {
+                core: {
+                    dashboard: { view: "View the dashboard" },
+                    media: { view: "View media", manage: "Manage media" },
+                    menus: { manage: "Manage menus" },
+                    search: { view: "Use the search" },
+                    settings: { manage: "Manage settings" },
+                    themes: { manage: "Manage themes" },
+                    users: { manage: "Manage users" },
+                },
+                crm: {
+                    companies: { manage: "Manage companies" },
+                    contacts: {
+                        view: "View contacts",
+                        create: "Create a contact",
+                        edit: "Edit a contact",
+                        delete: "Delete a contact",
+                    },
+                    deals: { manage: "Manage deals" },
+                },
+                ecommerce: {
+                    listings: {
+                        view: "View listings",
+                        create: "Create a listing",
+                        edit: "Edit a listing",
+                        delete: "Delete a listing",
+                    },
+                    orders: { view: "View orders", manage: "Manage orders" },
+                },
+                editorial: {
+                    comments: { manage: "Manage comments" },
+                    forms: { manage: "Manage forms" },
+                    post_types: { manage: "Manage post types" },
+                    posts: { view: "View posts", manage: "Manage posts" },
+                    taxonomies: { manage: "Manage taxonomies" },
+                },
+                erp: {
+                    products: {
+                        view: "View products",
+                        create: "Create a product",
+                        edit: "Edit a product",
+                        delete: "Delete a product",
+                    },
+                },
+            },
+        },
+        modules: {
+            core: "Core",
+            crm: "CRM",
+            ecommerce: "E-commerce",
+            editorial: "Editorial",
+            erp: "ERP",
+            media: "Media",
+            users: "Users",
+        },
+        roles: {
+            ROLE_USER: "User",
+            ROLE_CONTRIBUTOR: "Contributor",
+            ROLE_AUTHOR: "Author",
+            ROLE_EDITOR: "Editor",
+            ROLE_ADMIN: "Admin",
+            ROLE_DEV: "Developer",
         },
         search: {
             button: "Search",

@@ -1,9 +1,37 @@
-#sidebar { width: 15rem; transition: width 200ms ease; }
+:root { --sidebar-width: 15rem; }
+
+#sidebar { width: var(--sidebar-width); transition: width 200ms ease; }
 .sidebar-collapsed #sidebar { width: 4rem; }
+/* Disable the width transition while the user is actively resizing so the
+   handle tracks the cursor 1:1 instead of trailing behind. */
+.sidebar-resizing #sidebar,
+.sidebar-resizing #main-content { transition: none !important; }
 
 @media (min-width: 1024px) {
-    #main-content { padding-left: 15rem; transition: padding-left 200ms ease; }
+    #main-content { padding-left: var(--sidebar-width); transition: padding-left 200ms ease; }
     .sidebar-collapsed #main-content { padding-left: 4rem; }
+}
+
+/* Resize handle on the right edge of the sidebar — only active when not collapsed. */
+.sidebar-resize-handle {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    background: transparent;
+    transition: background-color 150ms ease;
+    z-index: 10;
+}
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.is-dragging {
+    background: var(--color-accent-500, #6366f1);
+    opacity: 0.5;
+}
+.sidebar-collapsed .sidebar-resize-handle { display: none; }
+@media (max-width: 1023px) {
+    .sidebar-resize-handle { display: none; }
 }
 
 .sh-wrap { justify-content: space-between; padding-left: 1rem; padding-right: 1rem; }

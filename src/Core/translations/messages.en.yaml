@@ -230,6 +230,7 @@ admin:
     settings: Settings
     themes: Themes
     users: Users
+    resizeHint: "Drag to resize — double-click to reset"
   profile:
     errors:
       current_password_invalid: The current password is incorrect.

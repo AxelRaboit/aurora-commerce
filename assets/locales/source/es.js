@@ -288,6 +288,7 @@ export default {
             approved_toast: "Solicitud de acceso aprobada.",
             rejected_toast: "Solicitud de acceso rechazada.",
             purged_toast: "Solicitudes procesadas eliminadas.",
+            searchPlaceholder: "Buscar por email, nombre o mensaje…",
         },
         editor: {
             placeholder: "Empieza a escribir…",
@@ -546,6 +547,8 @@ export default {
             slugUnlock: "Editar slug",
             preview: "Vista previa",
             previewEmpty: "No hay contenido para previsualizar.",
+            previewSavedHint:
+                "La vista previa muestra la última versión guardada.",
             statusOptions: {
                 draft: "Borrador",
                 pending_review: "Pendiente de revisión",
@@ -1299,6 +1302,56 @@ export default {
             module: "Módulo",
             user: "Usuario",
             date: "Fecha",
+            actions: {
+                crm: {
+                    company: {
+                        created: "Empresa creada",
+                        updated: "Empresa modificada",
+                        deleted: "Empresa eliminada",
+                    },
+                    contact: {
+                        created: "Contacto creado",
+                        updated: "Contacto modificado",
+                        deleted: "Contacto eliminado",
+                    },
+                    deal: {
+                        created: "Deal creado",
+                        updated: "Deal modificado",
+                        deleted: "Deal eliminado",
+                        stage_changed: "Etapa modificada",
+                    },
+                },
+                ecommerce: {
+                    listing: {
+                        created: "Anuncio creado",
+                        updated: "Anuncio modificado",
+                        deleted: "Anuncio eliminado",
+                    },
+                    order: {
+                        created: "Pedido creado",
+                        paid: "Pedido pagado",
+                        cancelled: "Pedido cancelado",
+                    },
+                },
+                erp: {
+                    product: {
+                        created: "Producto creado",
+                        updated: "Producto modificado",
+                        deleted: "Producto eliminado",
+                    },
+                },
+                media: {
+                    uploaded: "Medio subido",
+                    updated: "Medio modificado",
+                    moved: "Medio movido",
+                    deleted: "Medio eliminado",
+                    cropped: "Medio recortado",
+                },
+                users: {
+                    photo_uploaded: "Foto de perfil añadida",
+                    photo_removed: "Foto de perfil eliminada",
+                },
+            },
         },
         permissions: {
             intro: "Listado en solo lectura de los permisos declarados por cada módulo.",
@@ -1306,6 +1359,78 @@ export default {
             none: "Sin permisos para este módulo.",
             name: "Nombre",
             role: "Rol requerido",
+            searchPlaceholder: "Buscar por nombre, módulo o rol…",
+            names: {
+                core: {
+                    dashboard: { view: "Ver el panel" },
+                    media: {
+                        view: "Ver los medios",
+                        manage: "Gestionar medios",
+                    },
+                    menus: { manage: "Gestionar menús" },
+                    search: { view: "Usar la búsqueda" },
+                    settings: { manage: "Gestionar ajustes" },
+                    themes: { manage: "Gestionar temas" },
+                    users: { manage: "Gestionar usuarios" },
+                },
+                crm: {
+                    companies: { manage: "Gestionar empresas" },
+                    contacts: {
+                        view: "Ver contactos",
+                        create: "Crear un contacto",
+                        edit: "Editar un contacto",
+                        delete: "Eliminar un contacto",
+                    },
+                    deals: { manage: "Gestionar deals" },
+                },
+                ecommerce: {
+                    listings: {
+                        view: "Ver anuncios",
+                        create: "Crear un anuncio",
+                        edit: "Editar un anuncio",
+                        delete: "Eliminar un anuncio",
+                    },
+                    orders: {
+                        view: "Ver pedidos",
+                        manage: "Gestionar pedidos",
+                    },
+                },
+                editorial: {
+                    comments: { manage: "Gestionar comentarios" },
+                    forms: { manage: "Gestionar formularios" },
+                    post_types: { manage: "Gestionar tipos de contenido" },
+                    posts: {
+                        view: "Ver contenidos",
+                        manage: "Gestionar contenidos",
+                    },
+                    taxonomies: { manage: "Gestionar taxonomías" },
+                },
+                erp: {
+                    products: {
+                        view: "Ver productos",
+                        create: "Crear un producto",
+                        edit: "Editar un producto",
+                        delete: "Eliminar un producto",
+                    },
+                },
+            },
+        },
+        modules: {
+            core: "Núcleo",
+            crm: "CRM",
+            ecommerce: "E-commerce",
+            editorial: "Editorial",
+            erp: "ERP",
+            media: "Medios",
+            users: "Usuarios",
+        },
+        roles: {
+            ROLE_USER: "Usuario",
+            ROLE_CONTRIBUTOR: "Colaborador",
+            ROLE_AUTHOR: "Autor",
+            ROLE_EDITOR: "Editor",
+            ROLE_ADMIN: "Administrador",
+            ROLE_DEV: "Desarrollador",
         },
         search: {
             button: "Buscar",

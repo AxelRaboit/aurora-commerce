@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
@@ -141,7 +142,7 @@ async function submitEdit() {
         name: () => required(t("admin.erp.products.errors.name_required"))(editForm.value.name),
     })) return;
 
-    const url = props.updatePath.replace("__id__", editingProduct.value.id);
+    const url = buildPath(props.updatePath, { id: editingProduct.value.id });
     const data = await editRequest(url, buildPayload(editForm.value));
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t("admin.erp.products.updated")); reset(); }
@@ -204,7 +205,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', product.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
@@ -229,7 +230,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-sm text-secondary">{{ formatProductPrice(product) }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', product.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>

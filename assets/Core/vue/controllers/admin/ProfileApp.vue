@@ -9,7 +9,7 @@ import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
-import UserAvatar from "@core/admin/users/UserAvatar.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useProfileLocale } from "@core/admin/profile/composables/useProfileLocale.js";
 import { useProfileInfo } from "@core/admin/profile/composables/useProfileInfo.js";
 import { useProfileMood } from "@core/admin/profile/composables/useProfileMood.js";
@@ -114,7 +114,7 @@ async function removePhoto() {
                 <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.photo.subtitle') }}</p>
             </header>
             <div class="flex items-center gap-5">
-                <UserAvatar :name="userName" :photo-url="photoUrl" :size="80" />
+                <AppAvatar variant="solid" :name="userName" :photo-url="photoUrl" :size="80" />
                 <div class="flex flex-col gap-2">
                     <AppFileInput accept="image/jpeg,image/png,image/webp" v-on:change="onPhotoSelected">
                         <template #default="{ trigger }">

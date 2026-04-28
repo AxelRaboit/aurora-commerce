@@ -10,6 +10,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Pencil, Trash2, Save, } from "lucide-vue-next";
@@ -75,9 +76,14 @@ const actionLabel = (action) => {
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
                     <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-lg sm:text-xl font-bold uppercase shrink-0">
-                            {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
-                        </div>
+                        <AppAvatar
+                            :first-name="contact.firstName"
+                            :last-name="contact.lastName"
+                            :name="contact.fullName"
+                            :email="contact.email"
+                            size="xl"
+                            class="sm:w-14 sm:h-14 sm:text-xl"
+                        />
                         <div class="min-w-0">
                             <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ contact.fullName }}</h2>
                             <p v-if="contact.company" class="text-sm text-secondary truncate">{{ contact.company }}</p>

@@ -287,6 +287,7 @@ export default {
             approved_toast: "Zugriffsanfrage genehmigt.",
             rejected_toast: "Zugriffsanfrage abgelehnt.",
             purged_toast: "Verarbeitete Anfragen gelöscht.",
+            searchPlaceholder: "Nach E-Mail, Name oder Nachricht suchen…",
         },
         editor: {
             placeholder: "Beginne zu schreiben…",
@@ -544,6 +545,8 @@ export default {
             slugUnlock: "Slug bearbeiten",
             preview: "Vorschau",
             previewEmpty: "Kein Inhalt zur Vorschau.",
+            previewSavedHint:
+                "Die Vorschau zeigt die zuletzt gespeicherte Version.",
             statusOptions: {
                 draft: "Entwurf",
                 pending_review: "Zur Überprüfung",
@@ -1299,6 +1302,56 @@ export default {
             module: "Modul",
             user: "Benutzer",
             date: "Datum",
+            actions: {
+                crm: {
+                    company: {
+                        created: "Unternehmen erstellt",
+                        updated: "Unternehmen geändert",
+                        deleted: "Unternehmen gelöscht",
+                    },
+                    contact: {
+                        created: "Kontakt erstellt",
+                        updated: "Kontakt geändert",
+                        deleted: "Kontakt gelöscht",
+                    },
+                    deal: {
+                        created: "Deal erstellt",
+                        updated: "Deal geändert",
+                        deleted: "Deal gelöscht",
+                        stage_changed: "Phase geändert",
+                    },
+                },
+                ecommerce: {
+                    listing: {
+                        created: "Angebot erstellt",
+                        updated: "Angebot geändert",
+                        deleted: "Angebot gelöscht",
+                    },
+                    order: {
+                        created: "Bestellung erstellt",
+                        paid: "Bestellung bezahlt",
+                        cancelled: "Bestellung storniert",
+                    },
+                },
+                erp: {
+                    product: {
+                        created: "Produkt erstellt",
+                        updated: "Produkt geändert",
+                        deleted: "Produkt gelöscht",
+                    },
+                },
+                media: {
+                    uploaded: "Medium hochgeladen",
+                    updated: "Medium geändert",
+                    moved: "Medium verschoben",
+                    deleted: "Medium gelöscht",
+                    cropped: "Medium zugeschnitten",
+                },
+                users: {
+                    photo_uploaded: "Profilbild hinzugefügt",
+                    photo_removed: "Profilbild entfernt",
+                },
+            },
         },
         permissions: {
             intro: "Schreibgeschützte Liste der von jedem Modul deklarierten Berechtigungen.",
@@ -1306,6 +1359,78 @@ export default {
             none: "Keine Berechtigungen für dieses Modul.",
             name: "Name",
             role: "Erforderliche Rolle",
+            searchPlaceholder: "Nach Name, Modul oder Rolle suchen…",
+            names: {
+                core: {
+                    dashboard: { view: "Dashboard ansehen" },
+                    media: {
+                        view: "Medien ansehen",
+                        manage: "Medien verwalten",
+                    },
+                    menus: { manage: "Menüs verwalten" },
+                    search: { view: "Suche nutzen" },
+                    settings: { manage: "Einstellungen verwalten" },
+                    themes: { manage: "Designs verwalten" },
+                    users: { manage: "Benutzer verwalten" },
+                },
+                crm: {
+                    companies: { manage: "Unternehmen verwalten" },
+                    contacts: {
+                        view: "Kontakte ansehen",
+                        create: "Kontakt erstellen",
+                        edit: "Kontakt bearbeiten",
+                        delete: "Kontakt löschen",
+                    },
+                    deals: { manage: "Deals verwalten" },
+                },
+                ecommerce: {
+                    listings: {
+                        view: "Angebote ansehen",
+                        create: "Angebot erstellen",
+                        edit: "Angebot bearbeiten",
+                        delete: "Angebot löschen",
+                    },
+                    orders: {
+                        view: "Bestellungen ansehen",
+                        manage: "Bestellungen verwalten",
+                    },
+                },
+                editorial: {
+                    comments: { manage: "Kommentare verwalten" },
+                    forms: { manage: "Formulare verwalten" },
+                    post_types: { manage: "Inhaltstypen verwalten" },
+                    posts: {
+                        view: "Inhalte ansehen",
+                        manage: "Inhalte verwalten",
+                    },
+                    taxonomies: { manage: "Taxonomien verwalten" },
+                },
+                erp: {
+                    products: {
+                        view: "Produkte ansehen",
+                        create: "Produkt erstellen",
+                        edit: "Produkt bearbeiten",
+                        delete: "Produkt löschen",
+                    },
+                },
+            },
+        },
+        modules: {
+            core: "Kern",
+            crm: "CRM",
+            ecommerce: "E-Commerce",
+            editorial: "Redaktion",
+            erp: "ERP",
+            media: "Medien",
+            users: "Benutzer",
+        },
+        roles: {
+            ROLE_USER: "Benutzer",
+            ROLE_CONTRIBUTOR: "Mitwirkender",
+            ROLE_AUTHOR: "Autor",
+            ROLE_EDITOR: "Redakteur",
+            ROLE_ADMIN: "Administrator",
+            ROLE_DEV: "Entwickler",
         },
         search: {
             button: "Suchen",

@@ -8,6 +8,8 @@
 
 {% block body %}
 <div {{ vue_component('crm/admin/DealsApp', {
+    initialView: initialView,
+    kanbanColumns: kanbanColumns,
     deals: deals,
     search: search,
     stages: stages,
@@ -15,9 +17,12 @@
     updatePath: updatePath,
     deletePath: deletePath,
     listPath: listPath,
+    kanbanColumnsPath: kanbanColumnsPath,
     contactsListPath: contactsListPath,
     companiesListPath: companiesListPath,
-    kanbanPath: path('crm_deals_kanban'),
+    listRoutePath: path('crm_deals'),
+    kanbanRoutePath: path('crm_deals_kanban'),
+    updateStagePath: path('crm_deals_stage', {id: '__id__'}),
     showPath: path('crm_deals_show', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

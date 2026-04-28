@@ -231,6 +231,7 @@ admin:
     settings: Réglages
     themes: Thèmes
     users: Utilisateurs
+    resizeHint: "Glisser pour redimensionner — double-clic pour réinitialiser"
   profile:
     errors:
       current_password_invalid: Le mot de passe actuel est incorrect.

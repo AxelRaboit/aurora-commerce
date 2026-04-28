@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -63,7 +64,7 @@ function openEditPostType(postType) {
 
 async function submitPostType() {
     const url = postTypeModal.editing
-        ? props.editPath.replace("__id__", postTypeModal.editing.id)
+        ? buildPath(props.editPath, { id: postTypeModal.editing.id })
         : props.createPath;
     await postTypeModalSubmit(url, postTypeForm, (data) => {
         replacePostType(data.postType);
@@ -76,7 +77,7 @@ async function confirmDeletePostType() {
     const pt = deletingPostType.value;
     if (!pt) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", pt.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.deletePath, { id: pt.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(data.error ? t(data.error) : t("shared.common.error"));
@@ -137,8 +138,8 @@ function buildFieldOptions() {
 async function submitField() {
     if (!selected.value) return;
     const url = fieldModal.editing
-        ? props.fieldEditPath.replace("__id__", selected.value.id).replace("__fieldId__", fieldModal.editing.id)
-        : props.fieldCreatePath.replace("__id__", selected.value.id);
+        ? buildPath(props.fieldEditPath, { id: selected.value.id, fieldId: fieldModal.editing.id })
+        : buildPath(props.fieldCreatePath, { id: selected.value.id });
     const payload = {
         name: fieldForm.name, label: fieldForm.label, type: fieldForm.type,
         required: fieldForm.required, translatable: fieldForm.translatable, options: buildFieldOptions(),
@@ -151,7 +152,7 @@ async function confirmDeleteField() {
     const field = deletingField.value;
     if (!field || !selected.value) return;
     try {
-        const url = props.fieldDeletePath.replace("__id__", selected.value.id).replace("__fieldId__", field.id);
+        const url = buildPath(props.fieldDeletePath, { id: selected.value.id, fieldId: field.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
@@ -181,7 +182,7 @@ watch(
 async function persistFieldOrder() {
     if (!selected.value) return;
     try {
-        const response = await fetch(props.fieldReorderPath.replace("__id__", selected.value.id), {
+        const response = await fetch(buildPath(props.fieldReorderPath, { id: selected.value.id }), {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderedIds: orderedFields.value.map((f) => f.id) }),

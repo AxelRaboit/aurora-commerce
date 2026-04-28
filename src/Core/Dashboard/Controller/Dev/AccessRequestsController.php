@@ -34,7 +34,7 @@ final class AccessRequestsController extends AbstractController
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $result = $this->accessRequestRepository->findPaginatedAdmin($pagination->page);
+        $result = $this->accessRequestRepository->findPaginatedAdmin($pagination->page, search: $pagination->search);
 
         $items = array_map(
             fn (AccessRequest $accessRequest): array => [
@@ -58,6 +58,7 @@ final class AccessRequestsController extends AbstractController
         return $this->render('@Core/admin/administration/index.html.twig', [
             'tab' => 'access_requests',
             'accessRequests' => $payload,
+            'search' => $pagination->search ?? '',
         ]);
     }
 

@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -92,7 +93,7 @@ async function submitComment(parentId, activeForm) {
 }
 
 async function react(commentId, type) {
-    const url = props.reactPathTemplate.replace("__commentId__", String(commentId));
+    const url = buildPath(props.reactPathTemplate, { commentId });
     try {
         const response = await fetch(url, {
             method: HttpMethod.Post,

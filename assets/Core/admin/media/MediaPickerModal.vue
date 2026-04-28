@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import {
     Search,
@@ -245,7 +246,7 @@ async function saveEdit() {
     if (editAlt.value === (item.alt ?? "") && editCaption.value === (item.caption ?? "")) return;
     editSaving.value = true;
     try {
-        const url = props.editPath.replace("__id__", item.id);
+        const url = buildPath(props.editPath, { id: item.id });
         const response = await fetch(url, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },

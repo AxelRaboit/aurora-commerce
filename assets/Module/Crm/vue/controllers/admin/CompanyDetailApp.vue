@@ -10,6 +10,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
@@ -151,9 +152,12 @@ async function submitContact() {
                 <div class="sm:hidden space-y-3">
                     <div v-for="contact in contacts" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
-                                {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
-                            </div>
+                            <AppAvatar
+                                :first-name="contact.firstName"
+                                :last-name="contact.lastName"
+                                :email="contact.email"
+                                size="lg"
+                            />
                             <div class="min-w-0 flex-1">
                                 <p class="font-medium text-primary truncate">{{ contact.firstName }} {{ contact.lastName }}</p>
                                 <AppLink v-if="contact.email" :href="`mailto:${contact.email}`" class="text-xs text-muted hover:text-accent-400 transition-colors break-all">{{ contact.email }}</AppLink>
@@ -176,9 +180,12 @@ async function submitContact() {
                             <tr v-for="contact in contacts" :key="contact.id" class="hover:bg-surface-2/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <div class="w-7 h-7 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
-                                            {{ contact.firstName?.[0] }}{{ contact.lastName?.[0] }}
-                                        </div>
+                                        <AppAvatar
+                                            :first-name="contact.firstName"
+                                            :last-name="contact.lastName"
+                                            :email="contact.email"
+                                            size="sm"
+                                        />
                                         <span class="font-medium text-primary truncate">{{ contact.firstName }} {{ contact.lastName }}</span>
                                     </div>
                                 </td>

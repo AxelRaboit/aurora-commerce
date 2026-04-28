@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 export function usePostSave(createPath, editPath, onSuccess) {
     const { loading, request } = useApiRequest();
@@ -9,7 +10,7 @@ export function usePostSave(createPath, editPath, onSuccess) {
     async function save(postId, formData) {
         errors.value = {};
         conflict.value = false;
-        const url = postId ? editPath.replace("__id__", postId) : createPath;
+        const url = postId ? buildPath(editPath, { id: postId }) : createPath;
         const data = await request(url, formData);
         if (!data) return false;
         if (data.conflict) {

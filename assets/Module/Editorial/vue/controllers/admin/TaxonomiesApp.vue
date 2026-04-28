@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, computed, reactive, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -118,7 +119,7 @@ function openEditTaxonomy(taxonomy) {
 
 async function submitTaxonomy() {
     const url = taxonomyModal.editing
-        ? props.editPath.replace("__id__", taxonomyModal.editing.id)
+        ? buildPath(props.editPath, { id: taxonomyModal.editing.id })
         : props.createPath;
     await taxonomyModalSubmit(url, taxonomyForm, (data) => {
         replaceTaxonomy(data.taxonomy);
@@ -131,7 +132,7 @@ async function confirmDeleteTaxonomy() {
     const taxonomy = deletingTaxonomy.value;
     if (!taxonomy) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", taxonomy.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.deletePath, { id: taxonomy.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
             toast.error(data.error ?? t("shared.common.error"));
@@ -183,8 +184,8 @@ async function submitTerm() {
         if (entry?.name) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
     }
     const url = termModal.editing
-        ? props.termEditPath.replace("__id__", selected.value.id).replace("__termId__", termModal.editing.id)
-        : props.termCreatePath.replace("__id__", selected.value.id);
+        ? buildPath(props.termEditPath, { id: selected.value.id, termId: termModal.editing.id })
+        : buildPath(props.termCreatePath, { id: selected.value.id });
     await termModalSubmit(url, termForm, (data) => replaceTaxonomy(data.taxonomy));
 }
 
@@ -193,9 +194,7 @@ async function confirmDeleteTerm() {
     const term = deletingTerm.value;
     if (!term || !selected.value) return;
     try {
-        const url = props.termDeletePath
-            .replace("__id__", selected.value.id)
-            .replace("__termId__", term.id);
+        const url = buildPath(props.termDeletePath, { id: selected.value.id, termId: term.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.success) {
@@ -229,7 +228,7 @@ async function persistTreeOrder() {
     if (!selected.value) return;
     const entries = flattenTreeForReorder(tree.value);
     try {
-        const response = await fetch(props.termReorderPath.replace("__id__", selected.value.id), {
+        const response = await fetch(buildPath(props.termReorderPath, { id: selected.value.id }), {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ entries }),

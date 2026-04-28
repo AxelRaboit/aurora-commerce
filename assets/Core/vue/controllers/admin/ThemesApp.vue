@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -32,7 +33,7 @@ function accentColor(theme) {
 // ── Activate ─────────────────────────────────────────────────────────────────
 async function activateTheme(theme) {
     try {
-        const url = props.activatePath.replace("__id__", theme.id);
+        const url = buildPath(props.activatePath, { id: theme.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.ok) {
@@ -198,7 +199,7 @@ async function submitEdit() {
     editModal.errors = {};
 
     try {
-        const url = props.updatePath.replace("__id__", editModal.editing.id);
+        const url = buildPath(props.updatePath, { id: editModal.editing.id });
         const response = await fetch(url, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
@@ -233,7 +234,7 @@ async function confirmDelete() {
     const theme = deletingTheme.value;
     if (!theme) return;
     try {
-        const url = props.deletePath.replace("__id__", theme.id);
+        const url = buildPath(props.deletePath, { id: theme.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.ok) {

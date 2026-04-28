@@ -38,7 +38,7 @@ final class UsersController extends AbstractController
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
-    public function index(PaginationRequest $pagination): Response
+    public function index(PaginationRequest $pagination, Request $request): Response
     {
         $result = $this->userRepository->findPaginatedForAdmin($pagination->page, $pagination->search);
 
@@ -58,14 +58,20 @@ final class UsersController extends AbstractController
             $result['items'],
         );
 
+        $payload = [
+            'items' => $items,
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'totalPages' => $result['totalPages'],
+        ];
+
+        if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
+            return $this->json(['ok' => true, ...$payload]);
+        }
+
         return $this->render('@Core/admin/administration/index.html.twig', [
             'tab' => 'users',
-            'users' => [
-                'items' => $items,
-                'total' => $result['total'],
-                'page' => $result['page'],
-                'totalPages' => $result['totalPages'],
-            ],
+            'users' => $payload,
             'search' => $pagination->search ?? '',
         ]);
     }

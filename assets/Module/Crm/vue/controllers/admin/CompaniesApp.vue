@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
@@ -71,7 +72,7 @@ async function submitEdit() {
         name: () => required(t("admin.crm.companies.errors.name_required"))(editForm.value.name),
         website: () => url(t("admin.crm.companies.errors.website_invalid"))(editForm.value.website),
     })) return;
-    const updateUrl = props.updatePath.replace("__id__", editingCompany.value.id);
+    const updateUrl = buildPath(props.updatePath, { id: editingCompany.value.id });
     const data = await editRequest(updateUrl, editForm.value);
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t('admin.crm.companies.updated')); reset(); }
@@ -109,7 +110,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <AppLink v-if="company.website" :href="company.website" target="_blank" class="text-xs text-accent-400 truncate hover:underline">{{ company.website }}</AppLink>
                     <span v-else class="text-xs text-muted">—</span>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton color="sky" :href="showPath.replace('__id__', company.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -147,7 +148,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :href="showPath.replace('__id__', company.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>

@@ -1,9 +1,9 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch, provide, nextTick } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, Merge, History, ExternalLink } from "lucide-vue-next";
-import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
+import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, Merge, History } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -12,10 +12,8 @@ import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import EditorBlock from "@/shared/components/display/EditorBlock.vue";
-import PreviewOverlay from "@/shared/components/overlay/PreviewOverlay.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
@@ -24,6 +22,7 @@ import PostSeoPanel from "./PostSeoPanel.vue";
 import PostTaxonomiesPanel from "./PostTaxonomiesPanel.vue";
 import PostFeaturedImagePanel from "./PostFeaturedImagePanel.vue";
 import PostTemplatesOverlay from "./PostTemplatesOverlay.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { useRelatedSearch } from "./composables/useRelatedSearch.js";
@@ -46,6 +45,7 @@ const props = defineProps({
     showPath: { type: String, required: true },
     createPath: { type: String, required: true },
     editPath: { type: String, required: true },
+    previewPath: { type: String, required: true },
 });
 
 const emit = defineEmits(["saved", "back"]);
@@ -92,6 +92,10 @@ function makeEmptyTranslation() {
 
 const postTypeOptions = computed(() =>
     props.postTypes.map((pt) => ({ value: String(pt.id), label: pt.label })),
+);
+
+const statusOptions = computed(() =>
+    POST_STATUS_VALUES.map((value) => ({ value, label: t(`admin.posts.statusOptions.${value}`) })),
 );
 
 const form = reactive({
@@ -166,7 +170,7 @@ onMounted(async () => {
     if (!props.postId) return;
     fetching.value = true;
     try {
-        const response = await fetch(props.showPath.replace("__id__", props.postId));
+        const response = await fetch(buildPath(props.showPath, { id: props.postId }));
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
@@ -249,7 +253,7 @@ const editorKey     = ref(0);
 async function reloadAfterRestore() {
     showRevisions.value = false;
     try {
-        const response = await fetch(props.showPath.replace("__id__", props.postId));
+        const response = await fetch(buildPath(props.showPath, { id: props.postId }));
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
@@ -281,9 +285,24 @@ async function applyTemplate(template) {
     }
 }
 
-const previewHtml = computed(() =>
-    renderBlocks(form.translations[activeLocale.value]?.blocks ?? []),
-);
+function openPreview() {
+    if (isDirty.value) toast.info(t("admin.posts.previewSavedHint"));
+    showPreview.value = true;
+}
+
+const previewPost = computed(() => {
+    if (!props.postId) return null;
+    const postType = props.postTypes.find((pt) => pt.id === Number(form.postTypeId));
+    return {
+        id: props.postId,
+        title: form.translations[activeLocale.value]?.title ?? "",
+        slug: form.translations[activeLocale.value]?.slug ?? "",
+        status: form.status,
+        trashed: trashed.value,
+        translations: form.translations,
+        postType: postType ? { id: postType.id, slug: postType.slug, label: postType.label } : null,
+    };
+});
 
 const { loading, errors, conflict, save: savePost } = usePostSave(
     props.createPath,
@@ -371,9 +390,13 @@ function forceSave() {
             </div>
 
             <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-2">
-                <AppSelect v-model="form.status" class="w-full sm:w-auto">
-                    <option v-for="value in POST_STATUS_VALUES" :key="value" :value="value">{{ t(`admin.posts.statusOptions.${value}`) }}</option>
-                </AppSelect>
+                <AppMultiselect
+                    v-model="form.status"
+                    :options="statusOptions"
+                    track-by="value"
+                    option-label="label"
+                    class="w-full sm:w-44"
+                />
                 <AppDatePicker
                     v-if="form.status === PostStatus.Scheduled"
                     v-model="form.scheduledAt"
@@ -394,20 +417,16 @@ function forceSave() {
                     <History class="w-4 h-4" :stroke-width="2" />
                     <span>{{ t("admin.posts.revisions.title") }}</span>
                 </AppButton>
-                <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showPreview = true">
-                    <Eye class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("admin.posts.preview") }}</span>
-                </AppButton>
                 <AppButton
-                    v-if="frontUrl && form.status === 'published'"
+                    v-if="postId"
                     variant="secondary"
                     size="md"
                     class="w-full sm:w-auto"
-                    :href="frontUrl"
-                    target="_blank"
+                    :title="isDirty ? t('admin.posts.previewSavedHint') : null"
+                    v-on:click="openPreview"
                 >
-                    <ExternalLink class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("shared.common.view") }}</span>
+                    <Eye class="w-4 h-4" :stroke-width="2" />
+                    <span>{{ t("admin.posts.preview") }}</span>
                 </AppButton>
                 <AppButton
                     variant="primary"
@@ -522,18 +541,15 @@ function forceSave() {
         />
 
         <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
-            <button
+            <AppTab
                 v-for="locale in locales"
                 :key="locale"
-                type="button"
-                class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap shrink-0"
-                :class="activeLocale === locale
-                    ? 'border-accent-500 text-accent-400'
-                    : 'border-transparent text-secondary hover:text-primary'"
+                variant="underline"
+                :active="activeLocale === locale"
                 v-on:click="switchLocale(locale)"
             >
                 {{ t("shared.locales." + locale) }}
-            </button>
+            </AppTab>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -606,12 +622,10 @@ function forceSave() {
 
     <PostTemplatesOverlay :show="showTemplates" v-on:close="showTemplates = false" v-on:apply="applyTemplate" />
 
-    <PreviewOverlay
-        :show="showPreview"
-        :title="form.translations[activeLocale]?.title"
-        :html="previewHtml"
-        :featured-media-url="featuredMediaUrl"
-        :label="t('admin.posts.preview') + ' - ' + t('shared.locales.' + activeLocale)"
+    <PostPreviewOverlay
+        :post="showPreview ? previewPost : null"
+        :locales="locales"
+        :preview-path="previewPath"
         v-on:close="showPreview = false"
     />
 
@@ -619,6 +633,7 @@ function forceSave() {
         :post="remotePost"
         :loading="remoteLoading"
         :locales="locales"
+        :preview-path="previewPath"
         v-on:close="closeRemoteVersion"
     />
 

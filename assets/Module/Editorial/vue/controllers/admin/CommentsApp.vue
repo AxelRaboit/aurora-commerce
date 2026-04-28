@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, computed, onMounted } from "vue";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
@@ -52,7 +53,7 @@ function selectTab(key) {
 
 async function moderateComment(comment, path, successKey, statsUpdate) {
     try {
-        const response = await fetch(path.replace("__id__", comment.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(path, { id: comment.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t(successKey));
@@ -111,7 +112,7 @@ async function doDelete() {
     deleteLoading.value = true;
     const comment = pendingDelete.value;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", comment.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.deletePath, { id: comment.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("shared.common.deleted"));

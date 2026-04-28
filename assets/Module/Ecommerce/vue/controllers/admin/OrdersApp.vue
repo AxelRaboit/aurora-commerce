@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
@@ -105,7 +106,7 @@ function formatTotal(order) {
                     <span class="text-xs text-muted">{{ formatDateShort(order.createdAt) }} · {{ order.itemCount }} {{ t('admin.ecommerce.orders.items') }}</span>
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-semibold text-primary">{{ formatTotal(order) }}</span>
-                        <AppIconButton color="sky" :title="t('shared.common.view')" :href="showPath.replace('__id__', order.id)">
+                        <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                     </div>
@@ -139,7 +140,7 @@ function formatTotal(order) {
                         <td class="px-4 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" :href="showPath.replace('__id__', order.id)">
+                                <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

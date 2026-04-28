@@ -233,6 +233,7 @@ admin:
     settings: Ajustes
     themes: Temas
     users: Usuarios
+    resizeHint: "Arrastra para redimensionar — doble clic para restablecer"
   profile:
     errors:
       current_password_invalid: La contraseña actual es incorrecta.

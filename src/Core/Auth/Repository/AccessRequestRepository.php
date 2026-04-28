@@ -41,10 +41,18 @@ class AccessRequestRepository extends ServiceEntityRepository
     /**
      * @return array{items: AccessRequest[], total: int, page: int, totalPages: int}
      */
-    public function findPaginatedAdmin(int $page = 1, int $limit = 20): array
+    public function findPaginatedAdmin(int $page = 1, int $limit = 20, ?string $search = null): array
     {
         $queryBuilder = $this->createQueryBuilder('a')->orderBy('a.createdAt', Order::Descending->value);
         $countQueryBuilder = $this->createQueryBuilder('a')->select('COUNT(a.id)');
+
+        if (null !== $search && '' !== mb_trim($search)) {
+            $term = '%'.mb_trim($search).'%';
+            foreach ([$queryBuilder, $countQueryBuilder] as $qb) {
+                $qb->andWhere('a.requesterEmail LIKE :search OR a.requesterName LIKE :search OR a.message LIKE :search')
+                    ->setParameter('search', $term);
+            }
+        }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }

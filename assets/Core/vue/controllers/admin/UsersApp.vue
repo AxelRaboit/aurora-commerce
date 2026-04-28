@@ -1,5 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
@@ -19,7 +20,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import UserRowActions from "@core/admin/users/UserRowActions.vue";
-import UserAvatar from "@core/admin/users/UserAvatar.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 
 const { t } = useI18n();
 const { formatDate, formatDateShort } = useDateFormat();
@@ -118,7 +119,7 @@ async function openView(user) {
     // Show the row data immediately, then enrich with subordinates from the detail endpoint.
     viewingUser.value = { ...user, subordinates: [], subordinatesCount: 0 };
     try {
-        const response = await fetch(props.showPath.replace("__id__", user.id));
+        const response = await fetch(buildPath(props.showPath, { id: user.id }));
         const data = await response.json();
         if (data.ok && viewingUser.value?.id === user.id) {
             viewingUser.value = data.user;
@@ -160,7 +161,7 @@ async function onPhotoSelected(file) {
     try {
         const formData = new FormData();
         formData.append("photo", file);
-        const url = props.photoUploadPath.replace("__id__", editModal.editing.id);
+        const url = buildPath(props.photoUploadPath, { id: editModal.editing.id });
         const response = await fetch(url, { method: HttpMethod.Post, body: formData });
         const data = await response.json();
         if (!data.ok) {
@@ -182,7 +183,7 @@ async function removePhoto() {
     if (!editModal.editing) return;
     editModal.photoUploading = true;
     try {
-        const url = props.photoDeletePath.replace("__id__", editModal.editing.id);
+        const url = buildPath(props.photoDeletePath, { id: editModal.editing.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
         if (!data.ok) {
@@ -204,7 +205,7 @@ async function submitEdit() {
     editModal.saving = true;
     editModal.errors = {};
     try {
-        const url = props.updatePath.replace("__id__", editModal.editing.id);
+        const url = buildPath(props.updatePath, { id: editModal.editing.id });
         const payload = {
             ...editForm,
             managerId: editForm.managerId ? Number(editForm.managerId) : null,
@@ -232,7 +233,7 @@ async function submitEdit() {
 // ── Row actions ──────────────────────────────────────────────────────────────
 async function resendInvitation(user) {
     try {
-        const response = await fetch(props.resendInvitationPath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.resendInvitationPath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("admin.users.invitationResent"));
@@ -253,7 +254,7 @@ async function confirmToggleDisabled() {
     const user = togglingUser.value;
     if (!user) return;
     try {
-        const response = await fetch(props.toggleDisabledPath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.toggleDisabledPath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("shared.common.saved"));
@@ -273,7 +274,7 @@ async function confirmDelete() {
     const user = deletingUser.value;
     if (!user) return;
     try {
-        const response = await fetch(props.deletePath.replace("__id__", user.id), { method: HttpMethod.Post });
+        const response = await fetch(buildPath(props.deletePath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
         if (data.ok) {
             toast.success(t("shared.common.deleted"));
@@ -321,7 +322,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                 <div class="flex items-start gap-3">
-                    <UserAvatar :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="40" />
+                    <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="40" />
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary text-sm">
                             {{ user.name }}
@@ -371,7 +372,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
                         <td class="px-4 py-3 text-primary font-medium">
                             <div class="flex items-center gap-3">
-                                <UserAvatar :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
+                                <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
                                 <span>
                                     {{ user.name }}
                                     <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
@@ -447,7 +448,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
         <AppModal :show="!!viewingUser" max-width="md" v-on:close="viewingUser = null">
             <div v-if="viewingUser" class="space-y-5">
                 <div class="flex items-center gap-4">
-                    <UserAvatar :name="viewingUser.name" :photo-url="viewingUser.profilePhotoUrl ?? ''" :size="64" />
+                    <AppAvatar variant="solid" :name="viewingUser.name" :photo-url="viewingUser.profilePhotoUrl ?? ''" :size="64" />
                     <div class="min-w-0">
                         <h3 class="text-lg font-semibold text-primary truncate">{{ viewingUser.name }}</h3>
                         <p class="text-sm text-muted truncate">{{ viewingUser.email }}</p>
@@ -517,7 +518,8 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
             <div class="flex items-center gap-4 py-4 border-b border-line/40 mb-4">
-                <UserAvatar
+                <AppAvatar
+                    variant="solid"
                     :name="editModal.editing?.name ?? ''"
                     :photo-url="editModal.editing?.profilePhotoUrl ?? ''"
                     :size="64"

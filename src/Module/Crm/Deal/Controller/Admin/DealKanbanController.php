@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Deal\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
-use Aurora\Module\Crm\Deal\Repository\DealRepository;
-use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,24 +16,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class DealKanbanController extends AbstractController
 {
     public function __construct(
-        private readonly DealRepository $dealRepository,
-        private readonly DealSerializer $dealSerializer,
+        private readonly DealsController $dealsController,
     ) {}
 
-    public function __invoke(): Response
+    public function __invoke(PaginationRequest $pagination): Response
     {
-        $stages = DealStageEnum::cases();
-        $columns = [];
-        foreach ($stages as $stage) {
-            $result = $this->dealRepository->findPaginated(1, 100, stage: $stage);
-            $columns[$stage->value] = array_map($this->dealSerializer->serialize(...), $result['items']);
-        }
-
-        return $this->render('@Crm/admin/deals/kanban.html.twig', [
-            'columns' => $columns,
-            'stages' => array_map(fn (DealStageEnum $s) => $s->value, $stages),
-            'updateStagePath' => $this->generateUrl('crm_deals_stage', ['id' => '__id__']),
-            'listPath' => $this->generateUrl('crm_deals'),
-        ]);
+        return $this->dealsController->renderApp(
+            $pagination,
+            initialView: 'kanban',
+            kanbanColumns: $this->dealsController->buildKanbanColumns(),
+        );
     }
 }

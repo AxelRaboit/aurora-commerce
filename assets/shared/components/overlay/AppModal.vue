@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { useBackButtonClose } from "@/shared/composables/overlay/useBackButtonClose.js";
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -22,8 +23,13 @@ watch(() => props.show, (show) => {
     }
 });
 
+const { requestClose } = useBackButtonClose({
+    isOpen: () => props.show,
+    onClose: () => emit("close"),
+});
+
 function close() {
-    if (props.closeable) emit("close");
+    if (props.closeable) requestClose();
 }
 
 function closeOnEscape(event) {

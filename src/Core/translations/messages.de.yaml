@@ -233,6 +233,7 @@ admin:
     settings: Einstellungen
     themes: Designs
     users: Benutzer
+    resizeHint: "Ziehen zum Verändern — Doppelklick zum Zurücksetzen"
   profile:
     errors:
       current_password_invalid: Das aktuelle Passwort ist falsch.

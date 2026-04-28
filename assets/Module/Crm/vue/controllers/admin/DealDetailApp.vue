@@ -16,6 +16,7 @@ import { Pencil, Trash2, Save, } from "lucide-vue-next";
 import { required } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { stageBadge } from "@crm/utils/deals/stageStyles.js";
 
 const { t } = useI18n();
 
@@ -31,15 +32,6 @@ const STAGES = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
 const stageOptions = STAGES.map(s => ({ value: s, label: t(`admin.crm.deals.stages.${s}`) }));
 
 const stageLabel = (stage) => t(`admin.crm.deals.stages.${stage}`);
-
-const stageBadge = (stage) => ({
-    lead: "bg-slate-500/15 text-slate-400",
-    qualified: "bg-blue-500/15 text-blue-400",
-    proposal: "bg-violet-500/15 text-violet-400",
-    negotiation: "bg-amber-500/15 text-amber-400",
-    won: "bg-emerald-500/15 text-emerald-400",
-    lost: "bg-red-500/15 text-red-400",
-}[stage] ?? "bg-slate-500/15 text-slate-400");
 
 const deal = ref({ ...props.deal });
 

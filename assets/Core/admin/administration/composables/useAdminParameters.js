@@ -14,12 +14,13 @@ export function useAdminParameters(
 
     const searchInput = ref(initialSearch ?? "");
 
-    const { items, page, totalPages, goToPage, reset } = usePaginatedFetch(
-        parametersPath,
-        () => ({ search: searchInput.value || undefined }),
-        null,
-        initialParameters,
-    );
+    const { items, page, totalPages, goToPage, reset, load } =
+        usePaginatedFetch(
+            parametersPath,
+            () => ({ search: searchInput.value || undefined }),
+            null,
+            initialParameters,
+        );
 
     function performSearch() {
         reset();
@@ -69,6 +70,8 @@ export function useAdminParameters(
         page,
         totalPages,
         goToPage,
+        load,
+        reset,
         searchInput,
         performSearch,
         editingKey,

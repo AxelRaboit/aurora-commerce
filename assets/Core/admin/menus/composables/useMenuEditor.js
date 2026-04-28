@@ -1,4 +1,5 @@
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -14,9 +15,7 @@ async function jsonRequest(url, options = {}) {
     return response.json();
 }
 
-function replacePath(template, id) {
-    return template.replace("__id__", String(id));
-}
+const replacePath = (template, id) => buildPath(template, { id });
 
 function flattenItems(items, list = []) {
     for (const item of items) {

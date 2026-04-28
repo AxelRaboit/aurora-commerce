@@ -290,6 +290,7 @@ export default {
             approved_toast: "Demande d'accès approuvée.",
             rejected_toast: "Demande d'accès rejetée.",
             purged_toast: "Demandes traitées supprimées.",
+            searchPlaceholder: "Rechercher par e-mail, nom ou message…",
         },
         editor: {
             placeholder: "Commencez à rédiger…",
@@ -546,6 +547,8 @@ export default {
             slugUnlock: "Modifier le slug",
             preview: "Prévisualiser",
             previewEmpty: "Aucun contenu à prévisualiser.",
+            previewSavedHint:
+                "L'aperçu affiche la dernière version sauvegardée.",
             statusOptions: {
                 draft: "Brouillon",
                 pending_review: "En attente de relecture",
@@ -1306,6 +1309,56 @@ export default {
             module: "Module",
             user: "Utilisateur",
             date: "Date",
+            actions: {
+                crm: {
+                    company: {
+                        created: "Société créée",
+                        updated: "Société modifiée",
+                        deleted: "Société supprimée",
+                    },
+                    contact: {
+                        created: "Contact créé",
+                        updated: "Contact modifié",
+                        deleted: "Contact supprimé",
+                    },
+                    deal: {
+                        created: "Deal créé",
+                        updated: "Deal modifié",
+                        deleted: "Deal supprimé",
+                        stage_changed: "Étape modifiée",
+                    },
+                },
+                ecommerce: {
+                    listing: {
+                        created: "Annonce créée",
+                        updated: "Annonce modifiée",
+                        deleted: "Annonce supprimée",
+                    },
+                    order: {
+                        created: "Commande créée",
+                        paid: "Commande payée",
+                        cancelled: "Commande annulée",
+                    },
+                },
+                erp: {
+                    product: {
+                        created: "Produit créé",
+                        updated: "Produit modifié",
+                        deleted: "Produit supprimé",
+                    },
+                },
+                media: {
+                    uploaded: "Média téléversé",
+                    updated: "Média modifié",
+                    moved: "Média déplacé",
+                    deleted: "Média supprimé",
+                    cropped: "Média recadré",
+                },
+                users: {
+                    photo_uploaded: "Photo de profil ajoutée",
+                    photo_removed: "Photo de profil supprimée",
+                },
+            },
         },
         permissions: {
             intro: "Liste en lecture seule des permissions déclarées par chaque module.",
@@ -1313,6 +1366,78 @@ export default {
             none: "Aucune permission pour ce module.",
             name: "Nom",
             role: "Rôle requis",
+            searchPlaceholder: "Rechercher par nom, module ou rôle…",
+            names: {
+                core: {
+                    dashboard: { view: "Voir le tableau de bord" },
+                    media: {
+                        view: "Voir les médias",
+                        manage: "Gérer les médias",
+                    },
+                    menus: { manage: "Gérer les menus" },
+                    search: { view: "Utiliser la recherche" },
+                    settings: { manage: "Gérer les réglages" },
+                    themes: { manage: "Gérer les thèmes" },
+                    users: { manage: "Gérer les utilisateurs" },
+                },
+                crm: {
+                    companies: { manage: "Gérer les sociétés" },
+                    contacts: {
+                        view: "Voir les contacts",
+                        create: "Créer un contact",
+                        edit: "Modifier un contact",
+                        delete: "Supprimer un contact",
+                    },
+                    deals: { manage: "Gérer les deals" },
+                },
+                ecommerce: {
+                    listings: {
+                        view: "Voir les annonces",
+                        create: "Créer une annonce",
+                        edit: "Modifier une annonce",
+                        delete: "Supprimer une annonce",
+                    },
+                    orders: {
+                        view: "Voir les commandes",
+                        manage: "Gérer les commandes",
+                    },
+                },
+                editorial: {
+                    comments: { manage: "Gérer les commentaires" },
+                    forms: { manage: "Gérer les formulaires" },
+                    post_types: { manage: "Gérer les types de contenu" },
+                    posts: {
+                        view: "Voir les contenus",
+                        manage: "Gérer les contenus",
+                    },
+                    taxonomies: { manage: "Gérer les taxonomies" },
+                },
+                erp: {
+                    products: {
+                        view: "Voir les produits",
+                        create: "Créer un produit",
+                        edit: "Modifier un produit",
+                        delete: "Supprimer un produit",
+                    },
+                },
+            },
+        },
+        modules: {
+            core: "Cœur",
+            crm: "CRM",
+            ecommerce: "E-commerce",
+            editorial: "Éditorial",
+            erp: "ERP",
+            media: "Médias",
+            users: "Utilisateurs",
+        },
+        roles: {
+            ROLE_USER: "Utilisateur",
+            ROLE_CONTRIBUTOR: "Contributeur",
+            ROLE_AUTHOR: "Auteur",
+            ROLE_EDITOR: "Éditeur",
+            ROLE_ADMIN: "Administrateur",
+            ROLE_DEV: "Développeur",
         },
         search: {
             button: "Rechercher",

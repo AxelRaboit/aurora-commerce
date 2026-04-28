@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { LogIn, Pencil, Shield, Trash2, UserRound } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 const { t } = useI18n();
 
@@ -21,7 +22,7 @@ const emit = defineEmits(["edit", "toggle-role", "delete"]);
     <AppIconButton
         v-if="!user.isCurrent"
         color="amber"
-        :href="impersonatePath.replace('__email__', encodeURIComponent(user.email))"
+        :href="buildPath(impersonatePath, { email: user.email })"
         :title="t('admin.users.impersonate', { name: user.name })"
     >
         <LogIn class="w-4 h-4" :stroke-width="2" />

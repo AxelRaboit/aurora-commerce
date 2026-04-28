@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
@@ -15,6 +16,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required, email as emailValidator } from "@/shared/utils/validation/validators.js";
@@ -93,7 +95,7 @@ async function submitEdit() {
         email: () => editForm.value.email ? emailValidator(t("admin.crm.contacts.errors.email_invalid"))(editForm.value.email) : null,
     })) return;
 
-    const url = props.updatePath.replace("__id__", editingContact.value.id);
+    const url = buildPath(props.updatePath, { id: editingContact.value.id });
     const data = await editRequest(url, editForm.value);
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t('admin.crm.contacts.updated')); reset(); }
@@ -105,7 +107,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     props.deletePath, () => reset(), 'admin.crm.contacts.deleted',
 );
 
-const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.[0] ?? "");
 </script>
 
 <template>
@@ -125,9 +126,13 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
         <div class="sm:hidden space-y-3">
             <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-sm font-bold shrink-0 uppercase">
-                        {{ avatar(contact) }}
-                    </div>
+                    <AppAvatar
+                        :first-name="contact.firstName"
+                        :last-name="contact.lastName"
+                        :name="contact.fullName"
+                        :email="contact.email"
+                        size="lg"
+                    />
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary">{{ contact.fullName }}</p>
                         <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
@@ -136,7 +141,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', contact.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -159,9 +164,13 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                     <tr v-for="contact in items" :key="contact.id" class="hover:bg-surface-2/50 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-accent-600/20 text-accent-400 flex items-center justify-center text-xs font-bold shrink-0 uppercase">
-                                    {{ avatar(contact) }}
-                                </div>
+                                <AppAvatar
+                                    :first-name="contact.firstName"
+                                    :last-name="contact.lastName"
+                                    :name="contact.fullName"
+                                    :email="contact.email"
+                                    size="md"
+                                />
                                 <span class="font-medium text-primary">{{ contact.fullName }}</span>
                             </div>
                         </td>
@@ -170,7 +179,7 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
                         <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ contact.phone ?? '—' }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', contact.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>

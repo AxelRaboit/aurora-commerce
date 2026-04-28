@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
@@ -130,7 +131,7 @@ async function submitEdit() {
         slug: () => required(t("admin.ecommerce.listings.errors.slug_required"))(editForm.value.slug),
     })) return;
 
-    const url = props.updatePath.replace("__id__", editingListing.value.id);
+    const url = buildPath(props.updatePath, { id: editingListing.value.id });
     const data = await editRequest(url, editForm.value);
     if (!data) return;
     if (data.success) {
@@ -200,7 +201,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', listing.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
@@ -227,7 +228,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', listing.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>

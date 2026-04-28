@@ -1,4 +1,5 @@
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -15,16 +16,23 @@ export function useAdminAccessRequests(
     purgePath,
     csrfToken,
     initialAccessRequests,
+    initialSearch = "",
 ) {
     const { t } = useI18n();
+
+    const searchInput = ref(initialSearch);
 
     const { items, loading, page, totalPages, load, goToPage, reset } =
         usePaginatedFetch(
             () => accessRequestsPath,
-            () => ({}),
+            () => ({ search: searchInput.value || undefined }),
             null,
             initialAccessRequests,
         );
+
+    function performSearch() {
+        reset();
+    }
 
     onMounted(() => {
         if (!initialAccessRequests?.items?.length) {
@@ -51,7 +59,7 @@ export function useAdminAccessRequests(
         if (!pendingApprove.value || acting.value) return;
         acting.value = true;
         try {
-            const url = approvePath.replace("__id__", pendingApprove.value.id);
+            const url = buildPath(approvePath, { id: pendingApprove.value.id });
             const response = await fetch(url, {
                 method: HttpMethod.Post,
                 headers: {
@@ -80,7 +88,7 @@ export function useAdminAccessRequests(
         if (!pendingReject.value || acting.value) return;
         acting.value = true;
         try {
-            const url = rejectPath.replace("__id__", pendingReject.value.id);
+            const url = buildPath(rejectPath, { id: pendingReject.value.id });
             const response = await fetch(url, {
                 method: HttpMethod.Post,
                 headers: {
@@ -139,6 +147,10 @@ export function useAdminAccessRequests(
         page,
         totalPages,
         goToPage,
+        load,
+        reset,
+        searchInput,
+        performSearch,
         statusBadge: accessRequestStatusBadge,
         statusBadgeColor: accessRequestStatusBadgeColor,
         statusLabel,

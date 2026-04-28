@@ -4,6 +4,7 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/shared/composables/useTheme.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
+import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import "@/css/sidebar.css";
 import {
@@ -39,6 +40,7 @@ import {
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
+import { useResizable } from "@/shared/composables/useResizable.js";
 
 const ICON_MAP = {
     "layout-dashboard": LayoutDashboard,
@@ -79,7 +81,6 @@ const props = defineProps({
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
 
-const userInitial = computed(() => props.userName?.charAt(0)?.toUpperCase() || "?");
 
 const SIDEBAR_KEY = "aurora-sidebar";
 
@@ -95,6 +96,22 @@ function expand() {
 const mobileOpen = ref(false);
 function openMobile() { mobileOpen.value = true; document.body.style.overflow = "hidden"; }
 function closeMobile() { mobileOpen.value = false; document.body.style.overflow = ""; }
+
+// ── Resizable width ──────────────────────────────────────────────────────────
+const SIDEBAR_DEFAULT_WIDTH = 240; // 15rem
+const { size: sidebarWidth, dragging: sidebarDragging, startResize: startSidebarResize, reset: resetSidebarWidth } = useResizable({
+    key: "aurora-sidebar-width",
+    defaultValue: SIDEBAR_DEFAULT_WIDTH,
+    min: 200,
+    max: 480,
+    onChange: (px) => {
+        document.documentElement.style.setProperty("--sidebar-width", `${px}px`);
+    },
+});
+
+watch(sidebarDragging, (dragging) => {
+    document.documentElement.classList.toggle("sidebar-resizing", dragging);
+});
 
 const dashboardPath = computed(() => props.navSections?.[0]?.items?.[0]?.path ?? '/admin');
 
@@ -306,10 +323,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
 
         <div class="sh-logo-expanded items-center gap-3 border-b border-line px-4 py-3 shrink-0">
-            <div class="w-8 h-8 rounded-full overflow-hidden bg-accent-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
-                <img v-if="userPhotoUrl" :src="userPhotoUrl" :alt="userName" class="w-full h-full object-cover">
-                <span v-else>{{ userInitial }}</span>
-            </div>
+            <AppAvatar variant="solid" :name="userName" :photo-url="userPhotoUrl" size="md" />
             <div class="flex flex-col min-w-0">
                 <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
                 <p class="text-xs text-muted truncate">{{ userEmail }}</p>
@@ -438,6 +452,14 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 </button>
             </form>
         </div>
+
+        <div
+            class="sidebar-resize-handle"
+            :class="{ 'is-dragging': sidebarDragging }"
+            :title="t('admin.nav.resizeHint')"
+            v-on:pointerdown="startSidebarResize"
+            v-on:dblclick="resetSidebarWidth"
+        />
     </aside>
 
     <div class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-line z-30 flex items-center justify-between px-4">
