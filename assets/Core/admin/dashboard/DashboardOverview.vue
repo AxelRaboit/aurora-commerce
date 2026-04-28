@@ -104,7 +104,6 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
 
 <template>
     <div class="space-y-6">
-        <!-- Module pill nav -->
         <div class="inline-flex p-1 bg-surface-2 border border-line rounded-lg gap-1 max-w-full overflow-x-auto scrollbar-thin">
             <button
                 v-for="module in MODULES"
@@ -121,7 +120,6 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
             </button>
         </div>
 
-        <!-- ─── Editorial ─── -->
         <section v-show="activeModule === 'editorial'" class="space-y-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-surface border border-line rounded-xl p-4">
@@ -200,7 +198,6 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
             </div>
         </section>
 
-        <!-- ─── CRM ─── -->
         <section v-show="activeModule === 'crm'" class="space-y-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-surface border border-line rounded-xl p-4">
@@ -250,7 +247,6 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
             </div>
         </section>
 
-        <!-- ─── ERP ─── -->
         <section v-show="activeModule === 'erp'" class="space-y-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-surface border border-line rounded-xl p-4">

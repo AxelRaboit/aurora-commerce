@@ -505,7 +505,6 @@ function onAuditModuleChange(value) {
             </AppModal>
         </div>
 
-        <!-- Permissions tab -->
         <div v-if="props.tab === 'permissions'" class="space-y-6">
             <p class="text-sm text-secondary">{{ t('admin.permissions.intro') }}</p>
             <p v-if="!props.permissions?.modules?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.permissions.empty') }}</p>
@@ -531,7 +530,6 @@ function onAuditModuleChange(value) {
             </div>
         </div>
 
-        <!-- Audit log tab -->
         <div v-if="props.tab === 'audit'" class="space-y-3">
             <div v-if="props.audit?.modules?.length" class="max-w-xs">
                 <AppSelect

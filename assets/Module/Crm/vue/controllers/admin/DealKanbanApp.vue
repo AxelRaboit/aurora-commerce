@@ -72,7 +72,6 @@ async function onDrop(event, targetStage) {
 </script>
 
 <template>
-    <!-- View tabs -->
     <div class="flex border-b border-line/40 text-sm mb-4">
         <button type="button" class="px-4 py-2 border-b-2 border-transparent text-muted hover:text-secondary font-medium transition-colors flex items-center gap-1.5" v-on:click="goToList">
             <List class="w-4 h-4" :stroke-width="2" />
@@ -84,9 +83,7 @@ async function onDrop(event, targetStage) {
         </button>
     </div>
 
-    <!-- Mobile: tabs by stage -->
     <div class="sm:hidden">
-        <!-- Stage tabs (scrollable pill buttons) -->
         <div class="flex overflow-x-auto gap-1.5 pb-2 scrollbar-thin">
             <button
                 v-for="stage in stages"
@@ -102,7 +99,6 @@ async function onDrop(event, targetStage) {
             </button>
         </div>
 
-        <!-- Cards of active stage -->
         <div class="mt-3 space-y-2">
             <p v-if="!localColumns[activeStage]?.length" class="py-8 text-center text-sm text-muted">
                 {{ t('admin.crm.deals.empty') }}
@@ -135,7 +131,6 @@ async function onDrop(event, targetStage) {
         </div>
     </div>
 
-    <!-- Desktop: kanban columns -->
     <div class="hidden sm:flex gap-4 overflow-x-auto pb-4 min-h-[calc(100vh-16rem)]">
         <div
             v-for="stage in stages"

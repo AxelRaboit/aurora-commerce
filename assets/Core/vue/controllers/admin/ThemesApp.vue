@@ -323,7 +323,6 @@ async function confirmDelete() {
             </div>
         </div>
 
-        <!-- Create modal -->
         <AppModal :show="createModal.open" max-width="md" v-on:close="createModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.new") }}</h2>
@@ -351,7 +350,6 @@ async function confirmDelete() {
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
             <form class="space-y-5" v-on:submit.prevent="submitEdit">
                 <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.edit") }}</h2>
@@ -438,7 +436,6 @@ async function confirmDelete() {
             </form>
         </AppModal>
 
-        <!-- Delete confirm modal -->
         <AppModal :show="!!deletingTheme" max-width="sm" v-on:close="deletingTheme = null">
             <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.deleteConfirm", { name: deletingTheme?.name ?? "" }) }}</h2>
             <div class="flex justify-end gap-2">

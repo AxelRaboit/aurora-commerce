@@ -68,7 +68,6 @@ function formatTotal(order) {
 
 <template>
     <div class="space-y-4">
-        <!-- Status tabs -->
         <div class="flex gap-1 flex-wrap">
             <button
                 v-for="tab in tabs"
@@ -85,14 +84,12 @@ function formatTotal(order) {
             </button>
         </div>
 
-        <!-- Search -->
         <AppSearchInput
             v-model="searchInput"
             :placeholder="t('admin.ecommerce.orders.searchPlaceholder')"
             v-on:search="onSearch"
         />
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!items?.length" :message="t('admin.ecommerce.orders.empty')" />
             <div v-for="order in items" :key="order.id" class="bg-surface border border-line rounded-xl p-4 space-y-2">
@@ -116,7 +113,6 @@ function formatTotal(order) {
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">

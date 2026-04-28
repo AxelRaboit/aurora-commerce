@@ -768,7 +768,6 @@ async function moveFolder(folderId, newParentId) {
 
 <template>
     <div class="flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
-        <!-- Top toolbar: breadcrumbs + search + upload -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 bg-surface border border-line/60 rounded-xl px-4 py-3">
             <nav class="flex items-center gap-1 text-sm text-muted min-w-0 flex-1 flex-wrap">
                 <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
@@ -811,9 +810,7 @@ async function moveFolder(folderId, newParentId) {
         </div>
 
         <div class="flex flex-col lg:flex-row gap-4">
-            <!-- Folder sidebar -->
             <aside class="lg:w-72 shrink-0 space-y-2">
-                <!-- Favourites section -->
                 <div v-if="favouriteFolders.length" class="space-y-0.5">
                     <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide flex items-center gap-1.5 px-1">
                         <Star class="w-3 h-3 text-amber-400" :stroke-width="2" fill="currentColor" />
@@ -918,7 +915,6 @@ async function moveFolder(folderId, newParentId) {
                         </div>
                     </div>
                 </div>
-                <!-- Storage indicator -->
                 <div v-if="totalStorageBytes > 0" class="pt-3 border-t border-line/40 space-y-1.5">
                     <div class="flex items-center justify-between text-xs text-muted">
                         <span class="flex items-center gap-1"><HardDrive class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.storage") }}</span>
@@ -927,20 +923,17 @@ async function moveFolder(folderId, newParentId) {
                 </div>
             </aside>
 
-            <!-- Main -->
             <main
                 class="flex-1 min-w-0 min-h-[60vh] space-y-3 relative"
                 v-on:dragover="onMainDragOver"
                 v-on:dragleave="onMainDragLeave"
                 v-on:drop="onMainDrop"
             >
-                <!-- Drop overlay -->
                 <div v-if="filesDragOver" class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-3 pointer-events-none">
                     <Upload class="w-14 h-14 text-accent-400" :stroke-width="1.5" />
                     <span class="text-base font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
                 </div>
 
-                <!-- Upload progress -->
                 <div v-if="uploadProgress.length" class="space-y-1.5 bg-surface border border-line/60 rounded-xl p-3">
                     <div v-for="(f, i) in uploadProgress" :key="i" class="space-y-1">
                         <div class="flex justify-between text-xs text-muted">
@@ -953,7 +946,6 @@ async function moveFolder(folderId, newParentId) {
                     </div>
                 </div>
 
-                <!-- Bulk action bar -->
                 <div v-if="selectedIds.size" class="flex flex-wrap items-center gap-2 bg-accent-500/10 border border-accent-400/30 rounded-xl px-4 py-2.5">
                     <span class="text-sm font-medium text-accent-400">{{ selectedIds.size }} {{ t("admin.media.selected") }}</span>
                     <div class="flex gap-2 ml-auto flex-wrap">
@@ -972,9 +964,7 @@ async function moveFolder(folderId, newParentId) {
                     </div>
                 </div>
 
-                <!-- Filters + sort + view toggle -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- Type filters -->
                     <div class="flex gap-1 flex-wrap">
                         <button
                             v-for="f in TYPE_FILTERS"
@@ -988,7 +978,6 @@ async function moveFolder(folderId, newParentId) {
                         </button>
                     </div>
                     <div class="ml-auto flex items-center gap-1.5">
-                        <!-- Sort -->
                         <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
                             <button
                                 v-for="s in [{k:'position',l:'#'},{k:'name',l:'A-Z'},{k:'size',l:'KB'},{k:'date',l:t('admin.media.sortDate')}]"
@@ -1003,7 +992,6 @@ async function moveFolder(folderId, newParentId) {
                                 <SortDesc v-else-if="sortBy === s.k" class="w-3 h-3" :stroke-width="2" />
                             </button>
                         </div>
-                        <!-- View toggle -->
                         <div class="flex border border-line/60 rounded-lg p-0.5">
                             <button type="button" :class="viewMode === 'grid' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" class="p-1 rounded transition-colors" v-on:click="setViewMode('grid')">
                                 <LayoutGrid class="w-4 h-4" :stroke-width="2" />
@@ -1012,7 +1000,6 @@ async function moveFolder(folderId, newParentId) {
                                 <List class="w-4 h-4" :stroke-width="2" />
                             </button>
                         </div>
-                        <!-- Select mode toggle -->
                         <button type="button" class="p-1 rounded-lg border border-line/60 transition-colors" :class="isSelecting ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary'" v-on:click="isSelecting = !isSelecting; if (!isSelecting) clearSelection()">
                             <CheckSquare class="w-4 h-4" :stroke-width="2" />
                         </button>
@@ -1023,7 +1010,6 @@ async function moveFolder(folderId, newParentId) {
 
                 <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
 
-                <!-- Grid view -->
                 <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                     <div
                         v-for="item in displayedMedia"
@@ -1040,7 +1026,6 @@ async function moveFolder(folderId, newParentId) {
                         v-on:dragleave="dragOverMediaId = null"
                         v-on:drop="onMediaItemDrop($event, item)"
                     >
-                        <!-- Selection checkbox -->
                         <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(item.id)">
                             <CheckSquare v-if="selectedIds.has(item.id)" class="w-5 h-5 text-accent-400 drop-shadow" :stroke-width="2" />
                             <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
@@ -1055,7 +1040,6 @@ async function moveFolder(folderId, newParentId) {
                             />
                             <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
                             <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
-                            <!-- Quick actions overlay -->
                             <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
                                 <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
@@ -1078,7 +1062,6 @@ async function moveFolder(folderId, newParentId) {
                     </div>
                 </div>
 
-                <!-- List view -->
                 <div v-else class="border border-line/60 rounded-xl overflow-hidden">
                     <table class="w-full text-sm">
                         <thead class="bg-surface-2 text-xs text-muted uppercase">
@@ -1136,7 +1119,6 @@ async function moveFolder(folderId, newParentId) {
             </main>
         </div>
 
-        <!-- Edit media modal -->
         <AppModal :show="!!editingMedia" max-width="3xl" scrollable v-on:close="closeEditMedia">
             <div class="flex items-center justify-between gap-4 mb-1">
                 <h3 class="text-lg font-semibold text-primary truncate">{{ t("admin.media.editMedia") }}</h3>
@@ -1147,7 +1129,6 @@ async function moveFolder(folderId, newParentId) {
                 </div>
             </div>
 
-            <!-- Usage tab -->
             <div v-if="editTab === 'usage'" class="space-y-3 min-h-32">
                 <div v-if="!mediaUsage" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
                 <template v-else>
@@ -1169,7 +1150,6 @@ async function moveFolder(folderId, newParentId) {
                 </template>
             </div>
 
-            <!-- History tab -->
             <div v-if="editTab === 'history'" class="space-y-2 min-h-32">
                 <div v-if="historyLoading" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
                 <div v-else-if="!mediaHistory.length" class="text-center py-8 text-muted text-sm">{{ t("admin.media.noHistory") }}</div>
@@ -1287,7 +1267,6 @@ async function moveFolder(folderId, newParentId) {
             </form>
         </AppModal>
 
-        <!-- Folder modal -->
         <AppModal :show="folderModal.open" max-width="md" v-on:close="folderModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
                 {{ folderModal.editing ? t("admin.media.editFolder") : t("admin.media.createFolder") }}
@@ -1330,7 +1309,6 @@ async function moveFolder(folderId, newParentId) {
             </div>
         </AppModal>
 
-        <!-- Preview modal -->
         <AppModal :show="!!previewMedia" max-width="4xl" v-on:close="previewMedia = null">
             <div class="flex items-start justify-between gap-4 mb-3">
                 <h3 class="text-sm font-medium text-primary truncate">{{ previewMedia?.originalName }}</h3>
@@ -1364,7 +1342,6 @@ async function moveFolder(folderId, newParentId) {
             </dl>
         </AppModal>
 
-        <!-- QR Code modal -->
         <AppModal :show="!!qrMedia" max-width="sm" v-on:close="qrMedia = null; qrDataUrl = ''">
             <h3 class="text-sm font-medium text-primary mb-4">{{ t("admin.media.qrCode") }} — {{ qrMedia?.originalName }}</h3>
             <div class="flex flex-col items-center gap-4">
@@ -1376,7 +1353,6 @@ async function moveFolder(folderId, newParentId) {
             </div>
         </AppModal>
 
-        <!-- Bulk move modal -->
         <AppModal :show="openBulkMove" max-width="sm" v-on:close="openBulkMove = false">
             <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.bulkMove", { count: selectedIds.size }) }}</h3>
             <AppMultiselect
@@ -1394,10 +1370,8 @@ async function moveFolder(folderId, newParentId) {
             </div>
         </AppModal>
 
-        <!-- Crop modal -->
         <AppModal :show="!!cropMedia" max-width="5xl" v-on:close="closeCrop">
             <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ cropMedia?.originalName }}</h3>
-            <!-- Container with explicit height so cropperjs v1 can fill it properly -->
             <div style="height: 65vh; width: 100%; overflow: hidden;">
                 <img
                     v-if="cropMedia"

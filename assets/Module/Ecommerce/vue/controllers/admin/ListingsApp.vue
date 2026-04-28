@@ -171,7 +171,6 @@ function formatPrice(product) {
 
 <template>
     <div class="space-y-4">
-        <!-- Toolbar -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
@@ -184,7 +183,6 @@ function formatPrice(product) {
             </AppButton>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
@@ -232,7 +230,6 @@ function formatPrice(product) {
             </table>
         </div>
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="listing in items" :key="listing.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
@@ -258,7 +255,6 @@ function formatPrice(product) {
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.ecommerce.listings.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -301,7 +297,6 @@ function formatPrice(product) {
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -332,7 +327,6 @@ function formatPrice(product) {
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.ecommerce.listings.deleteConfirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.ecommerce.listings.deleteWarning') }}</p>

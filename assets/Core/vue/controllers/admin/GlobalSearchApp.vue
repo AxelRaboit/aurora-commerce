@@ -183,7 +183,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                             {{ t("admin.search.empty") }}
                         </div>
 
-                        <!-- Posts -->
                         <div v-if="results.posts.length" class="px-2 py-2 space-y-1">
                             <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <FileText class="w-3 h-3" :stroke-width="2" />
@@ -209,7 +208,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                             </button>
                         </div>
 
-                        <!-- Terms -->
                         <div v-if="results.terms.length" class="px-2 py-2 space-y-1 border-t border-line">
                             <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <TagsIcon class="w-3 h-3" :stroke-width="2" />
@@ -231,7 +229,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                             </button>
                         </div>
 
-                        <!-- Media -->
                         <div v-if="results.media.length" class="px-2 py-2 space-y-1 border-t border-line">
                             <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
                                 <Image class="w-3 h-3" :stroke-width="2" />

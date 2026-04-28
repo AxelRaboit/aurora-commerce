@@ -135,7 +135,6 @@ const actionLabel = (action) => {
 
 <template>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Product card -->
         <div class="lg:col-span-2 space-y-4">
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
@@ -179,7 +178,6 @@ const actionLabel = (action) => {
             </div>
         </div>
 
-        <!-- Activity timeline -->
         <div class="space-y-4">
             <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.erp.activity.title') }}</h3>
 
@@ -207,7 +205,6 @@ const actionLabel = (action) => {
             </template>
         </div>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.erp.products.edit', { name: product.name }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -254,7 +251,6 @@ const actionLabel = (action) => {
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('admin.erp.products.deleteConfirm', { name: product.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.erp.products.deleteWarning') }}</p>

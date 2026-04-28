@@ -116,7 +116,6 @@ function apply() {
             leave-to-class="opacity-0"
         >
             <div v-if="show" class="fixed inset-0 z-50 flex flex-col bg-bg">
-                <!-- Header -->
                 <div class="flex items-center gap-3 px-6 py-3 border-b border-line bg-surface shrink-0">
                     <Merge class="w-5 h-5 text-amber-600" :stroke-width="2" />
                     <div class="flex-1">
@@ -136,7 +135,6 @@ function apply() {
                     </AppButton>
                 </div>
 
-                <!-- Locale tabs -->
                 <div v-if="locales.length > 1" class="flex gap-1 px-6 py-2 border-b border-line bg-surface-2 shrink-0 overflow-x-auto scrollbar-thin">
                     <button
                         v-for="locale in locales"
@@ -157,7 +155,6 @@ function apply() {
                     </button>
                 </div>
 
-                <!-- Summary + batch actions -->
                 <div class="flex flex-wrap items-center gap-3 px-6 py-2 border-b border-line bg-surface shrink-0 text-xs">
                     <span class="text-muted">
                         {{ t("admin.posts.merge.summary", {
@@ -188,7 +185,6 @@ function apply() {
                     </button>
                 </div>
 
-                <!-- Entries list -->
                 <div class="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">
                     <div v-if="visibleEntries.length === 0" class="text-center py-12 text-muted text-sm">
                         {{ t("admin.posts.merge.nothingToShow") }}

@@ -336,7 +336,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
             </a>
         </div>
 
-        <!-- Search -->
         <div class="sh-search-section px-3 py-2 border-b border-line shrink-0">
             <button
                 type="button"
@@ -451,7 +450,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
     </aside>
 
-    <!-- Mobile top bar -->
     <div class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-line z-30 flex items-center justify-between px-4">
         <a :href="dashboardPath" class="flex items-center gap-2">
             <AppLogo :size="28" />
@@ -467,7 +465,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
     </div>
 
-    <!-- Mobile drawer -->
     <div
         class="lg:hidden fixed inset-0 z-50 transition-opacity duration-200"
         :class="mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
@@ -561,7 +558,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
         </div>
     </div>
 
-    <!-- Search palette modal -->
     <Teleport to="body">
         <Transition
             enter-active-class="transition ease-out duration-150"

@@ -136,7 +136,6 @@ async function uploadMedia(event) {
 
 <template>
     <div>
-        <!-- text -->
         <AppInput
             v-if="field.type === 'text'"
             :model-value="modelValue ?? ''"
@@ -145,7 +144,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- textarea -->
         <AppTextarea
             v-else-if="field.type === 'textarea'"
             :model-value="modelValue ?? ''"
@@ -155,7 +153,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- number -->
         <AppInput
             v-else-if="field.type === 'number'"
             type="number"
@@ -165,7 +162,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="(v) => update(v === '' ? null : Number(v))"
         />
 
-        <!-- date -->
         <AppDatePicker
             v-else-if="field.type === 'date'"
             :model-value="modelValue ?? ''"
@@ -174,7 +170,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- url -->
         <AppInput
             v-else-if="field.type === 'url'"
             type="url"
@@ -184,7 +179,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- email -->
         <AppInput
             v-else-if="field.type === 'email'"
             type="email"
@@ -194,7 +188,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- select -->
         <AppSelect
             v-else-if="field.type === 'select'"
             :model-value="modelValue ?? ''"
@@ -208,7 +201,6 @@ async function uploadMedia(event) {
             </option>
         </AppSelect>
 
-        <!-- checkbox -->
         <AppCheckbox
             v-else-if="field.type === 'checkbox'"
             :model-value="!!modelValue"
@@ -216,7 +208,6 @@ async function uploadMedia(event) {
             v-on:update:model-value="update"
         />
 
-        <!-- media -->
         <div v-else-if="field.type === 'media'" class="flex flex-col gap-1.5">
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
             <div class="flex items-center gap-2">
@@ -240,7 +231,6 @@ async function uploadMedia(event) {
             </div>
         </div>
 
-        <!-- reference -->
         <div v-else-if="isReference" class="flex flex-col gap-1.5">
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
 

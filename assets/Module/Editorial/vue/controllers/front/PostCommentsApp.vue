@@ -142,7 +142,6 @@ function formatDate(iso) {
 
                     <PostCommentsReactionBar :comment="rootComment" :reaction-emojis="reactionEmojis" v-on:react="react" />
 
-                    <!-- Flat replies -->
                     <div v-if="replies[rootComment.id]?.length" class="mt-4 ml-6 space-y-3 border-l-2 border-line pl-4">
                         <div v-for="reply in replies[rootComment.id]" :key="reply.id" class="bg-surface rounded-lg p-4">
                             <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -197,7 +196,6 @@ function formatDate(iso) {
             </div>
         </template>
 
-        <!-- Main comment form -->
         <div class="bg-surface border border-line rounded-xl p-6">
             <h3 class="text-lg font-semibold text-primary mb-4">{{ t("shared.comment.form_title") }}</h3>
             <PostCommentsForm

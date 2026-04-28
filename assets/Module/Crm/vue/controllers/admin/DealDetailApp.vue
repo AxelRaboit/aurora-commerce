@@ -92,7 +92,6 @@ async function doDelete() {
 
 <template>
     <div class="max-w-2xl space-y-6">
-        <!-- Deal card -->
         <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div class="min-w-0">
@@ -126,7 +125,6 @@ async function doDelete() {
                 </div>
             </dl>
 
-            <!-- Stage quick-change -->
             <div class="mt-6 pt-4 border-t border-line">
                 <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t('admin.crm.deals.stage') }}</p>
                 <AppStagePicker
@@ -140,7 +138,6 @@ async function doDelete() {
             </div>
         </div>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.edit', { name: deal.name }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -163,7 +160,6 @@ async function doDelete() {
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('admin.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.crm.deals.deleteWarning') }}</p>

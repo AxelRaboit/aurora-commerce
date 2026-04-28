@@ -36,7 +36,7 @@ final readonly class UserProfilePhotoManager
     public function upload(User $user, UploadedFile $file): void
     {
         $size = $file->getSize();
-        if (null !== $size && $size > self::MAX_SIZE_BYTES) {
+        if (false !== $size && $size > self::MAX_SIZE_BYTES) {
             throw new InvalidArgumentException('admin.users.photo.errors.too_large');
         }
 

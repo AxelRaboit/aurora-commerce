@@ -1220,16 +1220,19 @@ export default {
         profile: {
             photo: {
                 title: "Profilfoto",
-                subtitle: "Wird in der Seitenleiste und der Benutzerliste angezeigt.",
+                subtitle:
+                    "Wird in der Seitenleiste und der Benutzerliste angezeigt.",
             },
             mood: {
                 title: "Stimmung",
-                subtitle: "Ein kurzer Satz, der deine aktuelle Stimmung beschreibt.",
+                subtitle:
+                    "Ein kurzer Satz, der deine aktuelle Stimmung beschreibt.",
                 placeholder: "Was du teilen möchtest…",
                 hint: "Max. 160 Zeichen.",
                 saved: "Stimmung aktualisiert.",
                 errors: {
-                    too_long: "Die Stimmung darf 160 Zeichen nicht überschreiten.",
+                    too_long:
+                        "Die Stimmung darf 160 Zeichen nicht überschreiten.",
                 },
             },
             locale: {

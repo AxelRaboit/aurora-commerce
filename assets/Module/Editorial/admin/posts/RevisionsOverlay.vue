@@ -149,7 +149,6 @@ const visibleEntries = computed(() =>
             leave-to-class="opacity-0"
         >
             <div v-if="show" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-hidden">
-                <!-- Header -->
                 <div class="flex items-center gap-3 px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
                     <HistoryIcon class="w-4 h-4 text-secondary" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
@@ -160,9 +159,7 @@ const visibleEntries = computed(() =>
                     </AppIconButton>
                 </div>
 
-                <!-- Body: two columns -->
                 <div class="flex-1 flex min-h-0">
-                    <!-- Revisions list -->
                     <aside class="w-80 shrink-0 border-r border-line bg-surface overflow-y-auto scrollbar-thin">
                         <div v-if="loadingList" class="p-4 text-sm text-muted">{{ t("shared.common.loading") }}</div>
                         <div v-else-if="revisions.length === 0" class="p-4 text-sm text-muted">
@@ -190,7 +187,6 @@ const visibleEntries = computed(() =>
                         </ul>
                     </aside>
 
-                    <!-- Diff viewer -->
                     <section class="flex-1 overflow-y-auto scrollbar-thin">
                         <div v-if="!selectedRevision && !loadingSelected" class="p-8 text-sm text-muted text-center">
                             {{ t("admin.posts.revisions.selectHint") }}
@@ -199,7 +195,6 @@ const visibleEntries = computed(() =>
                             {{ t("shared.common.loading") }}
                         </div>
                         <div v-else class="p-6 space-y-4">
-                            <!-- Locale tabs + stats + restore -->
                             <div class="flex flex-wrap items-center gap-3">
                                 <div v-if="locales.length > 1" class="flex gap-1">
                                     <button
@@ -232,7 +227,6 @@ const visibleEntries = computed(() =>
                                 </AppButton>
                             </div>
 
-                            <!-- Block entries -->
                             <div class="space-y-3">
                                 <div v-if="visibleEntries.length === 0" class="p-4 text-sm text-muted text-center border border-line rounded-lg">
                                     {{ t("admin.posts.revisions.noChange") }}
@@ -247,7 +241,6 @@ const visibleEntries = computed(() =>
                                         <span class="text-muted font-mono">#{{ entry.id.slice(0, 8) }}</span>
                                     </div>
 
-                                    <!-- Modified: side-by-side -->
                                     <div v-if="entry.kind === RevisionDiffKind.Modified" class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-line">
                                         <div class="p-3">
                                             <div class="text-xs text-rose-600 dark:text-rose-400 mb-1.5">{{ t("admin.posts.revisions.revisionSide") }}</div>
@@ -259,7 +252,6 @@ const visibleEntries = computed(() =>
                                         </div>
                                     </div>
 
-                                    <!-- Added/Removed/Unchanged: single block -->
                                     <div v-else class="p-3 prose-preview text-sm">
                                         <div v-html="renderBlock(entry.current ?? entry.revision)" />
                                     </div>

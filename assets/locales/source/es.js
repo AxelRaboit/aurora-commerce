@@ -241,8 +241,7 @@ export default {
                 uploaded: "Foto actualizada.",
                 removed: "Foto eliminada.",
                 errors: {
-                    invalid_type:
-                        "Formato no admitido. Usa JPEG, PNG o WebP.",
+                    invalid_type: "Formato no admitido. Usa JPEG, PNG o WebP.",
                     too_large: "La imagen es demasiado grande (5 MB máx.).",
                     missing: "No hay imagen seleccionada.",
                 },
@@ -1221,16 +1220,19 @@ export default {
         profile: {
             photo: {
                 title: "Foto de perfil",
-                subtitle: "Aparece en la barra lateral y en la lista de usuarios.",
+                subtitle:
+                    "Aparece en la barra lateral y en la lista de usuarios.",
             },
             mood: {
                 title: "Estado de ánimo",
-                subtitle: "Una frase corta que describe tu estado de ánimo actual.",
+                subtitle:
+                    "Una frase corta que describe tu estado de ánimo actual.",
                 placeholder: "Lo que quieras compartir…",
                 hint: "160 caracteres máx.",
                 saved: "Estado de ánimo actualizado.",
                 errors: {
-                    too_long: "El estado de ánimo no debe superar los 160 caracteres.",
+                    too_long:
+                        "El estado de ánimo no debe superar los 160 caracteres.",
                 },
             },
             locale: {

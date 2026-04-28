@@ -650,12 +650,10 @@ function forceSave() {
     </div>
 
     <div v-else class="space-y-6">
-        <!-- Trashed banner -->
         <AppMessage v-if="trashed" variant="trash">
             {{ t("admin.posts.trashedBanner") }}
         </AppMessage>
 
-        <!-- Conflict banner -->
         <AppMessage v-if="conflict" variant="warning">
             {{ t("admin.posts.conflict") }}
             <template #actions>
@@ -674,9 +672,7 @@ function forceSave() {
             </template>
         </AppMessage>
 
-        <!-- Top bar -->
         <div class="space-y-3">
-            <!-- Back + title -->
             <div class="flex items-center gap-3 min-w-0">
                 <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
                     <ArrowLeft class="w-5 h-5" :stroke-width="2" />
@@ -686,7 +682,6 @@ function forceSave() {
                 </h1>
             </div>
 
-            <!-- Actions: stacked on mobile, inline on desktop -->
             <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-2">
                 <AppSelect v-model="form.status" class="w-full sm:w-auto">
                     <option value="draft">{{ t("admin.posts.statusOptions.draft") }}</option>
@@ -744,20 +739,16 @@ function forceSave() {
             </div>
         </div>
 
-        <!-- Global save errors -->
         <AppMessage v-if="Object.keys(errors).length" variant="danger">
             <p v-for="(message, field) in errors" :key="field">{{ message }}</p>
         </AppMessage>
 
-        <!-- Post ID -->
         <p v-if="postId" class="px-1 text-xs text-muted font-mono">ID : {{ postId }}</p>
 
-        <!-- Published at info -->
         <p v-if="publishedAt" class="px-1 text-xs text-muted">
             {{ t("admin.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
         </p>
 
-        <!-- Meta row: post type + tags -->
         <div class="flex flex-col gap-3 px-1">
             <div v-if="postTypes.length" class="flex items-center gap-2 shrink-0">
                 <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.postType") }}</span>
@@ -770,7 +761,6 @@ function forceSave() {
                     />
                 </div>
             </div>
-            <!-- Terms picker, grouped by taxonomy -->
             <div v-for="taxonomy in availableTaxonomies" :key="taxonomy.id" class="space-y-2">
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ taxonomyLabel(taxonomy) }}</span>
@@ -779,7 +769,6 @@ function forceSave() {
                     </span>
                 </div>
 
-                <!-- Flat taxonomy: chip picker -->
                 <div v-if="!taxonomy.hierarchical" class="flex items-center gap-2 flex-wrap">
                     <label
                         v-for="term in taxonomy.terms"
@@ -795,7 +784,6 @@ function forceSave() {
                     <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
                 </div>
 
-                <!-- Hierarchical taxonomy: indented checkbox tree -->
                 <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
                     <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
                     <label
@@ -816,7 +804,6 @@ function forceSave() {
             </div>
         </div>
 
-        <!-- Comments toggle -->
         <div class="px-1">
             <AppToggle
                 :model-value="form.commentsEnabled"
@@ -825,11 +812,9 @@ function forceSave() {
             />
         </div>
 
-        <!-- Related posts -->
         <div class="flex flex-col gap-2 px-1">
             <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.relatedPosts.title") }}</span>
 
-            <!-- Selected related posts -->
             <div v-if="relatedPosts.length" class="flex flex-col gap-1.5">
                 <div
                     v-for="related in relatedPosts"
@@ -849,7 +834,6 @@ function forceSave() {
                 </div>
             </div>
 
-            <!-- Search -->
             <div class="relative">
                 <AppInput
                     v-model="relatedSearchQuery"
@@ -881,7 +865,6 @@ function forceSave() {
             </div>
         </div>
 
-        <!-- Featured image -->
         <div class="flex flex-col gap-2 px-1">
             <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.featuredImage") }}</span>
             <div v-if="featuredMediaUrl" class="relative group w-full h-48">
@@ -924,7 +907,6 @@ function forceSave() {
             </button>
         </div>
 
-        <!-- Featured image lightbox -->
         <Teleport to="body">
             <Transition
                 enter-active-class="transition ease-out duration-200"
@@ -940,7 +922,6 @@ function forceSave() {
             </Transition>
         </Teleport>
 
-        <!-- Locale tabs -->
         <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
             <button
                 v-for="locale in locales"
@@ -956,7 +937,6 @@ function forceSave() {
             </button>
         </div>
 
-        <!-- Translation fields -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <AppInput
                 v-model="form.translations[activeLocale].title"
@@ -990,7 +970,6 @@ function forceSave() {
             </p>
         </div>
 
-        <!-- Custom fields defined on the post type -->
         <div v-if="customFieldsDefs.length" class="border-t border-line pt-4 space-y-3">
             <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("admin.posts.customFields") }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1004,12 +983,10 @@ function forceSave() {
             </div>
         </div>
 
-        <!-- SEO -->
         <div class="border-t border-line pt-4 space-y-4">
             <p class="text-xs font-semibold text-secondary uppercase tracking-wide">SEO</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <!-- Left column: fields -->
                 <div class="space-y-3">
                     <div>
                         <AppInput
@@ -1045,7 +1022,6 @@ function forceSave() {
                         :label="t('admin.posts.seo.noindex')"
                     />
 
-                    <!-- OG image -->
                     <div>
                         <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">
                             {{ t("admin.posts.seo.ogImage") }}
@@ -1088,7 +1064,6 @@ function forceSave() {
                     </div>
                 </div>
 
-                <!-- Right column: SERP preview + quality checks -->
                 <div class="space-y-4">
                     <div>
                         <p class="text-xs text-secondary uppercase tracking-wide mb-2">{{ t("admin.posts.seo.serpPreview") }}</p>
@@ -1114,7 +1089,6 @@ function forceSave() {
                 </div>
             </div>
 
-            <!-- JSON-LD -->
             <div class="border-t border-line pt-4 space-y-2">
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <label class="text-xs text-secondary uppercase tracking-wide">
@@ -1134,7 +1108,6 @@ function forceSave() {
             </div>
         </div>
 
-        <!-- Editor.js -->
         <div class="border-t border-line pt-4">
             <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
                 {{ t("admin.posts.blocks") }}
@@ -1149,7 +1122,6 @@ function forceSave() {
         </div>
     </div>
 
-    <!-- Templates panel -->
     <Teleport to="body">
         <Transition
             enter-active-class="transition ease-out duration-200"
@@ -1161,7 +1133,6 @@ function forceSave() {
         >
             <div v-if="showTemplates" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                 <div class="w-full max-w-4xl bg-surface rounded-2xl border border-line shadow-2xl flex flex-col max-h-[85vh]">
-                    <!-- Header -->
                     <div class="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
                         <div>
                             <h2 class="text-base font-semibold text-primary">{{ t("admin.editor.templates.title") }}</h2>
@@ -1172,7 +1143,6 @@ function forceSave() {
                         </AppButton>
                     </div>
 
-                    <!-- Category filters -->
                     <div class="flex gap-2 px-6 py-3 border-b border-line shrink-0 flex-wrap">
                         <button
                             v-for="cat in ['all', ...TEMPLATE_CATEGORIES]"
@@ -1186,9 +1156,7 @@ function forceSave() {
                         </button>
                     </div>
 
-                    <!-- Body -->
                     <div class="flex flex-1 min-h-0" v-on:mouseleave="hoveredTemplate = null">
-                        <!-- Grid -->
                         <div class="flex-1 overflow-y-auto scrollbar-thin p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                             <button
                                 v-for="template in filteredTemplates"
@@ -1201,7 +1169,6 @@ function forceSave() {
                                 v-on:click="confirmingTemplate = confirmingTemplate?.id === template.id ? null : template"
                                 v-on:mouseenter="hoveredTemplate = template"
                             >
-                                <!-- Confirm overlay -->
                                 <Transition
                                     enter-active-class="transition ease-out duration-150"
                                     enter-from-class="opacity-0"
@@ -1219,7 +1186,6 @@ function forceSave() {
                                     </div>
                                 </Transition>
 
-                                <!-- Card content -->
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="text-2xl">{{ template.icon }}</span>
                                     <span class="font-medium text-primary text-sm group-hover:text-accent-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
@@ -1228,7 +1194,6 @@ function forceSave() {
                             </button>
                         </div>
 
-                        <!-- Side preview panel -->
                         <div class="w-56 border-l border-line p-5 hidden md:flex flex-col gap-4 shrink-0 overflow-y-auto scrollbar-thin">
                             <Transition
                                 enter-active-class="transition ease-out duration-150"
@@ -1251,7 +1216,6 @@ function forceSave() {
                                     </div>
                                     <div v-if="hoveredTemplate.blocks.length" class="flex flex-col gap-1.5">
                                         <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("admin.editor.templates.structure") }}</p>
-                                        <!-- header -->
                                         <template v-for="(block, i) in hoveredTemplate.blocks" :key="i">
                                             <div v-if="block.type === 'header'" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
                                             <div v-else-if="block.type === 'paragraph'" class="flex flex-col gap-1">
@@ -1328,7 +1292,6 @@ function forceSave() {
         </Transition>
     </Teleport>
 
-    <!-- Preview overlay -->
     <PreviewOverlay
         :show="showPreview"
         :title="form.translations[activeLocale]?.title"
@@ -1338,7 +1301,6 @@ function forceSave() {
         v-on:close="showPreview = false"
     />
 
-    <!-- Remote version preview (conflict compare) -->
     <PostPreviewOverlay
         :post="remotePost"
         :loading="remoteLoading"
@@ -1346,7 +1308,6 @@ function forceSave() {
         v-on:close="closeRemoteVersion"
     />
 
-    <!-- Conflict merge overlay -->
     <ConflictMergeOverlay
         :show="showMerge"
         :base="baseTranslations"
@@ -1357,7 +1318,6 @@ function forceSave() {
         v-on:apply="applyMergeResolution"
     />
 
-    <!-- Revisions overlay -->
     <RevisionsOverlay
         v-if="postId"
         :post-id="postId"

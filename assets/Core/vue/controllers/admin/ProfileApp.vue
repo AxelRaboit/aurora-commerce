@@ -5,6 +5,7 @@ import { toast } from "vue-sonner";
 import { Upload, Trash2 } from "lucide-vue-next";
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
 import AppButton from "@/shared/components/AppButton.vue";
+import AppFileInput from "@/shared/components/AppFileInput.vue";
 import AppInput from "@/shared/components/AppInput.vue";
 import AppTextarea from "@/shared/components/AppTextarea.vue";
 import PasswordStrength from "@/shared/components/PasswordStrength.vue";
@@ -43,15 +44,8 @@ const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, prop
 
 const photoUrl = ref(props.userPhotoUrl);
 const photoLoading = ref(false);
-const photoInputRef = ref(null);
 
-function triggerPhotoSelect() {
-    photoInputRef.value?.click();
-}
-
-async function onPhotoSelected(event) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
+async function onPhotoSelected(file) {
     if (!file) return;
     photoLoading.value = true;
     try {
@@ -93,7 +87,6 @@ async function removePhoto() {
 
 <template>
     <div class="max-w-2xl mx-auto space-y-6">
-        <!-- Langue -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.locale.title') }}</h2>
@@ -115,7 +108,6 @@ async function removePhoto() {
             </div>
         </div>
 
-        <!-- Photo -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.photo.title') }}</h2>
@@ -124,23 +116,31 @@ async function removePhoto() {
             <div class="flex items-center gap-5">
                 <UserAvatar :name="userName" :photo-url="photoUrl" :size="80" />
                 <div class="flex flex-col gap-2">
-                    <input ref="photoInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" v-on:change="onPhotoSelected">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <AppButton variant="ghost" size="sm" :loading="photoLoading" v-on:click="triggerPhotoSelect">
-                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('admin.users.photo.upload') }}
-                        </AppButton>
-                        <AppButton v-if="photoUrl" variant="ghost" size="sm" :loading="photoLoading" v-on:click="removePhoto">
-                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('admin.users.photo.remove') }}
-                        </AppButton>
-                    </div>
+                    <AppFileInput accept="image/jpeg,image/png,image/webp" v-on:change="onPhotoSelected">
+                        <template #default="{ trigger }">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <AppButton variant="ghost" size="sm" :loading="photoLoading" v-on:click="trigger">
+                                    <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t('admin.users.photo.upload') }}
+                                </AppButton>
+                                <AppButton
+                                    v-if="photoUrl"
+                                    variant="ghost"
+                                    size="sm"
+                                    :loading="photoLoading"
+                                    v-on:click="removePhoto"
+                                >
+                                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t('admin.users.photo.remove') }}
+                                </AppButton>
+                            </div>
+                        </template>
+                    </AppFileInput>
                     <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Mood -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.mood.title') }}</h2>
@@ -166,7 +166,6 @@ async function removePhoto() {
             </form>
         </div>
 
-        <!-- Informations -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.info.title') }}</h2>
@@ -196,7 +195,6 @@ async function removePhoto() {
             </form>
         </div>
 
-        <!-- Mot de passe -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.password.title') }}</h2>
@@ -239,7 +237,6 @@ async function removePhoto() {
             </form>
         </div>
 
-        <!-- Zone de danger -->
         <div class="bg-surface border border-rose-900/40 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('admin.profile.danger.title') }}</h2>

@@ -151,7 +151,6 @@ async function openPreview(post) {
 </script>
 
 <template>
-    <!-- Editor view -->
     <PostEditor
         v-if="view === 'editor'"
         :post-id="editingPostId"
@@ -165,9 +164,7 @@ async function openPreview(post) {
         v-on:back="view = 'list'"
     />
 
-    <!-- List view -->
     <div v-else class="space-y-4">
-        <!-- Tabs: active vs trash -->
         <div class="flex border-b border-line/40 text-sm">
             <button
                 type="button"
@@ -189,7 +186,6 @@ async function openPreview(post) {
             </button>
         </div>
 
-        <!-- Toolbar -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
@@ -219,7 +215,6 @@ async function openPreview(post) {
             </AppButton>
         </div>
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!posts.length" :message="t('admin.posts.empty')" />
             <div v-for="post in posts" :key="post.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
@@ -262,7 +257,6 @@ async function openPreview(post) {
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
             <table class="w-full text-sm">
                 <thead>
@@ -327,10 +321,8 @@ async function openPreview(post) {
             </table>
         </div>
 
-        <!-- Pagination -->
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <!-- Delete confirmation modal -->
         <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" v-on:close="deletePost.pendingDelete.value = null">
             <p class="text-sm text-primary">
                 {{ t(trashed ? "admin.posts.forceDeleteConfirm" : "admin.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}

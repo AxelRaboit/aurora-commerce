@@ -239,8 +239,7 @@ export default {
                 uploaded: "Photo updated.",
                 removed: "Photo removed.",
                 errors: {
-                    invalid_type:
-                        "Unsupported format. Use JPEG, PNG or WebP.",
+                    invalid_type: "Unsupported format. Use JPEG, PNG or WebP.",
                     too_large: "The image is too large (5 MB max).",
                     missing: "No image selected.",
                 },
@@ -1208,7 +1207,8 @@ export default {
             },
             mood: {
                 title: "Mood",
-                subtitle: "A short line that captures how you're feeling right now.",
+                subtitle:
+                    "A short line that captures how you're feeling right now.",
                 placeholder: "What's on your mind…",
                 hint: "160 characters max.",
                 saved: "Mood updated.",

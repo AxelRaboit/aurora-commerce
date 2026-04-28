@@ -296,7 +296,6 @@ function findNodeInTree(nodes, id) {
 
 <template>
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
-        <!-- Sidebar: taxonomies list -->
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.title") }}</h2>
@@ -324,11 +323,9 @@ function findNodeInTree(nodes, id) {
             </div>
         </aside>
 
-        <!-- Main: selected taxonomy details -->
         <main class="flex-1 min-w-0 space-y-4">
             <AppNoData v-if="!selected" :message="t('admin.taxonomies.empty')" />
             <div v-else class="space-y-4">
-                <!-- Taxonomy header -->
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3 flex-wrap">
                         <div class="min-w-0">
@@ -363,7 +360,6 @@ function findNodeInTree(nodes, id) {
                     </div>
                 </div>
 
-                <!-- Terms -->
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.terms.title") }}</h4>
@@ -395,7 +391,6 @@ function findNodeInTree(nodes, id) {
 
                     <AppNoData v-if="!tree.length" :message="t('admin.taxonomies.terms.empty')" />
 
-                    <!-- Tree DnD -->
                     <VueDraggable
                         v-else
                         v-model="tree"
@@ -426,7 +421,6 @@ function findNodeInTree(nodes, id) {
             </div>
         </main>
 
-        <!-- Taxonomy modal -->
         <AppModal :show="taxonomyModal.open" max-width="lg" v-on:close="taxonomyModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
                 {{ taxonomyModal.editing ? t("admin.taxonomies.editTaxonomy") : t("admin.taxonomies.addTaxonomy") }}
@@ -504,7 +498,6 @@ function findNodeInTree(nodes, id) {
             </form>
         </AppModal>
 
-        <!-- Term modal -->
         <AppModal :show="termModal.open" max-width="md" v-on:close="termModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
                 {{ termModal.editing ? t("admin.taxonomies.terms.editTerm") : t("admin.taxonomies.terms.addTerm") }}
@@ -562,7 +555,6 @@ function findNodeInTree(nodes, id) {
             </form>
         </AppModal>
 
-        <!-- Delete taxonomy confirm -->
         <AppModal :show="!!deletingTaxonomy" max-width="sm" v-on:close="deletingTaxonomy = null">
             <p class="text-sm text-primary">{{ t("admin.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
@@ -571,7 +563,6 @@ function findNodeInTree(nodes, id) {
             </div>
         </AppModal>
 
-        <!-- Delete term confirm -->
         <AppModal :show="!!deletingTerm" max-width="sm" v-on:close="deletingTerm = null">
             <p class="text-sm text-primary">{{ t("admin.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">

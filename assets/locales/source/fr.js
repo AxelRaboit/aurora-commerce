@@ -1226,11 +1226,13 @@ export default {
         profile: {
             photo: {
                 title: "Photo de profil",
-                subtitle: "Cette image apparaît dans la barre latérale et la liste des utilisateurs.",
+                subtitle:
+                    "Cette image apparaît dans la barre latérale et la liste des utilisateurs.",
             },
             mood: {
                 title: "Phrase de mood",
-                subtitle: "Une courte phrase qui décrit votre humeur du moment.",
+                subtitle:
+                    "Une courte phrase qui décrit votre humeur du moment.",
                 placeholder: "Ce que vous voulez partager…",
                 hint: "160 caractères max.",
                 saved: "Mood mis à jour.",

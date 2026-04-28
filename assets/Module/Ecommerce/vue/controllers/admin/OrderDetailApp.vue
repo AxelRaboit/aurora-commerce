@@ -121,7 +121,6 @@ function actionLabel(action) {
 
 <template>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Order summary -->
         <div class="lg:col-span-2 space-y-4">
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
@@ -154,7 +153,6 @@ function actionLabel(action) {
                 </dl>
             </div>
 
-            <!-- Line items: mobile cards -->
             <div class="sm:hidden space-y-2">
                 <div v-for="line in order.lines" :key="line.id" class="bg-surface border border-line rounded-xl p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
@@ -175,7 +173,6 @@ function actionLabel(action) {
                 </div>
             </div>
 
-            <!-- Line items: desktop table -->
             <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead class="bg-surface-2 border-b border-line">
@@ -204,7 +201,6 @@ function actionLabel(action) {
             </div>
         </div>
 
-        <!-- Sidebar: actions + timeline -->
         <div class="space-y-4">
             <div v-if="canManage" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.ecommerce.orders.actions.title') }}</h3>
@@ -234,7 +230,6 @@ function actionLabel(action) {
                 <p v-if="!availableTransitions.length && !canCancel" class="text-xs text-muted text-center py-2">{{ t('admin.ecommerce.orders.actions.no_transitions') }}</p>
             </div>
 
-            <!-- Timeline -->
             <div class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <h3 class="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
                     <Clock class="w-4 h-4" :stroke-width="2" />
@@ -253,7 +248,6 @@ function actionLabel(action) {
             </div>
         </div>
 
-        <!-- Status change confirm -->
         <AppModal :show="!!pendingTransition" max-width="sm" v-on:close="pendingTransition = null">
             <p class="text-sm text-primary">{{ t('admin.ecommerce.orders.actions.confirm', { label: pendingTransition?.label }) }}</p>
             <AppModalFooter>

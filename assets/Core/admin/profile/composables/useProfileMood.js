@@ -30,7 +30,8 @@ export function useProfileMood(moodPath, initialMessage, maxLength) {
                 moodMessage.value = data.moodMessage ?? "";
                 toast.success(t("admin.profile.mood.saved"));
             } else {
-                moodError.value = data.errors?.moodMessage ?? t("shared.common.error");
+                moodError.value =
+                    data.errors?.moodMessage ?? t("shared.common.error");
             }
         } catch {
             toast.error(t("shared.common.error"));

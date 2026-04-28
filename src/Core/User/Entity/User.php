@@ -318,10 +318,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMoodMessage(?string $moodMessage): static
     {
         if (null !== $moodMessage && mb_strlen($moodMessage) > self::MOOD_MESSAGE_MAX_LENGTH) {
-            throw new InvalidArgumentException(sprintf(
-                'Mood message exceeds %d characters.',
-                self::MOOD_MESSAGE_MAX_LENGTH,
-            ));
+            throw new InvalidArgumentException(sprintf('Mood message exceeds %d characters.', self::MOOD_MESSAGE_MAX_LENGTH));
         }
 
         $this->moodMessage = $moodMessage;

@@ -7,6 +7,7 @@ namespace Aurora\Tests\Integration\Controller;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class ProfileMoodTest extends IntegrationTestCase
@@ -26,12 +27,12 @@ final class ProfileMoodTest extends IntegrationTestCase
 
     public function testSavingValidMessagePersistsAndReturnsIt(): void
     {
-        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => "Shipping things ✨"]);
+        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => 'Shipping things ✨']);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
-        self::assertSame("Shipping things ✨", $body['moodMessage']);
-        self::assertSame("Shipping things ✨", $this->reloadAdmin()->getMoodMessage());
+        self::assertSame('Shipping things ✨', $body['moodMessage']);
+        self::assertSame('Shipping things ✨', $this->reloadAdmin()->getMoodMessage());
     }
 
     public function testEmptyStringClearsTheMoodMessage(): void
@@ -74,7 +75,7 @@ final class ProfileMoodTest extends IntegrationTestCase
     {
         $user = new User();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $user->setMoodMessage(str_repeat('a', User::MOOD_MESSAGE_MAX_LENGTH + 1));
     }
 

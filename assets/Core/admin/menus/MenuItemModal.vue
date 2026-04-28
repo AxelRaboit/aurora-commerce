@@ -257,7 +257,6 @@ const targetTypeOptions = computed(() =>
         </h3>
 
         <form class="space-y-4" v-on:submit.prevent="save">
-            <!-- Target type selector -->
             <AppMultiselect
                 v-model="form.targetType"
                 :options="targetTypeOptions"
@@ -266,7 +265,6 @@ const targetTypeOptions = computed(() =>
                 :searchable="false"
             />
 
-            <!-- Post picker -->
             <div v-if="form.targetType === 'post'" class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
                     {{ t("admin.menus.target") }}
@@ -313,7 +311,6 @@ const targetTypeOptions = computed(() =>
                 <p v-if="errors.target" class="text-xs text-rose-400">{{ errors.target }}</p>
             </div>
 
-            <!-- Term picker -->
             <div v-else-if="form.targetType === 'term'" class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
                     {{ t("admin.menus.target") }}
@@ -360,7 +357,6 @@ const targetTypeOptions = computed(() =>
                 <p v-if="errors.target" class="text-xs text-rose-400">{{ errors.target }}</p>
             </div>
 
-            <!-- Archive picker -->
             <div v-else-if="form.targetType === 'post_type_archive'">
                 <AppMultiselect
                     v-model="form.targetId"
@@ -372,7 +368,6 @@ const targetTypeOptions = computed(() =>
                 />
             </div>
 
-            <!-- Custom URL -->
             <AppInput
                 v-else-if="form.targetType === 'custom_url'"
                 v-model="form.customUrl"
@@ -382,7 +377,6 @@ const targetTypeOptions = computed(() =>
                 required
             />
 
-            <!-- Translations -->
             <div class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
                     {{ t("admin.menus.translations") }}
@@ -411,7 +405,6 @@ const targetTypeOptions = computed(() =>
                 <p v-if="errors.translations" class="text-xs text-rose-400">{{ errors.translations }}</p>
             </div>
 
-            <!-- Options -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-line">
                 <AppMultiselect
                     v-model="form.visibility"

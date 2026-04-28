@@ -110,7 +110,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
 
 <template>
     <div class="space-y-4">
-        <!-- Toolbar -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
@@ -123,8 +122,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
             </AppButton>
         </div>
 
-        <!-- Empty -->
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start gap-3">
@@ -147,7 +144,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
@@ -190,7 +186,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -227,7 +222,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.edit', { name: editingContact?.fullName ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -264,7 +258,6 @@ const avatar = (contact) => (contact.firstName?.[0] ?? "") + (contact.lastName?.
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.crm.contacts.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.crm.contacts.deleteWarning') }}</p>

@@ -97,7 +97,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 {{ t('admin.crm.companies.add') }}
             </AppButton>
         </div>
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="company in items" :key="company.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
@@ -118,7 +117,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
@@ -165,7 +163,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.companies.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -187,7 +184,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.companies.edit', { name: editingCompany?.name ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -209,7 +205,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.crm.companies.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.crm.companies.deleteWarning') }}</p>

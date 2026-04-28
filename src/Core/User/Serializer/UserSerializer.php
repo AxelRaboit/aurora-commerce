@@ -44,7 +44,7 @@ final readonly class UserSerializer
             'moodMessage' => $user->getMoodMessage(),
             'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'managerId' => $manager?->getId(),
-            'manager' => null === $manager ? null : ['id' => $manager->getId(), 'name' => $manager->getName()],
+            'manager' => $manager instanceof User ? ['id' => $manager->getId(), 'name' => $manager->getName()] : null,
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),
             'createdAt' => $user->getCreatedAt()->format(DATE_ATOM),
         ];

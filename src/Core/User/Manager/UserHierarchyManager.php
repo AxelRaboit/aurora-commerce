@@ -70,6 +70,7 @@ final readonly class UserHierarchyManager
             if ($current->getId() === $user->getId()) {
                 return true;
             }
+
             $current = $current->getManager();
             ++$depth;
         }

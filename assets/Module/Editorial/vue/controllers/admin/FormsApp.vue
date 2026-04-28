@@ -466,7 +466,6 @@ function submissionValue(submission, field) {
 
 <template>
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
-        <!-- Left panel: forms list -->
         <div class="lg:w-72 shrink-0 flex flex-col gap-3">
             <AppButton variant="primary" size="md" class="w-full justify-center" v-on:click="startCreate">
                 <Plus class="w-4 h-4 shrink-0" :stroke-width="2" />
@@ -496,9 +495,7 @@ function submissionValue(submission, field) {
             <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
         </div>
 
-        <!-- Right panel: editor -->
         <div v-if="selectedForm || isCreating" class="flex-1 min-w-0 min-h-0 bg-surface border border-line/60 rounded-xl overflow-hidden flex flex-col">
-            <!-- Header -->
             <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-line/60">
                 <div class="flex items-center gap-2 min-w-0">
                     <ClipboardList class="w-5 h-5 shrink-0 text-accent-400" :stroke-width="2" />
@@ -529,7 +526,6 @@ function submissionValue(submission, field) {
                 </div>
             </div>
 
-            <!-- Tabs -->
             <div class="flex gap-1 px-5 pt-3 border-b border-line/60">
                 <button
                     v-for="tab in tabs"
@@ -543,9 +539,7 @@ function submissionValue(submission, field) {
                 </button>
             </div>
 
-            <!-- Settings tab -->
             <div v-if="activeTab === 'settings'" class="p-5 space-y-4 overflow-y-auto flex-1">
-                <!-- Locale switcher -->
                 <div v-if="locales.length > 1" class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                     <div class="flex gap-1">
                         <button
@@ -567,7 +561,6 @@ function submissionValue(submission, field) {
                     <p class="text-xs text-muted">{{ t("admin.forms.localesOptional") }}</p>
                 </div>
 
-                <!-- Per-locale fields -->
                 <div :class="sharedSlug ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-4'">
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.title") }}</label>
@@ -607,7 +600,6 @@ function submissionValue(submission, field) {
 
                 <hr class="border-line/40">
 
-                <!-- Slug + shared toggle -->
                 <div class="space-y-2">
                     <div v-if="locales.length > 1" class="flex items-center gap-2">
                         <input
@@ -636,7 +628,6 @@ function submissionValue(submission, field) {
 
                 <hr class="border-line/40">
 
-                <!-- Global settings -->
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.notifyEmail") }}</label>
                     <input
@@ -661,7 +652,6 @@ function submissionValue(submission, field) {
                 </div>
             </div>
 
-            <!-- Fields tab -->
             <div v-if="activeTab === 'fields'" class="p-5 flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between">
                     <p class="text-sm text-secondary">{{ t("admin.forms.fieldsHint") }}</p>
@@ -706,7 +696,6 @@ function submissionValue(submission, field) {
                 </VueDraggable>
             </div>
 
-            <!-- Submissions tab -->
             <div v-if="activeTab === 'submissions'" class="flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between px-5 pt-5">
                     <p class="text-sm text-secondary">{{ submissionsTotal }} {{ t("admin.forms.submissionsCount") }}</p>
@@ -752,13 +741,11 @@ function submissionValue(submission, field) {
             </div>
         </div>
 
-        <!-- Empty state -->
         <div v-else class="flex-1 flex items-center justify-center text-sm text-muted bg-surface border border-line/60 rounded-xl">
             {{ t("admin.forms.selectOrCreate") }}
         </div>
     </div>
 
-    <!-- Field modal -->
     <AppModal :show="showFieldModal" max-width="sm" v-on:close="showFieldModal = false">
         <h3 class="text-base font-semibold text-primary">
             {{ editingFieldId !== null ? t("admin.forms.editField") : t("admin.forms.addFieldTitle") }}
@@ -781,7 +768,6 @@ function submissionValue(submission, field) {
 
             <hr class="border-line/40">
 
-            <!-- Locale switcher for field translations -->
             <div v-if="locales.length > 1" class="flex gap-1">
                 <button
                     v-for="locale in locales"
@@ -839,7 +825,6 @@ function submissionValue(submission, field) {
         </AppModalFooter>
     </AppModal>
 
-    <!-- Delete confirm modal -->
     <AppModal :show="showDeleteConfirm" max-width="sm" v-on:close="showDeleteConfirm = false">
         <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.deleteConfirmTitle") }}</h3>
         <p class="text-sm text-secondary">{{ t("admin.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
@@ -851,7 +836,6 @@ function submissionValue(submission, field) {
         </AppModalFooter>
     </AppModal>
 
-    <!-- Submission detail modal -->
     <AppModal :show="!!viewingSubmission" max-width="md" v-on:close="viewingSubmission = null">
         <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.viewSubmission") }}</h3>
         <div class="space-y-3">
@@ -875,7 +859,6 @@ function submissionValue(submission, field) {
         </div>
     </AppModal>
 
-    <!-- Delete field confirm -->
     <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
         <p class="text-sm text-primary">{{ t('admin.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
         <div class="flex justify-end gap-2 pt-3 border-t border-line">

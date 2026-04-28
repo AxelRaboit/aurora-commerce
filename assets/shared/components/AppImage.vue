@@ -21,13 +21,11 @@ function onLoadStart() { status.value = "loading"; }
 
 <template>
     <div class="relative overflow-hidden bg-surface-2" :class="rounded">
-        <!-- Skeleton while loading -->
         <div
             v-if="status === 'loading'"
             class="absolute inset-0 animate-pulse bg-surface-3"
         />
 
-        <!-- Image -->
         <img
             v-if="src && status !== 'error'"
             :src="src"
@@ -44,7 +42,6 @@ function onLoadStart() { status.value = "loading"; }
             v-on:error="onError"
         >
 
-        <!-- Fallback on error or no src -->
         <div
             v-if="(status === 'error' || !src) && fallbackIcon"
             class="absolute inset-0 flex items-center justify-center"

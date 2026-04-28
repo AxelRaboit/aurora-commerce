@@ -137,7 +137,6 @@ async function toggleModeration() {
 
 <template>
     <div class="space-y-4">
-        <!-- Header -->
         <div class="flex items-center justify-between gap-3 flex-wrap">
             <div class="flex gap-1 flex-wrap">
                 <button
@@ -163,7 +162,6 @@ async function toggleModeration() {
             </AppButton>
         </div>
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
             <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
@@ -198,7 +196,6 @@ async function toggleModeration() {
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
             <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
             <table v-else class="w-full text-sm">
@@ -297,7 +294,6 @@ async function toggleModeration() {
             </AppModalFooter>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.comments.deleteConfirm') }}</p>
             <p class="text-sm text-secondary">{{ t('admin.comments.deleteWarning') }}</p>

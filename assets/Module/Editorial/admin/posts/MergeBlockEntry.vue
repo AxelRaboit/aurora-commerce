@@ -53,7 +53,6 @@ function renderBlock(block) {
             <span class="text-secondary">{{ blockType }}</span>
         </div>
 
-        <!-- Conflict: side-by-side -->
         <div v-if="isConflict" class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div
                 class="border rounded-lg overflow-hidden cursor-pointer transition-all"
@@ -84,7 +83,6 @@ function renderBlock(block) {
             </div>
         </div>
 
-        <!-- Auto-resolved: single card with flip option -->
         <div v-else class="border border-line rounded-lg overflow-hidden">
             <div class="p-3 prose-preview text-sm bg-surface">
                 <div v-if="resolvedBlock" v-html="renderBlock(resolvedBlock)" />

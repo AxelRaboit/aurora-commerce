@@ -178,7 +178,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <!-- Toolbar -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
@@ -191,7 +190,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </AppButton>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
@@ -241,7 +239,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </table>
         </div>
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="product in items" :key="product.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                 <div class="flex items-start justify-between gap-3">
@@ -265,7 +262,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.erp.products.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -323,7 +319,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.erp.products.edit', { name: editingProduct?.name ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -369,7 +364,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.erp.products.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.erp.products.deleteWarning') }}</p>

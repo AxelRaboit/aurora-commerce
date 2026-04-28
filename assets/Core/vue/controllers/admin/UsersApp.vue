@@ -8,6 +8,7 @@ import { toast } from "vue-sonner";
 import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
 import AppPagination from "@/shared/components/AppPagination.vue";
 import AppButton from "@/shared/components/AppButton.vue";
+import AppFileInput from "@/shared/components/AppFileInput.vue";
 import AppInput from "@/shared/components/AppInput.vue";
 import AppSearchInput from "@/shared/components/AppSearchInput.vue";
 import AppSelect from "@/shared/components/AppSelect.vue";
@@ -130,7 +131,6 @@ async function openView(user) {
 // ── Edit modal ───────────────────────────────────────────────────────────────
 const editModal = reactive({ open: false, editing: null, errors: {}, saving: false, photoUploading: false });
 const editForm = reactive({ name: "", email: "", role: "", password: "", managerId: null });
-const photoInputRef = ref(null);
 
 const managerOptions = computed(() => {
     const editingId = editModal.editing?.id ?? 0;
@@ -154,13 +154,7 @@ function openEdit(user) {
     loadSelectableUsers();
 }
 
-function triggerPhotoSelect() {
-    photoInputRef.value?.click();
-}
-
-async function onPhotoSelected(event) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
+async function onPhotoSelected(file) {
     if (!file || !editModal.editing) return;
     editModal.photoUploading = true;
     try {
@@ -323,7 +317,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </AppButton>
         </div>
 
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
@@ -361,7 +354,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <table v-else class="w-full text-sm">
@@ -419,7 +411,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <!-- Invite modal -->
         <AppModal :show="inviteModal.open" max-width="md" v-on:close="inviteModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.invite') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
@@ -453,7 +444,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </form>
         </AppModal>
 
-        <!-- View modal -->
         <AppModal :show="!!viewingUser" max-width="md" v-on:close="viewingUser = null">
             <div v-if="viewingUser" class="space-y-5">
                 <div class="flex items-center gap-4">
@@ -523,7 +513,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </div>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="editModal.open" max-width="md" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
@@ -534,23 +523,26 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                     :size="64"
                 />
                 <div class="flex flex-col gap-2">
-                    <input ref="photoInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" v-on:change="onPhotoSelected">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <AppButton variant="ghost" size="sm" :loading="editModal.photoUploading" v-on:click="triggerPhotoSelect">
-                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('admin.users.photo.upload') }}
-                        </AppButton>
-                        <AppButton
-                            v-if="editModal.editing?.profilePhotoUrl"
-                            variant="ghost"
-                            size="sm"
-                            :loading="editModal.photoUploading"
-                            v-on:click="removePhoto"
-                        >
-                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('admin.users.photo.remove') }}
-                        </AppButton>
-                    </div>
+                    <AppFileInput accept="image/jpeg,image/png,image/webp" v-on:change="onPhotoSelected">
+                        <template #default="{ trigger }">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <AppButton variant="ghost" size="sm" :loading="editModal.photoUploading" v-on:click="trigger">
+                                    <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t('admin.users.photo.upload') }}
+                                </AppButton>
+                                <AppButton
+                                    v-if="editModal.editing?.profilePhotoUrl"
+                                    variant="ghost"
+                                    size="sm"
+                                    :loading="editModal.photoUploading"
+                                    v-on:click="removePhoto"
+                                >
+                                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t('admin.users.photo.remove') }}
+                                </AppButton>
+                            </div>
+                        </template>
+                    </AppFileInput>
                     <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
                 </div>
             </div>
@@ -586,7 +578,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
             <p class="text-sm text-primary">{{ t('admin.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
             <AppModalFooter>
@@ -595,7 +586,6 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
             </AppModalFooter>
         </AppModal>
 
-        <!-- Toggle disabled confirm -->
         <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
                 {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}

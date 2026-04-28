@@ -96,7 +96,6 @@ async function submitContact() {
 
 <template>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Company card -->
         <div class="space-y-4">
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
@@ -131,7 +130,6 @@ async function submitContact() {
             </div>
         </div>
 
-        <!-- Contacts list -->
         <div class="lg:col-span-2 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">
@@ -154,7 +152,6 @@ async function submitContact() {
             </div>
 
             <template v-else>
-                <!-- Mobile cards -->
                 <div class="sm:hidden space-y-3">
                     <div v-for="contact in contacts" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                         <div class="flex items-center gap-3">
@@ -170,7 +167,6 @@ async function submitContact() {
                     </div>
                 </div>
 
-                <!-- Desktop table -->
                 <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                     <table class="w-full text-sm">
                         <thead class="bg-surface-2 border-b border-line">
@@ -202,7 +198,6 @@ async function submitContact() {
             </template>
         </div>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.companies.edit', { name: company.name }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -224,7 +219,6 @@ async function submitContact() {
             </form>
         </AppModal>
 
-        <!-- Delete confirm -->
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('admin.crm.companies.deleteConfirm', { name: company.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.crm.companies.deleteWarning') }}</p>
@@ -234,7 +228,6 @@ async function submitContact() {
             </AppModalFooter>
         </AppModal>
     </div>
-    <!-- Create contact modal -->
     <AppModal :show="showCreateContact" v-on:close="showCreateContact = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.create') }}</h3>
         <form class="space-y-4" v-on:submit.prevent="submitContact">

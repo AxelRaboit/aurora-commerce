@@ -100,7 +100,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <!-- View tabs -->
         <div v-if="kanbanPath" class="flex border-b border-line/40 text-sm">
             <button type="button" class="px-4 py-2 border-b-2 border-accent-500 text-primary font-medium transition-colors flex items-center gap-1.5">
                 <List class="w-4 h-4" :stroke-width="2" />
@@ -123,7 +122,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 {{ t('admin.crm.deals.add') }}
             </AppButton>
         </div>
-        <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="deal in items" :key="deal.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
@@ -146,7 +144,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </div>
         </div>
 
-        <!-- Desktop table -->
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead class="bg-surface-2 border-b border-line">
@@ -186,7 +183,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -209,7 +205,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.edit', { name: editingDeal?.name ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -232,7 +227,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Delete -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.crm.deals.deleteWarning') }}</p>

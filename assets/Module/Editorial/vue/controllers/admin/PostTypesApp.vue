@@ -204,7 +204,6 @@ function toggleIn(list, value) {
 
 <template>
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
-        <!-- Sidebar -->
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.title") }}</h2>
@@ -231,11 +230,9 @@ function toggleIn(list, value) {
             </div>
         </aside>
 
-        <!-- Main -->
         <main class="flex-1 min-w-0 space-y-4">
             <AppNoData v-if="!selected" :message="t('admin.postTypes.empty')" />
             <div v-else class="space-y-4">
-                <!-- Header card -->
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3 flex-wrap">
                         <div class="min-w-0">
@@ -268,7 +265,6 @@ function toggleIn(list, value) {
                     </div>
                 </div>
 
-                <!-- Fields -->
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.fields.title") }}</h4>
@@ -321,7 +317,6 @@ function toggleIn(list, value) {
             </div>
         </main>
 
-        <!-- Post type modal -->
         <AppModal :show="postTypeModal.open" max-width="lg" v-on:close="postTypeModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
                 {{ postTypeModal.editing ? t("admin.postTypes.editPostType") : t("admin.postTypes.add") }}
@@ -398,7 +393,6 @@ function toggleIn(list, value) {
             </form>
         </AppModal>
 
-        <!-- Field modal -->
         <AppModal :show="fieldModal.open" max-width="lg" v-on:close="fieldModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
                 {{ fieldModal.editing ? t("admin.postTypes.fields.edit") : t("admin.postTypes.fields.add") }}
@@ -462,7 +456,6 @@ function toggleIn(list, value) {
             </form>
         </AppModal>
 
-        <!-- Delete confirms -->
         <AppModal :show="!!deletingPostType" max-width="sm" v-on:close="deletingPostType = null">
             <p class="text-sm text-primary">{{ t("admin.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
             <div class="flex justify-end gap-2">
