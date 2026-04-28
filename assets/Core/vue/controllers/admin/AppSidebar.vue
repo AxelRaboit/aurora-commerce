@@ -38,6 +38,7 @@ import {
     ChevronDown,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/statusStyles.js";
+import { highlightMatch } from "@/shared/utils/highlightMatch.js";
 
 const ICON_MAP = {
     "layout-dashboard": LayoutDashboard,
@@ -272,17 +273,6 @@ function activateResult(entry) {
     }
 }
 
-function highlightMatch(text) {
-    if (!text || !searchQuery.value) return text ?? "";
-    const tokens = searchQuery.value
-        .trim()
-        .split(/\s+/)
-        .filter((token) => token.length > 1)
-        .map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-    if (!tokens.length) return text;
-    const regex = new RegExp(`(${tokens.join("|")})`, "ig");
-    return text.replace(regex, '<mark class="bg-accent-400/30 text-primary rounded px-0.5">$1</mark>');
-}
 
 function entryIndex(kind, item) {
     return flatResults.value.findIndex((entry) => entry.kind === kind && entry.item.id === item.id);
@@ -612,8 +602,8 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                     {{ t("admin.stats.postStatus." + post.status) }}
                                 </span>
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(post.title ?? '(—)')" />
-                                    <div v-if="post.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(post.snippet)" />
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(post.title ?? '(—)', searchQuery)" />
+                                    <div v-if="post.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(post.snippet, searchQuery)" />
                                     <div class="text-xs text-muted mt-0.5">{{ post.postType }}</div>
                                 </div>
                             </button>
@@ -634,7 +624,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 v-on:click="activateResult({ kind: 'term', item: term })"
                             >
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(term.name ?? '(—)')" />
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(term.name ?? '(—)', searchQuery)" />
                                     <div class="text-xs text-muted">{{ term.taxonomy }}</div>
                                 </div>
                             </button>
@@ -655,7 +645,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                                 v-on:click="activateResult({ kind: 'media', item: media })"
                             >
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(media.name ?? '(—)')" />
+                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(media.name ?? '(—)', searchQuery)" />
                                     <div class="text-xs text-muted">{{ media.mimeType }}</div>
                                 </div>
                             </button>

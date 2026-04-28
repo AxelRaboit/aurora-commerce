@@ -17,6 +17,7 @@ import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
+import { formatProductPrice } from "@/shared/utils/formatPrice.js";
 
 const { t } = useI18n();
 
@@ -26,15 +27,6 @@ const props = defineProps({
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
 });
-
-function formatPrice(product) {
-    if (product.price === null || product.price === undefined) return "—";
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currency || "EUR" }).format(product.price);
-    } catch {
-        return `${product.price} ${product.currency || ""}`;
-    }
-}
 
 const listing = ref({ ...props.listing });
 const frontUrl = computed(() => `/${(document.documentElement.lang || "fr").slice(0, 2)}/shop/${listing.value.slug}`);
@@ -120,7 +112,7 @@ async function doDelete() {
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.price') }}</dt>
-                        <dd class="text-primary font-medium">{{ formatPrice(listing.product) }}</dd>
+                        <dd class="text-primary font-medium">{{ formatProductPrice(listing.product) }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.frontUrl') }}</dt>
@@ -159,7 +151,7 @@ async function doDelete() {
             <div class="bg-surface border border-line/60 rounded-lg p-4 space-y-2">
                 <p class="font-medium text-primary">{{ listing.product.name }}</p>
                 <p class="text-xs font-mono text-muted">{{ listing.product.sku }}</p>
-                <p class="text-sm text-secondary">{{ formatPrice(listing.product) }}</p>
+                <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
                 <AppBadge :color="listing.product.status === 'active' ? 'emerald' : listing.product.status === 'draft' ? 'amber' : 'slate'">
                     {{ t(`admin.erp.products.status.${listing.product.status}`) }}
                 </AppBadge>

@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useApiRequest } from "@/shared/composables/useApiRequest.js";
 import { useDateFormat } from "@/shared/composables/useDateFormat.js";
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
+import { formatCurrency } from "@/shared/utils/formatPrice.js";
 import AppButton from "@/shared/components/AppButton.vue";
 import AppBadge from "@/shared/components/AppBadge.vue";
 import AppModal from "@/shared/components/AppModal.vue";
@@ -34,21 +35,8 @@ const statusBadge = (status) => ({
     cancelled: "rose",
 }[status] ?? "slate");
 
-const formattedTotal = computed(() => {
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: order.value.currency }).format(order.value.total);
-    } catch {
-        return `${order.value.total} ${order.value.currencySymbol}`;
-    }
-});
-
-const formatLineSubtotal = (line) => {
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: order.value.currency }).format(line.subtotal);
-    } catch {
-        return `${line.subtotal} ${line.currencySymbol}`;
-    }
-};
+const formattedTotal = computed(() => formatCurrency(order.value.total, order.value.currency));
+const formatLineSubtotal = (line) => formatCurrency(line.subtotal, order.value.currency);
 
 // Allowed forward transitions per current status. Digital-only orders (requiresShipping=false)
 // skip the shipped step entirely — they go paid → delivered (i.e. fulfilled).

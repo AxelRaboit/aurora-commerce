@@ -21,6 +21,7 @@ import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
+import { formatProductPrice } from "@/shared/utils/formatPrice.js";
 import { computed } from "vue";
 
 const { t } = useI18n();
@@ -159,14 +160,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     'admin.ecommerce.listings.deleted',
 );
 
-function formatPrice(product) {
-    if (product.price === null || product.price === undefined) return "—";
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currency || "EUR" }).format(product.price);
-    } catch {
-        return `${product.price} ${product.currency || ""}`;
-    }
-}
 </script>
 
 <template>
@@ -209,7 +202,7 @@ function formatPrice(product) {
                             </div>
                         </td>
                         <td class="px-6 py-3 font-mono text-xs text-secondary">/{{ listing.slug }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatPrice(listing.product) }}</td>
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
                         <td class="px-6 py-3">
                             <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
                                 {{ t(listing.isVisibleOnShop ? 'admin.ecommerce.listings.visible' : 'admin.ecommerce.listings.hidden') }}
@@ -242,7 +235,7 @@ function formatPrice(product) {
                     </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <p class="text-sm text-secondary">{{ formatPrice(listing.product) }}</p>
+                    <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', listing.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>

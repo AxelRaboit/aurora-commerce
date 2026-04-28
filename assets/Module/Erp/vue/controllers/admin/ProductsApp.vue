@@ -20,6 +20,8 @@ import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validators.js";
+import { formatProductPrice } from "@/shared/utils/formatPrice.js";
+import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/currencies.js";
 
 const { t } = useI18n();
 
@@ -54,25 +56,9 @@ const TYPE_OPTIONS = computed(() => [
 
 const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
 
-const CURRENCY_OPTIONS = [
-    { value: "EUR", symbol: "€", label: "Euro" },
-    { value: "USD", symbol: "$", label: "US Dollar" },
-    { value: "GBP", symbol: "£", label: "British Pound" },
-    { value: "CHF", symbol: "CHF", label: "Swiss Franc" },
-    { value: "JPY", symbol: "¥", label: "Japanese Yen" },
-    { value: "CAD", symbol: "$", label: "Canadian Dollar" },
-    { value: "AUD", symbol: "$", label: "Australian Dollar" },
-    { value: "SEK", symbol: "kr", label: "Swedish Krona" },
-];
-
-const CURRENCY_BY_CODE = Object.fromEntries(CURRENCY_OPTIONS.map((c) => [c.value, c]));
-
-function symbolFor(code) {
-    return CURRENCY_BY_CODE[code]?.symbol ?? code;
-}
 
 function emptyForm() {
-    return { name: "", sku: "", description: "", price: "", currency: "EUR", status: "draft", type: "physical", imageId: null, imageUrl: null, stockQuantity: "" };
+    return { name: "", sku: "", description: "", price: "", currency: DEFAULT_CURRENCY, status: "draft", type: "physical", imageId: null, imageUrl: null, stockQuantity: "" };
 }
 
 function makeImageRef(form) {
@@ -85,14 +71,6 @@ function makeImageRef(form) {
     });
 }
 
-function formatPrice(product) {
-    if (product.price === null || product.price === undefined) return "—";
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currency || "EUR" }).format(product.price);
-    } catch {
-        return `${product.price.toFixed(product.currencyDecimals ?? 2)} ${product.currency || ""}`;
-    }
-}
 
 // --- Create ---
 const showCreate = ref(false);
@@ -147,7 +125,7 @@ function openEdit(product) {
         sku: product.sku,
         description: product.description ?? "",
         price: product.price ?? "",
-        currency: product.currency ?? "EUR",
+        currency: product.currency ?? DEFAULT_CURRENCY,
         status: product.status ?? "draft",
         type: product.type ?? "physical",
         imageId: product.image?.id ?? null,
@@ -214,7 +192,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             </div>
                         </td>
                         <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.sku }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatPrice(product) }}</td>
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(product) }}</td>
                         <td class="px-6 py-3 hidden lg:table-cell">
                             <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('admin.erp.products.stockUntracked') }}</span>
                             <AppBadge v-else-if="product.stockQuantity === 0" color="rose">{{ t('admin.erp.products.stockOut') }}</AppBadge>
@@ -249,7 +227,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`admin.erp.products.status.${product.status}`) }}</AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <p class="text-sm text-secondary">{{ formatPrice(product) }}</p>
+                    <p class="text-sm text-secondary">{{ formatProductPrice(product) }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="showPath.replace('__id__', product.id)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>

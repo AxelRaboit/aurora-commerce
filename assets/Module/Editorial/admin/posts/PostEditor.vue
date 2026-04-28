@@ -31,6 +31,9 @@ import { slugify } from "@/shared/utils/slugify.js";
 import { statusBadge } from "@/shared/utils/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { useDateFormat } from "@/shared/composables/useDateFormat.js";
+import { seoCounterClass } from "@/shared/utils/seoCounter.js";
+import { parseJsonLd, buildArticleJsonLd } from "@/shared/utils/jsonLd.js";
+import { buildTermTree, flattenTreeWithDepth } from "@editorial/utils/termTree.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -222,13 +225,6 @@ async function selectFeaturedFromLibrary() {
 const metaTitleLength = computed(() => form.translations[activeLocale.value]?.metaTitle?.length ?? 0);
 const metaDescLength  = computed(() => form.translations[activeLocale.value]?.metaDescription?.length ?? 0);
 
-function seoCounterClass(length, max) {
-    if (length === 0)          return "text-muted";
-    if (length <= max * 0.85)  return "text-green-500";
-    if (length <= max)         return "text-amber-500";
-    return "text-red-500";
-}
-
 // ── SEO quality checks ───────────────────────────────────────────────────────
 const activeTranslation = computed(() => form.translations[activeLocale.value] ?? null);
 
@@ -265,40 +261,33 @@ watch(
 watch(jsonLdText, (raw) => {
     const tr = activeTranslation.value;
     if (!tr) return;
-    const trimmed = raw.trim();
-    if ("" === trimmed) {
+    const { value, error, empty } = parseJsonLd(raw);
+    if (empty) {
         tr.jsonLd = null;
         jsonLdError.value = null;
         return;
     }
-    try {
-        const parsed = JSON.parse(trimmed);
-        if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-            jsonLdError.value = t("admin.posts.seo.jsonLdMustBeObject");
-            return;
-        }
-        tr.jsonLd = parsed;
-        jsonLdError.value = null;
-    } catch (err) {
-        jsonLdError.value = err.message;
+    if (error === "not-object") {
+        jsonLdError.value = t("admin.posts.seo.jsonLdMustBeObject");
+        return;
     }
+    if (error) {
+        jsonLdError.value = error;
+        return;
+    }
+    tr.jsonLd = value;
+    jsonLdError.value = null;
 });
 
 function generateArticleJsonLd() {
     const tr = activeTranslation.value;
     if (!tr) return;
-    const template = {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: tr.title || "",
-        description: tr.metaDescription || "",
-        image: tr.ogImageUrl ? [tr.ogImageUrl] : undefined,
-        datePublished: publishedAt.value ?? undefined,
-    };
-    // Strip undefined entries
-    for (const key of Object.keys(template)) {
-        if (template[key] === undefined) delete template[key];
-    }
+    const template = buildArticleJsonLd({
+        title: tr.title,
+        description: tr.metaDescription,
+        imageUrl: tr.ogImageUrl,
+        datePublished: publishedAt.value,
+    });
     tr.jsonLd = template;
     jsonLdText.value = JSON.stringify(template, null, 2);
     jsonLdError.value = null;
@@ -466,35 +455,6 @@ function termLabel(term) {
     return term.translations?.[activeLocale.value]?.name
         ?? term.translations?.[props.locales[0]]?.name
         ?? "(—)";
-}
-
-function buildTermTree(terms) {
-    const byId = new Map(terms.map((term) => [term.id, { ...term, children: [] }]));
-    const roots = [];
-    for (const node of byId.values()) {
-        if (node.parentId && byId.has(node.parentId)) {
-            byId.get(node.parentId).children.push(node);
-        } else {
-            roots.push(node);
-        }
-    }
-    const sortRecursive = (nodes) => {
-        nodes.sort((a, b) => (a.position - b.position) || (a.id - b.id));
-        nodes.forEach((n) => sortRecursive(n.children));
-    };
-    sortRecursive(roots);
-    return roots;
-}
-
-function flattenTreeWithDepth(nodes, depth = 0) {
-    const result = [];
-    for (const node of nodes) {
-        result.push({ ...node, depth });
-        if (node.children?.length) {
-            result.push(...flattenTreeWithDepth(node.children, depth + 1));
-        }
-    }
-    return result;
 }
 
 const showPreview   = ref(false);

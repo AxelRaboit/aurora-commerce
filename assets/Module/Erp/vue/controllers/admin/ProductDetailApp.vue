@@ -17,6 +17,8 @@ import AppLoadMore from "@/shared/components/AppLoadMore.vue";
 import AppImage from "@/shared/components/AppImage.vue";
 import { Pencil, Trash2, Package, Save, } from "lucide-vue-next";
 import { required } from "@/shared/utils/validators.js";
+import { formatProductPrice } from "@/shared/utils/formatPrice.js";
+import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/currencies.js";
 import { toast } from "vue-sonner";
 
 const { t } = useI18n();
@@ -47,29 +49,6 @@ const TYPE_OPTIONS = [
 
 const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
 
-const CURRENCY_OPTIONS = [
-    { value: "EUR", symbol: "€" },
-    { value: "USD", symbol: "$" },
-    { value: "GBP", symbol: "£" },
-    { value: "CHF", symbol: "CHF" },
-    { value: "JPY", symbol: "¥" },
-    { value: "CAD", symbol: "$" },
-    { value: "AUD", symbol: "$" },
-    { value: "SEK", symbol: "kr" },
-];
-
-const CURRENCY_BY_CODE = Object.fromEntries(CURRENCY_OPTIONS.map((c) => [c.value, c]));
-const symbolFor = (code) => CURRENCY_BY_CODE[code]?.symbol ?? code;
-
-function formatPrice(product) {
-    if (product.price === null || product.price === undefined) return "—";
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currency || "EUR" }).format(product.price);
-    } catch {
-        return `${product.price.toFixed(product.currencyDecimals ?? 2)} ${product.currency || ""}`;
-    }
-}
-
 const product = ref({ ...props.product });
 
 // --- Edit ---
@@ -79,7 +58,7 @@ const editForm = ref({
     sku: product.value.sku ?? "",
     description: product.value.description ?? "",
     price: product.value.price ?? "",
-    currency: product.value.currency ?? "EUR",
+    currency: product.value.currency ?? DEFAULT_CURRENCY,
     status: product.value.status ?? "draft",
     type: product.value.type ?? "physical",
 });
@@ -164,7 +143,7 @@ const actionLabel = (action) => {
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.erp.products.price') }}</dt>
-                        <dd class="text-primary font-medium">{{ formatPrice(product) }}</dd>
+                        <dd class="text-primary font-medium">{{ formatProductPrice(product) }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.erp.products.currency') }}</dt>

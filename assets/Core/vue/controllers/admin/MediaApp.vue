@@ -1,6 +1,6 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/httpMethod.js";
-import { ref, reactive, computed, nextTick } from "vue";
+import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop } from "lucide-vue-next";
@@ -39,6 +39,7 @@ const props = defineProps({
     folderDeletePath: { type: String, default: "/admin/media/folders/__id__/delete" },
     reorderPath: { type: String, default: "/admin/media/reorder" },
     bulkDeletePath: { type: String, default: "/admin/media/bulk-delete" },
+    listPath: { type: String, default: "/admin/media/list" },
     bulkMovePath: { type: String, default: "/admin/media/bulk-move" },
     cropPath: { type: String, default: "/admin/media/__id__/crop" },
     totalStorageBytes: { type: Number, default: 0 },
@@ -49,16 +50,56 @@ const media = ref([...props.media]);
 const currentFolderId = ref(props.currentFolderId);
 const searchQuery = ref(props.search ?? "");
 
-function navigateTo(folderId) {
-    const url = new URL("/admin/media", window.location.origin);
+const mediaLoading = ref(false);
+let navAbort = null;
+
+function mediaUrl(base, folderId, search) {
+    const url = new URL(base, window.location.origin);
     if (folderId) url.searchParams.set("folderId", String(folderId));
-    if (searchQuery.value) url.searchParams.set("search", searchQuery.value);
-    window.location.href = url.toString();
+    if (search) url.searchParams.set("search", search);
+    return url;
 }
 
-function runSearch() {
-    navigateTo(currentFolderId.value);
+async function loadMedia(folderId, search) {
+    navAbort?.abort();
+    navAbort = new AbortController();
+    mediaLoading.value = true;
+    try {
+        const res = await fetch(mediaUrl(props.listPath, folderId, search), { signal: navAbort.signal });
+        const data = await res.json();
+        media.value = data.items ?? [];
+        folders.value = data.folders ?? folders.value;
+        currentFolderId.value = folderId ?? null;
+        searchQuery.value = search;
+        clearSelection();
+    } catch (e) {
+        if (e.name !== "AbortError") toast.error(t("shared.common.error"));
+    } finally {
+        mediaLoading.value = false;
+    }
 }
+
+async function navigateTo(folderId, search = searchQuery.value) {
+    await loadMedia(folderId, search);
+    history.pushState({ folderId, search }, "", mediaUrl("/admin/media", folderId, search));
+}
+
+async function onPopState(event) {
+    await loadMedia(event.state?.folderId ?? null, event.state?.search ?? "");
+}
+
+onMounted(() => {
+    history.replaceState(
+        { folderId: currentFolderId.value, search: searchQuery.value },
+        "",
+        mediaUrl("/admin/media", currentFolderId.value, searchQuery.value),
+    );
+    window.addEventListener("popstate", onPopState);
+});
+
+onUnmounted(() => {
+    window.removeEventListener("popstate", onPopState);
+});
 
 // ── Folder tree helpers ──────────────────────────────────────────────────────
 function buildFolderTree(list) {
@@ -795,7 +836,7 @@ async function moveFolder(folderId, newParentId) {
                     <AppSearchInput
                         v-model="searchQuery"
                         :placeholder="t('admin.media.searchPlaceholder')"
-                        v-on:search="runSearch"
+                        v-on:search="(q) => navigateTo(currentFolderId, q)"
                     />
                 </div>
                 <input
@@ -1018,114 +1059,122 @@ async function moveFolder(folderId, newParentId) {
 
                 <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">{{ t("admin.media.altWarning") }}</AppMessage>
 
-                <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
+                <div v-if="mediaLoading" class="flex items-center justify-center py-16 text-muted text-sm">
+                    <span class="animate-pulse">{{ t('shared.common.loading') }}</span>
+                </div>
 
-                <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                    <div
-                        v-for="item in displayedMedia"
-                        :key="item.id"
-                        class="group relative bg-surface border rounded-lg overflow-hidden transition-colors cursor-pointer"
-                        :class="[
-                            dragOverMediaId === item.id ? 'border-accent-400 ring-2 ring-accent-400/50' : 'border-line/60 hover:border-accent-400',
-                            selectedIds.has(item.id) ? 'ring-2 ring-accent-500' : '',
-                        ]"
-                        draggable="true"
-                        v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
-                        v-on:dragstart="onMediaDragStart($event, item)"
-                        v-on:dragover="onMediaItemDragOver($event, item)"
-                        v-on:dragleave="dragOverMediaId = null"
-                        v-on:drop="onMediaItemDrop($event, item)"
-                    >
-                        <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(item.id)">
-                            <CheckSquare v-if="selectedIds.has(item.id)" class="w-5 h-5 text-accent-400 drop-shadow" :stroke-width="2" />
-                            <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
-                        </div>
-                        <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden cursor-pointer">
-                            <AppImage
-                                v-if="item.isImage"
-                                :src="item.thumbnailUrl ?? item.url"
-                                :alt="item.alt ?? ''"
-                                object-fit="cover"
-                                :focal-point="item.focalPositionCss ?? '50% 50%'"
-                            />
-                            <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
-                            <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
-                            <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
-                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
-                                    <Eye class="w-4 h-4" :stroke-width="2" />
-                                </button>
-                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item)">
-                                    <Copy class="w-4 h-4" :stroke-width="2" />
-                                </button>
-                                <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.qrCode')" v-on:click.stop="openQr(item)">
-                                    <QrCode class="w-4 h-4" :stroke-width="2" />
-                                </button>
+                <template v-else>
+
+                    <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
+
+                    <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                        <div
+                            v-for="item in displayedMedia"
+                            :key="item.id"
+                            class="group relative bg-surface border rounded-lg overflow-hidden transition-colors cursor-pointer"
+                            :class="[
+                                dragOverMediaId === item.id ? 'border-accent-400 ring-2 ring-accent-400/50' : 'border-line/60 hover:border-accent-400',
+                                selectedIds.has(item.id) ? 'ring-2 ring-accent-500' : '',
+                            ]"
+                            draggable="true"
+                            v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
+                            v-on:dragstart="onMediaDragStart($event, item)"
+                            v-on:dragover="onMediaItemDragOver($event, item)"
+                            v-on:dragleave="dragOverMediaId = null"
+                            v-on:drop="onMediaItemDrop($event, item)"
+                        >
+                            <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(item.id)">
+                                <CheckSquare v-if="selectedIds.has(item.id)" class="w-5 h-5 text-accent-400 drop-shadow" :stroke-width="2" />
+                                <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
                             </div>
-                        </div>
-                        <div class="p-2 space-y-0.5">
-                            <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
-                            <div class="text-xs text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
-                            <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
-                                <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                            <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden cursor-pointer">
+                                <AppImage
+                                    v-if="item.isImage"
+                                    :src="item.thumbnailUrl ?? item.url"
+                                    :alt="item.alt ?? ''"
+                                    object-fit="cover"
+                                    :focal-point="item.focalPositionCss ?? '50% 50%'"
+                                />
+                                <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
+                                <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
+                                <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
+                                        <Eye class="w-4 h-4" :stroke-width="2" />
+                                    </button>
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item)">
+                                        <Copy class="w-4 h-4" :stroke-width="2" />
+                                    </button>
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.qrCode')" v-on:click.stop="openQr(item)">
+                                        <QrCode class="w-4 h-4" :stroke-width="2" />
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-2 space-y-0.5">
+                                <div class="text-xs font-medium text-primary truncate">{{ item.originalName }}</div>
+                                <div class="text-xs text-muted">{{ formatSize(item.size) }}<span v-if="item.width"> · {{ item.width }}×{{ item.height }}</span></div>
+                                <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
+                                    <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div v-else class="border border-line/60 rounded-xl overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-surface-2 text-xs text-muted uppercase">
-                            <tr>
-                                <th v-if="isSelecting" class="w-8 px-3 py-2" />
-                                <th class="px-3 py-2 text-left">{{ t("admin.media.filename") }}</th>
-                                <th class="px-3 py-2 text-left hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
-                                <th class="px-3 py-2 text-right hidden md:table-cell">{{ t("admin.media.size") }}</th>
-                                <th class="px-3 py-2 text-right w-24">{{ t("shared.common.actions") }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-line/40">
-                            <tr
-                                v-for="item in displayedMedia"
-                                :key="item.id"
-                                class="hover:bg-surface-2 transition-colors cursor-pointer"
-                                :class="selectedIds.has(item.id) ? 'bg-accent-500/5' : ''"
-                                v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
-                            >
-                                <td v-if="isSelecting" class="px-3 py-2" v-on:click.stop="toggleSelect(item.id)">
-                                    <CheckSquare v-if="selectedIds.has(item.id)" class="w-4 h-4 text-accent-400" :stroke-width="2" />
-                                    <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
-                                </td>
-                                <td class="px-3 py-2">
-                                    <div class="flex items-center gap-2">
-                                        <AppImage
-                                            :src="item.isImage ? (item.thumbnailUrl ?? item.url) : null"
-                                            :alt="item.alt ?? ''"
-                                            object-fit="cover"
-                                            rounded="rounded"
-                                            class="w-8 h-8 shrink-0"
-                                        />
-                                        <div class="min-w-0">
-                                            <div class="truncate font-medium text-primary">{{ item.originalName }}</div>
-                                            <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 flex items-center gap-1">
-                                                <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                    <div v-else class="border border-line/60 rounded-xl overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-surface-2 text-xs text-muted uppercase">
+                                <tr>
+                                    <th v-if="isSelecting" class="w-8 px-3 py-2" />
+                                    <th class="px-3 py-2 text-left">{{ t("admin.media.filename") }}</th>
+                                    <th class="px-3 py-2 text-left hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
+                                    <th class="px-3 py-2 text-right hidden md:table-cell">{{ t("admin.media.size") }}</th>
+                                    <th class="px-3 py-2 text-right w-24">{{ t("shared.common.actions") }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-line/40">
+                                <tr
+                                    v-for="item in displayedMedia"
+                                    :key="item.id"
+                                    class="hover:bg-surface-2 transition-colors cursor-pointer"
+                                    :class="selectedIds.has(item.id) ? 'bg-accent-500/5' : ''"
+                                    v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
+                                >
+                                    <td v-if="isSelecting" class="px-3 py-2" v-on:click.stop="toggleSelect(item.id)">
+                                        <CheckSquare v-if="selectedIds.has(item.id)" class="w-4 h-4 text-accent-400" :stroke-width="2" />
+                                        <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="flex items-center gap-2">
+                                            <AppImage
+                                                :src="item.isImage ? (item.thumbnailUrl ?? item.url) : null"
+                                                :alt="item.alt ?? ''"
+                                                object-fit="cover"
+                                                rounded="rounded"
+                                                class="w-8 h-8 shrink-0"
+                                            />
+                                            <div class="min-w-0">
+                                                <div class="truncate font-medium text-primary">{{ item.originalName }}</div>
+                                                <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 flex items-center gap-1">
+                                                    <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ item.folderName }}
+                                                </div>
                                             </div>
+                                            <span v-if="!item.alt" class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500">alt</span>
                                         </div>
-                                        <span v-if="!item.alt" class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500">alt</span>
-                                    </div>
-                                </td>
-                                <td class="px-3 py-2 text-muted hidden sm:table-cell">{{ item.mimeType }}</td>
-                                <td class="px-3 py-2 text-right text-muted hidden md:table-cell">{{ formatSize(item.size) }}</td>
-                                <td class="px-3 py-2 text-right">
-                                    <div class="flex justify-end gap-1" v-on:click.stop>
-                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                        <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                    </td>
+                                    <td class="px-3 py-2 text-muted hidden sm:table-cell">{{ item.mimeType }}</td>
+                                    <td class="px-3 py-2 text-right text-muted hidden md:table-cell">{{ formatSize(item.size) }}</td>
+                                    <td class="px-3 py-2 text-right">
+                                        <div class="flex justify-end gap-1" v-on:click.stop>
+                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </template>
             </main>
         </div>
 

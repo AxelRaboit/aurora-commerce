@@ -112,10 +112,6 @@ const KIND_CLASS = {
     [RevisionDiffKind.Modified]: "bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300",
 };
 
-function kindLabel(kind) {
-    return t(`admin.posts.revisions.kind.${kind}`);
-}
-
 function renderBlock(block) {
     if (!block) return "";
     return renderBlocks([block]);
@@ -237,7 +233,7 @@ const visibleEntries = computed(() =>
                                     class="border border-line rounded-lg overflow-hidden"
                                 >
                                     <div class="flex items-center gap-2 px-3 py-1.5 text-xs bg-surface-2 border-b border-line">
-                                        <span class="px-2 py-0.5 rounded-md font-medium" :class="KIND_CLASS[entry.kind]">{{ kindLabel(entry.kind) }}</span>
+                                        <span class="px-2 py-0.5 rounded-md font-medium" :class="KIND_CLASS[entry.kind]">{{ t(`admin.posts.revisions.kind.${entry.kind}`) }}</span>
                                         <span class="text-muted font-mono">#{{ entry.id.slice(0, 8) }}</span>
                                     </div>
 

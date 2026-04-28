@@ -19,14 +19,6 @@ const localChildren = ref([...(props.item.children ?? [])]);
 
 watch(() => props.item.children, (val) => { localChildren.value = [...(val ?? [])]; });
 
-function targetLabel(item) {
-    return item.targetPreview?.label ?? "—";
-}
-
-function targetHint(item) {
-    return item.targetPreview?.hint ?? "";
-}
-
 function visibilityIcon(item) {
     if (item.visibility === "guests_only" || item.visibility === "authenticated_only") return EyeOff;
     return Eye;
@@ -53,7 +45,7 @@ function visibilityIcon(item) {
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-sm font-medium text-primary truncate" :class="{ 'text-rose-400': item.targetPreview?.missing }">
-                        {{ targetLabel(item) }}
+                        {{ item.targetPreview?.label ?? "—" }}
                     </span>
                     <AppBadge v-if="item.translations?.fr || item.translations?.en" color="accent" class="shrink-0">
                         {{ Object.keys(item.translations).filter((l) => item.translations[l]).join(", ") }}
@@ -65,7 +57,7 @@ function visibilityIcon(item) {
                         <component :is="visibilityIcon(item)" class="w-3 h-3" :stroke-width="2.5" />
                     </AppBadge>
                 </div>
-                <p v-if="targetHint(item)" class="text-xs text-muted truncate font-mono mt-0.5">{{ targetHint(item) }}</p>
+                <p v-if="item.targetPreview?.hint" class="text-xs text-muted truncate font-mono mt-0.5">{{ item.targetPreview.hint }}</p>
             </div>
 
             <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="emit('edit', item)">
