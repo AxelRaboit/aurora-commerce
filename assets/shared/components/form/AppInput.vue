@@ -21,6 +21,13 @@ const inputType = computed(() => {
     if (props.toggleable) return revealed.value ? 'text' : 'password';
     return props.type;
 });
+
+const inputEl = ref(null);
+defineExpose({
+    focus: () => inputEl.value?.focus(),
+    select: () => inputEl.value?.select(),
+    blur: () => inputEl.value?.blur(),
+});
 </script>
 
 <template>
@@ -31,6 +38,7 @@ const inputType = computed(() => {
                 <slot name="prefix" />
             </div>
             <input
+                ref="inputEl"
                 :type="inputType"
                 :name="name || undefined"
                 :value="modelValue"

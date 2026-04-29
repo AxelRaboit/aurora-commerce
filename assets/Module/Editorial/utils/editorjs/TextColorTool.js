@@ -1,16 +1,16 @@
 const PALETTE = [
-    { label: "Black",      value: "#000000" },
-    { label: "Dark gray",  value: "#374151" },
-    { label: "Gray",       value: "#6b7280" },
+    { label: "Black", value: "#000000" },
+    { label: "Dark gray", value: "#374151" },
+    { label: "Gray", value: "#6b7280" },
     { label: "Light gray", value: "#d1d5db" },
-    { label: "White",      value: "#ffffff" },
-    { label: "Red",        value: "#ef4444" },
-    { label: "Orange",     value: "#f97316" },
-    { label: "Yellow",     value: "#eab308" },
-    { label: "Green",      value: "#22c55e" },
-    { label: "Blue",       value: "#3b82f6" },
-    { label: "Purple",     value: "#8b5cf6" },
-    { label: "Pink",       value: "#ec4899" },
+    { label: "White", value: "#ffffff" },
+    { label: "Red", value: "#ef4444" },
+    { label: "Orange", value: "#f97316" },
+    { label: "Yellow", value: "#eab308" },
+    { label: "Green", value: "#22c55e" },
+    { label: "Blue", value: "#3b82f6" },
+    { label: "Purple", value: "#8b5cf6" },
+    { label: "Pink", value: "#ec4899" },
 ];
 
 const TAG = "SPAN";
@@ -23,8 +23,12 @@ const swatchIcon = (color) =>
     `<div style="width:18px;height:18px;border-radius:4px;background:${color};border:1.5px solid rgba(0,0,0,0.12);box-sizing:border-box;"></div>`;
 
 export class TextColorTool {
-    static get isInline() { return true; }
-    static get title() { return "Text Color"; }
+    static get isInline() {
+        return true;
+    }
+    static get title() {
+        return "Text Color";
+    }
     static get sanitize() {
         return { span: { class: CSS_CLASS, style: true } };
     }

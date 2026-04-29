@@ -169,8 +169,8 @@ async function selectOgFromLibrary() {
                     <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">
                         {{ t("admin.posts.seo.ogImage") }}
                     </label>
-                    <div class="flex items-center gap-3">
-                        <div class="w-24 h-16 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div class="w-full h-40 sm:w-24 sm:h-16 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
                             <img
                                 v-if="translation.ogImageUrl"
                                 :src="translation.ogImageUrl"
@@ -178,9 +178,9 @@ async function selectOgFromLibrary() {
                                 :style="{ objectPosition: translation.ogImageFocalPosition ?? '50% 50%' }"
                                 alt=""
                             >
-                            <ImagePlus v-else class="w-5 h-5 text-muted" :stroke-width="2" />
+                            <ImagePlus v-else class="w-6 h-6 sm:w-5 sm:h-5 text-muted" :stroke-width="2" />
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
                             <input
                                 ref="ogInputRef"
                                 type="file"
@@ -188,10 +188,16 @@ async function selectOgFromLibrary() {
                                 class="hidden"
                                 v-on:change="uploadOgImage"
                             >
-                            <AppButton variant="secondary" size="sm" :loading="uploadingOg" v-on:click="ogInputRef?.click()">
+                            <AppButton
+                                variant="secondary"
+                                size="sm"
+                                :loading="uploadingOg"
+                                class="flex-1 sm:flex-none"
+                                v-on:click="ogInputRef?.click()"
+                            >
                                 {{ t("admin.posts.seo.ogImageUpload") }}
                             </AppButton>
-                            <AppButton variant="ghost" size="sm" v-on:click="selectOgFromLibrary">
+                            <AppButton variant="ghost" size="sm" class="flex-1 sm:flex-none" v-on:click="selectOgFromLibrary">
                                 {{ t("admin.posts.selectFromLibrary") }}
                             </AppButton>
                             <AppButton

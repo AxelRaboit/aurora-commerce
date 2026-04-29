@@ -3,6 +3,7 @@ import { ref } from "vue";
 
 const props = defineProps({
     accept: { type: String, default: "" },
+    multiple: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["change"]);
@@ -14,10 +15,13 @@ function trigger() {
 }
 
 function onChange(event) {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files ?? []);
     event.target.value = "";
-    if (file) emit("change", file);
+    if (!files.length) return;
+    emit("change", props.multiple ? files : files[0]);
 }
+
+defineExpose({ trigger });
 </script>
 
 <template>
@@ -25,6 +29,7 @@ function onChange(event) {
         ref="inputRef"
         type="file"
         :accept="accept"
+        :multiple="multiple"
         class="hidden"
         v-on:change="onChange"
     >

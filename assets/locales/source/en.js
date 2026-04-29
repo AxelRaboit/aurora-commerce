@@ -94,6 +94,8 @@ export default {
         },
         media: {
             folders: "Folders",
+            subfolders: "Subfolders",
+            files: "Files",
             newFolder: "New",
             rootFolder: "All media",
             upload: "Upload",
@@ -1532,6 +1534,7 @@ export default {
             description: "Description",
             view: "View",
             close: "Close",
+            back: "Back",
             expand: "Expand",
             collapse: "Collapse",
             select_placeholder: "Select…",
@@ -1563,6 +1566,8 @@ export default {
                 openInLibrary: "Open in library",
                 upload: "Upload",
                 dropHere: "Drop to upload",
+                subfolders: "Subfolders",
+                files: "Files",
             },
             filters: {
                 all: "All",

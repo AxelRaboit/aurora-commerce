@@ -1,9 +1,9 @@
 const SIZES = [
-    { label: "XS",  value: "0.75em" },
-    { label: "S",   value: "0.875em" },
-    { label: "M",   value: "1em" },
-    { label: "L",   value: "1.25em" },
-    { label: "XL",  value: "1.5em" },
+    { label: "XS", value: "0.75em" },
+    { label: "S", value: "0.875em" },
+    { label: "M", value: "1em" },
+    { label: "L", value: "1.25em" },
+    { label: "XL", value: "1.5em" },
     { label: "2XL", value: "2em" },
 ];
 
@@ -17,8 +17,12 @@ const sizeIcon = (label) =>
     `<div style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;">${label}</div>`;
 
 export class FontSizeTool {
-    static get isInline() { return true; }
-    static get title() { return "Font Size"; }
+    static get isInline() {
+        return true;
+    }
+    static get title() {
+        return "Font Size";
+    }
     static get sanitize() {
         return { span: { class: CSS_CLASS, style: true } };
     }

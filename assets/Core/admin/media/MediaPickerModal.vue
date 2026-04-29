@@ -3,7 +3,6 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import {
-    Search,
     Folder,
     FolderOpen,
     Home,
@@ -18,14 +17,20 @@ import {
     ExternalLink,
     Upload,
     Check,
+    ArrowLeft,
+    Menu,
 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
@@ -80,6 +85,12 @@ const visibleItems = computed(() => {
     });
 });
 
+const childFolders = computed(() =>
+    folders.value
+        .filter((f) => (f.parentId ?? null) === (currentFolderId.value ?? null))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+);
+
 // ── Loading ──────────────────────────────────────────────────────────────────
 async function load() {
     abortCtrl?.abort();
@@ -104,8 +115,6 @@ async function load() {
     }
 }
 
-const debouncedLoad = useDebounce(load, 250);
-watch(search, debouncedLoad);
 watch(currentFolderId, load);
 
 watch(
@@ -144,6 +153,14 @@ const currentFolderName = computed(() => {
 // ── Selection ────────────────────────────────────────────────────────────────
 function pick(item) {
     selected.value = item;
+}
+
+// ── Mobile UI state ──────────────────────────────────────────────────────────
+const foldersOpenMobile = ref(false);
+
+function pickFolderMobile(id) {
+    selectFolder(id);
+    foldersOpenMobile.value = false;
 }
 
 function confirm() {
@@ -200,12 +217,7 @@ async function uploadFiles(files) {
         toast.error(t("shared.common.error"));
     } finally {
         uploading.value = false;
-        if (fileInputRef.value) fileInputRef.value.value = "";
     }
-}
-
-function onPickFiles(event) {
-    uploadFiles(Array.from(event.target.files ?? []));
 }
 
 function onDragOver(event) {
@@ -295,22 +307,40 @@ function dimensions(item) {
         scrollable
         v-on:close="close"
     >
-        <div class="flex flex-col h-[80vh] max-h-[80vh]">
-            <header class="flex items-center justify-between px-5 py-3 border-b border-line shrink-0">
-                <h2 class="text-base font-semibold text-primary">{{ t("shared.media.picker.title") }}</h2>
-                <button type="button" class="p-1 text-muted hover:text-primary rounded" v-on:click="close">
+        <div class="flex flex-col h-dvh sm:h-[80vh] sm:max-h-[80vh]">
+            <header class="flex items-center gap-2 px-4 sm:px-5 py-3 border-b border-line shrink-0">
+                <AppIconButton
+                    class="md:hidden -ml-1"
+                    :title="t('shared.media.picker.allFolders')"
+                    v-on:click="foldersOpenMobile = true"
+                >
+                    <Menu class="w-5 h-5" :stroke-width="2" />
+                </AppIconButton>
+                <h2 class="text-base font-semibold text-primary truncate flex-1">{{ t("shared.media.picker.title") }}</h2>
+                <AppIconButton :title="t('shared.common.close')" v-on:click="close">
                     <X class="w-5 h-5" :stroke-width="2" />
-                </button>
+                </AppIconButton>
             </header>
 
-            <div class="flex flex-1 min-h-0">
-                <!-- Folders sidebar -->
-                <aside class="w-56 shrink-0 border-r border-line bg-surface-2/40 overflow-y-auto scrollbar-thin">
+            <div class="flex flex-1 min-h-0 relative">
+                <!-- Folders sidebar (drawer on mobile) -->
+                <aside
+                    class="border-r border-line overflow-y-auto scrollbar-thin shrink-0
+                           md:static md:w-56 md:translate-x-0 md:bg-surface-2/40
+                           fixed inset-y-0 left-0 z-30 w-72 bg-surface transition-transform duration-200 ease-out"
+                    :class="foldersOpenMobile ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'"
+                >
+                    <div class="md:hidden flex items-center gap-2 px-3 py-3 border-b border-line">
+                        <span class="font-medium text-sm text-primary flex-1">{{ t("shared.media.picker.allFolders") }}</span>
+                        <AppIconButton :title="t('shared.common.close')" v-on:click="foldersOpenMobile = false">
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
                     <button
                         type="button"
                         class="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors"
                         :class="!currentFolderId ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:bg-surface-2 hover:text-primary'"
-                        v-on:click="selectFolder(null)"
+                        v-on:click="pickFolderMobile(null)"
                     >
                         <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
                         <span class="truncate">{{ t("shared.media.picker.allFolders") }}</span>
@@ -337,7 +367,7 @@ function dimensions(item) {
                                 type="button"
                                 class="flex-1 flex items-center gap-2 py-1.5 pr-2 text-left min-w-0"
                                 :style="{ paddingLeft: `${folder.depth * 0.75}rem` }"
-                                v-on:click="selectFolder(folder.id)"
+                                v-on:click="pickFolderMobile(folder.id)"
                             >
                                 <FolderOpen v-if="currentFolderId === folder.id" class="w-4 h-4 shrink-0" :stroke-width="2" />
                                 <Folder v-else class="w-4 h-4 shrink-0" :stroke-width="2" />
@@ -348,49 +378,64 @@ function dimensions(item) {
                     </div>
                 </aside>
 
+                <!-- Backdrop for mobile drawer -->
+                <div
+                    v-if="foldersOpenMobile"
+                    class="md:hidden fixed inset-0 z-20 bg-black/40"
+                    v-on:click="foldersOpenMobile = false"
+                />
+
                 <!-- Main area -->
                 <div class="flex-1 flex flex-col min-w-0">
-                    <div class="flex items-center gap-3 px-4 py-3 border-b border-line shrink-0 flex-wrap">
-                        <div class="relative flex-1 min-w-48">
-                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" :stroke-width="2" />
-                            <input
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 border-b border-line shrink-0 sm:flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <AppSearchInput
                                 ref="searchInputRef"
                                 v-model="search"
-                                type="search"
                                 :placeholder="t('shared.media.picker.search')"
-                                class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary placeholder-muted outline-none focus:border-accent-500"
+                                :debounce="250"
+                                class="flex-1 sm:min-w-48"
+                                v-on:search="load"
+                            />
+                            <AppFileInput
+                                ref="fileInputRef"
+                                :multiple="true"
+                                :accept="imagesOnly ? 'image/*' : '*'"
+                                v-on:change="uploadFiles"
+                            />
+                            <AppButton
+                                variant="primary"
+                                size="sm"
+                                :loading="uploading"
+                                class="shrink-0 sm:hidden"
+                                v-on:click="fileInputRef?.trigger()"
                             >
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppButton>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <button
+                        <div class="flex items-center gap-1 overflow-x-auto scrollbar-hide -mx-1 px-1">
+                            <AppTab
                                 v-for="f in FILTERS"
                                 :key="f.key"
-                                type="button"
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
-                                :class="typeFilter === f.key ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:bg-surface-2 hover:text-primary'"
+                                :active="typeFilter === f.key"
+                                size="sm"
+                                class="shrink-0"
                                 v-on:click="typeFilter = f.key"
                             >
                                 <component :is="f.icon" class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ f.label }}
-                            </button>
+                            </AppTab>
                         </div>
                         <div v-if="loading" class="text-xs text-muted flex items-center gap-1.5">
                             <Loader2 class="w-3.5 h-3.5 animate-spin" :stroke-width="2" />
                             {{ t("shared.common.loading") }}
                         </div>
-                        <input
-                            ref="fileInputRef"
-                            type="file"
-                            multiple
-                            :accept="imagesOnly ? 'image/*' : '*'"
-                            class="hidden"
-                            v-on:change="onPickFiles"
-                        >
                         <AppButton
                             variant="primary"
                             size="sm"
                             :loading="uploading"
-                            v-on:click="fileInputRef?.click()"
+                            class="hidden sm:inline-flex sm:ml-auto"
+                            v-on:click="fileInputRef?.trigger()"
                         >
                             <Upload class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("shared.media.picker.upload") }}
@@ -418,40 +463,72 @@ function dimensions(item) {
                                 <span class="text-sm font-medium">{{ t("shared.media.picker.dropHere") }}</span>
                             </div>
                         </div>
-                        <div v-if="!loading && !visibleItems.length" class="text-center py-12 text-sm text-muted">
+                        <div v-if="childFolders.length" class="mb-4">
+                            <p class="text-xs text-muted uppercase tracking-wide mb-2 px-1">{{ t("shared.media.picker.subfolders") }}</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                <button
+                                    v-for="folder in childFolders"
+                                    :key="`folder-${folder.id}`"
+                                    type="button"
+                                    class="group relative flex items-center gap-2 rounded-lg border border-line bg-surface-2 hover:border-accent-400 hover:bg-surface-2/80 transition-colors px-3 py-2.5 text-left"
+                                    v-on:click="selectFolder(folder.id)"
+                                    v-on:dblclick="selectFolder(folder.id)"
+                                >
+                                    <Folder class="w-5 h-5 text-accent-400 shrink-0" :stroke-width="2" />
+                                    <span class="flex-1 text-sm text-primary truncate">{{ folder.name }}</span>
+                                    <span v-if="folder.mediaCount" class="text-xs text-muted shrink-0">{{ folder.mediaCount }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="!loading && !visibleItems.length && !childFolders.length" class="text-center py-12 text-sm text-muted">
                             {{ t("shared.media.picker.empty") }}
                         </div>
-                        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                            <button
-                                v-for="item in visibleItems"
-                                :key="item.id"
-                                type="button"
-                                class="group relative aspect-square rounded-lg overflow-hidden border-2 transition-all bg-surface-2"
-                                :class="selected?.id === item.id ? 'border-accent-500 ring-2 ring-accent-500/30' : 'border-line hover:border-accent-400'"
-                                v-on:click="pick(item)"
-                                v-on:dblclick="pick(item); confirm()"
-                            >
-                                <AppImage
-                                    v-if="item.isImage"
-                                    :src="item.thumbnailUrl ?? item.url"
-                                    :alt="item.alt ?? item.originalName ?? ''"
-                                    object-fit="cover"
-                                    class="w-full h-full"
-                                />
-                                <div v-else class="w-full h-full flex flex-col items-center justify-center text-muted gap-2 p-2">
-                                    <component :is="typeIcon(item)" class="w-8 h-8" :stroke-width="1.5" />
-                                    <span class="text-[10px] font-mono uppercase tracking-wide">{{ item.mimeType?.split("/")?.[1] ?? "" }}</span>
-                                </div>
-                                <div class="absolute inset-x-0 bottom-0 px-2 py-1 bg-gradient-to-t from-black/80 to-transparent text-white text-xs truncate text-left">
-                                    {{ item.originalName }}
-                                </div>
-                            </button>
+                        <div v-else-if="visibleItems.length">
+                            <p v-if="childFolders.length" class="text-xs text-muted uppercase tracking-wide mb-2 px-1">{{ t("shared.media.picker.files") }}</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                <button
+                                    v-for="item in visibleItems"
+                                    :key="item.id"
+                                    type="button"
+                                    class="group relative aspect-square rounded-lg overflow-hidden border-2 transition-all bg-surface-2"
+                                    :class="selected?.id === item.id ? 'border-accent-500 ring-2 ring-accent-500/30' : 'border-line hover:border-accent-400'"
+                                    v-on:click="pick(item)"
+                                    v-on:dblclick="pick(item); confirm()"
+                                >
+                                    <AppImage
+                                        v-if="item.isImage"
+                                        :src="item.thumbnailUrl ?? item.url"
+                                        :alt="item.alt ?? item.originalName ?? ''"
+                                        object-fit="cover"
+                                        class="w-full h-full"
+                                    />
+                                    <div v-else class="w-full h-full flex flex-col items-center justify-center text-muted gap-2 p-2">
+                                        <component :is="typeIcon(item)" class="w-8 h-8" :stroke-width="1.5" />
+                                        <span class="text-[10px] font-mono uppercase tracking-wide">{{ item.mimeType?.split("/")?.[1] ?? "" }}</span>
+                                    </div>
+                                    <div class="absolute inset-x-0 bottom-0 px-2 py-1 bg-linear-to-t from-black/80 to-transparent text-white text-xs truncate text-left">
+                                        {{ item.originalName }}
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Details panel -->
-                <aside v-if="selected" class="w-72 shrink-0 border-l border-line bg-surface-2/40 overflow-y-auto scrollbar-thin">
+                <!-- Details panel: sidebar on desktop, fullscreen overlay on mobile -->
+                <aside
+                    v-if="selected"
+                    class="border-l border-line overflow-y-auto scrollbar-thin shrink-0
+                           md:static md:w-72 md:bg-surface-2/40
+                           absolute inset-0 z-20 w-full bg-surface"
+                >
+                    <div class="md:hidden flex items-center gap-2 px-3 py-3 border-b border-line sticky top-0 bg-surface z-10">
+                        <AppIconButton class="-ml-1" :title="t('shared.common.back')" v-on:click="selected = null">
+                            <ArrowLeft class="w-5 h-5" :stroke-width="2" />
+                        </AppIconButton>
+                        <span class="font-medium text-sm text-primary truncate flex-1">{{ selected.originalName }}</span>
+                    </div>
                     <div class="p-4 space-y-4">
                         <div class="aspect-square rounded-lg overflow-hidden border border-line bg-surface flex items-center justify-center">
                             <AppImage
@@ -512,17 +589,28 @@ function dimensions(item) {
                             </div>
                         </div>
 
-                        <a :href="`/admin/media?focus=${selected.id}`" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-accent-400 hover:underline">
+                        <AppLink
+                            :href="`/admin/media?focus=${selected.id}`"
+                            target="_blank"
+                            variant="front"
+                            class="inline-flex items-center gap-1.5 text-xs"
+                        >
                             <ExternalLink class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("shared.media.picker.openInLibrary") }}
-                        </a>
+                        </AppLink>
                     </div>
                 </aside>
             </div>
 
-            <footer class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
-                <AppButton variant="ghost" size="md" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" :disabled="!selected" v-on:click="confirm">
+            <footer class="flex items-center justify-end gap-2 px-4 sm:px-5 py-3 border-t border-line shrink-0">
+                <AppButton variant="ghost" size="md" class="flex-1 sm:flex-none" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    :disabled="!selected"
+                    class="flex-1 sm:flex-none"
+                    v-on:click="confirm"
+                >
                     {{ t("shared.media.picker.select") }}
                 </AppButton>
             </footer>

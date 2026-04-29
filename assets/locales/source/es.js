@@ -95,6 +95,8 @@ export default {
         },
         media: {
             folders: "Carpetas",
+            subfolders: "Subcarpetas",
+            files: "Archivos",
             newFolder: "Nueva",
             rootFolder: "Todos los medios",
             upload: "Subir",
@@ -1565,6 +1567,7 @@ export default {
             description: "Descripción",
             view: "Ver",
             close: "Cerrar",
+            back: "Volver",
             expand: "Expandir",
             collapse: "Contraer",
             select_placeholder: "Seleccionar…",
@@ -1596,6 +1599,8 @@ export default {
                 openInLibrary: "Abrir en la biblioteca",
                 upload: "Subir",
                 dropHere: "Soltar para subir",
+                subfolders: "Subcarpetas",
+                files: "Archivos",
             },
             filters: {
                 all: "Todos",

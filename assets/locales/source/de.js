@@ -94,6 +94,8 @@ export default {
         },
         media: {
             folders: "Ordner",
+            subfolders: "Unterordner",
+            files: "Dateien",
             newFolder: "Neu",
             rootFolder: "Alle Medien",
             upload: "Hochladen",
@@ -1564,6 +1566,7 @@ export default {
             description: "Beschreibung",
             view: "Ansehen",
             close: "Schließen",
+            back: "Zurück",
             expand: "Erweitern",
             collapse: "Einklappen",
             select_placeholder: "Auswählen…",
@@ -1595,6 +1598,8 @@ export default {
                 openInLibrary: "In Mediathek öffnen",
                 upload: "Hochladen",
                 dropHere: "Zum Hochladen ablegen",
+                subfolders: "Unterordner",
+                files: "Dateien",
             },
             filters: {
                 all: "Alle",

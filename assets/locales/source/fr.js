@@ -94,6 +94,8 @@ export default {
         },
         media: {
             folders: "Dossiers",
+            subfolders: "Sous-dossiers",
+            files: "Fichiers",
             newFolder: "Nouveau",
             rootFolder: "Tous les médias",
             upload: "Téléverser",
@@ -1572,6 +1574,7 @@ export default {
             description: "Description",
             view: "Voir",
             close: "Fermer",
+            back: "Retour",
             expand: "Déplier",
             collapse: "Replier",
             select_placeholder: "Sélectionner…",
@@ -1603,6 +1606,8 @@ export default {
                 openInLibrary: "Ouvrir dans la médiathèque",
                 upload: "Téléverser",
                 dropHere: "Déposer pour téléverser",
+                subfolders: "Sous-dossiers",
+                files: "Fichiers",
             },
             filters: {
                 all: "Tous",

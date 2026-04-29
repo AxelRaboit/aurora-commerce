@@ -30,11 +30,19 @@ function clear() {
     emit("update:modelValue", "");
     emit("search", "");
 }
+
+const inputRef = ref(null);
+defineExpose({
+    focus: () => inputRef.value?.focus(),
+    select: () => inputRef.value?.select(),
+    blur: () => inputRef.value?.blur(),
+});
 </script>
 
 <template>
     <div class="relative">
         <AppInput
+            ref="inputRef"
             :model-value="localValue"
             :placeholder="placeholder"
             v-on:update:model-value="onInput"

@@ -201,6 +201,13 @@ function setSort(field) {
     localStorage.setItem("aurora-media-sort-dir", sortDir.value);
 }
 
+// ── Direct sub-folders of the current folder (shown above the grid) ──────────
+const childFolders = computed(() =>
+    folders.value
+        .filter((f) => (f.parentId ?? null) === (currentFolderId.value ?? null))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+);
+
 // ── Filtered + sorted media ───────────────────────────────────────────────────
 const displayedMedia = computed(() => {
     let list = [...media.value];
@@ -480,6 +487,8 @@ async function confirmDeleteMedia() {
         }
         media.value = media.value.filter((m) => m.id !== item.id);
         toast.success(t("shared.common.deleted"));
+        // Close the underlying edit modal too if the user came from it
+        if (editingMedia.value?.id === item.id) editingMedia.value = null;
     } catch {
         toast.error(t("shared.common.error"));
     } finally {
@@ -981,9 +990,29 @@ async function moveFolder(folderId, newParentId) {
                 </div>
 
                 <template v-else>
-                    <AppNoData v-if="!displayedMedia.length" :message="t('admin.media.empty')" />
+                    <div v-if="childFolders.length && !searchQuery" class="space-y-2">
+                        <p class="text-xs text-muted uppercase tracking-wide px-1">{{ t("admin.media.subfolders") }}</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                            <button
+                                v-for="folder in childFolders"
+                                :key="`folder-${folder.id}`"
+                                type="button"
+                                class="group relative flex items-center gap-2 rounded-lg border border-line/60 bg-surface hover:border-accent-400 hover:bg-surface-2/40 transition-colors px-3 py-2.5 text-left"
+                                v-on:click="navigateTo(folder.id)"
+                                v-on:dblclick="navigateTo(folder.id)"
+                            >
+                                <Folder class="w-5 h-5 text-accent-400 shrink-0" :stroke-width="2" />
+                                <span class="flex-1 text-sm text-primary truncate">{{ folder.name }}</span>
+                                <span v-if="folder.mediaCount" class="text-xs text-muted shrink-0">{{ folder.mediaCount }}</span>
+                            </button>
+                        </div>
+                    </div>
 
-                    <div v-else-if="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    <AppNoData v-if="!displayedMedia.length && (!childFolders.length || searchQuery)" :message="t('admin.media.empty')" />
+
+                    <p v-if="displayedMedia.length && childFolders.length && !searchQuery" class="text-xs text-muted uppercase tracking-wide px-1 mt-4">{{ t("admin.media.files") }}</p>
+
+                    <div v-if="displayedMedia.length && viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                         <div
                             v-for="item in displayedMedia"
                             :key="item.id"
@@ -1035,7 +1064,7 @@ async function moveFolder(folderId, newParentId) {
                         </div>
                     </div>
 
-                    <div v-else class="border border-line/60 rounded-xl overflow-hidden">
+                    <div v-else-if="displayedMedia.length" class="border border-line/60 rounded-xl overflow-hidden">
                         <table class="w-full text-sm">
                             <thead class="bg-surface-2 text-xs text-muted uppercase">
                                 <tr>
@@ -1223,12 +1252,12 @@ async function moveFolder(folderId, newParentId) {
                         variant="secondary"
                         size="md"
                         class="w-full sm:w-auto order-2 sm:order-1"
-                        v-on:click="openCrop(editingMedia); editingMedia = null"
+                        v-on:click="openCrop(editingMedia)"
                     >
                         <Crop class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.media.crop") }}
                     </AppButton>
-                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="deletingMedia = editingMedia; editingMedia = null">
+                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="deletingMedia = editingMedia">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>

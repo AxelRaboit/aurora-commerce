@@ -1,16 +1,16 @@
 const PALETTE = [
-    { label: "Yellow",     value: "#fef08a" },
-    { label: "Lime",       value: "#bef264" },
-    { label: "Green",      value: "#86efac" },
-    { label: "Cyan",       value: "#a5f3fc" },
-    { label: "Sky",        value: "#bae6fd" },
-    { label: "Blue",       value: "#bfdbfe" },
-    { label: "Purple",     value: "#ddd6fe" },
-    { label: "Pink",       value: "#fbcfe8" },
-    { label: "Red",        value: "#fecaca" },
-    { label: "Orange",     value: "#fed7aa" },
-    { label: "Gray",       value: "#e5e7eb" },
-    { label: "Dark",       value: "#1f2937" },
+    { label: "Yellow", value: "#fef08a" },
+    { label: "Lime", value: "#bef264" },
+    { label: "Green", value: "#86efac" },
+    { label: "Cyan", value: "#a5f3fc" },
+    { label: "Sky", value: "#bae6fd" },
+    { label: "Blue", value: "#bfdbfe" },
+    { label: "Purple", value: "#ddd6fe" },
+    { label: "Pink", value: "#fbcfe8" },
+    { label: "Red", value: "#fecaca" },
+    { label: "Orange", value: "#fed7aa" },
+    { label: "Gray", value: "#e5e7eb" },
+    { label: "Dark", value: "#1f2937" },
 ];
 
 const TAG = "SPAN";
@@ -23,8 +23,12 @@ const swatchIcon = (color) =>
     `<div style="width:18px;height:18px;border-radius:4px;background:${color};border:1.5px solid rgba(0,0,0,0.12);box-sizing:border-box;"></div>`;
 
 export class BackgroundColorTool {
-    static get isInline() { return true; }
-    static get title() { return "Background Color"; }
+    static get isInline() {
+        return true;
+    }
+    static get title() {
+        return "Background Color";
+    }
     static get sanitize() {
         return { span: { class: CSS_CLASS, style: true } };
     }
