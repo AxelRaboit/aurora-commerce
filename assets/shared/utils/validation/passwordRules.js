@@ -2,22 +2,22 @@ export const PASSWORD_RULES = [
     {
         key: "length",
         test: (p) => p.length >= 8,
-        errorKey: "password.errors.too_short",
+        errorKey: "shared.password.errors.too_short",
     },
     {
         key: "uppercase",
         test: (p) => /[A-Z]/.test(p),
-        errorKey: "password.errors.no_uppercase",
+        errorKey: "shared.password.errors.no_uppercase",
     },
     {
         key: "number",
         test: (p) => /[0-9]/.test(p),
-        errorKey: "password.errors.no_number",
+        errorKey: "shared.password.errors.no_number",
     },
     {
         key: "special",
         test: (p) => /[^A-Za-z0-9]/.test(p),
-        errorKey: "password.errors.no_special",
+        errorKey: "shared.password.errors.no_special",
     },
 ];
 

@@ -13,7 +13,7 @@ const { t } = useI18n();
 const criteria = computed(() =>
     PASSWORD_RULES.map((rule) => ({
         key: rule.key,
-        label: t(`password.criteria.${rule.key}`),
+        label: t(`shared.password.criteria.${rule.key}`),
         met: props.password.length > 0 && rule.test(props.password),
     })),
 );
