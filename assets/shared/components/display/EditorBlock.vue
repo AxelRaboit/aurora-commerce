@@ -14,6 +14,12 @@ import Embed from "@editorjs/embed";
 import Image from "@editorjs/image";
 import Marker from "@editorjs/marker";
 import InlineCode from "@editorjs/inline-code";
+import { TextColorTool } from "@editorial/utils/editorjs/TextColorTool.js";
+import { FontSizeTool } from "@editorial/utils/editorjs/FontSizeTool.js";
+import { UnderlineTool } from "@editorial/utils/editorjs/UnderlineTool.js";
+import { StrikethroughTool } from "@editorial/utils/editorjs/StrikethroughTool.js";
+import { BackgroundColorTool } from "@editorial/utils/editorjs/BackgroundColorTool.js";
+import { ClearFormattingTool } from "@editorial/utils/editorjs/ClearFormattingTool.js";
 import DragDrop from "editorjs-drag-drop";
 import Undo from "editorjs-undo";
 import MediaTextBlock from "@editorial/utils/editorjs/MediaTextBlock.js";
@@ -107,6 +113,12 @@ onMounted(async () => {
                     "Embed":          t("admin.editor.toolNames.embed"),
                     "Marker":         t("admin.editor.toolNames.marker"),
                     "InlineCode":     t("admin.editor.toolNames.inlineCode"),
+                    "Underline":      t("admin.editor.toolNames.underline"),
+                    "Strikethrough":  t("admin.editor.toolNames.strikethrough"),
+                    "Text Color":     t("admin.editor.toolNames.textColor"),
+                    "Background Color": t("admin.editor.toolNames.textBackground"),
+                    "Font Size":      t("admin.editor.toolNames.fontSize"),
+                    "Clear formatting": t("admin.editor.toolNames.clearFormatting"),
                     "Callout":        t("admin.editor.toolNames.callout"),
                     "Image + Text":   t("admin.editor.toolNames.mediaText"),
                     "Two Columns":    t("admin.editor.toolNames.twoColumn"),
@@ -130,6 +142,7 @@ onMounted(async () => {
             // Blocs de texte
             header: {
                 class: Header,
+                inlineToolbar: true,
                 config: { levels: [2, 3, 4], defaultLevel: 2 },
             },
             paragraph: {
@@ -204,6 +217,24 @@ onMounted(async () => {
             },
             inlineCode: {
                 class: InlineCode,
+            },
+            underline: {
+                class: UnderlineTool,
+            },
+            strikethrough: {
+                class: StrikethroughTool,
+            },
+            textColor: {
+                class: TextColorTool,
+            },
+            textBackground: {
+                class: BackgroundColorTool,
+            },
+            fontSize: {
+                class: FontSizeTool,
+            },
+            clearFormatting: {
+                class: ClearFormattingTool,
             },
 
             // Callout
