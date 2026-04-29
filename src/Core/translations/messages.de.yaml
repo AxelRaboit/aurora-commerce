@@ -231,6 +231,7 @@ admin:
     menus: Menüs
     profile: Mein Profil
     settings: Einstellungen
+    sitemap: Sitemap
     themes: Designs
     users: Benutzer
     resizeHint: "Ziehen zum Verändern — Doppelklick zum Zurücksetzen"

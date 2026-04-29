@@ -228,6 +228,7 @@ admin:
     menus: Menus
     profile: My profile
     settings: Settings
+    sitemap: Sitemap
     themes: Themes
     users: Users
     resizeHint: "Drag to resize — double-click to reset"

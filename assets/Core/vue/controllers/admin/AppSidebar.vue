@@ -37,6 +37,7 @@ import {
     Search,
     Loader2,
     ChevronDown,
+    Map as MapIcon,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
@@ -59,6 +60,7 @@ const ICON_MAP = {
     "clipboard-list": ClipboardList,
     "package": Package,
     "shopping-bag": ShoppingBag,
+    "map": MapIcon,
 };
 
 const props = defineProps({

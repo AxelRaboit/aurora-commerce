@@ -231,6 +231,7 @@ admin:
     menus: Menús
     profile: Mi perfil
     settings: Ajustes
+    sitemap: Sitemap
     themes: Temas
     users: Usuarios
     resizeHint: "Arrastra para redimensionar — doble clic para restablecer"

@@ -1,0 +1,15 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.sitemap'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.sitemap'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('editorial/admin/SitemapApp', {
+    stats: stats,
+    invalidatePath: path('admin_sitemap_invalidate'),
+    sitemapUrl: path('front_sitemap'),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

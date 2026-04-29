@@ -229,6 +229,7 @@ admin:
     menus: Menus
     profile: Mon profil
     settings: Réglages
+    sitemap: Sitemap
     themes: Thèmes
     users: Utilisateurs
     resizeHint: "Glisser pour redimensionner — double-clic pour réinitialiser"
