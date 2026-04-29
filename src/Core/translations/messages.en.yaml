@@ -137,9 +137,9 @@ admin:
       description: Fill out this form to request access to the administration.
       email: Email
       login_link: Sign in
-      message: Message (optional)
+      message: Message
       message_placeholder: Describe your need...
-      name: Name (optional)
+      name: Name
       name_placeholder: John Doe
       submit: Send request
       success_toast: Your access request has been sent.
@@ -151,13 +151,13 @@ admin:
       submit: Send reset link
       title: Forgot password
     hero:
-      description: A modern interface to create, manage and publish your web content.
-      feature_1: Flexible content management
-      feature_2: Customizable content types
-      feature_3: Built-in media management
-      feature_4: Modern and fast interface
-      heading: Manage your content
-      heading_accent: with Aurora.
+      description: An all-in-one platform to manage content, customers, catalog and shop.
+      feature_1: Content management & SEO
+      feature_2: "CRM: contacts and deals"
+      feature_3: "ERP: products and catalog"
+      feature_4: Built-in online store
+      heading: Run your business
+      heading_accent: with {siteName}.
     invitation:
       accept_title: Accept invitation
       confirm_password: Confirm password
@@ -172,6 +172,7 @@ admin:
       success: Your account is active, welcome!
       welcome: Welcome {name}
     login:
+      subtitle: Welcome back, sign in to your workspace.
       email: Email
       email_placeholder: your@email.com
       forgot: Forgot password?
@@ -182,6 +183,7 @@ admin:
       submit: Sign in
       title: Login
     register:
+      subtitle: Create your account in seconds.
       already_account: Already have an account?
       closed_desc: New registrations are currently disabled.
       closed_title: Registration closed
@@ -249,6 +251,7 @@ admin:
     tabs:
       modules: Modules
     cascadeLocked: "Enable “{parent}” first to edit this setting."
+    mediaSquareHint: "Recommended: square image (1:1)."
 front:
   menu:
     home: Home
@@ -338,7 +341,7 @@ shared:
       fallback_intro: 'If the button does not work, copy and paste this link into your browser:'
       footer_note: If you were not expecting this invitation, you can safely ignore this email.
       greeting: Hi {name},
-      heading: Invitation to join Aurora
+      heading: Invitation to join {siteName}
       intro: You have been invited to join {siteName}. Click the button below to activate your account and set your password.
     verify_email:
       cta: Confirm my email

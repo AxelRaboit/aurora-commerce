@@ -35,9 +35,9 @@ admin:
       description: Füllen Sie dieses Formular aus, um Zugang zur Administration anzufragen.
       email: E-Mail
       login_link: Anmelden
-      message: Nachricht (optional)
+      message: Nachricht
       message_placeholder: Beschreiben Sie Ihr Anliegen...
-      name: Name (optional)
+      name: Name
       name_placeholder: Max Mustermann
       submit: Anfrage senden
       success_toast: Ihre Zugriffsanfrage wurde gesendet.
@@ -55,7 +55,7 @@ admin:
       feature_3: Integrierte Medienverwaltung
       feature_4: Moderne und schnelle Oberfläche
       heading: Verwalten Sie Ihre Inhalte
-      heading_accent: mit Aurora.
+      heading_accent: mit {siteName}.
     invitation:
       accept_title: Einladung annehmen
       confirm_password: Passwort bestätigen

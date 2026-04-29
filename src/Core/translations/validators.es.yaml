@@ -35,9 +35,9 @@ admin:
       description: Rellena este formulario para solicitar acceso a la administración.
       email: Correo electrónico
       login_link: Iniciar sesión
-      message: Mensaje (opcional)
+      message: Mensaje
       message_placeholder: Describe tu necesidad...
-      name: Nombre (opcional)
+      name: Nombre
       name_placeholder: Juan García
       submit: Enviar solicitud
       success_toast: Tu solicitud de acceso ha sido enviada.
@@ -55,7 +55,7 @@ admin:
       feature_3: Gestión de medios integrada
       feature_4: Interfaz moderna y rápida
       heading: Gestiona tu contenido
-      heading_accent: con Aurora.
+      heading_accent: con {siteName}.
     invitation:
       accept_title: Aceptar invitación
       confirm_password: Confirmar contraseña

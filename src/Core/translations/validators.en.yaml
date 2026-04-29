@@ -35,9 +35,9 @@ admin:
       description: Fill out this form to request access to the administration.
       email: Email
       login_link: Sign in
-      message: Message (optional)
+      message: Message
       message_placeholder: Describe your need...
-      name: Name (optional)
+      name: Name
       name_placeholder: John Doe
       submit: Send request
       success_toast: Your access request has been sent.
@@ -55,7 +55,7 @@ admin:
       feature_3: Built-in media management
       feature_4: Modern and fast interface
       heading: Manage your content
-      heading_accent: with Aurora.
+      heading_accent: with {siteName}.
     invitation:
       accept_title: Accept invitation
       confirm_password: Confirm password

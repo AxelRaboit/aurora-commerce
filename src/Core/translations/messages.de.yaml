@@ -137,9 +137,9 @@ admin:
       description: Füllen Sie dieses Formular aus, um Zugang zur Administration anzufragen.
       email: E-Mail
       login_link: Anmelden
-      message: Nachricht (optional)
+      message: Nachricht
       message_placeholder: Beschreiben Sie Ihr Anliegen...
-      name: Name (optional)
+      name: Name
       name_placeholder: Max Mustermann
       submit: Anfrage senden
       success_toast: Ihre Zugriffsanfrage wurde gesendet.
@@ -151,13 +151,13 @@ admin:
       submit: Link senden
       title: Passwort vergessen
     hero:
-      description: Eine moderne Oberfläche zum Erstellen, Verwalten und Veröffentlichen von Webinhalten.
-      feature_1: Flexible Inhaltsverwaltung
-      feature_2: Anpassbare Inhaltstypen
-      feature_3: Integrierte Medienverwaltung
-      feature_4: Moderne und schnelle Oberfläche
-      heading: Verwalten Sie Ihre Inhalte
-      heading_accent: mit Aurora.
+      description: Eine All-in-One-Plattform für Inhalte, Kunden, Katalog und Shop.
+      feature_1: Content-Management & SEO
+      feature_2: "CRM: Kontakte und Deals"
+      feature_3: "ERP: Produkte und Katalog"
+      feature_4: Integrierter Online-Shop
+      heading: Steuern Sie Ihr Geschäft
+      heading_accent: mit {siteName}.
     invitation:
       accept_title: Einladung annehmen
       confirm_password: Passwort bestätigen
@@ -175,6 +175,7 @@ admin:
       success: Ihr Konto ist aktiv, willkommen!
       welcome: Willkommen {name}
     login:
+      subtitle: Willkommen zurück, melde dich in deinem Bereich an.
       email: E-Mail
       email_placeholder: ihre@email.de
       forgot: Passwort vergessen?
@@ -185,6 +186,7 @@ admin:
       submit: Anmelden
       title: Anmelden
     register:
+      subtitle: Erstelle dein Konto in wenigen Sekunden.
       already_account: Bereits ein Konto?
       closed_desc: Neue Registrierungen sind derzeit deaktiviert.
       closed_title: Registrierung geschlossen
@@ -252,6 +254,7 @@ admin:
     tabs:
       modules: Module
     cascadeLocked: 'Aktiviere zuerst „{parent}", um diese Einstellung zu ändern.'
+    mediaSquareHint: 'Empfohlen: quadratisches Bild (1:1).'
 front:
   menu:
     home: Startseite
@@ -341,7 +344,7 @@ shared:
       fallback_intro: 'Falls die Schaltfläche nicht funktioniert, kopiere diesen Link in deinen Browser:'
       footer_note: Wenn du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren.
       greeting: Hallo {name},
-      heading: Einladung zu Aurora
+      heading: Einladung zu {siteName}
       intro: Du wurdest eingeladen, {siteName} beizutreten. Klicke auf die Schaltfläche unten, um dein Konto zu aktivieren und dein Passwort festzulegen.
     verify_email:
       cta: E-Mail bestätigen

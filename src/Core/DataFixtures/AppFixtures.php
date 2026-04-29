@@ -103,8 +103,8 @@ class AppFixtures extends Fixture
 
         // Settings
         $settings = [
-            ['site_name', 'Mon Site', 'string', 'general'],
-            ['site_description', 'Propulsé par Aurora CMS', 'string', 'general'],
+            ['site_name', 'Mon site Aurora', 'string', 'general'],
+            ['site_description', 'Propulsé par Aurora', 'string', 'general'],
             ['default_locale', LocaleEnum::French->value, 'string', 'general'],
             ['posts_per_page', '10', 'int', 'reading'],
         ];

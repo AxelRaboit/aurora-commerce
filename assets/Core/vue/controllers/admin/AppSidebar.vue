@@ -75,6 +75,7 @@ const props = defineProps({
     logoutPath: { type: String, default: "/logout" },
     locale: { type: String, default: "fr" },
     mailpitUrl: { type: String, default: "" },
+    siteName: { type: String, default: "Aurora" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
     searchPath: { type: String, default: "/admin/search" },
@@ -308,7 +309,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain">
                 <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
-                    <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Aurora</span>
+                    <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">{{ siteName }}</span>
                     <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                 </div>
             </a>
@@ -467,7 +468,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
     <div class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-line z-30 flex items-center justify-between px-4">
         <a :href="dashboardPath" class="flex items-center gap-2">
             <AppLogo :size="28" />
-            <span class="text-primary font-bold text-base tracking-tight">Aurora</span>
+            <span class="text-primary font-bold text-base tracking-tight">{{ siteName }}</span>
         </a>
         <div class="flex items-center gap-1">
             <AppButton variant="ghost" size="none" class="p-2" v-on:click="openPalette">
@@ -492,7 +493,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                 <div class="flex items-center gap-2.5">
                     <AppLogo :size="32" />
                     <div class="flex flex-col">
-                        <span class="text-primary font-bold text-lg tracking-tight">Aurora</span>
+                        <span class="text-primary font-bold text-lg tracking-tight">{{ siteName }}</span>
                         <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
                     </div>
                 </div>

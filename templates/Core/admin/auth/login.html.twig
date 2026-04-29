@@ -6,6 +6,10 @@
     {{ include('@Shared/components/auth_hero.html.twig') }}
 {% endblock %}
 
+{% block form_icon %}log-in{% endblock %}
+{% block form_title %}{{ 'admin.auth.login.title'|trans }}{% endblock %}
+{% block form_subtitle %}{{ 'admin.auth.login.subtitle'|trans }}{% endblock %}
+
 {% block content %}
     <div {{ vue_component('core/admin/auth/LoginApp', {
         checkPath: path('admin_login'),

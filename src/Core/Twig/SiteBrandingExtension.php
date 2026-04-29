@@ -20,6 +20,11 @@ final class SiteBrandingExtension extends AbstractExtension implements GlobalsIn
     public function getGlobals(): array
     {
         return [
+            'siteName' => $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName),
+            'siteDescription' => $this->settingRepository->get(
+                ApplicationParameterEnum::SiteDescription->value,
+                ApplicationParameterEnum::SiteDescription->getDefaultValue(),
+            ) ?? '',
             'siteLogoUrl' => $this->resolveMediaUrl(ApplicationParameterEnum::LogoMediaId),
             'siteFaviconUrl' => $this->resolveMediaUrl(ApplicationParameterEnum::FaviconMediaId),
         ];

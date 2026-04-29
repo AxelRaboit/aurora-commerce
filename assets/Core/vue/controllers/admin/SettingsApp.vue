@@ -7,6 +7,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import { Search, FileText, Lock } from "lucide-vue-next";
 import { SettingErrorCode } from "@core/utils/settings/settingErrorCode.js";
 
@@ -38,13 +39,27 @@ const tabLabels = {
 const fieldValues = reactive({});
 const initialValues = {};
 const parameterByKey = {};
+const mediaState = reactive({}); // key -> { id, url } for type='media' parameters
 for (const groupName of availableGroups) {
     for (const parameter of props.groups[groupName]) {
         const value = parameter.value ?? "";
         fieldValues[parameter.key] = value;
         initialValues[parameter.key] = value;
         parameterByKey[parameter.key] = parameter;
+        if (parameter.type === "media") {
+            mediaState[parameter.key] = {
+                id: value ? Number(value) : null,
+                url: parameter.mediaUrl ?? null,
+            };
+        }
     }
+}
+
+function onMediaChange(parameter, picked) {
+    const id = picked?.id ?? null;
+    const url = picked?.url ?? null;
+    mediaState[parameter.key] = { id, url };
+    fieldValues[parameter.key] = id ? String(id) : "";
 }
 
 function dependencyDepth(parameter) {
@@ -299,7 +314,17 @@ async function saveGroup(groupName) {
                             </div>
                         </template>
 
-                        <template v-else-if="parameter.type === 'int' || parameter.type === 'media'">
+                        <template v-else-if="parameter.type === 'media'">
+                            <AppImagePickerField
+                                :label="parameter.label"
+                                :hint="parameter.description ? parameter.description + ' — ' + t('admin.settings.mediaSquareHint') : t('admin.settings.mediaSquareHint')"
+                                :model-value="mediaState[parameter.key]"
+                                :size="96"
+                                v-on:update:model-value="onMediaChange(parameter, $event)"
+                            />
+                        </template>
+
+                        <template v-else-if="parameter.type === 'int'">
                             <AppInput
                                 type="number"
                                 :label="parameter.label"
@@ -308,11 +333,6 @@ async function saveGroup(groupName) {
                                 v-on:update:model-value="fieldValues[parameter.key] = $event"
                             />
                             <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
-                            <p v-if="parameter.type === 'media' && props.mediaPickerPath" class="text-xs text-muted mt-1">
-                                <a :href="props.mediaPickerPath" target="_blank" rel="noopener" class="text-accent-400 hover:underline">
-                                    {{ t("admin.settings.browseMedia") }}
-                                </a>
-                            </p>
                         </template>
 
                         <template v-else>

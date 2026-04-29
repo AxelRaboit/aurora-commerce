@@ -8,6 +8,10 @@
     {% endif %}
 {% endblock %}
 
+{% block form_icon %}user-plus{% endblock %}
+{% block form_title %}{{ 'admin.auth.register.title'|trans }}{% endblock %}
+{% block form_subtitle %}{{ 'admin.auth.register.subtitle'|trans }}{% endblock %}
+
 {% block content %}
     <div {{ vue_component('core/admin/auth/RegisterApp', {
         registerPath: path('admin_register'),

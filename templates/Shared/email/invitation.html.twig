@@ -1,7 +1,7 @@
 {% extends '@Shared/email/layout/base.html.twig' %}
 
 {% block content %}
-<h1>{{ 'shared.mail.invitation.heading'|trans }}</h1>
+<h1>{{ 'shared.mail.invitation.heading'|trans({'{siteName}': siteName ?? 'Aurora'}) }}</h1>
 <p>{{ 'shared.mail.invitation.greeting'|trans({'{name}': userName}) }}</p>
 <p>{{ 'shared.mail.invitation.intro'|trans({'{siteName}': siteName ?? 'Aurora'}) }}</p>
 

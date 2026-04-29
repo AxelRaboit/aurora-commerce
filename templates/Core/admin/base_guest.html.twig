@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Aurora{% endblock %}</title>
+        <title>{% block title %}{{ siteName }}{% endblock %}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
@@ -24,13 +24,45 @@
 
         {% set hero_content %}{% block hero %}{% endblock %}{% endset %}
         {% set form_content %}{% block content %}{% endblock %}{% endset %}
+        {% set form_title %}{% block form_title %}{% endblock %}{% endset %}
+        {% set form_subtitle %}{% block form_subtitle %}{% endblock %}{% endset %}
+        {% set form_icon %}{% block form_icon %}{% endblock %}{% endset %}
+        {% set form_icon = form_icon|trim %}
+
+        {% set form_card %}
+            <div class="w-full bg-surface border border-line shadow-md rounded-xl overflow-hidden {% if hero_content|trim %}{% else %}sm:max-w-md{% endif %}">
+                {% if form_title|trim or form_icon %}
+                    <div class="relative h-20 bg-gradient-to-br from-accent-400 via-accent-500 to-accent-700">
+                        <div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.9) 0%, transparent 45%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.4) 0%, transparent 45%);"></div>
+                        {% if form_icon %}
+                            <div class="absolute inset-x-0 -bottom-6 flex justify-center">
+                                <div class="w-12 h-12 rounded-2xl bg-surface border border-line shadow-md flex items-center justify-center text-accent-500">
+                                    {{ include('@Shared/components/icon.html.twig', {name: form_icon, class: 'w-6 h-6'}) }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="px-6 pb-6 {% if form_icon %}pt-10{% elseif form_title|trim %}pt-5{% else %}pt-6{% endif %}">
+                    {% if form_title|trim %}
+                        <div class="text-center mb-5">
+                            <h1 class="text-primary text-xl font-bold leading-tight">{{ form_title|raw }}</h1>
+                            {% if form_subtitle|trim %}
+                                <p class="text-muted text-sm mt-1">{{ form_subtitle|raw }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {{ form_content|raw }}
+                </div>
+            </div>
+        {% endset %}
 
         {% if hero_content|trim %}
             <div class="flex min-h-screen items-center justify-center bg-bg px-4 py-12">
                 <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <div>
                         {{ include('@Shared/components/app_logo.html.twig', {
-                            gradientId: 'aurora-logo-hero',
+                            gradientId: 'app-logo-hero',
                             href: path('admin_login'),
                             linkClass: 'inline-flex items-center gap-3 mb-8',
                             withText: true,
@@ -38,15 +70,13 @@
                         }) }}
                         {{ hero_content|raw }}
                     </div>
-                    <div class="w-full bg-surface border border-line px-6 py-6 shadow-md rounded-xl">
-                        {{ form_content|raw }}
-                    </div>
+                    {{ form_card|raw }}
                 </div>
             </div>
         {% else %}
             <div class="flex min-h-screen flex-col items-center justify-center bg-bg px-4 py-12">
                 {{ include('@Shared/components/app_logo.html.twig', {
-                    gradientId: 'aurora-logo-stack',
+                    gradientId: 'app-logo-stack',
                     href: path('admin_login'),
                     linkClass: 'flex flex-col items-center gap-2 mb-6',
                     withText: true,
@@ -55,9 +85,7 @@
                     textLayout: 'contents',
                     appVersion: appVersion ?? null,
                 }) }}
-                <div class="w-full bg-surface border border-line px-6 py-6 shadow-md rounded-xl sm:max-w-md">
-                    {{ form_content|raw }}
-                </div>
+                {{ form_card|raw }}
             </div>
         {% endif %}
 

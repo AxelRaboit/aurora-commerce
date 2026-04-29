@@ -112,7 +112,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     {
         return match ($this) {
             self::SiteName => 'Mon site Aurora',
-            self::SiteDescription => 'Propulsé par Aurora CMS',
+            self::SiteDescription => 'Propulsé par Aurora',
             self::SiteUrl => 'http://localhost',
             self::AdminEmail => 'admin@aurora.app',
             self::DefaultLocale => 'fr',

@@ -35,9 +35,9 @@ admin:
       description: Remplissez ce formulaire pour demander l'accès à l'administration.
       email: Email
       login_link: Se connecter
-      message: Message (optionnel)
+      message: Message
       message_placeholder: Décrivez votre besoin...
-      name: Nom (optionnel)
+      name: Nom
       name_placeholder: Jean Dupont
       submit: Envoyer la demande
       success_toast: Votre demande d'accès a été envoyée.
@@ -55,7 +55,7 @@ admin:
       feature_3: Gestion des médias intégrée
       feature_4: Interface moderne et rapide
       heading: Gérez vos contenus
-      heading_accent: avec Aurora.
+      heading_accent: avec {siteName}.
     invitation:
       accept_title: Accepter l'invitation
       confirm_password: Confirmer le mot de passe

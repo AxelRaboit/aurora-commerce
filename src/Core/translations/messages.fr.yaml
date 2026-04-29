@@ -138,9 +138,9 @@ admin:
       description: Remplissez ce formulaire pour demander l'accès à l'administration.
       email: Email
       login_link: Se connecter
-      message: Message (optionnel)
+      message: Message
       message_placeholder: Décrivez votre besoin...
-      name: Nom (optionnel)
+      name: Nom
       name_placeholder: Jean Dupont
       submit: Envoyer la demande
       success_toast: Votre demande d'accès a été envoyée.
@@ -152,13 +152,13 @@ admin:
       submit: Envoyer le lien
       title: Mot de passe oublié
     hero:
-      description: Une interface moderne pour créer, gérer et publier vos contenus web.
-      feature_1: Gestion de contenu flexible
-      feature_2: Types de contenu personnalisables
-      feature_3: Gestion des médias intégrée
-      feature_4: Interface moderne et rapide
-      heading: Gérez vos contenus
-      heading_accent: avec Aurora.
+      description: Une plateforme tout-en-un pour gérer contenus, clients, catalogue et boutique.
+      feature_1: Gestion de contenu et SEO
+      feature_2: "CRM : contacts et opportunités"
+      feature_3: "ERP : produits et catalogue"
+      feature_4: Boutique e-commerce intégrée
+      heading: Pilotez votre activité
+      heading_accent: avec {siteName}.
     invitation:
       accept_title: Accepter l'invitation
       confirm_password: Confirmer le mot de passe
@@ -173,6 +173,7 @@ admin:
       success: Votre compte est activé, bienvenue !
       welcome: Bienvenue {name}
     login:
+      subtitle: Bon retour, connectez-vous à votre espace.
       email: Adresse e-mail
       email_placeholder: votre@email.com
       forgot: Mot de passe oublié ?
@@ -183,6 +184,7 @@ admin:
       submit: Se connecter
       title: Connexion
     register:
+      subtitle: Créez votre compte en quelques secondes.
       already_account: Déjà un compte ?
       closed_desc: Les nouvelles inscriptions sont désactivées pour le moment.
       closed_title: Inscriptions fermées
@@ -249,6 +251,7 @@ admin:
     tabs:
       modules: Modules
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
+    mediaSquareHint: "Recommandé : image carrée (1:1)."
 front:
   menu:
     home: Accueil
@@ -338,7 +341,7 @@ shared:
       fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :'
       footer_note: Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail.
       greeting: Bonjour {name},
-      heading: Invitation à rejoindre Aurora
+      heading: Invitation à rejoindre {siteName}
       intro: Vous avez été invité à rejoindre {siteName}. Cliquez sur le bouton ci-dessous pour activer votre compte et définir votre mot de passe.
     verify_email:
       cta: Confirmer mon adresse e-mail

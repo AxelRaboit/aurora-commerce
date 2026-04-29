@@ -8,6 +8,9 @@
     {% endif %}
 {% endblock %}
 
+{% block form_icon %}user-check{% endblock %}
+{% block form_title %}{{ 'admin.auth.access_request.title'|trans }}{% endblock %}
+
 {% block content %}
     <div {{ vue_component('core/admin/auth/AccessRequestApp', {
         submitPath: path('admin_access_request'),
