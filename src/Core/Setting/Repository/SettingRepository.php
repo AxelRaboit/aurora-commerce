@@ -51,20 +51,32 @@ class SettingRepository extends ServiceEntityRepository
 
     public function set(string $key, ?string $value): void
     {
-        $setting = $this->find($key);
+        $this->saveMany([[$key, $value]]);
+    }
 
-        if (!$setting instanceof Setting) {
-            $setting = new Setting($key, $value);
-            $this->getEntityManager()->persist($setting);
-        } else {
-            $setting->setValue($value);
+    /**
+     * Atomically persists a batch of key/value writes (single flush).
+     *
+     * @param iterable<array{0: string, 1: ?string}> $entries
+     */
+    public function saveMany(iterable $entries): void
+    {
+        foreach ($entries as [$key, $value]) {
+            $setting = $this->find($key);
+
+            if (!$setting instanceof Setting) {
+                $setting = new Setting($key, $value);
+                $this->getEntityManager()->persist($setting);
+            } else {
+                $setting->setValue($value);
+            }
+
+            if (null !== $this->cache) {
+                $this->cache[$key] = $value;
+            }
         }
 
         $this->getEntityManager()->flush();
-
-        if (null !== $this->cache) {
-            $this->cache[$key] = $value;
-        }
     }
 
     private function warmUp(): void

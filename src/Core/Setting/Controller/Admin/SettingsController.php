@@ -6,7 +6,10 @@ namespace Aurora\Core\Setting\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
+use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Service\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('core.settings.manage')]
 final class SettingsController extends AbstractController
 {
-    public function __construct(private readonly SettingRepository $settingRepository) {}
+    public function __construct(
+        private readonly SettingRepository $settingRepository,
+        private readonly SettingsManager $settingsManager,
+    ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
@@ -39,6 +45,7 @@ final class SettingsController extends AbstractController
                 'type' => $parameter->getType(),
                 'group' => $groupName,
                 'value' => $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue()),
+                'requires' => $parameter->getCascadeRequires(),
             ];
         }
 
@@ -66,7 +73,15 @@ final class SettingsController extends AbstractController
             return $this->json(['ok' => false, 'error' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
 
-        $this->settingRepository->set($key, $value);
+        try {
+            $this->settingsManager->set($key, $value);
+        } catch (CascadeViolationException $cascadeViolationException) {
+            return $this->json([
+                'ok' => false,
+                'error' => SettingErrorCodeEnum::CascadeViolation->value,
+                'parentKey' => $cascadeViolationException->parentKey,
+            ], Response::HTTP_CONFLICT);
+        }
 
         return $this->json(['ok' => true, 'key' => $key, 'value' => $value]);
     }

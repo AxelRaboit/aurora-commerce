@@ -7,7 +7,8 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
-import { Search, FileText } from "lucide-vue-next";
+import { Search, FileText, Lock } from "lucide-vue-next";
+import { SettingErrorCode } from "@core/utils/settings/settingErrorCode.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -18,7 +19,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const groupOrder = ["general", "reading", "localization", "branding", "seo", "system"];
+const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "modules"];
 
 const availableGroups = groupOrder.filter((groupName) => props.groups[groupName]);
 
@@ -31,12 +32,49 @@ const tabLabels = {
     branding: () => t("admin.settings.tabs.branding"),
     seo: () => t("admin.settings.tabs.seo"),
     system: () => t("admin.settings.tabs.system"),
+    modules: () => t("admin.settings.tabs.modules"),
 };
 
 const fieldValues = reactive({});
+const initialValues = {};
+const parameterByKey = {};
 for (const groupName of availableGroups) {
     for (const parameter of props.groups[groupName]) {
-        fieldValues[parameter.key] = parameter.value ?? "";
+        const value = parameter.value ?? "";
+        fieldValues[parameter.key] = value;
+        initialValues[parameter.key] = value;
+        parameterByKey[parameter.key] = parameter;
+    }
+}
+
+function dependencyDepth(parameter) {
+    let depth = 0;
+    let current = parameter.requires;
+    while (current) {
+        depth++;
+        current = parameterByKey[current]?.requires;
+    }
+    return depth;
+}
+
+function isLocked(parameter) {
+    return parameter.requires ? fieldValues[parameter.requires] !== "1" : false;
+}
+
+function lockReason(parameter) {
+    const parent = parameter.requires ? parameterByKey[parameter.requires] : null;
+    return parent ? t("admin.settings.cascadeLocked", { parent: parent.label }) : "";
+}
+
+function onBoolChange(parameter, enabled) {
+    fieldValues[parameter.key] = enabled ? "1" : "0";
+    // Mirror server-side cascade: turning a parent off forces dependents off.
+    if (!enabled) {
+        for (const child of Object.values(parameterByKey)) {
+            if (child.requires === parameter.key && fieldValues[child.key] === "1") {
+                onBoolChange(child, false);
+            }
+        }
     }
 }
 
@@ -110,10 +148,22 @@ onMounted(() => {
 
 async function saveGroup(groupName) {
     savingGroups[groupName] = true;
-    const parameters = props.groups[groupName];
+
+    // Only persist parameters that actually changed, ordered by dependency depth
+    // ascending so parents are written before their children (avoids 409 when
+    // enabling a chain like CRM → ERP → E-Commerce in a single save).
+    const changed = props.groups[groupName]
+        .filter((p) => fieldValues[p.key] !== initialValues[p.key])
+        .sort((a, b) => dependencyDepth(a) - dependencyDepth(b));
+
+    if (changed.length === 0) {
+        savingGroups[groupName] = false;
+        toast.success(t("admin.settings.saved"));
+        return;
+    }
 
     try {
-        for (const parameter of parameters) {
+        for (const parameter of changed) {
             const response = await fetch(props.updatePath, {
                 method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
@@ -123,9 +173,16 @@ async function saveGroup(groupName) {
             const result = await response.json();
 
             if (!result.ok) {
-                toast.error(t("shared.common.error"));
+                if (result.error === SettingErrorCode.CascadeViolation) {
+                    const parent = parameterByKey[result.parentKey];
+                    toast.error(t("admin.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
+                } else {
+                    toast.error(t("shared.common.error"));
+                }
                 return;
             }
+
+            initialValues[parameter.key] = fieldValues[parameter.key];
         }
 
         toast.success(t("admin.settings.saved"));
@@ -174,14 +231,19 @@ async function saveGroup(groupName) {
                         :key="parameter.key"
                     >
                         <template v-if="parameter.type === 'bool'">
-                            <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center justify-between gap-4" :class="{ 'opacity-60': isLocked(parameter) }">
                                 <div class="min-w-0">
-                                    <p class="text-sm font-medium text-primary">{{ parameter.label }}</p>
+                                    <p class="text-sm font-medium text-primary flex items-center gap-1.5">
+                                        {{ parameter.label }}
+                                        <Lock v-if="isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                                    </p>
                                     <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
+                                    <p v-if="isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ lockReason(parameter) }}</p>
                                 </div>
                                 <AppToggle
-                                    :model-value="fieldValues[parameter.key] === '1'"
-                                    v-on:update:model-value="fieldValues[parameter.key] = $event ? '1' : '0'"
+                                    :model-value="!isLocked(parameter) && fieldValues[parameter.key] === '1'"
+                                    :disabled="isLocked(parameter)"
+                                    v-on:update:model-value="onBoolChange(parameter, $event)"
                                 />
                             </div>
                         </template>

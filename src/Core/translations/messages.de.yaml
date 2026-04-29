@@ -247,6 +247,10 @@ admin:
   impersonation:
     banner: Du bist angemeldet als {name}
     leave: Verlassen
+  settings:
+    tabs:
+      modules: Module
+    cascadeLocked: 'Aktiviere zuerst „{parent}", um diese Einstellung zu ändern.'
 front:
   menu:
     home: Startseite

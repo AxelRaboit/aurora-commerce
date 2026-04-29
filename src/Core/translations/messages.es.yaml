@@ -247,6 +247,10 @@ admin:
   impersonation:
     banner: Has iniciado sesión como {name}
     leave: Salir
+  settings:
+    tabs:
+      modules: Módulos
+    cascadeLocked: "Activa «{parent}» antes de modificar este ajuste."
 front:
   menu:
     home: Inicio

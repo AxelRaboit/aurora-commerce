@@ -6,7 +6,10 @@ namespace Aurora\Core\Setting\Controller\Dev;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
+use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Setting\Service\SettingsManager;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +23,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class ParametersController extends AbstractController
 {
-    public function __construct(private readonly SettingRepository $settingRepository) {}
+    public function __construct(
+        private readonly SettingRepository $settingRepository,
+        private readonly SettingsManager $settingsManager,
+    ) {}
 
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
@@ -63,7 +69,15 @@ final class ParametersController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $value = isset($data['value']) ? (string) $data['value'] : null;
 
-        $this->settingRepository->set($key, $value);
+        try {
+            $this->settingsManager->set($key, $value);
+        } catch (CascadeViolationException $cascadeViolationException) {
+            return $this->json([
+                'ok' => false,
+                'error' => SettingErrorCodeEnum::CascadeViolation->value,
+                'parentKey' => $cascadeViolationException->parentKey,
+            ], Response::HTTP_CONFLICT);
+        }
 
         return $this->json(['key' => $key, 'value' => $value]);
     }

@@ -153,10 +153,53 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         };
     }
 
+    /**
+     * Single source of truth for the module dependency graph:
+     *
+     *   CRM ◀── ERP ◀── E-Commerce
+     *
+     * CRM is the foundational "parties" layer (Contacts, Companies). ERP
+     * consumes it (Suppliers ≈ Company, future Invoicing ≈ Contact). E-Commerce
+     * consumes ERP (Listing → Product) and CRM (future Customers ≈ Contact).
+     *
+     * Returns the parent parameter that must be on for this one to be enabled.
+     * The reverse direction (cascade-on-disable) is derived from this.
+     */
+    public function getCascadeRequires(): ?string
+    {
+        return match ($this) {
+            self::ErpAdminEnabled => self::CrmAdminEnabled->value,
+            self::EcommerceAdminEnabled, self::EcommerceFrontEnabled => self::ErpAdminEnabled->value,
+            default => null,
+        };
+    }
+
+    /**
+     * All descendant parameter keys (direct + transitive) that must be forced
+     * to '0' when this parameter is turned off. Derived from getCascadeRequires
+     * so the graph stays defined in a single place.
+     *
+     * @return list<string>
+     */
+    public function getCascadeDisableTargets(): array
+    {
+        $targets = [];
+        foreach (self::cases() as $case) {
+            if ($case->getCascadeRequires() === $this->value) {
+                $targets[] = $case->value;
+                foreach ($case->getCascadeDisableTargets() as $transitive) {
+                    $targets[] = $transitive;
+                }
+            }
+        }
+
+        return array_values(array_unique($targets));
+    }
+
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'crm', 'erp' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'modules', 'ecommerce' => true,
             default => false,
         };
     }
@@ -171,9 +214,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::EcommerceLowStockThreshold => 'ecommerce',
-            self::CrmAdminEnabled => 'crm',
-            self::ErpAdminEnabled => 'erp',
+            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled => 'modules',
+            self::EcommerceLowStockThreshold => 'ecommerce',
         };
     }
 }

@@ -244,6 +244,10 @@ admin:
   impersonation:
     banner: Vous êtes connecté en tant que {name}
     leave: Quitter
+  settings:
+    tabs:
+      modules: Modules
+    cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
 front:
   menu:
     home: Accueil
