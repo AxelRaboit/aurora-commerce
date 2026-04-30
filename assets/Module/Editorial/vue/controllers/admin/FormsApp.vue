@@ -195,7 +195,7 @@ async function selectForm(form) {
     formErrors.value = {};
     try {
         const data = await jsonRequest(buildPath(props.getPath, { id: form.id }));
-        if (data.ok) {
+        if (data.success) {
             applyFormResponse(data.form);
         }
     } catch {
@@ -275,7 +275,7 @@ async function saveForm() {
 
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify(payload) });
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.saved"));
             applyFormResponse(data.form);
             await fetchForms();
@@ -297,7 +297,7 @@ async function confirmDelete() {
     deleting.value = true;
     try {
         const data = await jsonRequest(buildPath(props.deletePath, { id: selectedForm.value.id }), { method: HttpMethod.Post });
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.deleted"));
             selectedForm.value = null;
             await fetchForms();
@@ -378,7 +378,7 @@ async function submitField() {
 
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify(payload) });
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.saved"));
             if (isUpdate) {
                 const index = editingForm.value.fields.findIndex((f) => f.id === editingFieldId.value);
@@ -416,7 +416,7 @@ async function doDeleteField() {
 
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post });
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.deleted"));
             editingForm.value.fields = editingForm.value.fields.filter((f) => f.id !== field.id);
             pendingDeleteField.value = null;
@@ -436,7 +436,7 @@ async function onFieldsReordered() {
     const url = buildPath(props.fieldReorderPath, { id: selectedForm.value.id });
     try {
         const data = await jsonRequest(url, { method: HttpMethod.Post, body: JSON.stringify({ orderedIds }) });
-        if (!data.ok) toast.error(t("shared.common.error"));
+        if (!data.success) toast.error(t("shared.common.error"));
     } catch {
         toast.error(t("shared.common.error"));
     }

@@ -71,7 +71,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('GET', '/admin/forms/list');
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
     }
 
@@ -80,7 +80,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
 
         self::assertSame(201, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertNotNull($body['form']['id']);
         self::assertEquals('Formulaire Test', $body['form']['translations']['fr']['title']);
 
@@ -91,11 +91,11 @@ final class FormsControllerTest extends IntegrationTestCase
     {
         $suffix = uniqid();
         [, $first] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload($suffix));
-        self::assertTrue($first['ok']);
+        self::assertTrue($first['success']);
 
         [$status, $second] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload($suffix));
         self::assertSame(422, $status);
-        self::assertFalse($second['ok']);
+        self::assertFalse($second['success']);
         self::assertNotEmpty($second['errors']);
 
         $this->cleanupForm($first['form']['id']);
@@ -112,7 +112,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', '/admin/forms', $payload);
 
         self::assertSame(422, $status);
-        self::assertFalse($body['ok']);
+        self::assertFalse($body['success']);
     }
 
     public function testGetForm(): void
@@ -123,7 +123,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('GET', "/admin/forms/{$id}");
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame($id, $body['form']['id']);
         self::assertIsArray($body['form']['fields']);
 
@@ -142,7 +142,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/edit", $updated);
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('Formulaire Modifié', $body['form']['translations']['fr']['title']);
 
         $this->cleanupForm($id);
@@ -156,7 +156,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/fields", $this->createFieldPayload());
 
         self::assertSame(201, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertNotNull($body['field']['id']);
         self::assertSame('text', $body['field']['type']);
         self::assertTrue($body['field']['required']);
@@ -174,7 +174,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/fields", $payload);
 
         self::assertSame(422, $status);
-        self::assertFalse($body['ok']);
+        self::assertFalse($body['success']);
 
         $this->cleanupForm($id);
     }
@@ -191,7 +191,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/{$fieldId}/edit", $updated);
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('Prénom', $body['field']['translations']['fr']['label']);
 
         $this->cleanupForm($formId);
@@ -208,7 +208,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/{$fieldId}/delete");
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
 
         [, $formBody] = $this->jsonRequest('GET', "/admin/forms/{$formId}");
         self::assertCount(0, $formBody['form']['fields']);
@@ -228,7 +228,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/reorder", ['orderedIds' => $orderedIds]);
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
 
         $this->cleanupForm($formId);
     }
@@ -241,7 +241,7 @@ final class FormsControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/delete");
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
     }
 
     private function cleanupForm(int $id): void

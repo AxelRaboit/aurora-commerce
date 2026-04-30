@@ -17,6 +17,7 @@ import { required } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { stageBadge } from "@crm/utils/deals/stageStyles.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -70,7 +71,7 @@ async function submitEdit() {
         showEdit.value = false;
         toast.success(t('admin.crm.deals.updated'));
     } else {
-        setEditErrors(data.errors ?? {});
+        setEditErrors(translateServerErrors(t, data.errors));
     }
 }
 

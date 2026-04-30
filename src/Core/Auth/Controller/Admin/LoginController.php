@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Admin;
 
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Auth\View\LoginViewBuilder;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 final class LoginController extends AbstractController
 {
-    public function __construct(private readonly SettingRepository $settingRepository) {}
+    public function __construct(private readonly LoginViewBuilder $viewBuilder) {}
 
     #[Route('/login', name: 'admin_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
@@ -24,12 +23,10 @@ final class LoginController extends AbstractController
             return $this->redirectToRoute('admin_dashboard');
         }
 
-        return $this->render('@Core/admin/auth/login.html.twig', [
-            'last_username' => $authenticationUtils->getLastUsername(),
-            'error' => $authenticationUtils->getLastAuthenticationError(),
-            'registrationEnabled' => $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminRegistrationEnabled->value),
-            'accessRequestEnabled' => $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true),
-        ]);
+        return $this->render('@Core/admin/auth/login.html.twig', $this->viewBuilder->loginView(
+            $authenticationUtils->getLastUsername(),
+            $authenticationUtils->getLastAuthenticationError(),
+        ));
     }
 
     #[Route('/logout', name: 'admin_logout')]

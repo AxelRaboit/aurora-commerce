@@ -60,12 +60,21 @@ final readonly class ImageVariantGenerator
         }
 
         $generated = [];
+        $largestSize = max(self::VARIANT_SIZES);
         foreach (self::VARIANT_SIZES as $variantName => $maxSide) {
-            if ($sourceWidth <= $maxSide && $sourceHeight <= $maxSide) {
+            // Skip downscale when source is already smaller — EXCEPT for the
+            // largest size: we always want a re-encoded "large" variant so the
+            // public download path (web) never falls back to the raw source,
+            // which would leak EXIF (geo/camera) on PNG/WebP originals.
+            $isLargest = $maxSide === $largestSize;
+            if (!$isLargest && $sourceWidth <= $maxSide && $sourceHeight <= $maxSide) {
                 continue;
             }
 
-            [$targetWidth, $targetHeight] = $this->fitDimensions($sourceWidth, $sourceHeight, $maxSide);
+            $shouldDownscale = $sourceWidth > $maxSide || $sourceHeight > $maxSide;
+            [$targetWidth, $targetHeight] = $shouldDownscale
+                ? $this->fitDimensions($sourceWidth, $sourceHeight, $maxSide)
+                : [$sourceWidth, $sourceHeight];
 
             $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
             $this->preserveTransparency($targetImage, $variantMime);

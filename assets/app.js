@@ -31,6 +31,9 @@ const erpModules = import.meta.glob("./Module/Erp/vue/controllers/**/*.vue");
 const ecommerceModules = import.meta.glob(
     "./Module/Ecommerce/vue/controllers/**/*.vue",
 );
+const photoModules = import.meta.glob(
+    "./Module/Photo/vue/controllers/**/*.vue",
+);
 
 const vueContext = {
     ...Object.fromEntries(
@@ -60,6 +63,12 @@ const vueContext = {
     ...Object.fromEntries(
         Object.entries(ecommerceModules).map(([key, loader]) => [
             key.replace("./Module/Ecommerce/vue/controllers/", "./ecommerce/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(photoModules).map(([key, loader]) => [
+            key.replace("./Module/Photo/vue/controllers/", "./photo/"),
             loader,
         ]),
     ),

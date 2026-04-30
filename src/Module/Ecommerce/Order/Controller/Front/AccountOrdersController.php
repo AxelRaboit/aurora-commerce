@@ -6,11 +6,9 @@ namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
-use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\View\AccountOrdersViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,12 +20,10 @@ class AccountOrdersController extends AbstractController
     use FrontLocaleTrait;
 
     public function __construct(
-        private readonly OrderRepository $orderRepository,
-        private readonly OrderSerializer $orderSerializer,
         private readonly Security $security,
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
-        private readonly ThemeContext $themeContext,
+        private readonly AccountOrdersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/account/orders', name: 'front_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
@@ -42,18 +38,7 @@ class AccountOrdersController extends AbstractController
         }
 
         $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->orderRepository->findPaginatedForCustomer($user, $page, 20);
 
-        return $this->render($this->themeResolver->resolve('account_orders'), [
-            'orders' => array_map($this->orderSerializer->serialize(...), $result['items']),
-            'pagination' => [
-                'page' => $result['page'],
-                'totalPages' => $result['totalPages'],
-                'total' => $result['total'],
-            ],
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('account_orders'), $this->viewBuilder->indexView($user, $page, $locale));
     }
 }

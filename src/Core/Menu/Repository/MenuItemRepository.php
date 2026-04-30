@@ -7,6 +7,7 @@ namespace Aurora\Core\Menu\Repository;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,8 +35,8 @@ class MenuItemRepository extends ServiceEntityRepository
             ->where('i.menu = :menu')
             ->andWhere('i.parent IS NULL')
             ->setParameter('menu', $menu)
-            ->orderBy('i.position', 'ASC')
-            ->addOrderBy('c.position', 'ASC')
+            ->orderBy('i.position', Order::Ascending->value)
+            ->addOrderBy('c.position', Order::Ascending->value)
             ->getQuery()
             ->getResult();
     }

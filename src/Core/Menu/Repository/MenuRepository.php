@@ -6,6 +6,7 @@ namespace Aurora\Core\Menu\Repository;
 
 use Aurora\Core\Menu\Entity\Menu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,9 +37,9 @@ class MenuRepository extends ServiceEntityRepository
             ->leftJoin('i.translations', 't')->addSelect('t')
             ->leftJoin('i.children', 'c')->addSelect('c')
             ->leftJoin('c.translations', 'ct')->addSelect('ct')
-            ->orderBy('m.location', 'ASC')
-            ->addOrderBy('i.position', 'ASC')
-            ->addOrderBy('c.position', 'ASC')
+            ->orderBy('m.location', Order::Ascending->value)
+            ->addOrderBy('i.position', Order::Ascending->value)
+            ->addOrderBy('c.position', Order::Ascending->value)
             ->getQuery()
             ->getResult();
 

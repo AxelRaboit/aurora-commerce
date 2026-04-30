@@ -101,15 +101,15 @@ async function loadFilters() {
     try {
         if (form.targetType === "post") {
             const data = await jsonRequest(props.pickerPostTypesPath);
-            if (data.ok) postTypeOptions.value = [{ id: 0, label: t("admin.menus.allTypes") }, ...data.items];
+            if (data.success) postTypeOptions.value = [{ id: 0, label: t("admin.menus.allTypes") }, ...data.items];
         }
         if (form.targetType === "term" && !taxonomyOptions.value.length) {
             const data = await jsonRequest(props.pickerTaxonomiesPath);
-            if (data.ok) taxonomyOptions.value = [{ id: 0, label: t("admin.menus.allTaxonomies") }, ...data.items];
+            if (data.success) taxonomyOptions.value = [{ id: 0, label: t("admin.menus.allTaxonomies") }, ...data.items];
         }
         if (form.targetType === "post_type_archive") {
             const data = await jsonRequest(`${props.pickerPostTypesPath}?withArchive=1`);
-            if (data.ok) postTypeOptions.value = data.items;
+            if (data.success) postTypeOptions.value = data.items;
         }
     } catch {
         toast.error(t("shared.common.error"));
@@ -147,7 +147,7 @@ async function runSearch() {
             return;
         }
         const data = await jsonRequest(url);
-        if (data.ok) {
+        if (data.success) {
             pickerResults.value = data.items;
             pickerOpen.value = true;
         }

@@ -19,6 +19,7 @@ import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-nex
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -69,7 +70,7 @@ async function submitEdit() {
         toast.success(t("shared.common.saved"));
     } else {
         if (data.errors?._global) toast.error(data.errors._global);
-        setEditErrors(data.errors ?? {});
+        setEditErrors(translateServerErrors(t, data.errors));
     }
 }
 

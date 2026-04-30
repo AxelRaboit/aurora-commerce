@@ -7,11 +7,12 @@ namespace Aurora\Core\Dashboard\Controller\Dev;
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Repository\AccessRequestRepository;
+use Aurora\Core\Dashboard\View\AccessRequestsViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\DTO\PaginationRequest;
-use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,49 +25,33 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class AccessRequestsController extends AbstractController
 {
+    use JsonResponseTrait;
+
     public function __construct(
         private readonly AccessRequestRepository $accessRequestRepository,
         private readonly AccessRequestManagerInterface $accessRequestManager,
         private readonly UserManagerInterface $userManager,
         private readonly TranslatorInterface $translator,
+        private readonly AccessRequestsViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $result = $this->accessRequestRepository->findPaginatedAdmin($pagination->page, search: $pagination->search);
-
-        $items = array_map(
-            fn (AccessRequest $accessRequest): array => [
-                'id' => $accessRequest->getId(),
-                'requesterEmail' => $accessRequest->getRequesterEmail(),
-                'requesterName' => $accessRequest->getRequesterName(),
-                'message' => $accessRequest->getMessage(),
-                'status' => $accessRequest->getStatus()->value,
-                'expiresAt' => $accessRequest->getExpiresAt()->format(DateTimeInterface::ATOM),
-                'createdAt' => $accessRequest->getCreatedAt()->format(DateTimeInterface::ATOM),
-            ],
-            $result['items'],
-        );
-
-        $payload = ['ok' => true, 'items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']];
+        $payload = $this->viewBuilder->accessRequestsPayload($pagination->page, $pagination->search);
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', [
-            'tab' => 'access_requests',
-            'accessRequests' => $payload,
-            'search' => $pagination->search ?? '',
-        ]);
+        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('/{id}/approve', name: '_approve', methods: [HttpMethodEnum::Post->value])]
     public function approve(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['ok' => false], Response::HTTP_CONFLICT);
+            return $this->json(['success' => false], Response::HTTP_CONFLICT);
         }
 
         $generatedPassword = null;
@@ -81,7 +66,7 @@ final class AccessRequestsController extends AbstractController
 
         $this->accessRequestManager->approve($accessRequest, $generatedPassword);
 
-        return $this->json(['ok' => true, 'message' => $this->translator->trans('admin.access_requests.approved', [
+        return $this->jsonSuccess(['message' => $this->translator->trans('admin.access_requests.approved', [
             '{name}' => $accessRequest->getRequesterName() ?? $accessRequest->getRequesterEmail(),
         ])]);
     }
@@ -90,12 +75,12 @@ final class AccessRequestsController extends AbstractController
     public function reject(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['ok' => false], Response::HTTP_CONFLICT);
+            return $this->json(['success' => false], Response::HTTP_CONFLICT);
         }
 
         $this->accessRequestManager->reject($accessRequest);
 
-        return $this->json(['ok' => true, 'message' => $this->translator->trans('admin.access_requests.rejected', [
+        return $this->jsonSuccess(['message' => $this->translator->trans('admin.access_requests.rejected', [
             '{name}' => $accessRequest->getRequesterName() ?? $accessRequest->getRequesterEmail(),
         ])]);
     }
@@ -105,6 +90,6 @@ final class AccessRequestsController extends AbstractController
     {
         $this->accessRequestRepository->deleteProcessed();
 
-        return $this->json(['ok' => true, 'message' => $this->translator->trans('admin.access_requests.purged')]);
+        return $this->jsonSuccess(['message' => $this->translator->trans('admin.access_requests.purged')]);
     }
 }

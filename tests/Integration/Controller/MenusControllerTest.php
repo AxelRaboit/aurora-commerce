@@ -89,7 +89,7 @@ final class MenusControllerTest extends IntegrationTestCase
             'location' => 'whatever',
         ]);
         self::assertSame(403, $status);
-        self::assertFalse($body['ok']);
+        self::assertFalse($body['success']);
     }
 
     public function testCannotDeleteProtectedMenu(): void
@@ -98,7 +98,7 @@ final class MenusControllerTest extends IntegrationTestCase
 
         [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/delete');
         self::assertSame(400, $status);
-        self::assertFalse($body['ok']);
+        self::assertFalse($body['success']);
     }
 
     public function testItemsCrud(): void
@@ -175,21 +175,21 @@ final class MenusControllerTest extends IntegrationTestCase
     {
         [$status, $body] = $this->getJson('/admin/menus/picker/post-types');
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
         [$status, $body] = $this->getJson('/admin/menus/picker/taxonomies');
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
 
         [$status, $body] = $this->getJson('/admin/menus/picker/posts?q=test');
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
         [$status, $body] = $this->getJson('/admin/menus/picker/terms?q=test');
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
     }
 
     public function testIndexPageRendersWhenLogged(): void

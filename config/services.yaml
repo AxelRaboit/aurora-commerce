@@ -21,6 +21,15 @@ services:
     Aurora\:
         resource: '../src/'
 
+    # Auto-tag every MediaUsageProvider so the aggregator service collects them.
+    _instanceof:
+        Aurora\Core\Media\Contract\MediaUsageProviderInterface:
+            tags: [aurora.media_usage_provider]
+
+    Aurora\Core\Media\Service\MediaUsageService:
+        arguments:
+            $providers: !tagged_iterator aurora.media_usage_provider
+
     Aurora\Core\Auth\Manager\AccessRequestManager:
         arguments:
             $adminEmail: '%app.admin_email%'
@@ -81,3 +90,14 @@ services:
 
     Aurora\Module\Ecommerce\EcommerceModule:
         tags: [aurora.module]
+
+    Aurora\Module\Photo\PhotoModule:
+        tags: [aurora.module]
+
+    Aurora\Module\Photo\Gallery\Service\GalleryAccessService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    Aurora\Module\Photo\Gallery\Service\GalleryNotificationService:
+        arguments:
+            $mailerFrom: '%app.mailer_from%'

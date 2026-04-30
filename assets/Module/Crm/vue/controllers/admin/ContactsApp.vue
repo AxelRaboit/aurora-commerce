@@ -20,6 +20,7 @@ import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required, email as emailValidator } from "@/shared/utils/validation/validators.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -64,7 +65,7 @@ async function submitCreate() {
     const data = await createRequest(props.createPath, newContact.value);
     if (!data) return;
     if (data.success) { showCreate.value = false; toast.success(t('admin.crm.contacts.created')); reset(); }
-    else setCreateErrors(data.errors ?? {});
+    else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
 // --- Edit ---
@@ -99,7 +100,7 @@ async function submitEdit() {
     const data = await editRequest(url, editForm.value);
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t('admin.crm.contacts.updated')); reset(); }
-    else setEditErrors(data.errors ?? {});
+    else setEditErrors(translateServerErrors(t, data.errors));
 }
 
 // --- Delete ---

@@ -1,4 +1,19 @@
 admin:
+  modules:
+    ecommerce: E-commerce
+  audit:
+    actions:
+      ecommerce:
+        listing:
+          created: Anuncio creado
+          updated: Anuncio actualizado
+          deleted: Anuncio eliminado
+        order:
+          created: Pedido creado
+          paid: Pedido pagado
+          shipped: Pedido enviado
+          delivered: Pedido entregado
+          cancelled: Pedido cancelado
   nav:
     listings: Tienda
     orders: Pedidos

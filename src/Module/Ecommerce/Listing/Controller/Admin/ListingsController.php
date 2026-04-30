@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Listing\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
@@ -12,6 +13,7 @@ use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Module\Ecommerce\Listing\View\ListingsViewBuilder;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,28 +27,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ecommerce.listings.view')]
 final class ListingsController extends AbstractController
 {
+    use JsonResponseTrait;
+
     public function __construct(
         private readonly ListingRepository $listingRepository,
         private readonly ProductRepository $productRepository,
         private readonly ListingSerializer $listingSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly ListingManagerInterface $listingManager,
+        private readonly ListingsViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(PaginationRequest $pagination): Response
     {
-        $payload = $this->buildListPayload($pagination);
-
-        return $this->render('@Ecommerce/admin/listings/index.html.twig', [
-            'listings' => $payload,
-            'search' => $pagination->search ?? '',
-            'createPath' => $this->generateUrl('ecommerce_listings_create'),
-            'updatePath' => $this->generateUrl('ecommerce_listings_update', ['id' => '__id__']),
-            'deletePath' => $this->generateUrl('ecommerce_listings_delete', ['id' => '__id__']),
-            'showPath' => $this->generateUrl('ecommerce_listings_show', ['id' => '__id__']),
-            'productsPath' => $this->generateUrl('ecommerce_listings_products'),
-        ]);
+        return $this->render('@Ecommerce/admin/listings/index.html.twig', $this->viewBuilder->indexView($pagination, $this->buildListPayload($pagination)));
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
@@ -67,7 +62,7 @@ final class ListingsController extends AbstractController
             'sku' => $product->getSku(),
         ], $result['items']);
 
-        return $this->json(['ok' => true, 'items' => $items, 'total' => $result['total']]);
+        return $this->jsonSuccess(['items' => $items, 'total' => $result['total']]);
     }
 
     #[Route('/search', name: '_search', methods: [HttpMethodEnum::Get->value])]
@@ -113,16 +108,16 @@ final class ListingsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $listing = $this->listingManager->create($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['_global' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'listing' => $this->listingSerializer->serialize($listing)]);
+        return $this->jsonSuccess(['listing' => $this->listingSerializer->serialize($listing)]);
     }
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
@@ -133,16 +128,16 @@ final class ListingsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $this->listingManager->update($listing, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['_global' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'listing' => $this->listingSerializer->serialize($listing)]);
+        return $this->jsonSuccess(['listing' => $this->listingSerializer->serialize($listing)]);
     }
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
@@ -151,16 +146,16 @@ final class ListingsController extends AbstractController
     {
         $this->listingManager->delete($listing);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
-    /** @return array{ok: bool, items: list<array<string, mixed>>, total: int, page: int, totalPages: int} */
+    /** @return array{success: bool, items: list<array<string, mixed>>, total: int, page: int, totalPages: int} */
     private function buildListPayload(PaginationRequest $pagination): array
     {
         $result = $this->listingRepository->findPaginated($pagination->page, search: $pagination->search);
 
         return [
-            'ok' => true,
+            'success' => true,
             'items' => array_map($this->listingSerializer->serialize(...), $result['items']),
             'total' => $result['total'],
             'page' => $result['page'],

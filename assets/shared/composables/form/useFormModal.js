@@ -45,7 +45,7 @@ export function useFormModal() {
                 body: JSON.stringify(payload),
             });
             const data = await response.json();
-            if (!data.ok && !data.success) {
+            if (!data.success && !data.success) {
                 modal.errors = data.errors ?? {};
                 return;
             }

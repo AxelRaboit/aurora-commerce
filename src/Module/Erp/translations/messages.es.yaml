@@ -1,4 +1,13 @@
 admin:
+  modules:
+    erp: ERP
+  audit:
+    actions:
+      erp:
+        product:
+          created: Producto creado
+          updated: Producto actualizado
+          deleted: Producto eliminado
   nav:
     products: Productos
   erp:

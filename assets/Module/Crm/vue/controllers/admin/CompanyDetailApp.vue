@@ -16,6 +16,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
 import { required, url, email as emailValidator } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -60,7 +61,7 @@ async function submitEdit() {
         showEdit.value = false;
         toast.success(t("shared.common.saved"));
     } else {
-        setEditErrors(data.errors ?? {});
+        setEditErrors(translateServerErrors(t, data.errors));
     }
 }
 
@@ -86,7 +87,7 @@ async function submitContact() {
         toast.success(t("admin.crm.contacts.created"));
         if (data.contact) contacts.value = [data.contact, ...contacts.value];
     } else {
-        setContactErrors(data.errors ?? {});
+        setContactErrors(translateServerErrors(t, data.errors));
     }
 }
 </script>

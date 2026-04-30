@@ -64,6 +64,13 @@ class AuroraBundle extends AbstractBundle
                         'prefix' => 'Aurora\Module\Ecommerce',
                         'alias' => 'AuroraEcommerce',
                     ],
+                    'AuroraPhoto' => [
+                        'type' => 'attribute',
+                        'is_bundle' => false,
+                        'dir' => $dir.'/src/Module/Photo',
+                        'prefix' => 'Aurora\Module\Photo',
+                        'alias' => 'AuroraPhoto',
+                    ],
                 ],
             ],
         ]);
@@ -79,6 +86,7 @@ class AuroraBundle extends AbstractBundle
                 $dir.'/templates/Module/Crm' => 'Crm',
                 $dir.'/templates/Module/Erp' => 'Erp',
                 $dir.'/templates/Module/Ecommerce' => 'Ecommerce',
+                $dir.'/templates/Module/Photo' => 'Photo',
             ],
         ]);
 
@@ -99,6 +107,7 @@ class AuroraBundle extends AbstractBundle
                     $dir.'/src/Module/Crm/translations',
                     $dir.'/src/Module/Erp/translations',
                     $dir.'/src/Module/Ecommerce/translations',
+                    $dir.'/src/Module/Photo/translations',
                 ],
                 'fallbacks' => ['fr'],
             ],

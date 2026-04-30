@@ -8,6 +8,7 @@ use Aurora\Core\Locale\Entity\Locale;
 use Aurora\Core\Locale\Repository\LocaleRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Doctrine\Common\Collections\Order;
 
 /**
  * Aggregates site-wide configuration used by public-facing controllers.
@@ -30,7 +31,7 @@ final class FrontContext
         if (null === $this->cachedLocales) {
             $this->cachedLocales = $this->localeRepository->findBy(
                 ['isActive' => true],
-                ['position' => 'ASC', 'code' => 'ASC'],
+                ['position' => Order::Ascending->value, 'code' => Order::Ascending->value],
             );
         }
 

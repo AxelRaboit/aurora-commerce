@@ -44,7 +44,7 @@ async function syncQuantity(listingId, quantity) {
     pendingUpdates.value.add(listingId);
     try {
         const data = await postJSON(props.updatePath, { listingId, quantity });
-        if (data.ok) {
+        if (data.success) {
             cart.value = data.cart;
             broadcastCartChange(data.cart.totalQuantity);
         }
@@ -79,7 +79,7 @@ async function removeItem(item) {
     pendingUpdates.value.add(item.listingId);
     try {
         const data = await postJSON(props.removePath, { listingId: item.listingId });
-        if (data.ok) {
+        if (data.success) {
             cart.value = data.cart;
             broadcastCartChange(data.cart.totalQuantity);
         }

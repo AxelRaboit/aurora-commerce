@@ -66,7 +66,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         ]);
 
         self::assertSame(200, $status, json_encode($body));
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('test-theme-create', $body['theme']['slug']);
 
         // Clean up
@@ -94,7 +94,7 @@ final class ThemesControllerTest extends IntegrationTestCase
             'description' => '',
         ]);
 
-        self::assertFalse($body['ok']);
+        self::assertFalse($body['success']);
         self::assertNotEmpty($body['errors']['slug']);
 
         // Clean up
@@ -113,7 +113,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         [$status, $body] = $this->jsonRequest('POST', sprintf('/admin/themes/%d/activate', $defaultThemeId));
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
     }
 
     public function testUpdateTheme(): void
@@ -126,7 +126,7 @@ final class ThemesControllerTest extends IntegrationTestCase
             'description' => '',
         ]);
 
-        self::assertTrue($createBody['ok'], 'Create step failed: '.json_encode($createBody));
+        self::assertTrue($createBody['success'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
         [$status, $body] = $this->jsonRequest('POST', sprintf('/admin/themes/%d/edit', $themeId), [
@@ -136,7 +136,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         ]);
 
         self::assertSame(200, $status);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('Updated Name', $body['theme']['name']);
 
         // Clean up
@@ -158,7 +158,7 @@ final class ThemesControllerTest extends IntegrationTestCase
             'description' => '',
         ]);
 
-        self::assertTrue($createBody['ok'], 'Create step failed: '.json_encode($createBody));
+        self::assertTrue($createBody['success'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
         $this->client->request('POST', sprintf('/admin/themes/%d/delete', $themeId), [], [], ['CONTENT_TYPE' => 'application/json']);
@@ -166,7 +166,7 @@ final class ThemesControllerTest extends IntegrationTestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
     }
 
     public function testCannotDeleteDefaultTheme(): void

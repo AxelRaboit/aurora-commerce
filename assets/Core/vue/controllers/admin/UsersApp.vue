@@ -50,7 +50,7 @@ async function loadSelectableUsers() {
     try {
         const response = await fetch(props.selectablePath);
         const data = await response.json();
-        selectableUsers.value = data.ok ? data.items : [];
+        selectableUsers.value = data.success ? data.items : [];
     } catch {
         selectableUsers.value = [];
     }
@@ -99,7 +99,7 @@ async function submitInvite() {
             body: JSON.stringify(inviteForm),
         });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             inviteModal.errors = data.errors ?? {};
             return;
         }
@@ -121,7 +121,7 @@ async function openView(user) {
     try {
         const response = await fetch(buildPath(props.showPath, { id: user.id }));
         const data = await response.json();
-        if (data.ok && viewingUser.value?.id === user.id) {
+        if (data.success && viewingUser.value?.id === user.id) {
             viewingUser.value = data.user;
         }
     } catch {
@@ -164,7 +164,7 @@ async function onPhotoSelected(file) {
         const url = buildPath(props.photoUploadPath, { id: editModal.editing.id });
         const response = await fetch(url, { method: HttpMethod.Post, body: formData });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             const message = data.errors?.photo ?? data.error ?? "shared.common.error";
             toast.error(t(message));
             return;
@@ -186,7 +186,7 @@ async function removePhoto() {
         const url = buildPath(props.photoDeletePath, { id: editModal.editing.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             toast.error(t(data.error ?? "shared.common.error"));
             return;
         }
@@ -216,7 +216,7 @@ async function submitEdit() {
             body: JSON.stringify(payload),
         });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             editModal.errors = data.errors ?? {};
             return;
         }
@@ -235,7 +235,7 @@ async function resendInvitation(user) {
     try {
         const response = await fetch(buildPath(props.resendInvitationPath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("admin.users.invitationResent"));
             fetchUsers();
         } else {
@@ -256,7 +256,7 @@ async function confirmToggleDisabled() {
     try {
         const response = await fetch(buildPath(props.toggleDisabledPath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.saved"));
             fetchUsers();
         } else {
@@ -276,7 +276,7 @@ async function confirmDelete() {
     try {
         const response = await fetch(buildPath(props.deletePath, { id: user.id }), { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.deleted"));
             fetchUsers();
         } else {

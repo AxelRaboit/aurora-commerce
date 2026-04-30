@@ -6,11 +6,10 @@ namespace Aurora\Module\Ecommerce\Listing\Controller\Front;
 
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
-use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
-use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Module\Ecommerce\Listing\View\ShopViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +21,9 @@ class ShopController extends AbstractController
 
     public function __construct(
         private readonly ListingRepository $listingRepository,
-        private readonly ListingSerializer $listingSerializer,
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
-        private readonly ThemeContext $themeContext,
+        private readonly ShopViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/shop', name: 'front_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
@@ -35,19 +33,8 @@ class ShopController extends AbstractController
         $request->setLocale($locale);
 
         $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->listingRepository->findPaginated($page, 12, visibleOnly: true);
 
-        return $this->render($this->themeResolver->resolve('shop_index'), [
-            'listings' => array_map($this->listingSerializer->serialize(...), $result['items']),
-            'pagination' => [
-                'page' => $result['page'],
-                'totalPages' => $result['totalPages'],
-                'total' => $result['total'],
-            ],
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('shop_index'), $this->viewBuilder->indexView($page, $locale));
     }
 
     #[Route('/{locale}/shop/{slug}', name: 'front_shop_product', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: ['GET'], priority: 8)]
@@ -61,11 +48,6 @@ class ShopController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('shop_product'), [
-            'listing' => $this->listingSerializer->serialize($listing),
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('shop_product'), $this->viewBuilder->showView($listing, $locale));
     }
 }

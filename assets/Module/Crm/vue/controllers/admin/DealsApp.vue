@@ -23,6 +23,7 @@ import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { stageBadge, stageBadgeBordered } from "@crm/utils/deals/stageStyles.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -96,7 +97,7 @@ async function submitCreate() {
         reset();
         if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true); // refresh kanban too
     } else {
-        setCreateErrors(data.errors ?? {});
+        setCreateErrors(translateServerErrors(t, data.errors));
     }
 }
 
@@ -122,7 +123,7 @@ async function submitEdit() {
         reset();
         if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
     } else {
-        setEditErrors(data.errors ?? {});
+        setEditErrors(translateServerErrors(t, data.errors));
     }
 }
 

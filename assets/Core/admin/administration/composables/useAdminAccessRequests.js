@@ -68,7 +68,7 @@ export function useAdminAccessRequests(
                 },
             });
             const data = await response.json();
-            if (data.ok) {
+            if (data.success) {
                 toast.success(
                     data.message ?? t("admin.access_requests.approved_toast"),
                 );
@@ -97,7 +97,7 @@ export function useAdminAccessRequests(
                 },
             });
             const data = await response.json();
-            if (data.ok) {
+            if (data.success) {
                 toast.success(
                     data.message ?? t("admin.access_requests.rejected_toast"),
                 );
@@ -125,7 +125,7 @@ export function useAdminAccessRequests(
                 },
             });
             const data = await response.json();
-            if (data.ok) {
+            if (data.success) {
                 toast.success(
                     data.message ?? t("admin.access_requests.purged_toast"),
                 );

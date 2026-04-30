@@ -6,12 +6,11 @@ namespace Aurora\Core\Auth\Controller\Front;
 
 use Aurora\Core\Auth\DTO\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
-use Aurora\Core\Auth\Security\FrontLoginAuthenticator;
+use Aurora\Core\Auth\View\AuthFrontViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserTypeEnum;
@@ -39,7 +38,7 @@ class AuthController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
-        private readonly ThemeContext $themeContext,
+        private readonly AuthFrontViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/login', name: 'front_login', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -53,14 +52,11 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('front_account', ['locale' => $locale]);
         }
 
-        return $this->render($this->themeResolver->resolve('front_login'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'checkPath' => FrontLoginAuthenticator::CHECK_PATH,
-            'error' => $authUtils->getLastAuthenticationError(),
-            'lastEmail' => $authUtils->getLastUsername(),
-        ]);
+        return $this->render($this->themeResolver->resolve('front_login'), $this->viewBuilder->loginView(
+            $locale,
+            $authUtils->getLastUsername(),
+            $authUtils->getLastAuthenticationError(),
+        ));
     }
 
     #[Route('/front-login-check', name: 'front_login_check', methods: [HttpMethodEnum::Post->value])]
@@ -82,15 +78,13 @@ class AuthController extends AbstractController
         $registrationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::FrontRegistrationEnabled->value);
 
         if (!$registrationEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render($this->themeResolver->resolve('front_register'), [
-                'locale' => $locale,
-                'context' => $this->frontContext,
-                'themeContext' => $this->themeContext,
-                'registrationEnabled' => $registrationEnabled,
-                'errors' => [],
-                'values' => [],
-                'submitted' => false,
-            ]);
+            return $this->render($this->themeResolver->resolve('front_register'), $this->viewBuilder->registerView(
+                $locale,
+                $registrationEnabled,
+                [],
+                [],
+                false,
+            ));
         }
 
         $input = FrontRegisterInput::fromArray($request->request->all(), $locale);
@@ -107,18 +101,16 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('front_register_confirm', ['locale' => $locale]);
         }
 
-        return $this->render($this->themeResolver->resolve('front_register'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'registrationEnabled' => true,
-            'errors' => $errors,
-            'values' => [
+        return $this->render($this->themeResolver->resolve('front_register'), $this->viewBuilder->registerView(
+            $locale,
+            true,
+            $errors,
+            [
                 'name' => $request->request->get('name', ''),
                 'email' => $request->request->get('email', ''),
             ],
-            'submitted' => true,
-        ]);
+            true,
+        ));
     }
 
     #[Route('/{locale}/register/confirm', name: 'front_register_confirm', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -129,13 +121,11 @@ class AuthController extends AbstractController
         $pendingEmail = $request->getSession()->get('_front_pending_email');
         $resent = $request->query->getBoolean('resent');
 
-        return $this->render($this->themeResolver->resolve('front_register_confirm'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'pendingEmail' => $pendingEmail,
-            'resent' => $resent,
-        ]);
+        return $this->render($this->themeResolver->resolve('front_register_confirm'), $this->viewBuilder->registerConfirmView(
+            $locale,
+            is_string($pendingEmail) ? $pendingEmail : null,
+            $resent,
+        ));
     }
 
     #[Route('/{locale}/resend-verification', name: 'front_resend_verification', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]
@@ -158,12 +148,10 @@ class AuthController extends AbstractController
 
         $user = $this->frontUserManager->verifyEmail($token);
 
-        return $this->render($this->themeResolver->resolve('front_verify_email'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'success' => $user instanceof User,
-        ]);
+        return $this->render($this->themeResolver->resolve('front_verify_email'), $this->viewBuilder->verifyEmailView(
+            $locale,
+            $user instanceof User,
+        ));
     }
 
     #[Route('/{locale}/forgot-password', name: 'front_forgot_password', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -184,12 +172,7 @@ class AuthController extends AbstractController
             $sent = true;
         }
 
-        return $this->render($this->themeResolver->resolve('front_forgot_password'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'sent' => $sent,
-        ]);
+        return $this->render($this->themeResolver->resolve('front_forgot_password'), $this->viewBuilder->forgotPasswordView($locale, $sent));
     }
 
     #[Route('/{locale}/reset-password/{selector}/{token}', name: 'front_reset_password', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -205,15 +188,13 @@ class AuthController extends AbstractController
         $resetRequest = $this->frontUserManager->validateResetToken($selector, $token);
 
         if (!$resetRequest instanceof ResetPasswordRequest) {
-            return $this->render($this->themeResolver->resolve('front_reset_password'), [
-                'locale' => $locale,
-                'context' => $this->frontContext,
-                'themeContext' => $this->themeContext,
-                'invalid' => true,
-                'errors' => [],
-                'selector' => $selector,
-                'token' => $token,
-            ]);
+            return $this->render($this->themeResolver->resolve('front_reset_password'), $this->viewBuilder->resetPasswordView(
+                $locale,
+                $selector,
+                $token,
+                true,
+                [],
+            ));
         }
 
         $errors = [];
@@ -235,15 +216,13 @@ class AuthController extends AbstractController
             }
         }
 
-        return $this->render($this->themeResolver->resolve('front_reset_password'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'invalid' => false,
-            'errors' => $errors,
-            'selector' => $selector,
-            'token' => $token,
-        ]);
+        return $this->render($this->themeResolver->resolve('front_reset_password'), $this->viewBuilder->resetPasswordView(
+            $locale,
+            $selector,
+            $token,
+            false,
+            $errors,
+        ));
     }
 
     #[Route('/{locale}/account', name: 'front_account', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -253,14 +232,7 @@ class AuthController extends AbstractController
         $this->assertActiveLocale($locale);
         $request->setLocale($locale);
 
-        $user = $this->getUser();
-
-        return $this->render($this->themeResolver->resolve('front_account'), [
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-            'user' => $user,
-        ]);
+        return $this->render($this->themeResolver->resolve('front_account'), $this->viewBuilder->accountView($locale, $this->getUser()));
     }
 
     #[Route('/{locale}/account/logout', name: 'front_logout', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]

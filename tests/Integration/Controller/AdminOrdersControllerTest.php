@@ -54,7 +54,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $payload = json_decode($response->getContent(), true);
-        self::assertTrue($payload['ok']);
+        self::assertTrue($payload['success']);
         self::assertGreaterThanOrEqual(1, $payload['total']);
         self::assertSame($this->order->getNumber(), $payload['items'][0]['number']);
     }
@@ -63,7 +63,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
     {
         $this->client->request('GET', '/admin/ecommerce/orders/list?status=cancelled');
         $payload = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertTrue($payload['ok']);
+        self::assertTrue($payload['success']);
         // Order is "paid" by default after checkout — cancelled bucket should be empty
         self::assertSame(0, $payload['total']);
     }

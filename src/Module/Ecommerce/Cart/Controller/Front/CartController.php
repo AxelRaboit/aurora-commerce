@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Cart\Controller\Front;
 
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
-use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
+use Aurora\Module\Ecommerce\Cart\View\CartViewBuilder;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CartController extends AbstractController
 {
     use FrontLocaleTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly CartManagerInterface $cartManager,
@@ -28,7 +30,7 @@ class CartController extends AbstractController
         private readonly ListingRepository $listingRepository,
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
-        private readonly ThemeContext $themeContext,
+        private readonly CartViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/cart', name: 'front_cart', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
@@ -39,12 +41,7 @@ class CartController extends AbstractController
 
         $cart = $this->cartManager->getCurrentCart();
 
-        return $this->render($this->themeResolver->resolve('cart'), [
-            'cart' => $this->cartSerializer->serialize($cart),
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('cart'), $this->viewBuilder->indexView($cart, $locale));
     }
 
     #[Route('/{locale}/cart/add', name: 'front_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
@@ -127,7 +124,7 @@ class CartController extends AbstractController
         if ($this->isXhr($request)) {
             $cart = $this->cartManager->getCurrentCart();
 
-            return $this->json(['ok' => true, 'cart' => $this->cartSerializer->serialize($cart)]);
+            return $this->jsonSuccess(['cart' => $this->cartSerializer->serialize($cart)]);
         }
 
         return $this->redirectToRoute('front_cart', ['locale' => $locale]);

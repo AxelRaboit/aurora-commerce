@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Dashboard\Controller\Dev;
 
+use Aurora\Core\Dashboard\View\UsersViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\DTO\CreateUserInput;
 use Aurora\Core\User\DTO\UpdateUserInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use DateTimeInterface;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,51 +29,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class UsersController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
-        private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
+        private readonly UsersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $result = $this->userRepository->findPaginatedForAdmin($pagination->page, $pagination->search);
-
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
-        $items = array_map(
-            fn (User $user): array => [
-                'id' => $user->getId(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'locale' => $user->getLocale()->value,
-                'isDevRole' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
-                'createdAt' => $user->getCreatedAt()->format(DateTimeInterface::ATOM),
-                'isCurrent' => $user->getId() === $currentUser->getId(),
-            ],
-            $result['items'],
-        );
-
-        $payload = [
-            'items' => $items,
-            'total' => $result['total'],
-            'page' => $result['page'],
-            'totalPages' => $result['totalPages'],
-        ];
+        $payload = $this->viewBuilder->usersPayload($pagination->page, $pagination->search, $currentUser);
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
-            return $this->json(['ok' => true, ...$payload]);
+            return $this->jsonSuccess($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', [
-            'tab' => 'users',
-            'users' => $payload,
-            'search' => $pagination->search ?? '',
-        ]);
+        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
@@ -84,14 +61,14 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         $user = $this->userManager->create($input->name, $input->email, $input->password);
         $this->userManager->changeLocale($user, $input->locale);
         $this->addFlash('success', $this->translator->trans('admin.users.toast.created'));
 
-        return $this->json(['success' => true, 'id' => $user->getId()]);
+        return $this->jsonSuccess(['id' => $user->getId()]);
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -102,13 +79,13 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $this->userManager->update($user, $input->name, $input->email);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['email' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['email' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
         $this->userManager->changeLocale($user, $input->locale);
@@ -119,7 +96,7 @@ final class UsersController extends AbstractController
 
         $this->addFlash('success', $this->translator->trans('admin.users.toast.updated'));
 
-        return $this->json(['success' => true, 'id' => $user->getId()]);
+        return $this->jsonSuccess(['id' => $user->getId()]);
     }
 
     #[Route('/{id}/toggle-role', name: '_toggle_role', methods: [HttpMethodEnum::Post->value])]

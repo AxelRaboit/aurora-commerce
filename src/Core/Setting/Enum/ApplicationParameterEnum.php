@@ -34,6 +34,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case EcommerceLowStockThreshold = 'ecommerce_low_stock_threshold';
     case CrmAdminEnabled = 'crm_admin_enabled';
     case ErpAdminEnabled = 'erp_admin_enabled';
+    case PhotoAdminEnabled = 'photo_admin_enabled';
+    case PhotoFrontEnabled = 'photo_front_enabled';
 
     public function getKey(): string
     {
@@ -71,6 +73,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceLowStockThreshold => 'Seuil de stock bas (e-commerce)',
             self::CrmAdminEnabled => 'Administration CRM activée',
             self::ErpAdminEnabled => 'Administration ERP activée',
+            self::PhotoAdminEnabled => 'Administration Photo activée',
+            self::PhotoFrontEnabled => 'Galeries publiques activées (front)',
         };
     }
 
@@ -105,6 +109,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceLowStockThreshold => "Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.",
             self::CrmAdminEnabled => "Active la section CRM dans l'administration (contacts, entreprises, affaires, kanban). Décocher cache la sidebar et 404 les routes /admin/crm/*.",
             self::ErpAdminEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
+            self::PhotoAdminEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
+            self::PhotoFrontEnabled => 'Active les galeries publiques côté front (pages /g/{slug}). Décocher 404 toutes les pages galerie pour les clients.',
         };
     }
 
@@ -139,6 +145,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceLowStockThreshold => '5',
             self::CrmAdminEnabled => '1',
             self::ErpAdminEnabled => '1',
+            self::PhotoAdminEnabled => '1',
+            self::PhotoFrontEnabled => '1',
         };
     }
 
@@ -147,7 +155,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled => 'bool',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -214,7 +222,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled => 'modules',
+            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled => 'modules',
             self::EcommerceLowStockThreshold => 'ecommerce',
         };
     }

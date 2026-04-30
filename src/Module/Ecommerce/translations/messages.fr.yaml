@@ -1,4 +1,19 @@
 admin:
+  modules:
+    ecommerce: E-commerce
+  audit:
+    actions:
+      ecommerce:
+        listing:
+          created: Annonce créée
+          updated: Annonce mise à jour
+          deleted: Annonce supprimée
+        order:
+          created: Commande créée
+          paid: Commande payée
+          shipped: Commande expédiée
+          delivered: Commande livrée
+          cancelled: Commande annulée
   nav:
     listings: Boutique
     orders: Commandes

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Admin;
 
+use Aurora\Core\Auth\View\InvitationViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\DTO\UserSetPasswordInput;
@@ -24,6 +25,7 @@ final class InvitationController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly Security $security,
         private readonly TranslatorInterface $translator,
+        private readonly InvitationViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/invitation/{selector}/{token}', name: 'admin_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
@@ -44,12 +46,7 @@ final class InvitationController extends AbstractController
 
             $errors = $this->payloadValidator->errors($input);
             if ([] !== $errors) {
-                return $this->render('@Core/admin/auth/invitation_accept.html.twig', [
-                    'user' => $user,
-                    'selector' => $selector,
-                    'token' => $token,
-                    'errors' => $errors,
-                ]);
+                return $this->render('@Core/admin/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token, $errors));
             }
 
             $this->userManager->consumeInvitation($user, $input->password);
@@ -61,11 +58,6 @@ final class InvitationController extends AbstractController
             return new RedirectResponse($this->generateUrl('admin_dashboard'));
         }
 
-        return $this->render('@Core/admin/auth/invitation_accept.html.twig', [
-            'user' => $user,
-            'selector' => $selector,
-            'token' => $token,
-            'errors' => [],
-        ]);
+        return $this->render('@Core/admin/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token));
     }
 }

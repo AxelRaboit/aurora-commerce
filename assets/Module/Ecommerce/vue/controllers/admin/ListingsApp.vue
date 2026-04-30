@@ -24,6 +24,7 @@ import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -47,7 +48,7 @@ const availableProducts = ref([]);
 async function loadProducts() {
     const response = await fetch(props.productsPath, { headers: { "X-Requested-With": "XMLHttpRequest" } });
     const data = await response.json();
-    if (data.ok) availableProducts.value = data.items;
+    if (data.success) availableProducts.value = data.items;
 }
 onMounted(loadProducts);
 
@@ -97,7 +98,7 @@ async function submitCreate() {
         loadProducts();
     } else {
         if (data.errors?._global) toast.error(data.errors._global);
-        setCreateErrors(data.errors ?? {});
+        setCreateErrors(translateServerErrors(t, data.errors));
     }
 }
 
@@ -140,7 +141,7 @@ async function submitEdit() {
         reset();
     } else {
         if (data.errors?._global) toast.error(data.errors._global);
-        setEditErrors(data.errors ?? {});
+        setEditErrors(translateServerErrors(t, data.errors));
     }
 }
 

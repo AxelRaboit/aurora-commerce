@@ -36,7 +36,7 @@ async function activateTheme(theme) {
         const url = buildPath(props.activatePath, { id: theme.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             toast.error(t("shared.common.error"));
             return;
         }
@@ -72,7 +72,7 @@ async function submitCreate() {
             body: JSON.stringify(createForm),
         });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             createModal.errors = data.errors ?? {};
             return;
         }
@@ -210,7 +210,7 @@ async function submitEdit() {
             }),
         });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             editModal.errors = data.errors ?? {};
             return;
         }
@@ -237,7 +237,7 @@ async function confirmDelete() {
         const url = buildPath(props.deletePath, { id: theme.id });
         const response = await fetch(url, { method: HttpMethod.Post });
         const data = await response.json();
-        if (!data.ok) {
+        if (!data.success) {
             toast.error(t(data.error ?? "common.error"));
             deletingTheme.value = null;
             return;

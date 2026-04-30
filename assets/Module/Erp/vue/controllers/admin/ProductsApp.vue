@@ -23,6 +23,7 @@ import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 
@@ -94,7 +95,7 @@ async function submitCreate() {
     const data = await createRequest(props.createPath, buildPayload(newProduct.value));
     if (!data) return;
     if (data.success) { showCreate.value = false; toast.success(t("admin.erp.products.created")); reset(); }
-    else setCreateErrors(data.errors ?? {});
+    else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
 function buildPayload(form) {
@@ -146,7 +147,7 @@ async function submitEdit() {
     const data = await editRequest(url, buildPayload(editForm.value));
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t("admin.erp.products.updated")); reset(); }
-    else setEditErrors(data.errors ?? {});
+    else setEditErrors(translateServerErrors(t, data.errors));
 }
 
 // --- Delete ---

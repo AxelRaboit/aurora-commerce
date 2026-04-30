@@ -18,6 +18,7 @@ export default defineConfig({
             '@crm': path.resolve(__dirname, 'assets/Module/Crm'),
             '@erp': path.resolve(__dirname, 'assets/Module/Erp'),
             '@ecommerce': path.resolve(__dirname, 'assets/Module/Ecommerce'),
+            '@photo': path.resolve(__dirname, 'assets/Module/Photo'),
             '@shared': path.resolve(__dirname, 'assets/shared'),
         },
     },

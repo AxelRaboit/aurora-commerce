@@ -1,9 +1,27 @@
 admin:
+  modules:
+    crm: CRM
   nav:
     contacts: Kontakte
     companies: Unternehmen
     deals: Geschäfte
     deals_kanban: Kanban-Pipeline
+  audit:
+    actions:
+      crm:
+        company:
+          created: Unternehmen erstellt
+          updated: Unternehmen aktualisiert
+          deleted: Unternehmen gelöscht
+        contact:
+          created: Kontakt erstellt
+          updated: Kontakt aktualisiert
+          deleted: Kontakt gelöscht
+        deal:
+          created: Geschäft erstellt
+          updated: Geschäft aktualisiert
+          deleted: Geschäft gelöscht
+          stage_changed: Stufe geändert
   crm:
     deals:
       kanban: Kanban-Pipeline

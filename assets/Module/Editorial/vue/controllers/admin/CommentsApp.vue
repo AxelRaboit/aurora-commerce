@@ -55,7 +55,7 @@ async function moderateComment(comment, path, successKey, statsUpdate) {
     try {
         const response = await fetch(buildPath(path, { id: comment.id }), { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             toast.success(t(successKey));
             statsUpdate(comment.status);
             fetchComments();
@@ -114,7 +114,7 @@ async function doDelete() {
     try {
         const response = await fetch(buildPath(props.deletePath, { id: comment.id }), { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.deleted"));
             if (comment.status === "pending") localStats.value.pending = Math.max(0, localStats.value.pending - 1);
             else if (comment.status === "approved") localStats.value.approved = Math.max(0, localStats.value.approved - 1);
@@ -148,7 +148,7 @@ async function doToggleModeration() {
     try {
         const response = await fetch(props.toggleModerationPath, { method: HttpMethod.Post });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             isModerationEnabled.value = data.moderationEnabled;
             toast.success(data.moderationEnabled ? t("admin.comments.moderationEnabled") : t("admin.comments.moderationDisabled"));
             pendingToggleModeration.value = false;

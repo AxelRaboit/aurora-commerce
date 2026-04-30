@@ -1,0 +1,11 @@
+{% extends '@Photo/front/gallery/layout.html.twig' %}
+
+{% block body %}
+<div {{ vue_component('photo/front/GalleryUnlockApp', {
+    gallery: {
+        id: gallery.id,
+        title: gallery.title,
+    },
+    unlockPath: unlockPath,
+}) }}></div>
+{% endblock %}

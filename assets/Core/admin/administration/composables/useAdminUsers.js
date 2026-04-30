@@ -5,6 +5,7 @@ import { useForm } from "@/shared/composables/form/useForm.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
 import { toast } from "vue-sonner";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import {
     required,
     email,
@@ -108,7 +109,7 @@ export function useAdminUsers(
         if (data.success) {
             window.location.reload();
         } else {
-            setCreateErrors(data.errors ?? {});
+            setCreateErrors(translateServerErrors(t, data.errors));
         }
     }
 
@@ -176,7 +177,7 @@ export function useAdminUsers(
         if (data.success) {
             window.location.reload();
         } else {
-            setEditErrors(data.errors ?? {});
+            setEditErrors(translateServerErrors(t, data.errors));
         }
     }
 

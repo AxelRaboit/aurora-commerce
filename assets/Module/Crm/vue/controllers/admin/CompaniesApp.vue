@@ -18,6 +18,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required, url } from "@/shared/utils/validation/validators.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -53,7 +54,7 @@ async function submitCreate() {
     const data = await createRequest(props.createPath, newCompany.value);
     if (!data) return;
     if (data.success) { showCreate.value = false; toast.success(t('admin.crm.companies.created')); reset(); }
-    else setCreateErrors(data.errors ?? {});
+    else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
 // Edit
@@ -76,7 +77,7 @@ async function submitEdit() {
     const data = await editRequest(updateUrl, editForm.value);
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t('admin.crm.companies.updated')); reset(); }
-    else setEditErrors(data.errors ?? {});
+    else setEditErrors(translateServerErrors(t, data.errors));
 }
 
 // --- Delete ---

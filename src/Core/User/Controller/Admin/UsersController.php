@@ -6,6 +6,7 @@ namespace Aurora\Core\User\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\DTO\UserInput;
 use Aurora\Core\User\DTO\UserInviteInput;
@@ -15,6 +16,7 @@ use Aurora\Core\User\Manager\UserHierarchyManager;
 use Aurora\Core\User\Manager\UserProfilePhotoManager;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\User\Serializer\UserSerializer;
+use Aurora\Core\User\View\UsersViewBuilder;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
@@ -30,6 +32,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class UsersController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -38,30 +41,18 @@ final class UsersController extends AbstractController
         private readonly UserSerializer $userSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly UserProfilePhotoManager $userProfilePhotoManager,
+        private readonly UsersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        $selectableRoles = $this->isGranted(UserRoleEnum::Dev->value)
-            ? [UserRoleEnum::Dev, ...UserRoleEnum::selectableForAdmin()]
-            : UserRoleEnum::selectableForAdmin();
-
-        $roles = array_map(
-            static fn (UserRoleEnum $role): array => ['value' => $role->value, 'label' => $role->label()],
-            $selectableRoles,
-        );
-
         $currentUser = $this->getUser();
-        $currentUserPriority = $currentUser instanceof User
-            ? UserRoleEnum::highestPriorityForRoles($currentUser->getRoles())
-            : 0;
 
-        return $this->render('@Core/admin/users/index.html.twig', [
-            'roles' => $roles,
-            'isDev' => $this->isGranted(UserRoleEnum::Dev->value),
-            'currentUserPriority' => $currentUserPriority,
-        ]);
+        return $this->render('@Core/admin/users/index.html.twig', $this->viewBuilder->indexView(
+            $this->isGranted(UserRoleEnum::Dev->value),
+            $currentUser instanceof User ? $currentUser : null,
+        ));
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
@@ -71,8 +62,7 @@ final class UsersController extends AbstractController
 
         $result = $this->userRepository->findPaginated($pagination->page, 10, $pagination->search, $role ?: null);
 
-        return $this->json([
-            'ok' => true,
+        return $this->jsonSuccess([
             'items' => array_map($this->userSerializer->serialize(...), $result['items']),
             'total' => $result['total'],
             'page' => $result['page'],
@@ -92,13 +82,13 @@ final class UsersController extends AbstractController
             $this->userRepository->findAllAdminsAlphabetical(),
         );
 
-        return $this->json(['ok' => true, 'items' => $items]);
+        return $this->jsonSuccess(['items' => $items]);
     }
 
     #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
     public function show(User $user): JsonResponse
     {
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serializeWithSubordinates($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serializeWithSubordinates($user)]);
     }
 
     #[Route('/invite', name: '_invite', methods: [HttpMethodEnum::Post->value])]
@@ -108,16 +98,16 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['ok' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $user = $this->userManager->invite($input->name, $input->email, $input->role, $input->message);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['ok' => false, 'errors' => ['role' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['role' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -125,20 +115,20 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $input = UserInput::fromRequest($request);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['ok' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $this->userHierarchyManager->applyManager($user, $input->managerId);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['ok' => false, 'errors' => ['managerId' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['managerId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
         try {
@@ -146,10 +136,10 @@ final class UsersController extends AbstractController
         } catch (InvalidArgumentException $invalidArgumentException) {
             $field = str_contains($invalidArgumentException->getMessage(), 'email') ? 'email' : 'role';
 
-            return $this->json(['ok' => false, 'errors' => [$field => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput([$field => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/resend-invitation', name: '_resend_invitation', methods: [HttpMethodEnum::Post->value])]
@@ -157,12 +147,12 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $this->userManager->resendInvitation($user, null);
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/toggle-disabled', name: '_toggle_disabled', methods: [HttpMethodEnum::Post->value])]
@@ -170,16 +160,16 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_disable_self'], Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure('admin.users.cannot_disable_self');
         }
 
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $this->userManager->toggleDisabled($user);
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/photo', name: '_photo_upload', methods: [HttpMethodEnum::Post->value])]
@@ -187,21 +177,21 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->json(['ok' => false, 'errors' => ['photo' => 'admin.users.photo.errors.missing']]);
+            return $this->jsonInvalidInput(['photo' => 'admin.users.photo.errors.missing'], Response::HTTP_OK);
         }
 
         try {
             $this->userProfilePhotoManager->upload($user, $file);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['ok' => false, 'errors' => ['photo' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/photo/delete', name: '_photo_delete', methods: [HttpMethodEnum::Post->value])]
@@ -209,12 +199,12 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $this->userProfilePhotoManager->delete($user);
 
-        return $this->json(['ok' => true, 'user' => $this->userSerializer->serialize($user)]);
+        return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
@@ -222,15 +212,15 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_delete_self'], Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure('admin.users.cannot_delete_self');
         }
 
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->json(['ok' => false, 'error' => 'admin.users.cannot_modify_higher_role'], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $this->userManager->delete($user);
 
-        return $this->json(['ok' => true]);
+        return $this->jsonSuccess();
     }
 }

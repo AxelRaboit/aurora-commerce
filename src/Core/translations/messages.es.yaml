@@ -1,4 +1,18 @@
 admin:
+  modules:
+    media: Medios
+    users: Usuarios
+  audit:
+    actions:
+      media:
+        cropped: Medio recortado
+        deleted: Medio eliminado
+        moved: Medio movido
+        updated: Medio actualizado
+        uploaded: Medio subido
+      users:
+        photo_uploaded: Foto de perfil subida
+        photo_removed: Foto de perfil eliminada
   access_requests:
     approved: Solicitud de {name} aprobada.
     purged: Solicitudes procesadas eliminadas.
@@ -10,6 +24,12 @@ admin:
   invitations:
     sent: Invitación enviada a {email}.
   media:
+    usage:
+      postFeatured: Imagen destacada
+      postContent: Bloque imagen
+      brandingLogo: Logo del sitio
+      brandingFavicon: Favicon
+      brandingDetail: Identidad visual
     upload: Subir
     uploaded: "{count} archivo(s) subido(s)"
     empty: No hay archivos en esta carpeta
@@ -18,6 +38,7 @@ admin:
     editMedia: Editar archivo
     moved: Archivo movido
     rootFolder: Raíz
+    allMedia: Todos los medios
     expand: Expandir
     collapse: Colapsar
     dropToUpload: Soltar archivos para subir
@@ -229,6 +250,7 @@ admin:
     administration: Administración
     forms: Formularios
     dashboard: Panel de control
+    galleries: Galerías
     media: Medios
     menus: Menús
     profile: Mi perfil

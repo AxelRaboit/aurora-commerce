@@ -42,23 +42,28 @@ final class ImageVariantGeneratorTest extends TestCase
         }
     }
 
-    public function testSkipsVariantsLargerThanSource(): void
+    public function testStillGeneratesLargeVariantWhenSourceIsSmaller(): void
     {
+        // Even when the source is smaller than every preset, the largest
+        // variant is always generated — that's the EXIF-strip safety net so
+        // the public download path never falls back to the raw original.
         $relative = $this->createPngFixture('small.png', 100, 100);
 
         $variants = $this->generator->generate($relative, 'image/png');
 
-        self::assertSame([], $variants);
+        self::assertSame(['large'], array_keys($variants));
+        self::assertFileExists($this->sandbox.'/'.$variants['large']);
     }
 
-    public function testGeneratesOnlyVariantsThatActuallyShrink(): void
+    public function testGeneratesShrinkingVariantsAndAlwaysKeepsLarge(): void
     {
         $relative = $this->createPngFixture('medium.png', 500, 500);
 
         $variants = $this->generator->generate($relative, 'image/png');
 
-        self::assertSame(['thumbnail'], array_keys($variants));
+        self::assertSame(['thumbnail', 'large'], array_keys($variants));
         self::assertFileExists($this->sandbox.'/'.$variants['thumbnail']);
+        self::assertFileExists($this->sandbox.'/'.$variants['large']);
     }
 
     public function testReturnsEmptyForUnsupportedMimeType(): void

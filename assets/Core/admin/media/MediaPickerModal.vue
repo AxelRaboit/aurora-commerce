@@ -6,6 +6,7 @@ import {
     Folder,
     FolderOpen,
     Home,
+    Layers,
     ChevronRight,
     ChevronDown,
     Image as ImageIcon,
@@ -26,6 +27,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppFileInput from "@/shared/components/form/AppFileInput.vue";
@@ -43,6 +45,7 @@ const { formatDateTime } = useDateFormat();
 const props = defineProps({
     show: { type: Boolean, default: false },
     imagesOnly: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: false },
     listPath: { type: String, default: "/admin/media/list" },
     uploadPath: { type: String, default: "/admin/media/upload" },
     editPath: { type: String, default: "/admin/media/__id__/edit" },
@@ -56,6 +59,8 @@ const folders = ref([]);
 const loading = ref(false);
 const search = ref("");
 const currentFolderId = ref(null);
+// true = flat cross-folder browse; false + currentFolderId=null = root only
+const allMediaView = ref(true);
 const typeFilter = ref("all");
 const selected = ref(null);
 const searchInputRef = ref(null);
@@ -100,6 +105,8 @@ async function load() {
         const url = new URL(props.listPath, window.location.origin);
         if (search.value.trim()) url.searchParams.set("search", search.value.trim());
         if (currentFolderId.value) url.searchParams.set("folderId", String(currentFolderId.value));
+        else if (allMediaView.value) url.searchParams.set("all", "1");
+        // else: no folderId + no all → backend returns root-only media
         const response = await fetch(url, { signal: abortCtrl.signal, headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error();
         const data = await response.json();
@@ -135,7 +142,20 @@ watch(
 
 // ── Folder navigation ────────────────────────────────────────────────────────
 function selectFolder(id) {
+    allMediaView.value = false;
     currentFolderId.value = id;
+}
+
+function selectAllMedia() {
+    allMediaView.value = true;
+    currentFolderId.value = null;
+    load();
+}
+
+function selectRoot() {
+    allMediaView.value = false;
+    currentFolderId.value = null;
+    load();
 }
 
 function toggleCollapse(id) {
@@ -151,7 +171,20 @@ const currentFolderName = computed(() => {
 });
 
 // ── Selection ────────────────────────────────────────────────────────────────
+const multiSelected = ref([]); // array of media items in multiple mode
+
+function isSelected(item) {
+    if (props.multiple) return multiSelected.value.some((m) => m.id === item.id);
+    return selected.value?.id === item.id;
+}
+
 function pick(item) {
+    if (props.multiple) {
+        const idx = multiSelected.value.findIndex((m) => m.id === item.id);
+        if (idx >= 0) multiSelected.value.splice(idx, 1);
+        else multiSelected.value.push(item);
+        return;
+    }
     selected.value = item;
 }
 
@@ -164,6 +197,10 @@ function pickFolderMobile(id) {
 }
 
 function confirm() {
+    if (props.multiple) {
+        if (multiSelected.value.length > 0) emit("select", [...multiSelected.value]);
+        return;
+    }
     if (selected.value) emit("select", selected.value);
 }
 
@@ -339,11 +376,20 @@ function dimensions(item) {
                     <button
                         type="button"
                         class="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors"
-                        :class="!currentFolderId ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:bg-surface-2 hover:text-primary'"
-                        v-on:click="pickFolderMobile(null)"
+                        :class="allMediaView ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:bg-surface-2 hover:text-primary'"
+                        v-on:click="selectAllMedia(); foldersOpenMobile = false"
+                    >
+                        <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
+                        <span class="truncate">{{ t("shared.media.picker.allFolders") }}</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors"
+                        :class="!allMediaView && !currentFolderId ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:bg-surface-2 hover:text-primary'"
+                        v-on:click="selectRoot(); foldersOpenMobile = false"
                     >
                         <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="truncate">{{ t("shared.media.picker.allFolders") }}</span>
+                        <span class="truncate">{{ t("shared.media.picker.rootFolder") }}</span>
                     </button>
                     <div v-if="flatFolders.length" class="border-t border-line/60 mt-1 pt-1">
                         <div
@@ -492,9 +538,9 @@ function dimensions(item) {
                                     :key="item.id"
                                     type="button"
                                     class="group relative aspect-square rounded-lg overflow-hidden border-2 transition-all bg-surface-2"
-                                    :class="selected?.id === item.id ? 'border-accent-500 ring-2 ring-accent-500/30' : 'border-line hover:border-accent-400'"
+                                    :class="isSelected(item) ? 'border-accent-500 ring-2 ring-accent-500/30' : 'border-line hover:border-accent-400'"
                                     v-on:click="pick(item)"
-                                    v-on:dblclick="pick(item); confirm()"
+                                    v-on:dblclick="multiple ? null : (pick(item), confirm())"
                                 >
                                     <AppImage
                                         v-if="item.isImage"
@@ -507,6 +553,7 @@ function dimensions(item) {
                                         <component :is="typeIcon(item)" class="w-8 h-8" :stroke-width="1.5" />
                                         <span class="text-[10px] font-mono uppercase tracking-wide">{{ item.mimeType?.split("/")?.[1] ?? "" }}</span>
                                     </div>
+                                    <AppSelectionCheck v-if="multiple" :active="isSelected(item)" class="absolute top-1.5 left-1.5" />
                                     <div class="absolute inset-x-0 bottom-0 px-2 py-1 bg-linear-to-t from-black/80 to-transparent text-white text-xs truncate text-left">
                                         {{ item.originalName }}
                                     </div>
@@ -569,12 +616,14 @@ function dimensions(item) {
                             <AppInput
                                 v-model="editAlt"
                                 :label="t('shared.media.picker.alt')"
+                                :placeholder="t('shared.media.picker.altPlaceholder')"
                                 :disabled="editSaving"
                                 v-on:blur="saveEdit"
                             />
                             <AppTextarea
                                 v-model="editCaption"
                                 :label="t('shared.media.picker.caption')"
+                                :placeholder="t('shared.media.picker.captionPlaceholder')"
                                 :rows="2"
                                 :disabled="editSaving"
                                 v-on:blur="saveEdit"
@@ -603,15 +652,16 @@ function dimensions(item) {
             </div>
 
             <footer class="flex items-center justify-end gap-2 px-4 sm:px-5 py-3 border-t border-line shrink-0">
+                <span v-if="multiple" class="text-xs text-muted mr-auto">{{ multiSelected.length }} {{ t("shared.media.picker.selectedCount") }}</span>
                 <AppButton variant="ghost" size="md" class="flex-1 sm:flex-none" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton
                     variant="primary"
                     size="md"
-                    :disabled="!selected"
+                    :disabled="multiple ? multiSelected.length === 0 : !selected"
                     class="flex-1 sm:flex-none"
                     v-on:click="confirm"
                 >
-                    {{ t("shared.media.picker.select") }}
+                    {{ multiple ? t("shared.media.picker.addSelected") : t("shared.media.picker.select") }}
                 </AppButton>
             </footer>
         </div>

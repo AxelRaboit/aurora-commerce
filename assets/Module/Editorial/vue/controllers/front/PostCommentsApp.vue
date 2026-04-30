@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import PostCommentsForm from "./PostCommentsForm.vue";
 import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -34,7 +35,7 @@ async function fetchComments() {
     try {
         const response = await fetch(props.listPath);
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             roots.value = data.roots;
             replies.value = data.replies;
             reactionEmojis.value = data.reactionEmojis;
@@ -75,8 +76,8 @@ async function submitComment(parentId, activeForm) {
             }),
         });
         const data = await response.json();
-        if (!data.ok) {
-            errors.value = data.errors ?? {};
+        if (!data.success) {
+            errors.value = translateServerErrors(t, data.errors);
             return;
         }
         activeForm.authorName = "";
@@ -101,7 +102,7 @@ async function react(commentId, type) {
             body: JSON.stringify({ type }),
         });
         const data = await response.json();
-        if (!data.ok) return;
+        if (!data.success) return;
         const update = (list) => list.map((c) =>
             c.id === commentId ? { ...c, reactionCounts: data.counts } : c
         );

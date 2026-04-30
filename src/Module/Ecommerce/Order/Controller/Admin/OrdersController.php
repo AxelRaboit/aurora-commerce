@@ -9,6 +9,7 @@ use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\View\OrdersViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,7 @@ final class OrdersController extends AbstractController
     public function __construct(
         private readonly OrderRepository $orderRepository,
         private readonly OrderSerializer $orderSerializer,
+        private readonly OrdersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -30,14 +32,7 @@ final class OrdersController extends AbstractController
     {
         $status = OrderStatusEnum::tryFrom((string) $request->query->get('status', ''));
 
-        return $this->render('@Ecommerce/admin/orders/index.html.twig', [
-            'orders' => $this->buildListPayload($pagination, $status),
-            'search' => $pagination->search ?? '',
-            'currentStatus' => null === $status ? '' : $status->value,
-            'stats' => $this->orderRepository->countByStatus(),
-            'showPath' => $this->generateUrl('ecommerce_orders_show', ['id' => '__id__']),
-            'listPath' => $this->generateUrl('ecommerce_orders_list'),
-        ]);
+        return $this->render('@Ecommerce/admin/orders/index.html.twig', $this->viewBuilder->indexView($pagination, $status, $this->buildListPayload($pagination, $status)));
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
@@ -53,7 +48,7 @@ final class OrdersController extends AbstractController
         $result = $this->orderRepository->findPaginated($pagination->page, search: $pagination->search, status: $status);
 
         return [
-            'ok' => true,
+            'success' => true,
             'items' => array_map($this->orderSerializer->serializeForList(...), $result['items']),
             'total' => $result['total'],
             'page' => $result['page'],

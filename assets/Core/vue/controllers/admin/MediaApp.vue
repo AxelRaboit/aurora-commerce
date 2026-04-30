@@ -4,7 +4,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, reactive, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -15,6 +15,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -50,28 +51,31 @@ const props = defineProps({
 const folders = ref([...props.folders]);
 const media = ref([...props.media]);
 const currentFolderId = ref(props.currentFolderId);
+const allMediaView = ref(false); // true = flat cross-folder browse ("Tous les médias")
 const searchQuery = ref(props.search ?? "");
 
 const mediaLoading = ref(false);
 let navAbort = null;
 
-function mediaUrl(base, folderId, search) {
+function mediaUrl(base, folderId, search, all = false) {
     const url = new URL(base, window.location.origin);
-    if (folderId) url.searchParams.set("folderId", String(folderId));
+    if (all) url.searchParams.set("all", "1");
+    else if (folderId) url.searchParams.set("folderId", String(folderId));
     if (search) url.searchParams.set("search", search);
     return url;
 }
 
-async function loadMedia(folderId, search) {
+async function loadMedia(folderId, search, { all = false } = {}) {
     navAbort?.abort();
     navAbort = new AbortController();
     mediaLoading.value = true;
     try {
-        const res = await fetch(mediaUrl(props.listPath, folderId, search), { signal: navAbort.signal });
+        const res = await fetch(mediaUrl(props.listPath, folderId, search, all), { signal: navAbort.signal });
         const data = await res.json();
         media.value = data.items ?? [];
         folders.value = data.folders ?? folders.value;
         currentFolderId.value = folderId ?? null;
+        allMediaView.value = all;
         searchQuery.value = search;
         clearSelection();
     } catch (e) {
@@ -83,21 +87,67 @@ async function loadMedia(folderId, search) {
 
 async function navigateTo(folderId, search = searchQuery.value) {
     await loadMedia(folderId, search);
-    history.pushState({ folderId, search }, "", mediaUrl("/admin/media", folderId, search));
+    history.pushState({ folderId, search, all: false }, "", mediaUrl("/admin/media", folderId, search));
+}
+
+async function navigateToAll(search = searchQuery.value) {
+    await loadMedia(null, search, { all: true });
+    history.pushState({ folderId: null, search, all: true }, "", mediaUrl("/admin/media", null, search, true));
 }
 
 async function onPopState(event) {
-    await loadMedia(event.state?.folderId ?? null, event.state?.search ?? "");
+    await loadMedia(event.state?.folderId ?? null, event.state?.search ?? "", { all: !!event.state?.all });
 }
+
+// Read ?focus=ID BEFORE history.replaceState below clears the query string.
+// Use globalThis because a `const window = globalThis` later in this script
+// shadows the global `window` and would put it in the temporal dead zone.
+const initialFocusId = Number(new URLSearchParams(globalThis.location.search).get("focus")) || null;
 
 onMounted(() => {
     history.replaceState(
-        { folderId: currentFolderId.value, search: searchQuery.value },
+        { folderId: currentFolderId.value, search: searchQuery.value, all: false },
         "",
         mediaUrl("/admin/media", currentFolderId.value, searchQuery.value),
     );
     window.addEventListener("popstate", onPopState);
+    focusMediaFromQuery();
 });
+
+// Opens the edit panel for the media id captured at script init from
+// `?focus=ID` (used by the picker modal "Open in library" link). Switches
+// to the right folder when needed so the surrounding grid stays in context.
+async function focusMediaFromQuery() {
+    if (!initialFocusId) return;
+    try {
+        const response = await fetch(`/admin/media/${initialFocusId}/info`, { headers: { Accept: "application/json" } });
+        if (!response.ok) {
+            console.warn(`[media] focus=${initialFocusId} returned ${response.status}`);
+            return;
+        }
+        const data = await response.json();
+        const item = data?.media;
+        if (!item) {
+            console.warn(`[media] focus=${initialFocusId} returned no media in payload`, data);
+            return;
+        }
+
+        // Open the edit panel first — that's what the user came for.
+        openEditMedia(item);
+
+        // Then best-effort: switch the surrounding grid to the right folder.
+        if ((item.folderId ?? null) !== currentFolderId.value) {
+            currentFolderId.value = item.folderId ?? null;
+            try {
+                await loadMedia(currentFolderId.value, searchQuery.value);
+            } catch (loadError) {
+                console.warn("[media] focus loadMedia failed", loadError);
+            }
+        }
+    } catch (error) {
+        console.warn("[media] focus failed", error);
+    }
+}
 
 onUnmounted(() => {
     window.removeEventListener("popstate", onPopState);
@@ -474,6 +524,20 @@ function resetFocalPoint() {
 
 // ── Delete media ─────────────────────────────────────────────────────────────
 const deletingMedia = ref(null);
+const deletingMediaUsage = ref(null);
+const deletingMediaUsageLoading = ref(false);
+
+async function askDeleteMedia(item) {
+    deletingMedia.value = item;
+    deletingMediaUsage.value = null;
+    deletingMediaUsageLoading.value = true;
+    try {
+        const response = await fetch(`/admin/media/${item.id}/usage`, { headers: { Accept: "application/json" } });
+        if (response.ok) deletingMediaUsage.value = await response.json();
+    } catch { /* surfaced as no-usage in the modal */ } finally {
+        deletingMediaUsageLoading.value = false;
+    }
+}
 
 async function confirmDeleteMedia() {
     const item = deletingMedia.value;
@@ -746,13 +810,21 @@ async function moveFolder(folderId, newParentId) {
     <div class="flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 bg-surface border border-line/60 rounded-xl px-4 py-3">
             <nav class="flex items-center gap-1 text-sm text-muted min-w-0 flex-1 flex-wrap">
-                <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
-                    <Home class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.media.rootFolder") }}
-                </button>
-                <template v-for="crumb in breadcrumbs" :key="crumb.id">
-                    <ChevronRight class="w-3 h-3 shrink-0" :stroke-width="2" />
-                    <button type="button" class="hover:text-primary transition-colors truncate" v-on:click="navigateTo(crumb.id)">{{ crumb.name }}</button>
+                <template v-if="allMediaView">
+                    <span class="flex items-center gap-1.5 text-primary shrink-0">
+                        <Layers class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("admin.media.allMedia") }}
+                    </span>
+                </template>
+                <template v-else>
+                    <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
+                        <Home class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("admin.media.rootFolder") }}
+                    </button>
+                    <template v-for="crumb in breadcrumbs" :key="crumb.id">
+                        <ChevronRight class="w-3 h-3 shrink-0" :stroke-width="2" />
+                        <button type="button" class="hover:text-primary transition-colors truncate" v-on:click="navigateTo(crumb.id)">{{ crumb.name }}</button>
+                    </template>
                 </template>
             </nav>
 
@@ -821,8 +893,19 @@ async function moveFolder(folderId, newParentId) {
                     <button
                         type="button"
                         class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
+                        :class="allMediaView
+                            ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
+                            : 'hover:bg-surface-2 text-primary border-transparent'"
+                        v-on:click="navigateToAll()"
+                    >
+                        <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
+                        <span class="flex-1 text-sm font-medium">{{ t("admin.media.allMedia") }}</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
                         :class="[
-                            !currentFolderId
+                            !currentFolderId && !allMediaView
                                 ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
                                 : 'hover:bg-surface-2 text-primary border-transparent',
                             rootDragOver ? 'ring-2 ring-accent-500' : '',
@@ -1029,8 +1112,7 @@ async function moveFolder(folderId, newParentId) {
                             v-on:drop="onMediaItemDrop($event, item)"
                         >
                             <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(item.id)">
-                                <CheckSquare v-if="selectedIds.has(item.id)" class="w-5 h-5 text-accent-400 drop-shadow" :stroke-width="2" />
-                                <Square v-else class="w-5 h-5 text-white drop-shadow" :stroke-width="2" />
+                                <AppSelectionCheck :active="selectedIds.has(item.id)" />
                             </div>
                             <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden cursor-pointer">
                                 <AppImage
@@ -1257,7 +1339,7 @@ async function moveFolder(folderId, newParentId) {
                         <Crop class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.media.crop") }}
                     </AppButton>
-                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="deletingMedia = editingMedia">
+                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="askDeleteMedia(editingMedia)">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>
@@ -1305,11 +1387,43 @@ async function moveFolder(folderId, newParentId) {
             </AppModalFooter>
         </AppModal>
 
-        <AppModal :show="!!deletingMedia" max-width="sm" v-on:close="deletingMedia = null">
-            <p class="text-sm text-primary">{{ t("admin.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
-            <div class="flex justify-end gap-2">
+        <AppModal :show="!!deletingMedia" max-width="md" v-on:close="deletingMedia = null">
+            <p class="text-sm text-primary mb-3">{{ t("admin.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
+
+            <div v-if="deletingMediaUsageLoading" class="text-xs text-muted italic">{{ t("admin.media.checkingUsage") }}</div>
+
+            <div v-else-if="deletingMediaUsage && deletingMediaUsage.total > 0" class="rounded-lg border border-amber-500/40 bg-amber-500/5 p-3 space-y-2 mb-2">
+                <p class="text-sm font-medium text-amber-600 dark:text-amber-400">
+                    {{ t("admin.media.usageWarning", { count: deletingMediaUsage.total }) }}
+                </p>
+                <div v-for="group in deletingMediaUsage.groups" :key="group.type" class="text-xs text-secondary">
+                    <p class="font-semibold uppercase tracking-wide text-[10px] text-muted mb-0.5">{{ t(`admin.media.usageGroups.${group.type}`) }}</p>
+                    <ul class="space-y-0.5 ml-1">
+                        <li v-for="(usage, idx) in group.items" :key="idx" class="flex items-center gap-1.5">
+                            <span class="w-1 h-1 bg-current rounded-full opacity-50" />
+                            <a
+                                v-if="usage.href"
+                                :href="usage.href"
+                                target="_blank"
+                                rel="noopener"
+                                class="text-accent-400 hover:underline truncate"
+                            >
+                                {{ usage.label }}
+                            </a>
+                            <span v-else class="text-primary truncate">{{ usage.label }}</span>
+                            <span v-if="usage.detail" class="text-muted">— {{ usage.detail }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <p v-else-if="deletingMediaUsage" class="text-xs text-emerald-500 italic">{{ t("admin.media.usageNone") }}</p>
+
+            <div class="flex justify-end gap-2 mt-4">
                 <AppButton variant="ghost" size="md" v-on:click="deletingMedia = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">
+                    {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("admin.media.deleteAnyway") : t("shared.common.delete") }}
+                </AppButton>
             </div>
         </AppModal>
 

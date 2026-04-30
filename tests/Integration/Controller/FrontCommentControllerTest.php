@@ -118,7 +118,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertArrayHasKey('counts', $body);
         self::assertGreaterThanOrEqual(1, $body['counts']['like'] ?? 0);
     }

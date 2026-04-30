@@ -82,7 +82,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
     }
 
@@ -94,7 +94,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
         foreach ($body['items'] as $item) {
@@ -110,7 +110,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('approved', $body['comment']['status']);
     }
 
@@ -122,7 +122,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertSame('spam', $body['comment']['status']);
     }
 
@@ -135,7 +135,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
     }
 
     public function testToggleModeration(): void
@@ -146,7 +146,7 @@ final class CommentsControllerTest extends IntegrationTestCase
         self::assertSame(200, $response->getStatusCode());
 
         $body = json_decode((string) $response->getContent(), true);
-        self::assertTrue($body['ok']);
+        self::assertTrue($body['success']);
         self::assertArrayHasKey('moderationEnabled', $body);
     }
 }

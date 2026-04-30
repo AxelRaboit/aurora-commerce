@@ -7,6 +7,7 @@ namespace Aurora\Core\Auth\Controller\Admin;
 use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
 use Aurora\Core\Auth\DTO\ResetPasswordInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\View\PasswordResetViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,7 @@ final class PasswordResetController extends AbstractController
         private readonly PasswordResetManagerInterface $passwordResetManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
+        private readonly PasswordResetViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/forgot-password', name: 'admin_forgot_password')]
@@ -39,7 +41,7 @@ final class PasswordResetController extends AbstractController
             $status = $this->translator->trans('admin.auth.forgot_password.sent');
         }
 
-        return $this->render('@Core/admin/auth/forgot_password.html.twig', ['status' => $status]);
+        return $this->render('@Core/admin/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
     }
 
     #[Route('/reset-password/{selector}/{token}', name: 'admin_reset_password')]
@@ -71,10 +73,6 @@ final class PasswordResetController extends AbstractController
             }
         }
 
-        return $this->render('@Core/admin/auth/reset_password.html.twig', [
-            'errors' => $errors,
-            'selector' => $selector,
-            'token' => $token,
-        ]);
+        return $this->render('@Core/admin/auth/reset_password.html.twig', $this->viewBuilder->resetView($selector, $token, $errors));
     }
 }

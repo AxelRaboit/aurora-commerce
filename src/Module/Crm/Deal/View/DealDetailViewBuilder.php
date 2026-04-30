@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Crm\Deal\View;
+
+use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+/**
+ * Builds the Twig payload for the admin deal detail view. Centralises URL
+ * generation + serialisation for the show screen.
+ */
+final readonly class DealDetailViewBuilder
+{
+    public function __construct(
+        private DealSerializer $dealSerializer,
+        private UrlGeneratorInterface $urlGenerator,
+    ) {}
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function showView(Deal $deal): array
+    {
+        return [
+            'deal' => $this->dealSerializer->serialize($deal),
+            'backPath' => $this->urlGenerator->generate('crm_deals'),
+            'updatePath' => $this->urlGenerator->generate('crm_deals_update', ['id' => $deal->getId()]),
+            'deletePath' => $this->urlGenerator->generate('crm_deals_delete', ['id' => $deal->getId()]),
+            'updateStagePath' => $this->urlGenerator->generate('crm_deals_stage', ['id' => $deal->getId()]),
+        ];
+    }
+}

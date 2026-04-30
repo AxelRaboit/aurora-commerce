@@ -46,7 +46,7 @@ async function handleSubmit() {
             body: JSON.stringify({ ...formData }),
         });
         const data = await response.json();
-        if (data.ok) {
+        if (data.success) {
             submitted.value = true;
         } else if (data.errors) {
             Object.assign(errors, data.errors);

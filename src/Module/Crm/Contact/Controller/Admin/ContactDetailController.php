@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Controller\Admin;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Module\Crm\Contact\View\ContactDetailViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,23 +17,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ContactDetailController extends AbstractController
 {
     public function __construct(
-        private readonly ContactSerializer $contactSerializer,
-        private readonly AuditLogRepository $auditLogRepository,
-        private readonly AuditLogSerializer $auditLogSerializer,
+        private readonly ContactDetailViewBuilder $viewBuilder,
     ) {}
 
     public function __invoke(Contact $contact): Response
     {
-        $activityResult = $this->auditLogRepository->findPaginatedForEntity('Contact', $contact->getId(), 1, 20);
-        $activity = array_map($this->auditLogSerializer->serialize(...), $activityResult['items']);
-
-        return $this->render('@Crm/admin/contacts/show.html.twig', [
-            'contact' => $this->contactSerializer->serialize($contact),
-            'activity' => $activity,
-            'editPath' => $this->generateUrl('crm_contacts', []),
-            'backPath' => $this->generateUrl('crm_contacts'),
-            'updatePath' => $this->generateUrl('crm_contacts_update', ['id' => $contact->getId()]),
-            'deletePath' => $this->generateUrl('crm_contacts_delete', ['id' => $contact->getId()]),
-        ]);
+        return $this->render('@Crm/admin/contacts/show.html.twig', $this->viewBuilder->showView($contact));
     }
 }

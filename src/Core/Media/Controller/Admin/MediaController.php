@@ -8,6 +8,7 @@ use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Media\Contract\MediaManagerInterface;
 use Aurora\Core\Media\DTO\MediaFolderInput;
 use Aurora\Core\Media\DTO\MediaInput;
@@ -18,6 +19,8 @@ use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Serializer\MediaFolderSerializer;
 use Aurora\Core\Media\Serializer\MediaSerializer;
+use Aurora\Core\Media\Service\MediaUsageService;
+use Aurora\Core\Media\View\MediaViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,6 +35,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class MediaController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly MediaRepository $mediaRepository,
@@ -42,34 +46,17 @@ class MediaController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly AuditLogRepository $auditLogRepository,
         private readonly AuditLogSerializer $auditLogSerializer,
+        private readonly MediaUsageService $mediaUsageService,
+        private readonly MediaViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(Request $request): Response
     {
-        $serializer = $this->folderSerializer->withMediaCounts($this->mediaRepository->countGroupedByFolders());
-
-        $folders = array_map(
-            $serializer->serialize(...),
-            $this->folderRepository->findAllOrdered(),
-        );
-
         $folderId = $request->query->getInt('folderId') ?: null;
         $search = mb_trim((string) $request->query->get('search', ''));
-        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
 
-        $media = array_map(
-            $this->mediaSerializer->serialize(...),
-            $this->mediaRepository->findByFolder($folder, $search ?: null),
-        );
-
-        return $this->render('@Core/admin/media/index.html.twig', [
-            'folders' => $folders,
-            'media' => $media,
-            'currentFolderId' => $folderId,
-            'search' => $search,
-            'totalStorageBytes' => $this->mediaRepository->getTotalStorageSize(),
-        ]);
+        return $this->render('@Core/admin/media/index.html.twig', $this->viewBuilder->indexView($folderId, $search));
     }
 
     #[Route('/{id}/info', name: '_info', methods: [HttpMethodEnum::Get->value])]
@@ -81,7 +68,17 @@ class MediaController extends AbstractController
     #[Route('/{id}/usage', name: '_usage', methods: [HttpMethodEnum::Get->value])]
     public function usage(Media $media): JsonResponse
     {
-        return $this->json($this->mediaRepository->countUsages((int) $media->getId()));
+        $counts = $this->mediaRepository->countUsages((int) $media->getId());
+        $detailed = $this->mediaUsageService->findUsages((int) $media->getId());
+
+        return $this->json([
+            // Legacy keys preserved for back-compat with existing UI panels.
+            'directCount' => $counts['directCount'],
+            'contentCount' => $counts['contentCount'],
+            'total' => $detailed['total'],
+            // New rich payload used by the delete confirmation modal.
+            'groups' => $detailed['groups'],
+        ]);
     }
 
     #[Route('/{id}/history', name: '_history', methods: [HttpMethodEnum::Get->value])]
@@ -107,10 +104,13 @@ class MediaController extends AbstractController
         $search = mb_trim((string) $request->query->get('search', ''));
         $folderId = $request->query->getInt('folderId') ?: null;
         $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+        $allFolders = $request->query->getBoolean('all');
 
         $items = array_map(
             $this->mediaSerializer->serialize(...),
-            $this->mediaRepository->findByFolder($folder, $search ?: null),
+            $allFolders && null === $folder
+                ? $this->mediaRepository->findAcrossFolders($search ?: null)
+                : $this->mediaRepository->findByFolder($folder, $search ?: null),
         );
 
         $serializer = $this->folderSerializer->withMediaCounts($this->mediaRepository->countGroupedByFolders());
@@ -162,16 +162,16 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $this->mediaManager->update($media, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['folderId' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['folderId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
+        return $this->jsonSuccess(['media' => $this->mediaSerializer->serialize($media)]);
     }
 
     #[Route('/{id}/move', name: '_move', methods: [HttpMethodEnum::Post->value])]
@@ -183,7 +183,7 @@ class MediaController extends AbstractController
 
         $this->mediaManager->move($media, $folder);
 
-        return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
+        return $this->jsonSuccess(['media' => $this->mediaSerializer->serialize($media)]);
     }
 
     #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
@@ -192,7 +192,7 @@ class MediaController extends AbstractController
         $ids = $this->decodeJson($request)['ids'] ?? [];
         $this->mediaManager->reorder($ids);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/bulk-delete', name: '_bulk_delete', methods: [HttpMethodEnum::Post->value])]
@@ -201,7 +201,7 @@ class MediaController extends AbstractController
         $ids = $this->decodeJson($request)['ids'] ?? [];
         $this->mediaManager->bulkDelete($ids);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/bulk-move', name: '_bulk_move', methods: [HttpMethodEnum::Post->value])]
@@ -213,7 +213,7 @@ class MediaController extends AbstractController
         $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
         $this->mediaManager->bulkMove($ids, $folder);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
@@ -221,7 +221,7 @@ class MediaController extends AbstractController
     {
         $this->mediaManager->delete($media);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/{id}/crop', name: '_crop', methods: [HttpMethodEnum::Post->value])]
@@ -236,7 +236,7 @@ class MediaController extends AbstractController
             (int) ($data['height'] ?? 1),
         );
 
-        return $this->json(['success' => true, 'media' => $this->mediaSerializer->serialize($media)]);
+        return $this->jsonSuccess(['media' => $this->mediaSerializer->serialize($media)]);
     }
 
     #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
@@ -246,16 +246,16 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $folder = $this->mediaManager->createFolder($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'folder' => $this->folderSerializer->serialize($folder)]);
+        return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);
     }
 
     #[Route('/folders/{id}/edit', name: '_folder_edit', methods: [HttpMethodEnum::Post->value])]
@@ -265,16 +265,16 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         try {
             $this->mediaManager->updateFolder($folder, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['parentId' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'folder' => $this->folderSerializer->serialize($folder)]);
+        return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);
     }
 
     #[Route('/folders/{id}/delete', name: '_folder_delete', methods: [HttpMethodEnum::Post->value])]
@@ -282,6 +282,6 @@ class MediaController extends AbstractController
     {
         $this->mediaManager->deleteFolder($folder);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 }

@@ -7,18 +7,16 @@ namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Locale\Enum\CountryEnum;
-use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\View\CheckoutViewBuilder;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,15 +30,13 @@ class CheckoutController extends AbstractController
 
     public function __construct(
         private readonly CartManagerInterface $cartManager,
-        private readonly CartSerializer $cartSerializer,
         private readonly OrderManagerInterface $orderManager,
         private readonly OrderRepository $orderRepository,
-        private readonly OrderSerializer $orderSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly Security $security,
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
-        private readonly ThemeContext $themeContext,
+        private readonly CheckoutViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/checkout', name: 'front_checkout', requirements: ['locale' => '[a-z]{2}'], methods: ['GET', 'POST'], priority: 8)]
@@ -79,17 +75,7 @@ class CheckoutController extends AbstractController
             }
         }
 
-        return $this->render($this->themeResolver->resolve('checkout'), [
-            'cart' => $this->cartSerializer->serialize($cart),
-            'errors' => $errors,
-            'stockError' => $stockError,
-            'form' => $formData,
-            'requiresShipping' => $cartRequiresShipping,
-            'countries' => CountryEnum::options($locale),
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('checkout'), $this->viewBuilder->checkoutView($cart, $errors, $stockError, $formData, $cartRequiresShipping, $locale));
     }
 
     private function cartContainsPhysicalItem(Cart $cart): bool
@@ -114,12 +100,7 @@ class CheckoutController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('order_show'), [
-            'order' => $this->orderSerializer->serialize($order),
-            'locale' => $locale,
-            'context' => $this->frontContext,
-            'themeContext' => $this->themeContext,
-        ]);
+        return $this->render($this->themeResolver->resolve('order_show'), $this->viewBuilder->showView($order, $locale));
     }
 
     private function initialFormData(bool $cartRequiresShipping): array

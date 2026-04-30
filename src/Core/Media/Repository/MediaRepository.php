@@ -116,4 +116,26 @@ class MediaRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    /**
+     * Returns every media regardless of folder, optionally filtered by search.
+     * Used by the media picker's "Tous les médias" view (cross-folder browse).
+     *
+     * @return list<Media>
+     */
+    public function findAcrossFolders(?string $search = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m')
+            ->leftJoin('m.folder', 'f')
+            ->addSelect('f')
+            ->orderBy('m.createdAt', Order::Descending->value);
+
+        if (null !== $search && '' !== $search) {
+            $queryBuilder
+                ->andWhere('LOWER(m.originalName) LIKE :search OR LOWER(m.alt) LIKE :search')
+                ->setParameter('search', '%'.mb_strtolower($search).'%');
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

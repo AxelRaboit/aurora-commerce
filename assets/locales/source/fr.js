@@ -121,6 +121,19 @@ export default {
             resetFocal: "Réinitialiser",
             deleteConfirm:
                 "Supprimer « {name} » ? Cette action est irréversible.",
+            checkingUsage: "Vérification des utilisations…",
+            usageNone: "Ce média n'est utilisé nulle part.",
+            usageWarning:
+                "Ce média est actuellement utilisé à {count} endroit(s). Le supprimer cassera ces emplacements :",
+            deleteAnyway: "Supprimer quand même",
+            usageGroups: {
+                "post.featured": "Articles (image principale)",
+                "post.content": "Articles (dans le contenu)",
+                "gallery.cover": "Galeries (couverture)",
+                "gallery.item": "Galeries (photos)",
+                "branding.setting": "Identité visuelle",
+                other: "Autres",
+            },
             bulkDelete: "Supprimer la sélection ({count})",
             bulkDeleteConfirm: "Supprimer {count} média(s) ?",
             bulkDeleteConfirmDesc:
@@ -981,6 +994,7 @@ export default {
                 crm: "CRM",
                 erp: "ERP",
                 ecommerce: "E-commerce",
+                photo: "Photographie",
                 dev: "Système",
             },
         },
@@ -1592,9 +1606,12 @@ export default {
             picker: {
                 title: "Choisir un média",
                 search: "Rechercher par nom ou alt…",
-                allFolders: "Tous les dossiers",
+                allFolders: "Tous les médias",
+                rootFolder: "Racine",
                 empty: "Aucun média trouvé",
                 select: "Sélectionner",
+                addSelected: "Ajouter la sélection",
+                selectedCount: "sélectionné(s)",
                 in: "Dans",
                 items: "résultats",
                 dimensions: "Dimensions",
@@ -1602,7 +1619,10 @@ export default {
                 uploaded: "Mis en ligne",
                 folder: "Dossier",
                 alt: "Texte alternatif",
+                altPlaceholder:
+                    "Décrivez l'image pour les lecteurs d'écran et le SEO",
                 caption: "Légende",
+                captionPlaceholder: "Légende affichée sous l'image",
                 openInLibrary: "Ouvrir dans la médiathèque",
                 upload: "Téléverser",
                 dropHere: "Déposer pour téléverser",

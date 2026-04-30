@@ -6,11 +6,12 @@ namespace Aurora\Core\Theme\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Theme\DTO\ThemeInput;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Manager\ThemeManager;
-use Aurora\Core\Theme\Repository\ThemeRepository;
 use Aurora\Core\Theme\Serializer\ThemeSerializer;
+use Aurora\Core\Theme\View\ThemesViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use RuntimeException;
@@ -26,23 +27,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ThemesController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
-        private readonly ThemeRepository $themeRepository,
         private readonly ThemeManager $themeManager,
         private readonly ThemeSerializer $themeSerializer,
         private readonly PayloadValidator $payloadValidator,
+        private readonly ThemesViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        $themes = $this->themeRepository->findAll();
-        $serialized = array_map($this->themeSerializer->serialize(...), $themes);
-
-        return $this->render('@Core/admin/themes/index.html.twig', [
-            'themes' => $serialized,
-        ]);
+        return $this->render('@Core/admin/themes/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
@@ -51,7 +48,7 @@ final class ThemesController extends AbstractController
         $input = ThemeInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['ok' => false, 'errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
@@ -59,10 +56,10 @@ final class ThemesController extends AbstractController
         } catch (InvalidArgumentException $invalidArgumentException) {
             [$field, $message] = explode('|', $invalidArgumentException->getMessage(), 2) + ['_error', ''];
 
-            return $this->json(['ok' => false, 'errors' => [$field => $message]], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonInvalidInput([$field => $message]);
         }
 
-        return $this->json(['ok' => true, 'theme' => $this->themeSerializer->serialize($theme)]);
+        return $this->jsonSuccess(['theme' => $this->themeSerializer->serialize($theme)]);
     }
 
     #[Route('/{id}/activate', name: '_activate', methods: [HttpMethodEnum::Post->value])]
@@ -70,7 +67,7 @@ final class ThemesController extends AbstractController
     {
         $this->themeManager->activate($theme);
 
-        return $this->json(['ok' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -79,12 +76,12 @@ final class ThemesController extends AbstractController
         $input = ThemeInput::fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['ok' => false, 'errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->themeManager->update($theme, $input);
 
-        return $this->json(['ok' => true, 'theme' => $this->themeSerializer->serialize($theme)]);
+        return $this->jsonSuccess(['theme' => $this->themeSerializer->serialize($theme)]);
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
@@ -93,9 +90,9 @@ final class ThemesController extends AbstractController
         try {
             $this->themeManager->delete($theme);
         } catch (RuntimeException $runtimeException) {
-            return $this->json(['ok' => false, 'error' => $runtimeException->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure($runtimeException->getMessage());
         }
 
-        return $this->json(['ok' => true]);
+        return $this->jsonSuccess();
     }
 }

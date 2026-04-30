@@ -37,4 +37,23 @@ final class Str
     {
         return mb_trim((string) ($data[$key] ?? $default));
     }
+
+    /**
+     * Reads $key from $data and returns the email lowercased + trimmed, or '' when absent.
+     * Format validation is left to the downstream Symfony Assert\Email constraint.
+     */
+    public static function emailFromArray(array $data, string $key): string
+    {
+        return mb_strtolower(self::trimFromArray($data, $key));
+    }
+
+    /**
+     * Reads $key from $data and returns the email lowercased + trimmed, or null when empty/absent.
+     */
+    public static function emailOrNullFromArray(array $data, string $key): ?string
+    {
+        $email = self::trimOrNullFromArray($data, $key);
+
+        return null === $email ? null : mb_strtolower($email);
+    }
 }

@@ -1,4 +1,18 @@
 admin:
+  modules:
+    media: Médias
+    users: Utilisateurs
+  audit:
+    actions:
+      media:
+        cropped: Média recadré
+        deleted: Média supprimé
+        moved: Média déplacé
+        updated: Média mis à jour
+        uploaded: Média téléversé
+      users:
+        photo_uploaded: Photo de profil téléversée
+        photo_removed: Photo de profil supprimée
   access_requests:
     approved: Demande de {name} approuvée.
     purged: Demandes traitées supprimées.
@@ -10,6 +24,12 @@ admin:
   invitations:
     sent: Invitation envoyée à {email}.
   media:
+    usage:
+      postFeatured: Image principale
+      postContent: Bloc image
+      brandingLogo: Logo du site
+      brandingFavicon: Favicon
+      brandingDetail: Identité visuelle
     upload: Téléverser
     uploaded: "{count} fichier(s) téléversé(s)"
     uploaded_one: Fichier téléversé
@@ -19,6 +39,7 @@ admin:
     editMedia: Modifier le média
     moved: Média déplacé
     rootFolder: Racine
+    allMedia: Tous les médias
     expand: Déplier
     collapse: Replier
     dropToUpload: Déposer les fichiers pour les téléverser
@@ -227,6 +248,7 @@ admin:
     administration: Administration
     forms: Formulaires
     dashboard: Tableau de bord
+    galleries: Galeries
     media: Médias
     menus: Menus
     profile: Mon profil

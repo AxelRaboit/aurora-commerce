@@ -1,0 +1,21 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.galleries'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.galleries'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('photo/admin/GalleriesApp', {
+    galleries: galleries,
+    search: search,
+    listPath: listPath,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    editPath: editPath,
+    crmEnabled: crmEnabled,
+    contactsSearchPath: contactsSearchPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

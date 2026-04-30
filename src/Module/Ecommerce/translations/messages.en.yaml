@@ -1,4 +1,19 @@
 admin:
+  modules:
+    ecommerce: Ecommerce
+  audit:
+    actions:
+      ecommerce:
+        listing:
+          created: Listing created
+          updated: Listing updated
+          deleted: Listing deleted
+        order:
+          created: Order created
+          paid: Order paid
+          shipped: Order shipped
+          delivered: Order delivered
+          cancelled: Order cancelled
   nav:
     listings: Shop
     orders: Orders

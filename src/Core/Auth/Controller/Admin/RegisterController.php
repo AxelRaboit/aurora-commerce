@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Controller\Admin;
 
 use Aurora\Core\Auth\DTO\RegisterInput;
+use Aurora\Core\Auth\View\RegisterViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -23,6 +24,7 @@ final class RegisterController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly SettingRepository $settingRepository,
+        private readonly RegisterViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/register', name: 'admin_register')]
@@ -35,22 +37,14 @@ final class RegisterController extends AbstractController
         $registrationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminRegistrationEnabled->value);
 
         if (!$registrationEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render('@Core/admin/auth/register.html.twig', [
-                'registrationEnabled' => $registrationEnabled,
-                'errors' => [],
-                'values' => [],
-            ]);
+            return $this->render('@Core/admin/auth/register.html.twig', $this->viewBuilder->registerView($registrationEnabled));
         }
 
         $input = RegisterInput::fromRequest($request);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->render('@Core/admin/auth/register.html.twig', [
-                'registrationEnabled' => true,
-                'errors' => $errors,
-                'values' => $request->request->all(),
-            ]);
+            return $this->render('@Core/admin/auth/register.html.twig', $this->viewBuilder->registerView(true, $errors, $request->request->all()));
         }
 
         $this->userManager->register($input->name, $input->email, $input->password);
@@ -65,10 +59,10 @@ final class RegisterController extends AbstractController
         $pendingEmail = $request->getSession()->get('_admin_pending_email');
         $resent = $request->query->getBoolean('resent');
 
-        return $this->render('@Core/admin/auth/register_confirm.html.twig', [
-            'pendingEmail' => $pendingEmail,
-            'resent' => $resent,
-        ]);
+        return $this->render('@Core/admin/auth/register_confirm.html.twig', $this->viewBuilder->confirmView(
+            is_string($pendingEmail) ? $pendingEmail : null,
+            $resent,
+        ));
     }
 
     #[Route('/resend-verification', name: 'admin_resend_verification', methods: [HttpMethodEnum::Post->value])]
@@ -87,8 +81,6 @@ final class RegisterController extends AbstractController
     {
         $user = $this->userManager->verifyEmail($token);
 
-        return $this->render('@Core/admin/auth/verify_email.html.twig', [
-            'success' => $user instanceof User,
-        ]);
+        return $this->render('@Core/admin/auth/verify_email.html.twig', $this->viewBuilder->verifyView($user instanceof User));
     }
 }

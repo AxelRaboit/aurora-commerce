@@ -44,7 +44,7 @@ export function useMenuEditor(paths, initialMenus) {
         loadingMenu.value = true;
         try {
             const data = await jsonRequest(replacePath(paths.show, menu.id));
-            if (data.ok) {
+            if (data.success) {
                 selectedMenu.value = data.menu;
             } else {
                 toast.error(t("shared.common.error"));
@@ -63,7 +63,7 @@ export function useMenuEditor(paths, initialMenus) {
 
     async function refreshList() {
         const data = await jsonRequest(paths.list);
-        if (data.ok) menus.value = data.menus;
+        if (data.success) menus.value = data.menus;
     }
 
     async function updateMenu(menu, payload) {
@@ -71,7 +71,7 @@ export function useMenuEditor(paths, initialMenus) {
             method: HttpMethod.Post,
             body: JSON.stringify(payload),
         });
-        if (data.ok) {
+        if (data.success) {
             toast.success(t("shared.common.saved"));
             await refreshList();
             if (data.menu) await selectMenu(data.menu);
@@ -86,7 +86,7 @@ export function useMenuEditor(paths, initialMenus) {
             const data = await jsonRequest(replacePath(paths.delete, menu.id), {
                 method: HttpMethod.Post,
             });
-            if (data.ok) {
+            if (data.success) {
                 toast.success(t("shared.common.deleted"));
                 if (selectedMenu.value?.id === menu.id)
                     selectedMenu.value = null;
@@ -121,7 +121,7 @@ export function useMenuEditor(paths, initialMenus) {
                     body: JSON.stringify({ items: payload }),
                 },
             );
-            if (data.ok) {
+            if (data.success) {
                 selectedMenu.value = data.menu;
             } else {
                 toast.error(t("shared.common.error"));
@@ -143,7 +143,7 @@ export function useMenuEditor(paths, initialMenus) {
                 method: HttpMethod.Post,
                 body: JSON.stringify(payload),
             });
-            if (data.ok) {
+            if (data.success) {
                 toast.success(t("shared.common.saved"));
                 selectedMenu.value = data.menu;
                 await refreshList();
@@ -162,7 +162,7 @@ export function useMenuEditor(paths, initialMenus) {
                 replacePath(paths.itemDelete, item.id),
                 { method: HttpMethod.Post },
             );
-            if (data.ok) {
+            if (data.success) {
                 toast.success(t("shared.common.deleted"));
                 selectedMenu.value = data.menu;
                 return true;

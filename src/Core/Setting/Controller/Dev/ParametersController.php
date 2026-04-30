@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\Controller\Dev;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
-use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Setting\Service\SettingsManager;
+use Aurora\Core\Setting\View\ParametersViewBuilder;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,44 +23,23 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class ParametersController extends AbstractController
 {
+    use JsonResponseTrait;
+
     public function __construct(
-        private readonly SettingRepository $settingRepository,
         private readonly SettingsManager $settingsManager,
+        private readonly ParametersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $result = $this->settingRepository->findPaginated($pagination->page, search: $pagination->search);
-
-        $labelsByKey = [];
-        foreach (ApplicationParameterEnum::cases() as $case) {
-            $labelsByKey[$case->getKey()] = $case->getLabel();
-        }
-
-        $items = array_map(
-            fn ($parameter): array => [
-                'key' => $parameter->getKey(),
-                'label' => $labelsByKey[$parameter->getKey()] ?? $parameter->getKey(),
-                'value' => $parameter->getValue(),
-                'description' => $parameter->getDescription(),
-                'type' => $parameter->getType(),
-                'group' => $parameter->getGroup(),
-            ],
-            $result['items'],
-        );
-
-        $payload = ['ok' => true, 'items' => $items, 'total' => $result['total'], 'page' => $result['page'], 'totalPages' => $result['totalPages']];
+        $payload = $this->viewBuilder->parametersPayload($pagination->page, $pagination->search);
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', [
-            'tab' => 'parameters',
-            'parameters' => $payload,
-            'search' => $pagination->search ?? '',
-        ]);
+        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('/{key}', name: '_update', methods: [HttpMethodEnum::Patch->value])]
@@ -72,11 +51,11 @@ final class ParametersController extends AbstractController
         try {
             $this->settingsManager->set($key, $value);
         } catch (CascadeViolationException $cascadeViolationException) {
-            return $this->json([
-                'ok' => false,
-                'error' => SettingErrorCodeEnum::CascadeViolation->value,
-                'parentKey' => $cascadeViolationException->parentKey,
-            ], Response::HTTP_CONFLICT);
+            return $this->jsonFailure(
+                SettingErrorCodeEnum::CascadeViolation->value,
+                Response::HTTP_CONFLICT,
+                ['parentKey' => $cascadeViolationException->parentKey],
+            );
         }
 
         return $this->json(['key' => $key, 'value' => $value]);

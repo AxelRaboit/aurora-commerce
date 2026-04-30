@@ -39,7 +39,7 @@ export function usePaginatedFetch(
                 headers: { "X-Requested-With": "XMLHttpRequest" },
             });
             const data = await response.json();
-            if (data.ok) {
+            if (data.success) {
                 items.value = data.items;
                 total.value = data.total ?? 0;
                 totalPages.value = data.totalPages ?? 1;

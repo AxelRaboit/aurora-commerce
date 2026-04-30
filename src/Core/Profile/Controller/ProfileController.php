@@ -7,7 +7,9 @@ namespace Aurora\Core\Profile\Controller;
 use Aurora\Core\Auth\DTO\ChangePasswordInput;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Profile\View\ProfileViewBuilder;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\DTO\MoodInput;
 use Aurora\Core\User\DTO\UpdateProfileInput;
@@ -30,20 +32,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class ProfileController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
         private readonly UserProfilePhotoManager $userProfilePhotoManager,
+        private readonly ProfileViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '')]
     public function index(): Response
     {
-        return $this->render('@Core/admin/profile/index.html.twig', [
-            'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
-        ]);
+        return $this->render('@Core/admin/profile/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -56,12 +58,12 @@ final class ProfileController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         $this->userManager->update($user, $input->name, $input->email);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/password', name: '_password', methods: [HttpMethodEnum::Post->value])]
@@ -74,18 +76,18 @@ final class ProfileController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
-            return $this->json(['success' => false, 'errors' => [
+            return $this->jsonInvalidInput([
                 'current_password' => $this->translator->trans('admin.profile.errors.current_password_invalid'),
-            ]]);
+            ], Response::HTTP_OK);
         }
 
         $this->userManager->changePassword($user, $input->password);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
@@ -96,17 +98,14 @@ final class ProfileController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
 
         if (!$this->isCsrfTokenValid('profile_delete', $data['_token'] ?? '')) {
-            return $this->json([
-                'success' => false,
-                'error' => $this->translator->trans('admin.profile.errors.invalid_csrf'),
-            ], Response::HTTP_FORBIDDEN);
+            return $this->jsonFailure($this->translator->trans('admin.profile.errors.invalid_csrf'), Response::HTTP_FORBIDDEN);
         }
 
         $tokenStorage->setToken(null);
         $request->getSession()->invalidate();
         $this->userManager->delete($user);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 
     #[Route('/mood', name: '_mood', methods: [HttpMethodEnum::Post->value])]
@@ -118,12 +117,12 @@ final class ProfileController extends AbstractController
         $input = MoodInput::fromRequest($request);
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         $this->userManager->changeMoodMessage($user, $input->moodMessage);
 
-        return $this->json(['success' => true, 'moodMessage' => $user->getMoodMessage()]);
+        return $this->jsonSuccess(['moodMessage' => $user->getMoodMessage()]);
     }
 
     #[Route('/photo', name: '_photo_upload', methods: [HttpMethodEnum::Post->value])]
@@ -134,16 +133,16 @@ final class ProfileController extends AbstractController
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->json(['success' => false, 'errors' => ['photo' => 'admin.users.photo.errors.missing']]);
+            return $this->jsonInvalidInput(['photo' => 'admin.users.photo.errors.missing'], Response::HTTP_OK);
         }
 
         try {
             $this->userProfilePhotoManager->upload($user, $file);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->json(['success' => false, 'errors' => ['photo' => $invalidArgumentException->getMessage()]]);
+            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        return $this->json(['success' => true, 'profilePhotoUrl' => $user->getProfilePhotoUrl()]);
+        return $this->jsonSuccess(['profilePhotoUrl' => $user->getProfilePhotoUrl()]);
     }
 
     #[Route('/photo/delete', name: '_photo_delete', methods: [HttpMethodEnum::Post->value])]
@@ -153,7 +152,7 @@ final class ProfileController extends AbstractController
         $user = $this->getUser();
         $this->userProfilePhotoManager->delete($user);
 
-        return $this->json(['success' => true, 'profilePhotoUrl' => null]);
+        return $this->jsonSuccess(['profilePhotoUrl' => null]);
     }
 
     #[Route('/locale', name: '_locale', methods: [HttpMethodEnum::Post->value])]
@@ -165,15 +164,12 @@ final class ProfileController extends AbstractController
         $locale = LocaleEnum::tryFrom($data['locale'] ?? '');
 
         if (null === $locale) {
-            return $this->json([
-                'success' => false,
-                'error' => $this->translator->trans('admin.profile.errors.invalid_locale'),
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure($this->translator->trans('admin.profile.errors.invalid_locale'));
         }
 
         $request->getSession()->set('_locale', $locale->value);
         $this->userManager->changeLocale($user, $locale);
 
-        return $this->json(['success' => true]);
+        return $this->jsonSuccess();
     }
 }

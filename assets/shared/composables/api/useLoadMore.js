@@ -38,7 +38,7 @@ export function useLoadMore(
                 headers: { "X-Requested-With": "XMLHttpRequest" },
             });
             const data = await response.json();
-            if (data.ok) {
+            if (data.success) {
                 items.value.push(...(data.items ?? []));
                 page.value = data.page ?? page.value + 1;
                 totalPages.value = data.totalPages ?? totalPages.value;

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Audit\Controller\Dev;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Audit\View\AuditViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\DTO\PaginationRequest;
@@ -19,35 +18,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class AuditController extends AbstractController
 {
-    public function __construct(
-        private readonly AuditLogRepository $auditLogRepository,
-        private readonly AuditLogSerializer $auditLogSerializer,
-    ) {}
+    public function __construct(private readonly AuditViewBuilder $viewBuilder) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
         $module = $request->query->get('module') ?: null;
-        $result = $this->auditLogRepository->findPaginated($pagination->page, 50, $module);
-
-        $payload = [
-            'ok' => true,
-            'items' => array_map($this->auditLogSerializer->serialize(...), $result['items']),
-            'total' => $result['total'],
-            'page' => $result['page'],
-            'totalPages' => $result['totalPages'],
-            'modules' => $this->auditLogRepository->findDistinctModules(),
-            'module' => $module,
-        ];
+        $payload = $this->viewBuilder->auditPayload($pagination->page, $module);
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', [
-            'tab' => 'audit',
-            'audit' => $payload,
-            'search' => '',
-        ]);
+        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload));
     }
 }

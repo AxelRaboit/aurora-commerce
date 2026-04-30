@@ -9,7 +9,7 @@ import MediaPickerModal from "@core/admin/media/MediaPickerModal.vue";
  * Kept as a Promise-returning function so existing callers (AppImagePickerField,
  * EditorBlock, PostFeaturedImagePanel, MediaTextBlock, …) don't have to change.
  */
-export function openMediaPicker({ imagesOnly = false } = {}) {
+export function openMediaPicker({ imagesOnly = false, multiple = false } = {}) {
     return new Promise((resolve) => {
         const host = document.createElement("div");
         document.body.appendChild(host);
@@ -35,7 +35,8 @@ export function openMediaPicker({ imagesOnly = false } = {}) {
                 return h(MediaPickerModal, {
                     show: show.value,
                     imagesOnly,
-                    onClose: () => finish(null),
+                    multiple,
+                    onClose: () => finish(multiple ? [] : null),
                     onSelect: (item) => finish(item),
                 });
             },

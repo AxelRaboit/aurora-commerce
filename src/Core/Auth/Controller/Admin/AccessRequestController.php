@@ -6,6 +6,7 @@ namespace Aurora\Core\Auth\Controller\Admin;
 
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
 use Aurora\Core\Auth\DTO\AccessRequestInput;
+use Aurora\Core\Auth\View\AccessRequestViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -24,6 +25,7 @@ final class AccessRequestController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
         private readonly SettingRepository $settingRepository,
+        private readonly AccessRequestViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/access-request', name: 'admin_access_request')]
@@ -36,22 +38,14 @@ final class AccessRequestController extends AbstractController
         $accessRequestEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true);
 
         if (!$accessRequestEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render('@Core/admin/auth/access_request.html.twig', [
-                'accessRequestEnabled' => $accessRequestEnabled,
-                'errors' => [],
-                'values' => [],
-            ]);
+            return $this->render('@Core/admin/auth/access_request.html.twig', $this->viewBuilder->formView($accessRequestEnabled));
         }
 
         $input = AccessRequestInput::fromRequest($request);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->render('@Core/admin/auth/access_request.html.twig', [
-                'accessRequestEnabled' => true,
-                'errors' => $errors,
-                'values' => $request->request->all(),
-            ]);
+            return $this->render('@Core/admin/auth/access_request.html.twig', $this->viewBuilder->formView(true, $errors, $request->request->all()));
         }
 
         $this->accessRequestManager->create($input->email, $input->name, $input->message);

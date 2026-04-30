@@ -6,13 +6,14 @@ namespace Aurora\Module\Crm\Company\Controller\Admin;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
 use Aurora\Module\Crm\Company\DTO\CompanyInput;
 use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Module\Crm\Company\View\CompaniesViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,31 +26,25 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class CompaniesController extends AbstractController
 {
     use JsonRequestTrait;
+    use JsonResponseTrait;
 
     public function __construct(
-        private readonly CompanyRepository $companyRepository,
         private readonly CompanySerializer $companySerializer,
         private readonly CompanyManagerInterface $companyManager,
         private readonly PayloadValidator $payloadValidator,
+        private readonly CompaniesViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(PaginationRequest $pagination): Response
     {
-        return $this->render('@Crm/admin/companies/index.html.twig', [
-            'companies' => $this->buildListPayload($pagination),
-            'search' => $pagination->search ?? '',
-            'createPath' => $this->generateUrl('crm_companies_create'),
-            'updatePath' => $this->generateUrl('crm_companies_update', ['id' => '__id__']),
-            'deletePath' => $this->generateUrl('crm_companies_delete', ['id' => '__id__']),
-            'listPath' => $this->generateUrl('crm_companies_list'),
-        ]);
+        return $this->render('@Crm/admin/companies/index.html.twig', $this->viewBuilder->indexView($pagination));
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
     public function list(PaginationRequest $pagination): JsonResponse
     {
-        return $this->json($this->buildListPayload($pagination));
+        return $this->json($this->viewBuilder->buildListPayload($pagination));
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
@@ -59,12 +54,12 @@ final class CompaniesController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         $company = $this->companyManager->create($input);
 
-        return $this->json(['success' => true, 'company' => $this->companySerializer->serialize($company)]);
+        return $this->jsonSuccess(['company' => $this->companySerializer->serialize($company)]);
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -74,12 +69,12 @@ final class CompaniesController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->json(['success' => false, 'errors' => $errors]);
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
         }
 
         $this->companyManager->update($company, $input);
 
-        return $this->json(['success' => true, 'company' => $this->companySerializer->serialize($company)]);
+        return $this->jsonSuccess(['company' => $this->companySerializer->serialize($company)]);
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
@@ -87,19 +82,6 @@ final class CompaniesController extends AbstractController
     {
         $this->companyManager->delete($company);
 
-        return $this->json(['success' => true]);
-    }
-
-    private function buildListPayload(PaginationRequest $pagination): array
-    {
-        $result = $this->companyRepository->findPaginated($pagination->page, search: $pagination->search);
-
-        return [
-            'ok' => true,
-            'items' => array_map($this->companySerializer->serialize(...), $result['items']),
-            'total' => $result['total'],
-            'page' => $result['page'],
-            'totalPages' => $result['totalPages'],
-        ];
+        return $this->jsonSuccess();
     }
 }
