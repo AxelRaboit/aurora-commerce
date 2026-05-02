@@ -193,6 +193,10 @@ const editingHasPassword = ref(false);
 const { errors: editErrors, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
 const { loading: editLoading, request: editRequest } = useApiRequest();
 
+function openGallery(g) {
+    window.location.href = buildPath(props.editPath, { id: g.id });
+}
+
 function openEdit(g) {
     editingId.value = g.id;
     editingHasPassword.value = !!g.hasPassword;
@@ -267,8 +271,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-for="g in items"
                 :key="g.id"
                 class="bg-surface border border-line rounded-lg overflow-hidden hover:border-accent transition-colors"
+                :class="{ 'cursor-pointer': editPath }"
+                v-on:click="editPath && openGallery(g)"
             >
-                <div class="aspect-[4/3] bg-surface-2 relative overflow-hidden">
+                <div class="aspect-4/3 bg-surface-2 relative overflow-hidden">
                     <img v-if="g.coverMediaUrl" :src="g.coverMediaUrl" :alt="g.title" class="w-full h-full object-cover">
                     <div v-else class="w-full h-full flex items-center justify-center text-muted">
                         <ImageIcon class="w-7 h-7" :stroke-width="1.5" />
@@ -289,7 +295,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <User class="w-3 h-3 shrink-0" :stroke-width="2" />
                         <span class="truncate">{{ g.client.name }}</span>
                     </p>
-                    <div class="flex items-center gap-0.5 pt-1">
+                    <div class="flex items-center gap-0.5 pt-1" v-on:click.stop>
                         <AppIconButton v-if="editPath" color="sky" :title="t('photo.galleries.openEditor')" :href="buildPath(editPath, { id: g.id })">
                             <ImageIcon class="w-3.5 h-3.5" :stroke-width="2" />
                         </AppIconButton>
