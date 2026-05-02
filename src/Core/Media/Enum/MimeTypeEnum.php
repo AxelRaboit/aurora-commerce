@@ -39,7 +39,7 @@ enum MimeTypeEnum: string
         return self::Gif === $this;
     }
 
-    public static function isRasterMimeType(string $mimeType): bool
+    public static function isRasterMimeTypeEnum(string $mimeType): bool
     {
         $case = self::tryFrom($mimeType);
 

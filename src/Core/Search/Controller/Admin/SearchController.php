@@ -37,7 +37,7 @@ class SearchController extends AbstractController
             return $this->json(['success' => true, 'posts' => [], 'terms' => [], 'media' => []]);
         }
 
-        $defaultLocale = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
+        $defaultLocaleEnum = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
 
         // ── Posts (full-text via tsvector) ──────────────────────────────────
         $postIds = $this->postRepository->fullTextPostIds($query, 10);
@@ -65,7 +65,7 @@ class SearchController extends AbstractController
         $termsSerialized = array_map(
             fn (TaxonomyTerm $term): array => [
                 'id' => $term->getId(),
-                'name' => $term->getTranslation($defaultLocale)?->getName()
+                'name' => $term->getTranslation($defaultLocaleEnum)?->getName()
                     ?? ($term->getTranslations()->first() ?: null)?->getName(),
                 'taxonomy' => $term->getTaxonomy()->getSlug(),
             ],

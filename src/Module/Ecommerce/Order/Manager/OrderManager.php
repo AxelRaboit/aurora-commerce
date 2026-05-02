@@ -54,7 +54,7 @@ final readonly class OrderManager implements OrderManagerInterface
         $order->setAddressLine2($input->addressLine2);
         $order->setCity($input->city);
         $order->setPostalCode($input->postalCode);
-        $order->setCountry($input->country);
+        $order->setCountryEnum($input->country);
         $order->setNotes($input->notes);
 
         $totalCents = 0;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Manager;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\DTO\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
@@ -30,6 +31,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         private UrlGeneratorInterface $urlGenerator,
         private EmailVerificationManager $emailVerificationManager,
         private PasswordResetManager $passwordResetManager,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function register(FrontRegisterInput $input): User
@@ -91,12 +93,18 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         }
 
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'front_user.profile_updated', 'User', $user->getId(), ['email' => $user->getEmail()]);
     }
 
     public function deleteAccount(User $user): void
     {
+        $id = $user->getId();
+        $email = $user->getEmail();
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'front_user.account_deleted', 'User', $id, ['email' => $email]);
     }
 
     public function resendVerificationEmail(string $email, string $locale): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Manager;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Theme\DTO\ThemeInput;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Repository\ThemeRepository;
@@ -19,6 +20,7 @@ final readonly class ThemeManager
         private EntityManagerInterface $entityManager,
         private ThemeRepository $themeRepository,
         private string $projectDir,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function create(ThemeInput $input): Theme
@@ -37,6 +39,8 @@ final readonly class ThemeManager
         $this->entityManager->persist($theme);
         $this->entityManager->flush();
 
+        $this->auditLogger->log('core', 'theme.created', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
+
         return $theme;
     }
 
@@ -47,6 +51,8 @@ final readonly class ThemeManager
         $theme->setConfig($input->config);
 
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'theme.updated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
     }
 
     public function activate(Theme $theme): void
@@ -54,6 +60,8 @@ final readonly class ThemeManager
         $this->entityManager->createQuery('UPDATE '.Theme::class.' t SET t.active = false')->execute();
         $theme->setActive(true);
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'theme.activated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
     }
 
     public function delete(Theme $theme): void
@@ -66,8 +74,12 @@ final readonly class ThemeManager
             throw new RuntimeException('themes.errors.cannot_delete_active');
         }
 
+        $id = $theme->getId();
+        $slug = $theme->getSlug();
         $this->entityManager->remove($theme);
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'theme.deleted', 'Theme', $id, ['slug' => $slug]);
     }
 
     public function countTemplates(string $slug): int

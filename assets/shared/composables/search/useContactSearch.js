@@ -20,7 +20,9 @@ export function useContactSearch(searchPath) {
         try {
             const url = new URL(searchPath, window.location.origin);
             url.searchParams.set("search", query);
-            const response = await fetch(url, { signal: abortController.signal });
+            const response = await fetch(url, {
+                signal: abortController.signal,
+            });
             const data = await response.json();
             contactSearchResults.value = data?.items ?? [];
             contactSearchOpen.value = true;

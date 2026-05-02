@@ -6,6 +6,7 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { UserStatus } from "@core/utils/enums/user/userStatus.js";
 import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -590,12 +591,12 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
 
         <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
-                {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
+                {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
             </p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="togglingUser = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton :variant="togglingUser?.status === 'disabled' ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
-                    {{ t(togglingUser?.status === 'disabled' ? 'admin.users.enable' : 'admin.users.disable') }}
+                <AppButton :variant="togglingUser?.status === UserStatus.Disabled ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
+                    {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enable' : 'admin.users.disable') }}
                 </AppButton>
             </AppModalFooter>
         </AppModal>

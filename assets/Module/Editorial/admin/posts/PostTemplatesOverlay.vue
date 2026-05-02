@@ -5,6 +5,7 @@ import { X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import { TEMPLATES } from "@editorial/utils/editorjs/templates.js";
 import { TEMPLATE_CATEGORIES } from "@editorial/utils/editorjs/blockTypes.js";
+import { BlockType } from "@editorial/utils/editorjs/blockType.js";
 
 const { t } = useI18n();
 
@@ -142,13 +143,13 @@ function apply(template) {
                                     <div v-if="hoveredTemplate.blocks.length" class="flex flex-col gap-1.5">
                                         <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("admin.editor.templates.structure") }}</p>
                                         <template v-for="(block, i) in hoveredTemplate.blocks" :key="i">
-                                            <div v-if="block.type === 'header'" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
-                                            <div v-else-if="block.type === 'paragraph'" class="flex flex-col gap-1">
+                                            <div v-if="block.type === BlockType.Header" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
+                                            <div v-else-if="block.type === BlockType.Paragraph" class="flex flex-col gap-1">
                                                 <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
                                                 <div class="h-1.5 rounded-sm bg-surface-3 w-5/6" />
                                                 <div class="h-1.5 rounded-sm bg-surface-3 w-4/6" />
                                             </div>
-                                            <div v-else-if="block.type === 'image'" class="h-10 rounded-sm bg-surface-3 w-full flex items-center justify-center">
+                                            <div v-else-if="block.type === BlockType.Image" class="h-10 rounded-sm bg-surface-3 w-full flex items-center justify-center">
                                                 <svg
                                                     class="w-4 h-4 text-muted/50"
                                                     fill="none"
@@ -163,14 +164,14 @@ function apply(template) {
                                                     rx="2"
                                                 /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
                                             </div>
-                                            <div v-else-if="block.type === 'mediaText'" class="flex gap-1.5">
+                                            <div v-else-if="block.type === BlockType.MediaText" class="flex gap-1.5">
                                                 <div class="h-8 rounded-sm bg-surface-3 w-2/5 shrink-0" />
                                                 <div class="flex flex-col gap-1 flex-1 justify-center">
                                                     <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
                                                     <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
                                                 </div>
                                             </div>
-                                            <div v-else-if="block.type === 'twoColumn'" class="flex gap-1.5">
+                                            <div v-else-if="block.type === BlockType.TwoColumn" class="flex gap-1.5">
                                                 <div class="flex flex-col gap-1 flex-1">
                                                     <div class="h-1.5 rounded-sm bg-surface-3 w-full" />
                                                     <div class="h-1.5 rounded-sm bg-surface-3 w-4/5" />
@@ -180,21 +181,21 @@ function apply(template) {
                                                     <div class="h-1.5 rounded-sm bg-surface-3 w-3/5" />
                                                 </div>
                                             </div>
-                                            <div v-else-if="block.type === 'list'" class="flex flex-col gap-1">
+                                            <div v-else-if="block.type === BlockType.List" class="flex flex-col gap-1">
                                                 <div v-for="n in 3" :key="n" class="flex items-center gap-1">
                                                     <div class="w-1 h-1 rounded-full bg-surface-3 shrink-0" />
                                                     <div class="h-1.5 rounded-sm bg-surface-3" :class="n === 1 ? 'w-4/5' : n === 2 ? 'w-3/5' : 'w-2/3'" />
                                                 </div>
                                             </div>
-                                            <div v-else-if="block.type === 'code'" class="h-8 rounded-sm bg-surface-3 w-full px-2 flex flex-col justify-center gap-1">
+                                            <div v-else-if="block.type === BlockType.Code" class="h-8 rounded-sm bg-surface-3 w-full px-2 flex flex-col justify-center gap-1">
                                                 <div class="h-1 rounded-sm bg-muted/20 w-2/3" />
                                                 <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
                                             </div>
-                                            <div v-else-if="block.type === 'callout'" class="h-7 rounded-sm bg-surface-3 w-full border-l-2 border-muted/30 pl-2 flex flex-col justify-center gap-1">
+                                            <div v-else-if="block.type === BlockType.Callout" class="h-7 rounded-sm bg-surface-3 w-full border-l-2 border-muted/30 pl-2 flex flex-col justify-center gap-1">
                                                 <div class="h-1.5 rounded-sm bg-muted/30 w-3/4" />
                                                 <div class="h-1 rounded-sm bg-muted/20 w-1/2" />
                                             </div>
-                                            <div v-else-if="block.type === 'delimiter'" class="flex items-center gap-1.5 py-0.5">
+                                            <div v-else-if="block.type === BlockType.Delimiter" class="flex items-center gap-1.5 py-0.5">
                                                 <div class="h-px flex-1 bg-surface-3" />
                                                 <div class="w-1 h-1 rounded-full bg-surface-3" />
                                                 <div class="h-px flex-1 bg-surface-3" />

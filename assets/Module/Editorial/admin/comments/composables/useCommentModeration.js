@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
 
 export function useCommentModeration(paths, initialStats, onRefresh) {
     const { t } = useI18n();
@@ -20,7 +21,9 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
 
     async function moderateComment(comment, path, successKey, statsUpdate) {
         try {
-            const response = await fetch(buildPath(path, { id: comment.id }), { method: HttpMethod.Post });
+            const response = await fetch(buildPath(path, { id: comment.id }), {
+                method: HttpMethod.Post,
+            });
             const data = await response.json();
             if (data.success) {
                 toast.success(t(successKey));
@@ -35,17 +38,49 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
     }
 
     function approveComment(comment) {
-        return moderateComment(comment, paths.approve, "admin.comments.approveSuccess", (status) => {
-            if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.approved += 1; }
-            else if (status === "spam") { localStats.value.spam = Math.max(0, localStats.value.spam - 1); localStats.value.approved += 1; }
-        });
+        return moderateComment(
+            comment,
+            paths.approve,
+            "admin.comments.approveSuccess",
+            (status) => {
+                if (status === CommentStatus.Pending) {
+                    localStats.value.pending = Math.max(
+                        0,
+                        localStats.value.pending - 1,
+                    );
+                    localStats.value.approved += 1;
+                } else if (status === CommentStatus.Spam) {
+                    localStats.value.spam = Math.max(
+                        0,
+                        localStats.value.spam - 1,
+                    );
+                    localStats.value.approved += 1;
+                }
+            },
+        );
     }
 
     function spamComment(comment) {
-        return moderateComment(comment, paths.spam, "admin.comments.spamSuccess", (status) => {
-            if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.spam += 1; }
-            else if (status === "approved") { localStats.value.approved = Math.max(0, localStats.value.approved - 1); localStats.value.spam += 1; }
-        });
+        return moderateComment(
+            comment,
+            paths.spam,
+            "admin.comments.spamSuccess",
+            (status) => {
+                if (status === CommentStatus.Pending) {
+                    localStats.value.pending = Math.max(
+                        0,
+                        localStats.value.pending - 1,
+                    );
+                    localStats.value.spam += 1;
+                } else if (status === CommentStatus.Approved) {
+                    localStats.value.approved = Math.max(
+                        0,
+                        localStats.value.approved - 1,
+                    );
+                    localStats.value.spam += 1;
+                }
+            },
+        );
     }
 
     function confirmSpam(comment) {
@@ -73,13 +108,28 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
         deleteLoading.value = true;
         const comment = pendingDelete.value;
         try {
-            const response = await fetch(buildPath(paths.delete, { id: comment.id }), { method: HttpMethod.Post });
+            const response = await fetch(
+                buildPath(paths.delete, { id: comment.id }),
+                { method: HttpMethod.Post },
+            );
             const data = await response.json();
             if (data.success) {
                 toast.success(t("shared.common.deleted"));
-                if (comment.status === "pending") localStats.value.pending = Math.max(0, localStats.value.pending - 1);
-                else if (comment.status === "approved") localStats.value.approved = Math.max(0, localStats.value.approved - 1);
-                else if (comment.status === "spam") localStats.value.spam = Math.max(0, localStats.value.spam - 1);
+                if (comment.status === CommentStatus.Pending)
+                    localStats.value.pending = Math.max(
+                        0,
+                        localStats.value.pending - 1,
+                    );
+                else if (comment.status === CommentStatus.Approved)
+                    localStats.value.approved = Math.max(
+                        0,
+                        localStats.value.approved - 1,
+                    );
+                else if (comment.status === CommentStatus.Spam)
+                    localStats.value.spam = Math.max(
+                        0,
+                        localStats.value.spam - 1,
+                    );
                 pendingDelete.value = null;
                 onRefresh();
             } else {
@@ -95,11 +145,17 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
     async function doToggleModeration() {
         toggleModerationLoading.value = true;
         try {
-            const response = await fetch(paths.toggleModeration, { method: HttpMethod.Post });
+            const response = await fetch(paths.toggleModeration, {
+                method: HttpMethod.Post,
+            });
             const data = await response.json();
             if (data.success) {
                 isModerationEnabled.value = data.moderationEnabled;
-                toast.success(data.moderationEnabled ? t("admin.comments.moderationEnabled") : t("admin.comments.moderationDisabled"));
+                toast.success(
+                    data.moderationEnabled
+                        ? t("admin.comments.moderationEnabled")
+                        : t("admin.comments.moderationDisabled"),
+                );
                 pendingToggleModeration.value = false;
             } else {
                 toast.error(t("shared.common.error"));

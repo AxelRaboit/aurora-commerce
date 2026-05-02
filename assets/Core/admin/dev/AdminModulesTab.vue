@@ -3,7 +3,7 @@ import { ref, reactive, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { SettingErrorCode } from "@core/utils/settings/settingErrorCode.js";
+import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import { Lock } from "lucide-vue-next";
@@ -130,7 +130,13 @@ async function save() {
         </div>
 
         <div class="pt-2 border-t border-line flex justify-end">
-            <AppButton type="button" variant="primary" size="md" :loading="saving" v-on:click="save">
+            <AppButton
+                type="button"
+                variant="primary"
+                size="md"
+                :loading="saving"
+                v-on:click="save"
+            >
                 {{ t("admin.settings.save") }}
             </AppButton>
         </div>

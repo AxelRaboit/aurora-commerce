@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'aurora:user:role',
     description: 'Assigne ou retire un rôle à un utilisateur identifié par son email.',
 )]
-class UserRoleCommand extends Command
+class UserRoleEnumCommand extends Command
 {
     private const array ASSIGNABLE_ROLES = [
         UserRoleEnum::Admin->value,

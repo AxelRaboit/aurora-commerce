@@ -29,7 +29,7 @@ interface UserManagerInterface
 
     public function changePassword(User $user, string $newPassword): void;
 
-    public function changeLocale(User $user, LocaleEnum $locale): void;
+    public function changeLocaleEnum(User $user, LocaleEnum $locale): void;
 
     public function changeMoodMessage(User $user, ?string $moodMessage): void;
 

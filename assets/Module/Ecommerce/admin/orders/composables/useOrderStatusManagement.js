@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Truck, PackageCheck } from "lucide-vue-next";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { OrderStatus } from "@/Module/Ecommerce/utils/enums/orderStatus.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useOrderStatusManagement(updateStatusPath, order, activity) {
@@ -12,18 +13,48 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
     const availableTransitions = computed(() => {
         const requiresShipping = order.value.requiresShipping ?? true;
         const map = {
-            pending: [],
-            paid: requiresShipping
-                ? [{ status: "shipped", label: t("admin.ecommerce.orders.actions.markShipped"), icon: Truck, color: "accent" }]
-                : [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markFulfilled"), icon: PackageCheck, color: "emerald" }],
-            shipped: [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markDelivered"), icon: PackageCheck, color: "emerald" }],
-            delivered: [],
-            cancelled: [],
+            [OrderStatus.Pending]: [],
+            [OrderStatus.Paid]: requiresShipping
+                ? [
+                      {
+                          status: OrderStatus.Shipped,
+                          label: t(
+                              "admin.ecommerce.orders.actions.markShipped",
+                          ),
+                          icon: Truck,
+                          color: "accent",
+                      },
+                  ]
+                : [
+                      {
+                          status: OrderStatus.Delivered,
+                          label: t(
+                              "admin.ecommerce.orders.actions.markFulfilled",
+                          ),
+                          icon: PackageCheck,
+                          color: "emerald",
+                      },
+                  ],
+            [OrderStatus.Shipped]: [
+                {
+                    status: OrderStatus.Delivered,
+                    label: t("admin.ecommerce.orders.actions.markDelivered"),
+                    icon: PackageCheck,
+                    color: "emerald",
+                },
+            ],
+            [OrderStatus.Delivered]: [],
+            [OrderStatus.Cancelled]: [],
         };
         return map[order.value.status] ?? [];
     });
 
-    const canCancel = computed(() => !["delivered", "cancelled"].includes(order.value.status));
+    const canCancel = computed(
+        () =>
+            ![OrderStatus.Delivered, OrderStatus.Cancelled].includes(
+                order.value.status,
+            ),
+    );
 
     const pendingTransition = ref(null);
 
@@ -34,11 +65,17 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
     async function applyTransition() {
         if (!pendingTransition.value) return;
         const target = pendingTransition.value;
-        const data = await request(updateStatusPath, { status: target.status }, HttpMethod.Patch);
+        const data = await request(
+            updateStatusPath,
+            { status: target.status },
+            HttpMethod.Patch,
+        );
         pendingTransition.value = null;
         if (data?.success) {
             order.value = { ...order.value, ...data.order };
-            toast.success(t("admin.ecommerce.orders.actions.transition_success"));
+            toast.success(
+                t("admin.ecommerce.orders.actions.transition_success"),
+            );
             prependActivity(target.status);
         } else if (data?.error) {
             toast.error(data.error);
@@ -50,7 +87,10 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
             {
                 id: Date.now(),
                 module: "ecommerce",
-                action: targetStatus === "cancelled" ? "order.cancelled" : `order.${targetStatus}`,
+                action:
+                    targetStatus === OrderStatus.Cancelled
+                        ? "order.cancelled"
+                        : `order.${targetStatus}`,
                 entityType: "Order",
                 entityId: order.value.id,
                 userId: null,

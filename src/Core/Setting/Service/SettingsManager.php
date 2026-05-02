@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\Service;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -21,7 +22,10 @@ use Aurora\Core\Setting\Repository\SettingRepository;
  */
 final readonly class SettingsManager
 {
-    public function __construct(private SettingRepository $repository) {}
+    public function __construct(
+        private SettingRepository $repository,
+        private AuditLogger $auditLogger,
+    ) {}
 
     /**
      * @throws CascadeViolationException when enabling a child whose parent is off
@@ -43,6 +47,8 @@ final readonly class SettingsManager
         }
 
         $this->repository->saveMany($writes);
+
+        $this->auditLogger->log('core', 'settings.updated', null, null, ['key' => $key, 'value' => $value]);
     }
 
     private function assertParentEnabled(ApplicationParameterEnum $parameter): void

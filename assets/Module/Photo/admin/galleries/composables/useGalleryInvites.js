@@ -30,8 +30,12 @@ export function useGalleryInvites(paths, invites) {
                 toast.success(t("photo.galleries.admin.invites.created"));
             } else {
                 const errs = translateServerErrors(t, data?.errors);
-                inviteErrors.value = { name: errs.name ?? "", email: errs.email ?? "" };
-                if (!errs.name && !errs.email) toast.error(t("shared.common.error"));
+                inviteErrors.value = {
+                    name: errs.name ?? "",
+                    email: errs.email ?? "",
+                };
+                if (!errs.name && !errs.email)
+                    toast.error(t("shared.common.error"));
             }
         } finally {
             inviteCreating.value = false;
@@ -42,7 +46,9 @@ export function useGalleryInvites(paths, invites) {
         if (!paths.send || inviteSendingId.value) return;
         inviteSendingId.value = invite.id;
         try {
-            const res = await fetch(paths.send.replace("__id__", invite.id), { method: "POST" });
+            const res = await fetch(paths.send.replace("__id__", invite.id), {
+                method: "POST",
+            });
             const data = await res.json();
             if (data?.success) {
                 invites.value = data.invites;
@@ -65,10 +71,14 @@ export function useGalleryInvites(paths, invites) {
         inviteDeleting.value = true;
         const invite = pendingInviteDelete.value;
         try {
-            const res = await fetch(paths.delete.replace("__id__", invite.id), { method: "DELETE" });
+            const res = await fetch(paths.delete.replace("__id__", invite.id), {
+                method: "DELETE",
+            });
             const data = await res.json();
             if (data?.success) {
-                invites.value = data.invites ?? invites.value.filter((i) => i.id !== invite.id);
+                invites.value =
+                    data.invites ??
+                    invites.value.filter((i) => i.id !== invite.id);
                 pendingInviteDelete.value = null;
                 toast.success(t("photo.galleries.admin.invites.deleted"));
             } else {

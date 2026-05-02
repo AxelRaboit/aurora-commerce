@@ -12,7 +12,7 @@ trait FrontLocaleTrait
     private function assertActiveLocale(FrontContext $frontContext, string $locale): void
     {
         if (!$frontContext->isLocaleActive($locale)) {
-            throw $this->createNotFoundException(sprintf('Locale "%s" is not active.', $locale));
+            throw $this->createNotFoundException(sprintf('LocaleEnum "%s" is not active.', $locale));
         }
     }
 

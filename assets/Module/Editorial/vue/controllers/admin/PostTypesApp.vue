@@ -17,6 +17,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
 
 const { t } = useI18n();
 
@@ -32,7 +33,7 @@ const props = defineProps({
     fieldReorderPath: { type: String, required: true },
 });
 
-const FIELD_TYPES = ["text", "textarea", "number", "date", "select", "checkbox", "media", "url", "email", "reference"];
+const FIELD_TYPES = Object.values(PostFieldType);
 const SUPPORTS = ["blocks", "thumbnail", "excerpt"];
 
 const postTypes = ref([...props.postTypes]);
@@ -121,13 +122,13 @@ function openEditField(field) {
 }
 
 function buildFieldOptions() {
-    if (fieldForm.type === "select") {
+    if (fieldForm.type === PostFieldType.Select) {
         return { choices: fieldForm.choicesText.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
             const [value, ...rest] = l.split("|");
             return { value: value.trim(), label: rest.join("|").trim() || value.trim() };
         }) };
     }
-    if (fieldForm.type === "reference") {
+    if (fieldForm.type === PostFieldType.Reference) {
         const options = { multiple: fieldForm.referenceMultiple };
         if (fieldForm.referencePostTypeId) options.postTypeId = Number(fieldForm.referencePostTypeId);
         return options;

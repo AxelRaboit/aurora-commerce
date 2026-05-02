@@ -65,7 +65,7 @@ final class UsersController extends AbstractController
         }
 
         $user = $this->userManager->create($input->name, $input->email, $input->password);
-        $this->userManager->changeLocale($user, $input->locale);
+        $this->userManager->changeLocaleEnum($user, $input->locale);
         $this->addFlash('success', $this->translator->trans('admin.users.toast.created'));
 
         return $this->jsonSuccess(['id' => $user->getId()]);
@@ -88,7 +88,7 @@ final class UsersController extends AbstractController
             return $this->jsonInvalidInput(['email' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
-        $this->userManager->changeLocale($user, $input->locale);
+        $this->userManager->changeLocaleEnum($user, $input->locale);
 
         if ('' !== $input->password) {
             $this->userManager->changePassword($user, $input->password);

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Manager\Decorator;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\Entity\User;
-use Psr\Log\LoggerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
@@ -18,19 +17,13 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function __construct(
         #[AutowireDecorated]
         private UserManagerInterface $inner,
-        private LoggerInterface $logger,
-        private Security $security,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
     {
         $user = $this->inner->create($name, $email, $password, $isAdmin);
-
-        $this->logger->info('user.created', [
-            'email' => $email,
-            'isAdmin' => $isAdmin,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.created', 'User', $user->getId(), ['email' => $email, 'isAdmin' => $isAdmin]);
 
         return $user;
     }
@@ -38,8 +31,7 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function register(string $name, string $email, string $password): User
     {
         $user = $this->inner->register($name, $email, $password);
-
-        $this->logger->info('user.registered', ['email' => $email]);
+        $this->auditLogger->log('core', 'user.registered', 'User', $user->getId(), ['email' => $email]);
 
         return $user;
     }
@@ -54,7 +46,7 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         $user = $this->inner->verifyEmail($token);
 
         if ($user instanceof User) {
-            $this->logger->info('user.email_verified', ['email' => $user->getEmail()]);
+            $this->auditLogger->log('core', 'user.email_verified', 'User', $user->getId(), ['email' => $user->getEmail()]);
         }
 
         return $user;
@@ -68,36 +60,19 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function update(User $user, string $name, string $email): void
     {
         $this->inner->update($user, $name, $email);
-
-        $this->logger->info('user.updated', [
-            'userId' => $user->getId(),
-            'email' => $email,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.updated', 'User', $user->getId(), ['email' => $email]);
     }
 
     public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void
     {
         $this->inner->updateWithRole($user, $name, $email, $role, $password);
-
-        $this->logger->info('user.role_updated', [
-            'userId' => $user->getId(),
-            'email' => $email,
-            'role' => $role,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.role_updated', 'User', $user->getId(), ['email' => $email, 'role' => $role]);
     }
 
     public function toggleDevRole(User $user): bool
     {
         $result = $this->inner->toggleDevRole($user);
-
-        $this->logger->info('user.dev_role_toggled', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-            'devRoleEnabled' => $result,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.dev_role_toggled', 'User', $user->getId(), ['email' => $user->getEmail(), 'devRoleEnabled' => $result]);
 
         return $result;
     }
@@ -105,13 +80,7 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function toggleDisabled(User $user): bool
     {
         $result = $this->inner->toggleDisabled($user);
-
-        $this->logger->warning('user.disabled_toggled', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-            'disabled' => !$result,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.disabled_toggled', 'User', $user->getId(), ['email' => $user->getEmail(), 'disabled' => !$result]);
 
         return $result;
     }
@@ -119,17 +88,12 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function changePassword(User $user, string $newPassword): void
     {
         $this->inner->changePassword($user, $newPassword);
-
-        $this->logger->warning('user.password_changed', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.password_changed', 'User', $user->getId(), ['email' => $user->getEmail()]);
     }
 
-    public function changeLocale(User $user, LocaleEnum $locale): void
+    public function changeLocaleEnum(User $user, LocaleEnum $locale): void
     {
-        $this->inner->changeLocale($user, $locale);
+        $this->inner->changeLocaleEnum($user, $locale);
     }
 
     public function changeMoodMessage(User $user, ?string $moodMessage): void
@@ -139,13 +103,10 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
 
     public function delete(User $user): void
     {
-        $this->logger->warning('user.deleted', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-            'actor' => $this->actorEmail(),
-        ]);
-
+        $id = $user->getId();
+        $email = $user->getEmail();
         $this->inner->delete($user);
+        $this->auditLogger->log('core', 'user.deleted', 'User', $id, ['email' => $email]);
     }
 
     public function isPasswordValid(User $user, string $plainPassword): bool
@@ -161,12 +122,7 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function invite(string $name, string $email, string $role, ?string $customMessage): User
     {
         $user = $this->inner->invite($name, $email, $role, $customMessage);
-
-        $this->logger->info('user.invited', [
-            'email' => $email,
-            'role' => $role,
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.invited', 'User', $user->getId(), ['email' => $email, 'role' => $role]);
 
         return $user;
     }
@@ -174,22 +130,13 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function resendInvitation(User $user, ?string $customMessage): void
     {
         $this->inner->resendInvitation($user, $customMessage);
-
-        $this->logger->info('user.invitation_resent', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.invitation_resent', 'User', $user->getId(), ['email' => $user->getEmail()]);
     }
 
     public function consumeInvitation(User $user, string $plainPassword): void
     {
         $this->inner->consumeInvitation($user, $plainPassword);
-
-        $this->logger->info('user.invitation_consumed', [
-            'userId' => $user->getId(),
-            'email' => $user->getEmail(),
-        ]);
+        $this->auditLogger->log('core', 'user.invitation_consumed', 'User', $user->getId(), ['email' => $user->getEmail()]);
     }
 
     public function findValidInvitation(string $selector, string $token): ?User
@@ -200,12 +147,5 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
     public function canActOn(User $actor, User $target): bool
     {
         return $this->inner->canActOn($actor, $target);
-    }
-
-    private function actorEmail(): ?string
-    {
-        $user = $this->security->getUser();
-
-        return $user instanceof User ? $user->getEmail() : null;
     }
 }

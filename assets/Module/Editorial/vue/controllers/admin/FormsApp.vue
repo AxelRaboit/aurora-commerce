@@ -6,6 +6,7 @@ import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { VueDraggable } from "vue-draggable-plus";
+import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
 import {
     ClipboardList,
     Plus,
@@ -98,7 +99,7 @@ const FIELD_TYPES = computed(() => [
     { value: "checkbox", label: t("admin.forms.fieldTypes.checkbox") },
 ]);
 
-const fieldHasOptions = computed(() => ["select", "radio", "checkbox"].includes(editingField.value.type));
+const fieldHasOptions = computed(() => [FormFieldType.Select, FormFieldType.Radio, FormFieldType.Checkbox].includes(editingField.value.type));
 
 // ── Submissions ──────────────────────────────────────────────────────────────
 const submissionFields = ref([]);

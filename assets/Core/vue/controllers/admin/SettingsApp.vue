@@ -9,7 +9,8 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import { Search, FileText, Lock } from "lucide-vue-next";
-import { SettingErrorCode } from "@core/utils/settings/settingErrorCode.js";
+import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
+import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -45,7 +46,7 @@ for (const groupName of availableGroups) {
         fieldValues[parameter.key] = value;
         initialValues[parameter.key] = value;
         parameterByKey[parameter.key] = parameter;
-        if (parameter.type === "media") {
+        if (parameter.type === ParameterType.Media) {
             mediaState[parameter.key] = {
                 id: value ? Number(value) : null,
                 url: parameter.mediaUrl ?? null,
@@ -153,7 +154,7 @@ function onPostPickerFocus(key) {
 onMounted(() => {
     for (const groupName of availableGroups) {
         for (const parameter of props.groups[groupName]) {
-            if (parameter.type === "post" && fieldValues[parameter.key]) {
+            if (parameter.type === ParameterType.Post && fieldValues[parameter.key]) {
                 resolvePostLabel(parameter.key);
             }
         }
@@ -244,7 +245,7 @@ async function saveGroup(groupName) {
                         v-for="parameter in groups[groupName]"
                         :key="parameter.key"
                     >
-                        <template v-if="parameter.type === 'bool'">
+                        <template v-if="parameter.type === ParameterType.Bool">
                             <div class="flex items-center justify-between gap-4" :class="{ 'opacity-60': isLocked(parameter) }">
                                 <div class="min-w-0">
                                     <p class="text-sm font-medium text-primary flex items-center gap-1.5">
@@ -262,7 +263,7 @@ async function saveGroup(groupName) {
                             </div>
                         </template>
 
-                        <template v-else-if="parameter.type === 'post'">
+                        <template v-else-if="parameter.type === ParameterType.Post">
                             <p class="text-sm font-medium text-primary mb-1">{{ parameter.label }}</p>
                             <p v-if="parameter.description" class="text-xs text-muted mb-2">{{ parameter.description }}</p>
                             <div v-if="postPickerLabels[parameter.key]" class="flex items-center gap-3 p-3 border border-line rounded-lg bg-surface-2 mb-2">
@@ -313,7 +314,7 @@ async function saveGroup(groupName) {
                             </div>
                         </template>
 
-                        <template v-else-if="parameter.type === 'media'">
+                        <template v-else-if="parameter.type === ParameterType.Media">
                             <AppImagePickerField
                                 :label="parameter.label"
                                 :hint="parameter.description ? parameter.description + ' — ' + t('admin.settings.mediaSquareHint') : t('admin.settings.mediaSquareHint')"
@@ -323,7 +324,7 @@ async function saveGroup(groupName) {
                             />
                         </template>
 
-                        <template v-else-if="parameter.type === 'int'">
+                        <template v-else-if="parameter.type === ParameterType.Int">
                             <AppInput
                                 type="number"
                                 :label="parameter.label"

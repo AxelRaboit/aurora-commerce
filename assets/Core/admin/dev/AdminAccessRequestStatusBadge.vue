@@ -1,5 +1,6 @@
 <script setup>
 import { Check, Clock, ShieldCheck, X } from "lucide-vue-next";
+import { AccessRequestStatus } from "@core/utils/enums/auth/accessRequestStatus.js";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { accessRequestStatusBadgeColor } from "@/shared/utils/format/statusStyles.js";
 
@@ -8,7 +9,7 @@ defineProps({
     statusLabel: { type: Object, required: true },
 });
 
-const STATUS_ICONS = { pending: Clock, approved: ShieldCheck, rejected: X };
+const STATUS_ICONS = { [AccessRequestStatus.Pending]: Clock, [AccessRequestStatus.Approved]: ShieldCheck, [AccessRequestStatus.Rejected]: X };
 </script>
 
 <template>

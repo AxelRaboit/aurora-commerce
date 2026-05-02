@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { MediaTypeFilter } from "@core/utils/enums/media/mediaTypeFilter.js";
 import { useI18n } from "vue-i18n";
 import {
     Folder,
@@ -61,18 +62,18 @@ const search = ref("");
 const currentFolderId = ref(null);
 // true = flat cross-folder browse; false + currentFolderId=null = root only
 const allMediaView = ref(true);
-const typeFilter = ref("all");
+const typeFilter = ref(MediaTypeFilter.All);
 const selected = ref(null);
 const searchInputRef = ref(null);
 let abortCtrl = null;
 
 const FILTERS = computed(() => {
-    if (props.imagesOnly) return [{ key: "all", label: t("shared.media.filters.all"), icon: Files }];
+    if (props.imagesOnly) return [{ key: MediaTypeFilter.All, label: t("shared.media.filters.all"), icon: Files }];
     return [
-        { key: "all", label: t("shared.media.filters.all"), icon: Files },
-        { key: "image", label: t("shared.media.filters.image"), icon: ImageIcon },
-        { key: "video", label: t("shared.media.filters.video"), icon: Film },
-        { key: "document", label: t("shared.media.filters.document"), icon: FileText },
+        { key: MediaTypeFilter.All, label: t("shared.media.filters.all"), icon: Files },
+        { key: MediaTypeFilter.Image, label: t("shared.media.filters.image"), icon: ImageIcon },
+        { key: MediaTypeFilter.Video, label: t("shared.media.filters.video"), icon: Film },
+        { key: MediaTypeFilter.Document, label: t("shared.media.filters.document"), icon: FileText },
     ];
 });
 
@@ -83,9 +84,9 @@ const flatFolders = computed(() => flattenFolders(folderTree.value, 0, collapsed
 const visibleItems = computed(() => {
     return items.value.filter((m) => {
         if (props.imagesOnly && !m.isImage) return false;
-        if (typeFilter.value === "image") return m.mimeType?.startsWith("image/");
-        if (typeFilter.value === "video") return m.mimeType?.startsWith("video/");
-        if (typeFilter.value === "document") return !m.mimeType?.startsWith("image/") && !m.mimeType?.startsWith("video/");
+        if (typeFilter.value === MediaTypeFilter.Image) return m.mimeType?.startsWith("image/");
+        if (typeFilter.value === MediaTypeFilter.Video) return m.mimeType?.startsWith("video/");
+        if (typeFilter.value === MediaTypeFilter.Document) return !m.mimeType?.startsWith("image/") && !m.mimeType?.startsWith("video/");
         return true;
     });
 });
@@ -134,7 +135,7 @@ watch(
         } else {
             selected.value = null;
             search.value = "";
-            typeFilter.value = "all";
+            typeFilter.value = MediaTypeFilter.All;
         }
     },
     { immediate: true },

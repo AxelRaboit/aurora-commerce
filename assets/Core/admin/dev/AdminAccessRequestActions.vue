@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { Check, X } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import { AccessRequestStatus } from "@core/utils/enums/auth/accessRequestStatus.js";
 
 const { t } = useI18n();
 
@@ -13,7 +14,7 @@ const emit = defineEmits(["approve", "reject"]);
 </script>
 
 <template>
-    <template v-if="accessRequest.status === 'pending'">
+    <template v-if="accessRequest.status === AccessRequestStatus.Pending">
         <AppIconButton color="emerald" :title="t('admin.access_requests.approve')" v-on:click="emit('approve', props.accessRequest)">
             <Check class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>

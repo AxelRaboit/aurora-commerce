@@ -170,7 +170,7 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
-    public function changeLocale(User $user, LocaleEnum $locale): void
+    public function changeLocaleEnum(User $user, LocaleEnum $locale): void
     {
         $user->setLocale($locale);
         $this->entityManager->flush();

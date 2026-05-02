@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Manager\Decorator;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
-use Aurora\Core\User\Entity\User;
-use Psr\Log\LoggerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
@@ -18,18 +16,13 @@ final readonly class AuditAccessRequestManagerDecorator implements AccessRequest
     public function __construct(
         #[AutowireDecorated]
         private AccessRequestManagerInterface $inner,
-        private LoggerInterface $logger,
-        private Security $security,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function create(string $email, ?string $name, ?string $message): AccessRequest
     {
         $request = $this->inner->create($email, $name, $message);
-
-        $this->logger->info('access_request.created', [
-            'requestId' => $request->getId(),
-            'email' => $email,
-        ]);
+        $this->auditLogger->log('core', 'access_request.created', 'AccessRequest', $request->getId(), ['email' => $email]);
 
         return $request;
     }
@@ -37,29 +30,12 @@ final readonly class AuditAccessRequestManagerDecorator implements AccessRequest
     public function approve(AccessRequest $request, ?string $generatedPassword = null): void
     {
         $this->inner->approve($request, $generatedPassword);
-
-        $this->logger->info('access_request.approved', [
-            'requestId' => $request->getId(),
-            'email' => $request->getRequesterEmail(),
-            'actor' => $this->actorEmail(),
-        ]);
+        $this->auditLogger->log('core', 'access_request.approved', 'AccessRequest', $request->getId(), ['email' => $request->getRequesterEmail()]);
     }
 
     public function reject(AccessRequest $request): void
     {
         $this->inner->reject($request);
-
-        $this->logger->info('access_request.rejected', [
-            'requestId' => $request->getId(),
-            'email' => $request->getRequesterEmail(),
-            'actor' => $this->actorEmail(),
-        ]);
-    }
-
-    private function actorEmail(): ?string
-    {
-        $user = $this->security->getUser();
-
-        return $user instanceof User ? $user->getEmail() : null;
+        $this->auditLogger->log('core', 'access_request.rejected', 'AccessRequest', $request->getId(), ['email' => $request->getRequesterEmail()]);
     }
 }

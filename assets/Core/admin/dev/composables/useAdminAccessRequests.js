@@ -8,6 +8,7 @@ import {
     accessRequestStatusBadge,
     accessRequestStatusBadgeColor,
 } from "@/shared/utils/format/statusStyles.js";
+import { AccessRequestStatus } from "@core/utils/enums/auth/accessRequestStatus.js";
 
 export function useAdminAccessRequests(
     accessRequestsPath,
@@ -41,9 +42,15 @@ export function useAdminAccessRequests(
     });
 
     const statusLabel = ref({
-        pending: t("admin.access_requests.status_pending"),
-        approved: t("admin.access_requests.status_approved"),
-        rejected: t("admin.access_requests.status_rejected"),
+        [AccessRequestStatus.Pending]: t(
+            "admin.access_requests.status_pending",
+        ),
+        [AccessRequestStatus.Approved]: t(
+            "admin.access_requests.status_approved",
+        ),
+        [AccessRequestStatus.Rejected]: t(
+            "admin.access_requests.status_rejected",
+        ),
     });
 
     const pendingApprove = ref(null);

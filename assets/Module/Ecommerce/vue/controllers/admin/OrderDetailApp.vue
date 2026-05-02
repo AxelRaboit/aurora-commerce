@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { formatCurrency } from "@/shared/utils/format/formatPrice.js";
 import { useOrderStatusManagement } from "@/Module/Ecommerce/admin/orders/composables/useOrderStatusManagement.js";
+import { OrderStatus } from "@/Module/Ecommerce/utils/enums/orderStatus.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -25,11 +26,11 @@ const order = ref({ ...props.order });
 const activity = ref([...props.activity]);
 
 const statusBadge = (status) => ({
-    pending: "amber",
-    paid: "sky",
-    shipped: "accent",
-    delivered: "emerald",
-    cancelled: "rose",
+    [OrderStatus.Pending]: "amber",
+    [OrderStatus.Paid]: "sky",
+    [OrderStatus.Shipped]: "accent",
+    [OrderStatus.Delivered]: "emerald",
+    [OrderStatus.Cancelled]: "rose",
 }[status] ?? "slate");
 
 const formattedTotal = computed(() => formatCurrency(order.value.total, order.value.currency));
@@ -142,7 +143,7 @@ const { loading, availableTransitions, canCancel, pendingTransition, confirmTran
                     size="md"
                     class="w-full"
                     :loading="loading"
-                    v-on:click="confirmTransition({ status: 'cancelled', label: t('admin.ecommerce.orders.actions.cancel'), icon: Ban })"
+                    v-on:click="confirmTransition({ status: OrderStatus.Cancelled, label: t('admin.ecommerce.orders.actions.cancel'), icon: Ban })"
                 >
                     <Ban class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.ecommerce.orders.actions.cancel') }}

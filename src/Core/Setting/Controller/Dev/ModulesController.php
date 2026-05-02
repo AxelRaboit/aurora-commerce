@@ -50,7 +50,7 @@ final class ModulesController extends AbstractController
 
         $parameter = ApplicationParameterEnum::tryFrom($key);
 
-        if (null === $parameter || $parameter->getGroup() !== 'modules') {
+        if (null === $parameter || 'modules' !== $parameter->getGroup()) {
             return $this->jsonForbidden();
         }
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Manager\Decorator;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
@@ -16,14 +16,13 @@ final readonly class AuditPasswordResetManagerDecorator implements PasswordReset
     public function __construct(
         #[AutowireDecorated]
         private PasswordResetManagerInterface $inner,
-        private LoggerInterface $logger,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function sendResetLink(string $email): void
     {
         $this->inner->sendResetLink($email);
-
-        $this->logger->info('password_reset.link_requested', ['email' => $email]);
+        $this->auditLogger->log('core', 'password_reset.link_requested', null, null, ['email' => $email]);
     }
 
     public function validateToken(string $selector, string $token): ?ResetPasswordRequest
@@ -34,10 +33,8 @@ final readonly class AuditPasswordResetManagerDecorator implements PasswordReset
     public function resetPassword(ResetPasswordRequest $resetRequest, string $newPassword): void
     {
         $this->inner->resetPassword($resetRequest, $newPassword);
-
-        $this->logger->warning('password_reset.completed', [
+        $this->auditLogger->log('core', 'password_reset.completed', 'User', $resetRequest->getUser()->getId(), [
             'email' => $resetRequest->getUser()->getEmail(),
-            'userId' => $resetRequest->getUser()->getId(),
         ]);
     }
 }

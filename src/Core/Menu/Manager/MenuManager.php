@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Manager;
 
+use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
@@ -23,6 +24,7 @@ final readonly class MenuManager
         private MenuRepository $menuRepository,
         private MenuItemRepository $menuItemRepository,
         private MenuLocationRegistry $locationRegistry,
+        private AuditLogger $auditLogger,
     ) {}
 
     public function isProtected(Menu $menu): bool
@@ -54,6 +56,8 @@ final readonly class MenuManager
         $this->entityManager->persist($menu);
         $this->entityManager->flush();
 
+        $this->auditLogger->log('core', 'menu.created', 'Menu', $menu->getId(), ['name' => $menu->getName(), 'location' => $menu->getLocation()]);
+
         return $menu;
     }
 
@@ -83,6 +87,8 @@ final readonly class MenuManager
         $menu->setDescription($description);
 
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'menu.updated', 'Menu', $menu->getId(), ['name' => $menu->getName()]);
     }
 
     public function deleteMenu(Menu $menu): void
@@ -91,8 +97,12 @@ final readonly class MenuManager
             throw new InvalidArgumentException('admin.menus.errors.menu_protected');
         }
 
+        $id = $menu->getId();
+        $name = $menu->getName();
         $this->entityManager->remove($menu);
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'menu.deleted', 'Menu', $id, ['name' => $name]);
     }
 
     // ── Item ──────────────────────────────────────────────────────────────────
@@ -139,6 +149,8 @@ final readonly class MenuManager
         $this->entityManager->persist($item);
         $this->entityManager->flush();
 
+        $this->auditLogger->log('core', 'menu.item.created', 'MenuItem', $item->getId(), ['menuId' => $menu->getId()]);
+
         return $item;
     }
 
@@ -166,10 +178,15 @@ final readonly class MenuManager
         $item->setVisibility($options['visibility'] ?? MenuItemVisibilityEnum::Always);
 
         $this->entityManager->flush();
+
+        $this->auditLogger->log('core', 'menu.item.updated', 'MenuItem', $item->getId());
     }
 
     public function deleteItem(MenuItem $item): void
     {
+        $id = $item->getId();
+        $menuId = $item->getMenu()->getId();
+        $this->auditLogger->log('core', 'menu.item.deleted', 'MenuItem', $id, ['menuId' => $menuId]);
         $this->entityManager->remove($item);
         $this->entityManager->flush();
     }

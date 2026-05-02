@@ -13,6 +13,7 @@ import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
+import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
 
 const { t } = useI18n();
 
@@ -30,7 +31,7 @@ function update(value) {
 }
 
 // ── Reference picker ─────────────────────────────────────────────────────────
-const isReference = computed(() => props.field.type === "reference");
+const isReference = computed(() => props.field.type === PostFieldType.Reference);
 const isMultiple = computed(() => props.field.options?.multiple === true);
 
 const referenceIds = computed(() => {
@@ -137,7 +138,7 @@ async function uploadMedia(event) {
 <template>
     <div>
         <AppInput
-            v-if="field.type === 'text'"
+            v-if="field.type === PostFieldType.Text"
             :model-value="modelValue ?? ''"
             :label="label"
             :required="field.required"
@@ -145,7 +146,7 @@ async function uploadMedia(event) {
         />
 
         <AppTextarea
-            v-else-if="field.type === 'textarea'"
+            v-else-if="field.type === PostFieldType.Textarea"
             :model-value="modelValue ?? ''"
             :label="label"
             :required="field.required"
@@ -154,7 +155,7 @@ async function uploadMedia(event) {
         />
 
         <AppInput
-            v-else-if="field.type === 'number'"
+            v-else-if="field.type === PostFieldType.Number"
             type="number"
             :model-value="modelValue === null || modelValue === undefined ? '' : String(modelValue)"
             :label="label"
@@ -163,7 +164,7 @@ async function uploadMedia(event) {
         />
 
         <AppDatePicker
-            v-else-if="field.type === 'date'"
+            v-else-if="field.type === PostFieldType.Date"
             :model-value="modelValue ?? ''"
             :label="label"
             :required="field.required"
@@ -171,7 +172,7 @@ async function uploadMedia(event) {
         />
 
         <AppInput
-            v-else-if="field.type === 'url'"
+            v-else-if="field.type === PostFieldType.Url"
             type="url"
             :model-value="modelValue ?? ''"
             :label="label"
@@ -180,7 +181,7 @@ async function uploadMedia(event) {
         />
 
         <AppInput
-            v-else-if="field.type === 'email'"
+            v-else-if="field.type === PostFieldType.Email"
             type="email"
             :model-value="modelValue ?? ''"
             :label="label"
@@ -189,7 +190,7 @@ async function uploadMedia(event) {
         />
 
         <AppSelect
-            v-else-if="field.type === 'select'"
+            v-else-if="field.type === PostFieldType.Select"
             :model-value="modelValue ?? ''"
             :label="label"
             :required="field.required"
@@ -202,13 +203,13 @@ async function uploadMedia(event) {
         </AppSelect>
 
         <AppCheckbox
-            v-else-if="field.type === 'checkbox'"
+            v-else-if="field.type === PostFieldType.Checkbox"
             :model-value="!!modelValue"
             :label="label"
             v-on:update:model-value="update"
         />
 
-        <div v-else-if="field.type === 'media'" class="flex flex-col gap-1.5">
+        <div v-else-if="field.type === PostFieldType.Media" class="flex flex-col gap-1.5">
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ label }}</label>
             <div class="flex items-center gap-2">
                 <div class="w-16 h-12 rounded-md border border-line bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">

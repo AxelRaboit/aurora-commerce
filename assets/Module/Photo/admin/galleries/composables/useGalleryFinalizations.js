@@ -3,7 +3,12 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useLocalPagination } from "@/shared/composables/list/useLocalPagination.js";
 
-export function useGalleryFinalizations(deletePath, finalizations, invites, galleryRef) {
+export function useGalleryFinalizations(
+    deletePath,
+    finalizations,
+    invites,
+    galleryRef,
+) {
     const { t } = useI18n();
 
     const expandedFinalizations = ref(new Set());
@@ -15,7 +20,8 @@ export function useGalleryFinalizations(deletePath, finalizations, invites, gall
     } = useLocalPagination(finalizations);
 
     function toggleFinalization(id) {
-        if (expandedFinalizations.value.has(id)) expandedFinalizations.value.delete(id);
+        if (expandedFinalizations.value.has(id))
+            expandedFinalizations.value.delete(id);
         else expandedFinalizations.value.add(id);
         expandedFinalizations.value = new Set(expandedFinalizations.value);
     }
@@ -29,18 +35,26 @@ export function useGalleryFinalizations(deletePath, finalizations, invites, gall
     }
 
     async function confirmDeleteFinalization() {
-        if (!pendingFinalizationDelete.value || finalizationDeleteLoading.value) return;
+        if (!pendingFinalizationDelete.value || finalizationDeleteLoading.value)
+            return;
         finalizationDeleteLoading.value = true;
         const finalization = pendingFinalizationDelete.value;
         try {
-            const res = await fetch(deletePath.replace("__id__", finalization.id), { method: "DELETE" });
+            const res = await fetch(
+                deletePath.replace("__id__", finalization.id),
+                { method: "DELETE" },
+            );
             const data = await res.json();
             if (data?.success) {
-                finalizations.value = data.finalizations ?? finalizations.value.filter((f) => f.id !== finalization.id);
+                finalizations.value =
+                    data.finalizations ??
+                    finalizations.value.filter((f) => f.id !== finalization.id);
                 if (data.invites) invites.value = data.invites;
                 galleryRef.value = data.gallery ?? galleryRef.value;
                 pendingFinalizationDelete.value = null;
-                toast.success(t("photo.galleries.admin.finalizations.reopened"));
+                toast.success(
+                    t("photo.galleries.admin.finalizations.reopened"),
+                );
             } else {
                 toast.error(t("shared.common.error"));
             }

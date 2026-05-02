@@ -2,6 +2,7 @@
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
+import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
 
 const { t } = useI18n();
 
@@ -18,7 +19,7 @@ const errors = reactive({});
 const formData = reactive({});
 
 for (const field of props.fields) {
-    formData[field.id] = field.type === "checkbox" ? [] : "";
+    formData[field.id] = field.type === FormFieldType.Checkbox ? [] : "";
 }
 
 function isChecked(fieldId, option) {

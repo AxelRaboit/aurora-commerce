@@ -168,7 +168,7 @@ final class ProfileController extends AbstractController
         }
 
         $request->getSession()->set('_locale', $locale->value);
-        $this->userManager->changeLocale($user, $locale);
+        $this->userManager->changeLocaleEnum($user, $locale);
 
         return $this->jsonSuccess();
     }

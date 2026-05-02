@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { ProductStatus } from "@/Module/Ecommerce/utils/enums/productStatus.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
@@ -149,7 +150,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <p class="font-medium text-primary">{{ listing.product.name }}</p>
                 <p class="text-xs font-mono text-muted">{{ listing.product.sku }}</p>
                 <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
-                <AppBadge :color="listing.product.status === 'active' ? 'emerald' : listing.product.status === 'draft' ? 'amber' : 'slate'">
+                <AppBadge :color="listing.product.status === ProductStatus.Active ? 'emerald' : listing.product.status === ProductStatus.Draft ? 'amber' : 'slate'">
                     {{ t(`admin.erp.products.status.${listing.product.status}`) }}
                 </AppBadge>
             </div>

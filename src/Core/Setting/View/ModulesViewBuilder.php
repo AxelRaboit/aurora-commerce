@@ -19,7 +19,7 @@ final readonly class ModulesViewBuilder
         $parameters = [];
 
         foreach (ApplicationParameterEnum::cases() as $parameter) {
-            if ($parameter->getGroup() !== 'modules') {
+            if ('modules' !== $parameter->getGroup()) {
                 continue;
             }
 

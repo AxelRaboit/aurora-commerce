@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { MenuTargetType } from "@core/utils/enums/menu/menuTargetType.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Search, Check, X, Save, } from "lucide-vue-next";
@@ -29,7 +30,7 @@ const emit = defineEmits(["close", "save"]);
 // ── Form state ───────────────────────────────────────────────────────────────
 
 const form = reactive({
-    targetType: "home",
+    targetType: MenuTargetType.Home,
     targetId: null,
     customUrl: "",
     openInNewTab: false,
@@ -56,7 +57,7 @@ watch(() => props.show, async (open) => {
         form.translations = { ...(props.editing.translations ?? {}) };
         targetLabel.value = props.editing.targetPreview?.label ?? "";
     } else {
-        form.targetType = "home";
+        form.targetType = MenuTargetType.Home;
         form.targetId = null;
         form.customUrl = "";
         form.openInNewTab = false;
@@ -72,17 +73,17 @@ watch(() => props.show, async (open) => {
 // ── Target type behaviour ────────────────────────────────────────────────────
 
 const requiresTargetId = computed(() =>
-    ["post", "term", "post_type_archive"].includes(form.targetType),
+    [MenuTargetType.Post, MenuTargetType.Term, MenuTargetType.PostTypeArchive].includes(form.targetType),
 );
-const requiresCustomUrl = computed(() => form.targetType === "custom_url");
-const requiresTranslationOverride = computed(() => form.targetType === "custom_url");
+const requiresCustomUrl = computed(() => form.targetType === MenuTargetType.CustomUrl);
+const requiresTranslationOverride = computed(() => form.targetType === MenuTargetType.CustomUrl);
 
 watch(() => form.targetType, (newType, oldType) => {
     if (newType === oldType) return;
     // Reset target-related fields when switching type
     form.targetId = null;
     targetLabel.value = "";
-    if (newType !== "custom_url") form.customUrl = "";
+    if (newType !== MenuTargetType.CustomUrl) form.customUrl = "";
 });
 
 // ── Autocomplete (post/term) ─────────────────────────────────────────────────
@@ -99,15 +100,15 @@ const taxonomyOptions = ref([]);
 
 async function loadFilters() {
     try {
-        if (form.targetType === "post") {
+        if (form.targetType === MenuTargetType.Post) {
             const data = await jsonRequest(props.pickerPostTypesPath);
             if (data.success) postTypeOptions.value = [{ id: 0, label: t("admin.menus.allTypes") }, ...data.items];
         }
-        if (form.targetType === "term" && !taxonomyOptions.value.length) {
+        if (form.targetType === MenuTargetType.Term && !taxonomyOptions.value.length) {
             const data = await jsonRequest(props.pickerTaxonomiesPath);
             if (data.success) taxonomyOptions.value = [{ id: 0, label: t("admin.menus.allTaxonomies") }, ...data.items];
         }
-        if (form.targetType === "post_type_archive") {
+        if (form.targetType === MenuTargetType.PostTypeArchive) {
             const data = await jsonRequest(`${props.pickerPostTypesPath}?withArchive=1`);
             if (data.success) postTypeOptions.value = data.items;
         }
@@ -137,10 +138,10 @@ async function runSearch() {
     pickerLoading.value = true;
     try {
         let url;
-        if (form.targetType === "post") {
+        if (form.targetType === MenuTargetType.Post) {
             url = `${props.pickerPostsPath}?q=${encodeURIComponent(pickerQuery.value)}`;
             if (postTypeFilter.value) url += `&postTypeId=${postTypeFilter.value}`;
-        } else if (form.targetType === "term") {
+        } else if (form.targetType === MenuTargetType.Term) {
             url = `${props.pickerTermsPath}?q=${encodeURIComponent(pickerQuery.value)}`;
             if (taxonomyFilter.value) url += `&taxonomyId=${taxonomyFilter.value}`;
         } else {
@@ -160,7 +161,7 @@ async function runSearch() {
 
 // Re-fetch when filter changes (post type, taxonomy)
 watch([postTypeFilter, taxonomyFilter], () => {
-    if (form.targetType === "post" || form.targetType === "term") {
+    if (form.targetType === MenuTargetType.Post || form.targetType === MenuTargetType.Term) {
         runSearch();
     }
 });

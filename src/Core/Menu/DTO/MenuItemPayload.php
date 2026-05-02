@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class MenuItemPayload
 {
     /**
-     * @param array<string, string|null> $translations Locale → label (or null to clear)
+     * @param array<string, string|null> $translations LocaleEnum → label (or null to clear)
      */
     public function __construct(
         #[Assert\NotNull(message: 'admin.menus.errors.target_type_invalid')]

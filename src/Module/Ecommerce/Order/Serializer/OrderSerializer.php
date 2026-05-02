@@ -54,7 +54,7 @@ final readonly class OrderSerializer
             'addressLine2' => $order->getAddressLine2(),
             'city' => $order->getCity(),
             'postalCode' => $order->getPostalCode(),
-            'country' => $order->getCountry(),
+            'country' => $order->getCountryEnum(),
             'notes' => $order->getNotes(),
             'totalCents' => $totalCents,
             'total' => $totalCents / (10 ** $currency->decimals()),

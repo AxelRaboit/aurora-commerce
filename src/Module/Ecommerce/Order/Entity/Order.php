@@ -205,12 +205,12 @@ class Order
         return $this;
     }
 
-    public function getCountry(): ?string
+    public function getCountryEnum(): ?string
     {
         return $this->country;
     }
 
-    public function setCountry(?string $v): static
+    public function setCountryEnum(?string $v): static
     {
         $this->country = $v;
 

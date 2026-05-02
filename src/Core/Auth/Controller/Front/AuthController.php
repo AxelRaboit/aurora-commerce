@@ -246,7 +246,7 @@ class AuthController extends AbstractController
     private function assertActiveLocale(string $locale): void
     {
         if (!$this->frontContext->isLocaleActive($locale)) {
-            throw $this->createNotFoundException(sprintf('Locale "%s" is not active.', $locale));
+            throw $this->createNotFoundException(sprintf('LocaleEnum "%s" is not active.', $locale));
         }
     }
 }

@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { useCommentModeration } from "@/Module/Editorial/admin/comments/composables/useCommentModeration.js";
+import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
 import { MessageSquare, Check, Ban, Trash2, Eye } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -60,9 +61,9 @@ const {
 
 const tabs = computed(() => [
     { key: "", label: t("admin.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
-    { key: "pending", label: t("admin.comments.pending"), count: localStats.value.pending },
-    { key: "approved", label: t("admin.comments.approved"), count: localStats.value.approved },
-    { key: "spam", label: t("admin.comments.spam"), count: localStats.value.spam },
+    { key: CommentStatus.Pending, label: t("admin.comments.pending"), count: localStats.value.pending },
+    { key: CommentStatus.Approved, label: t("admin.comments.approved"), count: localStats.value.approved },
+    { key: CommentStatus.Spam, label: t("admin.comments.spam"), count: localStats.value.spam },
 ]);
 
 function selectTab(key) {
@@ -71,8 +72,8 @@ function selectTab(key) {
 }
 
 function statusBadgeColor(status) {
-    if (status === "approved") return "emerald";
-    if (status === "spam") return "rose";
+    if (status === CommentStatus.Approved) return "emerald";
+    if (status === CommentStatus.Spam) return "rose";
     return "amber";
 }
 </script>
