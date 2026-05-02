@@ -125,6 +125,7 @@ admin:
     invitations: Invitaciones
     overview: Resumen
     parameters: Parámetros
+    modules: Módulos
     permissions: Permisos
     users: Usuarios
   users:
@@ -247,7 +248,7 @@ admin:
       error_heading: Enlace inválido o expirado
       error_message: Este enlace de verificación es inválido o ha expirado. Por favor regístrate de nuevo.
   nav:
-    administration: Administración
+    administration: Acceso desarrollador
     forms: Formularios
     dashboard: Panel de control
     galleries: Galerías

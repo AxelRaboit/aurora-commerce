@@ -126,6 +126,7 @@ admin:
     invitations: Invitations
     overview: Vue d'ensemble
     parameters: Paramètres
+    modules: Modules
     permissions: Permissions
     users: Utilisateurs
   users:
@@ -245,7 +246,7 @@ admin:
       error_heading: Lien invalide ou expiré
       error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
   nav:
-    administration: Administration
+    administration: Accès développeur
     forms: Formulaires
     dashboard: Tableau de bord
     galleries: Galeries

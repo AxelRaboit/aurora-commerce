@@ -6,12 +6,12 @@ namespace Aurora\Core\Setting\Controller\Dev;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Service\SettingsManager;
-use Aurora\Core\Setting\View\ParametersViewBuilder;
+use Aurora\Core\Setting\View\ModulesViewBuilder;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,27 +19,27 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/dev/dashboard/parameters', name: 'dev_parameters')]
+#[Route('/dev/dashboard/modules', name: 'dev_modules')]
 #[IsGranted(UserRoleEnum::Dev->value)]
-final class ParametersController extends AbstractController
+final class ModulesController extends AbstractController
 {
     use JsonResponseTrait;
 
     public function __construct(
         private readonly SettingsManager $settingsManager,
-        private readonly ParametersViewBuilder $viewBuilder,
+        private readonly ModulesViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('', name: '')]
-    public function index(PaginationRequest $pagination, Request $request): Response
+    #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
+    public function index(Request $request): Response
     {
-        $payload = $this->viewBuilder->parametersPayload($pagination->page, $pagination->search);
+        $payload = $this->viewBuilder->modulesPayload();
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Core/admin/dev/index.html.twig', $this->viewBuilder->indexView($payload));
     }
 
     #[Route('/{key}', name: '_update', methods: [HttpMethodEnum::Patch->value])]
@@ -47,6 +47,12 @@ final class ParametersController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $value = isset($data['value']) ? (string) $data['value'] : null;
+
+        $parameter = ApplicationParameterEnum::tryFrom($key);
+
+        if (null === $parameter || $parameter->getGroup() !== 'modules') {
+            return $this->jsonForbidden();
+        }
 
         try {
             $this->settingsManager->set($key, $value);
@@ -58,6 +64,6 @@ final class ParametersController extends AbstractController
             );
         }
 
-        return $this->json(['key' => $key, 'value' => $value]);
+        return $this->jsonSuccess(['key' => $key, 'value' => $value]);
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\Controller\Dev;
+namespace Aurora\Core\Auth\Controller\Dev;
 
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Repository\AccessRequestRepository;
-use Aurora\Core\Dashboard\View\AccessRequestsViewBuilder;
+use Aurora\Core\Auth\View\DevAccessRequestsViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Contract\UserManagerInterface;
@@ -32,7 +32,7 @@ final class AccessRequestsController extends AbstractController
         private readonly AccessRequestManagerInterface $accessRequestManager,
         private readonly UserManagerInterface $userManager,
         private readonly TranslatorInterface $translator,
-        private readonly AccessRequestsViewBuilder $viewBuilder,
+        private readonly DevAccessRequestsViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '')]
@@ -44,7 +44,7 @@ final class AccessRequestsController extends AbstractController
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Core/admin/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('/{id}/approve', name: '_approve', methods: [HttpMethodEnum::Post->value])]

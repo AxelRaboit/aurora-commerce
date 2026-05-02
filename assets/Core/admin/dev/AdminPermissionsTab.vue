@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
-import { useAdminPermissions } from "@core/admin/administration/composables/useAdminPermissions.js";
+import { useAdminPermissions } from "@core/admin/dev/composables/useAdminPermissions.js";
 
 const { t } = useI18n();
 

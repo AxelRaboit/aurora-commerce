@@ -7,7 +7,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { Save } from "lucide-vue-next";
-import { useAdminParameters } from "@core/admin/administration/composables/useAdminParameters.js";
+import { useAdminParameters } from "@core/admin/dev/composables/useAdminParameters.js";
 
 const { t } = useI18n();
 

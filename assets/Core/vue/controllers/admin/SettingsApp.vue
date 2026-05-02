@@ -20,7 +20,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "modules"];
+const groupOrder = ["general", "reading", "localization", "branding", "seo", "system"];
 
 const availableGroups = groupOrder.filter((groupName) => props.groups[groupName]);
 
@@ -33,7 +33,6 @@ const tabLabels = {
     branding: () => t("admin.settings.tabs.branding"),
     seo: () => t("admin.settings.tabs.seo"),
     system: () => t("admin.settings.tabs.system"),
-    modules: () => t("admin.settings.tabs.modules"),
 };
 
 const fieldValues = reactive({});

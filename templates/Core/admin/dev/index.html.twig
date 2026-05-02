@@ -10,6 +10,7 @@
         access_requests: 'admin.tabs.access_requests'|trans,
         audit: 'admin.tabs.audit'|trans,
         permissions: 'admin.tabs.permissions'|trans,
+        modules: 'admin.tabs.modules'|trans,
     } %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
@@ -28,6 +29,7 @@
     accessRequests: tab == 'access_requests' ? accessRequests : {},
     audit: tab == 'audit' ? audit : {},
     permissions: tab == 'permissions' ? permissions : {},
+    modules: tab == 'modules' ? modules : {},
     search: search ?? '',
     overviewPath: path('dev_dashboard'),
     parametersPath: path('dev_parameters'),
@@ -43,6 +45,8 @@
     accessRequestPurgePath: path('dev_access_requests_purge'),
     auditPath: path('dev_audit'),
     permissionsPath: path('dev_permissions'),
+    modulesPath: path('dev_modules'),
+    moduleUpdatePath: path('dev_modules_update', {key: '__key__'}),
     impersonatePath: path('admin_dashboard', {_switch_user: '__email__'}),
     csrfToken: csrf_token('admin'),
 }) }} class="flex-1"></div>

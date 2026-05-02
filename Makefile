@@ -258,6 +258,7 @@ fix-rector: ## Apply Rector suggestions
 	$(RECTOR) process -c $(AURORA)/tools/rector/rector.php
 
 fix: ## Run all fixers + stan
+	make i18n
 	make fix-js
 	make fix-twig
 	make fix-rector

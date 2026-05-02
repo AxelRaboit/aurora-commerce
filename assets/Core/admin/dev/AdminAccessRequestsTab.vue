@@ -7,9 +7,9 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { Trash2 } from "lucide-vue-next";
-import { useAdminAccessRequests } from "@core/admin/administration/composables/useAdminAccessRequests.js";
-import AdminAccessRequestStatusBadge from "@core/admin/administration/AdminAccessRequestStatusBadge.vue";
-import AdminAccessRequestActions from "@core/admin/administration/AdminAccessRequestActions.vue";
+import { useAdminAccessRequests } from "@core/admin/dev/composables/useAdminAccessRequests.js";
+import AdminAccessRequestStatusBadge from "@core/admin/dev/AdminAccessRequestStatusBadge.vue";
+import AdminAccessRequestActions from "@core/admin/dev/AdminAccessRequestActions.vue";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();

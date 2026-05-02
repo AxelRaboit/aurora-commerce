@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\Controller\Dev;
+namespace Aurora\Core\User\Controller\Dev;
 
-use Aurora\Core\Dashboard\View\UsersViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
@@ -13,6 +12,7 @@ use Aurora\Core\User\DTO\CreateUserInput;
 use Aurora\Core\User\DTO\UpdateUserInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\View\DevUsersViewBuilder;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
@@ -35,7 +35,7 @@ final class UsersController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
-        private readonly UsersViewBuilder $viewBuilder,
+        private readonly DevUsersViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,7 +50,7 @@ final class UsersController extends AbstractController
             return $this->jsonSuccess($payload);
         }
 
-        return $this->render('@Core/admin/administration/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Core/admin/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]

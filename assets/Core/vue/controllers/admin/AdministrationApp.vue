@@ -3,11 +3,12 @@ import { useI18n } from "vue-i18n";
 import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import DashboardOverview from "@core/admin/dashboard/DashboardOverview.vue";
-import AdminParametersTab from "@core/admin/administration/AdminParametersTab.vue";
-import AdminUsersTab from "@core/admin/administration/AdminUsersTab.vue";
-import AdminAccessRequestsTab from "@core/admin/administration/AdminAccessRequestsTab.vue";
-import AdminAuditTab from "@core/admin/administration/AdminAuditTab.vue";
-import AdminPermissionsTab from "@core/admin/administration/AdminPermissionsTab.vue";
+import AdminParametersTab from "@core/admin/dev/AdminParametersTab.vue";
+import AdminUsersTab from "@core/admin/dev/AdminUsersTab.vue";
+import AdminAccessRequestsTab from "@core/admin/dev/AdminAccessRequestsTab.vue";
+import AdminAuditTab from "@core/admin/dev/AdminAuditTab.vue";
+import AdminPermissionsTab from "@core/admin/dev/AdminPermissionsTab.vue";
+import AdminModulesTab from "@core/admin/dev/AdminModulesTab.vue";
 import {
     LayoutDashboard,
     Sliders,
@@ -15,6 +16,7 @@ import {
     KeyRound,
     ScrollText,
     ShieldCheck,
+    Puzzle,
 } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -27,6 +29,7 @@ const props = defineProps({
     accessRequests: { type: Object, default: () => ({}) },
     audit: { type: Object, default: () => ({}) },
     permissions: { type: Object, default: () => ({}) },
+    modules: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
     overviewPath: { type: String, required: true },
     parametersPath: { type: String, required: true },
@@ -40,6 +43,8 @@ const props = defineProps({
     accessRequestsPath: { type: String, required: true },
     auditPath: { type: String, required: true },
     permissionsPath: { type: String, required: true },
+    modulesPath: { type: String, required: true },
+    moduleUpdatePath: { type: String, required: true },
     accessRequestApprovePath: { type: String, required: true },
     accessRequestRejectPath: { type: String, required: true },
     accessRequestPurgePath: { type: String, required: true },
@@ -54,6 +59,7 @@ const ROUTE_BY_TAB = {
     access_requests: () => props.accessRequestsPath,
     audit: () => props.auditPath,
     permissions: () => props.permissionsPath,
+    modules: () => props.modulesPath,
 };
 
 const tabs = [
@@ -63,6 +69,7 @@ const tabs = [
     { key: "access_requests", label: () => t("admin.tabs.access_requests"), icon: KeyRound },
     { key: "audit", label: () => t("admin.tabs.audit"), icon: ScrollText },
     { key: "permissions", label: () => t("admin.tabs.permissions"), icon: ShieldCheck },
+    { key: "modules", label: () => t("admin.tabs.modules"), icon: Puzzle },
 ];
 
 const { state: tab, set: setTab } = useUrlSyncedState({
@@ -84,6 +91,7 @@ function initialDataFor(key) {
         access_requests: props.accessRequests,
         audit: props.audit,
         permissions: props.permissions,
+        modules: props.modules,
     }[key] ?? null;
 }
 </script>
@@ -159,6 +167,12 @@ function initialDataFor(key) {
                     v-else-if="tab === 'permissions'"
                     :permissions-path="permissionsPath"
                     :initial-data="initialDataFor('permissions')"
+                />
+                <AdminModulesTab
+                    v-else-if="tab === 'modules'"
+                    :modules-path="modulesPath"
+                    :module-update-path="moduleUpdatePath"
+                    :initial-data="initialDataFor('modules')"
                 />
             </KeepAlive>
         </div>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\View;
+namespace Aurora\Core\User\View;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -14,7 +14,7 @@ use DateTimeInterface;
  * pagination + per-user serialisation shape so the controller stays focused
  * on flow (XHR vs full page, current user awareness).
  */
-final readonly class UsersViewBuilder
+final readonly class DevUsersViewBuilder
 {
     public function __construct(private UserRepository $userRepository) {}
 

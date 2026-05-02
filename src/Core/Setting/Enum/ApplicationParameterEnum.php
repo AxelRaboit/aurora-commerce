@@ -207,7 +207,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'modules', 'ecommerce' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce' => true,
             default => false,
         };
     }

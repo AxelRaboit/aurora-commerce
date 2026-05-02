@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\View;
+namespace Aurora\Core\Auth\View;
 
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Repository\AccessRequestRepository;
@@ -13,7 +13,7 @@ use DateTimeInterface;
  * Centralises the pagination + serialised item shape so the controller
  * stays focused on flow (XHR vs full page rendering, search query).
  */
-final readonly class AccessRequestsViewBuilder
+final readonly class DevAccessRequestsViewBuilder
 {
     public function __construct(private AccessRequestRepository $accessRequestRepository) {}
 

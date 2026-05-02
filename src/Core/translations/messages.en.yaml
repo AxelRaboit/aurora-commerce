@@ -125,6 +125,7 @@ admin:
     invitations: Invitations
     overview: Overview
     parameters: Parameters
+    modules: Modules
     permissions: Permissions
     users: Users
   users:
@@ -244,7 +245,7 @@ admin:
       error_heading: Invalid or expired link
       error_message: This verification link is invalid or has expired. Please register again.
   nav:
-    administration: Administration
+    administration: Developer access
     forms: Forms
     dashboard: Dashboard
     galleries: Galleries

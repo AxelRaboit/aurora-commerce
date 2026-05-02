@@ -10,9 +10,9 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { Plus, Save } from "lucide-vue-next";
-import { useAdminUsers } from "@core/admin/administration/composables/useAdminUsers.js";
-import AdminUserBadges from "@core/admin/administration/AdminUserBadges.vue";
-import AdminUserActions from "@core/admin/administration/AdminUserActions.vue";
+import { useAdminUsers } from "@core/admin/dev/composables/useAdminUsers.js";
+import AdminUserBadges from "@core/admin/dev/AdminUserBadges.vue";
+import AdminUserActions from "@core/admin/dev/AdminUserActions.vue";
 
 const LOCALE_OPTIONS = [
     { value: "fr", label: "Français" },

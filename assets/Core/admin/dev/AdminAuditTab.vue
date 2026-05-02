@@ -3,7 +3,7 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { useAdminAudit } from "@core/admin/administration/composables/useAdminAudit.js";
+import { useAdminAudit } from "@core/admin/dev/composables/useAdminAudit.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();

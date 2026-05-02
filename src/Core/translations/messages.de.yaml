@@ -125,6 +125,7 @@ admin:
     invitations: Einladungen
     overview: Übersicht
     parameters: Parameter
+    modules: Module
     permissions: Berechtigungen
     users: Benutzer
   users:
@@ -247,7 +248,7 @@ admin:
       error_heading: Ungültiger oder abgelaufener Link
       error_message: Dieser Verifizierungslink ist ungültig oder abgelaufen. Bitte registriere dich erneut.
   nav:
-    administration: Administration
+    administration: Entwicklerzugang
     forms: Formulare
     dashboard: Übersicht
     galleries: Galerien
