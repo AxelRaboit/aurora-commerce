@@ -1,0 +1,86 @@
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { Truck, PackageCheck } from "lucide-vue-next";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+
+export function useOrderStatusManagement(updateStatusPath, order, activity) {
+    const { t } = useI18n();
+    const { loading, request } = useApiRequest();
+
+    const availableTransitions = computed(() => {
+        const requiresShipping = order.value.requiresShipping ?? true;
+        const map = {
+            pending: [],
+            paid: requiresShipping
+                ? [{ status: "shipped", label: t("admin.ecommerce.orders.actions.markShipped"), icon: Truck, color: "accent" }]
+                : [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markFulfilled"), icon: PackageCheck, color: "emerald" }],
+            shipped: [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markDelivered"), icon: PackageCheck, color: "emerald" }],
+            delivered: [],
+            cancelled: [],
+        };
+        return map[order.value.status] ?? [];
+    });
+
+    const canCancel = computed(() => !["delivered", "cancelled"].includes(order.value.status));
+
+    const pendingTransition = ref(null);
+
+    function confirmTransition(target) {
+        pendingTransition.value = target;
+    }
+
+    async function applyTransition() {
+        if (!pendingTransition.value) return;
+        const target = pendingTransition.value;
+        const data = await request(updateStatusPath, { status: target.status }, HttpMethod.Patch);
+        pendingTransition.value = null;
+        if (data?.success) {
+            order.value = { ...order.value, ...data.order };
+            toast.success(t("admin.ecommerce.orders.actions.transition_success"));
+            prependActivity(target.status);
+        } else if (data?.error) {
+            toast.error(data.error);
+        }
+    }
+
+    function prependActivity(targetStatus) {
+        activity.value = [
+            {
+                id: Date.now(),
+                module: "ecommerce",
+                action: targetStatus === "cancelled" ? "order.cancelled" : `order.${targetStatus}`,
+                entityType: "Order",
+                entityId: order.value.id,
+                userId: null,
+                userEmail: null,
+                userName: t("admin.ecommerce.orders.actions.you"),
+                data: { number: order.value.number },
+                createdAt: new Date().toISOString(),
+            },
+            ...activity.value,
+        ];
+    }
+
+    function actionLabel(action) {
+        const map = {
+            "order.created": t("admin.ecommerce.orders.activity.created"),
+            "order.paid": t("admin.ecommerce.orders.activity.paid"),
+            "order.shipped": t("admin.ecommerce.orders.activity.shipped"),
+            "order.delivered": t("admin.ecommerce.orders.activity.delivered"),
+            "order.cancelled": t("admin.ecommerce.orders.activity.cancelled"),
+        };
+        return map[action] ?? action;
+    }
+
+    return {
+        loading,
+        availableTransitions,
+        canCancel,
+        pendingTransition,
+        confirmTransition,
+        applyTransition,
+        actionLabel,
+    };
+}

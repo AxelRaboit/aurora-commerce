@@ -1,10 +1,8 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, computed, onMounted } from "vue";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
+import { useCommentModeration } from "@/Module/Editorial/admin/comments/composables/useCommentModeration.js";
 import { MessageSquare, Check, Ban, Trash2, Eye } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -30,14 +28,7 @@ const props = defineProps({
 });
 
 const statusFilter = ref("");
-const localStats = ref({ ...props.stats });
-
-const tabs = computed(() => [
-    { key: "", label: t("admin.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
-    { key: "pending", label: t("admin.comments.pending"), count: localStats.value.pending },
-    { key: "approved", label: t("admin.comments.approved"), count: localStats.value.approved },
-    { key: "spam", label: t("admin.comments.spam"), count: localStats.value.spam },
-]);
+const viewingComment = ref(null);
 
 const { items: comments, loading, page, totalPages, total, load: fetchComments, goToPage, reset: resetComments } = usePaginatedFetch(
     () => props.listPath,
@@ -46,120 +37,43 @@ const { items: comments, loading, page, totalPages, total, load: fetchComments, 
 
 onMounted(fetchComments);
 
+const {
+    localStats,
+    isModerationEnabled,
+    pendingToggleModeration,
+    toggleModerationLoading,
+    pendingSpam,
+    spamLoading,
+    pendingDelete,
+    deleteLoading,
+    approveComment,
+    confirmSpam,
+    doSpam,
+    confirmDelete,
+    doDelete,
+    doToggleModeration,
+} = useCommentModeration(
+    { approve: props.approvePath, spam: props.spamPath, delete: props.deletePath, toggleModeration: props.toggleModerationPath, moderationEnabled: props.moderationEnabled },
+    props.stats,
+    fetchComments,
+);
+
+const tabs = computed(() => [
+    { key: "", label: t("admin.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
+    { key: "pending", label: t("admin.comments.pending"), count: localStats.value.pending },
+    { key: "approved", label: t("admin.comments.approved"), count: localStats.value.approved },
+    { key: "spam", label: t("admin.comments.spam"), count: localStats.value.spam },
+]);
+
 function selectTab(key) {
     statusFilter.value = key;
     resetComments();
-}
-
-async function moderateComment(comment, path, successKey, statsUpdate) {
-    try {
-        const response = await fetch(buildPath(path, { id: comment.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t(successKey));
-            statsUpdate(comment.status);
-            fetchComments();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
-
-function approveComment(comment) {
-    return moderateComment(comment, props.approvePath, "admin.comments.approveSuccess", (status) => {
-        if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.approved += 1; }
-        else if (status === "spam") { localStats.value.spam = Math.max(0, localStats.value.spam - 1); localStats.value.approved += 1; }
-    });
-}
-
-function spamComment(comment) {
-    return moderateComment(comment, props.spamPath, "admin.comments.spamSuccess", (status) => {
-        if (status === "pending") { localStats.value.pending = Math.max(0, localStats.value.pending - 1); localStats.value.spam += 1; }
-        else if (status === "approved") { localStats.value.approved = Math.max(0, localStats.value.approved - 1); localStats.value.spam += 1; }
-    });
-}
-
-const pendingSpam = ref(null);
-const spamLoading = ref(false);
-
-function confirmSpam(comment) {
-    pendingSpam.value = comment;
-}
-
-async function doSpam() {
-    if (!pendingSpam.value || spamLoading.value) return;
-    spamLoading.value = true;
-    const comment = pendingSpam.value;
-    try {
-        await spamComment(comment);
-        pendingSpam.value = null;
-    } finally {
-        spamLoading.value = false;
-    }
-}
-
-const pendingDelete = ref(null);
-const deleteLoading = ref(false);
-
-function confirmDelete(comment) {
-    pendingDelete.value = comment;
-}
-
-async function doDelete() {
-    if (!pendingDelete.value || deleteLoading.value) return;
-    deleteLoading.value = true;
-    const comment = pendingDelete.value;
-    try {
-        const response = await fetch(buildPath(props.deletePath, { id: comment.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t("shared.common.deleted"));
-            if (comment.status === "pending") localStats.value.pending = Math.max(0, localStats.value.pending - 1);
-            else if (comment.status === "approved") localStats.value.approved = Math.max(0, localStats.value.approved - 1);
-            else if (comment.status === "spam") localStats.value.spam = Math.max(0, localStats.value.spam - 1);
-            pendingDelete.value = null;
-            fetchComments();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        deleteLoading.value = false;
-    }
 }
 
 function statusBadgeColor(status) {
     if (status === "approved") return "emerald";
     if (status === "spam") return "rose";
     return "amber";
-}
-
-
-const viewingComment = ref(null);
-const isModerationEnabled = ref(props.moderationEnabled);
-const pendingToggleModeration = ref(false);
-const toggleModerationLoading = ref(false);
-
-async function doToggleModeration() {
-    toggleModerationLoading.value = true;
-    try {
-        const response = await fetch(props.toggleModerationPath, { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            isModerationEnabled.value = data.moderationEnabled;
-            toast.success(data.moderationEnabled ? t("admin.comments.moderationEnabled") : t("admin.comments.moderationDisabled"));
-            pendingToggleModeration.value = false;
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        toggleModerationLoading.value = false;
-    }
 }
 </script>
 

@@ -1,16 +1,14 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { formatCurrency } from "@/shared/utils/format/formatPrice.js";
+import { useOrderStatusManagement } from "@/Module/Ecommerce/admin/orders/composables/useOrderStatusManagement.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Truck, PackageCheck, Ban, Clock } from "lucide-vue-next";
-import { toast } from "vue-sonner";
+import { Ban, Clock } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -25,7 +23,6 @@ const props = defineProps({
 
 const order = ref({ ...props.order });
 const activity = ref([...props.activity]);
-const { loading, request } = useApiRequest();
 
 const statusBadge = (status) => ({
     pending: "amber",
@@ -38,73 +35,8 @@ const statusBadge = (status) => ({
 const formattedTotal = computed(() => formatCurrency(order.value.total, order.value.currency));
 const formatLineSubtotal = (line) => formatCurrency(line.subtotal, order.value.currency);
 
-// Allowed forward transitions per current status. Digital-only orders (requiresShipping=false)
-// skip the shipped step entirely — they go paid → delivered (i.e. fulfilled).
-const availableTransitions = computed(() => {
-    const requiresShipping = order.value.requiresShipping ?? true;
-    const map = {
-        pending: [],
-        paid: requiresShipping
-            ? [{ status: "shipped", label: t("admin.ecommerce.orders.actions.markShipped"), icon: Truck, color: "accent" }]
-            : [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markFulfilled"), icon: PackageCheck, color: "emerald" }],
-        shipped: [{ status: "delivered", label: t("admin.ecommerce.orders.actions.markDelivered"), icon: PackageCheck, color: "emerald" }],
-        delivered: [],
-        cancelled: [],
-    };
-    return map[order.value.status] ?? [];
-});
-
-const canCancel = computed(() => !["delivered", "cancelled"].includes(order.value.status));
-
-const pendingTransition = ref(null);
-function confirmTransition(target) {
-    pendingTransition.value = target;
-}
-
-async function applyTransition() {
-    if (!pendingTransition.value) return;
-    const target = pendingTransition.value;
-    const data = await request(props.updateStatusPath, { status: target.status }, HttpMethod.Patch);
-    pendingTransition.value = null;
-    if (data?.success) {
-        order.value = { ...order.value, ...data.order };
-        toast.success(t("admin.ecommerce.orders.actions.transition_success"));
-        // Refresh activity from page (cheap UX: just reload).
-        // We could also refetch the audit log endpoint; for now a soft hint to reload is enough.
-        prependActivity(target.status, order.value.status);
-    } else if (data?.error) {
-        toast.error(data.error);
-    }
-}
-
-function prependActivity(targetStatus) {
-    activity.value = [
-        {
-            id: Date.now(),
-            module: "ecommerce",
-            action: targetStatus === "cancelled" ? "order.cancelled" : `order.${targetStatus}`,
-            entityType: "Order",
-            entityId: order.value.id,
-            userId: null,
-            userEmail: null,
-            userName: t("admin.ecommerce.orders.actions.you"),
-            data: { number: order.value.number },
-            createdAt: new Date().toISOString(),
-        },
-        ...activity.value,
-    ];
-}
-
-function actionLabel(action) {
-    const map = {
-        "order.created": t("admin.ecommerce.orders.activity.created"),
-        "order.paid": t("admin.ecommerce.orders.activity.paid"),
-        "order.shipped": t("admin.ecommerce.orders.activity.shipped"),
-        "order.delivered": t("admin.ecommerce.orders.activity.delivered"),
-        "order.cancelled": t("admin.ecommerce.orders.activity.cancelled"),
-    };
-    return map[action] ?? action;
-}
+const { loading, availableTransitions, canCancel, pendingTransition, confirmTransition, applyTransition, actionLabel } =
+    useOrderStatusManagement(props.updateStatusPath, order, activity);
 </script>
 
 <template>

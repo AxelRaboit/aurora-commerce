@@ -26,6 +26,7 @@ import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as Im
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { useContactSearch } from "@/shared/composables/search/useContactSearch.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -88,54 +89,7 @@ function isExpiryInPast(value) {
 }
 
 // --- Contact picker (CRM link) ---
-const contactSearchQuery = ref("");
-const contactSearchResults = ref([]);
-const contactSearchOpen = ref(false);
-let contactSearchAbort = null;
-let contactSearchTimer = null;
-let activeContactForm = null;
-
-async function searchContacts(query) {
-    if (!props.contactsSearchPath) return;
-    if (contactSearchAbort) contactSearchAbort.abort();
-    if (!query.trim()) {
-        contactSearchResults.value = [];
-        contactSearchOpen.value = false;
-        return;
-    }
-    contactSearchAbort = new AbortController();
-    try {
-        const url = new URL(props.contactsSearchPath, window.location.origin);
-        url.searchParams.set("search", query);
-        const response = await fetch(url, { signal: contactSearchAbort.signal });
-        const data = await response.json();
-        contactSearchResults.value = data?.items ?? [];
-        contactSearchOpen.value = true;
-    } catch (error) {
-        if (error.name !== "AbortError") contactSearchOpen.value = false;
-    }
-}
-
-function onContactQueryInput(form, value) {
-    activeContactForm = form;
-    contactSearchQuery.value = value;
-    clearTimeout(contactSearchTimer);
-    contactSearchTimer = setTimeout(() => searchContacts(value), 200);
-}
-
-function selectContact(contact) {
-    if (!activeContactForm) return;
-    activeContactForm.clientContactId = contact.id;
-    activeContactForm.clientLabel = `${contact.fullName ?? contact.firstName + " " + contact.lastName}${contact.email ? " — " + contact.email : ""}`;
-    contactSearchQuery.value = "";
-    contactSearchResults.value = [];
-    contactSearchOpen.value = false;
-}
-
-function clearContact(form) {
-    form.clientContactId = null;
-    form.clientLabel = null;
-}
+const { contactSearchQuery, contactSearchResults, contactSearchOpen, onContactQueryInput, selectContact, clearContact } = useContactSearch(props.contactsSearchPath);
 
 function slugify(input) {
     return String(input || "")
@@ -312,7 +266,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary mb-4">{{ t('photo.galleries.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -559,7 +512,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </form>
         </AppModal>
 
-        <!-- Delete confirmation -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.deleteConfirm", { title: pendingDelete?.title ?? '' }) }}</p>
             <AppModalFooter>

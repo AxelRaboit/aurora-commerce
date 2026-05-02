@@ -11,9 +11,11 @@ import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButto
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { useGalleryInvites } from "@/Module/Photo/admin/galleries/composables/useGalleryInvites.js";
+import { useGalleryFinalizations } from "@/Module/Photo/admin/galleries/composables/useGalleryFinalizations.js";
 import { Plus, Trash2, ExternalLink, Heart, GripVertical, Pencil, Check, X, Download, Unlock, Printer, Trash, MessageSquare, UserCheck, ChevronDown, ChevronRight, Mail, Send } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -135,123 +137,39 @@ function commentsForItem(itemId) {
 }
 
 // --- Invites ---
-const inviteForm = ref({ name: "", email: "" });
-const inviteErrors = ref({ name: "", email: "" });
-const inviteCreating = ref(false);
-const inviteSendingId = ref(null);
-const pendingInviteDelete = ref(null);
-const inviteDeleting = ref(false);
-
-async function createInvite() {
-    if (!props.invitesCreatePath || inviteCreating.value) return;
-    inviteErrors.value = { name: "", email: "" };
-    inviteCreating.value = true;
-    try {
-        const res = await fetch(props.invitesCreatePath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(inviteForm.value),
-        });
-        const data = await res.json();
-        if (data?.success) {
-            invites.value = data.invites;
-            inviteForm.value = { name: "", email: "" };
-            toast.success(t("photo.galleries.admin.invites.created"));
-        } else {
-            const errs = translateServerErrors(t, data?.errors);
-            inviteErrors.value = { name: errs.name ?? "", email: errs.email ?? "" };
-            if (!errs.name && !errs.email) toast.error(t("shared.common.error"));
-        }
-    } finally {
-        inviteCreating.value = false;
-    }
-}
-
-async function sendInvite(invite) {
-    if (!props.invitesSendPath || inviteSendingId.value) return;
-    inviteSendingId.value = invite.id;
-    try {
-        const url = props.invitesSendPath.replace("__id__", invite.id);
-        const res = await fetch(url, { method: "POST" });
-        const data = await res.json();
-        if (data?.success) {
-            invites.value = data.invites;
-            toast.success(t("photo.galleries.admin.invites.sent"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } finally {
-        inviteSendingId.value = null;
-    }
-}
-
-function askDeleteInvite(invite) {
-    if (!props.invitesDeletePath) return;
-    pendingInviteDelete.value = invite;
-}
-
-async function confirmDeleteInvite() {
-    if (!pendingInviteDelete.value || inviteDeleting.value) return;
-    inviteDeleting.value = true;
-    const invite = pendingInviteDelete.value;
-    try {
-        const url = props.invitesDeletePath.replace("__id__", invite.id);
-        const res = await fetch(url, { method: "DELETE" });
-        const data = await res.json();
-        if (data?.success) {
-            invites.value = data.invites ?? invites.value.filter((i) => i.id !== invite.id);
-            pendingInviteDelete.value = null;
-            toast.success(t("photo.galleries.admin.invites.deleted"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } finally {
-        inviteDeleting.value = false;
-    }
-}
+const {
+    inviteForm,
+    inviteErrors,
+    inviteCreating,
+    inviteSendingId,
+    pendingInviteDelete,
+    inviteDeleting,
+    createInvite,
+    sendInvite,
+    askDeleteInvite,
+    confirmDeleteInvite,
+} = useGalleryInvites(
+    { create: props.invitesCreatePath, send: props.invitesSendPath, delete: props.invitesDeletePath },
+    invites,
+);
 
 function itemById(itemId) {
     return items.value.find((i) => i.id === itemId);
 }
 
-const expandedFinalizations = ref(new Set());
-
-function toggleFinalization(id) {
-    if (expandedFinalizations.value.has(id)) expandedFinalizations.value.delete(id);
-    else expandedFinalizations.value.add(id);
-    expandedFinalizations.value = new Set(expandedFinalizations.value);
-}
-
-// --- Per-visitor finalization reopen ---
-const pendingFinalizationDelete = ref(null);
-const finalizationDeleteLoading = ref(false);
-
-function askDeleteFinalization(finalization) {
-    if (!props.finalizationDeletePath) return;
-    pendingFinalizationDelete.value = finalization;
-}
-
-async function confirmDeleteFinalization() {
-    if (!pendingFinalizationDelete.value || finalizationDeleteLoading.value) return;
-    finalizationDeleteLoading.value = true;
-    const finalization = pendingFinalizationDelete.value;
-    try {
-        const url = props.finalizationDeletePath.replace("__id__", finalization.id);
-        const res = await fetch(url, { method: "DELETE" });
-        const data = await res.json();
-        if (data?.success) {
-            finalizations.value = data.finalizations ?? finalizations.value.filter((f) => f.id !== finalization.id);
-            if (data.invites) invites.value = data.invites;
-            galleryRef.value = data.gallery ?? galleryRef.value;
-            pendingFinalizationDelete.value = null;
-            toast.success(t("photo.galleries.admin.finalizations.reopened"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } finally {
-        finalizationDeleteLoading.value = false;
-    }
-}
+// --- Finalizations ---
+const {
+    expandedFinalizations,
+    finalizationsPage,
+    finalizationsTotalPages,
+    paginatedFinalizations,
+    goToFinalizationsPage,
+    toggleFinalization,
+    pendingFinalizationDelete,
+    finalizationDeleteLoading,
+    askDeleteFinalization,
+    confirmDeleteFinalization,
+} = useGalleryFinalizations(props.finalizationDeletePath, finalizations, invites, galleryRef);
 
 function itemPreview(itemId) {
     return items.value.find((i) => i.id === itemId)?.thumb ?? null;
@@ -654,7 +572,7 @@ async function saveCaption(item) {
                 <span class="text-muted font-normal">({{ finalizations.length }})</span>
             </h2>
             <ul class="space-y-2">
-                <li v-for="finalization in finalizations" :key="finalization.id" class="bg-surface border border-line rounded-lg overflow-hidden">
+                <li v-for="finalization in paginatedFinalizations" :key="finalization.id" class="bg-surface border border-line rounded-lg overflow-hidden">
                     <div class="p-3 flex items-center gap-3">
                         <button
                             type="button"
@@ -722,6 +640,7 @@ async function saveCaption(item) {
                     </div>
                 </li>
             </ul>
+            <AppPagination v-if="finalizationsTotalPages > 1" :page="finalizationsPage" :total-pages="finalizationsTotalPages" v-on:change="goToFinalizationsPage" />
         </section>
 
         <!-- Visitor comments -->
