@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     description: 'Synchronise les paramètres applicatifs (crée les manquants, supprime les obsolètes).',
     aliases: ['aurora:ap'],
 )]
-class ApplicationParameterEnumCommand extends Command
+class ApplicationParameterCommand extends Command
 {
     public function __construct(
         private readonly SettingRepository $repository,
