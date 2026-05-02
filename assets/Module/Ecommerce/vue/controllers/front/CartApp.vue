@@ -3,6 +3,10 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
+import { formatMoney } from "@ecommerce/utils/formatMoney.js";
 
 const { t } = useI18n();
 
@@ -22,9 +26,6 @@ const updatingHeader = ref(false);
 const items = computed(() => cart.value.items ?? []);
 const isEmpty = computed(() => items.value.length === 0);
 
-function formatMoney(amount, symbol) {
-    return `${(amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${symbol ?? ""}`.trim();
-}
 
 async function postJSON(url, body) {
     const response = await fetch(url, {
@@ -101,9 +102,9 @@ function broadcastCartChange(count) {
 
         <div v-if="isEmpty" class="bg-surface border border-line rounded-xl p-8 text-center space-y-4">
             <p class="text-muted">{{ t('front.cart.empty') }}</p>
-            <a :href="shopPath" class="inline-block px-4 py-2 bg-accent text-white rounded-md hover:opacity-90 transition-opacity">
+            <AppButton :href="shopPath" variant="accent">
                 {{ t('front.cart.browse_shop') }}
-            </a>
+            </AppButton>
         </div>
 
         <div v-else class="space-y-4">
@@ -136,9 +137,9 @@ function broadcastCartChange(count) {
                         </button>
                     </div>
                     <p class="text-base font-bold text-accent tabular-nums w-24 text-right">{{ formatMoney(item.subtotal, item.currencySymbol) }}</p>
-                    <button type="button" class="text-rose-400 hover:text-rose-500 text-xl leading-none px-1" :aria-label="t('shared.common.delete')" v-on:click="removeItem(item)">
-                        ×
-                    </button>
+                    <AppIconButton color="rose" :aria-label="t('shared.common.delete')" v-on:click="removeItem(item)">
+                        <span class="text-xl leading-none">×</span>
+                    </AppIconButton>
                 </div>
             </div>
 
@@ -148,12 +149,12 @@ function broadcastCartChange(count) {
             </div>
 
             <div class="flex flex-col sm:flex-row sm:justify-between gap-3">
-                <a :href="shopPath" class="text-sm text-muted hover:text-primary self-center">
+                <AppLink :href="shopPath" variant="muted" size="sm" class="self-center">
                     ← {{ t('front.cart.continue_shopping') }}
-                </a>
-                <a :href="checkoutPath" class="inline-block px-6 py-3 bg-accent text-white font-medium rounded-md hover:opacity-90 transition-opacity text-center">
+                </AppLink>
+                <AppButton :href="checkoutPath" variant="accent" size="lg">
                     {{ t('front.cart.checkout') }}
-                </a>
+                </AppButton>
             </div>
         </div>
     </section>

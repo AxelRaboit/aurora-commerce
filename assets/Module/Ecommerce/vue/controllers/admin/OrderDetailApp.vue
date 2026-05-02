@@ -4,12 +4,15 @@ import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { formatCurrency } from "@/shared/utils/format/formatPrice.js";
 import { useOrderStatusManagement } from "@/Module/Ecommerce/admin/orders/composables/useOrderStatusManagement.js";
+import { useOrderRefund } from "@/Module/Ecommerce/admin/orders/composables/useOrderRefund.js";
 import { OrderStatus } from "@/Module/Ecommerce/utils/enums/orderStatus.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Ban, Clock } from "lucide-vue-next";
+import { Ban, Clock, Undo2 } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -19,6 +22,7 @@ const props = defineProps({
     activity: { type: Array, default: () => [] },
     backPath: { type: String, required: true },
     updateStatusPath: { type: String, required: true },
+    refundPath: { type: String, default: "" },
     canManage: { type: Boolean, default: false },
 });
 
@@ -31,6 +35,7 @@ const statusBadge = (status) => ({
     [OrderStatus.Shipped]: "accent",
     [OrderStatus.Delivered]: "emerald",
     [OrderStatus.Cancelled]: "rose",
+    [OrderStatus.Refunded]: "slate",
 }[status] ?? "slate");
 
 const formattedTotal = computed(() => formatCurrency(order.value.total, order.value.currency));
@@ -38,6 +43,8 @@ const formatLineSubtotal = (line) => formatCurrency(line.subtotal, order.value.c
 
 const { loading, availableTransitions, canCancel, pendingTransition, confirmTransition, applyTransition, actionLabel } =
     useOrderStatusManagement(props.updateStatusPath, order, activity);
+
+const refund = useOrderRefund(props.refundPath, order);
 </script>
 
 <template>
@@ -148,7 +155,17 @@ const { loading, availableTransitions, canCancel, pendingTransition, confirmTran
                     <Ban class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.ecommerce.orders.actions.cancel') }}
                 </AppButton>
-                <p v-if="!availableTransitions.length && !canCancel" class="text-xs text-muted text-center py-2">{{ t('admin.ecommerce.orders.actions.no_transitions') }}</p>
+                <AppButton
+                    v-if="order.isRefundable && refundPath"
+                    variant="secondary"
+                    size="md"
+                    class="w-full"
+                    v-on:click="refund.open"
+                >
+                    <Undo2 class="w-4 h-4" :stroke-width="2" />
+                    {{ t('admin.ecommerce.orders.refund.action') }}
+                </AppButton>
+                <p v-if="!availableTransitions.length && !canCancel && !order.isRefundable" class="text-xs text-muted text-center py-2">{{ t('admin.ecommerce.orders.actions.no_transitions') }}</p>
             </div>
 
             <div class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -174,6 +191,26 @@ const { loading, availableTransitions, canCancel, pendingTransition, confirmTran
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingTransition = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="pendingTransition?.status === 'cancelled' ? 'danger' : 'primary'" size="md" :loading="loading" v-on:click="applyTransition">{{ t('shared.common.confirm') }}</AppButton>
+            </AppModalFooter>
+        </AppModal>
+
+        <AppModal :show="refund.showModal.value" max-width="sm" v-on:close="refund.close">
+            <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.ecommerce.orders.refund.title') }}</h3>
+            <p class="text-sm text-secondary mb-4">{{ t('admin.ecommerce.orders.refund.hint') }}</p>
+            <AppCheckbox v-model="refund.isFullRefund.value" :label="t('admin.ecommerce.orders.refund.full', { total: formattedTotal })" class="mb-3" />
+            <AppInput
+                v-if="!refund.isFullRefund.value"
+                v-model="refund.refundAmount.value"
+                type="number"
+                :label="t('admin.ecommerce.orders.refund.amount')"
+                step="0.01"
+                min="0.01"
+                :max="order.total"
+                :placeholder="String(order.total)"
+            />
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="refund.close">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm">{{ t('admin.ecommerce.orders.refund.confirm') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

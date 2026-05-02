@@ -50,12 +50,12 @@ front:
     name: Nombre completo
     shipping: Dirección de envío
     address_line_1: Dirección
-    address_line_2: Línea 2 (opcional)
+    address_line_2: Línea 2
     city: Ciudad
     postal_code: Código postal
     country: País
     country_placeholder: Seleccionar un país
-    notes: Notas (opcional)
+    notes: Notas
     summary: Resumen
     confirm: Confirmar pedido
     payment_stub: Modo demo — no se procesa ningún pago real.
@@ -63,6 +63,12 @@ front:
     digital_delivery_hint: Este pedido solo contiene productos no físicos. No se requiere dirección de envío.
     errors:
       country_invalid: El país seleccionado no es compatible.
+      email_required: El correo electrónico es obligatorio.
+      email_invalid: El correo electrónico no es válido.
+      name_required: El nombre es obligatorio.
+      address_required: La dirección es obligatoria.
+      city_required: La ciudad es obligatoria.
+      postal_required: El código postal es obligatorio.
       country_required: El país es obligatorio.
   order:
     title: Pedido
@@ -80,6 +86,7 @@ front:
     status_shipped: Enviado
     status_delivered: Entregado
     status_cancelled: Cancelado
+    status_refunded: Reembolsado
   account:
     orders: Mis pedidos
     no_orders: Todavía no has realizado ningún pedido.

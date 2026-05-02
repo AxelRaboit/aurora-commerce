@@ -11,6 +11,7 @@ use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
 use Aurora\Module\Crm\Deal\DTO\DealInput;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
+use Aurora\Module\Crm\Service\CrmNotificationService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -23,6 +24,7 @@ final readonly class DealManager implements DealManagerInterface
         private ContactRepository $contactRepository,
         private CompanyRepository $companyRepository,
         private AuditLogger $auditLogger,
+        private CrmNotificationService $notificationService,
     ) {}
 
     public function create(DealInput $input): Deal
@@ -56,6 +58,8 @@ final readonly class DealManager implements DealManagerInterface
             'from' => $oldStage,
             'to' => $stage->value,
         ]);
+
+        $this->notificationService->notifyDealStageChanged($deal, $stage);
     }
 
     public function delete(Deal $deal): void

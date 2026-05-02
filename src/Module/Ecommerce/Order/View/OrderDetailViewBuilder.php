@@ -34,6 +34,7 @@ final readonly class OrderDetailViewBuilder
             'activity' => array_map($this->auditLogSerializer->serialize(...), $activityResult['items']),
             'backPath' => $this->urlGenerator->generate('ecommerce_orders'),
             'updateStatusPath' => $this->urlGenerator->generate('ecommerce_orders_status', ['id' => $order->getId()]),
+            'refundPath' => $this->urlGenerator->generate('ecommerce_orders_refund', ['id' => $order->getId()]),
         ];
     }
 }

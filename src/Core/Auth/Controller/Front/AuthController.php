@@ -13,6 +13,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Core\User\Manager\FrontUserManager;
 use Aurora\Core\User\Repository\UserRepository;
@@ -226,7 +227,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/{locale}/account', name: 'front_account', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted(UserRoleEnum::User->value)]
     public function account(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($locale);

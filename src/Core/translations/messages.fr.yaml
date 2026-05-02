@@ -272,6 +272,13 @@ admin:
     leave: Quitter
   settings:
     tabs:
+      general: Général
+      reading: Lecture
+      localization: Localisation
+      branding: Branding
+      seo: SEO
+      system: Système
+      email: Emails
       modules: Modules
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: "Recommandé : image carrée (1:1)."
@@ -356,6 +363,17 @@ front:
     passwords_mismatch: Les mots de passe ne correspondent pas.
     email_not_verified: Veuillez confirmer votre adresse e-mail avant de vous connecter.
     account_disabled: Votre compte a été désactivé.
+  mail:
+    user:
+      subject_account_deleted: Suppression de votre compte
+      subject_role_changed: Modification de votre rôle
+      account_deleted_heading: Compte supprimé
+      account_deleted_intro: 'Bonjour {name}, votre compte sur {siteName} a bien été supprimé.'
+      account_deleted_outro: Toutes les données associées à votre compte ont été supprimées. Si vous n'avez pas effectué cette action, contactez-nous immédiatement.
+      role_changed_heading: Votre rôle a changé
+      role_changed_intro: 'Bonjour {name}, votre rôle a été modifié sur {siteName}.'
+      role_changed_label: Nouveau rôle
+      role_changed_outro: 'Si vous n''êtes pas à l''origine de cette modification, contactez votre administrateur.'
 shared:
   mail:
     invitation:

@@ -9,6 +9,7 @@ use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
 use Aurora\Module\Crm\Contact\DTO\ContactInput;
 use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -19,6 +20,7 @@ final readonly class ContactManager implements ContactManagerInterface
         private EntityManagerInterface $entityManager,
         private CompanyRepository $companyRepository,
         private AuditLogger $auditLogger,
+        private CrmNotificationService $notificationService,
     ) {}
 
     public function create(ContactInput $input): Contact
@@ -29,6 +31,8 @@ final readonly class ContactManager implements ContactManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('crm', 'contact.created', 'Contact', $contact->getId(), ['name' => $contact->getFullName()]);
+
+        $this->notificationService->notifyContactCreated($contact);
 
         return $contact;
     }

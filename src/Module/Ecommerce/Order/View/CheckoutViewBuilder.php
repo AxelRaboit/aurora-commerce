@@ -25,20 +25,19 @@ final readonly class CheckoutViewBuilder
     ) {}
 
     /**
-     * @param array<string, string> $errors
-     * @param array<string, mixed>  $formData
+     * @param array<string, mixed> $formData
      *
      * @return array<string, mixed>
      */
-    public function checkoutView(Cart $cart, array $errors, ?string $stockError, array $formData, bool $cartRequiresShipping, string $locale): array
+    public function checkoutView(Cart $cart, bool $cartRequiresShipping, array $formData, string $locale, string $stripePublicKey, string $submitPath): array
     {
         return [
             'cart' => $this->cartSerializer->serialize($cart),
-            'errors' => $errors,
-            'stockError' => $stockError,
-            'form' => $formData,
+            'initialForm' => $formData,
             'requiresShipping' => $cartRequiresShipping,
             'countries' => CountryEnum::options($locale),
+            'stripePublicKey' => $stripePublicKey,
+            'submitPath' => $submitPath,
             'locale' => $locale,
             'context' => $this->frontContext,
             'themeContext' => $this->themeContext,

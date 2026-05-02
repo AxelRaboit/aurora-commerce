@@ -39,11 +39,6 @@ services:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    Aurora\Module\Editorial\Form\Manager\FormManager:
-        arguments:
-            $mailerFrom: '%app.mailer_from%'
-
-
     Aurora\Core\Auth\Manager\PasswordResetManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
@@ -94,10 +89,17 @@ services:
     Aurora\Module\Photo\PhotoModule:
         tags: [aurora.module]
 
+    Aurora\Core\Mail\Service\MailService:
+        arguments:
+            $mailerFrom: '%app.mailer_from%'
+
+    Aurora\Module\Ecommerce\Payment\StripeService:
+        arguments:
+            $secretKey: '%env(STRIPE_SECRET_KEY)%'
+            $publicKey: '%env(STRIPE_PUBLIC_KEY)%'
+            $webhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
+
     Aurora\Module\Photo\Gallery\Service\GalleryAccessService:
         arguments:
             $appSecret: '%kernel.secret%'
 
-    Aurora\Module\Photo\Gallery\Service\GalleryNotificationService:
-        arguments:
-            $mailerFrom: '%app.mailer_from%'

@@ -61,6 +61,8 @@ final readonly class OrderSerializer
             'currency' => $currency->value,
             'currencySymbol' => $currency->symbol(),
             'requiresShipping' => $order->requiresShipping(),
+            'isRefundable' => $order->isRefundable(),
+            'refundedCents' => $order->getRefundedCents(),
             'lines' => $lines,
             'createdAt' => $order->getCreatedAt()->format(DateTimeInterface::ATOM),
         ];

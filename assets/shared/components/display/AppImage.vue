@@ -21,7 +21,7 @@ function onLoadStart() { status.value = ImageLoadStatus.Loading; }
 </script>
 
 <template>
-    <div class="relative overflow-hidden bg-surface-2" :class="rounded">
+    <div class="relative w-full h-full overflow-hidden bg-surface-2" :class="rounded">
         <div
             v-if="status === ImageLoadStatus.Loading"
             class="absolute inset-0 animate-pulse bg-surface-3"

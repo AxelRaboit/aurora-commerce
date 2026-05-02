@@ -18,6 +18,7 @@
         "phpdocumentor/reflection-docblock": "^6.0.3",
         "phpoffice/phpspreadsheet": "*",
         "phpstan/phpdoc-parser": "^2.3.2",
+        "stripe/stripe-php": "*",
         "symfony/asset": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",

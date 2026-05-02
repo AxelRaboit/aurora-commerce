@@ -8,6 +8,8 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Service\UserNotificationService;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
@@ -18,6 +20,7 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         #[AutowireDecorated]
         private UserManagerInterface $inner,
         private AuditLogger $auditLogger,
+        private UserNotificationService $notificationService,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -65,14 +68,21 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
 
     public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void
     {
+        $previousRoles = $user->getRoles();
         $this->inner->updateWithRole($user, $name, $email, $role, $password);
         $this->auditLogger->log('core', 'user.role_updated', 'User', $user->getId(), ['email' => $email, 'role' => $role]);
+
+        if (!in_array($role, $previousRoles, true)) {
+            $this->notificationService->notifyRoleChanged($user, $role);
+        }
     }
 
     public function toggleDevRole(User $user): bool
     {
         $result = $this->inner->toggleDevRole($user);
         $this->auditLogger->log('core', 'user.dev_role_toggled', 'User', $user->getId(), ['email' => $user->getEmail(), 'devRoleEnabled' => $result]);
+
+        $this->notificationService->notifyRoleChanged($user, ($result ? UserRoleEnum::Dev : UserRoleEnum::Admin)->value);
 
         return $result;
     }

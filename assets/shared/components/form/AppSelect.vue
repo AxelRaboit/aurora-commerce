@@ -1,15 +1,20 @@
 <script setup>
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 
-defineProps({
+const props = defineProps({
     modelValue: { type: [String, Number], default: '' },
     label: { type: String, default: '' },
     error: { type: String, default: '' },
     required: { type: Boolean, default: false },
-    options: { type: Array, default: () => [] },
+    placeholder: { type: String, default: '' },
+    // Array of { value, label } OR object { value: label } — leave empty to use slot
+    options: { type: [Array, Object], default: null },
 });
 
 defineEmits(['update:modelValue']);
+
+const isObjectMap = (v) => v !== null && !Array.isArray(v) && typeof v === 'object';
+const isArrayOpts = (v) => Array.isArray(v) && v.length > 0;
 </script>
 
 <template>
@@ -21,7 +26,19 @@ defineEmits(['update:modelValue']);
             :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }"
             v-on:change="$emit('update:modelValue', $event.target.value)"
         >
-            <slot />
+            <option v-if="placeholder" value="">{{ placeholder }}</option>
+
+            <template v-if="isArrayOpts(options)">
+                <option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+            </template>
+
+            <template v-else-if="isObjectMap(options)">
+                <option v-for="(lbl, val) in options" :key="val" :value="val">{{ lbl }}</option>
+            </template>
+
+            <template v-else>
+                <slot />
+            </template>
         </select>
         <p v-if="error" class="text-xs text-red-500">{{ error }}</p>
     </div>

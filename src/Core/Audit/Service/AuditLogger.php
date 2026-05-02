@@ -9,7 +9,7 @@ use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-final readonly class AuditLogger
+readonly class AuditLogger
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

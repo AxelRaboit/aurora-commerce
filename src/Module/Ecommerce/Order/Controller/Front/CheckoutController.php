@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeResolver;
@@ -15,18 +16,24 @@ use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\View\CheckoutViewBuilder;
+use Aurora\Module\Ecommerce\Payment\StripeService;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckoutController extends AbstractController
 {
     use FrontLocaleTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly CartManagerInterface $cartManager,
@@ -37,6 +44,9 @@ class CheckoutController extends AbstractController
         private readonly FrontContext $frontContext,
         private readonly ThemeResolver $themeResolver,
         private readonly CheckoutViewBuilder $viewBuilder,
+        private readonly StripeService $stripeService,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[Route('/{locale}/checkout', name: 'front_checkout', requirements: ['locale' => '[a-z]{2}'], methods: ['GET', 'POST'], priority: 8)]
@@ -51,42 +61,81 @@ class CheckoutController extends AbstractController
         }
 
         $cartRequiresShipping = $this->cartContainsPhysicalItem($cart);
-        $errors = [];
-        $stockError = null;
-        $formData = $this->initialFormData($cartRequiresShipping);
 
         if ('POST' === $request->getMethod()) {
-            $formData = array_merge($formData, $request->request->all());
-            $input = CheckoutInput::fromArray($formData);
-            $errors = $this->payloadValidator->errors($input);
-            if ($cartRequiresShipping) {
-                $errors = array_merge($errors, $input->shippingErrors());
-            }
-
-            if ([] === $errors) {
-                $customer = $this->security->getUser() instanceof User ? $this->security->getUser() : null;
-                try {
-                    $order = $this->orderManager->checkout($cart, $input, $customer);
-
-                    return $this->redirectToRoute('front_order_show', ['locale' => $locale, 'token' => $order->getToken()]);
-                } catch (InvalidArgumentException $e) {
-                    $stockError = $e->getMessage();
-                }
-            }
+            return $this->handlePost($locale, $request, $cart, $cartRequiresShipping);
         }
 
-        return $this->render($this->themeResolver->resolve('checkout'), $this->viewBuilder->checkoutView($cart, $errors, $stockError, $formData, $cartRequiresShipping, $locale));
+        $formData = $this->initialFormData($cartRequiresShipping);
+        $submitPath = $this->urlGenerator->generate('front_checkout', ['locale' => $locale]);
+
+        return $this->render(
+            $this->themeResolver->resolve('checkout'),
+            $this->viewBuilder->checkoutView($cart, $cartRequiresShipping, $formData, $locale, $this->stripeService->getPublicKey(), $submitPath),
+        );
     }
 
-    private function cartContainsPhysicalItem(Cart $cart): bool
+    private function handlePost(string $locale, Request $request, Cart $cart, bool $cartRequiresShipping): Response
     {
-        foreach ($cart->getItems() as $item) {
-            if ($item->getListing()->getProduct()->getType()->requiresShipping()) {
-                return true;
+        $formData = $request->request->all();
+        $input = CheckoutInput::fromArray($formData);
+        $errors = $this->payloadValidator->errors($input);
+        if ($cartRequiresShipping) {
+            $errors = array_merge($errors, $input->shippingErrors());
+        }
+
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors);
+        }
+
+        $customer = $this->security->getUser() instanceof User ? $this->security->getUser() : null;
+
+        try {
+            $order = $this->orderManager->createFromCart($cart, $input, $customer, $locale);
+            $paymentIntent = $this->stripeService->createPaymentIntent($order);
+
+            $order->setStripePaymentIntentId($paymentIntent->id);
+            $this->entityManager->flush();
+
+            $returnUrl = $this->urlGenerator->generate('front_order_payment_return', [
+                'locale' => $locale,
+                'token' => $order->getToken(),
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            return $this->jsonSuccess([
+                'clientSecret' => $paymentIntent->client_secret,
+                'returnUrl' => $returnUrl,
+            ]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonInvalidInput(['stock' => $invalidArgumentException->getMessage()]);
+        }
+    }
+
+    #[Route('/{locale}/order/{token}/payment-return', name: 'front_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
+    public function paymentReturn(string $locale, string $token, Request $request): Response
+    {
+        $this->assertActiveLocale($this->frontContext, $locale);
+
+        $order = $this->orderRepository->findOneByToken($token);
+        if (!$order instanceof Order) {
+            throw $this->createNotFoundException();
+        }
+
+        $paymentIntentId = $request->query->get('payment_intent');
+
+        if (null !== $paymentIntentId && OrderStatusEnum::Pending === $order->getStatus()) {
+            try {
+                $paymentIntent = $this->stripeService->retrievePaymentIntent($paymentIntentId);
+                if ('succeeded' === $paymentIntent->status) {
+                    $this->orderManager->markPaid($order);
+                    $this->cartManager->clear();
+                }
+            } catch (Exception) {
+                // Log silently — order stays Pending, admin can handle manually
             }
         }
 
-        return false;
+        return $this->redirectToRoute('front_order_show', ['locale' => $locale, 'token' => $token]);
     }
 
     #[Route('/{locale}/order/{token}', name: 'front_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
@@ -101,6 +150,17 @@ class CheckoutController extends AbstractController
         }
 
         return $this->render($this->themeResolver->resolve('order_show'), $this->viewBuilder->showView($order, $locale));
+    }
+
+    private function cartContainsPhysicalItem(Cart $cart): bool
+    {
+        foreach ($cart->getItems() as $item) {
+            if ($item->getListing()->getProduct()->getType()->requiresShipping()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function initialFormData(bool $cartRequiresShipping): array

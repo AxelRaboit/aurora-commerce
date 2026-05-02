@@ -50,12 +50,12 @@ front:
     name: Vollständiger Name
     shipping: Lieferadresse
     address_line_1: Adresse
-    address_line_2: Adresse Zeile 2 (optional)
+    address_line_2: Adresse Zeile 2
     city: Stadt
     postal_code: PLZ
     country: Land
     country_placeholder: Land auswählen
-    notes: Bestellnotizen (optional)
+    notes: Bestellnotizen
     summary: Zusammenfassung
     confirm: Bestellung bestätigen
     payment_stub: Demo-Modus — es wird keine echte Zahlung verarbeitet.
@@ -63,6 +63,12 @@ front:
     digital_delivery_hint: Diese Bestellung enthält nur nicht-physische Produkte. Keine Lieferadresse erforderlich.
     errors:
       country_invalid: Das ausgewählte Land wird nicht unterstützt.
+      email_required: E-Mail-Adresse ist erforderlich.
+      email_invalid: E-Mail-Adresse ist ungültig.
+      name_required: Name ist erforderlich.
+      address_required: Adresse ist erforderlich.
+      city_required: Stadt ist erforderlich.
+      postal_required: Postleitzahl ist erforderlich.
       country_required: Land ist erforderlich.
   order:
     title: Bestellung
@@ -80,6 +86,7 @@ front:
     status_shipped: Versendet
     status_delivered: Geliefert
     status_cancelled: Storniert
+    status_refunded: Erstattet
   account:
     orders: Meine Bestellungen
     no_orders: Du hast noch keine Bestellung aufgegeben.

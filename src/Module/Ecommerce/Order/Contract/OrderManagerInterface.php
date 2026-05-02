@@ -11,7 +11,7 @@ use Aurora\Module\Ecommerce\Order\Entity\Order;
 
 interface OrderManagerInterface
 {
-    public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer): Order;
+    public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer, string $locale = 'fr'): Order;
 
     public function markPaid(Order $order): void;
 

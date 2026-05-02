@@ -14,6 +14,8 @@ use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Ecommerce\Order\Service\OrderNotificationService;
+use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,9 +30,11 @@ final readonly class OrderManager implements OrderManagerInterface
         private OrderRepository $orderRepository,
         private CartManagerInterface $cartManager,
         private AuditLogger $auditLogger,
+        private OrderNotificationService $notificationService,
+        private OrderRefundService $refundService,
     ) {}
 
-    public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer): Order
+    public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer, string $locale = 'fr'): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -56,6 +60,7 @@ final readonly class OrderManager implements OrderManagerInterface
         $order->setPostalCode($input->postalCode);
         $order->setCountryEnum($input->country);
         $order->setNotes($input->notes);
+        $order->setLocale($locale);
 
         $totalCents = 0;
         $currency = null;
@@ -125,11 +130,14 @@ final readonly class OrderManager implements OrderManagerInterface
         $this->auditLogger->log('ecommerce', 'order.paid', 'Order', $order->getId(), [
             'number' => $order->getNumber(),
         ]);
+
+        $this->notificationService->notifyPaid($order);
     }
 
     public function markShipped(Order $order): void
     {
         $this->transitionStatus($order, OrderStatusEnum::Shipped, [OrderStatusEnum::Paid], 'order.shipped');
+        $this->notificationService->notifyShipped($order);
     }
 
     public function markDelivered(Order $order): void
@@ -137,6 +145,11 @@ final readonly class OrderManager implements OrderManagerInterface
         $this->transitionStatus($order, OrderStatusEnum::Delivered, [OrderStatusEnum::Shipped, OrderStatusEnum::Paid], 'order.delivered');
     }
 
+    /**
+     * Cancels an order. If the order was paid (and not already refunded), the Stripe payment
+     * is refunded automatically. Already-refunded orders skip the refund step (just mark
+     * cancelled). Idempotent for already-cancelled orders.
+     */
     public function cancel(Order $order): void
     {
         if (OrderStatusEnum::Cancelled === $order->getStatus() || OrderStatusEnum::Delivered === $order->getStatus()) {
@@ -144,10 +157,24 @@ final readonly class OrderManager implements OrderManagerInterface
         }
 
         $previous = $order->getStatus();
+        $alreadyRefunded = OrderStatusEnum::Refunded === $previous;
 
-        $this->entityManager->wrapInTransaction(function () use ($order, $previous): void {
-            // Restock only if stock was actually decremented (Paid/Shipped). Pending was never decremented.
-            if (in_array($previous, [OrderStatusEnum::Paid, OrderStatusEnum::Shipped], true)) {
+        // Auto-refund: Paid/Shipped order with a Stripe payment intent that hasn't been refunded yet.
+        $needsRefund = !$alreadyRefunded
+            && null !== $order->getStripePaymentIntentId()
+            && in_array($previous, [OrderStatusEnum::Paid, OrderStatusEnum::Shipped], true);
+
+        if ($needsRefund) {
+            $this->refundService->refundForCancel($order);
+        }
+
+        $this->entityManager->wrapInTransaction(function () use ($order, $previous, $alreadyRefunded): void {
+            // Restock only if stock was actually decremented AND not already refunded
+            // (a previous refund already restocked, don't double-restock).
+            $shouldRestock = !$alreadyRefunded
+                && in_array($previous, [OrderStatusEnum::Paid, OrderStatusEnum::Shipped], true);
+
+            if ($shouldRestock) {
                 $quantitiesByProductId = $this->aggregateOrderQuantities($order);
                 foreach ($quantitiesByProductId as $productId => $totalQuantity) {
                     $product = $this->entityManager->find(Product::class, $productId, LockMode::PESSIMISTIC_WRITE);
@@ -164,7 +191,11 @@ final readonly class OrderManager implements OrderManagerInterface
         $this->auditLogger->log('ecommerce', 'order.cancelled', 'Order', $order->getId(), [
             'number' => $order->getNumber(),
             'from' => $previous->value,
+            'refunded' => $needsRefund,
+            'alreadyRefunded' => $alreadyRefunded,
         ]);
+
+        $this->notificationService->notifyCancelled($order, $needsRefund || $alreadyRefunded);
     }
 
     /**

@@ -71,6 +71,15 @@ class Order
     #[ORM\Column(length: 3, enumType: CurrencyEnum::class)]
     private CurrencyEnum $currency = CurrencyEnum::EUR;
 
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $stripePaymentIntentId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $refundedCents = null;
+
+    #[ORM\Column(length: 5)]
+    private string $locale = 'fr';
+
     /** @var Collection<int, OrderLine> */
     #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $lines;
@@ -282,6 +291,50 @@ class Order
             $this->lines->add($line);
             $line->setOrder($this);
         }
+
+        return $this;
+    }
+
+    public function getStripePaymentIntentId(): ?string
+    {
+        return $this->stripePaymentIntentId;
+    }
+
+    public function setStripePaymentIntentId(?string $id): static
+    {
+        $this->stripePaymentIntentId = $id;
+
+        return $this;
+    }
+
+    public function getRefundedCents(): ?int
+    {
+        return $this->refundedCents;
+    }
+
+    public function setRefundedCents(?int $cents): static
+    {
+        $this->refundedCents = $cents;
+
+        return $this;
+    }
+
+    public function isRefundable(): bool
+    {
+        return null !== $this->stripePaymentIntentId
+            && OrderStatusEnum::Refunded !== $this->status
+            && OrderStatusEnum::Pending !== $this->status
+            && OrderStatusEnum::Cancelled !== $this->status;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): static
+    {
+        $this->locale = $locale;
 
         return $this;
     }

@@ -3,103 +3,13 @@
 {% block title %}{{ 'front.checkout.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-    <section>
-        <h1 class="text-3xl font-bold mb-6">{{ 'front.checkout.title'|trans }}</h1>
-
-        {% if stockError is defined and stockError %}
-            <div class="bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl px-4 py-3 mb-4 text-sm">
-                {{ stockError }}
-            </div>
-        {% endif %}
-
-        <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 space-y-4">
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <h2 class="text-lg font-semibold text-primary">{{ 'front.checkout.contact'|trans }}</h2>
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.email'|trans }}</label>
-                        <input type="email" name="email" value="{{ form.email }}" required class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                        {% if errors.email is defined %}<p class="text-xs text-rose-400 mt-1">{{ errors.email|trans }}</p>{% endif %}
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.name'|trans }}</label>
-                        <input type="text" name="name" value="{{ form.name }}" required class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                        {% if errors.name is defined %}<p class="text-xs text-rose-400 mt-1">{{ errors.name|trans }}</p>{% endif %}
-                    </div>
-                </div>
-
-                {% if requiresShipping %}
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <h2 class="text-lg font-semibold text-primary">{{ 'front.checkout.shipping'|trans }}</h2>
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.address_line_1'|trans }}</label>
-                        <input type="text" name="addressLine1" value="{{ form.addressLine1 }}" required class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                        {% if errors.addressLine1 is defined %}<p class="text-xs text-rose-400 mt-1">{{ errors.addressLine1|trans }}</p>{% endif %}
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.address_line_2'|trans }}</label>
-                        <input type="text" name="addressLine2" value="{{ form.addressLine2 }}" class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.city'|trans }}</label>
-                            <input type="text" name="city" value="{{ form.city }}" required class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                            {% if errors.city is defined %}<p class="text-xs text-rose-400 mt-1">{{ errors.city|trans }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.postal_code'|trans }}</label>
-                            <input type="text" name="postalCode" value="{{ form.postalCode }}" required class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">
-                            {% if errors.postalCode is defined %}<p class="text-xs text-rose-400 mt-1">{{ errors.postalCode|trans }}</p>{% endif %}
-                        </div>
-                    </div>
-                    {{ include('@Shared/components/app_select.html.twig', {
-                        name: 'country',
-                        label: 'front.checkout.country',
-                        options: countries,
-                        selected: form.country,
-                        placeholder: 'front.checkout.country_placeholder',
-                        required: true,
-                        error: errors.country ?? null,
-                        class: 'sm:max-w-xs',
-                    }) }}
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.notes'|trans }}</label>
-                        <textarea name="notes" rows="3" class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">{{ form.notes }}</textarea>
-                    </div>
-                </div>
-                {% else %}
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-3">
-                    <h2 class="text-lg font-semibold text-primary">{{ 'front.checkout.digital_delivery'|trans }}</h2>
-                    <p class="text-sm text-secondary">{{ 'front.checkout.digital_delivery_hint'|trans }}</p>
-                    <div>
-                        <label class="block text-xs font-medium text-secondary mb-1">{{ 'front.checkout.notes'|trans }}</label>
-                        <textarea name="notes" rows="3" class="w-full px-3 py-2 rounded-md bg-surface-2 border border-line text-primary">{{ form.notes }}</textarea>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-
-            <aside class="space-y-4">
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-3 lg:sticky lg:top-4">
-                    <h2 class="text-lg font-semibold text-primary mb-3">{{ 'front.checkout.summary'|trans }}</h2>
-                    <ul class="space-y-2 text-sm border-b border-line pb-3">
-                        {% for item in cart.items %}
-                            <li class="flex justify-between gap-3">
-                                <span class="text-secondary">{{ item.title }} × {{ item.quantity }}</span>
-                                <span class="text-primary tabular-nums shrink-0">{{ item.subtotal|number_format(2, ',', ' ') }} {{ item.currencySymbol }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <div class="flex items-center justify-between pt-2">
-                        <span class="font-semibold text-primary">{{ 'front.cart.total'|trans }}</span>
-                        <span class="text-xl font-bold text-accent">{{ cart.total|number_format(2, ',', ' ') }} {{ cart.currencySymbol }}</span>
-                    </div>
-                    <button type="submit" class="w-full px-6 py-3 bg-accent text-white font-medium rounded-md hover:opacity-90 transition-opacity">
-                        {{ 'front.checkout.confirm'|trans }}
-                    </button>
-                    <p class="text-xs text-muted text-center">{{ 'front.checkout.payment_stub'|trans }}</p>
-                </div>
-            </aside>
-        </form>
-    </section>
+<div {{ vue_component('ecommerce/front/CheckoutApp', {
+    cart: cart,
+    initialForm: initialForm,
+    requiresShipping: requiresShipping,
+    countries: countries,
+    stripePublicKey: stripePublicKey,
+    submitPath: submitPath,
+    locale: locale,
+}) }}></div>
 {% endblock %}

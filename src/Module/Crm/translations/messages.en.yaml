@@ -25,3 +25,24 @@ admin:
   crm:
     deals:
       kanban: Kanban pipeline
+crm:
+  mail:
+    subject_contact_new: New contact created
+    subject_deal_won: Deal won
+    subject_deal_lost: Deal lost
+    contact:
+      heading: New contact
+      intro: 'A new contact has been added to the CRM.'
+      name: Name
+      email: Email
+      phone: Phone
+      company: Company
+    deal:
+      heading_won: 🎉 Deal won
+      heading_lost: Deal lost
+      intro_won: 'The deal {name} has been won!'
+      intro_lost: 'The deal {name} has been marked as lost.'
+      name: Deal name
+      value: Value
+      contact: Contact
+      company: Company

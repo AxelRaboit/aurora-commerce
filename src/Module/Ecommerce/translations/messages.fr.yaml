@@ -14,15 +14,86 @@ admin:
           shipped: Commande expédiée
           delivered: Commande livrée
           cancelled: Commande annulée
+          refunded: Commande remboursée
   nav:
     listings: Boutique
     orders: Commandes
   ecommerce:
+    orders:
+      refund:
+        action: Rembourser
+        title: Rembourser la commande
+        hint: Le remboursement est traité immédiatement par Stripe et est irréversible.
+        full: 'Remboursement total ({total})'
+        amount: Montant à rembourser
+        confirm: Confirmer le remboursement
+        success: Commande remboursée avec succès.
+      errors:
+        not_refundable: Cette commande ne peut pas être remboursée.
+        invalid_refund_amount: Le montant de remboursement est invalide.
+      status:
+        pending: En attente
+        paid: Payée
+        shipped: Expédiée
+        delivered: Livrée
+        cancelled: Annulée
+        refunded: Remboursée
     listings:
       errors:
         slug_taken: Ce slug est déjà utilisé pour un autre listing.
         product_already_listed: Ce produit a déjà un listing dans la boutique.
         product_not_found: Produit introuvable.
+ecommerce:
+  mail:
+    subject:
+      paid: Confirmation de commande
+      shipped: Votre commande a été expédiée
+      cancelled: Annulation de votre commande
+      refund: Remboursement de votre commande
+      admin_new: Nouvelle commande payée
+    common:
+      order: Numéro de commande
+      total: Total
+      items: Articles
+      customer: Client
+      shipping_address: Adresse de livraison
+      cta_view: Voir ma commande
+    paid:
+      subject: Confirmation de commande
+      heading: Merci pour votre commande !
+      greeting: 'Bonjour {name},'
+      intro: 'Votre commande {number} a bien été enregistrée chez {siteName}. Vous trouverez ci-dessous le récapitulatif.'
+      support: 'Pour toute question, n''hésitez pas à nous contacter en réponse à ce message.'
+    shipped:
+      subject: Votre commande a été expédiée
+      heading: Votre commande est en route
+      greeting: 'Bonjour {name},'
+      intro: 'Votre commande {number} vient d''être expédiée.'
+    cancelled:
+      subject: Annulation de votre commande
+      heading: Commande annulée
+      greeting: 'Bonjour {name},'
+      intro: 'Votre commande {number} a été annulée par {siteName}.'
+      intro_refunded: 'Votre commande {number} a été annulée et intégralement remboursée par {siteName}.'
+      refund_delay: Le remboursement apparaîtra sur votre compte bancaire sous 5 à 10 jours ouvrés.
+      support: 'Pour toute question, contactez-nous en réponse à ce message.'
+    admin_new:
+      subject: Nouvelle commande payée
+      heading: Nouvelle commande
+      intro: 'Une nouvelle commande {number} vient d''être payée.'
+      cta: Voir la commande dans l''admin
+    refund:
+      subject: Remboursement de votre commande
+      heading: Remboursement effectué
+      greeting: 'Bonjour {name},'
+      intro_full: 'Votre commande {number} a été remboursée intégralement par {siteName}.'
+      intro_partial: 'Un remboursement partiel a été effectué sur votre commande {number} par {siteName}.'
+      order: Numéro de commande
+      amount: Montant remboursé
+      original_total: Total initial
+      delay: Le remboursement apparaîtra sur votre compte bancaire sous 5 à 10 jours ouvrés.
+      cta: Voir ma commande
+      support: 'Pour toute question, n''hésitez pas à nous contacter en réponse à ce message.'
 front:
   shop:
     title: Boutique
@@ -30,6 +101,7 @@ front:
     no_image: Pas d'image
     back_to_list: Retour à la boutique
     add_to_cart: Ajouter au panier
+    added_to_cart: Produit ajouté au panier
     in_stock: En stock
     low_stock: 'Plus que %count% en stock'
     out_of_stock: Rupture de stock
@@ -50,18 +122,27 @@ front:
     name: Nom complet
     shipping: Adresse de livraison
     address_line_1: Adresse
-    address_line_2: Complément (optionnel)
+    address_line_2: Complément
     city: Ville
     postal_code: Code postal
     country: Pays
     country_placeholder: Sélectionner un pays
-    notes: Notes pour la commande (optionnel)
+    notes: Notes
     summary: Récapitulatif
-    confirm: Confirmer la commande
+    confirm: Confirmer et payer
+    payment: Paiement
+    demo_card_hint: "Mode démo — utilisez la carte test : 4242 4242 4242 4242 · exp. 12/34 · CVC 123"
+    processing: Traitement en cours…
     payment_stub: Mode démo — aucun paiement réel n'est effectué.
     digital_delivery: Livraison numérique
     digital_delivery_hint: Cette commande ne contient que des produits non-physiques. Aucune adresse de livraison n'est requise.
     errors:
+      email_required: L'adresse e-mail est requise.
+      email_invalid: L'adresse e-mail n'est pas valide.
+      name_required: Le nom est requis.
+      address_required: L'adresse est requise.
+      city_required: La ville est requise.
+      postal_required: Le code postal est requis.
       country_invalid: Le pays sélectionné n'est pas pris en charge.
       country_required: Le pays est requis.
   order:
@@ -80,6 +161,7 @@ front:
     status_shipped: Expédiée
     status_delivered: Livrée
     status_cancelled: Annulée
+    status_refunded: Remboursée
   account:
     orders: Mes commandes
     no_orders: Vous n'avez encore passé aucune commande.

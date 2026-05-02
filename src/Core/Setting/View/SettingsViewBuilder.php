@@ -38,6 +38,15 @@ final readonly class SettingsViewBuilder
 
             $value = $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue());
 
+            // EmailLocale defaults to the site's DefaultLocale when never explicitly set —
+            // keeps customer emails consistent with the site language out of the box.
+            if (ApplicationParameterEnum::EmailLocale === $parameter && '' === $value) {
+                $value = $this->settingRepository->get(
+                    ApplicationParameterEnum::DefaultLocale->value,
+                    ApplicationParameterEnum::DefaultLocale->getDefaultValue(),
+                );
+            }
+
             $groups[$groupName][] = [
                 'key' => $parameter->getKey(),
                 'label' => $parameter->getLabel(),

@@ -3,48 +3,11 @@
 {% block title %}{{ 'front.account.orders'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-    <section class="space-y-6">
-        <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold">{{ 'front.account.orders'|trans }}</h1>
-            <a href="{{ path('front_account', {locale: locale}) }}" class="text-sm text-muted hover:text-primary">← {{ 'front.account.back'|trans }}</a>
-        </div>
-
-        {% if orders|length == 0 %}
-            <div class="bg-surface border border-line rounded-xl p-8 text-center space-y-3">
-                <p class="text-muted">{{ 'front.account.no_orders'|trans }}</p>
-                <a href="{{ path('front_shop_index', {locale: locale}) }}" class="inline-block text-accent hover:underline">{{ 'front.cart.browse_shop'|trans }}</a>
-            </div>
-        {% else %}
-            <div class="bg-surface border border-line rounded-xl overflow-hidden">
-                <table class="w-full text-sm">
-                    <thead class="bg-surface-2 border-b border-line">
-                        <tr class="text-xs text-muted uppercase">
-                            <th class="px-4 py-3 text-left">{{ 'front.order.number'|trans }}</th>
-                            <th class="px-4 py-3 text-left hidden sm:table-cell">{{ 'front.order.date'|trans }}</th>
-                            <th class="px-4 py-3 text-left">{{ 'front.order.status'|trans }}</th>
-                            <th class="px-4 py-3 text-right">{{ 'front.cart.total'|trans }}</th>
-                            <th class="px-4 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-line">
-                        {% for order in orders %}
-                            <tr class="hover:bg-surface-2/50 transition-colors">
-                                <td class="px-4 py-3 font-mono text-primary">{{ order.number }}</td>
-                                <td class="px-4 py-3 text-secondary hidden sm:table-cell">{{ order.createdAt|date('d/m/Y') }}</td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-2 text-secondary">
-                                        {{ ('front.order.status_' ~ order.status)|trans }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-right text-primary tabular-nums font-medium">{{ order.total|number_format(2, ',', ' ') }} {{ order.currencySymbol }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="{{ path('front_order_show', {locale: locale, token: order.token}) }}" class="text-accent hover:underline text-sm">{{ 'front.order.view'|trans }}</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
-    </section>
+<div {{ vue_component('ecommerce/front/AccountOrdersApp', {
+    orders: orders,
+    locale: locale,
+    accountPath: path('front_account', {locale: locale}),
+    shopPath: path('front_shop_index', {locale: locale}),
+    orderPathBase: path('front_order_show', {locale: locale, token: '00000000000000000000000000000000'})|replace({'/00000000000000000000000000000000': ''}),
+}) }}></div>
 {% endblock %}

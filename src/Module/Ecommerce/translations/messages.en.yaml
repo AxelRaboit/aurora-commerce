@@ -14,15 +14,86 @@ admin:
           shipped: Order shipped
           delivered: Order delivered
           cancelled: Order cancelled
+          refunded: Order refunded
   nav:
     listings: Shop
     orders: Orders
   ecommerce:
+    orders:
+      refund:
+        action: Refund
+        title: Refund the order
+        hint: The refund is processed immediately by Stripe and is irreversible.
+        full: 'Full refund ({total})'
+        amount: Amount to refund
+        confirm: Confirm refund
+        success: Order refunded successfully.
+      errors:
+        not_refundable: This order cannot be refunded.
+        invalid_refund_amount: Invalid refund amount.
+      status:
+        pending: Pending
+        paid: Paid
+        shipped: Shipped
+        delivered: Delivered
+        cancelled: Cancelled
+        refunded: Refunded
     listings:
       errors:
         slug_taken: This slug is already used by another listing.
         product_already_listed: This product already has a shop listing.
         product_not_found: Product not found.
+ecommerce:
+  mail:
+    subject:
+      paid: Order confirmation
+      shipped: Your order has been shipped
+      cancelled: Order cancellation
+      refund: Refund of your order
+      admin_new: New paid order
+    common:
+      order: Order number
+      total: Total
+      items: Items
+      customer: Customer
+      shipping_address: Shipping address
+      cta_view: View my order
+    paid:
+      subject: Order confirmation
+      heading: Thank you for your order!
+      greeting: 'Hello {name},'
+      intro: 'Your order {number} has been registered at {siteName}. You will find the summary below.'
+      support: 'For any question, feel free to reply to this email.'
+    shipped:
+      subject: Your order has been shipped
+      heading: Your order is on its way
+      greeting: 'Hello {name},'
+      intro: 'Your order {number} has just been shipped.'
+    cancelled:
+      subject: Order cancellation
+      heading: Order cancelled
+      greeting: 'Hello {name},'
+      intro: 'Your order {number} has been cancelled by {siteName}.'
+      intro_refunded: 'Your order {number} has been cancelled and fully refunded by {siteName}.'
+      refund_delay: The refund will appear on your bank account within 5 to 10 business days.
+      support: 'For any question, contact us by replying to this email.'
+    admin_new:
+      subject: New paid order
+      heading: New order
+      intro: 'A new order {number} has just been paid.'
+      cta: View the order in admin
+    refund:
+      subject: Refund of your order
+      heading: Refund issued
+      greeting: 'Hello {name},'
+      intro_full: 'Your order {number} has been fully refunded by {siteName}.'
+      intro_partial: 'A partial refund has been issued on your order {number} by {siteName}.'
+      order: Order number
+      amount: Refunded amount
+      original_total: Original total
+      delay: The refund will appear on your bank account within 5 to 10 business days.
+      cta: View my order
+      support: 'For any question, feel free to reply to this email.'
 front:
   shop:
     title: Shop
@@ -30,6 +101,7 @@ front:
     no_image: No image
     back_to_list: Back to shop
     add_to_cart: Add to cart
+    added_to_cart: Product added to cart
     in_stock: In stock
     low_stock: 'Only %count% left'
     out_of_stock: Out of stock
@@ -50,18 +122,27 @@ front:
     name: Full name
     shipping: Shipping address
     address_line_1: Address
-    address_line_2: Address line 2 (optional)
+    address_line_2: Address line 2
     city: City
     postal_code: Postal code
     country: Country
     country_placeholder: Select a country
-    notes: Order notes (optional)
+    notes: Order notes
     summary: Summary
-    confirm: Confirm order
+    confirm: Confirm & pay
+    payment: Payment
+    demo_card_hint: "Demo mode — use test card: 4242 4242 4242 4242 · exp. 12/34 · CVC 123"
+    processing: Processing…
     payment_stub: Demo mode — no real payment is processed.
     digital_delivery: Digital delivery
     digital_delivery_hint: This order contains only non-physical products. No shipping address required.
     errors:
+      email_required: Email address is required.
+      email_invalid: Email address is not valid.
+      name_required: Name is required.
+      address_required: Address is required.
+      city_required: City is required.
+      postal_required: Postal code is required.
       country_invalid: The selected country is not supported.
       country_required: Country is required.
   order:
@@ -80,6 +161,7 @@ front:
     status_shipped: Shipped
     status_delivered: Delivered
     status_cancelled: Cancelled
+    status_refunded: Refunded
   account:
     orders: My orders
     no_orders: You haven't placed any order yet.

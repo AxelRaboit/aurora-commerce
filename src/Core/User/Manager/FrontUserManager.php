@@ -15,6 +15,7 @@ use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\User\Service\UserNotificationService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -32,6 +33,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         private EmailVerificationManager $emailVerificationManager,
         private PasswordResetManager $passwordResetManager,
         private AuditLogger $auditLogger,
+        private UserNotificationService $notificationService,
     ) {}
 
     public function register(FrontRegisterInput $input): User
@@ -101,6 +103,10 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
     {
         $id = $user->getId();
         $email = $user->getEmail();
+        $name = $user->getName();
+
+        $this->notificationService->notifyAccountDeleted($email, $name, $user->getLocale()->value);
+
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 

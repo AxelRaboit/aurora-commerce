@@ -11,8 +11,10 @@ use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Ecommerce\Order\View\OrderDetailViewBuilder;
 use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +33,7 @@ final class OrderDetailController extends AbstractController
         private readonly OrderSerializer $orderSerializer,
         private readonly OrderManagerInterface $orderManager,
         private readonly OrderDetailViewBuilder $viewBuilder,
+        private readonly OrderRefundService $refundService,
     ) {}
 
     #[Route('', name: '_show', methods: [HttpMethodEnum::Get->value])]
@@ -54,10 +57,37 @@ final class OrderDetailController extends AbstractController
                 OrderStatusEnum::Shipped => $this->orderManager->markShipped($order),
                 OrderStatusEnum::Delivered => $this->orderManager->markDelivered($order),
                 OrderStatusEnum::Cancelled => $this->orderManager->cancel($order),
-                OrderStatusEnum::Pending => throw new InvalidArgumentException('Cannot revert an order to pending'),
+                OrderStatusEnum::Pending,
+                OrderStatusEnum::Refunded => throw new InvalidArgumentException('Cannot transition order via this endpoint'),
             };
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonFailure($invalidArgumentException->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (RuntimeException $runtimeException) {
+            return $this->jsonFailure($runtimeException->getMessage(), Response::HTTP_BAD_GATEWAY);
+        }
+
+        return $this->jsonSuccess(['order' => $this->orderSerializer->serialize($order)]);
+    }
+
+    #[Route('/refund', name: '_refund', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ecommerce.orders.manage')]
+    public function refund(Order $order, Request $request): JsonResponse
+    {
+        if (!$order->isRefundable()) {
+            return $this->jsonFailure('order.not_refundable', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $payload = $this->decodeJson($request);
+        $amountCents = isset($payload['amountCents']) ? (int) $payload['amountCents'] : null;
+
+        if (null !== $amountCents && ($amountCents <= 0 || $amountCents > $order->getTotalCents())) {
+            return $this->jsonFailure('order.invalid_refund_amount', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $this->refundService->refund($order, $amountCents);
+        } catch (RuntimeException $runtimeException) {
+            return $this->jsonFailure($runtimeException->getMessage(), Response::HTTP_BAD_GATEWAY);
         }
 
         return $this->jsonSuccess(['order' => $this->orderSerializer->serialize($order)]);

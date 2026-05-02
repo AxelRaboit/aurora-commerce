@@ -1,0 +1,7 @@
+{% extends '@Shared/email/layout/base.html.twig' %}
+
+{% block content %}
+<h1>{{ 'admin.mail.user.account_deleted_heading'|trans }}</h1>
+<p>{{ 'admin.mail.user.account_deleted_intro'|trans({'{name}': name, '{siteName}': siteName}) }}</p>
+<p>{{ 'admin.mail.user.account_deleted_outro'|trans }}</p>
+{% endblock %}

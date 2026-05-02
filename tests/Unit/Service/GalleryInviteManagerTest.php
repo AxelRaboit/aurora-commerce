@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
+use Aurora\Core\Mail\Service\MailService;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
@@ -18,6 +19,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\RawMessage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\LocaleSwitcher;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -55,14 +58,23 @@ final class GalleryInviteManagerTest extends TestCase
 
         $pickRepo = $this->createStub(GalleryPickRepository::class);
 
-        return new GalleryNotificationService(
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
+
+        $localeSwitcher = $this->createMock(LocaleSwitcher::class);
+        $localeSwitcher->method('runWithLocale')
+            ->willReturnCallback(static fn (string $_, callable $cb) => $cb());
+
+        $mail = new MailService(
             $mailer,
             $twig,
             $settings,
-            $pickRepo,
-            $url,
+            $translator,
+            $localeSwitcher,
             'noreply@example.test',
         );
+
+        return new GalleryNotificationService($mail, $pickRepo, $url);
     }
 
     public function testCreatePersistsInviteWithLowercasedEmailAndDeterministicVisitorToken(): void
