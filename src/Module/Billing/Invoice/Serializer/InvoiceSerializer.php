@@ -29,6 +29,8 @@ final readonly class InvoiceSerializer
             'status' => $status->value,
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),
+            'isCancelled' => $invoice->isCancelled(),
+            'isCreditNote' => $invoice->getStatus() === \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::CreditNote,
             'supplier' => $supplier instanceof Supplier ? [
                 'id' => $supplier->getId(),
                 'name' => $supplier->getName(),
@@ -62,6 +64,8 @@ final readonly class InvoiceSerializer
             'paidAt' => $invoice->getPaidAt()?->format('Y-m-d'),
             'notes' => $invoice->getNotes(),
             'supplierFull' => $supplier instanceof Supplier ? $this->supplierSerializer->serialize($supplier) : null,
+            'creditNote' => ($cn = $invoice->getCreditNote()) !== null ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
+            'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) !== null ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
             'buyer' => $invoice->getBuyerName() !== null ? [
                 'name' => $invoice->getBuyerName(),
                 'vatNumber' => $invoice->getBuyerVatNumber(),
@@ -81,6 +85,7 @@ final readonly class InvoiceSerializer
                 'statusColor' => $job->getStatus()->getBadgeColor(),
                 'modelUsed' => $job->getModelUsed(),
                 'confidence' => $job->getConfidence(),
+                'uncertainFields' => $job->getExtracted()['uncertain_fields'] ?? [],
             ] : null,
             'lines' => array_map($this->serializeLine(...), $invoice->getLines()->toArray()),
         ];

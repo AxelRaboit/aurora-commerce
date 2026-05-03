@@ -11,6 +11,7 @@ use Aurora\Core\Media\DTO\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
@@ -40,11 +41,11 @@ final readonly class MediaManager implements MediaManagerInterface
         private Security $security,
         private AuditLogger $auditLogger,
         private Filesystem $filesystem,
-        #[Autowire('%kernel.project_dir%/public/uploads')]
+        #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
 
-    public function upload(UploadedFile $file, ?MediaFolder $folder = null): Media
+    public function upload(UploadedFile $file, ?MediaFolder $folder = null, StorageAreaEnum $area = StorageAreaEnum::Media): Media
     {
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
@@ -52,22 +53,26 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $safeFilename = $this->slugger->slug(pathinfo($clientName, PATHINFO_FILENAME))->lower();
         $extension = $file->guessExtension() ?? $file->getClientOriginalExtension();
+        $dateSlug = (new \DateTimeImmutable())->format('Y-m');
         $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $extension);
+        $relativeDir = sprintf('%s/%s', $area->value, $dateSlug);
+        $relativePath = sprintf('%s/%s', $relativeDir, $newFilename);
 
-        $file->move($this->uploadDir, $newFilename);
+        $this->filesystem->mkdir(Path::join($this->uploadDir, $relativeDir));
+        $file->move(Path::join($this->uploadDir, $relativeDir), $newFilename);
 
-        [$width, $height] = @getimagesize(Path::join($this->uploadDir, $newFilename)) ?: [null, null];
+        [$width, $height] = @getimagesize(Path::join($this->uploadDir, $relativePath)) ?: [null, null];
 
         $media = new Media();
         $media->setFilename($newFilename);
         $media->setOriginalName($clientName);
         $media->setMimeType($mimeType);
         $media->setSize($size);
-        $media->setPath($newFilename);
+        $media->setPath($relativePath);
         $media->setWidth($width);
         $media->setHeight($height);
         $media->setFolder($folder);
-        $media->setVariants($this->variantGenerator->generate($newFilename, (string) $mimeType));
+        $media->setVariants($this->variantGenerator->generate($relativePath, (string) $mimeType));
 
         $user = $this->security->getUser();
         if ($user instanceof User) {

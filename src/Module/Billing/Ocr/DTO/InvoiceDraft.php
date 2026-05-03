@@ -47,6 +47,7 @@ final readonly class InvoiceDraft
         public ?int $totalGrossCents,
         public array $lines,
         public float $confidence,
+        public array $uncertainFields = [],
     ) {}
 
     /**
@@ -106,6 +107,7 @@ final readonly class InvoiceDraft
                 'total_gross_cents' => $line->totalGrossCents,
             ], $this->lines),
             'confidence' => $this->confidence,
+            'uncertain_fields' => $this->uncertainFields,
         ];
     }
 }

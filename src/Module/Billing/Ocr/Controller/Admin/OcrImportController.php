@@ -55,6 +55,7 @@ final class OcrImportController extends AbstractController
             'uploadPath' => $this->generateUrl('billing_ocr_import_upload'),
             'jobsPath' => $this->generateUrl('billing_ocr_jobs'),
             'invoicesPath' => $this->generateUrl('billing_invoices'),
+            'invoiceShowPath' => $this->generateUrl('billing_invoices_show', ['id' => '__id__']),
             'statusUrlTemplate' => $this->generateUrl('billing_ocr_jobs_status', ['id' => '__id__']),
             'retryPath' => $this->generateUrl('billing_ocr_jobs_retry', ['id' => '__id__']),
             'deletePath' => $this->generateUrl('billing_ocr_jobs_delete', ['id' => '__id__']),

@@ -55,6 +55,11 @@ final readonly class InvoicesViewBuilder
             'lineCreatePath' => $this->urlGenerator->generate('billing_invoices_lines_create', ['id' => $invoice->getId()]),
             'lineUpdatePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_update', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
             'lineDeletePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_delete', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
+            'creditNotePath' => $this->urlGenerator->generate('billing_invoices_credit_note', ['id' => $invoice->getId()]),
+            'ocrRetryPath' => $invoice->getOcrJob() !== null
+                ? $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => $invoice->getOcrJob()->getId()])
+                : null,
+            'showPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
         ];
     }
 

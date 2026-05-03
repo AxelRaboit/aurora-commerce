@@ -41,6 +41,7 @@ admin:
       status:
         draft: Borrador
         needs_review: A revisar
+        credit_note: Nota de crédito
         validated: Validada
         paid: Pagada
         archived: Archivada
@@ -51,9 +52,22 @@ admin:
         document: Documento original
         noDocument: Sin documento adjunto.
         supplier: Proveedor
+        creditNoteCreated: "Nota de crédito emitida con éxito."
+        rescan: "Relanzar el escaneo OCR"
+        rescanQueued: "Escaneo OCR relanzado — la factura se actualizará automáticamente."
+        createCreditNote: "Emitir nota de crédito"
+        creditNoteHelp: "Una nota de crédito cancela esta factura de forma legal e irreversible. Los importes serán negativos."
+        creditNoteReasonPlaceholder: "Motivo de la nota de crédito (opcional)…"
+        confirmCreditNote: "Confirmar nota de crédito"
+        cancelledBy: "Esta factura está cancelada por la nota de crédito"
+        cancels: "Esta nota de crédito cancela la factura"
         buyer: Comprador
         ocr: OCR
         ocrJob: Tarea
+        ocrAnomaly:
+          lowConfidence: "Confianza insuficiente ({pct}% < {threshold}%) — los datos extraídos pueden ser incorrectos."
+          uncertainFields: "El modelo reportó incertidumbre en estos campos a pesar de una confianza global suficiente."
+          totalsMismatch: "Discrepancia de totales: Neto + IVA = {expected} {currency} ≠ Total {actual} {currency} (dif. {diff} {currency})."
         phone: Teléfono
         address: Dirección
         lines: Líneas
@@ -103,6 +117,44 @@ admin:
         invoices: Facturas vinculadas
         totalInvoiced: Total facturado
         invoiceCount: Número de facturas
+    compliance:
+      title: Conformidad
+      overall:
+        ok: "Todas las verificaciones superadas — conforme a la ley antifraude IVA."
+        warning: Algunos puntos requieren atención.
+        error: Se han detectado anomalías críticas.
+      generatedAt: "Generado el {date}"
+      statusLabels:
+        ok: OK
+        warning: Aviso
+        error: Error
+      stats:
+        totalIssued: Facturas emitidas
+      checks:
+        sequence:
+          title: Secuencia de numeración
+          noGaps: No se detectaron lagunas
+          gaps: "{n} laguna(s) detectada(s)"
+          noNumberedInvoices: No se encontraron facturas numeradas.
+          description: "Verifica que la numeración de las facturas sea continua y sin lagunas."
+          invoiceCount: "{n} facturas"
+          gapUnit: "laguna(s)"
+          missingNumbers: Números faltantes
+        archive:
+          title: Archivo de facturas
+          ok: Todas las facturas están archivadas a tiempo.
+          overdue: "{n} factura(s) sin archivar de más de {years} años"
+          description: "Señala las facturas validadas/pagadas emitidas hace más de {years} años que aún no se han archivado."
+        audit:
+          title: Registro de auditoría
+          ok: No se detectaron anomalías en los registros.
+          anomalies: "{n} entrada(s) sospechosa(s)"
+          description: Señala modificaciones realizadas sin usuario identificado.
+          action: Acción
+          entity: Entidad
+          date: Fecha
+          user: Usuario
+          noUser: "Sistema (no rastreado)"
     ocr:
       import: Importar una factura
       empty: Sin tareas OCR.
@@ -116,7 +168,16 @@ admin:
       deleteConfirm: "¿Eliminar la tarea #{id}? También se eliminará el archivo original."
       deleted: Tarea eliminada.
       deleteError: "No se puede eliminar (restricciones DB)."
+      creditNote:
+        invalidStatus: "Solo las facturas validadas o pagadas pueden tener una nota de crédito."
+        alreadyCancelled: "Ya se ha emitido una nota de crédito para esta factura."
       errorLog: Registro de error
+      viewLogs: Ver registros
+      logsTitle: Registros del trabajo
+      logsEmpty: No hay registros disponibles.
+      logsWaitingWorker: Esperando al worker — el trabajo está en cola…
+      logsStarting: El worker tomó el trabajo, registros en camino…
+      logsRunning: Procesando…
       noErrorLog: No hay detalles de error disponibles.
       status:
         queued: En cola
@@ -124,7 +185,7 @@ admin:
         parsing: Analizando
         completed: Completado
         failed: Error
-        needs_review: A revisar
+        needs_review: Anomalía detectada
       upload:
         title: Importar una factura
         help: "Sube una factura (JPG, PNG, WebP o PDF). Para los PDF, sólo la 1ª página se envía al modelo de visión. La tarea se encola y la procesa el worker."

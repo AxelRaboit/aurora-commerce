@@ -62,6 +62,10 @@ class OcrJob
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $error = null;
 
+    /** @var list<array{level: string, message: string, context: array<string,mixed>, ts: string}> */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $logs = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -195,6 +199,25 @@ class OcrJob
     public function setError(?string $error): self
     {
         $this->error = $error;
+
+        return $this;
+    }
+
+    /** @return list<array{level: string, message: string, context: array<string,mixed>, ts: string}> */
+    public function getLogs(): array
+    {
+        return $this->logs ?? [];
+    }
+
+    public function appendLog(string $level, string $message, array $context = []): self
+    {
+        // Assign a new array so Doctrine's change-tracking detects the mutation.
+        $this->logs = [...($this->logs ?? []), [
+            'level'   => $level,
+            'message' => $message,
+            'context' => $context,
+            'ts'      => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+        ]];
 
         return $this;
     }

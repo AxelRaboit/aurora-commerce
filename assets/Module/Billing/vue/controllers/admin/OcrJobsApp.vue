@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useOcrJobs } from "@billing/vue/composables/useOcrJobs.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -24,6 +26,7 @@ const props = defineProps({
     retryPath: { type: String, required: true },
     deletePath: { type: String, required: true },
     invoicesPath: { type: String, required: true },
+    invoiceShowPath: { type: String, required: true },
     importPath: { type: String, required: true },
     statusOptions: { type: Array, default: () => [] },
 });
@@ -96,7 +99,7 @@ onMounted(startPolling);
                         <td class="px-6 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
                         <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
                         <td class="px-6 py-3">
-                            <AppBadge :color="job.statusColor">{{ job.statusLabel }}{{ job.progress !== null ? ` ${job.progress}%` : '' }}</AppBadge>
+                            <AppBadge :color="job.statusColor" :spinning="ACTIVE_STATUSES.has(job.status)">{{ job.statusLabel }}</AppBadge>
                         </td>
                         <td class="px-6 py-3 text-secondary tabular-nums hidden md:table-cell">
                             {{ job.confidence !== null ? Math.round(job.confidence * 100) + '%' : '—' }}
@@ -105,13 +108,13 @@ onMounted(startPolling);
                         <td class="px-6 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="`${invoicesPath}?search=${job.id}`">
+                                <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="job.status === 'failed'" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
+                                <AppIconButton v-if="job.status === OcrJobStatus.Failed" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
                                     <Info class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="job.status === 'failed'" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
+                                <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
                                     <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(job)">

@@ -8,11 +8,12 @@ use Aurora\Core\Media\DTO\MediaFolderInput;
 use Aurora\Core\Media\DTO\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface MediaManagerInterface
 {
-    public function upload(UploadedFile $file, ?MediaFolder $folder = null): Media;
+    public function upload(UploadedFile $file, ?MediaFolder $folder = null, StorageAreaEnum $area = StorageAreaEnum::Media): Media;
 
     public function update(Media $media, MediaInput $input): void;
 

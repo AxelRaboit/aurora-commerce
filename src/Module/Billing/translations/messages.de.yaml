@@ -41,6 +41,7 @@ admin:
       status:
         draft: Entwurf
         needs_review: Zu prüfen
+        credit_note: Gutschrift
         validated: Validiert
         paid: Bezahlt
         archived: Archiviert
@@ -51,9 +52,22 @@ admin:
         document: Quelldokument
         noDocument: Kein Dokument angehängt.
         supplier: Lieferant
+        creditNoteCreated: "Gutschrift erfolgreich ausgestellt."
+        rescan: "OCR-Scan wiederholen"
+        rescanQueued: "OCR-Scan erneut eingereiht — die Rechnung wird automatisch aktualisiert."
+        createCreditNote: "Gutschrift ausstellen"
+        creditNoteHelp: "Eine Gutschrift storniert diese Rechnung rechtlich und unwiderruflich. Die Beträge werden negiert."
+        creditNoteReasonPlaceholder: "Grund für die Gutschrift (optional)…"
+        confirmCreditNote: "Gutschrift bestätigen"
+        cancelledBy: "Diese Rechnung wird durch die Gutschrift storniert"
+        cancels: "Diese Gutschrift storniert Rechnung"
         buyer: Käufer
         ocr: OCR
         ocrJob: Job
+        ocrAnomaly:
+          lowConfidence: "Unzureichende Konfidenz ({pct}% < {threshold}%) — extrahierte Daten können fehlerhaft sein."
+          uncertainFields: "Das Modell meldete Unsicherheiten bei diesen Feldern trotz ausreichender Gesamtkonfidenz."
+          totalsMismatch: "Betragsabweichung: Netto + USt. = {expected} {currency} ≠ Brutto {actual} {currency} (Diff. {diff} {currency})."
         phone: Telefon
         address: Adresse
         lines: Positionen
@@ -103,6 +117,44 @@ admin:
         invoices: Verknüpfte Rechnungen
         totalInvoiced: Gesamt fakturiert
         invoiceCount: Anzahl Rechnungen
+    compliance:
+      title: "Konformität"
+      overall:
+        ok: "Alle Prüfungen bestanden — konform mit dem Steuerrecht."
+        warning: Einige Punkte erfordern Aufmerksamkeit.
+        error: Kritische Anomalien wurden festgestellt.
+      generatedAt: "Erstellt am {date}"
+      statusLabels:
+        ok: OK
+        warning: Warnung
+        error: Fehler
+      stats:
+        totalIssued: Ausgestellte Rechnungen
+      checks:
+        sequence:
+          title: Nummerierungssequenz
+          noGaps: Keine Lücken erkannt
+          gaps: "{n} Lücke(n) erkannt"
+          noNumberedInvoices: Keine nummerierten Rechnungen gefunden.
+          description: "Prüft, ob die Rechnungsnummerierung lückenlos und fortlaufend ist."
+          invoiceCount: "{n} Rechnungen"
+          gapUnit: "Lücke(n)"
+          missingNumbers: Fehlende Nummern
+        archive:
+          title: Rechnungsarchivierung
+          ok: Alle Rechnungen sind fristgerecht archiviert.
+          overdue: "{n} nicht archivierte Rechnung(en) älter als {years} Jahre"
+          description: "Markiert validierte/bezahlte Rechnungen älter als {years} Jahre, die noch nicht archiviert sind."
+        audit:
+          title: "Prüfprotokoll"
+          ok: Keine Anomalien in den Protokollen erkannt.
+          anomalies: "{n} verdächtige(r) Eintrag/Einträge"
+          description: Markiert Änderungen ohne identifizierten Benutzer.
+          action: Aktion
+          entity: "Entität"
+          date: Datum
+          user: Benutzer
+          noUser: "System (nicht verfolgt)"
     ocr:
       import: Rechnung importieren
       empty: Keine OCR-Jobs.
@@ -116,7 +168,16 @@ admin:
       deleteConfirm: "Job #{id} löschen? Die Quelldatei wird ebenfalls entfernt."
       deleted: Job gelöscht.
       deleteError: "Löschen nicht möglich (DB-Constraint)."
+      creditNote:
+        invalidStatus: "Nur validierte oder bezahlte Rechnungen können eine Gutschrift erhalten."
+        alreadyCancelled: "Für diese Rechnung wurde bereits eine Gutschrift ausgestellt."
       errorLog: Fehlerprotokoll
+      viewLogs: Logs anzeigen
+      logsTitle: Job-Protokoll
+      logsEmpty: Keine Protokolle verfügbar.
+      logsWaitingWorker: Warte auf den Worker — Job ist in der Warteschlange…
+      logsStarting: Worker hat den Job aufgenommen, Protokolle kommen…
+      logsRunning: Verarbeitung läuft…
       noErrorLog: Keine Fehlerdetails verfügbar.
       status:
         queued: In Warteschlange
@@ -124,7 +185,7 @@ admin:
         parsing: Analyse
         completed: Abgeschlossen
         failed: Fehlgeschlagen
-        needs_review: Zu prüfen
+        needs_review: Anomalie erkannt
       upload:
         title: Rechnung importieren
         help: "Lade eine Rechnung hoch (JPG, PNG, WebP oder PDF). Bei PDFs wird nur die 1. Seite an das Vision-Modell gesendet. Der Job wird in die Warteschlange gestellt und vom Worker verarbeitet."

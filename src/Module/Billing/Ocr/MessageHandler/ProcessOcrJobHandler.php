@@ -41,6 +41,7 @@ final readonly class ProcessOcrJobHandler
             $this->pipeline->run($job);
         } catch (Throwable $throwable) {
             $this->logger->error('OCR job failed', ['job_id' => $job->getId(), 'exception' => $throwable]);
+            $job->appendLog('error', 'Erreur : '.$throwable->getMessage());
             $this->jobManager->markFailed($job, $throwable->getMessage());
 
             throw $throwable;

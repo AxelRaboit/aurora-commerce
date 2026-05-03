@@ -61,7 +61,7 @@ final class GalleryWatermarkServiceTest extends TestCase
         $path = $this->callPrivate('cachedPath', [$gallery, '/tmp/uploads/foo/bar.jpg']);
 
         $expectedHash = mb_substr(sha1('Brand'), 0, 8);
-        self::assertStringContainsString('photo-watermarks/42-'.$expectedHash, $path);
+        self::assertStringContainsString('photo/watermarks/42-'.$expectedHash, $path);
         self::assertStringEndsWith('/bar.jpg', $path);
     }
 

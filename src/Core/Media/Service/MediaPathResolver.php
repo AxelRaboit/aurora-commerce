@@ -13,7 +13,7 @@ use function sprintf;
 
 /**
  * Resolves the absolute filesystem path of a Media entity stored under
- * `%kernel.project_dir%/public/uploads`. Centralises the
+ * `%app.upload_dir%`. Centralises the
  * `uploadDir.'/'.getPath()` concatenation so callers (variant generators,
  * exporters, OCR pipeline…) don't reinvent it inline.
  *
@@ -23,7 +23,7 @@ use function sprintf;
 final readonly class MediaPathResolver
 {
     public function __construct(
-        #[Autowire('%kernel.project_dir%/public/uploads')]
+        #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
 

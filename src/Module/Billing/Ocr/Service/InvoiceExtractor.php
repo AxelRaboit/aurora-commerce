@@ -72,6 +72,11 @@ final readonly class InvoiceExtractor
                 ],
             ],
             'confidence' => ['type' => 'number', 'description' => '0..1 self-rated confidence'],
+            'uncertain_fields' => [
+                'type' => 'array',
+                'items' => ['type' => 'string'],
+                'description' => 'List of field names you were uncertain about (blurry, ambiguous, partially visible, or guessed). Use the exact schema key names, e.g. ["supplier_vat_number", "total_net_cents"].',
+            ],
         ],
         'required' => ['lines', 'confidence'],
     ];
@@ -186,6 +191,10 @@ final readonly class InvoiceExtractor
             totalGrossCents: $this->intOrNullSafe($payload['total_gross_cents'] ?? null),
             lines: $lines,
             confidence: (float) ($payload['confidence'] ?? 0.0),
+            uncertainFields: array_values(array_filter(
+                (array) ($payload['uncertain_fields'] ?? []),
+                static fn (mixed $v): bool => is_string($v) && $v !== '',
+            )),
         );
     }
 

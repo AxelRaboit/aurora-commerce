@@ -85,6 +85,15 @@ class Invoice
     #[ORM\Column(length: 2, nullable: true)]
     private ?string $buyerCountryCode = null;
 
+    /** The credit note (avoir) that cancels this invoice. Null if not cancelled. */
+    #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'cancelledInvoice')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?self $creditNote = null;
+
+    /** When this invoice IS a credit note, points back to the invoice it cancels. */
+    #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'creditNote')]
+    private ?self $cancelledInvoice = null;
+
     /** Original document (PDF/image) — owned by Core/Media. */
     #[ORM\ManyToOne(targetEntity: Media::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -109,6 +118,28 @@ class Invoice
         if (!$this->status->isEditable()) {
             throw new \InvalidArgumentException('admin.billing.invoices.update.locked');
         }
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->creditNote !== null;
+    }
+
+    public function getCreditNote(): ?self
+    {
+        return $this->creditNote;
+    }
+
+    public function setCreditNote(?self $creditNote): self
+    {
+        $this->creditNote = $creditNote;
+
+        return $this;
+    }
+
+    public function getCancelledInvoice(): ?self
+    {
+        return $this->cancelledInvoice;
     }
 
     public function getId(): ?int

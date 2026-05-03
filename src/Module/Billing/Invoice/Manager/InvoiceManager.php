@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Contract\SupplierManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
+use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
@@ -30,6 +33,8 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         private EntityManagerInterface $entityManager,
         private AuditLogger $auditLogger,
         private SupplierManagerInterface $supplierManager,
+        private InvoiceRepository $invoiceRepository,
+        private SettingRepository $settingRepository,
     ) {
         $this->fieldSetters = [
             'number' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setNumber($this->stringOrNull($value)),
@@ -50,6 +55,17 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
     public function validate(Invoice $invoice): void
     {
+        if ($invoice->getNumber() === null) {
+            $prefix = $this->settingRepository->get(
+                ApplicationParameterEnum::BillingInvoicePrefix->value,
+                'FO',
+            );
+            if ($prefix !== null && $prefix !== '') {
+                $year = (int) (($invoice->getIssuedAt() ?? new \DateTimeImmutable())->format('Y'));
+                $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
+            }
+        }
+
         $invoice->setStatus(InvoiceStatusEnum::Validated);
         $this->entityManager->flush();
 
@@ -71,6 +87,62 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $id, [
             'number' => $number,
         ]);
+    }
+
+    public function createCreditNote(Invoice $invoice, ?string $reason = null): Invoice
+    {
+        if (!$invoice->getStatus()->canHaveCreditNote()) {
+            throw new InvalidArgumentException('admin.billing.invoices.creditNote.invalidStatus');
+        }
+
+        if ($invoice->isCancelled()) {
+            throw new InvalidArgumentException('admin.billing.invoices.creditNote.alreadyCancelled');
+        }
+
+        $cn = new Invoice();
+        $cn->setStatus(InvoiceStatusEnum::CreditNote);
+        $cn->setNumber('AV-'.($invoice->getNumber() ?? $invoice->getId()));
+        $cn->setSupplier($invoice->getSupplier());
+        $cn->setBuyerName($invoice->getBuyerName());
+        $cn->setBuyerVatNumber($invoice->getBuyerVatNumber());
+        $cn->setBuyerAddress($invoice->getBuyerAddress());
+        $cn->setBuyerCountryCode($invoice->getBuyerCountryCode());
+        $cn->setCurrency($invoice->getCurrency());
+        $cn->setIssuedAt(new \DateTimeImmutable());
+        $cn->setTotalNetCents($invoice->getTotalNetCents() !== null ? -$invoice->getTotalNetCents() : null);
+        $cn->setTotalVatCents($invoice->getTotalVatCents() !== null ? -$invoice->getTotalVatCents() : null);
+        $cn->setTotalGrossCents($invoice->getTotalGrossCents() !== null ? -$invoice->getTotalGrossCents() : null);
+
+        if ($reason !== null && $reason !== '') {
+            $cn->setNotes($reason);
+        }
+
+        foreach ($invoice->getLines() as $line) {
+            $cnLine = new InvoiceLine();
+            $cnLine->setLabel($line->getLabel());
+            $cnLine->setSku($line->getSku());
+            $cnLine->setUnit($line->getUnit());
+            $cnLine->setQuantity($line->getQuantity());
+            $cnLine->setUnitPriceCents($line->getUnitPriceCents() !== null ? -$line->getUnitPriceCents() : null);
+            $cnLine->setVatRateBp($line->getVatRateBp());
+            $cnLine->setTotalNetCents($line->getTotalNetCents() !== null ? -$line->getTotalNetCents() : null);
+            $cnLine->setTotalGrossCents($line->getTotalGrossCents() !== null ? -$line->getTotalGrossCents() : null);
+            $cnLine->setPosition($line->getPosition());
+            $cn->addLine($cnLine);
+            $this->entityManager->persist($cnLine);
+        }
+
+        $invoice->setCreditNote($cn);
+
+        $this->entityManager->persist($cn);
+        $this->entityManager->flush();
+
+        $this->auditLogger->log('billing', 'invoice.credit_note_created', 'Invoice', $invoice->getId(), [
+            'creditNoteId' => $cn->getId(),
+            'reason' => $reason,
+        ]);
+
+        return $cn;
     }
 
     public function updateField(Invoice $invoice, string $field, mixed $value): void
@@ -136,6 +208,57 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         ]);
 
         return $invoice;
+    }
+
+    public function updateFromOcrDraft(Invoice $invoice, InvoiceDraft $draft, OcrJob $job): void
+    {
+        // Preserve the invoice number if the user already set one
+        if ($invoice->getNumber() === null) {
+            $invoice->setNumber($draft->invoiceNumber);
+        }
+
+        $invoice->setPurchaseOrderRef($draft->purchaseOrderRef);
+        $invoice->setIssuedAt($draft->issuedAt);
+        $invoice->setDueAt($draft->dueAt);
+        $invoice->setPaymentTerms($draft->paymentTerms);
+        $invoice->setPaymentMethod($draft->paymentMethod);
+        $invoice->setCurrency($this->resolveCurrency($draft->currency));
+        $invoice->setTotalNetCents($draft->totalNetCents);
+        $invoice->setTotalVatCents($draft->totalVatCents);
+        $invoice->setTotalGrossCents($draft->totalGrossCents);
+        $invoice->setSupplier($this->supplierManager->findOrCreateFromDraft($draft));
+        $invoice->setBuyerName($draft->buyerName);
+        $invoice->setBuyerVatNumber($draft->buyerVatNumber);
+        $invoice->setBuyerAddress($draft->buyerAddress);
+        $invoice->setBuyerCountryCode($draft->buyerCountryCode);
+
+        // Rebuild lines from scratch
+        foreach ($invoice->getLines()->toArray() as $line) {
+            $invoice->removeLine($line);
+            $this->entityManager->remove($line);
+        }
+
+        $position = 0;
+        foreach ($draft->lines as $lineDraft) {
+            $line = new InvoiceLine();
+            $line->setLabel($lineDraft->label);
+            $line->setSku($lineDraft->sku);
+            $line->setUnit($lineDraft->unit);
+            $line->setQuantity($lineDraft->quantity ?? '1.0000');
+            $line->setUnitPriceCents($lineDraft->unitPriceCents);
+            $line->setVatRateBp($lineDraft->vatRateBp);
+            $line->setTotalNetCents($lineDraft->totalNetCents);
+            $line->setTotalGrossCents($lineDraft->totalGrossCents);
+            $line->setPosition($position++);
+            $invoice->addLine($line);
+        }
+
+        $this->entityManager->flush();
+
+        $this->auditLogger->log('billing', 'invoice.rescanned', 'Invoice', $invoice->getId(), [
+            'jobId' => $job->getId(),
+            'confidence' => $draft->confidence,
+        ]);
     }
 
     private function resolveCurrency(?string $code): CurrencyEnum

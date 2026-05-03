@@ -37,6 +37,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoAdminEnabled = 'photo_admin_enabled';
     case PhotoFrontEnabled = 'photo_front_enabled';
     case BillingAdminEnabled = 'billing_admin_enabled';
+    case BillingInvoicePrefix = 'billing_invoice_prefix';
     case EmailLocale = 'email_locale';
 
     public function getKey(): string
@@ -78,6 +79,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoAdminEnabled => 'Administration Photo activée',
             self::PhotoFrontEnabled => 'Galeries publiques activées (front)',
             self::BillingAdminEnabled => 'Administration facturation activée',
+            self::BillingInvoicePrefix => 'Préfixe des numéros de factures reçues',
             self::EmailLocale => 'Langue forcée pour les emails',
         };
     }
@@ -115,6 +117,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ErpAdminEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
             self::PhotoAdminEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
             self::PhotoFrontEnabled => 'Active les galeries publiques côté front (pages /g/{slug}). Décocher 404 toutes les pages galerie pour les clients.',
+            self::BillingInvoicePrefix => 'Préfixe du numéro auto-généré à la validation (ex: FO). Laissez vide pour désactiver.',
             self::BillingAdminEnabled => "Active la section Facturation dans l'administration (factures fournisseurs, OCR, import). Décocher cache la sidebar et 404 les routes /admin/billing/*.",
             self::EmailLocale => 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.',
         };
@@ -154,6 +157,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoAdminEnabled => '1',
             self::PhotoFrontEnabled => '1',
             self::BillingAdminEnabled => '1',
+            self::BillingInvoicePrefix => 'FO',
             self::EmailLocale => '',
         };
     }
@@ -164,6 +168,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'bool',
+            self::BillingInvoicePrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -231,7 +236,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'modules',
+            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::BillingInvoicePrefix => 'modules',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
         };

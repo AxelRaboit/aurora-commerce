@@ -20,7 +20,7 @@ final readonly class ImageVariantGenerator
 
     public function __construct(
         private Filesystem $filesystem,
-        #[Autowire('%kernel.project_dir%/public/uploads')]
+        #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
 
@@ -84,7 +84,7 @@ final readonly class ImageVariantGenerator
 
             imagecopyresampled($targetImage, $source, 0, 0, 0, 0, $targetWidth, $targetHeight, $sourceWidth, $sourceHeight);
 
-            $variantRelative = sprintf('variants/%s/%s.%s', $variantName, $baseName, $variantExtension);
+            $variantRelative = Path::join(dirname($sourceRelativePath), 'variants', $variantName, sprintf('%s.%s', $baseName, $variantExtension));
             $variantAbsolute = Path::join($this->uploadDir, $variantRelative);
 
             $this->filesystem->mkdir(dirname($variantAbsolute));

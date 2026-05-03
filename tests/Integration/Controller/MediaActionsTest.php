@@ -40,7 +40,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $this->client = static::createClient();
         $this->loginAsAdmin();
 
-        $this->uploadDir = Path::join(static::getContainer()->getParameter('kernel.project_dir'), 'public/uploads');
+        $this->uploadDir = static::getContainer()->getParameter('app.upload_dir');
         $this->filesystem = new Filesystem();
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }

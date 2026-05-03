@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Manager\MediaManager;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
@@ -30,7 +31,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
 
     public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJob
     {
-        $media = $this->mediaManager->upload($file);
+        $media = $this->mediaManager->upload($file, null, StorageAreaEnum::Ocr);
 
         $job = new OcrJob();
         $job->setMedia($media);
@@ -67,9 +68,17 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
     public function delete(OcrJob $job): void
     {
         $id = $job->getId();
+        $media = $job->getMedia();
 
         $this->entityManager->remove($job);
         $this->entityManager->flush();
+
+        // Delete the uploaded file and its Media record — it was created solely
+        // for this OCR job and has no other owner once the job is gone.
+        // Invoice.document is SET NULL by the DB cascade if it referenced the same media.
+        if ($media !== null) {
+            $this->mediaManager->delete($media);
+        }
 
         $this->auditLogger->log('billing', 'ocr.job.deleted', 'OcrJob', $id);
     }

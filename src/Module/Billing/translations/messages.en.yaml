@@ -41,6 +41,7 @@ admin:
       status:
         draft: Draft
         needs_review: Needs review
+        credit_note: Credit note
         validated: Validated
         paid: Paid
         archived: Archived
@@ -51,9 +52,22 @@ admin:
         document: Source document
         noDocument: No document attached.
         supplier: Supplier
+        creditNoteCreated: "Credit note issued successfully."
+        rescan: "Re-run OCR scan"
+        rescanQueued: "OCR scan re-queued — the invoice will be updated automatically."
+        createCreditNote: "Issue a credit note"
+        creditNoteHelp: "A credit note legally and permanently cancels this invoice. Amounts will be negated."
+        creditNoteReasonPlaceholder: "Reason for credit note (optional)…"
+        confirmCreditNote: "Confirm credit note"
+        cancelledBy: "This invoice is cancelled by credit note"
+        cancels: "This credit note cancels invoice"
         buyer: Buyer
         ocr: OCR
         ocrJob: Job
+        ocrAnomaly:
+          lowConfidence: "Insufficient confidence ({pct}% < {threshold}%) — extracted data may be incorrect."
+          uncertainFields: "The model reported uncertainty on these fields despite sufficient overall confidence."
+          totalsMismatch: "Totals mismatch: Net + VAT = {expected} {currency} ≠ Gross {actual} {currency} (diff. {diff} {currency})."
         phone: Phone
         address: Address
         lines: Lines
@@ -103,6 +117,44 @@ admin:
       iban: IBAN
       email: Email
       country: Country
+    compliance:
+      title: Compliance
+      overall:
+        ok: "All checks passed — compliant with anti-VAT-fraud law."
+        warning: Some items require attention.
+        error: Critical anomalies have been detected.
+      generatedAt: "Generated on {date}"
+      statusLabels:
+        ok: OK
+        warning: Warning
+        error: Error
+      stats:
+        totalIssued: Issued invoices
+      checks:
+        sequence:
+          title: Numbering sequence
+          noGaps: No gaps detected
+          gaps: "{n} gap(s) detected"
+          noNumberedInvoices: No numbered invoices found.
+          description: "Verifies that invoice numbering is continuous and gap-free, as required by French tax law."
+          invoiceCount: "{n} invoices"
+          gapUnit: gap(s)
+          missingNumbers: Missing numbers
+        archive:
+          title: Invoice archiving
+          ok: All invoices are archived on time.
+          overdue: "{n} invoice(s) not archived, older than {years} years"
+          description: "Flags validated/paid invoices issued more than {years} years ago that have not yet been archived."
+        audit:
+          title: Audit trail
+          ok: No anomalies detected in the logs.
+          anomalies: "{n} suspicious entry(ies)"
+          description: Flags modifications made without an identified user.
+          action: Action
+          entity: Entity
+          date: Date
+          user: User
+          noUser: "System (untraced)"
     ocr:
       import: Import an invoice
       empty: No OCR jobs.
@@ -111,7 +163,16 @@ admin:
       deleteConfirm: "Delete job #{id}? This also removes the source file."
       deleted: Job deleted.
       deleteError: "Could not delete (DB constraint)."
+      creditNote:
+        invalidStatus: "Only validated or paid invoices can have a credit note."
+        alreadyCancelled: "A credit note has already been issued for this invoice."
       errorLog: Error log
+      viewLogs: View logs
+      logsTitle: Job logs
+      logsEmpty: No logs available.
+      logsWaitingWorker: Waiting for the worker — job is queued…
+      logsStarting: Worker picked up the job, logs incoming…
+      logsRunning: Processing…
       noErrorLog: No error details available.
       fileName: File
       statusLabel: Status
@@ -133,4 +194,4 @@ admin:
         parsing: Parsing
         completed: Completed
         failed: Failed
-        needs_review: Needs review
+        needs_review: Anomaly detected

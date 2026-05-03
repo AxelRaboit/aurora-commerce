@@ -13,9 +13,10 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Eye, Trash2, RotateCcw, Info, FileText } from "lucide-vue-next";
+import { Eye, Trash2, RotateCcw, Info, FileText, ScrollText, LayoutList } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isPdfMimeType, isImageMimeType } from "@core/utils/enums/media/mimeType.js";
+import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
 
 const OCR_ACCEPTED_MIME_TYPES = [
     MimeType.Jpeg,
@@ -31,6 +32,7 @@ const props = defineProps({
     uploadPath: { type: String, required: true },
     jobsPath: { type: String, required: true },
     invoicesPath: { type: String, required: true },
+    invoiceShowPath: { type: String, required: true },
     statusUrlTemplate: { type: String, required: true },
     retryPath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -68,7 +70,7 @@ watch(jobs, (newJobs) => {
         if (job?.isTerminal) {
             flashedJobIds.add(preview.jobId);
             const id = preview.jobId;
-            scanFlashes.value = { ...scanFlashes.value, [id]: job.status === 'failed' ? 'error' : 'success' };
+            scanFlashes.value = { ...scanFlashes.value, [id]: job.status === OcrJobStatus.Failed ? 'error' : 'success' };
             setTimeout(() => {
                 const { [id]: _, ...rest } = scanFlashes.value;
                 scanFlashes.value = rest;
@@ -123,6 +125,15 @@ onMounted(startPolling);
 const pendingDelete = ref(null);
 const deleteLoading = ref(false);
 const errorJob = ref(null);
+const logsJob = ref(null);
+
+// Keep logsJob in sync with polling updates
+watch(jobs, (newJobs) => {
+    if (logsJob.value) {
+        const updated = newJobs.find(j => j.id === logsJob.value.id);
+        if (updated) logsJob.value = updated;
+    }
+}, { deep: true });
 
 async function doDelete() {
     if (deleteLoading.value || !pendingDelete.value) return;
@@ -219,6 +230,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
 
         <div class="flex justify-end">
             <AppButton variant="secondary" size="md" :href="jobsPath">
+                <LayoutList class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.billing.ocr.upload.allJobs') }}
             </AppButton>
         </div>
@@ -242,7 +254,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                             <td class="px-6 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
                             <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
                             <td class="px-6 py-3">
-                                <AppBadge :color="job.statusColor">{{ job.statusLabel }}{{ job.progress !== null ? ` ${job.progress}%` : '' }}</AppBadge>
+                                <AppBadge :color="job.statusColor" :spinning="ACTIVE_STATUSES.has(job.status)">{{ job.statusLabel }}</AppBadge>
                             </td>
                             <td class="px-6 py-3 text-secondary tabular-nums hidden md:table-cell">
                                 {{ job.confidence !== null ? Math.round(job.confidence * 100) + '%' : '—' }}
@@ -250,13 +262,16 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                             <td class="px-6 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="`${invoicesPath}?search=${job.id}`">
+                                    <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="job.status === 'failed'" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
+                                    <AppIconButton v-if="!job.isTerminal || (job.logs && job.logs.length)" color="slate" :title="t('admin.billing.ocr.viewLogs')" v-on:click="logsJob = job">
+                                        <ScrollText class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="job.status === OcrJobStatus.Failed" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
                                         <Info class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="job.status === 'failed'" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
+                                    <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
                                         <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="pendingDelete = job">
@@ -269,6 +284,45 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 </table>
             </div>
         </div>
+
+        <AppModal :show="!!logsJob" max-width="lg" v-on:close="logsJob = null">
+            <h3 class="text-base font-semibold text-primary mb-3">
+                {{ t('admin.billing.ocr.logsTitle') }} — #{{ logsJob?.id }}
+                <AppBadge :color="logsJob?.statusColor" :spinning="logsJob && !logsJob.isTerminal" class="ml-2">{{ logsJob?.statusLabel }}</AppBadge>
+            </h3>
+            <div class="bg-surface-2 rounded-lg p-3 h-72 overflow-y-auto scrollbar-thin font-mono text-xs space-y-1" ref="logsContainer">
+                <template v-if="!logsJob?.logs?.length">
+                    <div v-if="logsJob?.status === OcrJobStatus.Queued" class="flex flex-col items-center gap-2 text-muted text-center py-8">
+                        <span class="w-5 h-5 rounded-full border-2 border-muted border-t-transparent animate-spin"></span>
+                        <span>{{ t('admin.billing.ocr.logsWaitingWorker') }}</span>
+                    </div>
+                    <div v-else-if="!logsJob?.isTerminal" class="flex flex-col items-center gap-2 text-muted text-center py-8">
+                        <span class="w-5 h-5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin"></span>
+                        <span>{{ t('admin.billing.ocr.logsStarting') }}</span>
+                    </div>
+                    <div v-else class="text-muted italic text-center py-8">{{ t('admin.billing.ocr.logsEmpty') }}</div>
+                </template>
+                <div
+                    v-for="(entry, i) in logsJob?.logs"
+                    :key="i"
+                    class="flex items-start gap-2"
+                >
+                    <span class="shrink-0 text-muted">{{ new Date(entry.ts).toLocaleTimeString() }}</span>
+                    <span :class="{
+                        'text-emerald-400': entry.level === 'info',
+                        'text-amber-400': entry.level === 'warning',
+                        'text-rose-400': entry.level === 'error',
+                    }">{{ entry.message }}</span>
+                </div>
+                <div v-if="logsJob && !logsJob.isTerminal" class="flex items-center gap-1.5 text-muted animate-pulse pt-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0"></span>
+                    <span>{{ t('admin.billing.ocr.logsRunning') }}</span>
+                </div>
+            </div>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="logsJob = null">{{ t('shared.common.close') }}</AppButton>
+            </AppModalFooter>
+        </AppModal>
 
         <AppModal :show="!!errorJob" max-width="md" v-on:close="errorJob = null">
             <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>

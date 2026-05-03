@@ -1,0 +1,20 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.billing.compliance.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
+            {label: 'admin.billing.compliance.title'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('billing/admin/ComplianceApp', {
+    reportPath: path('billing_compliance_report'),
+    invoicesPath: path('billing_invoices'),
+    showPath: path('billing_invoices_show', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

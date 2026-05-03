@@ -31,4 +31,20 @@ interface InvoiceManagerInterface
      * SupplierManagerInterface — no direct EntityManager calls leak elsewhere.
      */
     public function createFromOcrDraft(InvoiceDraft $draft, OcrJob $job): Invoice;
+
+    /**
+     * Re-apply an OCR draft onto an existing editable invoice.
+     * Lines are cleared and rebuilt from the draft; the invoice number is
+     * preserved if already set (user may have edited it).
+     */
+    public function updateFromOcrDraft(Invoice $invoice, InvoiceDraft $draft, OcrJob $job): void;
+
+    /**
+     * Issue a credit note (avoir) that cancels the given validated/paid invoice.
+     * The credit note is a new Invoice with negated amounts, status CreditNote,
+     * and a bi-directional link to the original.
+     *
+     * @throws InvalidArgumentException if the invoice cannot be credited
+     */
+    public function createCreditNote(Invoice $invoice, ?string $reason = null): Invoice;
 }

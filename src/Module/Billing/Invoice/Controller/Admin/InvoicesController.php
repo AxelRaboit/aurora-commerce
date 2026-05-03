@@ -161,6 +161,25 @@ final class InvoicesController extends AbstractController
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
     }
 
+    #[Route('/{id}/credit-note', name: '_credit_note', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('billing.invoices.edit')]
+    public function createCreditNote(Invoice $invoice, Request $request): JsonResponse
+    {
+        $payload = json_decode($request->getContent(), true);
+        $reason = is_array($payload) ? ($payload['reason'] ?? null) : null;
+
+        try {
+            $creditNote = $this->invoiceManager->createCreditNote($invoice, $reason);
+        } catch (InvalidArgumentException $e) {
+            return $this->jsonFailure($e->getMessage());
+        }
+
+        return $this->jsonSuccess([
+            'invoice' => $this->invoiceSerializer->serializeDetail($invoice),
+            'creditNote' => $this->invoiceSerializer->serializeDetail($creditNote),
+        ]);
+    }
+
     /**
      * Find a line that belongs to the given invoice. Refusing cross-invoice
      * line ids prevents IDOR via crafted URLs.

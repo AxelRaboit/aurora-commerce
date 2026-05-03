@@ -47,6 +47,37 @@ class AuditLogRepository extends ServiceEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
+    /**
+     * Billing anomalies: invoice.updated actions where the user is null (system
+     * edits bypassing the normal workflow) or edits on Validated/Paid invoices
+     * that lack a preceding invoice.validated event. Returns last 100 suspicious
+     * entries for display in the compliance screen.
+     *
+     * @return list<array{id: int, action: string, entityId: ?int, createdAt: string, userName: ?string, data: mixed}>
+     */
+    public function findBillingAnomalies(): array
+    {
+        $rows = $this->createQueryBuilder('a')
+            ->where('a.module = :module')
+            ->andWhere('a.action IN (:actions)')
+            ->andWhere('a.userName IS NULL')
+            ->setParameter('module', 'billing')
+            ->setParameter('actions', ['invoice.updated', 'invoice.line.updated', 'invoice.line.added', 'invoice.line.deleted'])
+            ->orderBy('a.createdAt', Order::Descending->value)
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(static fn (array $r): array => [
+            'id' => $r['id'],
+            'action' => $r['action'],
+            'entityId' => $r['entityId'],
+            'createdAt' => $r['createdAt']->format(\DateTimeInterface::ATOM),
+            'userName' => $r['userName'],
+            'data' => $r['data'],
+        ], $rows);
+    }
+
     /** @return array<int, string> */
     public function findDistinctModules(): array
     {

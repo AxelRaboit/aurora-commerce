@@ -32,6 +32,7 @@ final readonly class OcrJobsViewBuilder
             'retryPath' => $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('billing_ocr_jobs_delete', ['id' => '__id__']),
             'invoicesPath' => $this->urlGenerator->generate('billing_invoices'),
+            'invoiceShowPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
             'importPath' => $this->urlGenerator->generate('billing_ocr_import'),
             'statusOptions' => array_map(fn (OcrJobStatusEnum $status): array => [
                 'value' => $status->value,

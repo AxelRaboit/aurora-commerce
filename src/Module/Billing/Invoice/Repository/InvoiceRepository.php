@@ -170,6 +170,90 @@ class InvoiceRepository extends ServiceEntityRepository
         );
     }
 
+    /**
+     * Returns invoice numbers grouped by year, for all non-draft invoices with
+     * a non-null number. Used by the compliance sequence checker.
+     *
+     * @return array<int, list<string>>  keyed by 4-digit year
+     */
+    /**
+     * Generate the next sequential invoice number for the given prefix and year.
+     * Format: {PREFIX}-{YEAR}-{NNNN} (zero-padded to 4 digits).
+     * Queries the DB for the highest existing sequence to guarantee no gaps.
+     */
+    public function getNextNumber(string $prefix, int $year): string
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $pattern = $prefix.'-'.$year.'-%';
+
+        $result = $conn->executeQuery(
+            'SELECT number FROM billing_invoices WHERE number LIKE ? ORDER BY number DESC LIMIT 1',
+            [$pattern],
+        )->fetchOne();
+
+        $next = 1;
+        if ($result !== false) {
+            $parts = explode('-', (string) $result);
+            $last = (int) end($parts);
+            $next = $last + 1;
+        }
+
+        return sprintf('%s-%d-%04d', $prefix, $year, $next);
+    }
+
+    public function findInvoiceNumbersByYear(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $rows = $conn->executeQuery(
+            'SELECT number, EXTRACT(YEAR FROM issued_at) AS year
+             FROM billing_invoices
+             WHERE number IS NOT NULL
+               AND issued_at IS NOT NULL
+               AND status NOT IN (:drafts)
+             ORDER BY issued_at ASC',
+            ['drafts' => ['draft', 'needs_review']],
+            ['drafts' => \Doctrine\DBAL\ArrayParameterType::STRING],
+        )->fetchAllAssociative();
+
+        $byYear = [];
+        foreach ($rows as $row) {
+            $byYear[(int) $row['year']][] = $row['number'];
+        }
+
+        return $byYear;
+    }
+
+    /**
+     * Invoices in Validated/Paid status issued more than $years ago that have
+     * not yet been archived — flagged by the compliance screen.
+     *
+     * @return list<array{id: int, number: ?string, issuedAt: string, status: string}>
+     */
+    public function findOverdueForArchiving(int $years = 6): array
+    {
+        $threshold = new \DateTimeImmutable("-{$years} years");
+
+        $rows = $this->createQueryBuilder('i')
+            ->select('i.id', 'i.number', 'i.issuedAt', 'i.status')
+            ->where('i.status IN (:statuses)')
+            ->andWhere('i.issuedAt < :threshold')
+            ->setParameter('statuses', [
+                \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::Validated,
+                \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::Paid,
+            ])
+            ->setParameter('threshold', $threshold)
+            ->orderBy('i.issuedAt', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(static fn (array $r): array => [
+            'id' => $r['id'],
+            'number' => $r['number'],
+            'issuedAt' => $r['issuedAt']?->format('Y-m-d'),
+            'status' => $r['status']->value,
+        ], $rows);
+    }
+
     /** @return array<string, int> */
     public function countByStatus(): array
     {

@@ -4,8 +4,6 @@ import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 
-const TERMINAL_WITH_INVOICE = new Set(["completed", "needs_review"]);
-
 /**
  * One-stop composable for the OCR job list mounted on a Vue ref:
  *   - polling: refreshes every non-terminal job in place every `intervalMs`
@@ -97,11 +95,11 @@ export function useOcrJobs(
     }
 
     /**
-     * True when the job has produced an Invoice (Completed or NeedsReview).
-     * Other terminal statuses (Failed) or in-flight ones don't have one yet.
+     * True when the job has a linked invoice — either already completed or
+     * being re-scanned (invoiceId is set even when status is back to queued).
      */
     function hasInvoice(job) {
-        return TERMINAL_WITH_INVOICE.has(job.status);
+        return job.invoiceId != null;
     }
 
     onBeforeUnmount(stop);

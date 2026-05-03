@@ -41,6 +41,7 @@ admin:
       status:
         draft: Brouillon
         needs_review: À vérifier
+        credit_note: Avoir
         validated: Validée
         paid: Payée
         archived: Archivée
@@ -51,9 +52,22 @@ admin:
         document: Document source
         noDocument: Aucun document attaché.
         supplier: Fournisseur
+        creditNoteCreated: "Avoir émis avec succès."
+        rescan: "Relancer le scan OCR"
+        rescanQueued: "Scan OCR relancé — la facture sera mise à jour automatiquement."
+        createCreditNote: "Émettre un avoir"
+        creditNoteHelp: "Un avoir annule cette facture de façon légale et irréversible. Les montants seront négatifs."
+        creditNoteReasonPlaceholder: "Motif de l'avoir (facultatif)…"
+        confirmCreditNote: "Confirmer l'avoir"
+        cancelledBy: "Cette facture est annulée par l'avoir"
+        cancels: "Cet avoir annule la facture"
         buyer: Acheteur
         ocr: OCR
         ocrJob: Job
+        ocrAnomaly:
+          lowConfidence: "Confiance insuffisante ({pct}% < {threshold}%) — les données extraites peuvent être incorrectes."
+          uncertainFields: "Le modèle a signalé des incertitudes sur ces champs malgré une confiance globale suffisante."
+          totalsMismatch: "Écart de totaux : HT + TVA = {expected} {currency} ≠ TTC {actual} {currency} (diff. {diff} {currency})."
         phone: Téléphone
         address: Adresse
         lines: Lignes
@@ -103,6 +117,44 @@ admin:
       iban: IBAN
       email: Email
       country: Pays
+    compliance:
+      title: Conformité
+      overall:
+        ok: "Toutes les vérifications sont passées — conforme loi anti-fraude TVA."
+        warning: Des points d'attention ont été détectés.
+        error: Des anomalies critiques ont été détectées.
+      generatedAt: "Généré le {date}"
+      statusLabels:
+        ok: OK
+        warning: Attention
+        error: Erreur
+      stats:
+        totalIssued: Factures émises
+      checks:
+        sequence:
+          title: Séquence de numérotation
+          noGaps: Aucun trou détecté
+          gaps: "{n} trou(s) détecté(s)"
+          noNumberedInvoices: Aucune facture numérotée trouvée.
+          description: "Vérifie que la numérotation est continue et sans trou (art. 242 nonies A CGI)."
+          invoiceCount: "{n} factures"
+          gapUnit: trou(s)
+          missingNumbers: Numéros manquants
+        archive:
+          title: Archivage des factures
+          ok: Toutes les factures sont archivées dans les délais.
+          overdue: "{n} facture(s) non archivée(s) de plus de {years} ans"
+          description: "Signale les factures validées/payées émises il y a plus de {years} ans non archivées."
+        audit:
+          title: Journal d'audit
+          ok: Aucune anomalie détectée dans les journaux.
+          anomalies: "{n} entrée(s) suspecte(s)"
+          description: Signale les modifications effectuées sans utilisateur identifié.
+          action: Action
+          entity: "Entité"
+          date: Date
+          user: Utilisateur
+          noUser: "Système (non tracé)"
     ocr:
       import: Importer une facture
       empty: Aucun job OCR.
@@ -111,7 +163,16 @@ admin:
       deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi le fichier source."
       deleted: Job supprimé.
       deleteError: "Suppression impossible (contraintes DB)."
+      creditNote:
+        invalidStatus: "Seules les factures validées ou payées peuvent faire l'objet d'un avoir."
+        alreadyCancelled: "Un avoir a déjà été émis pour cette facture."
       errorLog: Journal d'erreur
+      viewLogs: Voir les logs
+      logsTitle: Logs du job
+      logsEmpty: Aucun log disponible.
+      logsWaitingWorker: En attente du worker — le job est en file d'attente…
+      logsStarting: Le worker a pris en charge le job, les logs arrivent…
+      logsRunning: Traitement en cours…
       noErrorLog: Aucun détail d'erreur disponible.
       fileName: Fichier
       statusLabel: Statut
@@ -133,4 +194,4 @@ admin:
         parsing: Analyse
         completed: Terminé
         failed: Échec
-        needs_review: À vérifier
+        needs_review: Anomalie détectée

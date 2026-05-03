@@ -44,6 +44,22 @@ class OcrJobRepository extends ServiceEntityRepository
      */
     public function findRecent(int $limit = 10): array
     {
-        return $this->findBy([], ['createdAt' => Order::Descending->value], $limit);
+        return $this->createQueryBuilder('j')
+            ->addSelect('
+                CASE j.status
+                    WHEN :extracting THEN 0
+                    WHEN :parsing    THEN 1
+                    WHEN :queued     THEN 2
+                    ELSE                  3
+                END AS HIDDEN status_priority
+            ')
+            ->setParameter('extracting', OcrJobStatusEnum::Extracting)
+            ->setParameter('parsing',    OcrJobStatusEnum::Parsing)
+            ->setParameter('queued',     OcrJobStatusEnum::Queued)
+            ->orderBy('status_priority', Order::Ascending->value)
+            ->addOrderBy('j.createdAt',  Order::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -58,6 +58,7 @@ final readonly class BillingModule implements ModuleInterface
                     ],
                 ),
                 new NavItem('billing_suppliers', 'admin.nav.suppliers', 'briefcase', UserRoleEnum::Editor->value),
+                new NavItem('billing_compliance', 'admin.billing.compliance.title', 'shield-check', UserRoleEnum::Admin->value),
             ], priority: 55),
         ];
     }

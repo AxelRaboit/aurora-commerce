@@ -11,11 +11,20 @@ enum InvoiceStatusEnum: string
     case Validated = 'validated';
     case Paid = 'paid';
     case Archived = 'archived';
+    case CreditNote = 'credit_note';
 
     public function isEditable(): bool
     {
         return match ($this) {
             self::Draft, self::NeedsReview => true,
+            default => false,
+        };
+    }
+
+    public function canHaveCreditNote(): bool
+    {
+        return match ($this) {
+            self::Validated, self::Paid => true,
             default => false,
         };
     }
@@ -33,6 +42,7 @@ enum InvoiceStatusEnum: string
             self::Validated => 'sky',
             self::Paid => 'emerald',
             self::Archived => 'gray',
+            self::CreditNote => 'violet',
         };
     }
 }

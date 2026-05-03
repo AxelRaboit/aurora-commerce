@@ -30,7 +30,7 @@ final readonly class UserProfilePhotoManager
         private SluggerInterface $slugger,
         private AuditLogger $auditLogger,
         private Filesystem $filesystem,
-        #[Autowire('%kernel.project_dir%/public/uploads/users')]
+        #[Autowire('%app.upload_dir%/users')]
         private string $uploadDir,
     ) {}
 

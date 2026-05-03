@@ -7,6 +7,7 @@
 defineProps({
     color: { type: String, default: "gray" },
     href: { type: String, default: null },
+    spinning: { type: Boolean, default: false },
 });
 
 const colors = {
@@ -31,6 +32,7 @@ const colors = {
             href ? 'hover:opacity-80 transition-opacity cursor-pointer' : '',
         ]"
     >
+        <span v-if="spinning" class="inline-block w-2.5 h-2.5 rounded-full border border-current border-t-transparent animate-spin shrink-0" />
         <slot />
     </component>
 </template>
