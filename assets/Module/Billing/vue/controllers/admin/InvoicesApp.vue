@@ -1,0 +1,157 @@
+<script setup>
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { Plus, Eye, Trash2, Download } from "lucide-vue-next";
+import { formatCents } from "@/shared/utils/format/formatPrice.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+
+const { t } = useI18n();
+
+const props = defineProps({
+    invoices: { type: Object, default: () => ({}) },
+    search: { type: String, default: "" },
+    listPath: { type: String, required: true },
+    showPath: { type: String, required: true },
+    deletePath: { type: String, required: true },
+    exportXlsxPath: { type: String, required: true },
+    importPath: { type: String, required: true },
+    statusOptions: { type: Array, default: () => [] },
+});
+
+const statusFilter = ref("");
+const counts = ref(props.invoices.counts ?? {});
+
+const { items, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
+    props.listPath,
+    {
+        initialSearch: props.search,
+        initialData: props.invoices,
+        extraParams: () => ({ status: statusFilter.value || undefined }),
+        onData: (data) => { counts.value = data.counts ?? {}; },
+    },
+);
+
+function onStatusChange() {
+    reload();
+}
+
+function goToInvoice(id) {
+    window.location.href = buildPath(props.showPath, { id });
+}
+
+const exportXlsxUrl = computed(() => {
+    const params = new URLSearchParams();
+    if (search.value) params.set('search', search.value);
+    if (statusFilter.value) params.set('status', statusFilter.value);
+    const qs = params.toString();
+    return qs ? `${props.exportXlsxPath}?${qs}` : props.exportXlsxPath;
+});
+
+
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
+    props.deletePath, () => reload(), 'admin.billing.invoices.deleted',
+);
+
+const STATUS_SELECT = computed(() =>
+    props.statusOptions.map(option => ({
+        value: option.value,
+        label: `${t(option.labelKey)} (${counts.value[option.value] ?? 0})`,
+    })),
+);
+
+const { formatDateNumeric } = useDateFormat();
+</script>
+
+<template>
+    <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex-1 max-w-md">
+                <AppSearchInput v-model="search" :placeholder="t('admin.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
+            </div>
+            <AppMultiselect
+                v-model="statusFilter"
+                :options="STATUS_SELECT"
+                :placeholder="t('admin.billing.list.allStatuses')"
+                :allow-empty="true"
+                class="sm:max-w-xs"
+                v-on:update:modelValue="onStatusChange"
+            />
+            <div class="flex items-center gap-2 sm:ml-auto">
+                <a :href="exportXlsxUrl"
+                   class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-line text-sm text-primary transition-colors">
+                    <Download class="w-4 h-4" :stroke-width="2" />
+                    {{ t('admin.billing.invoices.exportXlsx') }}
+                </a>
+                <AppButton variant="primary" size="md" :href="importPath">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('admin.billing.invoices.importOcr') }}
+                </AppButton>
+            </div>
+        </div>
+
+        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+            <AppNoData v-if="!items?.length" :message="t('admin.billing.invoices.empty')" />
+            <table v-else class="w-full text-sm">
+                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
+                    <tr>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.number') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.supplier') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.invoices.dueAt') }}</th>
+                        <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.totalGross') }}</th>
+                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.statusLabel') }}</th>
+                        <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="invoice in items" :key="invoice.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
+                        <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
+                        <td class="px-4 py-3 text-primary font-medium truncate max-w-xs">{{ invoice.supplier?.name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateNumeric(invoice.issuedAt) }}</td>
+                        <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ formatDateNumeric(invoice.dueAt) }}</td>
+                        <td class="px-4 py-3 text-primary text-right tabular-nums">
+                            {{ formatCents(invoice.totalGrossCents, invoice.currency) }}
+                        </td>
+                        <td class="px-4 py-3">
+                            <AppBadge :color="invoice.statusColor">{{ t(`admin.billing.invoices.status.${invoice.status}`) }}</AppBadge>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="goToInvoice(invoice.id)">
+                                    <Eye class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(invoice)">
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+
+        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+            <p class="text-sm text-primary">{{ t('admin.billing.invoices.deleteConfirm', { number: pendingDelete?.number ?? ('#' + (pendingDelete?.id ?? '')) }) }}</p>
+            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+            </AppModalFooter>
+        </AppModal>
+    </div>
+</template>

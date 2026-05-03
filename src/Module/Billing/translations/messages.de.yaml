@@ -1,0 +1,128 @@
+admin:
+  modules:
+    billing: Abrechnung
+  nav:
+    dashboard: Übersicht
+    invoices: Rechnungen
+    suppliers: Lieferanten
+    ocr_import: OCR-Import
+    sections:
+      billing: Abrechnung
+  billing:
+    list:
+      allStatuses: Alle Status
+      deleteWarning: Diese Aktion kann nicht rückgängig gemacht werden.
+    dashboard:
+      stats:
+        thisMonth: Dieser Monat
+        thisYear: Dieses Jahr
+        needsReview: Zu prüfen
+        totalInvoices: Rechnungen gesamt
+      statusBreakdown: Verteilung nach Status
+      topSuppliers: Top Lieferanten
+      noTopSuppliers: Noch keine Daten.
+      needsReviewQueue: Prüf-Warteschlange
+      allClear: Keine offenen Rechnungen — alles erledigt.
+    invoices:
+      searchPlaceholder: "Rechnungsnr., Lieferant…"
+      importOcr: Importieren (OCR)
+      exportXlsx: Excel exportieren
+      empty: Noch keine Rechnungen.
+      number: "Nr."
+      supplier: Lieferant
+      issuedAt: Ausgestellt
+      dueAt: Fällig
+      totalGross: Brutto
+      statusLabel: Status
+      deleteConfirm: "Rechnung {number} löschen?"
+      deleted: Rechnung gelöscht.
+      deleteError: "Löschen nicht möglich (DB-Constraint)."
+      status:
+        draft: Entwurf
+        needs_review: Zu prüfen
+        validated: Validiert
+        paid: Bezahlt
+        archived: Archiviert
+      show:
+        back: Zurück zu den Rechnungen
+        validate: Validieren
+        validated: Rechnung validiert.
+        document: Quelldokument
+        noDocument: Kein Dokument angehängt.
+        supplier: Lieferant
+        ocr: OCR
+        ocrJob: Job
+        phone: Telefon
+        address: Adresse
+        lines: Positionen
+        noLines: Keine Positionen extrahiert.
+        addLine: Position hinzufügen
+        lineAdded: Position hinzugefügt.
+        lineDeleted: Position gelöscht.
+        fields:
+          number: "Rechnungsnr."
+          purchaseOrder: "Bestellnr."
+          issuedAt: Ausgestellt am
+          dueAt: Fällig am
+          paymentMethod: Zahlungsart
+          paymentTerms: Zahlungsbedingungen
+          totalNet: Netto
+          totalVat: USt.
+          totalGross: Brutto
+        lineCols:
+          label: Bezeichnung
+          sku: SKU
+          qty: Menge
+          unit: Einheit
+          unitPrice: Stückpreis
+          vat: USt.
+          totalNet: Netto
+          totalGross: Brutto
+    suppliers:
+      searchPlaceholder: "Name, USt-IdNr…"
+      empty: Noch keine Lieferanten. Sie erscheinen hier, sobald OCR-Importe laufen.
+      name: Name
+      vatNumber: "USt-IdNr."
+      registrationNumber: HR / Reg.
+      iban: IBAN
+      email: E-Mail
+      country: Land
+      deleteConfirm: "Lieferant {name} löschen?"
+      deleted: Lieferant gelöscht.
+      deleteError: "Löschen nicht möglich (DB-Constraint)."
+      show:
+        details: Stammdaten
+        invoices: Verknüpfte Rechnungen
+        totalInvoiced: Gesamt fakturiert
+        invoiceCount: Anzahl Rechnungen
+    ocr:
+      import: Rechnung importieren
+      empty: Keine OCR-Jobs.
+      fileName: Datei
+      statusLabel: Status
+      confidence: Vertrauen
+      model: Modell
+      createdAt: Erstellt
+      retry: Erneut versuchen
+      retryQueued: Job neu eingereiht.
+      deleteConfirm: "Job #{id} löschen? Die Quelldatei wird ebenfalls entfernt."
+      deleted: Job gelöscht.
+      deleteError: "Löschen nicht möglich (DB-Constraint)."
+      status:
+        queued: In Warteschlange
+        extracting: Extraktion
+        parsing: Analyse
+        completed: Abgeschlossen
+        failed: Fehlgeschlagen
+        needs_review: Zu prüfen
+      upload:
+        title: Rechnung importieren
+        help: "Lade eine Rechnung hoch (JPG, PNG, WebP oder PDF). Bei PDFs wird nur die 1. Seite an das Vision-Modell gesendet. Der Job wird in die Warteschlange gestellt und vom Worker verarbeitet."
+        cta: Datei auswählen
+        uploading: Wird hochgeladen…
+        success: "Rechnung eingereiht — Job #{id}."
+        recent: Letzte 10 Jobs
+        allJobs: Alle Jobs
+        errors:
+          missing: Keine Datei angegeben.
+          unsupported: "Format nicht unterstützt. Akzeptiert: JPG, PNG, WebP, PDF."

@@ -34,6 +34,7 @@ final class DumpJsTranslationsCommand extends Command
         'src/Module/Erp/translations',
         'src/Module/Ecommerce/translations',
         'src/Module/Photo/translations',
+        'src/Module/Billing/translations',
     ];
 
     private const string OUTPUT_DIR = 'assets/locales/generated';

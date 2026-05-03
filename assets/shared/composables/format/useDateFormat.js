@@ -30,5 +30,31 @@ export function useDateFormat() {
         }).format(new Date(isoString));
     }
 
-    return { formatDate, formatDateShort, formatDateTime };
+    /**
+     * Strict numeric date (locale-aware): DD/MM/YYYY in FR, MM/DD/YYYY in EN, …
+     * Returns the placeholder when the input is empty / null — handy in
+     * table cells where we don't want to special-case on every call site.
+     */
+    function formatDateNumeric(isoString, placeholder = "—") {
+        if (!isoString) return placeholder;
+        return new Intl.DateTimeFormat(locale.value, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        }).format(new Date(isoString));
+    }
+
+    /** Numeric date + HH:MM (locale-aware), with placeholder fallback. */
+    function formatDateTimeNumeric(isoString, placeholder = "—") {
+        if (!isoString) return placeholder;
+        return new Intl.DateTimeFormat(locale.value, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(new Date(isoString));
+    }
+
+    return { formatDate, formatDateShort, formatDateTime, formatDateNumeric, formatDateTimeNumeric };
 }

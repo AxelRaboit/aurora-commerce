@@ -1,6 +1,12 @@
 <script setup>
+/**
+ * Coloured pill. Renders as a `<span>` by default, or as an `<a>` when an
+ * `href` is provided — handy for status filters / counts that link to a
+ * filtered list. The hover state is only added in linked mode.
+ */
 defineProps({
     color: { type: String, default: "gray" },
+    href: { type: String, default: null },
 });
 
 const colors = {
@@ -16,10 +22,15 @@ const colors = {
 </script>
 
 <template>
-    <span
+    <component
+        :is="href ? 'a' : 'span'"
+        v-bind="href ? { href } : {}"
         class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-        :class="colors[color] ?? colors.gray"
+        :class="[
+            colors[color] ?? colors.gray,
+            href ? 'hover:opacity-80 transition-opacity cursor-pointer' : '',
+        ]"
     >
         <slot />
-    </span>
+    </component>
 </template>

@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Enum;
 
+/**
+ * Document mime types known to Aurora.
+ *
+ * @see assets/Core/utils/enums/media/mimeType.js — JavaScript mirror used by
+ *      Vue components. **Keep the two in sync**: every case added here must be
+ *      reflected there (and vice-versa) so the front-end and back-end agree on
+ *      what's supported.
+ */
 enum MimeTypeEnum: string
 {
     case Jpeg = 'image/jpeg';
@@ -12,6 +20,16 @@ enum MimeTypeEnum: string
     case Gif = 'image/gif';
     case Webp = 'image/webp';
     case Svg = 'image/svg+xml';
+    case Pdf = 'application/pdf';
+
+    /** True for any image/* (raster or vector). Excludes PDFs. */
+    public function isImage(): bool
+    {
+        return match ($this) {
+            self::Jpeg, self::Jpg, self::Png, self::Gif, self::Webp, self::Svg => true,
+            default => false,
+        };
+    }
 
     public function isRasterImage(): bool
     {

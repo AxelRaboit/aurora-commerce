@@ -1,0 +1,17 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.suppliers'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.suppliers'|trans}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('billing/admin/SuppliersApp', {
+    suppliers: suppliers,
+    search: search,
+    listPath: listPath,
+    deletePath: deletePath,
+    showPath: showPath,
+}) }} class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6"></div>
+{% endblock %}

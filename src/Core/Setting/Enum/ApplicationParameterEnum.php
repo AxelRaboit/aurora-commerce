@@ -36,6 +36,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case ErpAdminEnabled = 'erp_admin_enabled';
     case PhotoAdminEnabled = 'photo_admin_enabled';
     case PhotoFrontEnabled = 'photo_front_enabled';
+    case BillingAdminEnabled = 'billing_admin_enabled';
     case EmailLocale = 'email_locale';
 
     public function getKey(): string
@@ -76,6 +77,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ErpAdminEnabled => 'Administration ERP activée',
             self::PhotoAdminEnabled => 'Administration Photo activée',
             self::PhotoFrontEnabled => 'Galeries publiques activées (front)',
+            self::BillingAdminEnabled => 'Administration facturation activée',
             self::EmailLocale => 'Langue forcée pour les emails',
         };
     }
@@ -113,6 +115,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ErpAdminEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
             self::PhotoAdminEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
             self::PhotoFrontEnabled => 'Active les galeries publiques côté front (pages /g/{slug}). Décocher 404 toutes les pages galerie pour les clients.',
+            self::BillingAdminEnabled => "Active la section Facturation dans l'administration (factures fournisseurs, OCR, import). Décocher cache la sidebar et 404 les routes /admin/billing/*.",
             self::EmailLocale => 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.',
         };
     }
@@ -150,6 +153,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ErpAdminEnabled => '1',
             self::PhotoAdminEnabled => '1',
             self::PhotoFrontEnabled => '1',
+            self::BillingAdminEnabled => '1',
             self::EmailLocale => '',
         };
     }
@@ -159,7 +163,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'bool',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
         };
@@ -182,6 +186,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::ErpAdminEnabled => self::CrmAdminEnabled->value,
             self::EcommerceAdminEnabled, self::EcommerceFrontEnabled => self::ErpAdminEnabled->value,
+            self::BillingAdminEnabled => self::CrmAdminEnabled->value,
             default => null,
         };
     }
@@ -226,7 +231,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled => 'modules',
+            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'modules',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
         };

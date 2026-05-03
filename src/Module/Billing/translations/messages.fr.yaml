@@ -1,0 +1,128 @@
+admin:
+  modules:
+    billing: Facturation
+  nav:
+    dashboard: Tableau de bord
+    invoices: Factures
+    suppliers: Fournisseurs
+    ocr_import: Import OCR
+    sections:
+      billing: Facturation
+  billing:
+    list:
+      allStatuses: Tous les statuts
+      deleteWarning: Cette action est irréversible.
+    dashboard:
+      stats:
+        thisMonth: Ce mois
+        thisYear: Cette année
+        needsReview: À vérifier
+        totalInvoices: Total factures
+      statusBreakdown: Répartition par statut
+      topSuppliers: Top fournisseurs
+      noTopSuppliers: Aucune donnée pour l'instant.
+      needsReviewQueue: File de relecture
+      allClear: Aucune facture en attente — tout est à jour.
+    invoices:
+      searchPlaceholder: "N° facture, fournisseur…"
+      importOcr: Importer (OCR)
+      exportXlsx: Exporter Excel
+      empty: Aucune facture pour l'instant.
+      deleteConfirm: "Supprimer la facture {number} ?"
+      deleted: Facture supprimée.
+      deleteError: "Suppression impossible (contraintes DB)."
+      number: "N°"
+      supplier: Fournisseur
+      issuedAt: Émise
+      dueAt: Échéance
+      totalGross: TTC
+      statusLabel: Statut
+      status:
+        draft: Brouillon
+        needs_review: À vérifier
+        validated: Validée
+        paid: Payée
+        archived: Archivée
+      show:
+        back: Retour aux factures
+        validate: Valider
+        validated: Facture validée.
+        document: Document source
+        noDocument: Aucun document attaché.
+        supplier: Fournisseur
+        ocr: OCR
+        ocrJob: Job
+        phone: Téléphone
+        address: Adresse
+        lines: Lignes
+        noLines: Aucune ligne extraite.
+        addLine: Ajouter une ligne
+        lineAdded: Ligne ajoutée.
+        lineDeleted: Ligne supprimée.
+        fields:
+          number: "N° facture"
+          purchaseOrder: "N° commande"
+          issuedAt: Émise le
+          dueAt: Échéance
+          paymentMethod: Mode de paiement
+          paymentTerms: Conditions de paiement
+          totalNet: Total HT
+          totalVat: TVA
+          totalGross: Total TTC
+        lineCols:
+          label: Libellé
+          sku: SKU
+          qty: Qté
+          unit: Unité
+          unitPrice: PU HT
+          vat: TVA
+          totalNet: Total HT
+          totalGross: Total TTC
+    suppliers:
+      searchPlaceholder: "Nom, n° TVA…"
+      empty: Aucun fournisseur. Ils apparaîtront ici au fil des imports OCR.
+      deleteConfirm: "Supprimer le fournisseur {name} ?"
+      deleted: Fournisseur supprimé.
+      deleteError: "Suppression impossible (contraintes DB)."
+      show:
+        details: Coordonnées
+        invoices: Factures liées
+        totalInvoiced: Total facturé
+        invoiceCount: Nombre de factures
+      name: Nom
+      vatNumber: "N° TVA"
+      registrationNumber: SIRET / Reg.
+      iban: IBAN
+      email: Email
+      country: Pays
+    ocr:
+      import: Importer une facture
+      empty: Aucun job OCR.
+      retry: Relancer
+      retryQueued: Job remis en file d'attente.
+      deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi le fichier source."
+      deleted: Job supprimé.
+      deleteError: "Suppression impossible (contraintes DB)."
+      fileName: Fichier
+      statusLabel: Statut
+      confidence: Confiance
+      model: Modèle
+      createdAt: Créé
+      upload:
+        title: Importer une facture
+        help: "Charge une facture (JPG, PNG, WebP ou PDF). Pour un PDF, seule la 1ʳᵉ page est analysée par le modèle vision. Le job est mis en file d'attente et traité par le worker."
+        cta: Choisir un fichier
+        uploading: Envoi…
+        success: "Facture envoyée — job #{id} en file d'attente."
+        recent: 10 derniers jobs
+        allJobs: Tous les jobs
+        errors:
+          missing: Aucun fichier fourni.
+          unsupported: "Format non supporté. Formats acceptés : JPG, PNG, WebP, PDF."
+      status:
+        queued: En attente
+        extracting: Extraction
+        parsing: Analyse
+        completed: Terminé
+        failed: Échec
+        needs_review: À vérifier

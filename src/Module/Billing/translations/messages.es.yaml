@@ -1,0 +1,128 @@
+admin:
+  modules:
+    billing: Facturación
+  nav:
+    dashboard: Panel
+    invoices: Facturas
+    suppliers: Proveedores
+    ocr_import: Importación OCR
+    sections:
+      billing: Facturación
+  billing:
+    list:
+      allStatuses: Todos los estados
+      deleteWarning: Esta acción es irreversible.
+    dashboard:
+      stats:
+        thisMonth: Este mes
+        thisYear: Este año
+        needsReview: Por revisar
+        totalInvoices: Total de facturas
+      statusBreakdown: Distribución por estado
+      topSuppliers: Top proveedores
+      noTopSuppliers: Sin datos por ahora.
+      needsReviewQueue: Cola de revisión
+      allClear: No hay facturas pendientes — todo al día.
+    invoices:
+      searchPlaceholder: "N° factura, proveedor…"
+      importOcr: Importar (OCR)
+      exportXlsx: Exportar Excel
+      empty: Aún no hay facturas.
+      number: "N°"
+      supplier: Proveedor
+      issuedAt: Emitida
+      dueAt: Vencimiento
+      totalGross: TTC
+      statusLabel: Estado
+      deleteConfirm: "¿Eliminar la factura {number}?"
+      deleted: Factura eliminada.
+      deleteError: "No se puede eliminar (restricciones DB)."
+      status:
+        draft: Borrador
+        needs_review: A revisar
+        validated: Validada
+        paid: Pagada
+        archived: Archivada
+      show:
+        back: Volver a las facturas
+        validate: Validar
+        validated: Factura validada.
+        document: Documento original
+        noDocument: Sin documento adjunto.
+        supplier: Proveedor
+        ocr: OCR
+        ocrJob: Tarea
+        phone: Teléfono
+        address: Dirección
+        lines: Líneas
+        noLines: Ninguna línea extraída.
+        addLine: Añadir una línea
+        lineAdded: Línea añadida.
+        lineDeleted: Línea eliminada.
+        fields:
+          number: "N° factura"
+          purchaseOrder: "N° pedido"
+          issuedAt: Emitida el
+          dueAt: Vencimiento
+          paymentMethod: Forma de pago
+          paymentTerms: Condiciones de pago
+          totalNet: Total HT
+          totalVat: IVA
+          totalGross: Total TTC
+        lineCols:
+          label: Descripción
+          sku: SKU
+          qty: Cant.
+          unit: Unidad
+          unitPrice: PU HT
+          vat: IVA
+          totalNet: Total HT
+          totalGross: Total TTC
+    suppliers:
+      searchPlaceholder: "Nombre, n° IVA…"
+      empty: Aún no hay proveedores. Aparecerán a medida que se importen las facturas OCR.
+      name: Nombre
+      vatNumber: "N° IVA"
+      registrationNumber: SIRET / Reg.
+      iban: IBAN
+      email: Correo
+      country: País
+      deleteConfirm: "¿Eliminar el proveedor {name}?"
+      deleted: Proveedor eliminado.
+      deleteError: "No se puede eliminar (restricciones DB)."
+      show:
+        details: Datos
+        invoices: Facturas vinculadas
+        totalInvoiced: Total facturado
+        invoiceCount: Número de facturas
+    ocr:
+      import: Importar una factura
+      empty: Sin tareas OCR.
+      fileName: Archivo
+      statusLabel: Estado
+      confidence: Confianza
+      model: Modelo
+      createdAt: Creada
+      retry: Reintentar
+      retryQueued: Tarea reencolada.
+      deleteConfirm: "¿Eliminar la tarea #{id}? También se eliminará el archivo original."
+      deleted: Tarea eliminada.
+      deleteError: "No se puede eliminar (restricciones DB)."
+      status:
+        queued: En cola
+        extracting: Extrayendo
+        parsing: Analizando
+        completed: Completado
+        failed: Error
+        needs_review: A revisar
+      upload:
+        title: Importar una factura
+        help: "Sube una factura (JPG, PNG, WebP o PDF). Para los PDF, sólo la 1ª página se envía al modelo de visión. La tarea se encola y la procesa el worker."
+        cta: Elegir un archivo
+        uploading: Subiendo…
+        success: "Factura encolada — tarea #{id}."
+        recent: 10 últimas tareas
+        allJobs: Todas las tareas
+        errors:
+          missing: Falta el archivo.
+          unsupported: "Formato no soportado. Aceptados: JPG, PNG, WebP, PDF."

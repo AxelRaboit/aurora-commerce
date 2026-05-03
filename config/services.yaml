@@ -89,6 +89,20 @@ services:
     Aurora\Module\Photo\PhotoModule:
         tags: [aurora.module]
 
+    Aurora\Module\Billing\BillingModule:
+        tags: [aurora.module]
+
+    Aurora\Module\Billing\Ocr\Service\DocTrClient:
+        arguments:
+            $baseUrl: '%env(OCR_DOCTR_URL)%'
+            $timeout: '%env(int:OCR_HTTP_TIMEOUT)%'
+
+    Aurora\Module\Billing\Ocr\Service\OllamaVisionClient:
+        arguments:
+            $baseUrl: '%env(OLLAMA_URL)%'
+            $model: '%env(OLLAMA_VISION_MODEL)%'
+            $timeout: '%env(int:OCR_HTTP_TIMEOUT)%'
+
     Aurora\Core\Mail\Service\MailService:
         arguments:
             $mailerFrom: '%app.mailer_from%'

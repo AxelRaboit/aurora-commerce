@@ -1,0 +1,128 @@
+admin:
+  modules:
+    billing: Billing
+  nav:
+    dashboard: Dashboard
+    invoices: Invoices
+    suppliers: Suppliers
+    ocr_import: OCR import
+    sections:
+      billing: Billing
+  billing:
+    list:
+      allStatuses: All statuses
+      deleteWarning: This action cannot be undone.
+    dashboard:
+      stats:
+        thisMonth: This month
+        thisYear: This year
+        needsReview: Needs review
+        totalInvoices: Total invoices
+      statusBreakdown: Status breakdown
+      topSuppliers: Top suppliers
+      noTopSuppliers: No data yet.
+      needsReviewQueue: Review queue
+      allClear: No pending invoices — all clear.
+    invoices:
+      searchPlaceholder: "Invoice #, supplier…"
+      importOcr: Import (OCR)
+      exportXlsx: Export Excel
+      empty: No invoices yet.
+      deleteConfirm: "Delete invoice {number}?"
+      deleted: Invoice deleted.
+      deleteError: "Could not delete (DB constraint)."
+      number: "#"
+      supplier: Supplier
+      issuedAt: Issued
+      dueAt: Due
+      totalGross: Gross
+      statusLabel: Status
+      status:
+        draft: Draft
+        needs_review: Needs review
+        validated: Validated
+        paid: Paid
+        archived: Archived
+      show:
+        back: Back to invoices
+        validate: Validate
+        validated: Invoice validated.
+        document: Source document
+        noDocument: No document attached.
+        supplier: Supplier
+        ocr: OCR
+        ocrJob: Job
+        phone: Phone
+        address: Address
+        lines: Lines
+        noLines: No lines extracted.
+        addLine: Add a line
+        lineAdded: Line added.
+        lineDeleted: Line deleted.
+        fields:
+          number: Invoice #
+          purchaseOrder: PO #
+          issuedAt: Issued at
+          dueAt: Due at
+          paymentMethod: Payment method
+          paymentTerms: Payment terms
+          totalNet: Net total
+          totalVat: VAT
+          totalGross: Gross total
+        lineCols:
+          label: Label
+          sku: SKU
+          qty: Qty
+          unit: Unit
+          unitPrice: Unit price
+          vat: VAT
+          totalNet: Net total
+          totalGross: Gross total
+    suppliers:
+      searchPlaceholder: "Name, VAT #…"
+      empty: No suppliers yet. They'll appear here as OCR imports run.
+      deleteConfirm: "Delete supplier {name}?"
+      deleted: Supplier deleted.
+      deleteError: "Could not delete (DB constraint)."
+      show:
+        details: Details
+        invoices: Linked invoices
+        totalInvoiced: Total invoiced
+        invoiceCount: Invoice count
+      name: Name
+      vatNumber: VAT #
+      registrationNumber: Reg. #
+      iban: IBAN
+      email: Email
+      country: Country
+    ocr:
+      import: Import an invoice
+      empty: No OCR jobs.
+      retry: Retry
+      retryQueued: Job re-queued.
+      deleteConfirm: "Delete job #{id}? This also removes the source file."
+      deleted: Job deleted.
+      deleteError: "Could not delete (DB constraint)."
+      fileName: File
+      statusLabel: Status
+      confidence: Confidence
+      model: Model
+      createdAt: Created
+      upload:
+        title: Import an invoice
+        help: "Upload an invoice (JPG, PNG, WebP or PDF). For PDFs, only the 1st page is fed to the vision model. The job is queued and processed by the worker."
+        cta: Choose a file
+        uploading: Uploading…
+        success: "Invoice queued — job #{id}."
+        recent: 10 most recent jobs
+        allJobs: All jobs
+        errors:
+          missing: No file provided.
+          unsupported: "Unsupported format. Accepted: JPG, PNG, WebP, PDF."
+      status:
+        queued: Queued
+        extracting: Extracting
+        parsing: Parsing
+        completed: Completed
+        failed: Failed
+        needs_review: Needs review
