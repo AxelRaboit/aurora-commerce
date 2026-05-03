@@ -7,14 +7,21 @@ namespace Aurora\Core\Dashboard\Service;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
+use Aurora\Module\Billing\Invoice\Repository\SupplierRepository;
+use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;
+use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Module\Photo\Gallery\Repository\GalleryItemRepository;
+use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 
@@ -30,6 +37,13 @@ final readonly class AdminStatsService
         private CompanyRepository $companyRepository,
         private DealRepository $dealRepository,
         private ProductRepository $productRepository,
+        private InvoiceRepository $invoiceRepository,
+        private SupplierRepository $supplierRepository,
+        private OcrJobRepository $ocrJobRepository,
+        private OrderRepository $orderRepository,
+        private ListingRepository $listingRepository,
+        private GalleryRepository $galleryRepository,
+        private GalleryItemRepository $galleryItemRepository,
     ) {}
 
     /**
@@ -48,6 +62,9 @@ final readonly class AdminStatsService
             ],
             'crm' => $this->getCrmStats(),
             'erp' => $this->getErpStats(),
+            'billing' => $this->getBillingStats(),
+            'ecommerce' => $this->getEcommerceStats(),
+            'photo' => $this->getPhotoStats(),
             'postsByMonth' => $this->getPostsByMonth(),
             'recentPosts' => $this->getRecentPosts(),
         ];
@@ -120,6 +137,40 @@ final readonly class AdminStatsService
         return [
             'total' => $this->mediaRepository->count([]),
             'totalSize' => $this->mediaRepository->getTotalStorageSize(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function getBillingStats(): array
+    {
+        $byStatus = $this->invoiceRepository->countByStatus();
+
+        return [
+            'invoices' => array_sum($byStatus),
+            'byStatus' => $byStatus,
+            'suppliers' => $this->supplierRepository->count([]),
+            'ocrJobs' => $this->ocrJobRepository->count([]),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function getEcommerceStats(): array
+    {
+        $byStatus = $this->orderRepository->countByStatus();
+
+        return [
+            'orders' => array_sum($byStatus),
+            'byStatus' => $byStatus,
+            'listings' => $this->listingRepository->count([]),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function getPhotoStats(): array
+    {
+        return [
+            'galleries' => $this->galleryRepository->count([]),
+            'photos' => $this->galleryItemRepository->count([]),
         ];
     }
 

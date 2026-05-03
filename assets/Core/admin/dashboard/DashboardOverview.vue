@@ -13,6 +13,11 @@ import {
     Building2,
     TrendingUp,
     Package,
+    Receipt,
+    ShoppingCart,
+    Camera,
+    Store,
+    ScanText,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -25,9 +30,12 @@ const { formatSize } = useFileSize();
 
 const ACTIVE_MODULE_KEY = "aurora-dashboard-module";
 const MODULES = [
-    { id: "editorial", label: () => t("admin.nav.sections.editorial"), icon: FileText },
-    { id: "crm", label: () => t("admin.nav.sections.crm"), icon: Users },
-    { id: "erp", label: () => t("admin.nav.sections.erp"), icon: Package },
+    { id: "editorial",  label: () => t("admin.nav.sections.editorial"),  icon: FileText },
+    { id: "crm",        label: () => t("admin.nav.sections.crm"),        icon: Users },
+    { id: "erp",        label: () => t("admin.nav.sections.erp"),        icon: Package },
+    { id: "billing",    label: () => t("admin.nav.sections.billing"),    icon: Receipt },
+    { id: "ecommerce",  label: () => t("admin.nav.sections.ecommerce"),  icon: ShoppingCart },
+    { id: "photo",      label: () => t("admin.nav.sections.photo"),      icon: Camera },
 ];
 
 const activeModule = ref(localStorage.getItem(ACTIVE_MODULE_KEY) || "editorial");
@@ -97,6 +105,56 @@ const productsByStatusData = computed(() => {
 });
 
 const hasProducts = computed(() => (stats.value.erp?.products ?? 0) > 0);
+
+// ── Billing ──
+const INVOICE_STATUS_COLORS = {
+    draft: "#94a3b8",
+    needs_review: "#fbbf24",
+    validated: "#60a5fa",
+    paid: "#34d399",
+    archived: "#6b7280",
+    credit_note: "#a78bfa",
+};
+
+const invoicesByStatusData = computed(() => {
+    const byStatus = stats.value.billing?.byStatus ?? {};
+    const entries = Object.entries(byStatus).filter(([, v]) => v > 0);
+    return {
+        labels: entries.map(([k]) => t(`admin.billing.invoices.status.${k}`, k)),
+        datasets: [{
+            data: entries.map(([, v]) => v),
+            backgroundColor: entries.map(([k]) => INVOICE_STATUS_COLORS[k] ?? "#94a3b8"),
+            borderWidth: 0,
+        }],
+    };
+});
+
+const hasInvoices = computed(() => (stats.value.billing?.invoices ?? 0) > 0);
+
+// ── Ecommerce ──
+const ORDER_STATUS_COLORS = {
+    pending: "#fbbf24",
+    paid: "#34d399",
+    shipped: "#60a5fa",
+    delivered: "#a78bfa",
+    cancelled: "#f87171",
+    refunded: "#94a3b8",
+};
+
+const ordersByStatusData = computed(() => {
+    const byStatus = stats.value.ecommerce?.byStatus ?? {};
+    const entries = Object.entries(byStatus).filter(([, v]) => v > 0);
+    return {
+        labels: entries.map(([k]) => t(`admin.ecommerce.orders.status.${k}`, k)),
+        datasets: [{
+            data: entries.map(([, v]) => v),
+            backgroundColor: entries.map(([k]) => ORDER_STATUS_COLORS[k] ?? "#94a3b8"),
+            borderWidth: 0,
+        }],
+    };
+});
+
+const hasOrders = computed(() => (stats.value.ecommerce?.orders ?? 0) > 0);
 
 const formatCurrency = (cents) => new Intl.NumberFormat(undefined, { style: "currency", currency: "EUR" }).format((cents ?? 0) / 100);
 const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value ?? 0);
@@ -291,6 +349,96 @@ const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "curren
                 <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.stats.productsByStatus') }}</h3>
                 <div class="h-64">
                     <AppChart type="doughnut" :data="productsByStatusData" />
+                </div>
+            </div>
+        </section>
+
+        <section v-show="activeModule === 'billing'" class="space-y-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.invoices') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <Receipt class="w-4 h-4 text-accent-500" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.billing?.invoices ?? 0 }}</p>
+                </div>
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.suppliers') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                            <Building2 class="w-4 h-4 text-violet-400" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-violet-400">{{ stats.billing?.suppliers ?? 0 }}</p>
+                </div>
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.ocr_import') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                            <ScanText class="w-4 h-4 text-sky-400" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-sky-400">{{ stats.billing?.ocrJobs ?? 0 }}</p>
+                </div>
+            </div>
+            <div v-if="hasInvoices" class="bg-surface border border-line/60 rounded-xl p-5">
+                <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.billing.invoices.statusLabel') }}</h3>
+                <div class="h-64">
+                    <AppChart type="doughnut" :data="invoicesByStatusData" />
+                </div>
+            </div>
+        </section>
+
+        <section v-show="activeModule === 'ecommerce'" class="space-y-4">
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.orders') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <ShoppingCart class="w-4 h-4 text-accent-500" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.ecommerce?.orders ?? 0 }}</p>
+                </div>
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.listings') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                            <Store class="w-4 h-4 text-emerald-400" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-emerald-400">{{ stats.ecommerce?.listings ?? 0 }}</p>
+                </div>
+            </div>
+            <div v-if="hasOrders" class="bg-surface border border-line/60 rounded-xl p-5">
+                <h3 class="text-sm font-semibold text-primary mb-4">{{ t('admin.nav.orders') }}</h3>
+                <div class="h-64">
+                    <AppChart type="doughnut" :data="ordersByStatusData" />
+                </div>
+            </div>
+        </section>
+
+        <section v-show="activeModule === 'photo'" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.nav.galleries') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-accent-600/10 flex items-center justify-center">
+                            <Camera class="w-4 h-4 text-accent-500" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-accent-400">{{ stats.photo?.galleries ?? 0 }}</p>
+                </div>
+                <div class="bg-surface border border-line rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('admin.stats.media') }}</span>
+                        <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                            <ImageIcon class="w-4 h-4 text-sky-400" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-sky-400">{{ stats.photo?.photos ?? 0 }}</p>
                 </div>
             </div>
         </section>
