@@ -302,6 +302,14 @@ function entryIndex(kind, item) {
 
 onMounted(() => window.addEventListener("keydown", onGlobalKeydown));
 onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
+
+// Scroll the nav so the active item is visible without manual scrolling.
+// `block: "nearest"` only scrolls if the item is offscreen, so users who land
+// on a top entry don't see a jarring jump.
+onMounted(() => nextTick(() => {
+    const active = document.querySelector(".sidebar-nav [data-sidebar-active='true']");
+    active?.scrollIntoView({ block: "nearest", behavior: "instant" });
+}));
 </script>
 
 <template>
@@ -385,6 +393,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
                     :href="item.path"
                     :target="item.external ? '_blank' : undefined"
                     :rel="item.external ? 'noopener' : undefined"
+                    :data-sidebar-active="isActive(item.route) ? 'true' : null"
                     class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
                     :class="itemClasses(item)"
                 >
