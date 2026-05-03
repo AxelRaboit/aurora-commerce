@@ -1,4 +1,11 @@
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+    nextTick,
+} from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { modKeyLabel } from "@/shared/utils/platform.js";
 
@@ -31,11 +38,16 @@ export function useAdminSearch({ searchPath, navItems }) {
     }
 
     function entryIndex(kind, item) {
-        return flatResults.value.findIndex((entry) => entry.kind === kind && entry.item.id === item.id);
+        return flatResults.value.findIndex(
+            (entry) => entry.kind === kind && entry.item.id === item.id,
+        );
     }
 
     function findNavPath(routePrefix) {
-        return navItems.value?.find((i) => i.route.startsWith(routePrefix))?.path ?? null;
+        return (
+            navItems.value?.find((i) => i.route.startsWith(routePrefix))
+                ?.path ?? null
+        );
     }
 
     function activateResult(entry) {
@@ -56,7 +68,10 @@ export function useAdminSearch({ searchPath, navItems }) {
     }
 
     function onGlobalKeydown(event) {
-        if ((event.ctrlKey || event.metaKey) && "k" === event.key.toLowerCase()) {
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            "k" === event.key.toLowerCase()
+        ) {
             event.preventDefault();
             searchOpen.value ? closePalette() : openPalette();
             return;
@@ -67,10 +82,15 @@ export function useAdminSearch({ searchPath, navItems }) {
             closePalette();
         } else if ("ArrowDown" === event.key) {
             event.preventDefault();
-            if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value + 1) % totalResults.value;
+            if (totalResults.value)
+                searchHighlightedIndex.value =
+                    (searchHighlightedIndex.value + 1) % totalResults.value;
         } else if ("ArrowUp" === event.key) {
             event.preventDefault();
-            if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value - 1 + totalResults.value) % totalResults.value;
+            if (totalResults.value)
+                searchHighlightedIndex.value =
+                    (searchHighlightedIndex.value - 1 + totalResults.value) %
+                    totalResults.value;
         } else if ("Enter" === event.key) {
             event.preventDefault();
             activateResult(flatResults.value[searchHighlightedIndex.value]);
@@ -106,7 +126,9 @@ export function useAdminSearch({ searchPath, navItems }) {
     watch(searchQuery, useDebounce(runSearch, 180));
 
     onMounted(() => window.addEventListener("keydown", onGlobalKeydown));
-    onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
+    onBeforeUnmount(() =>
+        window.removeEventListener("keydown", onGlobalKeydown),
+    );
 
     return {
         searchOpen,

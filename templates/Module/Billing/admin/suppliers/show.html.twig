@@ -6,6 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: supplier.name,
         crumbs: [
+            {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
             {label: 'admin.nav.suppliers'|trans, href: listPath},
             {label: supplier.name},
         ],

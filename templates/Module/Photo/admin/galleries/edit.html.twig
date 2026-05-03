@@ -6,6 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: gallery.title,
         crumbs: [
+            {label: 'admin.modules.photo'|trans, href: path('admin_galleries')},
             {label: 'admin.nav.galleries'|trans, href: path('admin_galleries')},
             {label: gallery.title},
         ],
