@@ -328,39 +328,111 @@ const { formatDateNumeric } = useDateFormat();
                     <dl class="space-y-2 text-secondary">
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
-                            <dd class="text-primary font-medium"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.name" :raw-value="invoice.supplierFull.name" type="text" v-on:save="updateSupplierField('name', $event)" /></dd>
+                            <dd class="text-primary font-medium">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.name"
+                                    :raw-value="invoice.supplierFull.name"
+                                    type="text"
+                                    v-on:save="updateSupplierField('name', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
-                            <dd class="font-mono text-xs"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.vatNumber" :raw-value="invoice.supplierFull.vatNumber" type="text" v-on:save="updateSupplierField('vatNumber', $event)" /></dd>
+                            <dd class="font-mono text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.vatNumber"
+                                    :raw-value="invoice.supplierFull.vatNumber"
+                                    type="text"
+                                    v-on:save="updateSupplierField('vatNumber', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.registrationNumber') }}</dt>
-                            <dd class="font-mono text-xs"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.registrationNumber" :raw-value="invoice.supplierFull.registrationNumber" type="text" v-on:save="updateSupplierField('registrationNumber', $event)" /></dd>
+                            <dd class="font-mono text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.registrationNumber"
+                                    :raw-value="invoice.supplierFull.registrationNumber"
+                                    type="text"
+                                    v-on:save="updateSupplierField('registrationNumber', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">IBAN</dt>
-                            <dd class="font-mono text-xs break-all"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.iban" :raw-value="invoice.supplierFull.iban" type="text" v-on:save="updateSupplierField('iban', $event)" /></dd>
+                            <dd class="font-mono text-xs break-all">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.iban"
+                                    :raw-value="invoice.supplierFull.iban"
+                                    type="text"
+                                    v-on:save="updateSupplierField('iban', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">BIC</dt>
-                            <dd class="font-mono text-xs"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.bic" :raw-value="invoice.supplierFull.bic" type="text" v-on:save="updateSupplierField('bic', $event)" /></dd>
+                            <dd class="font-mono text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.bic"
+                                    :raw-value="invoice.supplierFull.bic"
+                                    type="text"
+                                    v-on:save="updateSupplierField('bic', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.email') }}</dt>
-                            <dd class="text-xs break-all"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.email" :raw-value="invoice.supplierFull.email" type="text" v-on:save="updateSupplierField('email', $event)" /></dd>
+                            <dd class="text-xs break-all">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.email"
+                                    :raw-value="invoice.supplierFull.email"
+                                    type="text"
+                                    v-on:save="updateSupplierField('email', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.invoices.show.phone') }}</dt>
-                            <dd><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.phone" :raw-value="invoice.supplierFull.phone" type="text" v-on:save="updateSupplierField('phone', $event)" /></dd>
+                            <dd>
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.phone"
+                                    :raw-value="invoice.supplierFull.phone"
+                                    type="text"
+                                    v-on:save="updateSupplierField('phone', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
-                            <dd><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.countryCode" :raw-value="invoice.supplierFull.countryCode" type="text" v-on:save="updateSupplierField('countryCode', $event)" /></dd>
+                            <dd>
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.countryCode"
+                                    :raw-value="invoice.supplierFull.countryCode"
+                                    type="text"
+                                    v-on:save="updateSupplierField('countryCode', $event)"
+                                />
+                            </dd>
                         </div>
                         <div class="pt-2 border-t border-line/60">
                             <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
-                            <dd class="text-primary text-xs"><InlineField :disabled="isLocked" :display-value="invoice.supplierFull.address" :raw-value="invoice.supplierFull.address" type="text" v-on:save="updateSupplierField('address', $event)" /></dd>
+                            <dd class="text-primary text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.supplierFull.address"
+                                    :raw-value="invoice.supplierFull.address"
+                                    type="text"
+                                    v-on:save="updateSupplierField('address', $event)"
+                                />
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -370,19 +442,51 @@ const { formatDateNumeric } = useDateFormat();
                     <dl class="space-y-2 text-secondary">
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
-                            <dd class="text-primary font-medium"><InlineField :disabled="isLocked" :display-value="invoice.buyer?.name" :raw-value="invoice.buyer?.name" type="text" v-on:save="updateBuyerField('name', $event)" /></dd>
+                            <dd class="text-primary font-medium">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.buyer?.name"
+                                    :raw-value="invoice.buyer?.name"
+                                    type="text"
+                                    v-on:save="updateBuyerField('name', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
-                            <dd class="font-mono text-xs"><InlineField :disabled="isLocked" :display-value="invoice.buyer?.vatNumber" :raw-value="invoice.buyer?.vatNumber" type="text" v-on:save="updateBuyerField('vatNumber', $event)" /></dd>
+                            <dd class="font-mono text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.buyer?.vatNumber"
+                                    :raw-value="invoice.buyer?.vatNumber"
+                                    type="text"
+                                    v-on:save="updateBuyerField('vatNumber', $event)"
+                                />
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
-                            <dd><InlineField :disabled="isLocked" :display-value="invoice.buyer?.countryCode" :raw-value="invoice.buyer?.countryCode" type="text" v-on:save="updateBuyerField('countryCode', $event)" /></dd>
+                            <dd>
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.buyer?.countryCode"
+                                    :raw-value="invoice.buyer?.countryCode"
+                                    type="text"
+                                    v-on:save="updateBuyerField('countryCode', $event)"
+                                />
+                            </dd>
                         </div>
                         <div class="pt-2 border-t border-line/60">
                             <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
-                            <dd class="text-primary text-xs"><InlineField :disabled="isLocked" :display-value="invoice.buyer?.address" :raw-value="invoice.buyer?.address" type="text" v-on:save="updateBuyerField('address', $event)" /></dd>
+                            <dd class="text-primary text-xs">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.buyer?.address"
+                                    :raw-value="invoice.buyer?.address"
+                                    type="text"
+                                    v-on:save="updateBuyerField('address', $event)"
+                                />
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -407,7 +511,13 @@ const { formatDateNumeric } = useDateFormat();
                             >
                                 <Check class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="isNeedsReview && ocrRetryPath" color="sky" :title="t('admin.billing.invoices.show.rescan')" :loading="rescanLoading" v-on:click="rescan">
+                            <AppIconButton
+                                v-if="isNeedsReview && ocrRetryPath"
+                                color="sky"
+                                :title="t('admin.billing.invoices.show.rescan')"
+                                :loading="rescanLoading"
+                                v-on:click="rescan"
+                            >
                                 <ScanLine class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton v-if="canHaveCreditNote" color="violet" :title="t('admin.billing.invoices.show.createCreditNote')" v-on:click="showCreditNoteModal = true">
@@ -423,37 +533,73 @@ const { formatDateNumeric } = useDateFormat();
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.number') }}</dt>
                             <dd class="text-primary font-medium">
-                                <InlineField :disabled="isLocked" :display-value="invoice.number" :raw-value="invoice.number" type="text" v-on:save="updateField('number', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.number"
+                                    :raw-value="invoice.number"
+                                    type="text"
+                                    v-on:save="updateField('number', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.purchaseOrder') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked" :display-value="invoice.purchaseOrderRef" :raw-value="invoice.purchaseOrderRef" type="text" v-on:save="updateField('purchaseOrderRef', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.purchaseOrderRef"
+                                    :raw-value="invoice.purchaseOrderRef"
+                                    type="text"
+                                    v-on:save="updateField('purchaseOrderRef', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.issuedAt') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked" :display-value="formatDateNumeric(invoice.issuedAt)" :raw-value="invoice.issuedAt" type="date" v-on:save="updateField('issuedAt', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="formatDateNumeric(invoice.issuedAt)"
+                                    :raw-value="invoice.issuedAt"
+                                    type="date"
+                                    v-on:save="updateField('issuedAt', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.dueAt') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked" :display-value="formatDateNumeric(invoice.dueAt)" :raw-value="invoice.dueAt" type="date" v-on:save="updateField('dueAt', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="formatDateNumeric(invoice.dueAt)"
+                                    :raw-value="invoice.dueAt"
+                                    type="date"
+                                    v-on:save="updateField('dueAt', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.paymentMethod') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked" :display-value="invoice.paymentMethod" :raw-value="invoice.paymentMethod" type="text" v-on:save="updateField('paymentMethod', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.paymentMethod"
+                                    :raw-value="invoice.paymentMethod"
+                                    type="text"
+                                    v-on:save="updateField('paymentMethod', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.paymentTerms') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked" :display-value="invoice.paymentTerms" :raw-value="invoice.paymentTerms" type="text" v-on:save="updateField('paymentTerms', $event)" />
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.paymentTerms"
+                                    :raw-value="invoice.paymentTerms"
+                                    type="text"
+                                    v-on:save="updateField('paymentTerms', $event)"
+                                />
                             </dd>
                         </div>
                     </dl>
@@ -462,7 +608,8 @@ const { formatDateNumeric } = useDateFormat();
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalNet') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked"
+                                <InlineField
+                                    :disabled="isLocked"
                                     align="right"
                                     :display-value="formatCents(invoice.totalNetCents)"
                                     :raw-value="invoice.totalNetCents"
@@ -475,7 +622,8 @@ const { formatDateNumeric } = useDateFormat();
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalVat') }}</dt>
                             <dd class="text-primary">
-                                <InlineField :disabled="isLocked"
+                                <InlineField
+                                    :disabled="isLocked"
                                     align="right"
                                     :display-value="formatCents(invoice.totalVatCents)"
                                     :raw-value="invoice.totalVatCents"
@@ -488,7 +636,8 @@ const { formatDateNumeric } = useDateFormat();
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalGross') }}</dt>
                             <dd class="text-primary font-semibold">
-                                <InlineField :disabled="isLocked"
+                                <InlineField
+                                    :disabled="isLocked"
                                     align="right"
                                     :display-value="formatCents(invoice.totalGrossCents)"
                                     :raw-value="invoice.totalGrossCents"
@@ -528,13 +677,26 @@ const { formatDateNumeric } = useDateFormat();
                             <tbody class="divide-y divide-line/40">
                                 <tr v-for="line in invoice.lines" :key="line.id" class="group hover:bg-surface-2/40 transition-colors">
                                     <td class="px-4 py-3 text-primary">
-                                        <InlineField :disabled="isLocked" :display-value="line.label" :raw-value="line.label" type="text" v-on:save="updateLineField(line.id, 'label', $event)" />
+                                        <InlineField
+                                            :disabled="isLocked"
+                                            :display-value="line.label"
+                                            :raw-value="line.label"
+                                            type="text"
+                                            v-on:save="updateLineField(line.id, 'label', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 font-mono text-xs text-secondary hidden md:table-cell">
-                                        <InlineField :disabled="isLocked" :display-value="line.sku" :raw-value="line.sku" type="text" v-on:save="updateLineField(line.id, 'sku', $event)" />
+                                        <InlineField
+                                            :disabled="isLocked"
+                                            :display-value="line.sku"
+                                            :raw-value="line.sku"
+                                            type="text"
+                                            v-on:save="updateLineField(line.id, 'sku', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-secondary">
-                                        <InlineField :disabled="isLocked"
+                                        <InlineField
+                                            :disabled="isLocked"
                                             align="right"
                                             :display-value="line.quantity"
                                             :raw-value="line.quantity"
@@ -543,10 +705,17 @@ const { formatDateNumeric } = useDateFormat();
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-xs text-muted hidden md:table-cell">
-                                        <InlineField :disabled="isLocked" :display-value="line.unit" :raw-value="line.unit" type="text" v-on:save="updateLineField(line.id, 'unit', $event)" />
+                                        <InlineField
+                                            :disabled="isLocked"
+                                            :display-value="line.unit"
+                                            :raw-value="line.unit"
+                                            type="text"
+                                            v-on:save="updateLineField(line.id, 'unit', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-secondary">
-                                        <InlineField :disabled="isLocked"
+                                        <InlineField
+                                            :disabled="isLocked"
                                             align="right"
                                             :display-value="formatCents(line.unitPriceCents)"
                                             :raw-value="line.unitPriceCents"
@@ -555,7 +724,8 @@ const { formatDateNumeric } = useDateFormat();
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-secondary hidden lg:table-cell">
-                                        <InlineField :disabled="isLocked"
+                                        <InlineField
+                                            :disabled="isLocked"
                                             align="right"
                                             :display-value="formatBpAsPercent(line.vatRateBp)"
                                             :raw-value="line.vatRateBp"
@@ -564,7 +734,8 @@ const { formatDateNumeric } = useDateFormat();
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-primary">
-                                        <InlineField :disabled="isLocked"
+                                        <InlineField
+                                            :disabled="isLocked"
                                             align="right"
                                             :display-value="formatCents(line.totalNetCents)"
                                             :raw-value="line.totalNetCents"
@@ -573,7 +744,8 @@ const { formatDateNumeric } = useDateFormat();
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-primary hidden lg:table-cell">
-                                        <InlineField :disabled="isLocked"
+                                        <InlineField
+                                            :disabled="isLocked"
                                             align="right"
                                             :display-value="formatCents(line.totalGrossCents)"
                                             :raw-value="line.totalGrossCents"

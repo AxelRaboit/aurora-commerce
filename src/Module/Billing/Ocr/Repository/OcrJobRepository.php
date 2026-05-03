@@ -54,10 +54,10 @@ class OcrJobRepository extends ServiceEntityRepository
                 END AS HIDDEN status_priority
             ')
             ->setParameter('extracting', OcrJobStatusEnum::Extracting)
-            ->setParameter('parsing',    OcrJobStatusEnum::Parsing)
-            ->setParameter('queued',     OcrJobStatusEnum::Queued)
+            ->setParameter('parsing', OcrJobStatusEnum::Parsing)
+            ->setParameter('queued', OcrJobStatusEnum::Queued)
             ->orderBy('status_priority', Order::Ascending->value)
-            ->addOrderBy('j.createdAt',  Order::Descending->value)
+            ->addOrderBy('j.createdAt', Order::Descending->value)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

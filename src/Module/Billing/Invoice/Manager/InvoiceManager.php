@@ -17,6 +17,7 @@ use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -55,13 +56,13 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
     public function validate(Invoice $invoice): void
     {
-        if ($invoice->getNumber() === null) {
+        if (null === $invoice->getNumber()) {
             $prefix = $this->settingRepository->get(
                 ApplicationParameterEnum::BillingInvoicePrefix->value,
                 'FO',
             );
-            if ($prefix !== null && $prefix !== '') {
-                $year = (int) (($invoice->getIssuedAt() ?? new \DateTimeImmutable())->format('Y'));
+            if (null !== $prefix && '' !== $prefix) {
+                $year = (int) ($invoice->getIssuedAt() ?? new DateTimeImmutable())->format('Y');
                 $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
             }
         }
@@ -108,12 +109,12 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $cn->setBuyerAddress($invoice->getBuyerAddress());
         $cn->setBuyerCountryCode($invoice->getBuyerCountryCode());
         $cn->setCurrency($invoice->getCurrency());
-        $cn->setIssuedAt(new \DateTimeImmutable());
-        $cn->setTotalNetCents($invoice->getTotalNetCents() !== null ? -$invoice->getTotalNetCents() : null);
-        $cn->setTotalVatCents($invoice->getTotalVatCents() !== null ? -$invoice->getTotalVatCents() : null);
-        $cn->setTotalGrossCents($invoice->getTotalGrossCents() !== null ? -$invoice->getTotalGrossCents() : null);
+        $cn->setIssuedAt(new DateTimeImmutable());
+        $cn->setTotalNetCents(null !== $invoice->getTotalNetCents() ? -$invoice->getTotalNetCents() : null);
+        $cn->setTotalVatCents(null !== $invoice->getTotalVatCents() ? -$invoice->getTotalVatCents() : null);
+        $cn->setTotalGrossCents(null !== $invoice->getTotalGrossCents() ? -$invoice->getTotalGrossCents() : null);
 
-        if ($reason !== null && $reason !== '') {
+        if (null !== $reason && '' !== $reason) {
             $cn->setNotes($reason);
         }
 
@@ -123,10 +124,10 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
             $cnLine->setSku($line->getSku());
             $cnLine->setUnit($line->getUnit());
             $cnLine->setQuantity($line->getQuantity());
-            $cnLine->setUnitPriceCents($line->getUnitPriceCents() !== null ? -$line->getUnitPriceCents() : null);
+            $cnLine->setUnitPriceCents(null !== $line->getUnitPriceCents() ? -$line->getUnitPriceCents() : null);
             $cnLine->setVatRateBp($line->getVatRateBp());
-            $cnLine->setTotalNetCents($line->getTotalNetCents() !== null ? -$line->getTotalNetCents() : null);
-            $cnLine->setTotalGrossCents($line->getTotalGrossCents() !== null ? -$line->getTotalGrossCents() : null);
+            $cnLine->setTotalNetCents(null !== $line->getTotalNetCents() ? -$line->getTotalNetCents() : null);
+            $cnLine->setTotalGrossCents(null !== $line->getTotalGrossCents() ? -$line->getTotalGrossCents() : null);
             $cnLine->setPosition($line->getPosition());
             $cn->addLine($cnLine);
             $this->entityManager->persist($cnLine);
@@ -213,7 +214,7 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
     public function updateFromOcrDraft(Invoice $invoice, InvoiceDraft $draft, OcrJob $job): void
     {
         // Preserve the invoice number if the user already set one
-        if ($invoice->getNumber() === null) {
+        if (null === $invoice->getNumber()) {
             $invoice->setNumber($draft->invoiceNumber);
         }
 

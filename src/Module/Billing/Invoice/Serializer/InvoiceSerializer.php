@@ -8,6 +8,7 @@ use Aurora\Core\Media\Entity\Media;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Entity\Supplier;
+use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -30,7 +31,7 @@ final readonly class InvoiceSerializer
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),
             'isCancelled' => $invoice->isCancelled(),
-            'isCreditNote' => $invoice->getStatus() === \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::CreditNote,
+            'isCreditNote' => InvoiceStatusEnum::CreditNote === $invoice->getStatus(),
             'supplier' => $supplier instanceof Supplier ? [
                 'id' => $supplier->getId(),
                 'name' => $supplier->getName(),
@@ -64,9 +65,9 @@ final readonly class InvoiceSerializer
             'paidAt' => $invoice->getPaidAt()?->format('Y-m-d'),
             'notes' => $invoice->getNotes(),
             'supplierFull' => $supplier instanceof Supplier ? $this->supplierSerializer->serialize($supplier) : null,
-            'creditNote' => ($cn = $invoice->getCreditNote()) !== null ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
-            'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) !== null ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
-            'buyer' => $invoice->getBuyerName() !== null ? [
+            'creditNote' => ($cn = $invoice->getCreditNote()) instanceof Invoice ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
+            'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) instanceof Invoice ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
+            'buyer' => null !== $invoice->getBuyerName() ? [
                 'name' => $invoice->getBuyerName(),
                 'vatNumber' => $invoice->getBuyerVatNumber(),
                 'address' => $invoice->getBuyerAddress(),

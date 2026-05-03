@@ -144,18 +144,35 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
             $len = mb_strlen($payload);
             for ($i = $firstBrace; $i < $len; ++$i) {
                 $char = mb_substr($payload, $i, 1);
-                if ($escape) { $escape = false; continue; }
-                if ($char === '\\' && $inString) { $escape = true; continue; }
-                if ($char === '"') { $inString = !$inString; continue; }
-                if ($inString) { continue; }
-                if ($char === '{') { ++$depth; }
-                elseif ($char === '}') {
+                if ($escape) {
+                    $escape = false;
+                    continue;
+                }
+
+                if ('\\' === $char && $inString) {
+                    $escape = true;
+                    continue;
+                }
+
+                if ('"' === $char) {
+                    $inString = !$inString;
+                    continue;
+                }
+
+                if ($inString) {
+                    continue;
+                }
+
+                if ('{' === $char) {
+                    ++$depth;
+                } elseif ('}' === $char) {
                     --$depth;
-                    if ($depth === 0) {
+                    if (0 === $depth) {
                         $decoded = json_decode(mb_substr($payload, $firstBrace, $i - $firstBrace + 1), true);
                         if (is_array($decoded)) {
                             return $decoded;
                         }
+
                         break;
                     }
                 }

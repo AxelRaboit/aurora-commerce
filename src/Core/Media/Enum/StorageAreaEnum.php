@@ -7,7 +7,7 @@ namespace Aurora\Core\Media\Enum;
 enum StorageAreaEnum: string
 {
     case Media = 'media';
-    case Ocr   = 'ocr';
+    case Ocr = 'ocr';
     case Photo = 'photo';
     case Users = 'users';
 }

@@ -7,6 +7,8 @@ namespace Aurora\Module\Billing\Compliance\View;
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Module\Billing\Compliance\Service\SequenceChecker;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 final readonly class ComplianceViewBuilder
 {
@@ -20,13 +22,13 @@ final readonly class ComplianceViewBuilder
     {
         $sequenceChecks = $this->sequenceChecker->check();
         $sequenceStatus = $this->rollupStatus(array_column($sequenceChecks, 'status'));
-        $gapCount = array_sum(array_map(static fn ($c) => count($c['gaps']), $sequenceChecks));
+        $gapCount = array_sum(array_map(static fn ($c): int => count($c['gaps']), $sequenceChecks));
 
         $overdueForArchiving = $this->invoiceRepository->findOverdueForArchiving(6);
-        $archiveStatus = count($overdueForArchiving) === 0 ? 'ok' : 'warning';
+        $archiveStatus = [] === $overdueForArchiving ? 'ok' : 'warning';
 
         $auditAnomalies = $this->auditLogRepository->findBillingAnomalies();
-        $auditStatus = count($auditAnomalies) === 0 ? 'ok' : 'warning';
+        $auditStatus = [] === $auditAnomalies ? 'ok' : 'warning';
 
         $counts = $this->invoiceRepository->countByStatus();
         $totalValidated = ($counts['validated'] ?? 0) + ($counts['paid'] ?? 0) + ($counts['archived'] ?? 0);
@@ -35,7 +37,7 @@ final readonly class ComplianceViewBuilder
 
         return [
             'overall' => $overall,
-            'generatedAt' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+            'generatedAt' => new DateTimeImmutable()->format(DateTimeInterface::ATOM),
             'checks' => [
                 'sequence' => [
                     'status' => $sequenceStatus,
@@ -63,8 +65,14 @@ final readonly class ComplianceViewBuilder
 
     private function rollupStatus(array $statuses): string
     {
-        if (in_array('error', $statuses, true)) return 'error';
-        if (in_array('warning', $statuses, true)) return 'warning';
+        if (in_array('error', $statuses, true)) {
+            return 'error';
+        }
+
+        if (in_array('warning', $statuses, true)) {
+            return 'warning';
+        }
+
         return 'ok';
     }
 }

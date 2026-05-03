@@ -76,9 +76,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         // Delete the uploaded file and its Media record — it was created solely
         // for this OCR job and has no other owner once the job is gone.
         // Invoice.document is SET NULL by the DB cascade if it referenced the same media.
-        if ($media !== null) {
-            $this->mediaManager->delete($media);
-        }
+        $this->mediaManager->delete($media);
 
         $this->auditLogger->log('billing', 'ocr.job.deleted', 'OcrJob', $id);
     }

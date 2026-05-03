@@ -320,7 +320,7 @@ onMounted(() => nextTick(() => {
                     type="text"
                     :placeholder="t('admin.nav.filterNav')"
                     class="w-full pl-7 pr-6 py-1.5 rounded-md text-xs bg-surface-2/60 border border-line/40 text-primary placeholder:text-muted focus:outline-none focus:border-line focus:bg-surface-2 transition-colors"
-                />
+                >
                 <button v-if="navFilter" type="button" class="absolute right-2 text-muted hover:text-primary transition-colors" v-on:click="navFilter = ''">
                     <X class="w-3 h-3" :stroke-width="2.5" />
                 </button>

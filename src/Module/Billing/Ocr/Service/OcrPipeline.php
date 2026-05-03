@@ -59,13 +59,13 @@ final readonly class OcrPipeline
         $doctrPayload = $this->doctr->extract($sourcePath);
         $this->jobManager->recordDoctrResult($job, $doctrPayload);
 
-        $textLen = mb_strlen($doctrPayload['text'] ?? '');
-        $log('info', "Étape 1/2 : docTR terminé — {$textLen} caractères extraits.", ['text_length' => $textLen]);
+        $textLen = mb_strlen($doctrPayload['text']);
+        $log('info', sprintf('Étape 1/2 : docTR terminé — %d caractères extraits.', $textLen), ['text_length' => $textLen]);
         $this->logger->info('OCR stage 1/2: docTR done', ['job_id' => $job->getId(), 'text_length' => $textLen]);
 
         // Stage 2 — Ollama VLM (structured extraction on a renderable image)
         $model = $this->ollama->getModel();
-        $log('info', "Étape 2/2 : analyse VLM en cours… (modèle : {$model})", ['model' => $model]);
+        $log('info', sprintf('Étape 2/2 : analyse VLM en cours… (modèle : %s)', $model), ['model' => $model]);
         $this->logger->info('OCR stage 2/2: VLM extraction starting', ['job_id' => $job->getId(), 'model' => $model]);
 
         $imagePath = $this->documentRenderer->resolveImagePath($sourcePath, (int) $job->getId());
@@ -73,29 +73,29 @@ final readonly class OcrPipeline
         $this->jobManager->recordVlmResult($job, $draft, $model);
 
         $pct = round($draft->confidence * 100);
-        $log('info', "Étape 2/2 : VLM terminé — confiance {$pct}%, ".count($draft->lines)." ligne(s) extraite(s).", [
+        $log('info', sprintf('Étape 2/2 : VLM terminé — confiance %s%%, ', $pct).count($draft->lines).' ligne(s) extraite(s).', [
             'confidence' => $draft->confidence,
-            'lines'      => count($draft->lines),
+            'lines' => count($draft->lines),
         ]);
-        if ($draft->uncertainFields !== []) {
+        if ([] !== $draft->uncertainFields) {
             $log('warning', 'Champs incertains signalés : '.implode(', ', $draft->uncertainFields), ['fields' => $draft->uncertainFields]);
         }
+
         if (!$draft->isTrustworthy()) {
             $log('warning', 'Qualité insuffisante — facture marquée "Anomalie détectée".');
         }
+
         $this->logger->info('OCR stage 2/2: VLM done', ['job_id' => $job->getId(), 'confidence' => $draft->confidence]);
 
         // Guard: the job may have been deleted by the user during the long VLM call.
-        if ($this->ocrJobRepository->find($job->getId()) === null) {
-            throw new UnrecoverableMessageHandlingException(
-                sprintf('OcrJob %d was deleted during processing — aborting.', $job->getId()),
-            );
+        if (null === $this->ocrJobRepository->find($job->getId())) {
+            throw new UnrecoverableMessageHandlingException(sprintf('OcrJob %d was deleted during processing — aborting.', $job->getId()));
         }
 
         // Update existing editable invoice if one is already linked, otherwise create.
         $existing = $this->invoiceRepository->findOneBy(['ocrJob' => $job]);
-        if ($existing !== null && $existing->getStatus()->isEditable()) {
-            $log('info', "Mise à jour de la facture existante #{$existing->getId()}.");
+        if (null !== $existing && $existing->getStatus()->isEditable()) {
+            $log('info', sprintf('Mise à jour de la facture existante #%s.', $existing->getId()));
             $this->invoiceManager->updateFromOcrDraft($existing, $draft, $job);
         } else {
             $log('info', 'Création de la facture depuis le brouillon OCR.');
@@ -109,8 +109,8 @@ final readonly class OcrPipeline
 
         $log('info', 'Pipeline terminé — statut : '.$job->getStatus()->value.'.');
         $this->logger->info('OCR pipeline finished', [
-            'job_id'     => $job->getId(),
-            'status'     => $job->getStatus()->value,
+            'job_id' => $job->getId(),
+            'status' => $job->getStatus()->value,
             'confidence' => $draft->confidence,
         ]);
     }

@@ -10,6 +10,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -213,10 +214,10 @@ class OcrJob
     {
         // Assign a new array so Doctrine's change-tracking detects the mutation.
         $this->logs = [...($this->logs ?? []), [
-            'level'   => $level,
+            'level' => $level,
             'message' => $message,
             'context' => $context,
-            'ts'      => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+            'ts' => new DateTimeImmutable()->format(DateTimeInterface::ATOM),
         ]];
 
         return $this;

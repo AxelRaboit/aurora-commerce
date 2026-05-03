@@ -33,7 +33,7 @@ final readonly class SequenceChecker
 
         foreach ($years as $year => $numbers) {
             $parsed = $this->parse($numbers);
-            if ($parsed === null) {
+            if (null === $parsed) {
                 // Unrecognised format — skip rather than false-positive
                 continue;
             }
@@ -44,7 +44,7 @@ final readonly class SequenceChecker
             $gaps = [];
             for ($i = $sequences[0]; $i <= end($sequences); ++$i) {
                 if (!in_array($i, $sequences, true)) {
-                    $gaps[] = $prefix.$year.$separator.str_pad((string) $i, $width, '0', STR_PAD_LEFT);
+                    $gaps[] = $prefix.$year.$separator.mb_str_pad((string) $i, $width, '0', STR_PAD_LEFT);
                 }
             }
 
@@ -53,7 +53,7 @@ final readonly class SequenceChecker
                 'prefix' => $prefix,
                 'total' => count($sequences),
                 'gaps' => $gaps,
-                'status' => count($gaps) === 0 ? 'ok' : 'error',
+                'status' => [] === $gaps ? 'ok' : 'error',
             ];
         }
 
@@ -61,12 +61,13 @@ final readonly class SequenceChecker
     }
 
     /**
-     * @param  list<string>  $numbers
+     * @param list<string> $numbers
+     *
      * @return array{0: string, 1: string, 2: int, 3: list<int>}|null
      */
     private function parse(array $numbers): ?array
     {
-        if (empty($numbers)) {
+        if ([] === $numbers) {
             return null;
         }
 
@@ -80,17 +81,16 @@ final readonly class SequenceChecker
                 if (!preg_match($pattern, $number, $m)) {
                     continue 2; // pattern doesn't match all numbers → try next pattern
                 }
+
                 $sequences[] = (int) $m['seq'];
-                $width = max($width, strlen($m['seq']));
-                if ($prefix === null) {
+                $width = max($width, mb_strlen($m['seq']));
+                if (null === $prefix) {
                     $prefix = $m['prefix'];
-                    $separator = isset($m[0]) && str_contains($m[0], '/') ? '/' : '-';
+                    $separator = str_contains($m[0], '/') ? '/' : '-';
                 }
             }
 
-            if (!empty($sequences)) {
-                return [$prefix ?? '', $separator, $width, $sequences];
-            }
+            return [$prefix, $separator, $width, $sequences];
         }
 
         return null;

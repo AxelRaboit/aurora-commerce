@@ -9,6 +9,7 @@ use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
+use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -56,7 +57,7 @@ final readonly class InvoicesViewBuilder
             'lineUpdatePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_update', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
             'lineDeletePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_delete', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
             'creditNotePath' => $this->urlGenerator->generate('billing_invoices_credit_note', ['id' => $invoice->getId()]),
-            'ocrRetryPath' => $invoice->getOcrJob() !== null
+            'ocrRetryPath' => $invoice->getOcrJob() instanceof OcrJob
                 ? $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => $invoice->getOcrJob()->getId()])
                 : null,
             'showPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),

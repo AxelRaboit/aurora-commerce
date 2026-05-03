@@ -6,6 +6,7 @@ namespace Aurora\Core\Audit\Repository;
 
 use Aurora\Core\Audit\Entity\AuditLog;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -72,7 +73,7 @@ class AuditLogRepository extends ServiceEntityRepository
             'id' => $r['id'],
             'action' => $r['action'],
             'entityId' => $r['entityId'],
-            'createdAt' => $r['createdAt']->format(\DateTimeInterface::ATOM),
+            'createdAt' => $r['createdAt']->format(DateTimeInterface::ATOM),
             'userName' => $r['userName'],
             'data' => $r['data'],
         ], $rows);

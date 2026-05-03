@@ -113,8 +113,8 @@ final class InvoicesController extends AbstractController
     {
         try {
             $this->lineManager->add($invoice);
-        } catch (\InvalidArgumentException $e) {
-            return $this->jsonFailure($e->getMessage());
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonFailure($invalidArgumentException->getMessage());
         }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
@@ -154,8 +154,8 @@ final class InvoicesController extends AbstractController
 
         try {
             $this->lineManager->delete($line);
-        } catch (\InvalidArgumentException $e) {
-            return $this->jsonFailure($e->getMessage());
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonFailure($invalidArgumentException->getMessage());
         }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
@@ -170,8 +170,8 @@ final class InvoicesController extends AbstractController
 
         try {
             $creditNote = $this->invoiceManager->createCreditNote($invoice, $reason);
-        } catch (InvalidArgumentException $e) {
-            return $this->jsonFailure($e->getMessage());
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonFailure($invalidArgumentException->getMessage());
         }
 
         return $this->jsonSuccess([

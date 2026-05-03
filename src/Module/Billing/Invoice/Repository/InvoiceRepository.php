@@ -7,9 +7,11 @@ namespace Aurora\Module\Billing\Invoice\Repository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -174,7 +176,7 @@ class InvoiceRepository extends ServiceEntityRepository
      * Returns invoice numbers grouped by year, for all non-draft invoices with
      * a non-null number. Used by the compliance sequence checker.
      *
-     * @return array<int, list<string>>  keyed by 4-digit year
+     * @return array<int, list<string>> keyed by 4-digit year
      */
     /**
      * Generate the next sequential invoice number for the given prefix and year.
@@ -192,7 +194,7 @@ class InvoiceRepository extends ServiceEntityRepository
         )->fetchOne();
 
         $next = 1;
-        if ($result !== false) {
+        if (false !== $result) {
             $parts = explode('-', (string) $result);
             $last = (int) end($parts);
             $next = $last + 1;
@@ -212,7 +214,7 @@ class InvoiceRepository extends ServiceEntityRepository
                AND status NOT IN (:drafts)
              ORDER BY issued_at ASC',
             ['drafts' => ['draft', 'needs_review']],
-            ['drafts' => \Doctrine\DBAL\ArrayParameterType::STRING],
+            ['drafts' => ArrayParameterType::STRING],
         )->fetchAllAssociative();
 
         $byYear = [];
@@ -231,15 +233,15 @@ class InvoiceRepository extends ServiceEntityRepository
      */
     public function findOverdueForArchiving(int $years = 6): array
     {
-        $threshold = new \DateTimeImmutable("-{$years} years");
+        $threshold = new DateTimeImmutable(sprintf('-%d years', $years));
 
         $rows = $this->createQueryBuilder('i')
             ->select('i.id', 'i.number', 'i.issuedAt', 'i.status')
             ->where('i.status IN (:statuses)')
             ->andWhere('i.issuedAt < :threshold')
             ->setParameter('statuses', [
-                \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::Validated,
-                \Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum::Paid,
+                InvoiceStatusEnum::Validated,
+                InvoiceStatusEnum::Paid,
             ])
             ->setParameter('threshold', $threshold)
             ->orderBy('i.issuedAt', 'ASC')

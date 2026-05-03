@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]
 #[ORM\Table(name: 'billing_invoices')]
@@ -116,13 +117,13 @@ class Invoice
     public function assertEditable(): void
     {
         if (!$this->status->isEditable()) {
-            throw new \InvalidArgumentException('admin.billing.invoices.update.locked');
+            throw new InvalidArgumentException('admin.billing.invoices.update.locked');
         }
     }
 
     public function isCancelled(): bool
     {
-        return $this->creditNote !== null;
+        return $this->creditNote instanceof Invoice;
     }
 
     public function getCreditNote(): ?self

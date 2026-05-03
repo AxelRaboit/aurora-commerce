@@ -1,4 +1,11 @@
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+    nextTick,
+} from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 
 // ── Recent pages ─────────────────────────────────────────────────────────────
@@ -17,7 +24,10 @@ function loadRecentRoutes() {
 
 function recordRecentRoute(route) {
     if (!route) return;
-    const routes = [route, ...loadRecentRoutes().filter(r => r !== route)].slice(0, RECENT_MAX);
+    const routes = [
+        route,
+        ...loadRecentRoutes().filter((r) => r !== route),
+    ].slice(0, RECENT_MAX);
     localStorage.setItem(RECENT_KEY, JSON.stringify(routes));
 }
 
@@ -30,7 +40,6 @@ function itemKey(kind, item) {
 // ── Composable ────────────────────────────────────────────────────────────────
 
 export function useAdminSearch({ searchPath, navItems, currentRoute }) {
-
     // ── State ─────────────────────────────────────────────────────────────────
 
     const searchOpen = ref(false);
@@ -46,14 +55,16 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     const recentPages = computed(() => {
         const routes = loadRecentRoutes();
         return routes
-            .map(route => navItems.value?.find(i => i.route === route))
+            .map((route) => navItems.value?.find((i) => i.route === route))
             .filter(Boolean);
     });
 
     const navResults = computed(() => {
         const q = searchQuery.value.trim().toLowerCase();
         if (!q) return [];
-        return (navItems.value ?? []).filter(i => i.label.toLowerCase().includes(q));
+        return (navItems.value ?? []).filter((i) =>
+            i.label.toLowerCase().includes(q),
+        );
     });
 
     // ── Sections (drives the template) ───────────────────────────────────────
@@ -68,15 +79,17 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
                 : [];
         }
         return [
-            { kind: "nav",   items: navResults.value              },
-            { kind: "post",  items: apiResults.value.posts        },
-            { kind: "term",  items: apiResults.value.terms        },
-            { kind: "media", items: apiResults.value.media        },
-        ].filter(s => s.items.length > 0);
+            { kind: "nav", items: navResults.value },
+            { kind: "post", items: apiResults.value.posts },
+            { kind: "term", items: apiResults.value.terms },
+            { kind: "media", items: apiResults.value.media },
+        ].filter((s) => s.items.length > 0);
     });
 
     const flatResults = computed(() =>
-        sections.value.flatMap(s => s.items.map(item => ({ kind: s.kind, item })))
+        sections.value.flatMap((s) =>
+            s.items.map((item) => ({ kind: s.kind, item })),
+        ),
     );
 
     const totalResults = computed(() => flatResults.value.length);
@@ -130,12 +143,15 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     function entryIndex(kind, item) {
         const key = itemKey(kind, item);
         return flatResults.value.findIndex(
-            e => e.kind === kind && itemKey(e.kind, e.item) === key
+            (e) => e.kind === kind && itemKey(e.kind, e.item) === key,
         );
     }
 
     function findNavPath(routePrefix) {
-        return navItems.value?.find(i => i.route.startsWith(routePrefix))?.path ?? null;
+        return (
+            navItems.value?.find((i) => i.route.startsWith(routePrefix))
+                ?.path ?? null
+        );
     }
 
     function activateResult(entry) {
@@ -162,7 +178,10 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     // ── Keyboard ──────────────────────────────────────────────────────────────
 
     function onGlobalKeydown(event) {
-        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "k"
+        ) {
             event.preventDefault();
             searchOpen.value ? closePalette() : openPalette();
             return;
@@ -175,11 +194,14 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
         } else if (event.key === "ArrowDown") {
             event.preventDefault();
             if (totalResults.value)
-                searchHighlightedIndex.value = (searchHighlightedIndex.value + 1) % totalResults.value;
+                searchHighlightedIndex.value =
+                    (searchHighlightedIndex.value + 1) % totalResults.value;
         } else if (event.key === "ArrowUp") {
             event.preventDefault();
             if (totalResults.value)
-                searchHighlightedIndex.value = (searchHighlightedIndex.value - 1 + totalResults.value) % totalResults.value;
+                searchHighlightedIndex.value =
+                    (searchHighlightedIndex.value - 1 + totalResults.value) %
+                    totalResults.value;
         } else if (event.key === "Enter") {
             event.preventDefault();
             activateResult(flatResults.value[searchHighlightedIndex.value]);
@@ -189,11 +211,15 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     onMounted(() => {
         window.addEventListener("keydown", onGlobalKeydown);
         // Record the current page as a recent visit
-        const matchingItem = navItems.value?.find(i => currentRoute?.startsWith(i.route));
+        const matchingItem = navItems.value?.find((i) =>
+            currentRoute?.startsWith(i.route),
+        );
         if (matchingItem) recordRecentRoute(matchingItem.route);
     });
 
-    onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
+    onBeforeUnmount(() =>
+        window.removeEventListener("keydown", onGlobalKeydown),
+    );
 
     // ── Public API ────────────────────────────────────────────────────────────
 

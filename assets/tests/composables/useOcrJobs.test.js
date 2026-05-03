@@ -182,18 +182,37 @@ describe("useOcrJobs — polling", () => {
 });
 
 describe("useOcrJobs — hasInvoice", () => {
-    it.each([
-        ["completed", true],
-        ["needs_review", true],
-        ["failed", false],
-        ["queued", false],
-        ["extracting", false],
-        ["parsing", false],
-    ])("status=%s → %s", (status, expected) => {
+    it("returns true when invoiceId is set regardless of status", () => {
         let api;
         mountWithComposable(() => {
             api = useOcrJobs(ref([]), { statusUrlTemplate: STATUS_URL });
         });
-        expect(api.hasInvoice({ status })).toBe(expected);
+        expect(api.hasInvoice({ status: "completed", invoiceId: 42 })).toBe(
+            true,
+        );
+        expect(api.hasInvoice({ status: "needs_review", invoiceId: 42 })).toBe(
+            true,
+        );
+        // rescan case: back to queued but invoice already linked
+        expect(api.hasInvoice({ status: "queued", invoiceId: 42 })).toBe(true);
+    });
+
+    it("returns false when invoiceId is null or missing", () => {
+        let api;
+        mountWithComposable(() => {
+            api = useOcrJobs(ref([]), { statusUrlTemplate: STATUS_URL });
+        });
+        expect(api.hasInvoice({ status: "completed", invoiceId: null })).toBe(
+            false,
+        );
+        expect(
+            api.hasInvoice({ status: "needs_review", invoiceId: null }),
+        ).toBe(false);
+        expect(api.hasInvoice({ status: "failed", invoiceId: null })).toBe(
+            false,
+        );
+        expect(api.hasInvoice({ status: "queued", invoiceId: null })).toBe(
+            false,
+        );
     });
 });

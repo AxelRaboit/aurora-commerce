@@ -193,7 +193,7 @@ final readonly class InvoiceExtractor
             confidence: (float) ($payload['confidence'] ?? 0.0),
             uncertainFields: array_values(array_filter(
                 (array) ($payload['uncertain_fields'] ?? []),
-                static fn (mixed $v): bool => is_string($v) && $v !== '',
+                static fn (mixed $v): bool => is_string($v) && '' !== $v,
             )),
         );
     }

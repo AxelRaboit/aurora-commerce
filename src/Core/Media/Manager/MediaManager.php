@@ -16,6 +16,7 @@ use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
 use Aurora\Core\User\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use GdImage;
 use InvalidArgumentException;
@@ -53,7 +54,7 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $safeFilename = $this->slugger->slug(pathinfo($clientName, PATHINFO_FILENAME))->lower();
         $extension = $file->guessExtension() ?? $file->getClientOriginalExtension();
-        $dateSlug = (new \DateTimeImmutable())->format('Y-m');
+        $dateSlug = new DateTimeImmutable()->format('Y-m');
         $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $extension);
         $relativeDir = sprintf('%s/%s', $area->value, $dateSlug);
         $relativePath = sprintf('%s/%s', $relativeDir, $newFilename);

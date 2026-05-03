@@ -68,7 +68,13 @@ onMounted(load);
         <!-- Header summary -->
         <div class="bg-surface border border-line/60 rounded-xl p-6 flex items-center gap-4">
             <div v-if="loading" class="w-10 h-10 rounded-full bg-surface-2 animate-pulse" />
-            <component v-else-if="report" :is="overallIcon" class="w-10 h-10 shrink-0" :class="`text-${overallColor}-400`" :stroke-width="1.5" />
+            <component
+                :is="overallIcon"
+                v-else-if="report"
+                class="w-10 h-10 shrink-0"
+                :class="`text-${overallColor}-400`"
+                :stroke-width="1.5"
+            />
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-primary">{{ t('admin.billing.compliance.title') }}</p>
                 <p v-if="loading" class="text-sm text-muted">{{ t('shared.common.loading') }}…</p>
@@ -153,7 +159,7 @@ onMounted(load);
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.number') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.issuedAt') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.statusLabel') }}</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted"></th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted" />
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-line/40">

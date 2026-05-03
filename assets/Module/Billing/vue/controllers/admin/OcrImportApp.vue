@@ -182,13 +182,13 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                         v-if="isImageMimeType(preview.mime)"
                         :src="preview.url"
                         :class="['w-full object-contain', previewCount > 1 ? 'max-h-48' : 'max-h-96']"
-                    />
+                    >
                     <embed
                         v-else-if="isPdfMimeType(preview.mime)"
                         :src="preview.url"
                         :type="MimeType.Pdf"
                         :class="['w-full', previewCount > 1 ? 'h-48' : 'h-72']"
-                    />
+                    >
                     <div v-else class="flex flex-col items-center justify-center gap-2 text-muted" :class="previewCount > 1 ? 'h-48' : 'h-40'">
                         <FileText class="w-10 h-10" :stroke-width="1.5" />
                     </div>
@@ -290,14 +290,14 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 {{ t('admin.billing.ocr.logsTitle') }} — #{{ logsJob?.id }}
                 <AppBadge :color="logsJob?.statusColor" :spinning="logsJob && !logsJob.isTerminal" class="ml-2">{{ logsJob?.statusLabel }}</AppBadge>
             </h3>
-            <div class="bg-surface-2 rounded-lg p-3 h-72 overflow-y-auto scrollbar-thin font-mono text-xs space-y-1" ref="logsContainer">
+            <div ref="logsContainer" class="bg-surface-2 rounded-lg p-3 h-72 overflow-y-auto scrollbar-thin font-mono text-xs space-y-1">
                 <template v-if="!logsJob?.logs?.length">
                     <div v-if="logsJob?.status === OcrJobStatus.Queued" class="flex flex-col items-center gap-2 text-muted text-center py-8">
-                        <span class="w-5 h-5 rounded-full border-2 border-muted border-t-transparent animate-spin"></span>
+                        <span class="w-5 h-5 rounded-full border-2 border-muted border-t-transparent animate-spin" />
                         <span>{{ t('admin.billing.ocr.logsWaitingWorker') }}</span>
                     </div>
                     <div v-else-if="!logsJob?.isTerminal" class="flex flex-col items-center gap-2 text-muted text-center py-8">
-                        <span class="w-5 h-5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin"></span>
+                        <span class="w-5 h-5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
                         <span>{{ t('admin.billing.ocr.logsStarting') }}</span>
                     </div>
                     <div v-else class="text-muted italic text-center py-8">{{ t('admin.billing.ocr.logsEmpty') }}</div>
@@ -308,14 +308,16 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                     class="flex items-start gap-2"
                 >
                     <span class="shrink-0 text-muted">{{ new Date(entry.ts).toLocaleTimeString() }}</span>
-                    <span :class="{
-                        'text-emerald-400': entry.level === 'info',
-                        'text-amber-400': entry.level === 'warning',
-                        'text-rose-400': entry.level === 'error',
-                    }">{{ entry.message }}</span>
+                    <span
+                        :class="{
+                            'text-emerald-400': entry.level === 'info',
+                            'text-amber-400': entry.level === 'warning',
+                            'text-rose-400': entry.level === 'error',
+                        }"
+                    >{{ entry.message }}</span>
                 </div>
                 <div v-if="logsJob && !logsJob.isTerminal" class="flex items-center gap-1.5 text-muted animate-pulse pt-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
                     <span>{{ t('admin.billing.ocr.logsRunning') }}</span>
                 </div>
             </div>
