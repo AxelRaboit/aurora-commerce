@@ -44,6 +44,7 @@ function handleSubmit(event) {
         :heading="t('front.register.heading')"
         :subtitle="t('front.register.subtitle')"
     >
+        <template #icon><UserPlus class="w-6 h-6" :stroke-width="2" /></template>
         <form method="POST" :action="registerPath" class="space-y-5" v-on:submit.prevent="handleSubmit">
             <AppInput
                 v-model="name"
@@ -86,13 +87,13 @@ function handleSubmit(event) {
         </template>
     </AuthCard>
 
-    <AuthCard v-else>
-        <div class="text-center py-8">
-            <div class="w-14 h-14 rounded-full bg-rose-500/15 flex items-center justify-center mx-auto mb-6">
-                <Lock class="w-7 h-7 text-rose-400" :stroke-width="2" />
-            </div>
-            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.register.closed_title') }}</h1>
-            <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('front.register.closed_desc') }}</p>
+    <AuthCard
+        v-else
+        :heading="t('front.register.closed_title')"
+        :subtitle="t('front.register.closed_desc')"
+    >
+        <template #icon><Lock class="w-6 h-6" :stroke-width="2" /></template>
+        <div class="text-center">
             <AppButton :href="loginPath" variant="primary">
                 <LogIn class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.login.submit') }}

@@ -6,12 +6,49 @@
     {{ include('Front/themes/default/partials/head.html.twig') }}
 </head>
 <body class="min-h-screen bg-bg text-primary flex flex-col">
-    {{ include('Front/themes/default/partials/header.html.twig') }}
+    {% set localeFlagCodes = {fr: 'fr', en: 'gb', es: 'es', de: 'de', it: 'it', pt: 'pt', nl: 'nl'} %}
+    {% set localeNames = {fr: 'Français', en: 'English', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands'} %}
+    {% set alternatesByLocale = {} %}
+    {% for alt in alternates %}
+        {% set alternatesByLocale = alternatesByLocale|merge({(alt.locale): alt.url}) %}
+    {% endfor %}
+    {% set switcherLocales = [] %}
+    {% for loc in context.activeLocales %}
+        {% set switcherLocales = switcherLocales|merge([{
+            code: loc.code,
+            name: localeNames[loc.code] ?? loc.code|upper,
+            flagCode: localeFlagCodes[loc.code] ?? loc.code,
+            url: alternatesByLocale[loc.code] ?? path('front_home', {locale: loc.code}),
+        }]) %}
+    {% endfor %}
+
+    <div {{ vue_component('core/front/FrontHeaderApp', {
+        locale: locale,
+        siteName: context.siteName,
+        homePath: path('front_home', {locale: locale}),
+        cartPath: is_ecommerce_front_enabled() ? path('front_cart', {locale: locale}) : '',
+        accountOrdersPath: is_ecommerce_front_enabled() ? path('front_account_orders', {locale: locale}) : '',
+        cartCount: is_ecommerce_front_enabled() ? cart_count() : 0,
+        ecommerceEnabled: is_ecommerce_front_enabled(),
+        headerLogoUrl: themeContext.headerLogoUrl() ?? '',
+        siteLogoUrl: siteLogoUrl ?? '',
+        headerCustomText: themeContext.headerCustomText() ?? '',
+        currentUser: app.user ? {name: app.user.name} : null,
+        primaryMenuItems: menu_items('primary', locale),
+        accountMenuItems: menu_items('account', locale),
+        localeSwitcher: {
+            enabled: context.activeLocales|length > 1,
+            locales: switcherLocales,
+        },
+    }) }}></div>
 
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
         {% block body %}{% endblock %}
     </main>
 
-    {{ include('Front/themes/default/partials/footer.html.twig') }}
+    <div {{ vue_component('core/front/FrontFooterApp', {
+        footerText: themeContext.footerText(context.siteName),
+        footerMenuItems: menu_items('footer', locale),
+    }) }}></div>
 </body>
 </html>

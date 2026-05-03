@@ -61,7 +61,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="max-w-2xl mx-auto space-y-6">
         <div v-if="submitted" class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-4 text-emerald-400 text-sm font-medium">
             {{ t("shared.form.success") }}
         </div>

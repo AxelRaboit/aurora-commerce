@@ -40,6 +40,7 @@ function handleSubmit(event) {
 
 <template>
     <AuthCard :heading="t('front.login.heading')" :subtitle="t('front.login.subtitle')">
+        <template #icon><LogIn class="w-6 h-6" :stroke-width="2" /></template>
         <template #banner>
             <div v-if="resetSuccess" class="mb-6 rounded-lg bg-success-soft border border-success/30 px-4 py-3 text-sm text-success">
                 {{ t('front.reset_password.success') }}

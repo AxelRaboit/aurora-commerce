@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { Check, X, LogIn, UserPlus } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AuthCard from "@/front/components/AuthCard.vue";
 
 const { t } = useI18n();
 
@@ -13,28 +14,23 @@ defineProps({
 </script>
 
 <template>
-    <div class="max-w-md mx-auto py-16 px-4 text-center">
-        <template v-if="success">
-            <div class="w-14 h-14 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-6">
-                <Check class="w-7 h-7 text-success" :stroke-width="2" />
-            </div>
-            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.verify_email.success_heading') }}</h1>
-            <p class="text-secondary text-sm mb-8">{{ t('front.verify_email.success_message') }}</p>
-            <AppButton :href="loginPath" variant="accent">
+    <AuthCard
+        :heading="success ? t('front.verify_email.success_heading') : t('front.verify_email.error_heading')"
+        :subtitle="success ? t('front.verify_email.success_message') : t('front.verify_email.error_message')"
+    >
+        <template #icon>
+            <Check v-if="success" class="w-6 h-6" :stroke-width="2" />
+            <X v-else class="w-6 h-6" :stroke-width="2" />
+        </template>
+        <div class="text-center">
+            <AppButton v-if="success" :href="loginPath" variant="accent">
                 <LogIn class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.login.submit') }}
             </AppButton>
-        </template>
-        <template v-else>
-            <div class="w-14 h-14 rounded-full bg-danger-soft flex items-center justify-center mx-auto mb-6">
-                <X class="w-7 h-7 text-danger" :stroke-width="2" />
-            </div>
-            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.verify_email.error_heading') }}</h1>
-            <p class="text-secondary text-sm mb-8">{{ t('front.verify_email.error_message') }}</p>
-            <AppButton :href="registerPath" variant="secondary">
+            <AppButton v-else :href="registerPath" variant="secondary">
                 <UserPlus class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.register.submit') }}
             </AppButton>
-        </template>
-    </div>
+        </div>
+    </AuthCard>
 </template>

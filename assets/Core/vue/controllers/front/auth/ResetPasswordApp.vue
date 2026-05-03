@@ -37,6 +37,7 @@ function handleSubmit(event) {
         :heading="t('front.reset_password.heading')"
         :subtitle="invalid ? '' : t('front.reset_password.subtitle')"
     >
+        <template #icon><KeyRound class="w-6 h-6" :stroke-width="2" /></template>
         <template v-if="invalid">
             <div class="rounded-lg bg-danger-soft border border-danger/30 px-4 py-4 text-sm text-danger mb-6">
                 {{ t('front.reset_password.invalid_link') }}

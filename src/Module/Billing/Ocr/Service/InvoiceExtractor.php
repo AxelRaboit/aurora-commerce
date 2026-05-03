@@ -139,6 +139,7 @@ final readonly class InvoiceExtractor
             if (!is_array($row)) {
                 continue;
             }
+
             if (!isset($row['label'])) {
                 continue;
             }

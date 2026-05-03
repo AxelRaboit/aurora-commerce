@@ -7,4 +7,5 @@
 body {
     background-color: var(--th-bg);
     color: var(--color-primary);
+    font-family: var(--font-sans);
 }

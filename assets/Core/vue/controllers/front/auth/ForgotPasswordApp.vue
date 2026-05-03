@@ -34,6 +34,7 @@ function handleSubmit(event) {
 
 <template>
     <AuthCard :heading="t('front.forgot_password.heading')" :subtitle="t('front.forgot_password.subtitle')">
+        <template #icon><Mail class="w-6 h-6" :stroke-width="2" /></template>
         <div v-if="sent" class="text-center">
             <div class="w-14 h-14 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-6">
                 <Mail class="w-7 h-7 text-emerald-400" :stroke-width="2" />

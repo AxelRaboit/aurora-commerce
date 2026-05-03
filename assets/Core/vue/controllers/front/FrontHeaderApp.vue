@@ -1,0 +1,203 @@
+<script setup>
+import { computed, ref, onMounted, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
+import { Menu, ChevronDown, User, ShoppingCart, Package } from "lucide-vue-next";
+import LocaleSwitcher from "./LocaleSwitcher.vue";
+
+const { t } = useI18n();
+
+const props = defineProps({
+    locale: { type: String, required: true },
+    siteName: { type: String, required: true },
+    homePath: { type: String, required: true },
+    cartPath: { type: String, default: "" },
+    accountOrdersPath: { type: String, default: "" },
+    cartCount: { type: Number, default: 0 },
+    ecommerceEnabled: { type: Boolean, default: false },
+    headerLogoUrl: { type: String, default: "" },
+    siteLogoUrl: { type: String, default: "" },
+    headerCustomText: { type: String, default: "" },
+    currentUser: { type: Object, default: null },
+    primaryMenuItems: { type: Array, default: () => [] },
+    accountMenuItems: { type: Array, default: () => [] },
+    localeSwitcher: { type: Object, default: () => ({ enabled: false, locales: [] }) },
+});
+
+const logoUrl = computed(() => props.headerLogoUrl || props.siteLogoUrl);
+// Local mutable copy — initial value comes from the server-side prop, then
+// kept in sync with cart mutations dispatched from CartApp / ShopProductApp.
+const cartCount = ref(props.cartCount);
+const showAccountMenu = computed(() => props.accountMenuItems.length > 0 || cartCount.value > 0 || props.currentUser);
+
+function onCartChanged(event) {
+    const next = Number(event.detail?.count);
+    if (Number.isFinite(next)) cartCount.value = next;
+}
+
+onMounted(() => document.addEventListener("cart:changed", onCartChanged));
+onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged));
+</script>
+
+<template>
+    <header
+        class="border-b"
+        style="background-color: var(--th-header-bg, var(--th-surface)); border-color: var(--th-header-border, var(--color-border)); color: var(--th-header-text, var(--th-primary));"
+    >
+        <div class="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-6 flex-wrap">
+            <a
+                :href="homePath"
+                class="flex items-center gap-2 text-lg"
+                style="color: var(--th-header-text, var(--th-primary));"
+            >
+                <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-8 w-auto object-contain">
+                <template v-else-if="headerCustomText">{{ headerCustomText }}</template>
+                <template v-else>{{ siteName }}</template>
+            </a>
+
+            <nav v-if="primaryMenuItems.length" class="hidden md:flex items-center gap-1">
+                <div v-for="item in primaryMenuItems" :key="item.id" class="relative group">
+                    <a
+                        :href="item.url"
+                        :target="item.openInNewTab ? '_blank' : null"
+                        :rel="item.openInNewTab ? 'noopener' : null"
+                        class="inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm transition-colors hover:opacity-80"
+                        :class="item.cssClass"
+                        style="color: var(--th-header-text, var(--th-primary));"
+                    >
+                        {{ item.label }}
+                        <ChevronDown v-if="item.children && item.children.length" class="w-3.5 h-3.5" :stroke-width="2.5" />
+                    </a>
+                    <div
+                        v-if="item.children && item.children.length"
+                        class="absolute left-0 top-full pt-1 min-w-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50"
+                    >
+                        <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
+                            <component
+                                :is="child.targetType === 'front_logout' ? 'form' : 'a'"
+                                v-for="child in item.children"
+                                :key="child.id"
+                                :method="child.targetType === 'front_logout' ? 'POST' : null"
+                                :action="child.targetType === 'front_logout' ? child.url : null"
+                                :href="child.targetType === 'front_logout' ? null : child.url"
+                                :target="child.openInNewTab ? '_blank' : null"
+                                :rel="child.openInNewTab ? 'noopener' : null"
+                                class="block px-4 py-2 text-sm transition-colors hover:bg-surface-2"
+                                :class="child.cssClass"
+                                style="color: var(--th-primary);"
+                            >
+                                <button v-if="child.targetType === 'front_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ child.label }}</button>
+                                <template v-else>{{ child.label }}</template>
+                            </component>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <details v-if="primaryMenuItems.length" class="md:hidden order-last basis-full">
+                <summary class="list-none flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:opacity-80" style="color: var(--th-header-text, var(--th-primary));">
+                    <Menu class="w-5 h-5" :stroke-width="2" />
+                    <span class="text-sm">{{ t('front.menu.label') }}</span>
+                </summary>
+                <ul class="mt-2 space-y-1 border-t pt-2" style="border-color: var(--th-header-border, var(--color-border));">
+                    <li v-for="item in primaryMenuItems" :key="item.id">
+                        <a
+                            :href="item.url"
+                            :target="item.openInNewTab ? '_blank' : null"
+                            :rel="item.openInNewTab ? 'noopener' : null"
+                            class="block px-3 py-2 rounded-md text-sm hover:opacity-80"
+                            :class="item.cssClass"
+                            style="color: var(--th-header-text, var(--th-primary));"
+                        >
+                            {{ item.label }}
+                        </a>
+                        <ul v-if="item.children && item.children.length" class="ml-4 mt-1 space-y-1 border-l pl-2" style="border-color: var(--th-header-border, var(--color-border));">
+                            <li v-for="child in item.children" :key="child.id">
+                                <a
+                                    :href="child.url"
+                                    :target="child.openInNewTab ? '_blank' : null"
+                                    :rel="child.openInNewTab ? 'noopener' : null"
+                                    class="block px-3 py-1.5 rounded-md text-sm hover:opacity-80"
+                                    :class="child.cssClass"
+                                    style="color: var(--th-header-text, var(--th-primary));"
+                                >
+                                    {{ child.label }}
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </details>
+
+            <div class="ml-auto flex items-center gap-4 text-sm">
+                <div v-if="showAccountMenu" class="relative group">
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80 relative"
+                        style="color: var(--th-header-text, var(--th-primary));"
+                    >
+                        <User class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ currentUser ? currentUser.name : t('front.menu.account') }}</span>
+                        <span
+                            v-show="cartCount > 0"
+                            class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-white text-xs tabular-nums"
+                        >{{ cartCount }}</span>
+                        <ChevronDown class="w-3.5 h-3.5" :stroke-width="2.5" />
+                    </button>
+
+                    <div class="absolute right-0 top-full pt-1 min-w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50">
+                        <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
+                            <template v-if="ecommerceEnabled">
+                                <a
+                                    :href="cartPath"
+                                    class="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
+                                    style="color: var(--th-primary);"
+                                >
+                                    <span class="flex items-center gap-2">
+                                        <ShoppingCart class="w-4 h-4" :stroke-width="2" />
+                                        {{ t('front.cart.title') }}
+                                    </span>
+                                    <span
+                                        v-if="cartCount > 0"
+                                        class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-white text-xs tabular-nums"
+                                    >{{ cartCount }}</span>
+                                </a>
+                                <a
+                                    v-if="currentUser"
+                                    :href="accountOrdersPath"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
+                                    style="color: var(--th-primary);"
+                                >
+                                    <Package class="w-4 h-4" :stroke-width="2" />
+                                    {{ t('front.account.orders') }}
+                                </a>
+                            </template>
+                            <div v-if="ecommerceEnabled && accountMenuItems.length" class="border-t" style="border-color: var(--color-border);" />
+                            <component
+                                :is="item.targetType === 'front_logout' ? 'form' : 'a'"
+                                v-for="item in accountMenuItems"
+                                :key="item.id"
+                                :method="item.targetType === 'front_logout' ? 'POST' : null"
+                                :action="item.targetType === 'front_logout' ? item.url : null"
+                                :href="item.targetType === 'front_logout' ? null : item.url"
+                                :target="item.openInNewTab ? '_blank' : null"
+                                :rel="item.openInNewTab ? 'noopener' : null"
+                                class="block px-4 py-2 text-sm transition-colors hover:bg-surface-2"
+                                :class="item.cssClass"
+                                style="color: var(--th-primary);"
+                            >
+                                <button v-if="item.targetType === 'front_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ item.label }}</button>
+                                <template v-else>{{ item.label }}</template>
+                            </component>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <LocaleSwitcher
+                v-if="localeSwitcher.enabled"
+                :current-locale="locale"
+                :locales="localeSwitcher.locales"
+            />
+        </div>
+    </header>
+</template>

@@ -36,7 +36,10 @@
 <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
 
 {{ vite_entry_link_tags('app') }}
+{{ vite_entry_link_tags('flash') }}
 {{ vite_entry_script_tags('app') }}
+{{ vite_entry_script_tags('flash') }}
+<script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
 
 <link rel="alternate" type="application/rss+xml" title="{{ context.siteName }} - RSS" href="{{ path('front_rss', {locale: locale}) }}">
 
