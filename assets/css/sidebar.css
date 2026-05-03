@@ -79,3 +79,8 @@
 .sidebar-collapsed .si-section-header { display: none; }
 /* In collapsed (icon-only) mode, force all items visible regardless of section toggle state */
 .sidebar-collapsed .sidebar-nav .si { display: flex !important; }
+
+/* Sub-items container: hidden in collapsed mode */
+.sidebar-collapsed .si-children { display: none !important; }
+/* Chevron on group parent: hidden in collapsed mode */
+.sidebar-collapsed .si-group-chevron { display: none !important; }

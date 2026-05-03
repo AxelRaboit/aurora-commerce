@@ -31,17 +31,10 @@ final readonly class ModuleRegistry
                 $resolvedItems = [];
 
                 foreach ($section->items as $item) {
-                    if (null !== $item->requiredRole && !$this->security->isGranted($item->requiredRole)) {
-                        continue;
+                    $resolved = $this->resolveItem($item);
+                    if (null !== $resolved) {
+                        $resolvedItems[] = $resolved;
                     }
-
-                    $resolvedItems[] = [
-                        'route' => $item->activeRoutePrefix ?? $item->route,
-                        'path' => $this->urlGenerator->generate($item->route),
-                        'labelKey' => $item->labelKey,
-                        'icon' => $item->icon,
-                        'activeColor' => $item->activeColor,
-                    ];
                 }
 
                 if ([] !== $resolvedItems) {
@@ -61,5 +54,30 @@ final readonly class ModuleRegistry
             'id' => $section['id'],
             'items' => $section['items'],
         ], $sections);
+    }
+
+    /** @return array<string, mixed>|null null when the item is filtered by role */
+    private function resolveItem(NavItem $item): ?array
+    {
+        if (null !== $item->requiredRole && !$this->security->isGranted($item->requiredRole)) {
+            return null;
+        }
+
+        $children = [];
+        foreach ($item->children as $child) {
+            $resolved = $this->resolveItem($child);
+            if (null !== $resolved) {
+                $children[] = $resolved;
+            }
+        }
+
+        return [
+            'route' => $item->activeRoutePrefix ?? $item->route,
+            'path' => $this->urlGenerator->generate($item->route),
+            'labelKey' => $item->labelKey,
+            'icon' => $item->icon,
+            'activeColor' => $item->activeColor,
+            'children' => $children,
+        ];
     }
 }

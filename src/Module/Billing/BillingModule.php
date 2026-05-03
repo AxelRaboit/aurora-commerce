@@ -42,15 +42,22 @@ final readonly class BillingModule implements ModuleInterface
         return [
             new NavSection('billing', [
                 new NavItem('billing_dashboard', 'admin.nav.dashboard', 'gauge', UserRoleEnum::Editor->value),
-                new NavItem('billing_invoices', 'admin.nav.invoices', 'file-text', UserRoleEnum::Editor->value),
-                new NavItem('billing_suppliers', 'admin.nav.suppliers', 'briefcase', UserRoleEnum::Editor->value),
                 new NavItem(
-                    'billing_ocr_import',
-                    'admin.nav.ocr_import',
-                    'scan-line',
+                    'billing_invoices',
+                    'admin.nav.invoices',
+                    'file-text',
                     UserRoleEnum::Editor->value,
-                    activeRoutePrefix: 'billing_ocr_',
+                    children: [
+                        new NavItem(
+                            'billing_ocr_import',
+                            'admin.nav.ocr_import',
+                            'scan-line',
+                            UserRoleEnum::Editor->value,
+                            activeRoutePrefix: 'billing_ocr_',
+                        ),
+                    ],
                 ),
+                new NavItem('billing_suppliers', 'admin.nav.suppliers', 'briefcase', UserRoleEnum::Editor->value),
             ], priority: 55),
         ];
     }

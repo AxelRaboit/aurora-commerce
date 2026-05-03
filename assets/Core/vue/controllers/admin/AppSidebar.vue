@@ -1,11 +1,14 @@
 <script setup>
-import { computed, ref, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { computed, ref, watch, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/shared/composables/useTheme.js";
+import { usePersistedExpanded } from "@/shared/composables/usePersistedExpanded.js";
+import { useAdminSearch } from "@core/vue/composables/useAdminSearch.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import "@/css/sidebar.css";
 import {
     LayoutDashboard,
@@ -43,6 +46,7 @@ import {
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
 import { useResizable } from "@/shared/composables/useResizable.js";
+import { modKeyLabel } from "@/shared/utils/platform.js";
 
 const ICON_MAP = {
     "layout-dashboard": LayoutDashboard,
@@ -75,7 +79,6 @@ const props = defineProps({
     frontPath: { type: String, default: "/" },
     profilePath: { type: String, default: "/admin/profile" },
     logoutPath: { type: String, default: "/logout" },
-    locale: { type: String, default: "fr" },
     mailpitUrl: { type: String, default: "" },
     siteName: { type: String, default: "Aurora" },
     siteLogoUrl: { type: String, default: "" },
@@ -104,7 +107,7 @@ function closeMobile() { mobileOpen.value = false; document.body.style.overflow 
 
 // ── Resizable width ──────────────────────────────────────────────────────────
 const SIDEBAR_DEFAULT_WIDTH = 240; // 15rem
-const { size: sidebarWidth, dragging: sidebarDragging, startResize: startSidebarResize, reset: resetSidebarWidth } = useResizable({
+const { dragging: sidebarDragging, startResize: startSidebarResize, reset: resetSidebarWidth } = useResizable({
     key: "aurora-sidebar-width",
     defaultValue: SIDEBAR_DEFAULT_WIDTH,
     min: 200,
@@ -127,6 +130,7 @@ function buildItem(item) {
         label: t(item.labelKey),
         icon: ICON_MAP[item.icon] ?? FileText,
         activeColor: item.activeColor ?? "accent",
+        children: (item.children ?? []).map(buildItem),
     };
 }
 
@@ -137,15 +141,14 @@ const groupedSections = computed(() =>
             id: section.id,
             label: t(`admin.nav.sections.${section.id}`),
             items,
-            collapsible: true,
         };
     })
 );
 
-const navItems = computed(() => groupedSections.value.flatMap(s => s.items));
+const navItems = computed(() => groupedSections.value.flatMap(s => s.items.flatMap(i => [i, ...(i.children ?? [])])));
 
 function itemClasses(item) {
-    if (isActive(item.route)) {
+    if (itemIsActive(item)) {
         return item.activeColor === "rose" ? "bg-rose-600/15 text-rose-400" : "bg-accent-600/15 text-accent-400";
     }
     return item.activeColor === "rose"
@@ -154,7 +157,7 @@ function itemClasses(item) {
 }
 
 function iconClasses(item) {
-    if (isActive(item.route)) {
+    if (itemIsActive(item)) {
         return item.activeColor === "rose" ? "text-rose-400" : "text-accent-400";
     }
     return item.activeColor === "rose"
@@ -163,145 +166,42 @@ function iconClasses(item) {
 }
 
 function isActive(route) {
-    if ("__front" === route) return false;
     return props.activeRoute?.startsWith(route);
 }
 
-function sectionContainsActive(section) {
-    return section.items.some(item => isActive(item.route));
+function itemIsActive(item) {
+    return isActive(item.route) || (item.children?.some(child => isActive(child.route)) ?? false);
 }
 
-// Collapsible sections — persisted in localStorage. Sections containing the active route auto-open on mount.
-const SECTIONS_KEY = "aurora-sidebar-sections";
-const expandedSections = ref(loadExpandedSections());
 
-function loadExpandedSections() {
-    try {
-        const raw = localStorage.getItem(SECTIONS_KEY);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
-}
+const { isExpanded: isGroupExpanded, toggle: toggleGroup, getRaw: getGroupRaw } = usePersistedExpanded("aurora-sidebar-groups");
+const { isExpanded: isSectionExpandedById, toggle: toggleSectionById } = usePersistedExpanded("aurora-sidebar-sections");
 
-function isSectionExpanded(section) {
-    return expandedSections.value[section.id] !== false;
-}
+function isSectionExpanded(section) { return isSectionExpandedById(section.id); }
+function toggleSection(section) { toggleSectionById(section.id); }
 
-function toggleSection(section) {
-    expandedSections.value = {
-        ...expandedSections.value,
-        [section.id]: !isSectionExpanded(section),
-    };
-    localStorage.setItem(SECTIONS_KEY, JSON.stringify(expandedSections.value));
-}
-
-// Search palette
-const searchOpen = ref(false);
-const searchQuery = ref("");
-const searchResults = ref({ posts: [], terms: [], media: [] });
-const searchLoading = ref(false);
-const searchHighlightedIndex = ref(0);
-const searchInputRef = ref(null);
-
-const isMac = typeof navigator !== "undefined" && /Mac|iP(hone|od|ad)/.test(navigator.platform);
-const modKeyLabel = isMac ? "⌘" : "Ctrl";
-
-const flatResults = computed(() => [
-    ...searchResults.value.posts.map((item) => ({ kind: "post", item })),
-    ...searchResults.value.terms.map((item) => ({ kind: "term", item })),
-    ...searchResults.value.media.map((item) => ({ kind: "media", item })),
-]);
-
-const totalResults = computed(() => flatResults.value.length);
-
-function openPalette() {
-    searchOpen.value = true;
-    searchQuery.value = "";
-    searchResults.value = { posts: [], terms: [], media: [] };
-    searchHighlightedIndex.value = 0;
-    nextTick(() => searchInputRef.value?.focus());
-}
-
-function closePalette() {
-    searchOpen.value = false;
-}
+const {
+    searchOpen, searchQuery, searchResults, searchLoading,
+    searchHighlightedIndex, searchInputRef,
+    flatResults, totalResults,
+    openPalette, closePalette, activateResult, entryIndex,
+} = useAdminSearch({ searchPath: props.searchPath, navItems });
 
 function openSearchFromMobile() {
     closeMobile();
     openPalette();
 }
 
-function onGlobalKeydown(event) {
-    if ((event.ctrlKey || event.metaKey) && "k" === event.key.toLowerCase()) {
-        event.preventDefault();
-        searchOpen.value ? closePalette() : openPalette();
-        return;
-    }
-    if (!searchOpen.value) return;
-    if ("Escape" === event.key) {
-        event.preventDefault();
-        closePalette();
-    } else if ("ArrowDown" === event.key) {
-        event.preventDefault();
-        if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value + 1) % totalResults.value;
-    } else if ("ArrowUp" === event.key) {
-        event.preventDefault();
-        if (totalResults.value) searchHighlightedIndex.value = (searchHighlightedIndex.value - 1 + totalResults.value) % totalResults.value;
-    } else if ("Enter" === event.key) {
-        event.preventDefault();
-        activateResult(flatResults.value[searchHighlightedIndex.value]);
-    }
-}
-
-watch(searchQuery, useDebounce(runSearch, 180));
-
-async function runSearch() {
-    const trimmed = searchQuery.value.trim();
-    if ("" === trimmed) {
-        searchResults.value = { posts: [], terms: [], media: [] };
-        return;
-    }
-    searchLoading.value = true;
-    try {
-        const url = new URL(props.searchPath, window.location.origin);
-        url.searchParams.set("q", trimmed);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        searchResults.value = {
-            posts: data.posts ?? [],
-            terms: data.terms ?? [],
-            media: data.media ?? [],
-        };
-        searchHighlightedIndex.value = 0;
-    } catch {
-        searchResults.value = { posts: [], terms: [], media: [] };
-    } finally {
-        searchLoading.value = false;
-    }
-}
-
-function activateResult(entry) {
-    if (!entry) return;
-    if ("post" === entry.kind) {
-        const url = new URL(props.postsPath, window.location.origin);
-        if (entry.item.trashed) url.searchParams.set("trashed", "1");
-        window.location.href = url.toString();
-    } else if ("term" === entry.kind) {
-        window.location.href = props.taxonomiesPath;
-    } else if ("media" === entry.kind) {
-        window.location.href = props.mediaPath;
-    }
-}
-
-
-function entryIndex(kind, item) {
-    return flatResults.value.findIndex((entry) => entry.kind === kind && entry.item.id === item.id);
-}
-
-onMounted(() => window.addEventListener("keydown", onGlobalKeydown));
-onBeforeUnmount(() => window.removeEventListener("keydown", onGlobalKeydown));
+// Auto-open groups that contain the active route on first load (only if never toggled by user).
+onMounted(() => {
+    groupedSections.value.forEach(section => {
+        section.items.forEach(item => {
+            if (item.children?.length && getGroupRaw(item.route) === undefined && item.children.some(c => isActive(c.route))) {
+                toggleGroup(item.route);
+            }
+        });
+    });
+});
 
 // Scroll the nav so the active item is visible without manual scrolling.
 // `block: "nearest"` only scrolls if the item is offscreen, so users who land
@@ -386,23 +286,62 @@ onMounted(() => nextTick(() => {
                     <ChevronDown class="si-chevron w-3.5 h-3.5 shrink-0 transition-transform" :class="{ '-rotate-90': !isSectionExpanded(section) }" :stroke-width="2.5" />
                 </button>
 
-                <a
-                    v-for="item in section.items"
-                    v-show="isSectionExpanded(section)"
-                    :key="item.route"
-                    :href="item.path"
-                    :target="item.external ? '_blank' : undefined"
-                    :rel="item.external ? 'noopener' : undefined"
-                    :data-sidebar-active="isActive(item.route) ? 'true' : null"
-                    class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                    :class="itemClasses(item)"
-                >
-                    <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
-                    <span class="si-label truncate">{{ item.label }}</span>
-                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                        {{ item.label }}
-                    </span>
-                </a>
+                <template v-for="item in section.items" :key="item.route">
+                    <template v-if="isSectionExpanded(section)">
+                        <!-- Group parent: split link + chevron toggle -->
+                        <template v-if="item.children?.length">
+                            <div
+                                class="flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                                :class="itemClasses(item)"
+                            >
+                                <a
+                                    :href="item.path"
+                                    :data-sidebar-active="itemIsActive(item) ? 'true' : null"
+                                    class="flex items-center flex-1 min-w-0 gap-3 py-[0.625rem] pl-3"
+                                >
+                                    <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                    <span class="si-label flex-1 truncate">{{ item.label }}</span>
+                                </a>
+                                <AppIconButton
+                                    :title="item.label"
+                                    class="si-group-chevron si-label mr-1 opacity-50 hover:opacity-100 hover:!bg-transparent"
+                                    v-on:click.stop="toggleGroup(item.route)"
+                                >
+                                    <ChevronDown class="w-3.5 h-3.5 transition-transform" :class="{ '-rotate-90': !isGroupExpanded(item.route) }" :stroke-width="2.5" />
+                                </AppIconButton>
+                                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                                    {{ item.label }}
+                                </span>
+                            </div>
+                            <div v-show="isGroupExpanded(item.route)" class="si-children space-y-0.5">
+                                <AppNavLink
+                                    v-for="child in item.children"
+                                    :key="child.route"
+                                    :href="child.path"
+                                    :active="isActive(child.route)"
+                                    :active-color="child.activeColor"
+                                    :sidebar-active="isActive(child.route)"
+                                >
+                                    <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child)" :stroke-width="2" />
+                                    <span class="si-label truncate">{{ child.label }}</span>
+                                    <template #tooltip>{{ child.label }}</template>
+                                </AppNavLink>
+                            </div>
+                        </template>
+                        <!-- Regular item (no children) -->
+                        <AppNavLink
+                            v-else
+                            :href="item.path"
+                            :active="itemIsActive(item)"
+                            :active-color="item.activeColor"
+                            :sidebar-active="itemIsActive(item)"
+                        >
+                            <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                            <span class="si-label truncate">{{ item.label }}</span>
+                            <template #tooltip>{{ item.label }}</template>
+                        </AppNavLink>
+                    </template>
+                </template>
             </div>
         </nav>
 
@@ -540,19 +479,49 @@ onMounted(() => nextTick(() => {
                         <ChevronDown class="w-3.5 h-3.5 shrink-0 transition-transform" :class="{ '-rotate-90': !isSectionExpanded(section) }" :stroke-width="2.5" />
                     </button>
 
-                    <a
-                        v-for="item in section.items"
-                        v-show="isSectionExpanded(section)"
-                        :key="item.route"
-                        :href="item.path"
-                        :target="item.external ? '_blank' : undefined"
-                        :rel="item.external ? 'noopener' : undefined"
-                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                        :class="itemClasses(item)"
-                    >
-                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
-                        {{ item.label }}
-                    </a>
+                    <template v-for="item in section.items" :key="item.route">
+                        <template v-if="isSectionExpanded(section)">
+                            <!-- Group parent: split link + chevron -->
+                            <template v-if="item.children?.length">
+                                <div
+                                    class="flex items-center rounded-lg text-sm font-medium transition-colors"
+                                    :class="itemClasses(item)"
+                                >
+                                    <a :href="item.path" class="flex items-center flex-1 gap-3 px-3 py-2.5">
+                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                        {{ item.label }}
+                                    </a>
+                                    <AppIconButton :title="item.label" class="mr-1 opacity-50 hover:opacity-100 hover:!bg-transparent" v-on:click.stop="toggleGroup(item.route)">
+                                        <ChevronDown class="w-3.5 h-3.5 transition-transform" :class="{ '-rotate-90': !isGroupExpanded(item.route) }" :stroke-width="2.5" />
+                                    </AppIconButton>
+                                </div>
+                                <div v-show="isGroupExpanded(item.route)" class="space-y-0.5">
+                                    <AppNavLink
+                                        v-for="child in item.children"
+                                        :key="child.route"
+                                        :href="child.path"
+                                        :active="isActive(child.route)"
+                                        :active-color="child.activeColor"
+                                    >
+                                        <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child)" :stroke-width="2" />
+                                        <span class="truncate">{{ child.label }}</span>
+                                        <template #tooltip>{{ child.label }}</template>
+                                    </AppNavLink>
+                                </div>
+                            </template>
+                            <!-- Regular item -->
+                            <AppNavLink
+                                v-else
+                                :href="item.path"
+                                :active="itemIsActive(item)"
+                                :active-color="item.activeColor"
+                            >
+                                <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                <span class="si-label truncate">{{ item.label }}</span>
+                                <template #tooltip>{{ item.label }}</template>
+                            </AppNavLink>
+                        </template>
+                    </template>
                 </div>
             </nav>
 

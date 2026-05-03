@@ -6,6 +6,9 @@ namespace Aurora\Core\Module;
 
 final readonly class NavItem
 {
+    /**
+     * @param NavItem[] $children
+     */
     public function __construct(
         public string $route,
         public string $labelKey,
@@ -13,5 +16,6 @@ final readonly class NavItem
         public ?string $requiredRole = null,
         public string $activeColor = 'accent',
         public ?string $activeRoutePrefix = null,
+        public array $children = [],
     ) {}
 }
