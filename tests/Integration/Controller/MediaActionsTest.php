@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
@@ -17,7 +18,9 @@ use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MediaActionsTest extends IntegrationTestCase
 {
@@ -26,6 +29,7 @@ final class MediaActionsTest extends IntegrationTestCase
     private KernelBrowser $client;
     private string $uploadDir;
     private Filesystem $filesystem;
+    private UrlGeneratorInterface $urlGenerator;
 
     /** @var list<string> absolute paths created during the test, scrubbed in tearDown */
     private array $createdPaths = [];
@@ -36,8 +40,9 @@ final class MediaActionsTest extends IntegrationTestCase
         $this->client = static::createClient();
         $this->loginAsAdmin();
 
-        $this->uploadDir = static::getContainer()->getParameter('kernel.project_dir').'/public/uploads';
+        $this->uploadDir = Path::join(static::getContainer()->getParameter('kernel.project_dir'), 'public/uploads');
         $this->filesystem = new Filesystem();
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     protected function tearDown(): void
@@ -56,7 +61,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('alt.png', 200, 150);
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/%d/edit', $media->getId()), [
+        [$status, $body] = $this->postJson('admin_media_edit', ['id' => $media->getId()], [
             'alt' => 'A scenic banner',
             'caption' => 'Hero of the homepage',
             'focalX' => 0.4,
@@ -75,11 +80,11 @@ final class MediaActionsTest extends IntegrationTestCase
         $folder = $this->createFolder('Marketing');
         $media = $this->uploadAndPersist('to-move.png', 200, 150);
 
-        [, $body] = $this->postJson(sprintf('/admin/media/%d/move', $media->getId()), ['folderId' => $folder->getId()]);
+        [, $body] = $this->postJson('admin_media_move', ['id' => $media->getId()], ['folderId' => $folder->getId()]);
         self::assertTrue($body['success']);
         self::assertSame($folder->getId(), $body['media']['folderId']);
 
-        [, $rootBody] = $this->postJson(sprintf('/admin/media/%d/move', $media->getId()), ['folderId' => 0]);
+        [, $rootBody] = $this->postJson('admin_media_move', ['id' => $media->getId()], ['folderId' => 0]);
         self::assertTrue($rootBody['success']);
         self::assertNull($rootBody['media']['folderId']);
     }
@@ -90,7 +95,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $second = $this->uploadAndPersist('second.png', 100, 100);
         $third = $this->uploadAndPersist('third.png', 100, 100);
 
-        [$status, $body] = $this->postJson('/admin/media/reorder', [
+        [$status, $body] = $this->postJson('admin_media_reorder', [], [
             'ids' => [$third->getId(), $first->getId(), $second->getId()],
         ]);
 
@@ -110,7 +115,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('crop.png', 800, 600);
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/%d/crop', $media->getId()), [
+        [$status, $body] = $this->postJson('admin_media_crop', ['id' => $media->getId()], [
             'x' => 100,
             'y' => 50,
             'width' => 400,
@@ -127,12 +132,12 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $a = $this->uploadAndPersist('bulk-a.png', 100, 100);
         $b = $this->uploadAndPersist('bulk-b.png', 100, 100);
-        $aFile = $this->uploadDir.'/'.$a->getPath();
-        $bFile = $this->uploadDir.'/'.$b->getPath();
+        $aFile = Path::join($this->uploadDir, $a->getPath());
+        $bFile = Path::join($this->uploadDir, $b->getPath());
         self::assertFileExists($aFile);
         self::assertFileExists($bFile);
 
-        [$status, $body] = $this->postJson('/admin/media/bulk-delete', ['ids' => [$a->getId(), $b->getId()]]);
+        [$status, $body] = $this->postJson('admin_media_bulk_delete', [], ['ids' => [$a->getId(), $b->getId()]]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -150,7 +155,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $a = $this->uploadAndPersist('move-a.png', 100, 100);
         $b = $this->uploadAndPersist('move-b.png', 100, 100);
 
-        [$status, $body] = $this->postJson('/admin/media/bulk-move', [
+        [$status, $body] = $this->postJson('admin_media_bulk_move', [], [
             'ids' => [$a->getId(), $b->getId()],
             'folderId' => $folder->getId(),
         ]);
@@ -170,7 +175,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $parent = $this->createFolder('Top');
         $child = $this->createFolder('Old name');
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/folders/%d/edit', $child->getId()), [
+        [$status, $body] = $this->postJson('admin_media_folder_edit', ['id' => $child->getId()], [
             'name' => 'New name',
             'parentId' => $parent->getId(),
         ]);
@@ -189,7 +194,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('permalink.png', 200, 200);
 
-        $this->client->request('GET', sprintf('/media/%d', $media->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('media_view', ['id' => $media->getId()]));
         $response = $this->client->getResponse();
 
         self::assertSame(302, $response->getStatusCode());
@@ -201,7 +206,7 @@ final class MediaActionsTest extends IntegrationTestCase
 
     public function testPermalinkReturns404ForUnknownMedia(): void
     {
-        $this->client->request('GET', '/media/999999');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('media_view', ['id' => 999999]));
 
         self::assertSame(404, $this->client->getResponse()->getStatusCode());
     }
@@ -211,7 +216,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $editor = $this->createTestUser('editor', role: UserRoleEnum::Editor);
         $this->client->loginUser($editor, 'admin');
 
-        $this->client->request('GET', '/admin/media/list');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_media_list'));
 
         self::assertSame(403, $this->client->getResponse()->getStatusCode());
     }
@@ -225,7 +230,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $uploadEntries = $auditRepository->findBy(['module' => 'media', 'action' => 'uploaded', 'entityId' => $mediaId]);
         self::assertCount(1, $uploadEntries);
 
-        $this->client->request('POST', sprintf('/admin/media/%d/delete', $mediaId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_delete', ['id' => $mediaId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $deleteEntries = $auditRepository->findBy(['module' => 'media', 'action' => 'deleted', 'entityId' => $mediaId]);
@@ -243,7 +248,7 @@ final class MediaActionsTest extends IntegrationTestCase
     private function uploadAndPersist(string $name, int $width, int $height): Media
     {
         $upload = $this->prepareUploadedFile($name, 'image/png', $width, $height);
-        $this->client->request('POST', '/admin/media/upload', [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertSame(1, $body['success']);
@@ -251,9 +256,9 @@ final class MediaActionsTest extends IntegrationTestCase
         $media = static::getContainer()->get(MediaRepository::class)->find($body['media']['id']);
         self::assertInstanceOf(Media::class, $media);
 
-        $this->trackForCleanup($this->uploadDir.'/'.$media->getPath());
+        $this->trackForCleanup(Path::join($this->uploadDir, $media->getPath()));
         foreach ($media->getVariants() as $variantPath) {
-            $this->trackForCleanup($this->uploadDir.'/'.$variantPath);
+            $this->trackForCleanup(Path::join($this->uploadDir, $variantPath));
         }
 
         return $media;
@@ -274,7 +279,7 @@ final class MediaActionsTest extends IntegrationTestCase
 
     private function createFolder(string $name): MediaFolder
     {
-        [$status, $body] = $this->postJson('/admin/media/folders', ['name' => $name, 'parentId' => null]);
+        [$status, $body] = $this->postJson('admin_media_folder_create', [], ['name' => $name, 'parentId' => null]);
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         $folder = static::getContainer()->get(MediaFolderRepository::class)->find($body['folder']['id']);
@@ -283,10 +288,22 @@ final class MediaActionsTest extends IntegrationTestCase
         return $folder;
     }
 
-    /** @return array{0: int, 1: array} */
-    private function postJson(string $url, array $payload): array
+    /**
+     * @param array<string, mixed> $routeParameters
+     * @param array<string, mixed> $payload
+     *
+     * @return array{0: int, 1: array}
+     */
+    private function postJson(string $route, array $routeParameters, array $payload): array
     {
-        $this->client->request('POST', $url, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
 
         return [
             $this->client->getResponse()->getStatusCode(),

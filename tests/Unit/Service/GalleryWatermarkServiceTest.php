@@ -9,6 +9,8 @@ use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final class GalleryWatermarkServiceTest extends TestCase
 {
@@ -16,7 +18,7 @@ final class GalleryWatermarkServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->service = new GalleryWatermarkService('/tmp/uploads');
+        $this->service = new GalleryWatermarkService(new Filesystem(), Path::join(sys_get_temp_dir(), 'aurora-uploads'));
     }
 
     private function makeGallery(int $id, ?string $watermarkText): Gallery

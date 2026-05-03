@@ -9,6 +9,8 @@ use Aurora\Module\Photo\Gallery\Service\GalleryDownloadService;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final class GalleryDownloadServiceTest extends TestCase
 {
@@ -16,7 +18,10 @@ final class GalleryDownloadServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->service = new GalleryDownloadService('/tmp/uploads', new GalleryWatermarkService('/tmp/uploads'));
+        $this->service = new GalleryDownloadService(
+            Path::join(sys_get_temp_dir(), 'aurora-uploads'),
+            new GalleryWatermarkService(new Filesystem(), Path::join(sys_get_temp_dir(), 'aurora-uploads')),
+        );
     }
 
     public function testNiceNameSanitizesOriginalName(): void

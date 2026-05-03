@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Menu\Manager\MenuManager;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\User\Entity\User;
@@ -11,10 +12,12 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MenusControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -24,6 +27,8 @@ final class MenusControllerTest extends IntegrationTestCase
         $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
 
         // Clean menus
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -35,17 +40,24 @@ final class MenusControllerTest extends IntegrationTestCase
     }
 
     /** @return array{0: int, 1: array<string, mixed>} */
-    private function postJson(string $url, array $payload = []): array
+    private function postJson(string $route, array $routeParameters = [], array $payload = []): array
     {
-        $this->client->request('POST', $url, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
 
         return [$this->client->getResponse()->getStatusCode(), json_decode((string) $this->client->getResponse()->getContent(), true) ?? []];
     }
 
     /** @return array{0: int, 1: array<string, mixed>} */
-    private function getJson(string $url): array
+    private function getJson(string $route, array $routeParameters = []): array
     {
-        $this->client->request('GET', $url);
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate($route, $routeParameters));
 
         return [$this->client->getResponse()->getStatusCode(), json_decode((string) $this->client->getResponse()->getContent(), true) ?? []];
     }
@@ -62,17 +74,17 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // List
-        [$status, $body] = $this->getJson('/admin/menus/list');
+        [$status, $body] = $this->getJson('admin_menus_list');
         self::assertSame(200, $status);
         self::assertCount(1, $body['menus']);
 
         // Show
-        [$status, $body] = $this->getJson('/admin/menus/'.$menuId);
+        [$status, $body] = $this->getJson('admin_menus_show', ['id' => $menuId]);
         self::assertSame(200, $status);
         self::assertSame([], $body['menu']['items']);
 
         // Update name + description (location stays the same)
-        [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/update', [
+        [$status, $body] = $this->postJson('admin_menus_update', ['id' => $menuId], [
             'name' => 'Renamed',
             'location' => 'custom-test',
             'description' => 'Updated',
@@ -84,7 +96,7 @@ final class MenusControllerTest extends IntegrationTestCase
 
     public function testCreateEndpointIsDisabled(): void
     {
-        [$status, $body] = $this->postJson('/admin/menus/create', [
+        [$status, $body] = $this->postJson('admin_menus_create', [], [
             'name' => 'Header',
             'location' => 'whatever',
         ]);
@@ -96,7 +108,7 @@ final class MenusControllerTest extends IntegrationTestCase
     {
         $menuId = $this->seedMenu('primary');
 
-        [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/delete');
+        [$status, $body] = $this->postJson('admin_menus_delete', ['id' => $menuId]);
         self::assertSame(400, $status);
         self::assertFalse($body['success']);
     }
@@ -106,7 +118,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // Create Home item
-        [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/items/create', [
+        [$status, $body] = $this->postJson('admin_menus_items_create', ['id' => $menuId], [
             'targetType' => 'home',
         ]);
         self::assertSame(200, $status);
@@ -114,7 +126,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $homeId = $body['menu']['items'][0]['id'];
 
         // Create CustomUrl item
-        [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/items/create', [
+        [$status, $body] = $this->postJson('admin_menus_items_create', ['id' => $menuId], [
             'targetType' => 'custom_url',
             'customUrl' => 'https://example.com',
             'openInNewTab' => true,
@@ -124,7 +136,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $urlId = $body['menu']['items'][1]['id'];
 
         // Update item with translation
-        [$status, $body] = $this->postJson('/admin/menus/items/'.$urlId.'/update', [
+        [$status, $body] = $this->postJson('admin_menus_items_update', ['id' => $urlId], [
             'targetType' => 'custom_url',
             'customUrl' => 'https://example.org',
             'openInNewTab' => false,
@@ -138,7 +150,7 @@ final class MenusControllerTest extends IntegrationTestCase
         self::assertSame('Example', $updated['translations']['en']);
 
         // Reorder
-        [$status, $body] = $this->postJson('/admin/menus/'.$menuId.'/items/reorder', [
+        [$status, $body] = $this->postJson('admin_menus_items_reorder', ['id' => $menuId], [
             'items' => [
                 ['id' => $urlId, 'parentId' => null, 'position' => 0],
                 ['id' => $homeId, 'parentId' => null, 'position' => 1],
@@ -149,7 +161,7 @@ final class MenusControllerTest extends IntegrationTestCase
         self::assertSame($homeId, $body['menu']['items'][1]['id']);
 
         // Delete
-        [$status, $body] = $this->postJson('/admin/menus/items/'.$homeId.'/delete');
+        [$status, $body] = $this->postJson('admin_menus_items_delete', ['id' => $homeId]);
         self::assertSame(200, $status);
         self::assertCount(1, $body['menu']['items']);
     }
@@ -159,42 +171,46 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // Invalid target type
-        [$status] = $this->postJson('/admin/menus/'.$menuId.'/items/create', ['targetType' => 'unknown']);
+        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'unknown']);
         self::assertSame(400, $status);
 
         // CustomUrl without URL
-        [$status] = $this->postJson('/admin/menus/'.$menuId.'/items/create', ['targetType' => 'custom_url']);
+        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'custom_url']);
         self::assertSame(400, $status);
 
         // Post without targetId
-        [$status] = $this->postJson('/admin/menus/'.$menuId.'/items/create', ['targetType' => 'post']);
+        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'post']);
         self::assertSame(400, $status);
     }
 
     public function testPickers(): void
     {
-        [$status, $body] = $this->getJson('/admin/menus/picker/post-types');
+        [$status, $body] = $this->getJson('admin_menus_picker_post_types');
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
-        [$status, $body] = $this->getJson('/admin/menus/picker/taxonomies');
+        [$status, $body] = $this->getJson('admin_menus_picker_taxonomies');
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
 
-        [$status, $body] = $this->getJson('/admin/menus/picker/posts?q=test');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus_picker_posts').'?q=test');
+        $status = $this->client->getResponse()->getStatusCode();
+        $body = json_decode((string) $this->client->getResponse()->getContent(), true) ?? [];
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
-        [$status, $body] = $this->getJson('/admin/menus/picker/terms?q=test');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus_picker_terms').'?q=test');
+        $status = $this->client->getResponse()->getStatusCode();
+        $body = json_decode((string) $this->client->getResponse()->getContent(), true) ?? [];
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
     }
 
     public function testIndexPageRendersWhenLogged(): void
     {
-        $this->client->request('GET', '/admin/menus');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus'));
         self::assertTrue($this->client->getResponse()->isOk());
     }
 }

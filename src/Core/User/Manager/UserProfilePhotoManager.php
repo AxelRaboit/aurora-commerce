@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -83,7 +84,7 @@ final readonly class UserProfilePhotoManager
             return;
         }
 
-        $absolute = $this->uploadDir.'/'.$relativePath;
+        $absolute = Path::join($this->uploadDir, $relativePath);
         if ($this->filesystem->exists($absolute)) {
             $this->filesystem->remove($absolute);
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
@@ -13,10 +14,12 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MediaControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -27,18 +30,27 @@ final class MediaControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
-    private function postJson(string $url, array $payload): array
+    private function postJson(string $route, array $routeParameters, array $payload): array
     {
-        $this->client->request('POST', $url, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
 
         return [$this->client->getResponse()->getStatusCode(), json_decode((string) $this->client->getResponse()->getContent(), true) ?? []];
     }
 
     private function createFolder(string $name, ?int $parentId = null): MediaFolder
     {
-        [, $body] = $this->postJson('/admin/media/folders', ['name' => $name, 'parentId' => $parentId]);
+        [, $body] = $this->postJson('admin_media_folder_create', [], ['name' => $name, 'parentId' => $parentId]);
         self::assertTrue($body['success']);
         /** @var MediaFolder $folder */
         $folder = static::getContainer()->get(MediaFolderRepository::class)->find($body['folder']['id']);
@@ -65,7 +77,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/%d/edit', $media->getId()), [
+        [$status, $body] = $this->postJson('admin_media_edit', ['id' => $media->getId()], [
             'alt' => '',
         ]);
 
@@ -78,7 +90,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $media = $this->createMedia();
         $folder = $this->createFolder('Banners');
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/%d/edit', $media->getId()), [
+        [$status, $body] = $this->postJson('admin_media_edit', ['id' => $media->getId()], [
             'alt' => 'A nice banner',
             'caption' => 'Marketing banner for homepage',
             'focalX' => 0.5,
@@ -98,7 +110,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $parent = $this->createFolder('Parent');
         $child = $this->createFolder('Child', $parent->getId());
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/folders/%d/edit', $parent->getId()), [
+        [$status, $body] = $this->postJson('admin_media_folder_edit', ['id' => $parent->getId()], [
             'name' => 'Parent',
             'parentId' => $child->getId(),
         ]);
@@ -112,7 +124,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson(sprintf('/admin/media/%d/edit', $media->getId()), [
+        [$status, $body] = $this->postJson('admin_media_edit', ['id' => $media->getId()], [
             'alt' => 'x',
             'focalX' => 1.5,
             'focalY' => -0.2,
@@ -130,7 +142,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $media->setFolder($folder);
         $entityManager->flush();
 
-        $this->client->request('POST', sprintf('/admin/media/folders/%d/delete', $folder->getId()));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_folder_delete', ['id' => $folder->getId()]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $entityManager->clear();

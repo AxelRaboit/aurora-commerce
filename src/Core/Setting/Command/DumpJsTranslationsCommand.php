@@ -10,6 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -39,17 +42,21 @@ final class DumpJsTranslationsCommand extends Command
 
     private const string OUTPUT_DIR = 'assets/locales/generated';
 
-    public function __construct(private readonly string $projectDir)
-    {
+    public function __construct(
+        private readonly string $projectDir,
+        private readonly Filesystem $filesystem = new Filesystem(),
+    ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $outputDir = $this->projectDir.'/'.self::OUTPUT_DIR;
+        $outputDir = Path::join($this->projectDir, self::OUTPUT_DIR);
 
-        if (!is_dir($outputDir) && !mkdir($outputDir, 0o775, true) && !is_dir($outputDir)) {
+        try {
+            $this->filesystem->mkdir($outputDir);
+        } catch (IOException $exception) {
             $io->error('Cannot create output directory: '.$outputDir);
 
             return Command::FAILURE;
@@ -60,7 +67,7 @@ final class DumpJsTranslationsCommand extends Command
             $sourcesFound = 0;
 
             foreach (self::SOURCE_DIRS as $sourceDir) {
-                $sourcePath = sprintf('%s/%s/messages.%s.yaml', $this->projectDir, $sourceDir, $locale);
+                $sourcePath = Path::join($this->projectDir, $sourceDir, sprintf('messages.%s.yaml', $locale));
                 if (!is_file($sourcePath)) {
                     continue;
                 }
@@ -77,8 +84,11 @@ final class DumpJsTranslationsCommand extends Command
 
             $converted = $this->convertPlaceholders($merged);
 
-            $outPath = sprintf('%s/%s.json', $outputDir, $locale);
-            file_put_contents($outPath, json_encode($converted, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
+            $outPath = Path::join($outputDir, sprintf('%s.json', $locale));
+            $this->filesystem->dumpFile(
+                $outPath,
+                json_encode($converted, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n",
+            );
             $io->writeln(sprintf('  <info>✓</info> %s (%d keys from %d module(s))', basename($outPath), $this->countLeaves($converted), $sourcesFound));
         }
 

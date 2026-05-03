@@ -21,6 +21,8 @@ use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -37,6 +39,7 @@ final readonly class MediaManager implements MediaManagerInterface
         private TranslatorInterface $translator,
         private Security $security,
         private AuditLogger $auditLogger,
+        private Filesystem $filesystem,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -53,7 +56,7 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $file->move($this->uploadDir, $newFilename);
 
-        [$width, $height] = @getimagesize(sprintf('%s/%s', $this->uploadDir, $newFilename)) ?: [null, null];
+        [$width, $height] = @getimagesize(Path::join($this->uploadDir, $newFilename)) ?: [null, null];
 
         $media = new Media();
         $media->setFilename($newFilename);
@@ -114,10 +117,10 @@ final readonly class MediaManager implements MediaManagerInterface
         $id = $media->getId();
         $name = $media->getOriginalName();
 
-        $filePath = sprintf('%s/%s', $this->uploadDir, $media->getPath());
-        if (is_file($filePath)) {
-            @unlink($filePath);
-        }
+        $filePath = Path::join($this->uploadDir, $media->getPath());
+        // Filesystem::remove() is a no-op when the path is missing, so the
+        // pre-existence check that wrapped the previous @unlink call is redundant.
+        $this->filesystem->remove($filePath);
 
         $this->variantGenerator->deleteVariants($media->getVariants());
         $this->entityManager->remove($media);
@@ -191,10 +194,8 @@ final readonly class MediaManager implements MediaManagerInterface
                 continue;
             }
 
-            $filePath = sprintf('%s/%s', $this->uploadDir, $media->getPath());
-            if (is_file($filePath)) {
-                @unlink($filePath);
-            }
+            $filePath = Path::join($this->uploadDir, $media->getPath());
+            $this->filesystem->remove($filePath);
 
             $this->variantGenerator->deleteVariants($media->getVariants());
             $this->entityManager->remove($media);
@@ -216,7 +217,7 @@ final readonly class MediaManager implements MediaManagerInterface
     public function crop(Media $media, int $x, int $y, int $width, int $height): void
     {
         $mime = MimeTypeEnum::tryFrom($media->getMimeType());
-        $sourceAbsolute = $this->uploadDir.'/'.$media->getPath();
+        $sourceAbsolute = Path::join($this->uploadDir, $media->getPath());
 
         if (!$mime?->isRasterImage() || !is_file($sourceAbsolute)) {
             return;

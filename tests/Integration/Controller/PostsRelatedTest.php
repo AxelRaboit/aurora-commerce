@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
@@ -14,12 +15,14 @@ use Aurora\Tests\Integration\Concern\BuildsPostPayload;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PostsRelatedTest extends IntegrationTestCase
 {
     use BuildsPostPayload;
 
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -30,6 +33,8 @@ final class PostsRelatedTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function createPost(string $title): Post
@@ -85,7 +90,7 @@ final class PostsRelatedTest extends IntegrationTestCase
         $first = $this->createPost('Apple article');
         $this->createPost('Banana post');
 
-        $this->client->request('GET', '/admin/posts/search?q=apple&excludeId='.$first->getId());
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_search', ['q' => 'apple', 'excludeId' => $first->getId()]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 
@@ -101,7 +106,7 @@ final class PostsRelatedTest extends IntegrationTestCase
         $second = $this->createPost('Beta');
         $third = $this->createPost('Gamma');
 
-        $this->client->request('GET', sprintf('/admin/posts/search?ids=%d,%d', $first->getId(), $third->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_search', ['ids' => sprintf('%d,%d', $first->getId(), $third->getId())]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 

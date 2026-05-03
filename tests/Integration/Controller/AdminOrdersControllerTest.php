@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
@@ -20,11 +21,13 @@ use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class AdminOrdersControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
     private Order $order;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -37,14 +40,16 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
 
+        $this->urlGenerator = $container->get(UrlGeneratorInterface::class);
+
         $this->order = $this->seedOrder();
     }
 
     public function testIndexReturnsListPayloadAsJson(): void
     {
         $this->client->request(
-            'GET',
-            '/admin/ecommerce/orders/list',
+            HttpMethodEnum::Get->value,
+            $this->urlGenerator->generate('ecommerce_orders_list'),
             [],
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
@@ -61,7 +66,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
 
     public function testFilterByStatusOnlyReturnsMatchingOrders(): void
     {
-        $this->client->request('GET', '/admin/ecommerce/orders/list?status=cancelled');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('ecommerce_orders_list', ['status' => 'cancelled']));
         $payload = json_decode($this->client->getResponse()->getContent(), true);
         self::assertTrue($payload['success']);
         // Order is "paid" by default after checkout — cancelled bucket should be empty
@@ -70,7 +75,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
 
     public function testShowRendersOrderDetail(): void
     {
-        $this->client->request('GET', sprintf('/admin/ecommerce/orders/%d', $this->order->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('ecommerce_orders_show', ['id' => $this->order->getId()]));
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString($this->order->getNumber(), $response->getContent());
@@ -79,8 +84,8 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
     public function testStatusTransitionPaidToShippedSucceeds(): void
     {
         $this->client->request(
-            'PATCH',
-            sprintf('/admin/ecommerce/orders/%d/status', $this->order->getId()),
+            HttpMethodEnum::Patch->value,
+            $this->urlGenerator->generate('ecommerce_orders_status', ['id' => $this->order->getId()]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -100,8 +105,8 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
         // Actually delivered allows from shipped OR paid (per OrderManager). Use a truly invalid jump:
         // paid → pending is forbidden (cannot revert).
         $this->client->request(
-            'PATCH',
-            sprintf('/admin/ecommerce/orders/%d/status', $this->order->getId()),
+            HttpMethodEnum::Patch->value,
+            $this->urlGenerator->generate('ecommerce_orders_status', ['id' => $this->order->getId()]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

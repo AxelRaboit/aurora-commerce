@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
@@ -13,10 +14,12 @@ use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SearchControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -27,6 +30,8 @@ final class SearchControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function createPost(string $title, array $blocks = []): Post
@@ -58,7 +63,7 @@ final class SearchControllerTest extends IntegrationTestCase
             ['type' => 'paragraph', 'data' => ['text' => 'Nothing interesting here.']],
         ]);
 
-        $this->client->request('GET', '/admin/search?q=constellation');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_search', ['q' => 'constellation']));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 
@@ -73,7 +78,7 @@ final class SearchControllerTest extends IntegrationTestCase
             ['type' => 'paragraph', 'data' => ['text' => 'Lorem ipsum dolor sit amet, constellation patterns continue beyond the sky.']],
         ]);
 
-        $this->client->request('GET', '/admin/search?q=constellation');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_search', ['q' => 'constellation']));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $match = array_values(array_filter($body['posts'], static fn (array $result): bool => $result['id'] === $post->getId()))[0] ?? null;
         self::assertNotNull($match);
@@ -82,7 +87,7 @@ final class SearchControllerTest extends IntegrationTestCase
 
     public function testSearchIncludesTerms(): void
     {
-        $this->client->request('GET', '/admin/search?q=nouveaut');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_search', ['q' => 'nouveaut']));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 

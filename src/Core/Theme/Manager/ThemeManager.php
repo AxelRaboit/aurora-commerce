@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use Symfony\Component\Filesystem\Path;
 
 final readonly class ThemeManager
 {
@@ -84,7 +85,7 @@ final readonly class ThemeManager
 
     public function countTemplates(string $slug): int
     {
-        $dir = sprintf('%s/templates/Front/themes/%s', $this->projectDir, $slug);
+        $dir = Path::join($this->projectDir, 'templates/Front/themes', $slug);
         if (!is_dir($dir)) {
             return 0;
         }

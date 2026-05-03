@@ -7,6 +7,7 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final class ImageVariantGeneratorTest extends TestCase
 {
@@ -16,10 +17,10 @@ final class ImageVariantGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sandbox = sys_get_temp_dir().'/aurora-variant-'.uniqid();
+        $this->sandbox = Path::join(sys_get_temp_dir(), 'aurora-variant-'.uniqid());
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->sandbox);
-        $this->generator = new ImageVariantGenerator($this->sandbox);
+        $this->generator = new ImageVariantGenerator($this->filesystem, $this->sandbox);
     }
 
     protected function tearDown(): void
@@ -37,7 +38,7 @@ final class ImageVariantGeneratorTest extends TestCase
 
         self::assertSame(['thumbnail', 'medium', 'large'], array_keys($variants));
         foreach ($variants as $name => $variantPath) {
-            self::assertFileExists($this->sandbox.'/'.$variantPath, "variant {$name} not written");
+            self::assertFileExists(Path::join($this->sandbox, $variantPath), "variant {$name} not written");
             self::assertStringContainsString('variants/'.$name.'/', $variantPath);
         }
     }
@@ -52,7 +53,7 @@ final class ImageVariantGeneratorTest extends TestCase
         $variants = $this->generator->generate($relative, 'image/png');
 
         self::assertSame(['large'], array_keys($variants));
-        self::assertFileExists($this->sandbox.'/'.$variants['large']);
+        self::assertFileExists(Path::join($this->sandbox, $variants['large']));
     }
 
     public function testGeneratesShrinkingVariantsAndAlwaysKeepsLarge(): void
@@ -62,8 +63,8 @@ final class ImageVariantGeneratorTest extends TestCase
         $variants = $this->generator->generate($relative, 'image/png');
 
         self::assertSame(['thumbnail', 'large'], array_keys($variants));
-        self::assertFileExists($this->sandbox.'/'.$variants['thumbnail']);
-        self::assertFileExists($this->sandbox.'/'.$variants['large']);
+        self::assertFileExists(Path::join($this->sandbox, $variants['thumbnail']));
+        self::assertFileExists(Path::join($this->sandbox, $variants['large']));
     }
 
     public function testReturnsEmptyForUnsupportedMimeType(): void
@@ -102,7 +103,7 @@ final class ImageVariantGeneratorTest extends TestCase
         $this->generator->deleteVariants($variants);
 
         foreach ($variants as $variantPath) {
-            self::assertFileDoesNotExist($this->sandbox.'/'.$variantPath);
+            self::assertFileDoesNotExist(Path::join($this->sandbox, $variantPath));
         }
     }
 
@@ -115,7 +116,7 @@ final class ImageVariantGeneratorTest extends TestCase
 
     private function createPngFixture(string $name, int $width, int $height): string
     {
-        $absolute = $this->sandbox.'/'.$name;
+        $absolute = Path::join($this->sandbox, $name);
         $image = imagecreatetruecolor($width, $height);
         $color = imagecolorallocate($image, 100, 150, 200);
         imagefilledrectangle($image, 0, 0, $width, $height, $color);

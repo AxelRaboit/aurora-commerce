@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ProfileMoodTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -23,11 +26,13 @@ final class ProfileMoodTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     public function testSavingValidMessagePersistsAndReturnsIt(): void
     {
-        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => 'Shipping things ✨']);
+        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => 'Shipping things ✨']);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -37,10 +42,10 @@ final class ProfileMoodTest extends IntegrationTestCase
 
     public function testEmptyStringClearsTheMoodMessage(): void
     {
-        $this->postJson('/admin/profile/mood', ['moodMessage' => 'set']);
+        $this->postJson('profile_mood', [], ['moodMessage' => 'set']);
         self::assertSame('set', $this->reloadAdmin()->getMoodMessage());
 
-        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => '   ']);
+        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => '   ']);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -52,7 +57,7 @@ final class ProfileMoodTest extends IntegrationTestCase
     {
         $tooLong = str_repeat('a', User::MOOD_MESSAGE_MAX_LENGTH + 1);
 
-        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => $tooLong]);
+        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => $tooLong]);
 
         self::assertSame(200, $status);
         self::assertFalse($body['success']);
@@ -64,7 +69,7 @@ final class ProfileMoodTest extends IntegrationTestCase
     {
         $exact = str_repeat('a', User::MOOD_MESSAGE_MAX_LENGTH);
 
-        [$status, $body] = $this->postJson('/admin/profile/mood', ['moodMessage' => $exact]);
+        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => $exact]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -91,9 +96,16 @@ final class ProfileMoodTest extends IntegrationTestCase
     }
 
     /** @return array{0: int, 1: array} */
-    private function postJson(string $url, array $payload): array
+    private function postJson(string $route, array $routeParameters, array $payload): array
     {
-        $this->client->request('POST', $url, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
 
         return [
             $this->client->getResponse()->getStatusCode(),

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Concern;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
 
 /**
  * Helpers for integration tests that interact with the Posts API.
+ *
+ * Consumers must declare `$this->client` (KernelBrowser) and `$this->urlGenerator`
+ * (UrlGeneratorInterface) — `editPost()` relies on both.
  */
 trait BuildsPostPayload
 {
@@ -56,8 +60,8 @@ trait BuildsPostPayload
     protected function editPost(int $postId, array $payload): array
     {
         $this->client->request(
-            'POST',
-            sprintf('/admin/posts/%d/edit', $postId),
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate('admin_posts_edit', ['id' => $postId]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

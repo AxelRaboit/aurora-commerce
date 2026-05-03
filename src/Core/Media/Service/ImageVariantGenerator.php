@@ -7,6 +7,8 @@ namespace Aurora\Core\Media\Service;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use GdImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final readonly class ImageVariantGenerator
 {
@@ -17,6 +19,7 @@ final readonly class ImageVariantGenerator
     ];
 
     public function __construct(
+        private Filesystem $filesystem,
         #[Autowire('%kernel.project_dir%/public/uploads')]
         private string $uploadDir,
     ) {}
@@ -35,7 +38,7 @@ final readonly class ImageVariantGenerator
             return [];
         }
 
-        $sourceAbsolute = $this->uploadDir.'/'.$sourceRelativePath;
+        $sourceAbsolute = Path::join($this->uploadDir, $sourceRelativePath);
         if (!is_file($sourceAbsolute)) {
             return [];
         }
@@ -82,11 +85,9 @@ final readonly class ImageVariantGenerator
             imagecopyresampled($targetImage, $source, 0, 0, 0, 0, $targetWidth, $targetHeight, $sourceWidth, $sourceHeight);
 
             $variantRelative = sprintf('variants/%s/%s.%s', $variantName, $baseName, $variantExtension);
-            $variantAbsolute = $this->uploadDir.'/'.$variantRelative;
+            $variantAbsolute = Path::join($this->uploadDir, $variantRelative);
 
-            if (!is_dir(dirname($variantAbsolute))) {
-                @mkdir(dirname($variantAbsolute), 0o775, true);
-            }
+            $this->filesystem->mkdir(dirname($variantAbsolute));
 
             $this->save($targetImage, $variantAbsolute, $variantMime);
             imagedestroy($targetImage);
@@ -104,12 +105,12 @@ final readonly class ImageVariantGenerator
      */
     public function deleteVariants(array $variants): void
     {
-        foreach ($variants as $relativePath) {
-            $absolute = $this->uploadDir.'/'.$relativePath;
-            if (is_file($absolute)) {
-                @unlink($absolute);
-            }
-        }
+        // Filesystem::remove() accepts an array and silently skips missing
+        // entries — no need for the per-file is_file() guard.
+        $this->filesystem->remove(array_map(
+            fn (string $relativePath): string => Path::join($this->uploadDir, $relativePath),
+            $variants,
+        ));
     }
 
     /** @return array{0: int, 1: int} */

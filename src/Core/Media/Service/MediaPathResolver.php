@@ -6,6 +6,7 @@ namespace Aurora\Core\Media\Service;
 
 use Aurora\Core\Media\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * Resolves the absolute filesystem path of a Media entity stored under
@@ -25,7 +26,7 @@ final readonly class MediaPathResolver
 
     public function resolveAbsolutePath(Media $media): string
     {
-        $absolutePath = \sprintf('%s/%s', $this->uploadDir, $media->getPath());
+        $absolutePath = Path::join($this->uploadDir, $media->getPath());
 
         if (!is_file($absolutePath)) {
             throw new \RuntimeException(\sprintf('Media file missing on disk: %s', $absolutePath));

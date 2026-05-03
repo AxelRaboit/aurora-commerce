@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Service;
 
+use Symfony\Component\Filesystem\Path;
+
 final readonly class ThemeResolver
 {
     public function __construct(
@@ -14,7 +16,7 @@ final readonly class ThemeResolver
     public function resolve(string $templateName): string
     {
         $activeSlug = $this->themeContext->activeThemeSlug();
-        $activePath = sprintf('%s/templates/Front/themes/%s/%s.html.twig', $this->projectDir, $activeSlug, $templateName);
+        $activePath = Path::join($this->projectDir, 'templates/Front/themes', $activeSlug, sprintf('%s.html.twig', $templateName));
 
         if ('default' !== $activeSlug && file_exists($activePath)) {
             return sprintf('Front/themes/%s/%s.html.twig', $activeSlug, $templateName);

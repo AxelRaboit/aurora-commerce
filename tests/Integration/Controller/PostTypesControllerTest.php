@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PostTypesControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -23,11 +26,20 @@ final class PostTypesControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
-    private function postJson(string $url, array $payload): array
+    private function postJson(string $route, array $routeParameters, array $payload): array
     {
-        $this->client->request('POST', $url, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
 
         return [$this->client->getResponse()->getStatusCode(), json_decode((string) $this->client->getResponse()->getContent(), true) ?? []];
     }
@@ -42,7 +54,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
 
     public function testCreateCustomPostType(): void
     {
-        [$status, $body] = $this->postJson('/admin/post-types', [
+        [$status, $body] = $this->postJson('admin_post_types_create', [], [
             'slug' => 'recipe',
             'label' => 'Recipes',
             'icon' => 'utensils',
@@ -60,7 +72,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
     public function testCannotDeleteBuiltInPostType(): void
     {
         $id = $this->articlePostTypeId();
-        $this->client->request('POST', sprintf('/admin/post-types/%d/delete', $id));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_post_types_delete', ['id' => $id]));
         self::assertSame(409, $this->client->getResponse()->getStatusCode());
     }
 
@@ -68,14 +80,14 @@ final class PostTypesControllerTest extends IntegrationTestCase
     {
         $postTypeId = $this->articlePostTypeId();
 
-        [, $body1] = $this->postJson(sprintf('/admin/post-types/%d/fields', $postTypeId), [
+        [, $body1] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'reading_time',
             'label' => 'Reading time',
             'type' => 'number',
         ]);
         self::assertTrue($body1['success']);
 
-        [, $body2] = $this->postJson(sprintf('/admin/post-types/%d/fields', $postTypeId), [
+        [, $body2] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'priority',
             'label' => 'Priority',
             'type' => 'select',
@@ -88,7 +100,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
         $readingTimeField = array_values(array_filter($fields, static fn ($f) => 'reading_time' === $f['name']))[0];
         $priorityField = array_values(array_filter($fields, static fn ($f) => 'priority' === $f['name']))[0];
 
-        [, $reordered] = $this->postJson(sprintf('/admin/post-types/%d/fields/reorder', $postTypeId), [
+        [, $reordered] = $this->postJson('admin_post_types_field_reorder', ['id' => $postTypeId], [
             'orderedIds' => [$priorityField['id'], $readingTimeField['id']],
         ]);
         self::assertTrue($reordered['success']);
@@ -103,13 +115,13 @@ final class PostTypesControllerTest extends IntegrationTestCase
     {
         $postTypeId = $this->articlePostTypeId();
 
-        $this->postJson(sprintf('/admin/post-types/%d/fields', $postTypeId), [
+        $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'unique_name',
             'label' => 'First',
             'type' => 'text',
         ]);
 
-        [$status, $body] = $this->postJson(sprintf('/admin/post-types/%d/fields', $postTypeId), [
+        [$status, $body] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'unique_name',
             'label' => 'Duplicate',
             'type' => 'text',

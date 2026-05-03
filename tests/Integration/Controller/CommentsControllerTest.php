@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Comment\Entity\Comment;
@@ -15,12 +16,14 @@ use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class CommentsControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
     private Comment $comment;
     private Post $post;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -31,6 +34,8 @@ final class CommentsControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
 
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
 
@@ -76,7 +81,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testListReturnsOk(): void
     {
-        $this->client->request('GET', '/admin/comments/list');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_comments_list'));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -88,7 +93,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testListFilterByStatus(): void
     {
-        $this->client->request('GET', '/admin/comments/list?status=pending');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_comments_list', ['status' => 'pending']));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -104,7 +109,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testApproveComment(): void
     {
-        $this->client->request('POST', sprintf('/admin/comments/%d/approve', $this->comment->getId()));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_approve', ['id' => $this->comment->getId()]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -116,7 +121,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testSpamComment(): void
     {
-        $this->client->request('POST', sprintf('/admin/comments/%d/spam', $this->comment->getId()));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_spam', ['id' => $this->comment->getId()]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -129,7 +134,7 @@ final class CommentsControllerTest extends IntegrationTestCase
     public function testDeleteComment(): void
     {
         $commentId = $this->comment->getId();
-        $this->client->request('POST', sprintf('/admin/comments/%d/delete', $commentId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_delete', ['id' => $commentId]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -140,7 +145,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testToggleModeration(): void
     {
-        $this->client->request('POST', '/admin/comments/toggle-moderation');
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_toggle_moderation'));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());

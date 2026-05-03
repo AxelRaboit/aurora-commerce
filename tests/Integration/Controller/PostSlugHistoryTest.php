@@ -12,12 +12,14 @@ use Aurora\Module\Editorial\Post\Repository\PostSlugHistoryRepository;
 use Aurora\Tests\Integration\Concern\BuildsPostPayload;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PostSlugHistoryTest extends IntegrationTestCase
 {
     use BuildsPostPayload;
 
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -28,6 +30,8 @@ final class PostSlugHistoryTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function firstPost(): Post

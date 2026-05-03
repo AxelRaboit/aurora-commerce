@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
@@ -12,13 +13,16 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MediaUploadTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
     private string $uploadDir;
     private Filesystem $filesystem;
+    private UrlGeneratorInterface $urlGenerator;
 
     /** @var list<string> absolute paths created during the test, scrubbed in tearDown */
     private array $createdPaths = [];
@@ -33,8 +37,9 @@ final class MediaUploadTest extends IntegrationTestCase
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
 
-        $this->uploadDir = static::getContainer()->getParameter('kernel.project_dir').'/public/uploads';
+        $this->uploadDir = Path::join(static::getContainer()->getParameter('kernel.project_dir'), 'public/uploads');
         $this->filesystem = new Filesystem();
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     protected function tearDown(): void
@@ -53,7 +58,7 @@ final class MediaUploadTest extends IntegrationTestCase
     {
         $upload = $this->prepareUploadedFile('hero.png', 'image/png', 600, 400);
 
-        $this->client->request('POST', '/admin/media/upload', [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
 
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
@@ -70,23 +75,23 @@ final class MediaUploadTest extends IntegrationTestCase
         self::assertSame('hero.png', $media->getOriginalName());
         self::assertSame('image/png', $media->getMimeType());
 
-        $absoluteFile = $this->uploadDir.'/'.$media->getPath();
+        $absoluteFile = Path::join($this->uploadDir, $media->getPath());
         self::assertFileExists($absoluteFile);
         $this->trackForCleanup($absoluteFile);
         foreach ($media->getVariants() as $variantPath) {
-            $this->trackForCleanup($this->uploadDir.'/'.$variantPath);
+            $this->trackForCleanup(Path::join($this->uploadDir, $variantPath));
         }
     }
 
     public function testUploadRejectsInvalidMimeType(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'aurora_upload_');
-        file_put_contents($tmp, "not an image\n");
+        $this->filesystem->dumpFile($tmp, "not an image\n");
         $this->trackForCleanup($tmp);
 
         $upload = new UploadedFile($tmp, 'note.txt', 'text/plain', null, true);
 
-        $this->client->request('POST', '/admin/media/upload', [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
 
         self::assertSame(422, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -95,7 +100,7 @@ final class MediaUploadTest extends IntegrationTestCase
 
     public function testUploadWithoutFileReturnsBadRequest(): void
     {
-        $this->client->request('POST', '/admin/media/upload');
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'));
 
         self::assertSame(400, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -107,7 +112,12 @@ final class MediaUploadTest extends IntegrationTestCase
         $folder = $this->createFolder('Banners');
 
         $upload = $this->prepareUploadedFile('banner.png', 'image/png', 300, 200);
-        $this->client->request('POST', '/admin/media/upload', ['folderId' => (string) $folder->getId()], ['image' => $upload]);
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate('admin_media_upload'),
+            ['folderId' => (string) $folder->getId()],
+            ['image' => $upload],
+        );
 
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertSame(1, $body['success']);
@@ -116,16 +126,16 @@ final class MediaUploadTest extends IntegrationTestCase
         self::assertNotNull($media);
         self::assertSame($folder->getId(), $media->getFolder()?->getId());
 
-        $this->trackForCleanup($this->uploadDir.'/'.$media->getPath());
+        $this->trackForCleanup(Path::join($this->uploadDir, $media->getPath()));
         foreach ($media->getVariants() as $variantPath) {
-            $this->trackForCleanup($this->uploadDir.'/'.$variantPath);
+            $this->trackForCleanup(Path::join($this->uploadDir, $variantPath));
         }
     }
 
     public function testDeleteMediaRemovesFileVariantsAndEntity(): void
     {
         $upload = $this->prepareUploadedFile('to-delete.png', 'image/png', 800, 600);
-        $this->client->request('POST', '/admin/media/upload', [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $mediaId = $body['media']['id'];
 
@@ -133,11 +143,11 @@ final class MediaUploadTest extends IntegrationTestCase
         $media = $repository->find($mediaId);
         self::assertNotNull($media);
 
-        $absoluteFile = $this->uploadDir.'/'.$media->getPath();
-        $variantAbsolutes = array_map(fn (string $rel): string => $this->uploadDir.'/'.$rel, $media->getVariants());
+        $absoluteFile = Path::join($this->uploadDir, $media->getPath());
+        $variantAbsolutes = array_map(fn (string $relativePath): string => Path::join($this->uploadDir, $relativePath), $media->getVariants());
         self::assertFileExists($absoluteFile);
 
-        $this->client->request('POST', sprintf('/admin/media/%d/delete', $mediaId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_delete', ['id' => $mediaId]));
 
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         self::assertNull($repository->find($mediaId));
@@ -163,8 +173,8 @@ final class MediaUploadTest extends IntegrationTestCase
     private function createFolder(string $name): MediaFolder
     {
         $this->client->request(
-            'POST',
-            '/admin/media/folders',
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate('admin_media_folder_create'),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

@@ -7,6 +7,7 @@ namespace Aurora\Module\Billing\Ocr\Service;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * Resolves a raster image path that the vision model can ingest.
@@ -47,7 +48,7 @@ final readonly class OcrDocumentRenderer
             return $absoluteSourcePath;
         }
 
-        $destinationPath = \sprintf('%s/%s', $this->renderCacheDir, \sprintf(self::CACHED_IMAGE_FILENAME_FORMAT, $jobId));
+        $destinationPath = Path::join($this->renderCacheDir, \sprintf(self::CACHED_IMAGE_FILENAME_FORMAT, $jobId));
 
         return $this->doctr->renderToPng($absoluteSourcePath, $destinationPath);
     }

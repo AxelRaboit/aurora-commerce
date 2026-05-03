@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
@@ -11,6 +12,7 @@ use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class FrontCommentControllerTest extends IntegrationTestCase
 {
@@ -18,6 +20,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
     private Post $post;
     private string $postSlug;
     private string $postTypeSlug;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -56,6 +59,8 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         $em->clear();
         $this->post = static::getContainer()->get(PostRepository::class)->find($postId);
         self::assertInstanceOf(Post::class, $this->post);
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     protected function tearDown(): void
@@ -66,14 +71,13 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         parent::tearDown();
     }
 
-    private function postUrl(): string
-    {
-        return sprintf('/fr/%s/%s', $this->postTypeSlug, $this->postSlug);
-    }
-
     public function testPostCommentCreatesComment(): void
     {
-        $this->client->request('POST', $this->postUrl().'/comment', [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_post_comment', [
+            'locale' => 'fr',
+            'postTypeSlug' => $this->postTypeSlug,
+            'slug' => $this->postSlug,
+        ]), [
             'authorName' => 'John Doe',
             'authorEmail' => 'john@example.com',
             'content' => 'This is a valid comment.',
@@ -86,7 +90,11 @@ final class FrontCommentControllerTest extends IntegrationTestCase
 
     public function testPostCommentWithInvalidDataReturnsErrors(): void
     {
-        $this->client->request('POST', $this->postUrl().'/comment', [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_post_comment', [
+            'locale' => 'fr',
+            'postTypeSlug' => $this->postTypeSlug,
+            'slug' => $this->postSlug,
+        ]), [
             'authorName' => '',
             'authorEmail' => 'valid@example.com',
             'content' => 'Some content',
@@ -106,8 +114,13 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         );
 
         $this->client->request(
-            'POST',
-            $this->postUrl().sprintf('/comment/%d/react', $commentId),
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate('front_comment_react', [
+                'locale' => 'fr',
+                'postTypeSlug' => $this->postTypeSlug,
+                'slug' => $this->postSlug,
+                'commentId' => $commentId,
+            ]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

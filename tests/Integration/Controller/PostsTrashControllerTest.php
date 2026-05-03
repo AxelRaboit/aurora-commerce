@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
@@ -13,10 +14,12 @@ use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PostsTrashControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -27,6 +30,8 @@ final class PostsTrashControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function createPost(): Post
@@ -49,7 +54,7 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request('POST', sprintf('/admin/posts/%d/delete', $postId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_delete', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -63,8 +68,8 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request('POST', sprintf('/admin/posts/%d/delete', $postId));
-        $this->client->request('POST', sprintf('/admin/posts/%d/restore', $postId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_restore', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -77,8 +82,8 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request('POST', sprintf('/admin/posts/%d/delete', $postId));
-        $this->client->request('POST', sprintf('/admin/posts/%d/force-delete', $postId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_force_delete', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -88,7 +93,7 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     public function testListingExcludesTrashedByDefault(): void
     {
         $trashedId = $this->createPost()->getId();
-        $this->client->request('POST', sprintf('/admin/posts/%d/delete', $trashedId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_delete', ['id' => $trashedId]));
 
         $repository = static::getContainer()->get(PostRepository::class);
 

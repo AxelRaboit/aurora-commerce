@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
@@ -12,12 +13,14 @@ use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Tests\Integration\Concern\BuildsPostPayload;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PostRevisionsControllerTest extends IntegrationTestCase
 {
     use BuildsPostPayload;
 
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -28,6 +31,8 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function firstPost(): Post
@@ -48,7 +53,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         );
         self::assertSame(200, $statusCode);
 
-        $this->client->request('GET', sprintf('/admin/posts/%d/revisions', $post->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_revisions', ['id' => $post->getId()]));
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string) $response->getContent(), true);
@@ -68,7 +73,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         self::assertSame(200, $statusCode);
 
         // fetch the first revision (which was the state after v2)
-        $this->client->request('GET', sprintf('/admin/posts/%d/revisions', $post->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_revisions', ['id' => $post->getId()]));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $revisionId = $body['revisions'][0]['id'];
 
@@ -81,7 +86,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         self::assertSame(200, $statusCode);
 
         // restore the first revision
-        $this->client->request('POST', sprintf('/admin/posts/%d/revisions/%d/restore', $post->getId(), $revisionId));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_posts_revision_restore', ['id' => $post->getId(), 'revisionId' => $revisionId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $restored = static::getContainer()->get(PostRepository::class)->find($post->getId());
@@ -105,7 +110,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
             self::assertSame(200, $statusCode);
         }
 
-        $this->client->request('GET', sprintf('/admin/posts/%d/revisions', $post->getId()));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_revisions', ['id' => $post->getId()]));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertCount(2, $body['revisions']);
     }

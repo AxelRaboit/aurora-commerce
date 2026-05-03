@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Repository\ThemeRepository;
 use Aurora\Core\User\Entity\User;
@@ -11,10 +12,12 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ThemesControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -25,6 +28,8 @@ final class ThemesControllerTest extends IntegrationTestCase
         $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function defaultThemeId(): int
@@ -35,11 +40,11 @@ final class ThemesControllerTest extends IntegrationTestCase
         return $theme->getId();
     }
 
-    private function jsonRequest(string $method, string $url, array $payload = []): array
+    private function jsonRequest(string $method, string $route, array $routeParameters = [], array $payload = []): array
     {
         $this->client->request(
             $method,
-            $url,
+            $this->urlGenerator->generate($route, $routeParameters),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -52,14 +57,14 @@ final class ThemesControllerTest extends IntegrationTestCase
 
     public function testIndexReturnsOk(): void
     {
-        $this->client->request('GET', '/admin/themes');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_themes'));
 
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testCreateTheme(): void
     {
-        [$status, $body] = $this->jsonRequest('POST', '/admin/themes', [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_create', [], [
             'name' => 'Test Theme',
             'slug' => 'test-theme-create',
             'description' => '',
@@ -82,13 +87,13 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $slug = 'test-duplicate-slug-'.uniqid();
 
-        $this->jsonRequest('POST', '/admin/themes', [
+        $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_create', [], [
             'name' => 'First Theme',
             'slug' => $slug,
             'description' => '',
         ]);
 
-        [$status, $body] = $this->jsonRequest('POST', '/admin/themes', [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_create', [], [
             'name' => 'Second Theme',
             'slug' => $slug,
             'description' => '',
@@ -110,7 +115,7 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $defaultThemeId = $this->defaultThemeId();
 
-        [$status, $body] = $this->jsonRequest('POST', sprintf('/admin/themes/%d/activate', $defaultThemeId));
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_activate', ['id' => $defaultThemeId]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -120,7 +125,7 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $slug = 'test-update-'.uniqid();
 
-        [, $createBody] = $this->jsonRequest('POST', '/admin/themes', [
+        [, $createBody] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_create', [], [
             'name' => 'Update Me',
             'slug' => $slug,
             'description' => '',
@@ -129,7 +134,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         self::assertTrue($createBody['success'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', sprintf('/admin/themes/%d/edit', $themeId), [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_update', ['id' => $themeId], [
             'name' => 'Updated Name',
             'description' => 'new desc',
             'config' => [],
@@ -152,7 +157,7 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $slug = 'test-delete-'.uniqid();
 
-        [, $createBody] = $this->jsonRequest('POST', '/admin/themes', [
+        [, $createBody] = $this->jsonRequest(HttpMethodEnum::Post->value, 'admin_themes_create', [], [
             'name' => 'Delete Me',
             'slug' => $slug,
             'description' => '',
@@ -161,7 +166,7 @@ final class ThemesControllerTest extends IntegrationTestCase
         self::assertTrue($createBody['success'], 'Create step failed: '.json_encode($createBody));
         $themeId = $createBody['theme']['id'];
 
-        $this->client->request('POST', sprintf('/admin/themes/%d/delete', $themeId), [], [], ['CONTENT_TYPE' => 'application/json']);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_themes_delete', ['id' => $themeId]), [], [], ['CONTENT_TYPE' => 'application/json']);
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -173,7 +178,7 @@ final class ThemesControllerTest extends IntegrationTestCase
     {
         $defaultThemeId = $this->defaultThemeId();
 
-        $this->client->request('POST', sprintf('/admin/themes/%d/delete', $defaultThemeId), [], [], ['CONTENT_TYPE' => 'application/json']);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_themes_delete', ['id' => $defaultThemeId]), [], [], ['CONTENT_TYPE' => 'application/json']);
         $response = $this->client->getResponse();
 
         self::assertSame(400, $response->getStatusCode());

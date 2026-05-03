@@ -7,6 +7,7 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Module\Photo\Gallery\Service\ExifReader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final class ExifReaderTest extends TestCase
 {
@@ -16,7 +17,7 @@ final class ExifReaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sandbox = sys_get_temp_dir().'/aurora-exif-'.uniqid();
+        $this->sandbox = Path::join(sys_get_temp_dir(), 'aurora-exif-'.uniqid());
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->sandbox);
         $this->reader = new ExifReader($this->sandbox);
@@ -45,7 +46,7 @@ final class ExifReaderTest extends TestCase
         }
 
         $name = 'plain.png';
-        $absolute = $this->sandbox.'/'.$name;
+        $absolute = Path::join($this->sandbox, $name);
         $image = imagecreatetruecolor(20, 20);
         $color = imagecolorallocate($image, 255, 0, 0);
         imagefilledrectangle($image, 0, 0, 20, 20, $color);

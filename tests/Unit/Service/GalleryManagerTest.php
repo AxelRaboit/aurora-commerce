@@ -12,6 +12,8 @@ use Aurora\Module\Photo\Gallery\DTO\GalleryInput;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Manager\GalleryManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -31,7 +33,7 @@ final class GalleryManagerTest extends TestCase
         $this->em = $this->createMock(EntityManagerInterface::class);
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
-        $this->watermark = new class('/tmp/uploads') extends GalleryWatermarkService {
+        $this->watermark = new class(new Filesystem(), Path::join(sys_get_temp_dir(), 'aurora-uploads')) extends GalleryWatermarkService {
             public int $clearCalls = 0;
 
             public function clearCacheForGallery(Gallery $gallery): void

@@ -159,7 +159,7 @@ final readonly class MenuItemSerializer
 
         return [
             'label' => $translation?->getTitle() ?? $this->translator->trans('admin.menus.preview.untitled'),
-            'hint' => '/'.$post->getPostType()->getSlug().'/'.$translation?->getSlug(),
+            'hint' => sprintf('/%s/%s', $post->getPostType()->getSlug(), $translation?->getSlug() ?? ''),
         ];
     }
 
@@ -184,7 +184,7 @@ final readonly class MenuItemSerializer
 
         return [
             'label' => $translation?->getName() ?? $this->translator->trans('admin.menus.preview.unnamed'),
-            'hint' => $term->getTaxonomy()->getSlug().'/'.$translation?->getSlug(),
+            'hint' => sprintf('/%s/%s', $term->getTaxonomy()->getSlug(), $translation?->getSlug() ?? ''),
         ];
     }
 
