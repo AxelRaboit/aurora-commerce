@@ -22,6 +22,10 @@ export default defineConfig({
         globals: true,
         include: ["assets/**/*.{test,spec}.{js,ts}"],
         exclude: ["node_modules", "tests/e2e/**", "dist/**"],
+        pool: "threads",
+        minThreads: 1,
+        maxThreads: 4,
+        testTimeout: 30000,
         env: {
             TZ: "UTC",
         },

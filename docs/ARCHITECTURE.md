@@ -1,8 +1,8 @@
 # Aurora Architecture
 
 Aurora is a platform built on Symfony 7 / PHP 8.3 / Vue 3 / Vite, designed to host
-multiple independent business modules (Editorial CMS, CRM, ERP, …) on top of a shared
-Core infrastructure.
+multiple independent business modules (Editorial CMS, CRM, ERP, Billing, Ecommerce, Photo, …)
+on top of a shared Core infrastructure.
 
 ---
 
@@ -12,9 +12,12 @@ Core infrastructure.
 src/
   Core/         -- reusable infrastructure, independent of any business module
   Module/
-    Editorial/  -- editorial CMS (posts, taxonomies, comments, forms, SEO)
+    Billing/    -- invoices, suppliers (Tiers), OCR pipeline
     Crm/        -- CRM (contacts, companies, deals, …)
-    Erp/        -- ERP (products, …)
+    Ecommerce/  -- shop (listings, cart, orders, payments)
+    Editorial/  -- editorial CMS (posts, taxonomies, comments, forms, SEO)
+    Erp/        -- ERP (products, inventory)
+    Photo/      -- client gallery delivery (galleries, items, invites)
 
 templates/
   Core/         -- admin templates for Core domains
@@ -46,8 +49,9 @@ import anything from `App\Module\*`.
 |------------|-----------------|
 | User       | Entity, Managers (UserManager, FrontUserManager), Repository, DTO, Serializer, Enum (UserRole, UserStatus, UserType), Command |
 | Auth       | Entities (AccessRequest, ResetPasswordRequest), Managers (AccessRequest, Invitation, PasswordReset, EmailVerification), Security (providers, checkers, authenticator, entry point), EventListeners, Validator, Controllers, DTO |
-| Setting    | Entity (Setting), Repository, Enum (ApplicationParameter), Command, Controller |
-| Media      | Entities (Media, MediaFolder), Manager, Repository, Service (ImageVariantGenerator), DTO, Serializer, Command, Controller |
+| Setting    | Entity (Setting), Repository, Enum (ApplicationParameter — includes Sequences group), Command, Controller |
+| Media      | Entities (Media, MediaFolder), Manager, Repository, Service (ImageVariantGenerator, MediaPathResolver), DTO, Serializer, Command, Controller — files stored under `%app.upload_dir%/{area}/YYYY-MM/` |
+| Sequence   | `SequenceGenerator` (PostgreSQL NEXTVAL wrapper), `SequencePrefixEnum` (canonical prefix per entity), `ResyncSequencesCommand` (`aurora:sequences:resync`) — see §6.8 |
 | Theme      | Entity, Manager, Repository, Services (ThemeContext, ThemeResolver), DTO, Serializer, Controller |
 | Locale     | Entity, Repository, Enum (LocaleEnum), EventSubscriber |
 | Menu       | Entities (Menu, MenuItem, MenuItemTranslation), Manager, Repository, Services, DTO, Serializer, Twig extension, Command, Controller |
@@ -58,7 +62,7 @@ import anything from `App\Module\*`.
 | Audit      | Entity (AuditLog), Service (AuditLogger) — records cross-module actions |
 | Frontend   | Services (FrontContext, HttpCacheService) |
 | Validation | Service (PayloadValidator), ArgumentResolver, DTO (PaginationRequest) |
-| (misc)     | Twig extensions, Enums (HttpMethod), Support (Str), Trait (Timestampable), Scheduler |
+| (misc)     | Twig extensions, Enums (HttpMethod), Support (Str), Trait (Timestampable, TimestampableTrait), Scheduler |
 
 ### Rule
 
@@ -146,13 +150,29 @@ Module/<Name>/<Domain>/{Entity,Manager,Repository,DTO,Service,Serializer,Enum,Co
 
 | Domain  | What it contains |
 |---------|-----------------|
-| Product | Entity, Repository, DTO (ProductInput), Serializer, Enum (ProductStatusEnum), Controller (admin CRUD) |
+| Product | Entity (`reference` auto-generated via `SequenceGenerator`), Repository, DTO (ProductInput), Serializer, Enum (ProductStatusEnum, CurrencyEnum), Controller (admin CRUD) |
 
 ### 4.4 Module/Ecommerce
 
 | Domain  | What it contains |
 |---------|-----------------|
-| Listing | Entity (FK to `Erp\Product`, slug, marketing copy, featured image, visibility, SEO), Repository, DTO (ListingInput), Serializer, Manager + Contract, Controllers (admin CRUD + public Frontend `ShopController` for `/{locale}/shop` and `/{locale}/shop/{slug}`) |
+| Listing | Entity (FK to `Erp\Product`, `reference` auto-generated), Repository, DTO, Serializer, Manager, Controllers (admin CRUD + public Frontend) |
+| Cart    | Entities (Cart, CartItem — `reference` auto-generated), Manager + Contract, Repository, Serializer, Controller |
+| Order   | Entities (Order — `number` sequential via `SequenceGenerator`, OrderLine — `reference` auto-generated), Manager + Contract, Repository, Serializer, Enum (OrderStatusEnum), Services (OrderNotificationService, OrderRefundService), Payment (StripeService), Controllers (admin + front) |
+
+### 4.5 Module/Billing
+
+| Domain     | What it contains |
+|------------|-----------------|
+| Invoice    | Entity (internal `number` sequential, `supplierNumber` from OCR), InvoiceLine (`productCode` = OCR line code, `reference` = article ref), Tiers (supplier/client/partner/…), Manager + Contract, Repository, Serializer, Enum (InvoiceStatusEnum, TiersTypeEnum), Controller |
+| Ocr        | Entity (OcrJob), Manager, Repository, Serializer, DTO (InvoiceDraft, InvoiceLineDraft), Service (OcrPipeline, InvoiceExtractor, DocTrClient, OllamaVisionClient, OcrDocumentRenderer), Message + Handler |
+| Compliance | Service (SequenceChecker, ArchiveChecker, AuditChecker), Controller |
+
+### 4.6 Module/Photo
+
+| Domain  | What it contains |
+|---------|-----------------|
+| Gallery | Entities (Gallery, GalleryItem, GalleryInvite, GalleryFinalization, GalleryPick, GalleryItemComment — all with `reference`), Manager, Repository, Serializer, Enum, Services (GalleryWatermarkService, GalleryDownloadService, GalleryAccessService, GalleryNotificationService, GalleryPickService), Controllers (admin + front) |
 
 ---
 
@@ -229,6 +249,7 @@ Add one mapping block per new module.
 10. Add Vue-only labels (form fields, editor blocks…) under `assets/locales/source/{locale}.js`
 11. Add validator messages to `src/Core/translations/validators.*.yaml` if needed (or to the module's own file)
 12. Generate + run Doctrine migration
+13. **Sequences**: for each new entity, add `#[ORM\GeneratedValue(strategy: 'SEQUENCE')]` + `#[ORM\SequenceGenerator(sequenceName: 'seq_{slug}_id')]`; for business sequential references, add a `SequencePrefixEnum` case + `ApplicationParameterEnum` case (group `sequences`); run `make sync-params`
 
 ---
 
@@ -262,9 +283,11 @@ a `Module/<Name>/Frontend/Controller/` directory with public routes (typically p
 | Module     | Front? | Why |
 |------------|--------|-----|
 | Editorial  | ✅ Yes | A CMS exists to serve public pages |
-| Ecommerce  | ✅ Yes (planned) | Catalog, cart, checkout are inherently public |
+| Ecommerce  | ✅ Yes | Catalog (`/shop`), cart, checkout, order confirmation |
+| Photo      | ✅ Yes | Client gallery pages (`/g/{slug}`) — password-protected |
 | CRM        | ❌ Never | Contacts/companies/deals are private business data |
-| ERP        | ❌ Internal-only | Inventory/suppliers/costs stay backend; the public catalog lives in Ecommerce |
+| ERP        | ❌ Internal-only | Inventory stays backend; the public catalog lives in Ecommerce |
+| Billing    | ❌ Internal-only | Invoice management, suppliers, OCR — admin only |
 | Core       | n/a | Infrastructure |
 
 ### 6.5 Module dependencies & shared entities
@@ -272,11 +295,13 @@ a `Module/<Name>/Frontend/Controller/` directory with public routes (typically p
 Allowed direction of dependencies (import only downward):
 
 ```
-Ecommerce  →  Erp     (catalog reads inventory)
-Ecommerce  →  CRM     (Customer ↔ Contact link)
-Editorial  →  (none)  — independent
-CRM        →  (none)  — independent
-ERP        →  (none)  — independent of business modules
+Ecommerce  →  Erp          (catalog reads inventory)
+Ecommerce  →  CRM          (Customer ↔ Contact link)
+Billing    →  CRM          (Tiers can be linked to Company)
+Editorial  →  (none)       — independent
+CRM        →  (none)       — independent
+ERP        →  (none)       — independent of business modules
+Photo      →  (none)       — independent
 All        →  Core
 ```
 
@@ -295,10 +320,12 @@ Each module owns its translations:
 | Owner | Path |
 |---|---|
 | Core | `src/Core/translations/{messages,validators,security}.{locale}.yaml` |
-| Editorial | `src/Module/Editorial/translations/messages.{locale}.yaml` |
+| Billing | `src/Module/Billing/translations/messages.{locale}.yaml` |
 | CRM | `src/Module/Crm/translations/messages.{locale}.yaml` |
-| ERP | `src/Module/Erp/translations/messages.{locale}.yaml` |
 | Ecommerce | `src/Module/Ecommerce/translations/messages.{locale}.yaml` |
+| Editorial | `src/Module/Editorial/translations/messages.{locale}.yaml` |
+| ERP | `src/Module/Erp/translations/messages.{locale}.yaml` |
+| Photo | `src/Module/Photo/translations/messages.{locale}.yaml` |
 
 Symfony's translator merges all paths automatically — keys can share top-level prefixes
 (e.g. `admin.nav.*` is partially defined by every module that contributes a sidebar entry).
@@ -319,6 +346,28 @@ deep-merges each module's YAML, then converts Symfony's `%var%` placeholders to 
 
 **Convention**: a key used in **both** Twig and Vue lives in YAML. A key used **only** in Vue
 stays in the JS source. Never duplicate the same key in both files.
+
+### 6.8 PostgreSQL sequences
+
+All entity PKs use Doctrine's `SEQUENCE` strategy with explicit named sequences (`seq_{slug}_id`).
+This makes sequences visible and manageable in PostgreSQL — no silent `IDENTITY` columns.
+
+All business entities also carry a human-readable `reference` field (e.g. `FAC-2026-0001`,
+`ORD-000001`) generated atomically via `Core\Sequence\SequenceGenerator::next()` or
+`nextYearly()`. Prefixes are configurable in **Settings → Séquences** (`ApplicationParameterEnum`
+cases with group `sequences`). Canonical defaults live in `SequencePrefixEnum`.
+
+```
+seq_{slug}_id   — PK sequences, one per entity (created by Doctrine migrations)
+seq_{prefix}_{year}  — yearly business sequences (FAC-2026-0001 …)
+seq_{prefix}         — global business sequences (ORD-000001 …)
+```
+
+After data imports or fixture loads, run:
+
+```bash
+make sync-sequences   # resets all seq_*_id to MAX(id)+1
+```
 
 ### 6.6 Entity naming: no module prefix on class names
 
@@ -343,18 +392,15 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 ## 7. Roadmap
 
 - [x] Module manifest + ModuleRegistry + dynamic admin sidebar
-- [x] Module/Editorial — full editorial CMS
-- [x] Module/Crm — Contact entity + admin CRUD
+- [x] Module/Editorial — full editorial CMS (posts, taxonomies, comments, forms, SEO, sitemap)
+- [x] Module/Crm — Contact, Company, Deal (CRUD + Kanban)
 - [x] Permission registry (ModulePermissionVoter + per-module `#[IsGranted]`)
-- [x] Module/Crm — Company entity (CRUD + detail)
-- [x] Module/Crm — Deal entity + DealStageEnum (CRUD + Kanban)
 - [x] Audit log / Activity timeline (Core — cross-module action logging, dev viewer)
-- [x] Module/Crm — Activity timeline per contact
-- [x] Shared component: AppStagePicker
-- [x] Permission registry UI (read-only listing per module, dev dashboard)
-- [x] Audit log filter by module (UI `<select>`)
 - [x] Module/Erp — Product entity (inventory backend, admin CRUD)
-- [x] Module/Ecommerce — Listing (refs Erp\Product) + admin CRUD + public Frontend (`/shop`, `/shop/{slug}`)
-- [ ] Module/Ecommerce — Cart + Order + Customer (transactional, Phase 2)
+- [x] Module/Ecommerce — Listing, Cart, Order, Payment (Stripe), public Frontend
+- [x] Module/Billing — Invoice management, Tiers (supplier/client/…), OCR pipeline (docTR + Ollama VLM), compliance
+- [x] Module/Photo — Client gallery delivery (galleries, items, invites, picks, watermarking)
+- [x] Core/Sequence — Named PostgreSQL sequences for all PKs + configurable business reference numbers
+- [x] Core/Media — Module-scoped upload dirs (`media/`, `ocr/`, `users/`, `photo/`) with `%app.upload_dir%`
 - [ ] Editor.js block: ProductGrid (Editorial → Ecommerce, embed listings in posts/pages)
 - [ ] ThemeResolver multi-path (per-module front templates)
