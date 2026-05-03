@@ -258,6 +258,23 @@ admin:
     themes: Thèmes
     users: Utilisateurs
     resizeHint: "Glisser pour redimensionner — double-clic pour réinitialiser"
+    filterNav: Filtrer le menu…
+    filterNavEmpty: Aucun élément trouvé
+  search:
+    button: Rechercher…
+    placeholder: Rechercher des contenus, médias…
+    hint: Tapez pour rechercher dans les contenus, termes et médias.
+    empty: Aucun résultat.
+    keys:
+      navigate: Naviguer
+      select: Sélectionner
+      close: Fermer
+    sections:
+      recent: Récents
+      nav: Navigation
+      posts: Contenus
+      terms: Termes
+      media: Médias
   profile:
     errors:
       current_password_invalid: Le mot de passe actuel est incorrect.

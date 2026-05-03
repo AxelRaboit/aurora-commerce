@@ -257,6 +257,23 @@ admin:
     themes: Themes
     users: Users
     resizeHint: "Drag to resize — double-click to reset"
+    filterNav: Filter menu…
+    filterNavEmpty: No items found
+  search:
+    button: Search…
+    placeholder: Search content, media…
+    hint: Type to search across content, terms and media.
+    empty: No results.
+    keys:
+      navigate: Navigate
+      select: Select
+      close: Close
+    sections:
+      recent: Recent
+      nav: Navigation
+      posts: Content
+      terms: Terms
+      media: Media
   profile:
     errors:
       current_password_invalid: The current password is incorrect.

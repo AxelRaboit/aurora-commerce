@@ -111,7 +111,11 @@ final class InvoicesController extends AbstractController
     #[IsGranted('billing.invoices.edit')]
     public function createLine(Invoice $invoice): JsonResponse
     {
-        $this->lineManager->add($invoice);
+        try {
+            $this->lineManager->add($invoice);
+        } catch (\InvalidArgumentException $e) {
+            return $this->jsonFailure($e->getMessage());
+        }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
     }
@@ -148,7 +152,11 @@ final class InvoicesController extends AbstractController
             return $this->jsonNotFound();
         }
 
-        $this->lineManager->delete($line);
+        try {
+            $this->lineManager->delete($line);
+        } catch (\InvalidArgumentException $e) {
+            return $this->jsonFailure($e->getMessage());
+        }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
     }

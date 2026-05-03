@@ -59,14 +59,19 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
         // (e.g. qwen3-vl) return empty responses when a JSON schema is set as
         // the format constraint. We rely on prompt + a tolerant parser instead.
         // The schema is appended to the prompt so the model still has the shape.
+        //
+        // `think: false` disables the chain-of-thought reasoning block on qwen3
+        // thinking models — without it the <think>...</think> tokens fill the
+        // entire context window and the actual JSON response is empty.
         $body = [
             'model' => $this->model,
             'prompt' => $prompt."\n\nJSON Schema (your response MUST conform):\n".json_encode($jsonSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
             'images' => [base64_encode($imageBytes)],
             'stream' => false,
+            'think' => false,
             'options' => [
                 'temperature' => 0.1,
-                'num_ctx' => 8192,
+                'num_ctx' => 16384,
             ],
         ];
 
@@ -105,13 +110,18 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
     }
 
     /**
-     * Some models wrap JSON in ```json``` fences or prepend prose despite the
-     * format constraint. Try strict decode first, then fall back to extracting
-     * the largest balanced {...} block.
+     * Some models wrap JSON in ```json``` fences, prepend prose, or emit
+     * <think>...</think> reasoning blocks (e.g. qwen3) before the payload.
+     * Try strict decode first, then progressively looser strategies.
      */
     private function decodeJsonLoose(string $payload): mixed
     {
         $payload = mb_trim($payload);
+
+        // Strip <think>...</think> reasoning blocks emitted by thinking models.
+        $payload = preg_replace('/<think>.*?<\/think>/s', '', $payload) ?? $payload;
+        $payload = mb_trim($payload);
+
         $decoded = json_decode($payload, true);
         if (is_array($decoded)) {
             return $decoded;
@@ -125,13 +135,30 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
             }
         }
 
-        // Last resort: pull the first {...} block
+        // Walk forward from the first '{' counting depth to find the matching '}'.
         $firstBrace = mb_strpos($payload, '{');
-        $lastBrace = mb_strrpos($payload, '}');
-        if (false !== $firstBrace && false !== $lastBrace && $lastBrace > $firstBrace) {
-            $decoded = json_decode(mb_substr($payload, $firstBrace, $lastBrace - $firstBrace + 1), true);
-            if (is_array($decoded)) {
-                return $decoded;
+        if (false !== $firstBrace) {
+            $depth = 0;
+            $inString = false;
+            $escape = false;
+            $len = mb_strlen($payload);
+            for ($i = $firstBrace; $i < $len; ++$i) {
+                $char = mb_substr($payload, $i, 1);
+                if ($escape) { $escape = false; continue; }
+                if ($char === '\\' && $inString) { $escape = true; continue; }
+                if ($char === '"') { $inString = !$inString; continue; }
+                if ($inString) { continue; }
+                if ($char === '{') { ++$depth; }
+                elseif ($char === '}') {
+                    --$depth;
+                    if ($depth === 0) {
+                        $decoded = json_decode(mb_substr($payload, $firstBrace, $i - $firstBrace + 1), true);
+                        if (is_array($decoded)) {
+                            return $decoded;
+                        }
+                        break;
+                    }
+                }
             }
         }
 

@@ -12,6 +12,14 @@ enum InvoiceStatusEnum: string
     case Paid = 'paid';
     case Archived = 'archived';
 
+    public function isEditable(): bool
+    {
+        return match ($this) {
+            self::Draft, self::NeedsReview => true,
+            default => false,
+        };
+    }
+
     public function getLabelKey(): string
     {
         return 'admin.billing.invoices.status.'.$this->value;

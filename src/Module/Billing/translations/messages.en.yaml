@@ -33,6 +33,7 @@ admin:
       deleteError: "Could not delete (DB constraint)."
       number: "#"
       supplier: Supplier
+      buyer: Buyer
       issuedAt: Issued
       dueAt: Due
       totalGross: Gross
@@ -50,6 +51,7 @@ admin:
         document: Source document
         noDocument: No document attached.
         supplier: Supplier
+        buyer: Buyer
         ocr: OCR
         ocrJob: Job
         phone: Phone
@@ -78,6 +80,12 @@ admin:
           vat: VAT
           totalNet: Net total
           totalGross: Gross total
+      update:
+        locked: This invoice can no longer be edited.
+        unknownField: Unknown field.
+        fieldRequired: Field required.
+        invalidDate: Invalid date.
+        notNumeric: Numeric value required.
     suppliers:
       searchPlaceholder: "Name, VAT #…"
       empty: No suppliers yet. They'll appear here as OCR imports run.
@@ -103,6 +111,8 @@ admin:
       deleteConfirm: "Delete job #{id}? This also removes the source file."
       deleted: Job deleted.
       deleteError: "Could not delete (DB constraint)."
+      errorLog: Error log
+      noErrorLog: No error details available.
       fileName: File
       statusLabel: Status
       confidence: Confidence

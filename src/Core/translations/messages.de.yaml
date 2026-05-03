@@ -260,6 +260,23 @@ admin:
     themes: Designs
     users: Benutzer
     resizeHint: "Ziehen zum Verändern — Doppelklick zum Zurücksetzen"
+    filterNav: Menü filtern…
+    filterNavEmpty: Keine Einträge gefunden
+  search:
+    button: Suchen…
+    placeholder: Inhalte, Medien suchen…
+    hint: Tippen um Inhalte, Begriffe und Medien zu suchen.
+    empty: Keine Ergebnisse.
+    keys:
+      navigate: Navigieren
+      select: Auswählen
+      close: Schließen
+    sections:
+      recent: Zuletzt besucht
+      nav: Navigation
+      posts: Inhalte
+      terms: Begriffe
+      media: Medien
   profile:
     errors:
       current_password_invalid: Das aktuelle Passwort ist falsch.

@@ -73,6 +73,18 @@ class Invoice
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $buyerName = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $buyerVatNumber = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $buyerAddress = null;
+
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $buyerCountryCode = null;
+
     /** Original document (PDF/image) — owned by Core/Media. */
     #[ORM\ManyToOne(targetEntity: Media::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -90,6 +102,13 @@ class Invoice
     public function __construct()
     {
         $this->lines = new ArrayCollection();
+    }
+
+    public function assertEditable(): void
+    {
+        if (!$this->status->isEditable()) {
+            throw new \InvalidArgumentException('admin.billing.invoices.update.locked');
+        }
     }
 
     public function getId(): ?int
@@ -261,6 +280,54 @@ class Invoice
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getBuyerName(): ?string
+    {
+        return $this->buyerName;
+    }
+
+    public function setBuyerName(?string $buyerName): self
+    {
+        $this->buyerName = $buyerName;
+
+        return $this;
+    }
+
+    public function getBuyerVatNumber(): ?string
+    {
+        return $this->buyerVatNumber;
+    }
+
+    public function setBuyerVatNumber(?string $buyerVatNumber): self
+    {
+        $this->buyerVatNumber = $buyerVatNumber;
+
+        return $this;
+    }
+
+    public function getBuyerAddress(): ?string
+    {
+        return $this->buyerAddress;
+    }
+
+    public function setBuyerAddress(?string $buyerAddress): self
+    {
+        $this->buyerAddress = $buyerAddress;
+
+        return $this;
+    }
+
+    public function getBuyerCountryCode(): ?string
+    {
+        return $this->buyerCountryCode;
+    }
+
+    public function setBuyerCountryCode(?string $buyerCountryCode): self
+    {
+        $this->buyerCountryCode = $buyerCountryCode;
 
         return $this;
     }

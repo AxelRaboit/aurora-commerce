@@ -42,6 +42,8 @@ import {
     Loader2,
     ChevronDown,
     Map as MapIcon,
+    Filter,
+    Clock,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
@@ -147,9 +149,36 @@ const groupedSections = computed(() =>
 
 const navItems = computed(() => groupedSections.value.flatMap(s => s.items.flatMap(i => [i, ...(i.children ?? [])])));
 
+const navFilter = ref("");
+
+const displayedSections = computed(() => {
+    const q = navFilter.value.trim().toLowerCase();
+    if (!q) return groupedSections.value;
+
+    const results = [];
+    for (const section of groupedSections.value) {
+        const matchingItems = [];
+        for (const item of section.items) {
+            if (item.label.toLowerCase().includes(q)) {
+                matchingItems.push(item);
+            } else if (item.children?.length) {
+                const matchingChildren = item.children.filter(c => c.label.toLowerCase().includes(q));
+                matchingItems.push(...matchingChildren);
+            }
+        }
+        if (matchingItems.length) results.push({ ...section, items: matchingItems });
+    }
+    return results;
+});
+
 function itemClasses(item) {
-    if (itemIsActive(item)) {
+    if (isActive(item.route)) {
+        // Exact active page — full highlight
         return item.activeColor === "rose" ? "bg-rose-600/15 text-rose-400" : "bg-accent-600/15 text-accent-400";
+    }
+    if (itemIsActive(item)) {
+        // Parent of active child — text hint only, no background
+        return item.activeColor === "rose" ? "text-rose-400 hover:bg-rose-600/10" : "text-accent-400 hover:bg-surface-2";
     }
     return item.activeColor === "rose"
         ? "text-secondary hover:text-rose-400 hover:bg-rose-600/10"
@@ -157,7 +186,7 @@ function itemClasses(item) {
 }
 
 function iconClasses(item) {
-    if (itemIsActive(item)) {
+    if (isActive(item.route) || itemIsActive(item)) {
         return item.activeColor === "rose" ? "text-rose-400" : "text-accent-400";
     }
     return item.activeColor === "rose"
@@ -180,12 +209,20 @@ const { isExpanded: isSectionExpandedById, toggle: toggleSectionById } = usePers
 function isSectionExpanded(section) { return isSectionExpandedById(section.id); }
 function toggleSection(section) { toggleSectionById(section.id); }
 
+const SECTION_CONFIG = {
+    recent: { icon: Clock,    labelKey: "admin.search.sections.recent" },
+    nav:    { icon: Layers,   labelKey: "admin.search.sections.nav"    },
+    post:   { icon: FileText, labelKey: "admin.search.sections.posts"  },
+    term:   { icon: TagsIcon, labelKey: "admin.search.sections.terms"  },
+    media:  { icon: Image,    labelKey: "admin.search.sections.media"  },
+};
+
 const {
-    searchOpen, searchQuery, searchResults, searchLoading,
+    searchOpen, searchQuery, searchLoading,
     searchHighlightedIndex, searchInputRef,
-    flatResults, totalResults,
+    sections, flatResults, totalResults,
     openPalette, closePalette, activateResult, entryIndex,
-} = useAdminSearch({ searchPath: props.searchPath, navItems });
+} = useAdminSearch({ searchPath: props.searchPath, navItems, currentRoute: props.activeRoute });
 
 function openSearchFromMobile() {
     closeMobile();
@@ -253,16 +290,18 @@ onMounted(() => nextTick(() => {
             </a>
         </div>
 
-        <div class="sh-search-section px-3 py-2 border-b border-line shrink-0">
+        <div class="sh-search-section px-3 py-2 border-b border-line shrink-0 space-y-1.5">
+            <!-- Palette trigger — expanded -->
             <button
                 type="button"
-                class="sh-logo-expanded w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted border border-line/60 hover:border-line hover:text-primary hover:bg-surface-2 transition-colors"
+                class="sh-logo-expanded w-full items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted hover:text-primary hover:bg-surface-2 transition-colors"
                 v-on:click="openPalette"
             >
-                <Search class="w-4 h-4 shrink-0" :stroke-width="2" />
+                <Search class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
                 <span class="flex-1 text-left">{{ t("admin.search.button") }}</span>
-                <kbd class="px-1.5 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
+                <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
             </button>
+            <!-- Palette trigger — collapsed -->
             <button
                 type="button"
                 class="sh-logo-collapsed si items-center rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
@@ -273,11 +312,28 @@ onMounted(() => nextTick(() => {
                     {{ t("admin.search.button") }}
                 </span>
             </button>
+            <!-- Nav filter — expanded only -->
+            <div class="sh-logo-expanded relative flex items-center">
+                <Filter class="absolute left-2.5 w-3 h-3 text-muted pointer-events-none" :stroke-width="2" />
+                <input
+                    v-model="navFilter"
+                    type="text"
+                    :placeholder="t('admin.nav.filterNav')"
+                    class="w-full pl-7 pr-6 py-1.5 rounded-md text-xs bg-surface-2/60 border border-line/40 text-primary placeholder:text-muted focus:outline-none focus:border-line focus:bg-surface-2 transition-colors"
+                />
+                <button v-if="navFilter" type="button" class="absolute right-2 text-muted hover:text-primary transition-colors" v-on:click="navFilter = ''">
+                    <X class="w-3 h-3" :stroke-width="2.5" />
+                </button>
+            </div>
         </div>
 
         <nav class="sidebar-nav flex-1 py-4 space-y-3">
-            <div v-for="section in groupedSections" :key="section.id" class="space-y-0.5">
+            <p v-if="navFilter && !displayedSections.length" class="sh-logo-expanded px-3 text-xs text-muted">
+                {{ t("admin.nav.filterNavEmpty") }}
+            </p>
+            <div v-for="section in displayedSections" :key="section.id" class="space-y-0.5">
                 <button
+                    v-if="!navFilter"
                     type="button"
                     class="si-section-header w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted hover:text-secondary transition-colors"
                     v-on:click="toggleSection(section)"
@@ -287,9 +343,9 @@ onMounted(() => nextTick(() => {
                 </button>
 
                 <template v-for="item in section.items" :key="item.route">
-                    <template v-if="isSectionExpanded(section)">
-                        <!-- Group parent: split link + chevron toggle -->
-                        <template v-if="item.children?.length">
+                    <template v-if="navFilter || isSectionExpanded(section)">
+                        <!-- Group parent: split link + chevron toggle (only when not filtering) -->
+                        <template v-if="!navFilter && item.children?.length">
                             <div
                                 class="flex items-center rounded-lg text-sm font-medium transition-colors group relative"
                                 :class="itemClasses(item)"
@@ -328,7 +384,7 @@ onMounted(() => nextTick(() => {
                                 </AppNavLink>
                             </div>
                         </template>
-                        <!-- Regular item (no children) -->
+                        <!-- Regular item or filtered group parent -->
                         <AppNavLink
                             v-else
                             :href="item.path"
@@ -582,77 +638,68 @@ onMounted(() => nextTick(() => {
                     </div>
 
                     <div class="flex-1 overflow-y-auto">
-                        <div v-if="!searchQuery.trim()" class="px-4 py-8 text-sm text-muted text-center">
+                        <!-- Empty state -->
+                        <div v-if="!searchQuery.trim() && !sections.length" class="px-4 py-8 text-sm text-muted text-center">
                             {{ t("admin.search.hint") }}
                         </div>
-                        <div v-else-if="!searchLoading && totalResults === 0" class="px-4 py-8 text-sm text-muted text-center">
+                        <div v-else-if="searchQuery.trim() && !searchLoading && !totalResults" class="px-4 py-8 text-sm text-muted text-center">
                             {{ t("admin.search.empty") }}
                         </div>
 
-                        <div v-if="searchResults.posts.length" class="px-2 py-2 space-y-1">
+                        <!-- Result sections -->
+                        <div
+                            v-for="(section, idx) in sections"
+                            :key="section.kind"
+                            class="px-2 py-2 space-y-1"
+                            :class="{ 'border-t border-line': idx > 0 }"
+                        >
                             <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
-                                <FileText class="w-3 h-3" :stroke-width="2" />
-                                {{ t("admin.search.sections.posts") }}
+                                <component :is="SECTION_CONFIG[section.kind].icon" class="w-3 h-3" :stroke-width="2" />
+                                {{ t(SECTION_CONFIG[section.kind].labelKey) }}
                             </p>
-                            <button
-                                v-for="post in searchResults.posts"
-                                :key="`post-${post.id}`"
-                                type="button"
-                                class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-start gap-3"
-                                :class="entryIndex('post', post) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
-                                v-on:mouseenter="searchHighlightedIndex = entryIndex('post', post)"
-                                v-on:click="activateResult({ kind: 'post', item: post })"
-                            >
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5" :class="statusBadge(post.status)">
-                                    {{ t("admin.stats.postStatus." + post.status) }}
-                                </span>
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(post.title ?? '(—)', searchQuery)" />
-                                    <div v-if="post.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(post.snippet, searchQuery)" />
-                                    <div class="text-xs text-muted mt-0.5">{{ post.postType }}</div>
-                                </div>
-                            </button>
-                        </div>
 
-                        <div v-if="searchResults.terms.length" class="px-2 py-2 space-y-1 border-t border-line">
-                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
-                                <TagsIcon class="w-3 h-3" :stroke-width="2" />
-                                {{ t("admin.search.sections.terms") }}
-                            </p>
                             <button
-                                v-for="term in searchResults.terms"
-                                :key="`term-${term.id}`"
+                                v-for="item in section.items"
+                                :key="`${section.kind}-${section.kind === 'nav' || section.kind === 'recent' ? item.route : item.id}`"
                                 type="button"
                                 class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('term', term) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
-                                v-on:mouseenter="searchHighlightedIndex = entryIndex('term', term)"
-                                v-on:click="activateResult({ kind: 'term', item: term })"
+                                :class="entryIndex(section.kind, item) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
+                                v-on:mouseenter="searchHighlightedIndex = entryIndex(section.kind, item)"
+                                v-on:click="activateResult({ kind: section.kind, item })"
                             >
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(term.name ?? '(—)', searchQuery)" />
-                                    <div class="text-xs text-muted">{{ term.taxonomy }}</div>
-                                </div>
-                            </button>
-                        </div>
+                                <!-- nav / recent -->
+                                <template v-if="section.kind === 'nav' || section.kind === 'recent'">
+                                    <component :is="item.icon" class="w-4 h-4 shrink-0 text-muted" :stroke-width="2" />
+                                    <span class="text-sm font-medium text-primary truncate">{{ item.label }}</span>
+                                </template>
 
-                        <div v-if="searchResults.media.length" class="px-2 py-2 space-y-1 border-t border-line">
-                            <p class="px-2 py-1 text-xs uppercase tracking-wide text-muted font-semibold flex items-center gap-1.5">
-                                <Image class="w-3 h-3" :stroke-width="2" />
-                                {{ t("admin.search.sections.media") }}
-                            </p>
-                            <button
-                                v-for="media in searchResults.media"
-                                :key="`media-${media.id}`"
-                                type="button"
-                                class="w-full text-left px-2 py-2 rounded-md transition-colors flex items-center gap-3"
-                                :class="entryIndex('media', media) === searchHighlightedIndex ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2'"
-                                v-on:mouseenter="searchHighlightedIndex = entryIndex('media', media)"
-                                v-on:click="activateResult({ kind: 'media', item: media })"
-                            >
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(media.name ?? '(—)', searchQuery)" />
-                                    <div class="text-xs text-muted">{{ media.mimeType }}</div>
-                                </div>
+                                <!-- post -->
+                                <template v-else-if="section.kind === 'post'">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0" :class="statusBadge(item.status)">
+                                        {{ t("admin.stats.postStatus." + item.status) }}
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />
+                                        <div v-if="item.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(item.snippet, searchQuery)" />
+                                        <div class="text-xs text-muted mt-0.5">{{ item.postType }}</div>
+                                    </div>
+                                </template>
+
+                                <!-- term -->
+                                <template v-else-if="section.kind === 'term'">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.name ?? '(—)', searchQuery)" />
+                                        <div class="text-xs text-muted">{{ item.taxonomy }}</div>
+                                    </div>
+                                </template>
+
+                                <!-- media -->
+                                <template v-else-if="section.kind === 'media'">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.name ?? '(—)', searchQuery)" />
+                                        <div class="text-xs text-muted">{{ item.mimeType }}</div>
+                                    </div>
+                                </template>
                             </button>
                         </div>
                     </div>

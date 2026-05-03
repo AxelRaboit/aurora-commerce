@@ -120,15 +120,27 @@ purge: ## Remove all cache and log files
 	rm -rf var/cache/* var/logs/*
 
 # === Docker ===
-docker-up: ## Start database container
-	docker compose up -d database
+docker-up: ## Start all local services (mailpit + docTR)
+	docker compose up -d mailer
+	docker compose --profile ocr up -d --build doctr
 
-docker-down: ## Stop database container
-	docker compose stop database
+docker-down: ## Stop all local services (mailpit + docTR)
+	docker compose stop mailer
+	docker compose --profile ocr stop doctr
+
+# === Mailpit ===
+mailpit-up: ## Start mailpit
+	docker compose up -d mailer
+
+mailpit-down: ## Stop mailpit
+	docker compose stop mailer
+
+mailpit-logs: ## Tail mailpit logs
+	docker compose logs -f mailer
 
 # === Symfony ===
 start: ## Start dev server + Vite dev server
-	@docker compose up -d database 2>/dev/null || true
+	@docker compose up -d mailer 2>/dev/null || true
 	symfony server:start -d
 	$(PNPM) --dir=$(AURORA) run dev
 

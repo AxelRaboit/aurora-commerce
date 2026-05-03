@@ -41,6 +41,10 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
             'totalNetCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalNetCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalVatCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalVatCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalGrossCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalGrossCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'buyerName' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerName($this->stringOrNull($value)),
+            'buyerVatNumber' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerVatNumber($this->stringOrNull($value)),
+            'buyerAddress' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerAddress($this->stringOrNull($value)),
+            'buyerCountryCode' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerCountryCode($this->stringOrNull($value)),
         ];
     }
 
@@ -56,6 +60,8 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
     public function delete(Invoice $invoice): void
     {
+        $invoice->assertEditable();
+
         $id = $invoice->getId();
         $number = $invoice->getNumber();
 
@@ -69,6 +75,8 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
     public function updateField(Invoice $invoice, string $field, mixed $value): void
     {
+        $invoice->assertEditable();
+
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
             throw new InvalidArgumentException('admin.billing.invoices.update.unknownField');
@@ -99,6 +107,10 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $invoice->setTotalVatCents($draft->totalVatCents);
         $invoice->setTotalGrossCents($draft->totalGrossCents);
         $invoice->setSupplier($this->supplierManager->findOrCreateFromDraft($draft));
+        $invoice->setBuyerName($draft->buyerName);
+        $invoice->setBuyerVatNumber($draft->buyerVatNumber);
+        $invoice->setBuyerAddress($draft->buyerAddress);
+        $invoice->setBuyerCountryCode($draft->buyerCountryCode);
 
         $position = 0;
         foreach ($draft->lines as $lineDraft) {

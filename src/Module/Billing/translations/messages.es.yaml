@@ -30,6 +30,7 @@ admin:
       empty: Aún no hay facturas.
       number: "N°"
       supplier: Proveedor
+      buyer: Comprador
       issuedAt: Emitida
       dueAt: Vencimiento
       totalGross: TTC
@@ -50,6 +51,7 @@ admin:
         document: Documento original
         noDocument: Sin documento adjunto.
         supplier: Proveedor
+        buyer: Comprador
         ocr: OCR
         ocrJob: Tarea
         phone: Teléfono
@@ -78,6 +80,12 @@ admin:
           vat: IVA
           totalNet: Total HT
           totalGross: Total TTC
+      update:
+        locked: Esta factura ya no se puede modificar.
+        unknownField: Campo desconocido.
+        fieldRequired: Campo requerido.
+        invalidDate: Fecha inválida.
+        notNumeric: Se requiere un valor numérico.
     suppliers:
       searchPlaceholder: "Nombre, n° IVA…"
       empty: Aún no hay proveedores. Aparecerán a medida que se importen las facturas OCR.
@@ -108,6 +116,8 @@ admin:
       deleteConfirm: "¿Eliminar la tarea #{id}? También se eliminará el archivo original."
       deleted: Tarea eliminada.
       deleteError: "No se puede eliminar (restricciones DB)."
+      errorLog: Registro de error
+      noErrorLog: No hay detalles de error disponibles.
       status:
         queued: En cola
         extracting: Extrayendo

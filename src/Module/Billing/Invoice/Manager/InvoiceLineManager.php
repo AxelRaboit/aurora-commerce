@@ -40,6 +40,8 @@ final readonly class InvoiceLineManager implements InvoiceLineManagerInterface
 
     public function add(Invoice $invoice): InvoiceLine
     {
+        $invoice->assertEditable();
+
         $line = new InvoiceLine();
         $line->setLabel('');
         $line->setQuantity('1.0000');
@@ -59,6 +61,8 @@ final readonly class InvoiceLineManager implements InvoiceLineManagerInterface
 
     public function updateField(InvoiceLine $line, string $field, mixed $value): void
     {
+        $line->getInvoice()?->assertEditable();
+
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
             throw new InvalidArgumentException('admin.billing.invoices.update.unknownField');
@@ -74,6 +78,8 @@ final readonly class InvoiceLineManager implements InvoiceLineManagerInterface
 
     public function delete(InvoiceLine $line): void
     {
+        $line->getInvoice()?->assertEditable();
+
         $id = $line->getId();
         $invoiceId = $line->getInvoice()?->getId();
 

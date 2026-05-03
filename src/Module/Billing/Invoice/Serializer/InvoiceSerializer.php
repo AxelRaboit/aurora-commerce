@@ -62,6 +62,12 @@ final readonly class InvoiceSerializer
             'paidAt' => $invoice->getPaidAt()?->format('Y-m-d'),
             'notes' => $invoice->getNotes(),
             'supplierFull' => $supplier instanceof Supplier ? $this->supplierSerializer->serialize($supplier) : null,
+            'buyer' => $invoice->getBuyerName() !== null ? [
+                'name' => $invoice->getBuyerName(),
+                'vatNumber' => $invoice->getBuyerVatNumber(),
+                'address' => $invoice->getBuyerAddress(),
+                'countryCode' => $invoice->getBuyerCountryCode(),
+            ] : null,
             'document' => $document instanceof Media ? [
                 'id' => $document->getId(),
                 'url' => '/uploads/'.$document->getPath(),

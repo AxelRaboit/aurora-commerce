@@ -103,15 +103,23 @@ watch(() => props.disabled, (d) => { if (d) editing.value = false; });
 
 <template>
     <div class="inline-field" :class="align === 'right' ? 'text-right' : 'text-left'">
+        <span
+            v-if="!editing && disabled"
+            class="inline-flex w-full px-1 -mx-1 py-0.5"
+            :class="[align === 'right' ? 'justify-end tabular-nums' : '', isEmpty ? 'text-muted italic' : '']"
+        >
+            {{ formatted }}
+            <span v-if="type === 'money' && !isEmpty && currency" class="text-muted ml-1">{{ currency }}</span>
+        </span>
+
         <button
-            v-if="!editing"
+            v-else-if="!editing"
             type="button"
             class="group inline-flex items-center gap-1.5 rounded px-1 -mx-1 py-0.5 hover:bg-surface-2 transition-colors w-full"
             :class="[
                 align === 'right' ? 'flex-row-reverse text-right' : 'text-left',
-                { 'opacity-50 cursor-not-allowed': disabled, 'text-muted italic': isEmpty },
+                { 'text-muted italic': isEmpty },
             ]"
-            :disabled="disabled"
             v-on:click="startEdit"
         >
             <span class="flex-1 truncate" :class="align === 'right' ? 'tabular-nums' : ''">

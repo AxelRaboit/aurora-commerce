@@ -260,6 +260,23 @@ admin:
     themes: Temas
     users: Usuarios
     resizeHint: "Arrastra para redimensionar — doble clic para restablecer"
+    filterNav: Filtrar menú…
+    filterNavEmpty: Sin resultados
+  search:
+    button: Buscar…
+    placeholder: Buscar contenidos, medios…
+    hint: Escribe para buscar contenidos, términos y medios.
+    empty: Sin resultados.
+    keys:
+      navigate: Navegar
+      select: Seleccionar
+      close: Cerrar
+    sections:
+      recent: Recientes
+      nav: Navegación
+      posts: Contenidos
+      terms: Términos
+      media: Medios
   profile:
     errors:
       current_password_invalid: La contraseña actual es incorrecta.

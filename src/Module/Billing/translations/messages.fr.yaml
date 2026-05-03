@@ -33,6 +33,7 @@ admin:
       deleteError: "Suppression impossible (contraintes DB)."
       number: "N°"
       supplier: Fournisseur
+      buyer: Acheteur
       issuedAt: Émise
       dueAt: Échéance
       totalGross: TTC
@@ -50,6 +51,7 @@ admin:
         document: Document source
         noDocument: Aucun document attaché.
         supplier: Fournisseur
+        buyer: Acheteur
         ocr: OCR
         ocrJob: Job
         phone: Téléphone
@@ -78,6 +80,12 @@ admin:
           vat: TVA
           totalNet: Total HT
           totalGross: Total TTC
+      update:
+        locked: Cette facture ne peut plus être modifiée.
+        unknownField: Champ inconnu.
+        fieldRequired: Champ requis.
+        invalidDate: Date invalide.
+        notNumeric: Valeur numérique requise.
     suppliers:
       searchPlaceholder: "Nom, n° TVA…"
       empty: Aucun fournisseur. Ils apparaîtront ici au fil des imports OCR.
@@ -103,6 +111,8 @@ admin:
       deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi le fichier source."
       deleted: Job supprimé.
       deleteError: "Suppression impossible (contraintes DB)."
+      errorLog: Journal d'erreur
+      noErrorLog: Aucun détail d'erreur disponible.
       fileName: Fichier
       statusLabel: Statut
       confidence: Confiance

@@ -26,6 +26,17 @@ enum OcrJobStatusEnum: string
         return 'admin.billing.ocr.status.'.$this->value;
     }
 
+    /** Progress percentage (0–100), null for states where progress is not meaningful. */
+    public function getProgress(): ?int
+    {
+        return match ($this) {
+            self::Extracting => 33,
+            self::Parsing => 66,
+            self::Completed, self::NeedsReview => 100,
+            default => null,
+        };
+    }
+
     /** Tailwind colour key matching AppBadge palette (gray/sky/emerald/amber/rose/violet/slate). */
     public function getBadgeColor(): string
     {

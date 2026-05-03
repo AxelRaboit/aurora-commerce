@@ -12,7 +12,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Plus, Eye, Trash2, RotateCcw } from "lucide-vue-next";
+import { Plus, Eye, Trash2, RotateCcw, Info } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
@@ -48,6 +48,8 @@ function onStatusChange() {
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deletePath, () => reload(), 'admin.billing.ocr.deleted',
 );
+
+const errorJob = ref(null);
 
 const { start: startPolling, retry: retryJob, hasInvoice } = useOcrJobs(items, {
     statusUrlTemplate: props.statusUrlTemplate,
@@ -94,7 +96,7 @@ onMounted(startPolling);
                         <td class="px-6 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
                         <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
                         <td class="px-6 py-3">
-                            <AppBadge :color="job.statusColor">{{ job.statusLabel }}</AppBadge>
+                            <AppBadge :color="job.statusColor">{{ job.statusLabel }}{{ job.progress !== null ? ` ${job.progress}%` : '' }}</AppBadge>
                         </td>
                         <td class="px-6 py-3 text-secondary tabular-nums hidden md:table-cell">
                             {{ job.confidence !== null ? Math.round(job.confidence * 100) + '%' : '—' }}
@@ -105,6 +107,9 @@ onMounted(startPolling);
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="`${invoicesPath}?search=${job.id}`">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="job.status === 'failed'" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
+                                    <Info class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="job.status === 'failed'" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
                                     <RotateCcw class="w-4 h-4" :stroke-width="2" />
@@ -120,6 +125,14 @@ onMounted(startPolling);
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+
+        <AppModal :show="!!errorJob" max-width="md" v-on:close="errorJob = null">
+            <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>
+            <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('admin.billing.ocr.noErrorLog') }}</pre>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="errorJob = null">{{ t('shared.common.close') }}</AppButton>
+            </AppModalFooter>
+        </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('admin.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>

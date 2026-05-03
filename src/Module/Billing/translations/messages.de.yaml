@@ -30,6 +30,7 @@ admin:
       empty: Noch keine Rechnungen.
       number: "Nr."
       supplier: Lieferant
+      buyer: Käufer
       issuedAt: Ausgestellt
       dueAt: Fällig
       totalGross: Brutto
@@ -50,6 +51,7 @@ admin:
         document: Quelldokument
         noDocument: Kein Dokument angehängt.
         supplier: Lieferant
+        buyer: Käufer
         ocr: OCR
         ocrJob: Job
         phone: Telefon
@@ -78,6 +80,12 @@ admin:
           vat: USt.
           totalNet: Netto
           totalGross: Brutto
+      update:
+        locked: Diese Rechnung kann nicht mehr bearbeitet werden.
+        unknownField: Unbekanntes Feld.
+        fieldRequired: Feld erforderlich.
+        invalidDate: Ungültiges Datum.
+        notNumeric: Numerischer Wert erforderlich.
     suppliers:
       searchPlaceholder: "Name, USt-IdNr…"
       empty: Noch keine Lieferanten. Sie erscheinen hier, sobald OCR-Importe laufen.
@@ -108,6 +116,8 @@ admin:
       deleteConfirm: "Job #{id} löschen? Die Quelldatei wird ebenfalls entfernt."
       deleted: Job gelöscht.
       deleteError: "Löschen nicht möglich (DB-Constraint)."
+      errorLog: Fehlerprotokoll
+      noErrorLog: Keine Fehlerdetails verfügbar.
       status:
         queued: In Warteschlange
         extracting: Extraktion

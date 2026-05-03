@@ -35,7 +35,10 @@ class InvoiceRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('i')
             ->leftJoin('i.supplier', 's')->addSelect('s')
-            ->orderBy('i.issuedAt', Order::Descending->value)
+            ->addSelect('CASE WHEN i.status = :priorityStatus THEN 0 ELSE 1 END AS HIDDEN status_priority')
+            ->setParameter('priorityStatus', InvoiceStatusEnum::NeedsReview)
+            ->orderBy('status_priority', Order::Ascending->value)
+            ->addOrderBy('i.issuedAt', Order::Descending->value)
             ->addOrderBy('i.id', Order::Descending->value);
 
         if (null !== $search && '' !== $search) {
@@ -60,7 +63,10 @@ class InvoiceRepository extends ServiceEntityRepository
     ): array {
         $queryBuilder = $this->createQueryBuilder('i')
             ->leftJoin('i.supplier', 's')->addSelect('s')
-            ->orderBy('i.issuedAt', Order::Descending->value)
+            ->addSelect('CASE WHEN i.status = :priorityStatus THEN 0 ELSE 1 END AS HIDDEN status_priority')
+            ->setParameter('priorityStatus', InvoiceStatusEnum::NeedsReview)
+            ->orderBy('status_priority', Order::Ascending->value)
+            ->addOrderBy('i.issuedAt', Order::Descending->value)
             ->addOrderBy('i.id', Order::Descending->value);
         $countQueryBuilder = $this->createQueryBuilder('i')->select('COUNT(i.id)')->leftJoin('i.supplier', 's');
 

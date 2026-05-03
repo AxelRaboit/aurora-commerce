@@ -23,6 +23,7 @@ final readonly class OcrJobSerializer
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),
             'isTerminal' => $status->isTerminal(),
+            'progress' => $status->getProgress(),
             'modelUsed' => $job->getModelUsed(),
             'confidence' => $job->getConfidence(),
             'error' => $job->getError(),
