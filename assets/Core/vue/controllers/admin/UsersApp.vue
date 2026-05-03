@@ -359,18 +359,18 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
             <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
             <table v-else class="w-full text-sm">
-                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                    <tr>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.name') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.email') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.users.role') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.users.status') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.users.created') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('admin.users.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.name') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.email') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.users.role') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.status') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.created') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="user in users" :key="user.id" class="border-t border-line/60 hover:bg-surface-2/50">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="user in users" :key="user.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-3 text-primary font-medium">
                             <div class="flex items-center gap-3">
                                 <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />

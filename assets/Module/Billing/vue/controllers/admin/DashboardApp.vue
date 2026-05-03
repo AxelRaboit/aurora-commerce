@@ -98,17 +98,17 @@ function statusFilterUrl(status) {
             </div>
             <AppNoData v-if="!needsReview.length" :message="t('admin.billing.dashboard.allClear')" />
             <table v-else class="w-full text-sm">
-                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                    <tr>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.number') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.supplier') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.totalGross') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.number') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.supplier') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.totalGross') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="invoice in needsReview" :key="invoice.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="invoice in needsReview" :key="invoice.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
                         <td class="px-4 py-3 text-primary font-medium truncate max-w-xs">{{ invoice.supplier?.name ?? '—' }}</td>
                         <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ invoice.issuedAt ?? '—' }}</td>

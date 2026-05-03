@@ -170,15 +170,15 @@ async function submitContact() {
 
                 <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                     <table class="w-full text-sm">
-                        <thead class="bg-surface-2 border-b border-line">
-                            <tr>
-                                <th class="px-4 py-3 text-left font-semibold text-primary">{{ t('admin.crm.contacts.name') }}</th>
-                                <th class="px-4 py-3 text-left font-semibold text-primary">{{ t('admin.crm.contacts.email') }}</th>
-                                <th class="px-4 py-3 text-left font-semibold text-primary hidden md:table-cell">{{ t('admin.crm.contacts.phone') }}</th>
+                        <thead>
+                            <tr class="bg-surface-2/50 border-b border-line/40">
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.contacts.name') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.contacts.email') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.contacts.phone') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-line">
-                            <tr v-for="contact in contacts" :key="contact.id" class="hover:bg-surface-2/50 transition-colors">
+                        <tbody class="divide-y divide-line/40">
+                            <tr v-for="contact in contacts" :key="contact.id" class="group hover:bg-surface-2/40 transition-colors">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2 min-w-0">
                                         <AppAvatar

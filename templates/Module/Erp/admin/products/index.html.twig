@@ -3,7 +3,12 @@
 {% block title %}{{ 'admin.nav.products'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.products'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.erp'|trans, href: path('erp_products')},
+            {label: 'admin.nav.products'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}

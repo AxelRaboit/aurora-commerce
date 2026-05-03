@@ -8,12 +8,12 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useOcrJobs } from "@billing/vue/composables/useOcrJobs.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import AppFileInput from "@/shared/components/form/AppFileInput.vue";
+import AppDropZone from "@/shared/components/form/AppDropZone.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Upload, Eye, Trash2, RotateCcw } from "lucide-vue-next";
+import { Eye, Trash2, RotateCcw } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType } from "@core/utils/enums/media/mimeType.js";
 
@@ -92,47 +92,46 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             <h3 class="text-lg font-semibold text-primary mb-2">{{ t('admin.billing.ocr.upload.title') }}</h3>
             <p class="text-sm text-secondary mb-4">{{ t('admin.billing.ocr.upload.help') }}</p>
 
-            <AppFileInput v-slot="{ trigger }" :accept="OCR_ACCEPTED_MIME_TYPES" v-on:change="onFileSelected">
-                <AppButton variant="primary" size="md" :disabled="uploading" v-on:click="trigger">
-                    <Upload class="w-4 h-4" :stroke-width="2" />
-                    {{ uploading ? t('admin.billing.ocr.upload.uploading') : t('admin.billing.ocr.upload.cta') }}
-                </AppButton>
-            </AppFileInput>
+            <AppDropZone
+                :accept="OCR_ACCEPTED_MIME_TYPES"
+                :uploading="uploading"
+                hint="JPG, PNG, WebP, PDF"
+                v-on:change="onFileSelected"
+            />
         </div>
 
-        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-line/60 flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-primary">{{ t('admin.billing.ocr.upload.recent') }}</h3>
-                <a :href="jobsPath" class="text-sm text-accent-400 hover:text-accent-300 transition-colors">
-                    {{ t('admin.billing.ocr.upload.allJobs') }} →
-                </a>
-            </div>
+        <div class="flex justify-end">
+            <AppButton variant="secondary" size="md" :href="jobsPath">
+                {{ t('admin.billing.ocr.upload.allJobs') }}
+            </AppButton>
+        </div>
 
+        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!jobs.length" :message="t('admin.billing.ocr.empty')" />
             <div v-else class="overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
-                    <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                        <tr>
-                            <th class="text-left px-4 py-3 font-semibold">#</th>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.ocr.fileName') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.ocr.statusLabel') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
-                            <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.fileName') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.statusLabel') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr v-for="job in jobs" :key="job.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
-                            <td class="px-4 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
-                            <td class="px-4 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
-                            <td class="px-4 py-3">
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="job in jobs" :key="job.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
+                            <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
+                            <td class="px-6 py-3">
                                 <AppBadge :color="job.statusColor">{{ job.statusLabel }}</AppBadge>
                             </td>
-                            <td class="px-4 py-3 text-secondary tabular-nums hidden md:table-cell">
+                            <td class="px-6 py-3 text-secondary tabular-nums hidden md:table-cell">
                                 {{ job.confidence !== null ? Math.round(job.confidence * 100) + '%' : '—' }}
                             </td>
-                            <td class="px-4 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-6 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
+                            <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="`${invoicesPath}?search=${job.id}`">
                                         <Eye class="w-4 h-4" :stroke-width="2" />

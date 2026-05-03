@@ -286,8 +286,8 @@ async function onDrop(event, targetStage) {
 
                 <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                     <table class="w-full text-sm">
-                        <thead class="bg-surface-2 border-b border-line">
-                            <tr>
+                        <thead>
+                            <tr class="bg-surface-2/50 border-b border-line/40">
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.deals.name') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.deals.stage') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.deals.contact') }}</th>
@@ -295,8 +295,8 @@ async function onDrop(event, targetStage) {
                                 <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-line">
-                            <tr v-for="deal in items" :key="deal.id" class="hover:bg-surface-2/50 transition-colors">
+                        <tbody class="divide-y divide-line/40">
+                            <tr v-for="deal in items" :key="deal.id" class="group hover:bg-surface-2/40 transition-colors">
                                 <td class="px-6 py-3 font-medium text-primary">{{ deal.name }}</td>
                                 <td class="px-6 py-3">
                                     <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', stageBadge(deal.stage)]">

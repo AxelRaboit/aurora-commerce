@@ -118,8 +118,6 @@ admin:
       upload:
         title: Importar una factura
         help: "Sube una factura (JPG, PNG, WebP o PDF). Para los PDF, sólo la 1ª página se envía al modelo de visión. La tarea se encola y la procesa el worker."
-        cta: Elegir un archivo
-        uploading: Subiendo…
         success: "Factura encolada — tarea #{id}."
         recent: 10 últimas tareas
         allJobs: Todas las tareas

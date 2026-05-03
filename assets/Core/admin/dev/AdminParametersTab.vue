@@ -75,15 +75,15 @@ onMounted(() => {
 
         <div class="hidden sm:block bg-surface border border-line rounded-xl overflow-hidden">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
-                        <th class="px-5 py-3 text-left text-sm font-semibold text-primary w-1/3">{{ t('admin.parameters.key') }}</th>
-                        <th class="px-5 py-3 text-left text-sm font-semibold text-primary w-1/4">{{ t('admin.parameters.value') }}</th>
-                        <th class="px-5 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t('admin.parameters.description') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/3">{{ t('admin.parameters.key') }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/4">{{ t('admin.parameters.value') }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.parameters.description') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="parameter in parameters.items.value" :key="parameter.key" class="hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="parameter in parameters.items.value" :key="parameter.key" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-5 py-3 align-top w-1/3">
                             <p class="font-mono text-sm text-accent-400 font-medium break-all">{{ parameter.key }}</p>
                             <p v-if="parameter.label && parameter.label !== parameter.key" class="text-xs text-secondary mt-0.5">{{ parameter.label }}</p>

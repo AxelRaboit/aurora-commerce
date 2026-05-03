@@ -265,16 +265,16 @@ async function openPreview(post) {
                 </div>
             </div>
 
-            <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.tags.createdAt") }}</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.tags.actions") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.tags.createdAt") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.tags.actions") }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
@@ -282,8 +282,8 @@ async function openPreview(post) {
                             <td colspan="6"><AppNoData :message="t('admin.posts.empty')" /></td>
                         </tr>
                         <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
-                            <td class="px-4 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-6 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
+                            <td class="px-6 py-3">
                                 <div class="flex items-center gap-2.5">
                                     <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
                                     <div class="min-w-0 flex-1">
@@ -292,14 +292,14 @@ async function openPreview(post) {
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-6 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
+                            <td class="px-6 py-3">
                                 <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)">
                                     {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
                                 </AppBadge>
                             </td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
+                            <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton color="sky" v-on:click="openPreview(post)">
                                         <Eye class="w-4 h-4" :stroke-width="2" />

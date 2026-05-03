@@ -360,6 +360,10 @@ front:
     email_not_verified: Bitte verifiziere deine E-Mail-Adresse vor der Anmeldung.
     account_disabled: Dein Konto wurde deaktiviert.
 shared:
+  dropZone:
+    cta: Datei auswählen
+    drop: Datei hier ablegen
+    uploading: Wird hochgeladen…
   mail:
     invitation:
       cta: Konto aktivieren

@@ -99,18 +99,18 @@ onMounted(() => {
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.users.name') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.users.email') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t('admin.users.role') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.users.locale') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.users.created') }}</th>
-                        <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t('admin.users.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.users.role') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.locale') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.created') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="user in users.parsedUsers.value.items" :key="user.id" class="hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="user in users.parsedUsers.value.items" :key="user.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
                                 <AppAvatar :name="user.name" :email="user.email" size="md" />

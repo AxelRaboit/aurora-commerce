@@ -111,8 +111,6 @@ admin:
       upload:
         title: Import an invoice
         help: "Upload an invoice (JPG, PNG, WebP or PDF). For PDFs, only the 1st page is fed to the vision model. The job is queued and processed by the worker."
-        cta: Choose a file
-        uploading: Uploading…
         success: "Invoice queued — job #{id}."
         recent: 10 most recent jobs
         allJobs: All jobs

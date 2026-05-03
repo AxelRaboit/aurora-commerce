@@ -360,6 +360,10 @@ front:
     email_not_verified: Por favor verifica tu correo antes de iniciar sesión.
     account_disabled: Tu cuenta ha sido desactivada.
 shared:
+  dropZone:
+    cta: Elegir un archivo
+    drop: Suelta tu archivo aquí
+    uploading: Subiendo…
   mail:
     invitation:
       cta: Activar mi cuenta

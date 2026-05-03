@@ -709,16 +709,16 @@ function submissionValue(submission, field) {
                     <AppNoData v-if="!submissionsLoading && !submissions.length" :message="t('admin.forms.submissionsEmpty')" />
                     <div v-else class="overflow-x-auto">
                         <table class="w-full text-sm">
-                            <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                                <tr>
-                                    <th class="text-left px-4 py-3 font-semibold whitespace-nowrap">{{ t("admin.forms.submittedAt") }}</th>
-                                    <th class="text-left px-4 py-3 font-semibold whitespace-nowrap">{{ t("admin.forms.locale") }}</th>
-                                    <th v-for="field in submissionFields" :key="field.id" class="text-left px-4 py-3 font-semibold whitespace-nowrap max-w-xs">{{ fieldLabel(field) }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold">{{ t("shared.common.edit") }}</th>
+                            <thead>
+                                <tr class="bg-surface-2/50 border-b border-line/40">
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.submittedAt") }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.locale") }}</th>
+                                    <th v-for="field in submissionFields" :key="field.id" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap max-w-xs">{{ fieldLabel(field) }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.edit") }}</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr v-for="submission in submissions" :key="submission.id" class="border-t border-line/60 hover:bg-surface-2/50">
+                            <tbody class="divide-y divide-line/40">
+                                <tr v-for="submission in submissions" :key="submission.id" class="group hover:bg-surface-2/40 transition-colors">
                                     <td class="px-4 py-3 text-xs text-muted whitespace-nowrap">{{ formatDateTime(submission.submittedAt) }}</td>
                                     <td class="px-4 py-3 text-xs text-muted whitespace-nowrap uppercase">{{ submission.locale }}</td>
                                     <td v-for="field in submissionFields" :key="field.id" class="px-4 py-3 text-sm text-secondary max-w-xs truncate">

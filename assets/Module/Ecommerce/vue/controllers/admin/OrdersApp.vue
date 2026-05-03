@@ -116,29 +116,29 @@ function formatTotal(order) {
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.number') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.customer') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.ecommerce.orders.date') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.status_col') }}</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.total') }}</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.number') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.customer') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.ecommerce.orders.date') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.status_col') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.total') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="order in items" :key="order.id" class="hover:bg-surface-2/50 transition-colors">
-                        <td class="px-4 py-3 font-mono text-primary">{{ order.number }}</td>
-                        <td class="px-4 py-3">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="order in items" :key="order.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-6 py-3 font-mono text-primary">{{ order.number }}</td>
+                        <td class="px-6 py-3">
                             <p class="text-primary">{{ order.name }}</p>
                             <p class="text-xs text-muted">{{ order.email }}</p>
                         </td>
-                        <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateShort(order.createdAt) }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatDateShort(order.createdAt) }}</td>
+                        <td class="px-6 py-3">
                             <AppBadge :color="statusBadge(order.status)">{{ t(`admin.ecommerce.orders.status.${order.status}`) }}</AppBadge>
                         </td>
-                        <td class="px-4 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-6 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
+                        <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />

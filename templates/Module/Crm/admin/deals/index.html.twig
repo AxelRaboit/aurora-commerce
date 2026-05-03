@@ -3,7 +3,12 @@
 {% block title %}{{ 'admin.nav.deals'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.deals'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.crm'|trans, href: path('crm_contacts')},
+            {label: 'admin.nav.deals'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}

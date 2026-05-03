@@ -83,18 +83,18 @@ onMounted(() => {
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.access_requests.requester') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t('admin.access_requests.message') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t('admin.access_requests.status') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.access_requests.date') }}</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t('admin.access_requests.expires') }}</th>
-                        <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t('admin.users.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.access_requests.requester') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.access_requests.message') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.access_requests.status') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.access_requests.date') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.access_requests.expires') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '-' }}</p>
                             <p class="text-xs text-secondary">{{ accessRequest.requesterEmail }}</p>

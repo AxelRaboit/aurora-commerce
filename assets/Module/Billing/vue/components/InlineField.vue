@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, watch } from "vue";
-import { Pencil } from "lucide-vue-next";
+import { Pencil, Check, X } from "lucide-vue-next";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 
 const props = defineProps({
@@ -127,17 +127,23 @@ watch(() => props.disabled, (d) => { if (d) editing.value = false; });
             v-on:update:model-value="onDatePicked"
         />
 
-        <input
-            v-else
-            ref="inputRef"
-            v-model="localValue"
-            :type="type === 'money' || type === 'number' ? 'number' : 'text'"
-            :step="type === 'money' ? '0.01' : (type === 'number' ? 'any' : undefined)"
-            class="w-full px-2 py-1 rounded border border-accent-500 bg-surface text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/30"
-            :class="align === 'right' ? 'text-right tabular-nums' : ''"
-            :disabled="saving"
-            v-on:keydown="onKeydown"
-            v-on:blur="commit"
-        >
+        <div v-else class="flex items-center gap-1">
+            <input
+                ref="inputRef"
+                v-model="localValue"
+                :type="type === 'money' || type === 'number' ? 'number' : 'text'"
+                :step="type === 'money' ? '0.01' : (type === 'number' ? 'any' : undefined)"
+                class="w-full px-2 py-1 rounded border border-accent-500 bg-surface text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/30"
+                :class="align === 'right' ? 'text-right tabular-nums' : ''"
+                :disabled="saving"
+                v-on:keydown="onKeydown"
+            >
+            <button type="button" :disabled="saving" class="inline-flex items-center justify-center w-6 h-6 rounded text-emerald-400 hover:bg-emerald-500/10 transition-colors shrink-0 disabled:opacity-50" v-on:click="commit">
+                <Check class="w-3.5 h-3.5" :stroke-width="2.5" />
+            </button>
+            <button type="button" :disabled="saving" class="inline-flex items-center justify-center w-6 h-6 rounded text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0 disabled:opacity-50" v-on:click="cancel">
+                <X class="w-3.5 h-3.5" :stroke-width="2.5" />
+            </button>
+        </div>
     </div>
 </template>

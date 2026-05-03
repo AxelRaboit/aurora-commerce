@@ -3,7 +3,12 @@
 {% block title %}{{ 'admin.nav.invoices'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.invoices'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
+            {label: 'admin.nav.invoices'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}
@@ -16,5 +21,5 @@
     exportXlsxPath: exportXlsxPath,
     importPath: importPath,
     statusOptions: statusOptions,
-}) }} class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-6"></div>
+}) }} class="flex-1 min-w-0"></div>
 {% endblock %}

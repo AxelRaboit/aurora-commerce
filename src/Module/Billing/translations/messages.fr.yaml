@@ -111,8 +111,6 @@ admin:
       upload:
         title: Importer une facture
         help: "Charge une facture (JPG, PNG, WebP ou PDF). Pour un PDF, seule la 1ʳᵉ page est analysée par le modèle vision. Le job est mis en file d'attente et traité par le worker."
-        cta: Choisir un fichier
-        uploading: Envoi…
         success: "Facture envoyée — job #{id} en file d'attente."
         recent: 10 derniers jobs
         allJobs: Tous les jobs

@@ -103,16 +103,16 @@ const refund = useOrderRefund(props.refundPath, order);
 
             <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
-                    <thead class="bg-surface-2 border-b border-line">
-                        <tr>
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.product') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">SKU</th>
                             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.quantity') }}</th>
                             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.subtotal') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-line">
-                        <tr v-for="line in order.lines" :key="line.id">
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="line in order.lines" :key="line.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-4 py-3 text-primary">{{ line.title }}</td>
                             <td class="px-4 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ line.sku ?? '—' }}</td>
                             <td class="px-4 py-3 text-right text-secondary">× {{ line.quantity }}</td>

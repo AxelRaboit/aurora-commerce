@@ -121,16 +121,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.companies.name') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.companies.industry') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.companies.website') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="company in items" :key="company.id" class="hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="company in items" :key="company.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <span class="font-medium text-primary">{{ company.name }}</span>
                         </td>

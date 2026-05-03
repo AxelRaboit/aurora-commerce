@@ -172,8 +172,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
-                <thead class="bg-surface-2 border-b border-line">
-                    <tr>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.name') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.sku') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.erp.products.price') }}</th>
@@ -182,8 +182,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="product in items" :key="product.id" class="hover:bg-surface-2/50 transition-colors">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="product in items" :key="product.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">

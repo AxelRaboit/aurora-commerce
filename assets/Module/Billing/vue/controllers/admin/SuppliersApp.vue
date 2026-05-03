@@ -34,35 +34,31 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="flex-1 max-w-md">
-                <AppSearchInput v-model="search" :placeholder="t('admin.billing.suppliers.searchPlaceholder')" v-on:search="onSearch" />
-            </div>
-        </div>
+        <AppSearchInput v-model="search" :placeholder="t('admin.billing.suppliers.searchPlaceholder')" v-on:search="onSearch" />
 
-        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('admin.billing.suppliers.empty')" />
             <table v-else class="w-full text-sm">
-                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                    <tr>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.suppliers.name') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.suppliers.vatNumber') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.suppliers.registrationNumber') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.suppliers.iban') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.suppliers.email') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.suppliers.country') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.suppliers.registrationNumber') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.suppliers.iban') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.suppliers.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.country') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="supplier in items" :key="supplier.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
-                        <td class="px-4 py-3 text-primary font-medium truncate max-w-xs">{{ supplier.name }}</td>
-                        <td class="px-4 py-3 font-mono text-xs text-secondary">{{ supplier.vatNumber ?? '—' }}</td>
-                        <td class="px-4 py-3 font-mono text-xs text-secondary hidden md:table-cell">{{ supplier.registrationNumber ?? '—' }}</td>
-                        <td class="px-4 py-3 font-mono text-xs text-secondary hidden lg:table-cell">{{ supplier.iban ?? '—' }}</td>
-                        <td class="px-4 py-3 text-secondary hidden md:table-cell truncate max-w-xs">{{ supplier.email ?? '—' }}</td>
-                        <td class="px-4 py-3 text-secondary">{{ supplier.countryCode ?? '—' }}</td>
-                        <td class="px-4 py-3">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="supplier in items" :key="supplier.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ supplier.name }}</td>
+                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ supplier.vatNumber ?? '—' }}</td>
+                        <td class="px-6 py-3 font-mono text-xs text-secondary hidden md:table-cell">{{ supplier.registrationNumber ?? '—' }}</td>
+                        <td class="px-6 py-3 font-mono text-xs text-secondary hidden lg:table-cell">{{ supplier.iban ?? '—' }}</td>
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell truncate max-w-xs">{{ supplier.email ?? '—' }}</td>
+                        <td class="px-6 py-3 text-secondary">{{ supplier.countryCode ?? '—' }}</td>
+                        <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: supplier.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />

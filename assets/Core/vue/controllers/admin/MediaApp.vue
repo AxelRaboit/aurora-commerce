@@ -1148,20 +1148,20 @@ async function moveFolder(folderId, newParentId) {
 
                     <div v-else-if="displayedMedia.length" class="border border-line/60 rounded-xl overflow-hidden">
                         <table class="w-full text-sm">
-                            <thead class="bg-surface-2 text-xs text-muted uppercase">
-                                <tr>
+                            <thead>
+                                <tr class="bg-surface-2/50 border-b border-line/40">
                                     <th v-if="isSelecting" class="w-8 px-3 py-2" />
-                                    <th class="px-3 py-2 text-left">{{ t("admin.media.filename") }}</th>
-                                    <th class="px-3 py-2 text-left hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
-                                    <th class="px-3 py-2 text-right hidden md:table-cell">{{ t("admin.media.size") }}</th>
-                                    <th class="px-3 py-2 text-right w-24">{{ t("shared.common.actions") }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.media.filename") }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
+                                    <th class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.media.size") }}</th>
+                                    <th class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted w-24">{{ t("shared.common.actions") }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-line/40">
                                 <tr
                                     v-for="item in displayedMedia"
                                     :key="item.id"
-                                    class="hover:bg-surface-2 transition-colors cursor-pointer"
+                                    class="group hover:bg-surface-2/40 transition-colors cursor-pointer"
                                     :class="selectedIds.has(item.id) ? 'bg-accent-500/5' : ''"
                                     v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
                                 >

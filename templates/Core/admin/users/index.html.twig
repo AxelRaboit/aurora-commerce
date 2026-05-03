@@ -3,7 +3,11 @@
 {% block title %}{{ 'admin.nav.users'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.users'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.nav.users'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}

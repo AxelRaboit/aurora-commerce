@@ -61,48 +61,47 @@ onMounted(startPolling);
 
 <template>
     <div class="space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppMultiselect
                 v-model="statusFilter"
                 :options="STATUS_SELECT"
                 :placeholder="t('admin.billing.list.allStatuses')"
                 :allow-empty="true"
-                class="sm:max-w-xs"
                 v-on:update:model-value="onStatusChange"
             />
-            <AppButton variant="primary" size="md" :href="importPath" class="sm:ml-auto">
+            <AppButton variant="primary" size="md" :href="importPath">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.billing.ocr.import') }}
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('admin.billing.ocr.empty')" />
             <table v-else class="w-full text-sm">
-                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                    <tr>
-                        <th class="text-left px-4 py-3 font-semibold">#</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.ocr.fileName') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.ocr.statusLabel') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.ocr.model') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">#</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.fileName') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.statusLabel') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.ocr.model') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="job in items" :key="job.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
-                        <td class="px-4 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
-                        <td class="px-4 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
-                        <td class="px-4 py-3">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="job in items" :key="job.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ job.id }}</td>
+                        <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ job.fileName }}</td>
+                        <td class="px-6 py-3">
                             <AppBadge :color="job.statusColor">{{ job.statusLabel }}</AppBadge>
                         </td>
-                        <td class="px-4 py-3 text-secondary tabular-nums hidden md:table-cell">
+                        <td class="px-6 py-3 text-secondary tabular-nums hidden md:table-cell">
                             {{ job.confidence !== null ? Math.round(job.confidence * 100) + '%' : '—' }}
                         </td>
-                        <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ job.modelUsed ?? '—' }}</td>
-                        <td class="px-4 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-6 py-3 text-xs text-muted hidden lg:table-cell">{{ job.modelUsed ?? '—' }}</td>
+                        <td class="px-6 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
+                        <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="`${invoicesPath}?search=${job.id}`">
                                     <Eye class="w-4 h-4" :stroke-width="2" />

@@ -3,7 +3,12 @@
 {% block title %}{{ 'admin.nav.orders'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.orders'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.ecommerce'|trans, href: path('ecommerce_listings')},
+            {label: 'admin.nav.orders'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}

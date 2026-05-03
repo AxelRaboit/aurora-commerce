@@ -3,7 +3,12 @@
 {% block title %}{{ 'admin.nav.galleries'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {title: 'admin.nav.galleries'|trans}) }}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'admin.modules.photo'|trans, href: path('admin_galleries')},
+            {label: 'admin.nav.galleries'|trans},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}

@@ -118,8 +118,6 @@ admin:
       upload:
         title: Rechnung importieren
         help: "Lade eine Rechnung hoch (JPG, PNG, WebP oder PDF). Bei PDFs wird nur die 1. Seite an das Vision-Modell gesendet. Der Job wird in die Warteschlange gestellt und vom Worker verarbeitet."
-        cta: Datei auswählen
-        uploading: Wird hochgeladen…
         success: "Rechnung eingereiht — Job #{id}."
         recent: Letzte 10 Jobs
         allJobs: Alle Jobs

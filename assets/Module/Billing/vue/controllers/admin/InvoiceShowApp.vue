@@ -101,6 +101,16 @@ const { formatDateNumeric } = useDateFormat();
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1 space-y-4">
+                <div v-if="invoice.ocrJob" class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
+                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.ocr') }}</h3>
+                    <dl class="space-y-1.5 text-secondary">
+                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.invoices.show.ocrJob') }}</dt><dd class="text-right">#{{ invoice.ocrJob.id }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.statusLabel') }}</dt><dd class="text-right"><AppBadge :color="invoice.ocrJob.statusColor">{{ invoice.ocrJob.statusLabel }}</AppBadge></dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.model') }}</dt><dd class="text-right text-xs">{{ invoice.ocrJob.modelUsed ?? '—' }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.confidence') }}</dt><dd class="text-right tabular-nums">{{ invoice.ocrJob.confidence !== null ? Math.round(invoice.ocrJob.confidence * 100) + '%' : '—' }}</dd></div>
+                    </dl>
+                </div>
+
                 <div class="bg-surface border border-line/60 rounded-xl p-6">
                     <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.document') }}</h3>
                     <template v-if="invoice.document">
@@ -172,16 +182,6 @@ const { formatDateNumeric } = useDateFormat();
                             <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
                             <dd class="text-primary text-xs"><InlineField :display-value="invoice.supplierFull.address" :raw-value="invoice.supplierFull.address" type="text" v-on:save="updateSupplierField('address', $event)" /></dd>
                         </div>
-                    </dl>
-                </div>
-
-                <div v-if="invoice.ocrJob" class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
-                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.ocr') }}</h3>
-                    <dl class="space-y-1.5 text-secondary">
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.invoices.show.ocrJob') }}</dt><dd class="text-right">#{{ invoice.ocrJob.id }}</dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.statusLabel') }}</dt><dd class="text-right"><AppBadge :color="invoice.ocrJob.statusColor">{{ invoice.ocrJob.statusLabel }}</AppBadge></dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.model') }}</dt><dd class="text-right text-xs">{{ invoice.ocrJob.modelUsed ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.confidence') }}</dt><dd class="text-right tabular-nums">{{ invoice.ocrJob.confidence !== null ? Math.round(invoice.ocrJob.confidence * 100) + '%' : '—' }}</dd></div>
                     </dl>
                 </div>
             </div>
@@ -304,21 +304,21 @@ const { formatDateNumeric } = useDateFormat();
                     <AppNoData v-if="!invoice.lines.length" :message="t('admin.billing.invoices.show.noLines')" />
                     <div v-else class="overflow-x-auto scrollbar-thin">
                         <table class="w-full text-sm">
-                            <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                                <tr>
-                                    <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.show.lineCols.label') }}</th>
-                                    <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.sku') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.show.lineCols.qty') }}</th>
-                                    <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.unit') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.show.lineCols.unitPrice') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.vat') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.show.lineCols.totalNet') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.totalGross') }}</th>
-                                    <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                            <thead>
+                                <tr class="bg-surface-2/50 border-b border-line/40">
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.label') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.sku') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.qty') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.unit') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.unitPrice') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.vat') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.totalNet') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.totalGross') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr v-for="line in invoice.lines" :key="line.id" class="border-t border-line/60">
+                            <tbody class="divide-y divide-line/40">
+                                <tr v-for="line in invoice.lines" :key="line.id" class="group hover:bg-surface-2/40 transition-colors">
                                     <td class="px-4 py-3 text-primary">
                                         <InlineField :display-value="line.label" :raw-value="line.label" type="text" v-on:save="updateLineField(line.id, 'label', $event)" />
                                     </td>

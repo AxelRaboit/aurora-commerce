@@ -375,6 +375,10 @@ front:
       role_changed_label: New role
       role_changed_outro: 'If you did not initiate this change, contact your administrator.'
 shared:
+  dropZone:
+    cta: Choose a file
+    drop: Drop your file here
+    uploading: Uploading…
   mail:
     invitation:
       cta: Activate my account

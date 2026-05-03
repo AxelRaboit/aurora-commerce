@@ -139,34 +139,34 @@ function statusBadgeColor(status) {
             </div>
         </div>
 
-        <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
             <table v-else class="w-full text-sm">
-                <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                    <tr>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.name') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.comments.email') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.comments.post') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.content') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.comments.date') }}</th>
-                        <th class="text-left px-4 py-3 font-semibold">{{ t('admin.comments.status') }}</th>
-                        <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.edit') }}</th>
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.comments.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.comments.post') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.content') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.comments.date') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.status') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.edit') }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="comment in comments" :key="comment.id" class="border-t border-line/60 hover:bg-surface-2/50">
-                        <td class="px-4 py-3 text-primary font-medium whitespace-nowrap">
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="comment in comments" :key="comment.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-6 py-3 text-primary font-medium whitespace-nowrap">
                             {{ comment.authorName }}
                             <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
                         </td>
-                        <td class="px-4 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
-                        <td class="px-4 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
-                        <td class="px-4 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
-                        <td class="px-4 py-3 text-xs text-muted whitespace-nowrap hidden md:table-cell">{{ formatDateShort(comment.createdAt) }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-6 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
+                        <td class="px-6 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
+                        <td class="px-6 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
+                        <td class="px-6 py-3 text-xs text-muted whitespace-nowrap hidden md:table-cell">{{ formatDateShort(comment.createdAt) }}</td>
+                        <td class="px-6 py-3">
                             <AppBadge :color="statusBadgeColor(comment.status)">{{ comment.statusLabel }}</AppBadge>
                         </td>
-                        <td class="px-4 py-3">
+                        <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
