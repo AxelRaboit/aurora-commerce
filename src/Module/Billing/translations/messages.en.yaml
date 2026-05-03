@@ -2,9 +2,9 @@ admin:
   modules:
     billing: Billing
   nav:
-    dashboard: Dashboard
     invoices: Invoices
     suppliers: Suppliers
+    tiers: Third parties
     ocr_import: OCR import
     sections:
       billing: Billing
@@ -18,17 +18,13 @@ admin:
         thisYear: This year
         needsReview: Needs review
         totalInvoices: Total invoices
-      statusBreakdown: Status breakdown
-      topSuppliers: Top suppliers
-      noTopSuppliers: No data yet.
-      needsReviewQueue: Review queue
-      allClear: No pending invoices — all clear.
     invoices:
       searchPlaceholder: "Invoice #, supplier…"
       importOcr: Import (OCR)
       exportXlsx: Export Excel
       empty: No invoices yet.
       deleteConfirm: "Delete invoice {number}?"
+      deleteTiersToo: "Also delete third party \"{name}\" (no other linked invoices)"
       deleted: Invoice deleted.
       deleteError: "Could not delete (DB constraint)."
       number: "#"
@@ -62,6 +58,8 @@ admin:
         cancelledBy: "This invoice is cancelled by credit note"
         cancels: "This credit note cancels invoice"
         buyer: Buyer
+        noBuyer: No buyer identified.
+        numberPending: Generated on validation
         ocr: OCR
         ocrJob: Job
         ocrAnomaly:
@@ -76,24 +74,40 @@ admin:
         lineAdded: Line added.
         lineDeleted: Line deleted.
         fields:
-          number: Invoice #
+          number: Internal ref.
+          supplierNumber: Supplier invoice #
           purchaseOrder: PO #
           issuedAt: Issued at
           dueAt: Due at
           paymentMethod: Payment method
           paymentTerms: Payment terms
+          subtotal: Subtotal
           totalNet: Net total
           totalVat: VAT
           totalGross: Gross total
+          discount: Global discount
+          freight: Freight
+          insurance: Insurance
+          discountRate: Discount rate
+          reference: Internal reference
+          project: Project code
+          incoterms: Incoterms
+          deliveryDate: Delivery date
+          reverseCharge: Reverse charge VAT
+          bankDetails: Bank details
         lineCols:
           label: Label
-          sku: SKU
+          reference: Article ref.
+          description: Description
+          productCode: Product code
           qty: Qty
           unit: Unit
           unitPrice: Unit price
+          discount: Discount
           vat: VAT
           totalNet: Net total
           totalGross: Gross total
+          origin: Origin
       update:
         locked: This invoice can no longer be edited.
         unknownField: Unknown field.
@@ -117,6 +131,27 @@ admin:
       iban: IBAN
       email: Email
       country: Country
+      website: Website
+      legalForm: Legal form
+      bankName: Bank name
+      notes: Internal notes
+    tiers:
+      searchPlaceholder: "Name, VAT #…"
+      empty: No third parties found.
+      allTypes: All types
+      deleteConfirm: "Delete third party \"{name}\"?"
+      deleted: Third party deleted.
+      deleteError: "Could not delete (DB constraint)."
+      update:
+        unknownField: Unknown field.
+        fieldRequired: Field required.
+      type:
+        label: Type
+        supplier: Supplier
+        client: Client
+        partner: Partner
+        subcontractor: Subcontractor
+        other: Other
     compliance:
       title: Compliance
       overall:

@@ -27,16 +27,25 @@ class Invoice
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_invoice_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $number = null;
 
-    #[ORM\ManyToOne(targetEntity: Supplier::class)]
+    /** Invoice number as printed on the supplier's document (extracted by OCR). */
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $supplierNumber = null;
+
+    #[ORM\ManyToOne(targetEntity: Tiers::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Supplier $supplier = null;
+    private ?Tiers $tiers = null;
+
+    #[ORM\ManyToOne(targetEntity: Tiers::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Tiers $buyerTiers = null;
 
     #[ORM\Column(length: 16, enumType: InvoiceStatusEnum::class, options: ['default' => 'draft'])]
     private InvoiceStatusEnum $status = InvoiceStatusEnum::Draft;
@@ -54,6 +63,9 @@ class Invoice
     private CurrencyEnum $currency = CurrencyEnum::EUR;
 
     #[ORM\Column(nullable: true)]
+    private ?int $subtotalCents = null;
+
+    #[ORM\Column(nullable: true)]
     private ?int $totalNetCents = null;
 
     #[ORM\Column(nullable: true)]
@@ -61,6 +73,36 @@ class Invoice
 
     #[ORM\Column(nullable: true)]
     private ?int $totalGrossCents = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $discountCents = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $freightCents = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $insuranceCents = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $discountRateBp = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $reference = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $project = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $incoterms = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $deliveryDate = null;
+
+    #[ORM\Column(nullable: true, options: ['default' => false])]
+    private ?bool $reverseCharge = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $bankDetails = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $purchaseOrderRef = null;
@@ -73,18 +115,6 @@ class Invoice
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $buyerName = null;
-
-    #[ORM\Column(length: 50, nullable: true)]
-    private ?string $buyerVatNumber = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $buyerAddress = null;
-
-    #[ORM\Column(length: 2, nullable: true)]
-    private ?string $buyerCountryCode = null;
 
     /** The credit note (avoir) that cancels this invoice. Null if not cancelled. */
     #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'cancelledInvoice')]
@@ -160,14 +190,38 @@ class Invoice
         return $this;
     }
 
-    public function getSupplier(): ?Supplier
+    public function getSupplierNumber(): ?string
     {
-        return $this->supplier;
+        return $this->supplierNumber;
     }
 
-    public function setSupplier(?Supplier $supplier): self
+    public function setSupplierNumber(?string $supplierNumber): self
     {
-        $this->supplier = $supplier;
+        $this->supplierNumber = $supplierNumber;
+
+        return $this;
+    }
+
+    public function getTiers(): ?Tiers
+    {
+        return $this->tiers;
+    }
+
+    public function setTiers(?Tiers $tiers): self
+    {
+        $this->tiers = $tiers;
+
+        return $this;
+    }
+
+    public function getBuyerTiers(): ?Tiers
+    {
+        return $this->buyerTiers;
+    }
+
+    public function setBuyerTiers(?Tiers $buyerTiers): self
+    {
+        $this->buyerTiers = $buyerTiers;
 
         return $this;
     }
@@ -268,6 +322,138 @@ class Invoice
         return $this;
     }
 
+    public function getSubtotalCents(): ?int
+    {
+        return $this->subtotalCents;
+    }
+
+    public function setSubtotalCents(?int $subtotalCents): self
+    {
+        $this->subtotalCents = $subtotalCents;
+
+        return $this;
+    }
+
+    public function getDiscountCents(): ?int
+    {
+        return $this->discountCents;
+    }
+
+    public function setDiscountCents(?int $discountCents): self
+    {
+        $this->discountCents = $discountCents;
+
+        return $this;
+    }
+
+    public function getFreightCents(): ?int
+    {
+        return $this->freightCents;
+    }
+
+    public function setFreightCents(?int $freightCents): self
+    {
+        $this->freightCents = $freightCents;
+
+        return $this;
+    }
+
+    public function getInsuranceCents(): ?int
+    {
+        return $this->insuranceCents;
+    }
+
+    public function setInsuranceCents(?int $insuranceCents): self
+    {
+        $this->insuranceCents = $insuranceCents;
+
+        return $this;
+    }
+
+    public function getDiscountRateBp(): ?int
+    {
+        return $this->discountRateBp;
+    }
+
+    public function setDiscountRateBp(?int $discountRateBp): self
+    {
+        $this->discountRateBp = $discountRateBp;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): self
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getProject(): ?string
+    {
+        return $this->project;
+    }
+
+    public function setProject(?string $project): self
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    public function getIncoterms(): ?string
+    {
+        return $this->incoterms;
+    }
+
+    public function setIncoterms(?string $incoterms): self
+    {
+        $this->incoterms = $incoterms;
+
+        return $this;
+    }
+
+    public function getDeliveryDate(): ?DateTimeImmutable
+    {
+        return $this->deliveryDate;
+    }
+
+    public function setDeliveryDate(?DateTimeImmutable $deliveryDate): self
+    {
+        $this->deliveryDate = $deliveryDate;
+
+        return $this;
+    }
+
+    public function getReverseCharge(): ?bool
+    {
+        return $this->reverseCharge;
+    }
+
+    public function setReverseCharge(?bool $reverseCharge): self
+    {
+        $this->reverseCharge = $reverseCharge;
+
+        return $this;
+    }
+
+    public function getBankDetails(): ?string
+    {
+        return $this->bankDetails;
+    }
+
+    public function setBankDetails(?string $bankDetails): self
+    {
+        $this->bankDetails = $bankDetails;
+
+        return $this;
+    }
+
     public function getPurchaseOrderRef(): ?string
     {
         return $this->purchaseOrderRef;
@@ -312,54 +498,6 @@ class Invoice
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
-
-        return $this;
-    }
-
-    public function getBuyerName(): ?string
-    {
-        return $this->buyerName;
-    }
-
-    public function setBuyerName(?string $buyerName): self
-    {
-        $this->buyerName = $buyerName;
-
-        return $this;
-    }
-
-    public function getBuyerVatNumber(): ?string
-    {
-        return $this->buyerVatNumber;
-    }
-
-    public function setBuyerVatNumber(?string $buyerVatNumber): self
-    {
-        $this->buyerVatNumber = $buyerVatNumber;
-
-        return $this;
-    }
-
-    public function getBuyerAddress(): ?string
-    {
-        return $this->buyerAddress;
-    }
-
-    public function setBuyerAddress(?string $buyerAddress): self
-    {
-        $this->buyerAddress = $buyerAddress;
-
-        return $this;
-    }
-
-    public function getBuyerCountryCode(): ?string
-    {
-        return $this->buyerCountryCode;
-    }
-
-    public function setBuyerCountryCode(?string $buyerCountryCode): self
-    {
-        $this->buyerCountryCode = $buyerCountryCode;
 
         return $this;
     }

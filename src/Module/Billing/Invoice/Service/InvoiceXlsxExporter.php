@@ -30,8 +30,8 @@ final readonly class InvoiceXlsxExporter
         'ID',
         'Numéro',
         'Statut',
-        'Fournisseur',
-        'N° TVA fournisseur',
+        'Tiers',
+        'N° TVA',
         'Émise le',
         'Échéance',
         'Devise',
@@ -106,14 +106,14 @@ final readonly class InvoiceXlsxExporter
 
     private function writeInvoice(Worksheet $sheet, int $row, Invoice $invoice): void
     {
-        $supplier = $invoice->getSupplier();
+        $tiers = $invoice->getTiers();
         $currency = $invoice->getCurrency()->value;
 
         $sheet->setCellValue('A'.$row, $invoice->getId());
         $sheet->setCellValue('B'.$row, $invoice->getNumber() ?? '');
         $sheet->setCellValue('C'.$row, $invoice->getStatus()->value);
-        $sheet->setCellValue('D'.$row, $supplier?->getName() ?? '');
-        $sheet->setCellValue('E'.$row, $supplier?->getVatNumber() ?? '');
+        $sheet->setCellValue('D'.$row, $tiers?->getName() ?? '');
+        $sheet->setCellValue('E'.$row, $tiers?->getVatNumber() ?? '');
         $sheet->setCellValue('F'.$row, $invoice->getIssuedAt()?->format('Y-m-d') ?? '');
         $sheet->setCellValue('G'.$row, $invoice->getDueAt()?->format('Y-m-d') ?? '');
         $sheet->setCellValue('H'.$row, $currency);

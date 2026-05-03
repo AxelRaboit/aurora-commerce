@@ -13,7 +13,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { Plus, Eye, Trash2, Download } from "lucide-vue-next";
+import { Plus, Eye, Trash2, Download, Calendar, TrendingUp, AlertCircle, FileText } from "lucide-vue-next";
 import { formatCents } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
@@ -21,6 +21,7 @@ const { t } = useI18n();
 
 const props = defineProps({
     invoices: { type: Object, default: () => ({}) },
+    stats: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
     listPath: { type: String, required: true },
     showPath: { type: String, required: true },
@@ -77,6 +78,37 @@ const { formatDateNumeric } = useDateFormat();
 
 <template>
     <div class="space-y-4">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-surface border border-line/60 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.thisMonth') }}</p>
+                    <Calendar class="w-4 h-4 text-muted" :stroke-width="2" />
+                </div>
+                <p class="text-xl font-semibold text-primary tabular-nums">{{ formatCents(stats.monthGrossCents) }}</p>
+            </div>
+            <div class="bg-surface border border-line/60 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.thisYear') }}</p>
+                    <TrendingUp class="w-4 h-4 text-muted" :stroke-width="2" />
+                </div>
+                <p class="text-xl font-semibold text-primary tabular-nums">{{ formatCents(stats.yearGrossCents) }}</p>
+            </div>
+            <div class="bg-surface border border-line/60 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.needsReview') }}</p>
+                    <AlertCircle class="w-4 h-4 text-muted" :stroke-width="2" />
+                </div>
+                <p class="text-xl font-semibold text-primary tabular-nums">{{ stats.needsReviewCount }}</p>
+            </div>
+            <div class="bg-surface border border-line/60 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.totalInvoices') }}</p>
+                    <FileText class="w-4 h-4 text-muted" :stroke-width="2" />
+                </div>
+                <p class="text-xl font-semibold text-primary tabular-nums">{{ stats.totalInvoices }}</p>
+            </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
             <div class="flex-1">
                 <AppSearchInput v-model="search" :placeholder="t('admin.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
@@ -132,7 +164,7 @@ const { formatDateNumeric } = useDateFormat();
                                 <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="goToInvoice(invoice.id)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(invoice)">
+                                <AppIconButton v-if="invoice.isDeletable" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(invoice)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

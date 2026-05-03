@@ -283,7 +283,7 @@ All        →  Core
 Modules **must not** depend upward (e.g. ERP must not import Ecommerce). When two
 modules need the same concept, the lower module owns the canonical entity:
 
-- `Erp\Product` is the source of truth for inventory (SKU, cost, stock, suppliers).
+- `Erp\Product` is the source of truth for inventory (reference, cost, stock, suppliers).
 - `Ecommerce\Listing` (planned) references an `Erp\Product` and adds shop-only fields:
   slug, marketing description, gallery, `isVisibleOnShop`, public price, SEO. ERP
   products that aren't sold online simply have no `Listing`.

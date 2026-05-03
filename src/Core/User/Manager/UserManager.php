@@ -7,6 +7,10 @@ namespace Aurora\Core\User\Manager;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\InvitationManager;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -30,6 +34,8 @@ final readonly class UserManager implements UserManagerInterface
         private InvitationManager $invitationManager,
         private UrlGeneratorInterface $urlGenerator,
         private EmailVerificationManager $emailVerificationManager,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -40,6 +46,9 @@ final readonly class UserManager implements UserManagerInterface
         $user->setType(UserTypeEnum::Admin);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
         $user->setRoles($isAdmin ? [UserRoleEnum::Admin->value] : []);
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
+        $user->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -56,6 +65,9 @@ final readonly class UserManager implements UserManagerInterface
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
         $user->setRoles([UserRoleEnum::Admin->value]);
         $user->setStatus(UserStatusEnum::PendingVerification);
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
+        $user->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -218,6 +230,9 @@ final readonly class UserManager implements UserManagerInterface
         $user->setStatus(UserStatusEnum::Invited);
         $user->setLocale(LocaleEnum::French);
         $user->setPassword($this->passwordHasher->hashPassword($user, bin2hex(random_bytes(24))));
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
+        $user->setReference($this->sequenceGenerator->next($prefix));
 
         $plainToken = $this->prepareInvitationToken($user);
 

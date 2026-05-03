@@ -15,6 +15,10 @@ use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\ImageVariantGenerator;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +46,8 @@ final readonly class MediaManager implements MediaManagerInterface
         private Security $security,
         private AuditLogger $auditLogger,
         private Filesystem $filesystem,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
         #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
@@ -64,6 +70,8 @@ final readonly class MediaManager implements MediaManagerInterface
 
         [$width, $height] = @getimagesize(Path::join($this->uploadDir, $relativePath)) ?: [null, null];
 
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreMediaPrefix->value, SequencePrefixEnum::Media->value) ?? SequencePrefixEnum::Media->value;
+
         $media = new Media();
         $media->setFilename($newFilename);
         $media->setOriginalName($clientName);
@@ -74,6 +82,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $media->setHeight($height);
         $media->setFolder($folder);
         $media->setVariants($this->variantGenerator->generate($relativePath, (string) $mimeType));
+        $media->setReference($this->sequenceGenerator->next($prefix));
 
         $user = $this->security->getUser();
         if ($user instanceof User) {
@@ -147,6 +156,9 @@ final readonly class MediaManager implements MediaManagerInterface
 
             $folder->setParent($parent);
         }
+
+        $folderPrefix = $this->settingRepository->get(ApplicationParameterEnum::CoreMediaFolderPrefix->value, SequencePrefixEnum::MediaFolder->value) ?? SequencePrefixEnum::MediaFolder->value;
+        $folder->setReference($this->sequenceGenerator->next($folderPrefix));
 
         $this->entityManager->persist($folder);
         $this->entityManager->flush();

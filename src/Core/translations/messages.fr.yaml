@@ -296,6 +296,7 @@ admin:
       seo: SEO
       system: Système
       email: Emails
+      sequences: Séquences
       modules: Modules
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: "Recommandé : image carrée (1:1)."
@@ -458,6 +459,8 @@ shared:
       back: Retour à l'accueil
   common:
     pagination: 'Page {page} sur {totalPages}'
+    yes: Oui
+    no: Non
   pagination:
     previous: Précédent
     next: Suivant

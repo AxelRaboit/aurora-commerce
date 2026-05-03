@@ -23,6 +23,8 @@ final readonly class OcrJobSerializer
         return [
             'id' => $job->getId(),
             'fileName' => $job->getMedia()->getOriginalName(),
+            'mediaUrl' => $job->getMedia()->getPublicUrl(),
+            'mediaMime' => $job->getMedia()->getMimeType(),
             'status' => $status->value,
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),

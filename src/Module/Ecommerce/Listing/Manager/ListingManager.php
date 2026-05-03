@@ -6,6 +6,10 @@ namespace Aurora\Module\Ecommerce\Listing\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
 use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
@@ -26,6 +30,8 @@ final readonly class ListingManager implements ListingManagerInterface
         private MediaRepository $mediaRepository,
         private AuditLogger $auditLogger,
         private TranslatorInterface $translator,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function create(ListingInput $input): Listing
@@ -37,13 +43,16 @@ final readonly class ListingManager implements ListingManagerInterface
         $listing = new Listing();
         $listing->setProduct($product);
         $this->applyInput($listing, $input);
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceListingPrefix->value, SequencePrefixEnum::Listing->value) ?? SequencePrefixEnum::Listing->value;
+        $listing->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($listing);
         $this->entityManager->flush();
 
         $this->auditLogger->log('ecommerce', 'listing.created', 'Listing', $listing->getId(), [
             'slug' => $listing->getSlug(),
-            'productSku' => $product->getSku(),
+            'reference' => $listing->getReference(),
+            'productReference' => $product->getReference(),
         ]);
 
         return $listing;

@@ -23,6 +23,7 @@ import {
     TrendingUp,
     Globe,
     Shield,
+    ShieldCheck,
     LogOut,
     Mail,
     Moon,
@@ -44,6 +45,12 @@ import {
     Map as MapIcon,
     Filter,
     Clock,
+    Receipt,
+    ScanLine,
+    Briefcase,
+    Camera,
+    ShoppingCart,
+    Gauge,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
@@ -69,6 +76,13 @@ const ICON_MAP = {
     "package": Package,
     "shopping-bag": ShoppingBag,
     "map": MapIcon,
+    "receipt": Receipt,
+    "scan-line": ScanLine,
+    "briefcase": Briefcase,
+    "shield-check": ShieldCheck,
+    "camera": Camera,
+    "shopping-cart": ShoppingCart,
+    "gauge": Gauge,
 };
 
 const props = defineProps({

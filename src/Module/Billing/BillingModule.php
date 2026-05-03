@@ -27,8 +27,8 @@ final readonly class BillingModule implements ModuleInterface
             new NavPermission('billing.invoices.create', UserRoleEnum::Editor->value),
             new NavPermission('billing.invoices.edit', UserRoleEnum::Editor->value),
             new NavPermission('billing.invoices.delete', UserRoleEnum::Admin->value),
-            new NavPermission('billing.suppliers.view', UserRoleEnum::Editor->value),
-            new NavPermission('billing.suppliers.manage', UserRoleEnum::Editor->value),
+            new NavPermission('billing.tiers.view', UserRoleEnum::Editor->value),
+            new NavPermission('billing.tiers.manage', UserRoleEnum::Editor->value),
             new NavPermission('billing.ocr.import', UserRoleEnum::Editor->value),
         ];
     }
@@ -41,11 +41,10 @@ final readonly class BillingModule implements ModuleInterface
 
         return [
             new NavSection('billing', [
-                new NavItem('billing_dashboard', 'admin.nav.dashboard', 'gauge', UserRoleEnum::Editor->value),
                 new NavItem(
                     'billing_invoices',
                     'admin.nav.invoices',
-                    'file-text',
+                    'receipt',
                     UserRoleEnum::Editor->value,
                     children: [
                         new NavItem(
@@ -57,7 +56,7 @@ final readonly class BillingModule implements ModuleInterface
                         ),
                     ],
                 ),
-                new NavItem('billing_suppliers', 'admin.nav.suppliers', 'briefcase', UserRoleEnum::Editor->value),
+                new NavItem('billing_tiers', 'admin.nav.tiers', 'users', UserRoleEnum::Editor->value),
                 new NavItem('billing_compliance', 'admin.billing.compliance.title', 'shield-check', UserRoleEnum::Admin->value),
             ], priority: 55),
         ];

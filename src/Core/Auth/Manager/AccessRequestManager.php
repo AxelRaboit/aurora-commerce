@@ -7,6 +7,8 @@ namespace Aurora\Core\Auth\Manager;
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use DateTimeImmutable;
@@ -30,13 +32,17 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
         private TranslatorInterface $translator,
         private string $adminEmail,
         private string $mailerFrom,
+        private SequenceGenerator $sequenceGenerator,
     ) {}
 
     public function create(string $email, ?string $name, ?string $message): AccessRequest
     {
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreAccessRequestPrefix->value, SequencePrefixEnum::AccessRequest->value) ?? SequencePrefixEnum::AccessRequest->value;
+
         $request = new AccessRequest($email, new DateTimeImmutable('+48 hours'));
         $request->setRequesterName($name ?: null);
         $request->setMessage($message ?: null);
+        $request->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($request);
         $this->entityManager->flush();

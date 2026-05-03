@@ -116,7 +116,7 @@ function broadcastCartChange(count) {
 
                 <div class="flex-1 min-w-0">
                     <p class="font-medium text-primary truncate">{{ item.title }}</p>
-                    <p class="text-xs font-mono text-muted">{{ item.sku }}</p>
+                    <p class="text-xs font-mono text-muted">{{ item.reference }}</p>
                     <p class="text-sm text-secondary mt-1">{{ formatMoney(item.unitPrice, item.currencySymbol) }}</p>
                 </div>
 

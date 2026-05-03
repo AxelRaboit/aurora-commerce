@@ -49,7 +49,7 @@ final readonly class ListingSerializer
             'product' => [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
-                'sku' => $product->getSku(),
+                'reference' => $product->getReference(),
                 'price' => null === $priceCents ? null : $priceCents / (10 ** $currency->decimals()),
                 'priceCents' => $priceCents,
                 'currency' => $currency->value,

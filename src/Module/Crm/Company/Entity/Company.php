@@ -17,9 +17,13 @@ class Company
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_company_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    private ?string $reference = null;
 
     #[ORM\Column(length: 150)]
     private string $name;
@@ -112,6 +116,18 @@ class Company
     public function setNotes(?string $notes): static
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
 
         return $this;
     }

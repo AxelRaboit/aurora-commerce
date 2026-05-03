@@ -13,7 +13,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Eye, Trash2, RotateCcw, Info, FileText, ScrollText, LayoutList } from "lucide-vue-next";
+import { Eye, Trash2, RotateCcw, FileText, ScrollText, LayoutList } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isPdfMimeType, isImageMimeType } from "@core/utils/enums/media/mimeType.js";
 import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
@@ -47,7 +47,24 @@ const { start: startPolling, retry: retryJob, hasInvoice } = useOcrJobs(jobs, {
 });
 
 // ── Previews ─────────────────────────────────────────────────────────────────
-// Each entry: { key: number, url: string, mime: string, jobId: number|null }
+// Each entry: { key: number, url: string, mime: string, jobId: number|null, isBlob: boolean }
+const PREVIEW_STORE_KEY = 'aurora-ocr-previews';
+
+function loadPersistedPreviews() {
+    try {
+        return JSON.parse(localStorage.getItem(PREVIEW_STORE_KEY) ?? '[]');
+    } catch {
+        return [];
+    }
+}
+
+function persistPreviews(list) {
+    const toStore = list
+        .filter(p => p.jobId !== null && !p.isBlob)
+        .map(({ jobId, url, mime }) => ({ jobId, url, mime }));
+    localStorage.setItem(PREVIEW_STORE_KEY, JSON.stringify(toStore));
+}
+
 const previews = ref([]);
 const scanFlashes = ref({}); // { [jobId]: 'success' | 'error' }
 const flashedJobIds = new Set();
@@ -74,6 +91,9 @@ watch(jobs, (newJobs) => {
             setTimeout(() => {
                 const { [id]: _, ...rest } = scanFlashes.value;
                 scanFlashes.value = rest;
+                // Remove terminal job from persistence
+                const stored = loadPersistedPreviews().filter(p => p.jobId !== id);
+                localStorage.setItem(PREVIEW_STORE_KEY, JSON.stringify(stored));
             }, 1200);
         }
     }
@@ -81,19 +101,22 @@ watch(jobs, (newJobs) => {
 
 function removePreview(key) {
     const p = previews.value.find(p => p.key === key);
-    if (p) URL.revokeObjectURL(p.url);
+    if (p?.isBlob) URL.revokeObjectURL(p.url);
     previews.value = previews.value.filter(p => p.key !== key);
+    persistPreviews(previews.value);
 }
 
 onUnmounted(() => {
-    for (const p of previews.value) URL.revokeObjectURL(p.url);
+    for (const p of previews.value) {
+        if (p.isBlob) URL.revokeObjectURL(p.url);
+    }
 });
 
 // ── Upload ────────────────────────────────────────────────────────────────────
 async function onFileSelected(file) {
     if (!file) return;
 
-    const preview = { key: Date.now(), url: URL.createObjectURL(file), mime: file.type, jobId: null };
+    const preview = { key: Date.now(), url: URL.createObjectURL(file), mime: file.type, jobId: null, isBlob: true };
     previews.value = [...previews.value, preview];
 
     uploadingCount.value++;
@@ -109,7 +132,14 @@ async function onFileSelected(file) {
         }
         toast.success(t("admin.billing.ocr.upload.success", { id: data.job.id }));
         jobs.value = [data.job, ...jobs.value].slice(0, 10);
-        previews.value = previews.value.map(p => p.key === preview.key ? { ...p, jobId: data.job.id } : p);
+        // Switch blob URL → persistent server URL so refresh can restore it
+        URL.revokeObjectURL(preview.url);
+        previews.value = previews.value.map(p =>
+            p.key === preview.key
+                ? { ...p, url: data.job.mediaUrl, mime: data.job.mediaMime, jobId: data.job.id, isBlob: false }
+                : p
+        );
+        persistPreviews(previews.value);
         startPolling();
     } catch {
         toast.error(t("shared.common.error"));
@@ -119,12 +149,25 @@ async function onFileSelected(file) {
     }
 }
 
-onMounted(startPolling);
+onMounted(() => {
+    // Restore previews for jobs that are still active (non-terminal) after a refresh
+    const stored = loadPersistedPreviews();
+    const activeJobIds = new Set(jobs.value.filter(j => !j.isTerminal).map(j => j.id));
+    const restored = stored
+        .filter(({ jobId }) => activeJobIds.has(jobId))
+        .map(({ jobId, url, mime }) => ({ key: jobId, url, mime, jobId, isBlob: false }));
+    if (restored.length) previews.value = restored;
+
+    // Drop stale entries (jobs now terminal or gone)
+    const stillActive = stored.filter(({ jobId }) => activeJobIds.has(jobId));
+    localStorage.setItem(PREVIEW_STORE_KEY, JSON.stringify(stillActive));
+
+    startPolling();
+});
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 const pendingDelete = ref(null);
 const deleteLoading = ref(false);
-const errorJob = ref(null);
 const logsJob = ref(null);
 
 // Keep logsJob in sync with polling updates
@@ -218,7 +261,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                                 <div class="absolute bottom-2 inset-x-0 flex justify-center">
                                     <span class="inline-flex items-center gap-1.5 bg-black/55 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm font-medium">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                                        {{ getPreviewJob(preview.jobId)?.statusLabel }}{{ getPreviewJob(preview.jobId)?.progress !== null ? ` · ${getPreviewJob(preview.jobId)?.progress}%` : '' }}
+                                        {{ getPreviewJob(preview.jobId)?.statusLabel }}
                                     </span>
                                 </div>
                             </template>
@@ -262,14 +305,11 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                             <td class="px-6 py-3 text-xs text-muted hidden md:table-cell">{{ formatDateTime(job.createdAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
+                                    <AppIconButton v-if="hasInvoice(job) && job.isTerminal" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="!job.isTerminal || (job.logs && job.logs.length)" color="slate" :title="t('admin.billing.ocr.viewLogs')" v-on:click="logsJob = job">
+                                    <AppIconButton v-if="!job.isTerminal || (job.logs && job.logs.length) || job.error" color="slate" :title="t('admin.billing.ocr.viewLogs')" v-on:click="logsJob = job">
                                         <ScrollText class="w-4 h-4" :stroke-width="2" />
-                                    </AppIconButton>
-                                    <AppIconButton v-if="job.status === OcrJobStatus.Failed" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
-                                        <Info class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
                                     <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
                                         <RotateCcw class="w-4 h-4" :stroke-width="2" />
@@ -300,6 +340,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                         <span class="w-5 h-5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
                         <span>{{ t('admin.billing.ocr.logsStarting') }}</span>
                     </div>
+                    <pre v-else-if="logsJob?.error" class="text-rose-400 text-xs whitespace-pre-wrap break-all">{{ logsJob.error }}</pre>
                     <div v-else class="text-muted italic text-center py-8">{{ t('admin.billing.ocr.logsEmpty') }}</div>
                 </template>
                 <div
@@ -323,14 +364,6 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             </div>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="logsJob = null">{{ t('shared.common.close') }}</AppButton>
-            </AppModalFooter>
-        </AppModal>
-
-        <AppModal :show="!!errorJob" max-width="md" v-on:close="errorJob = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>
-            <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('admin.billing.ocr.noErrorLog') }}</pre>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="errorJob = null">{{ t('shared.common.close') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 

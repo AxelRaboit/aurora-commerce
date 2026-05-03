@@ -17,9 +17,13 @@ class Media implements TimestampableInterface
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_media_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    private ?string $reference = null;
 
     #[ORM\Column(length: 255)]
     private string $filename;
@@ -72,6 +76,18 @@ class Media implements TimestampableInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
     }
 
     public function getFilename(): string

@@ -21,6 +21,14 @@ enum InvoiceStatusEnum: string
         };
     }
 
+    public function isDeletable(): bool
+    {
+        return match ($this) {
+            self::Draft, self::NeedsReview => true,
+            default => false,
+        };
+    }
+
     public function canHaveCreditNote(): bool
     {
         return match ($this) {

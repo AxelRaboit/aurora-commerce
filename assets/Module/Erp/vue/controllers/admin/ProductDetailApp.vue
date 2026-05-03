@@ -57,7 +57,7 @@ const product = ref({ ...props.product });
 const showEdit = ref(false);
 const editForm = ref({
     name: product.value.name,
-    sku: product.value.sku ?? "",
+    reference: product.value.reference ?? "",
     description: product.value.description ?? "",
     price: product.value.price ?? "",
     currency: product.value.currency ?? DEFAULT_CURRENCY,
@@ -74,7 +74,7 @@ async function submitEdit() {
 
     const data = await editRequest(props.updatePath, {
         name: editForm.value.name,
-        sku: editForm.value.sku,
+        reference: editForm.value.reference,
         description: editForm.value.description,
         price: editForm.value.price === "" ? null : editForm.value.price,
         currency: editForm.value.currency,
@@ -122,7 +122,7 @@ const actionLabel = (action) => {
                         </div>
                         <div class="min-w-0">
                             <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ product.name }}</h2>
-                            <p class="text-xs font-mono text-muted mt-0.5 break-all">{{ product.sku }}</p>
+                            <p class="text-xs font-mono text-muted mt-0.5 break-all">{{ product.reference }}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between sm:justify-end gap-2 sm:shrink-0">
@@ -192,10 +192,10 @@ const actionLabel = (action) => {
                 />
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
-                        v-model="editForm.sku"
-                        :label="t('admin.erp.products.sku')"
-                        :placeholder="t('admin.erp.products.skuAutoPlaceholder')"
-                        :error="editErrors.sku"
+                        v-model="editForm.reference"
+                        :label="t('admin.erp.products.reference')"
+                        :placeholder="t('admin.erp.products.referenceAutoPlaceholder')"
+                        :error="editErrors.reference"
                     />
                     <AppSelect v-model="editForm.status" :label="t('admin.erp.products.statusLabel')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label() }}</option>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use DateTimeImmutable;
@@ -21,8 +22,10 @@ class InvoiceRepository extends ServiceEntityRepository
 {
     use PaginationTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SequenceGenerator $sequenceGenerator,
+    ) {
         parent::__construct($registry, Invoice::class);
     }
 
@@ -36,7 +39,7 @@ class InvoiceRepository extends ServiceEntityRepository
     public function findAllMatching(?string $search, ?InvoiceStatusEnum $status): iterable
     {
         $queryBuilder = $this->createQueryBuilder('i')
-            ->leftJoin('i.supplier', 's')->addSelect('s')
+            ->leftJoin('i.tiers', 's')->addSelect('s')
             ->addSelect('CASE WHEN i.status = :priorityStatus THEN 0 ELSE 1 END AS HIDDEN status_priority')
             ->setParameter('priorityStatus', InvoiceStatusEnum::NeedsReview)
             ->orderBy('status_priority', Order::Ascending->value)
@@ -61,16 +64,16 @@ class InvoiceRepository extends ServiceEntityRepository
         int $limit = 20,
         ?string $search = null,
         ?InvoiceStatusEnum $status = null,
-        ?int $supplierId = null,
+        ?int $tiersId = null,
     ): array {
         $queryBuilder = $this->createQueryBuilder('i')
-            ->leftJoin('i.supplier', 's')->addSelect('s')
+            ->leftJoin('i.tiers', 's')->addSelect('s')
             ->addSelect('CASE WHEN i.status = :priorityStatus THEN 0 ELSE 1 END AS HIDDEN status_priority')
             ->setParameter('priorityStatus', InvoiceStatusEnum::NeedsReview)
             ->orderBy('status_priority', Order::Ascending->value)
             ->addOrderBy('i.issuedAt', Order::Descending->value)
             ->addOrderBy('i.id', Order::Descending->value);
-        $countQueryBuilder = $this->createQueryBuilder('i')->select('COUNT(i.id)')->leftJoin('i.supplier', 's');
+        $countQueryBuilder = $this->createQueryBuilder('i')->select('COUNT(i.id)')->leftJoin('i.tiers', 's');
 
         if (null !== $search && '' !== $search) {
             $pattern = '%'.mb_strtolower($search).'%';
@@ -85,33 +88,33 @@ class InvoiceRepository extends ServiceEntityRepository
             $countQueryBuilder->andWhere('i.status = :status')->setParameter('status', $status);
         }
 
-        if (null !== $supplierId) {
-            $queryBuilder->andWhere('s.id = :supplierId')->setParameter('supplierId', $supplierId);
-            $countQueryBuilder->andWhere('s.id = :supplierId')->setParameter('supplierId', $supplierId);
+        if (null !== $tiersId) {
+            $queryBuilder->andWhere('s.id = :tiersId')->setParameter('tiersId', $tiersId);
+            $countQueryBuilder->andWhere('s.id = :tiersId')->setParameter('tiersId', $tiersId);
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
     }
 
-    /** Sum of total_gross_cents over all non-draft invoices linked to a supplier. */
-    public function sumGrossForSupplier(int $supplierId): int
+    /** Sum of total_gross_cents over all non-draft invoices linked to a tiers. */
+    public function sumGrossForTiers(int $tiersId): int
     {
         return (int) $this->createQueryBuilder('i')
             ->select('COALESCE(SUM(i.totalGrossCents), 0)')
-            ->andWhere('IDENTITY(i.supplier) = :supplierId')
+            ->andWhere('IDENTITY(i.tiers) = :tiersId')
             ->andWhere('i.status != :draft')
-            ->setParameter('supplierId', $supplierId)
+            ->setParameter('tiersId', $tiersId)
             ->setParameter('draft', InvoiceStatusEnum::Draft)
             ->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function countForSupplier(int $supplierId): int
+    public function countForTiers(int $tiersId): int
     {
         return (int) $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
-            ->andWhere('IDENTITY(i.supplier) = :supplierId')
-            ->setParameter('supplierId', $supplierId)
+            ->andWhere('IDENTITY(i.tiers) = :tiersId')
+            ->setParameter('tiersId', $tiersId)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -134,13 +137,13 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return list<array{supplierId: int, supplierName: string, total: int}>
+     * @return list<array{tiersId: int, tiersName: string, total: int}>
      */
-    public function topSuppliers(int $limit = 5): array
+    public function topTiers(int $limit = 5): array
     {
         $rows = $this->createQueryBuilder('i')
-            ->select('s.id AS supplierId, s.name AS supplierName, SUM(i.totalGrossCents) AS total')
-            ->innerJoin('i.supplier', 's')
+            ->select('s.id AS tiersId, s.name AS tiersName, SUM(i.totalGrossCents) AS total')
+            ->innerJoin('i.tiers', 's')
             ->andWhere('i.status != :draft')
             ->andWhere('i.totalGrossCents IS NOT NULL')
             ->setParameter('draft', InvoiceStatusEnum::Draft)
@@ -151,8 +154,8 @@ class InvoiceRepository extends ServiceEntityRepository
             ->getArrayResult();
 
         return array_map(static fn (array $row): array => [
-            'supplierId' => (int) $row['supplierId'],
-            'supplierName' => (string) $row['supplierName'],
+            'tiersId' => (int) $row['tiersId'],
+            'tiersName' => (string) $row['tiersName'],
             'total' => (int) $row['total'],
         ], $rows);
     }
@@ -179,28 +182,12 @@ class InvoiceRepository extends ServiceEntityRepository
      * @return array<int, list<string>> keyed by 4-digit year
      */
     /**
-     * Generate the next sequential invoice number for the given prefix and year.
-     * Format: {PREFIX}-{YEAR}-{NNNN} (zero-padded to 4 digits).
-     * Queries the DB for the highest existing sequence to guarantee no gaps.
+     * Generate the next sequential invoice number using a PostgreSQL sequence.
+     * Format: {PREFIX}-{YEAR}-{NNNN} — atomic, no race condition, no gaps.
      */
     public function getNextNumber(string $prefix, int $year): string
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $pattern = $prefix.'-'.$year.'-%';
-
-        $result = $conn->executeQuery(
-            'SELECT number FROM billing_invoices WHERE number LIKE ? ORDER BY number DESC LIMIT 1',
-            [$pattern],
-        )->fetchOne();
-
-        $next = 1;
-        if (false !== $result) {
-            $parts = explode('-', (string) $result);
-            $last = (int) end($parts);
-            $next = $last + 1;
-        }
-
-        return sprintf('%s-%d-%04d', $prefix, $year, $next);
+        return $this->sequenceGenerator->nextYearly($prefix, $year);
     }
 
     public function findInvoiceNumbersByYear(): array

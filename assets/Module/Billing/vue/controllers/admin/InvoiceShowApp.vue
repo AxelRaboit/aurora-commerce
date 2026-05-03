@@ -24,12 +24,13 @@ const props = defineProps({
     validatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     updatePath: { type: String, required: true },
-    supplierUpdatePathTemplate: { type: String, required: true },
+    tiersUpdatePathTemplate: { type: String, required: true },
     lineCreatePath: { type: String, required: true },
     lineUpdatePathTemplate: { type: String, required: true },
     lineDeletePathTemplate: { type: String, required: true },
     creditNotePath: { type: String, required: true },
     showPath: { type: String, required: true },
+    importPath: { type: String, required: true },
     ocrRetryPath: { type: String, default: null },
 });
 
@@ -37,6 +38,10 @@ const invoice = ref({ ...props.invoice });
 const validating = ref(false);
 const deleting = ref(false);
 const showDeleteModal = ref(false);
+const deleteTiersToo = ref(false);
+const canDeleteTiers = computed(() =>
+    invoice.value.supplier !== null && invoice.value.supplierInvoiceCount === 1
+);
 const isNeedsReview = computed(() => invoice.value.status === 'needs_review');
 const isLocked = computed(() => !['draft', 'needs_review'].includes(invoice.value.status));
 
@@ -54,16 +59,33 @@ const FIELD_LABELS = {
     buyer_vat_number: 'admin.billing.suppliers.vatNumber',
     buyer_address: 'admin.billing.invoices.show.address',
     buyer_country_code: 'admin.billing.suppliers.country',
-    invoice_number: 'admin.billing.invoices.show.fields.number',
+    buyer_email: 'admin.billing.suppliers.email',
+    buyer_phone: 'admin.billing.invoices.show.phone',
+    invoice_number: 'admin.billing.invoices.show.fields.supplierNumber',
     purchase_order_ref: 'admin.billing.invoices.show.fields.purchaseOrder',
     issued_at: 'admin.billing.invoices.show.fields.issuedAt',
     due_at: 'admin.billing.invoices.show.fields.dueAt',
     payment_method: 'admin.billing.invoices.show.fields.paymentMethod',
     payment_terms: 'admin.billing.invoices.show.fields.paymentTerms',
     currency: 'admin.billing.invoices.show.fields.currency',
+    subtotal_cents: 'admin.billing.invoices.show.fields.subtotal',
     total_net_cents: 'admin.billing.invoices.show.fields.totalNet',
     total_vat_cents: 'admin.billing.invoices.show.fields.totalVat',
     total_gross_cents: 'admin.billing.invoices.show.fields.totalGross',
+    discount_cents: 'admin.billing.invoices.show.fields.discount',
+    freight_cents: 'admin.billing.invoices.show.fields.freight',
+    insurance_cents: 'admin.billing.invoices.show.fields.insurance',
+    discount_rate_bp: 'admin.billing.invoices.show.fields.discountRate',
+    reference: 'admin.billing.invoices.show.fields.reference',
+    project: 'admin.billing.invoices.show.fields.project',
+    incoterms: 'admin.billing.invoices.show.fields.incoterms',
+    delivery_date: 'admin.billing.invoices.show.fields.deliveryDate',
+    reverse_charge: 'admin.billing.invoices.show.fields.reverseCharge',
+    bank_details: 'admin.billing.invoices.show.fields.bankDetails',
+    line_reference: 'admin.billing.invoices.show.lineCols.reference',
+    line_description: 'admin.billing.invoices.show.lineCols.description',
+    line_discount_cents: 'admin.billing.invoices.show.lineCols.discount',
+    line_origin: 'admin.billing.invoices.show.lineCols.origin',
 };
 
 function fieldLabel(key) {
@@ -133,6 +155,7 @@ async function rescan() {
     rescanLoading.value = true;
     const data = await submit(props.ocrRetryPath, null, { successMessage: 'admin.billing.invoices.show.rescanQueued' });
     rescanLoading.value = false;
+    if (data) window.location.href = props.importPath;
     if (data) invoice.value = { ...invoice.value, ocrJob: { ...invoice.value.ocrJob, status: 'queued', statusLabel: data.job?.statusLabel ?? invoice.value.ocrJob?.statusLabel, statusColor: data.job?.statusColor ?? invoice.value.ocrJob?.statusColor } };
 }
 
@@ -161,8 +184,12 @@ async function updateField(field, value) {
 }
 
 async function updateBuyerField(field, value) {
-    const data = await saveField(props.updatePath, `buyer${field.charAt(0).toUpperCase() + field.slice(1)}`, value);
-    if (data) invoice.value = data.invoice;
+    const buyerId = invoice.value.buyer?.id;
+    if (!buyerId) return;
+    const data = await saveField(buildPath(props.tiersUpdatePathTemplate, { id: buyerId }), field, value);
+    if (data) {
+        invoice.value = { ...invoice.value, buyer: data.tiers };
+    }
 }
 
 async function validateInvoice() {
@@ -176,10 +203,11 @@ async function validateInvoice() {
 async function deleteInvoice() {
     if (deleting.value) return;
     deleting.value = true;
-    const data = await submit(props.deletePath, null, { successMessage: 'admin.billing.invoices.deleted' });
+    const data = await submit(props.deletePath, { deleteTiers: deleteTiersToo.value }, { successMessage: 'admin.billing.invoices.deleted' });
     deleting.value = false;
-    showDeleteModal.value = false;
     if (data) window.location.href = props.listPath;
+    showDeleteModal.value = false;
+    deleteTiersToo.value = false;
 }
 
 async function addLine() {
@@ -202,9 +230,9 @@ async function deleteLine(lineId) {
 async function updateSupplierField(field, value) {
     const supplierId = invoice.value.supplierFull?.id;
     if (!supplierId) return;
-    const data = await saveField(buildPath(props.supplierUpdatePathTemplate, { id: supplierId }), field, value);
+    const data = await saveField(buildPath(props.tiersUpdatePathTemplate, { id: supplierId }), field, value);
     if (data) {
-        invoice.value = { ...invoice.value, supplierFull: data.supplier, supplier: { id: data.supplier.id, name: data.supplier.name } };
+        invoice.value = { ...invoice.value, supplierFull: data.tiers, supplier: { id: data.tiers.id, name: data.tiers.name } };
     }
 }
 
@@ -255,11 +283,15 @@ const { formatDateNumeric } = useDateFormat();
             </span>
         </div>
 
-        <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false">
+        <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false; deleteTiersToo = false">
             <p class="text-sm text-primary">{{ t('admin.billing.invoices.deleteConfirm', { number: invoice.number ?? ('#' + invoice.id) }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <label v-if="canDeleteTiers" class="flex items-center gap-2 mt-3 text-sm text-secondary cursor-pointer select-none">
+                <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
+                {{ t('admin.billing.invoices.deleteTiersToo', { name: invoice.supplier?.name ?? '' }) }}
+            </label>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false; deleteTiersToo = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteInvoice">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
@@ -388,7 +420,7 @@ const { formatDateNumeric } = useDateFormat();
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.email') }}</dt>
-                            <dd class="text-xs break-all">
+                            <dd class="text-primary break-all">
                                 <InlineField
                                     :disabled="isLocked"
                                     :display-value="invoice.supplierFull.email"
@@ -400,7 +432,7 @@ const { formatDateNumeric } = useDateFormat();
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.invoices.show.phone') }}</dt>
-                            <dd>
+                            <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
                                     :display-value="invoice.supplierFull.phone"
@@ -412,7 +444,7 @@ const { formatDateNumeric } = useDateFormat();
                         </div>
                         <div>
                             <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
-                            <dd>
+                            <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
                                     :display-value="invoice.supplierFull.countryCode"
@@ -439,56 +471,77 @@ const { formatDateNumeric } = useDateFormat();
 
                 <div class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
                     <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.buyer') }}</h3>
-                    <dl class="space-y-2 text-secondary">
-                        <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
-                            <dd class="text-primary font-medium">
-                                <InlineField
-                                    :disabled="isLocked"
-                                    :display-value="invoice.buyer?.name"
-                                    :raw-value="invoice.buyer?.name"
-                                    type="text"
-                                    v-on:save="updateBuyerField('name', $event)"
-                                />
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
-                            <dd class="font-mono text-xs">
-                                <InlineField
-                                    :disabled="isLocked"
-                                    :display-value="invoice.buyer?.vatNumber"
-                                    :raw-value="invoice.buyer?.vatNumber"
-                                    type="text"
-                                    v-on:save="updateBuyerField('vatNumber', $event)"
-                                />
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
-                            <dd>
-                                <InlineField
-                                    :disabled="isLocked"
-                                    :display-value="invoice.buyer?.countryCode"
-                                    :raw-value="invoice.buyer?.countryCode"
-                                    type="text"
-                                    v-on:save="updateBuyerField('countryCode', $event)"
-                                />
-                            </dd>
-                        </div>
-                        <div class="pt-2 border-t border-line/60">
-                            <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
-                            <dd class="text-primary text-xs">
-                                <InlineField
-                                    :disabled="isLocked"
-                                    :display-value="invoice.buyer?.address"
-                                    :raw-value="invoice.buyer?.address"
-                                    type="text"
-                                    v-on:save="updateBuyerField('address', $event)"
-                                />
-                            </dd>
-                        </div>
-                    </dl>
+                    <template v-if="invoice.buyer">
+                        <dl class="space-y-2 text-secondary">
+                            <div>
+                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
+                                <dd class="text-primary font-medium">
+                                    <InlineField
+                                        :display-value="invoice.buyer?.name"
+                                        :raw-value="invoice.buyer?.name"
+                                        type="text"
+                                        v-on:save="updateBuyerField('name', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
+                                <dd class="font-mono text-xs">
+                                    <InlineField
+                                        :display-value="invoice.buyer?.vatNumber"
+                                        :raw-value="invoice.buyer?.vatNumber"
+                                        type="text"
+                                        v-on:save="updateBuyerField('vatNumber', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
+                                <dd>
+                                    <InlineField
+                                        :display-value="invoice.buyer?.countryCode"
+                                        :raw-value="invoice.buyer?.countryCode"
+                                        type="text"
+                                        v-on:save="updateBuyerField('countryCode', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.email') }}</dt>
+                                <dd class="text-primary break-all">
+                                    <InlineField
+                                        :display-value="invoice.buyer?.email"
+                                        :raw-value="invoice.buyer?.email"
+                                        type="text"
+                                        v-on:save="updateBuyerField('email', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted">{{ t('admin.billing.invoices.show.phone') }}</dt>
+                                <dd class="text-primary">
+                                    <InlineField
+                                        :display-value="invoice.buyer?.phone"
+                                        :raw-value="invoice.buyer?.phone"
+                                        type="text"
+                                        v-on:save="updateBuyerField('phone', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div class="pt-2 border-t border-line/60">
+                                <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
+                                <dd class="text-primary text-xs">
+                                    <InlineField
+                                        :display-value="invoice.buyer?.address"
+                                        :raw-value="invoice.buyer?.address"
+                                        type="text"
+                                        v-on:save="updateBuyerField('address', $event)"
+                                    />
+                                </dd>
+                            </div>
+                        </dl>
+                    </template>
+                    <p v-else class="text-xs text-muted italic">{{ t('admin.billing.invoices.show.noBuyer') }}</p>
                 </div>
             </div>
 
@@ -523,7 +576,7 @@ const { formatDateNumeric } = useDateFormat();
                             <AppIconButton v-if="canHaveCreditNote" color="violet" :title="t('admin.billing.invoices.show.createCreditNote')" v-on:click="showCreditNoteModal = true">
                                 <FileX class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="!isLocked" color="rose" :title="t('shared.common.delete')" v-on:click="showDeleteModal = true">
+                            <AppIconButton v-if="invoice.isDeletable" color="rose" :title="t('shared.common.delete')" v-on:click="showDeleteModal = true">
                                 <Trash2 class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                         </div>
@@ -532,13 +585,20 @@ const { formatDateNumeric } = useDateFormat();
                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.number') }}</dt>
-                            <dd class="text-primary font-medium">
+                            <dd class="text-primary font-medium font-mono text-xs">
+                                <span v-if="invoice.number" class="text-accent-400">{{ invoice.number }}</span>
+                                <span v-else class="text-muted italic text-xs">{{ t('admin.billing.invoices.show.numberPending') }}</span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.supplierNumber') }}</dt>
+                            <dd class="text-primary font-mono text-xs">
                                 <InlineField
                                     :disabled="isLocked"
-                                    :display-value="invoice.number"
-                                    :raw-value="invoice.number"
+                                    :display-value="invoice.supplierNumber"
+                                    :raw-value="invoice.supplierNumber"
                                     type="text"
-                                    v-on:save="updateField('number', $event)"
+                                    v-on:save="updateField('supplierNumber', $event)"
                                 />
                             </dd>
                         </div>
@@ -602,9 +662,163 @@ const { formatDateNumeric } = useDateFormat();
                                 />
                             </dd>
                         </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.reference') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.reference"
+                                    :raw-value="invoice.reference"
+                                    type="text"
+                                    v-on:save="updateField('reference', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.project') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.project"
+                                    :raw-value="invoice.project"
+                                    type="text"
+                                    v-on:save="updateField('project', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.deliveryDate') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.deliveryDate"
+                                    :raw-value="invoice.deliveryDate"
+                                    type="text"
+                                    v-on:save="updateField('deliveryDate', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.incoterms') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.incoterms"
+                                    :raw-value="invoice.incoterms"
+                                    type="text"
+                                    v-on:save="updateField('incoterms', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.reverseCharge') }}</dt>
+                            <dd class="text-primary text-sm">
+                                <label class="flex items-center gap-2 cursor-pointer select-none mt-1">
+                                    <input
+                                        type="checkbox"
+                                        :checked="!!invoice.reverseCharge"
+                                        :disabled="isLocked"
+                                        class="rounded border-line"
+                                        v-on:change="updateField('reverseCharge', $event.target.checked)"
+                                    >
+                                    <span class="text-xs text-secondary">{{ invoice.reverseCharge ? t('shared.common.yes') : t('shared.common.no') }}</span>
+                                </label>
+                            </dd>
+                        </div>
+                        <div class="col-span-3">
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.bankDetails') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    :display-value="invoice.bankDetails"
+                                    :raw-value="invoice.bankDetails"
+                                    type="text"
+                                    v-on:save="updateField('bankDetails', $event)"
+                                />
+                            </dd>
+                        </div>
                     </dl>
 
-                    <div class="mt-6 pt-4 border-t border-line/60 grid grid-cols-3 gap-4 text-sm">
+                    <div class="mt-4 grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.subtotal') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    align="right"
+                                    :display-value="formatCents(invoice.subtotalCents)"
+                                    :raw-value="invoice.subtotalCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('subtotalCents', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div class="col-span-2" />
+                    </div>
+
+                    <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
+                        <!-- Remise : montant + taux regroupés dans la même colonne -->
+                        <div class="space-y-2">
+                            <div>
+                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.discount') }}</dt>
+                                <dd class="text-primary">
+                                    <InlineField
+                                        :disabled="isLocked"
+                                        align="right"
+                                        :display-value="invoice.discountCents != null ? formatCents(invoice.discountCents) : null"
+                                        :raw-value="invoice.discountCents"
+                                        type="money"
+                                        :currency="invoice.currency"
+                                        v-on:save="updateField('discountCents', $event)"
+                                    />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.discountRate') }}</dt>
+                                <dd class="text-primary">
+                                    <InlineField
+                                        :disabled="isLocked"
+                                        align="right"
+                                        :display-value="invoice.discountRateBp != null ? (invoice.discountRateBp / 100).toFixed(2) + ' %' : null"
+                                        :raw-value="invoice.discountRateBp"
+                                        type="number"
+                                        v-on:save="updateField('discountRateBp', $event)"
+                                    />
+                                </dd>
+                            </div>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.freight') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    align="right"
+                                    :display-value="invoice.freightCents != null ? formatCents(invoice.freightCents) : null"
+                                    :raw-value="invoice.freightCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('freightCents', $event)"
+                                />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.insurance') }}</dt>
+                            <dd class="text-primary">
+                                <InlineField
+                                    :disabled="isLocked"
+                                    align="right"
+                                    :display-value="invoice.insuranceCents != null ? formatCents(invoice.insuranceCents) : null"
+                                    :raw-value="invoice.insuranceCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('insuranceCents', $event)"
+                                />
+                            </dd>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-line/60 grid grid-cols-3 gap-4 text-sm">
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalNet') }}</dt>
                             <dd class="text-primary">
@@ -664,10 +878,12 @@ const { formatDateNumeric } = useDateFormat();
                             <thead>
                                 <tr class="bg-surface-2/50 border-b border-line/40">
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.label') }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.sku') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('admin.billing.invoices.show.lineCols.reference') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.productCode') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.qty') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.unit') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.unitPrice') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('admin.billing.invoices.show.lineCols.discount') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.vat') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.totalNet') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.totalGross') }}</th>
@@ -684,14 +900,24 @@ const { formatDateNumeric } = useDateFormat();
                                             type="text"
                                             v-on:save="updateLineField(line.id, 'label', $event)"
                                         />
+                                        <div v-if="line.description" class="text-xs text-muted mt-0.5 truncate max-w-xs">{{ line.description }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 font-mono text-xs text-secondary hidden xl:table-cell">
+                                        <InlineField
+                                            :disabled="isLocked"
+                                            :display-value="line.reference"
+                                            :raw-value="line.reference"
+                                            type="text"
+                                            v-on:save="updateLineField(line.id, 'reference', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 font-mono text-xs text-secondary hidden md:table-cell">
                                         <InlineField
                                             :disabled="isLocked"
-                                            :display-value="line.sku"
-                                            :raw-value="line.sku"
+                                            :display-value="line.productCode"
+                                            :raw-value="line.productCode"
                                             type="text"
-                                            v-on:save="updateLineField(line.id, 'sku', $event)"
+                                            v-on:save="updateLineField(line.id, 'productCode', $event)"
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-secondary">
@@ -721,6 +947,17 @@ const { formatDateNumeric } = useDateFormat();
                                             :raw-value="line.unitPriceCents"
                                             type="money"
                                             v-on:save="updateLineField(line.id, 'unitPriceCents', $event)"
+                                        />
+                                    </td>
+                                    <td class="px-4 py-3 text-secondary hidden xl:table-cell">
+                                        <InlineField
+                                            :disabled="isLocked"
+                                            align="right"
+                                            :display-value="line.discountCents != null ? formatCents(line.discountCents) : null"
+                                            :raw-value="line.discountCents"
+                                            type="money"
+                                            :currency="invoice.currency"
+                                            v-on:save="updateLineField(line.id, 'discountCents', $event)"
                                         />
                                     </td>
                                     <td class="px-4 py-3 text-secondary hidden lg:table-cell">

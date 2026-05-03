@@ -20,13 +20,17 @@ class Listing
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_listing_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Product $product;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    private ?string $reference = null;
 
     #[ORM\Column(length: 200)]
     private string $slug;
@@ -152,6 +156,18 @@ class Listing
     public function setSeoDescription(?string $seoDescription): static
     {
         $this->seoDescription = $seoDescription;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
 
         return $this;
     }

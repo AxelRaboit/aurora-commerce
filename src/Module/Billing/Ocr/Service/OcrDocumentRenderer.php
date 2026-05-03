@@ -30,6 +30,8 @@ final readonly class OcrDocumentRenderer
         private DocTrClientInterface $doctr,
         #[Autowire('%kernel.project_dir%/var/cache/ocr')]
         private string $renderCacheDir,
+        #[Autowire('%env(int:OCR_RENDER_DPI)%')]
+        private int $renderDpi = 200,
     ) {}
 
     /**
@@ -53,6 +55,6 @@ final readonly class OcrDocumentRenderer
 
         $destinationPath = Path::join($this->renderCacheDir, sprintf(self::CACHED_IMAGE_FILENAME_FORMAT, $jobId));
 
-        return $this->doctr->renderToPng($absoluteSourcePath, $destinationPath);
+        return $this->doctr->renderToPng($absoluteSourcePath, $destinationPath, $this->renderDpi);
     }
 }

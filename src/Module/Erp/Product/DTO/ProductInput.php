@@ -17,8 +17,8 @@ final readonly class ProductInput
         #[Assert\Length(max: 150)]
         public string $name = '',
         #[Assert\Length(max: 64)]
-        #[Assert\Regex(pattern: '/^[A-Za-z0-9_-]+$/', message: 'erp.products.errors.sku_invalid')]
-        public ?string $sku = null,
+        #[Assert\Regex(pattern: '/^[A-Za-z0-9_-]+$/', message: 'erp.products.errors.reference_invalid')]
+        public ?string $reference = null,
         public ?string $description = null,
         #[Assert\PositiveOrZero(message: 'erp.products.errors.price_invalid')]
         public ?int $priceCents = null,
@@ -49,7 +49,7 @@ final readonly class ProductInput
 
         return new self(
             name: Str::trimFromArray($data, 'name'),
-            sku: Str::trimOrNullFromArray($data, 'sku'),
+            reference: Str::trimOrNullFromArray($data, 'reference'),
             description: Str::trimOrNullFromArray($data, 'description'),
             priceCents: self::extractPriceCents($data, $currency),
             currency: $currency,

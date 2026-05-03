@@ -189,7 +189,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                 </div>
                                 <div class="min-w-0">
                                     <div class="font-medium text-primary truncate">{{ listing.displayTitle }}</div>
-                                    <div class="text-xs font-mono text-muted">{{ listing.product.sku }}</div>
+                                    <div class="text-xs font-mono text-muted">{{ listing.product.reference }}</div>
                                 </div>
                             </div>
                         </td>
@@ -251,7 +251,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     v-on:update:model-value="(v) => onProductChange(availableProducts.find(p => p.id == v), newListing)"
                 >
                     <option value="" disabled>{{ t('admin.ecommerce.listings.selectProduct') }}</option>
-                    <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }} ({{ product.sku }})</option>
+                    <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }} ({{ product.reference }})</option>
                 </AppSelect>
                 <AppInput
                     v-model="newListing.slug"

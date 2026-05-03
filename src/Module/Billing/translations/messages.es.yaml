@@ -2,9 +2,9 @@ admin:
   modules:
     billing: Facturación
   nav:
-    dashboard: Panel
     invoices: Facturas
     suppliers: Proveedores
+    tiers: Terceros
     ocr_import: Importación OCR
     sections:
       billing: Facturación
@@ -18,11 +18,6 @@ admin:
         thisYear: Este año
         needsReview: Por revisar
         totalInvoices: Total de facturas
-      statusBreakdown: Distribución por estado
-      topSuppliers: Top proveedores
-      noTopSuppliers: Sin datos por ahora.
-      needsReviewQueue: Cola de revisión
-      allClear: No hay facturas pendientes — todo al día.
     invoices:
       searchPlaceholder: "N° factura, proveedor…"
       importOcr: Importar (OCR)
@@ -36,6 +31,7 @@ admin:
       totalGross: TTC
       statusLabel: Estado
       deleteConfirm: "¿Eliminar la factura {number}?"
+      deleteTiersToo: "Eliminar también el tercero «{name}» (sin otras facturas vinculadas)"
       deleted: Factura eliminada.
       deleteError: "No se puede eliminar (restricciones DB)."
       status:
@@ -62,6 +58,8 @@ admin:
         cancelledBy: "Esta factura está cancelada por la nota de crédito"
         cancels: "Esta nota de crédito cancela la factura"
         buyer: Comprador
+        noBuyer: No se ha identificado ningún comprador.
+        numberPending: Generado en la validación
         ocr: OCR
         ocrJob: Tarea
         ocrAnomaly:
@@ -76,24 +74,40 @@ admin:
         lineAdded: Línea añadida.
         lineDeleted: Línea eliminada.
         fields:
-          number: "N° factura"
+          number: "Ref. interna"
+          supplierNumber: "N° factura proveedor"
           purchaseOrder: "N° pedido"
           issuedAt: Emitida el
           dueAt: Vencimiento
           paymentMethod: Forma de pago
           paymentTerms: Condiciones de pago
+          subtotal: Subtotal
           totalNet: Total HT
           totalVat: IVA
           totalGross: Total TTC
+          discount: Descuento global
+          freight: Flete
+          insurance: Seguro
+          discountRate: Tasa de descuento
+          reference: Referencia interna
+          project: Código de proyecto
+          incoterms: Incoterms
+          deliveryDate: Fecha de entrega
+          reverseCharge: Inversión del sujeto pasivo
+          bankDetails: Datos bancarios
         lineCols:
           label: Descripción
-          sku: SKU
+          reference: Ref. artículo
+          description: Descripción larga
+          productCode: Código producto
           qty: Cant.
           unit: Unidad
           unitPrice: PU HT
+          discount: Descuento
           vat: IVA
           totalNet: Total HT
           totalGross: Total TTC
+          origin: País de origen
       update:
         locked: Esta factura ya no se puede modificar.
         unknownField: Campo desconocido.
@@ -109,6 +123,10 @@ admin:
       iban: IBAN
       email: Correo
       country: País
+      website: Sitio web
+      legalForm: Forma jurídica
+      bankName: Nombre del banco
+      notes: Notas internas
       deleteConfirm: "¿Eliminar el proveedor {name}?"
       deleted: Proveedor eliminado.
       deleteError: "No se puede eliminar (restricciones DB)."
@@ -117,6 +135,23 @@ admin:
         invoices: Facturas vinculadas
         totalInvoiced: Total facturado
         invoiceCount: Número de facturas
+    tiers:
+      searchPlaceholder: "Nombre, n° IVA…"
+      empty: No se encontraron terceros.
+      allTypes: Todos los tipos
+      deleteConfirm: "¿Eliminar el tercero «{name}»?"
+      deleted: Tercero eliminado.
+      deleteError: "No se puede eliminar (restricciones DB)."
+      update:
+        unknownField: Campo desconocido.
+        fieldRequired: Campo requerido.
+      type:
+        label: Tipo
+        supplier: Proveedor
+        client: Cliente
+        partner: Socio
+        subcontractor: Subcontratista
+        other: Otro
     compliance:
       title: Conformidad
       overall:

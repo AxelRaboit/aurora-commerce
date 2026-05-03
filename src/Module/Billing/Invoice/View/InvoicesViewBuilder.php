@@ -10,6 +10,7 @@ use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -26,9 +27,23 @@ final readonly class InvoicesViewBuilder
     public function indexView(PaginationRequest $pagination, Request $request): array
     {
         $payload = $this->buildListPayload($pagination, $request);
+        $now = new DateTimeImmutable();
+        $counts = $this->invoiceRepository->countByStatus();
 
         return [
             'invoices' => $payload,
+            'stats' => [
+                'monthGrossCents' => $this->invoiceRepository->sumGrossInPeriod(
+                    $now->modify('first day of this month')->setTime(0, 0),
+                    $now->modify('last day of this month')->setTime(23, 59, 59),
+                ),
+                'yearGrossCents' => $this->invoiceRepository->sumGrossInPeriod(
+                    $now->modify('first day of January this year')->setTime(0, 0),
+                    $now->modify('last day of December this year')->setTime(23, 59, 59),
+                ),
+                'needsReviewCount' => $counts[InvoiceStatusEnum::NeedsReview->value] ?? 0,
+                'totalInvoices' => array_sum($counts),
+            ],
             'search' => $pagination->search ?? '',
             'listPath' => $this->urlGenerator->generate('billing_invoices_list'),
             'showPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
@@ -52,11 +67,12 @@ final readonly class InvoicesViewBuilder
             'validatePath' => $this->urlGenerator->generate('billing_invoices_validate', ['id' => $invoice->getId()]),
             'deletePath' => $this->urlGenerator->generate('billing_invoices_delete', ['id' => $invoice->getId()]),
             'updatePath' => $this->urlGenerator->generate('billing_invoices_update', ['id' => $invoice->getId()]),
-            'supplierUpdatePathTemplate' => $this->urlGenerator->generate('billing_suppliers_update', ['id' => '__id__']),
+            'tiersUpdatePathTemplate' => $this->urlGenerator->generate('billing_tiers_update', ['id' => '__id__']),
             'lineCreatePath' => $this->urlGenerator->generate('billing_invoices_lines_create', ['id' => $invoice->getId()]),
             'lineUpdatePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_update', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
             'lineDeletePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_delete', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
             'creditNotePath' => $this->urlGenerator->generate('billing_invoices_credit_note', ['id' => $invoice->getId()]),
+            'importPath' => $this->urlGenerator->generate('billing_ocr_import'),
             'ocrRetryPath' => $invoice->getOcrJob() instanceof OcrJob
                 ? $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => $invoice->getOcrJob()->getId()])
                 : null,
@@ -80,13 +96,13 @@ final readonly class InvoicesViewBuilder
     public function buildListPayload(PaginationRequest $pagination, Request $request): array
     {
         $status = $this->resolveStatus($request->query->get('status'));
-        $supplierId = (int) $request->query->get('supplier', '0') ?: null;
+        $tiersId = (int) $request->query->get('tiers', '0') ?: null;
         $result = $this->invoiceRepository->findPaginated(
             $pagination->page,
             $pagination->limit,
             $pagination->search,
             $status,
-            $supplierId,
+            $tiersId,
         );
 
         return [

@@ -48,7 +48,7 @@ final class InvoiceExtractorTest extends TestCase
                 'lines' => [
                     [
                         'label' => 'Service A',
-                        'sku' => 'SKU-1',
+                        'product_code' => 'PROD-001',
                         'unit' => 'h',
                         'quantity' => '2',
                         'unit_price_cents' => 5000,

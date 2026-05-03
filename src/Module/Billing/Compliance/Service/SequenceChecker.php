@@ -17,7 +17,11 @@ final readonly class SequenceChecker
 {
     /** Patterns: named group "prefix" (optional) + "year" + separator + "seq" */
     private const array PATTERNS = [
+        // PREFIX-YYYY-NNN or PREFIX/YYYY/NNN (prefix with separator before year)
+        '/^(?P<prefix>[A-Za-z]+)[-\/](?P<year>\d{4})[-\/](?P<seq>\d+)$/',
+        // PREFIXYYYYYYY-NNN or PREFIX/NNN (no separator before year)
         '/^(?P<prefix>[A-Za-z]*)(?P<year>\d{4})[-\/](?P<seq>\d+)$/',
+        // PREFIXYYYYNNNN (no separator at all)
         '/^(?P<prefix>[A-Za-z]*)(?P<year>\d{4})(?P<seq>\d{4,6})$/',
     ];
 
@@ -77,6 +81,7 @@ final readonly class SequenceChecker
             $separator = '';
             $width = 4;
 
+            $prefixSep = '';
             foreach ($numbers as $number) {
                 if (!preg_match($pattern, $number, $m)) {
                     continue 2; // pattern doesn't match all numbers → try next pattern
@@ -86,11 +91,18 @@ final readonly class SequenceChecker
                 $width = max($width, mb_strlen($m['seq']));
                 if (null === $prefix) {
                     $prefix = $m['prefix'];
-                    $separator = str_contains($m[0], '/') ? '/' : '-';
+                    // Detect separators: prefix→year and year→seq
+                    $rest = mb_substr($number, mb_strlen($prefix));
+                    $prefixSep = ('' !== $prefix && str_starts_with($rest, '-')) ? '-'
+                        : (('' !== $prefix && str_starts_with($rest, '/')) ? '/' : '');
+                    $separator = str_contains(mb_substr($rest, mb_strlen($prefixSep) + 4), '/') ? '/' : '-';
                 }
             }
 
-            return [$prefix, $separator, $width, $sequences];
+            // Rebuild format: PREFIX{prefixSep}YEAR{separator}SEQ
+            $fullPrefix = '' !== $prefix ? $prefix.$prefixSep : '';
+
+            return [$fullPrefix, $separator, $width, $sequences];
         }
 
         return null;

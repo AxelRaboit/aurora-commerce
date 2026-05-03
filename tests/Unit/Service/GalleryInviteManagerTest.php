@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Mail\Service\MailService;
+use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
@@ -12,7 +13,9 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
 use Aurora\Module\Photo\Gallery\Service\GalleryAccessService;
 use Aurora\Module\Photo\Gallery\Service\GalleryInviteManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryNotificationService;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Symfony\Component\Mailer\MailerInterface;
@@ -33,6 +36,7 @@ use Twig\Loader\ArrayLoader;
  * the mailer for the side-effect we care about — that the invite notification
  * was sent with the magic URL embedded.
  */
+#[AllowMockObjectsWithoutExpectations]
 final class GalleryInviteManagerTest extends TestCase
 {
     private function makeGallery(int $id = 1, string $slug = 'wedding-2026'): Gallery
@@ -90,7 +94,7 @@ final class GalleryInviteManagerTest extends TestCase
             ->with(self::isInstanceOf(GalleryInvite::class));
         $em->expects(self::once())->method('flush');
 
-        $manager = new GalleryInviteManager($em, $notifier, $url, $access);
+        $manager = new GalleryInviteManager($em, $notifier, $url, $access, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
         $gallery = $this->makeGallery();
 
         $invite = $manager->create($gallery, 'Jane Doe', 'JANE@Example.COM');
@@ -119,7 +123,7 @@ final class GalleryInviteManagerTest extends TestCase
         $em->expects(self::once())->method('remove')->with($invite);
         $em->expects(self::once())->method('flush');
 
-        $manager = new GalleryInviteManager($em, $notifier, $url, $access);
+        $manager = new GalleryInviteManager($em, $notifier, $url, $access, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
         $manager->delete($invite);
     }
 
@@ -156,7 +160,7 @@ final class GalleryInviteManagerTest extends TestCase
 
         $em->expects(self::once())->method('flush');
 
-        $manager = new GalleryInviteManager($em, $notifier, $url, $access);
+        $manager = new GalleryInviteManager($em, $notifier, $url, $access, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
 
         self::assertNull($invite->getSentAt());
         $manager->send($invite);
@@ -181,7 +185,7 @@ final class GalleryInviteManagerTest extends TestCase
 
         $em->expects(self::once())->method('flush');
 
-        $manager = new GalleryInviteManager($em, $notifier, $url, $access);
+        $manager = new GalleryInviteManager($em, $notifier, $url, $access, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
         $manager->markSeen($invite);
 
         self::assertNotNull($invite->getLastSeenAt());

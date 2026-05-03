@@ -30,6 +30,8 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
         private string $baseUrl,
         private string $model,
         private int $timeout,
+        private int $numCtx = 8192,
+        private int $numPredict = -1,
     ) {}
 
     public function getModel(): string
@@ -65,13 +67,14 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
         // entire context window and the actual JSON response is empty.
         $body = [
             'model' => $this->model,
-            'prompt' => $prompt."\n\nJSON Schema (your response MUST conform):\n".json_encode($jsonSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'prompt' => $prompt."\n\nJSON Schema (your response MUST conform):\n".json_encode($jsonSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'images' => [base64_encode($imageBytes)],
             'stream' => false,
             'think' => false,
             'options' => [
                 'temperature' => 0.1,
-                'num_ctx' => 16384,
+                'num_ctx' => $this->numCtx,
+                'num_predict' => $this->numPredict,
             ],
         ];
 

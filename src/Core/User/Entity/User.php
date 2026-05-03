@@ -31,10 +31,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const int MOOD_MESSAGE_MAX_LENGTH = 160;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_user_id', allocationSize: 1)]
     #[ORM\Column]
     #[Groups(['user:read'])]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $reference = null;
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:read'])]
@@ -107,6 +112,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
     }
 
     public function getEmail(): string

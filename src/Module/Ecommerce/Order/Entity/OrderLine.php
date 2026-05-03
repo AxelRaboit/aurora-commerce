@@ -14,9 +14,13 @@ use Doctrine\ORM\Mapping as ORM;
 class OrderLine
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_order_line_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    private ?string $reference = null;
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'lines')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -30,7 +34,7 @@ class OrderLine
     private string $titleSnapshot;
 
     #[ORM\Column(length: 64)]
-    private string $skuSnapshot;
+    private string $referenceSnapshot;
 
     #[ORM\Column]
     private int $quantity = 1;
@@ -44,6 +48,18 @@ class OrderLine
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
     }
 
     public function getOrder(): ?Order
@@ -82,14 +98,14 @@ class OrderLine
         return $this;
     }
 
-    public function getSkuSnapshot(): string
+    public function getReferenceSnapshot(): string
     {
-        return $this->skuSnapshot;
+        return $this->referenceSnapshot;
     }
 
-    public function setSkuSnapshot(string $v): static
+    public function setReferenceSnapshot(string $v): static
     {
-        $this->skuSnapshot = $v;
+        $this->referenceSnapshot = $v;
 
         return $this;
     }

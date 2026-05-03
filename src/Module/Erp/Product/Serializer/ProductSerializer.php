@@ -31,7 +31,7 @@ final readonly class ProductSerializer
         return [
             'id' => $product->getId(),
             'name' => $product->getName(),
-            'sku' => $product->getSku(),
+            'reference' => $product->getReference(),
             'description' => $product->getDescription(),
             'price' => $price,
             'priceCents' => $priceCents,

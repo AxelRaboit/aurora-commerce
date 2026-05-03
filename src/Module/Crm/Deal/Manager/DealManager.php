@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Deal\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
@@ -25,16 +29,20 @@ final readonly class DealManager implements DealManagerInterface
         private CompanyRepository $companyRepository,
         private AuditLogger $auditLogger,
         private CrmNotificationService $notificationService,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function create(DealInput $input): Deal
     {
         $deal = new Deal();
         $this->applyInput($deal, $input);
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmDealPrefix->value, SequencePrefixEnum::Deal->value) ?? SequencePrefixEnum::Deal->value;
+        $deal->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($deal);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'deal.created', 'Deal', $deal->getId(), ['name' => $deal->getName()]);
+        $this->auditLogger->log('crm', 'deal.created', 'Deal', $deal->getId(), ['name' => $deal->getName(), 'reference' => $deal->getReference()]);
 
         return $deal;
     }

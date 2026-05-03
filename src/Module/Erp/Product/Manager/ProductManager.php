@@ -6,11 +6,14 @@ namespace Aurora\Module\Erp\Product\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Erp\Product\Contract\ProductManagerInterface;
 use Aurora\Module\Erp\Product\DTO\ProductInput;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
-use Aurora\Module\Erp\Product\Service\SkuGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -22,7 +25,8 @@ final readonly class ProductManager implements ProductManagerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProductRepository $productRepository,
-        private SkuGenerator $skuGenerator,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
         private AuditLogger $auditLogger,
         private TranslatorInterface $translator,
         private MediaRepository $mediaRepository,
@@ -30,23 +34,24 @@ final readonly class ProductManager implements ProductManagerInterface
 
     public function create(ProductInput $input): Product
     {
-        $this->assertSkuIsAvailable($input->sku);
+        $this->assertReferenceIsAvailable($input->reference);
 
         $product = new Product();
         $this->applyInput($product, $input);
-        $product->setSku($input->sku ?? $this->reservePlaceholderSku());
+
+        if (null !== $input->reference) {
+            $product->setReference($input->reference);
+        } else {
+            $prefix = $this->settingRepository->get(ApplicationParameterEnum::ErpProductPrefix->value, SequencePrefixEnum::Product->value) ?? SequencePrefixEnum::Product->value;
+            $product->setReference($this->sequenceGenerator->next($prefix));
+        }
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        if (null === $input->sku) {
-            $product->setSku($this->skuGenerator->generate((int) $product->getId()));
-            $this->entityManager->flush();
-        }
-
         $this->auditLogger->log('erp', 'product.created', 'Product', $product->getId(), [
             'name' => $product->getName(),
-            'sku' => $product->getSku(),
+            'reference' => $product->getReference(),
         ]);
 
         return $product;
@@ -54,18 +59,18 @@ final readonly class ProductManager implements ProductManagerInterface
 
     public function update(Product $product, ProductInput $input): void
     {
-        $this->assertSkuIsAvailable($input->sku, $product);
+        $this->assertReferenceIsAvailable($input->reference, $product);
 
         $this->applyInput($product, $input);
-        if (null !== $input->sku) {
-            $product->setSku($input->sku);
+        if (null !== $input->reference) {
+            $product->setReference($input->reference);
         }
 
         $this->entityManager->flush();
 
         $this->auditLogger->log('erp', 'product.updated', 'Product', $product->getId(), [
             'name' => $product->getName(),
-            'sku' => $product->getSku(),
+            'reference' => $product->getReference(),
         ]);
     }
 
@@ -73,14 +78,14 @@ final readonly class ProductManager implements ProductManagerInterface
     {
         $id = $product->getId();
         $name = $product->getName();
-        $sku = $product->getSku();
+        $reference = $product->getReference();
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();
 
         $this->auditLogger->log('erp', 'product.deleted', 'Product', $id, [
             'name' => $name,
-            'sku' => $sku,
+            'reference' => $reference,
         ]);
     }
 
@@ -96,13 +101,13 @@ final readonly class ProductManager implements ProductManagerInterface
         $product->setStockQuantity($input->stockQuantity);
     }
 
-    private function assertSkuIsAvailable(?string $sku, ?Product $ignore = null): void
+    private function assertReferenceIsAvailable(?string $reference, ?Product $ignore = null): void
     {
-        if (null === $sku) {
+        if (null === $reference) {
             return;
         }
 
-        $existing = $this->productRepository->findOneBySku($sku);
+        $existing = $this->productRepository->findOneByReference($reference);
         if (!$existing instanceof Product) {
             return;
         }
@@ -111,11 +116,6 @@ final readonly class ProductManager implements ProductManagerInterface
             return;
         }
 
-        throw new InvalidArgumentException($this->translator->trans('admin.erp.products.errors.sku_taken'));
-    }
-
-    private function reservePlaceholderSku(): string
-    {
-        return '__pending_'.bin2hex(random_bytes(8));
+        throw new InvalidArgumentException($this->translator->trans('admin.erp.products.errors.reference_taken'));
     }
 }

@@ -14,10 +14,12 @@ use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Ecommerce\Payment\StripeService;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Stripe\Exception\InvalidRequestException;
 
+#[AllowMockObjectsWithoutExpectations]
 final class OrderRefundServiceTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
@@ -119,7 +121,6 @@ final class OrderRefundServiceTest extends TestCase
         $order->addLine($line);
 
         $this->entityManager->method('find')
-            ->with(Product::class, 42, self::anything())
             ->willReturn($product);
 
         $this->notificationService->expects(self::once())

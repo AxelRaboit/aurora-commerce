@@ -2,9 +2,9 @@ admin:
   modules:
     billing: Facturation
   nav:
-    dashboard: Tableau de bord
     invoices: Factures
     suppliers: Fournisseurs
+    tiers: Tiers
     ocr_import: Import OCR
     sections:
       billing: Facturation
@@ -18,17 +18,13 @@ admin:
         thisYear: Cette année
         needsReview: À vérifier
         totalInvoices: Total factures
-      statusBreakdown: Répartition par statut
-      topSuppliers: Top fournisseurs
-      noTopSuppliers: Aucune donnée pour l'instant.
-      needsReviewQueue: File de relecture
-      allClear: Aucune facture en attente — tout est à jour.
     invoices:
       searchPlaceholder: "N° facture, fournisseur…"
       importOcr: Importer (OCR)
       exportXlsx: Exporter Excel
       empty: Aucune facture pour l'instant.
       deleteConfirm: "Supprimer la facture {number} ?"
+      deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
       deleted: Facture supprimée.
       deleteError: "Suppression impossible (contraintes DB)."
       number: "N°"
@@ -62,6 +58,8 @@ admin:
         cancelledBy: "Cette facture est annulée par l'avoir"
         cancels: "Cet avoir annule la facture"
         buyer: Acheteur
+        noBuyer: Aucun acheteur identifié.
+        numberPending: Généré à la validation
         ocr: OCR
         ocrJob: Job
         ocrAnomaly:
@@ -76,24 +74,40 @@ admin:
         lineAdded: Ligne ajoutée.
         lineDeleted: Ligne supprimée.
         fields:
-          number: "N° facture"
+          number: "N° interne"
+          supplierNumber: "N° facture fournisseur"
           purchaseOrder: "N° commande"
           issuedAt: Émise le
           dueAt: Échéance
           paymentMethod: Mode de paiement
           paymentTerms: Conditions de paiement
+          subtotal: Sous-total HT
           totalNet: Total HT
           totalVat: TVA
           totalGross: Total TTC
+          discount: Remise globale
+          freight: Frais de port
+          insurance: Assurance
+          discountRate: "Taux de remise"
+          reference: "Référence interne"
+          project: "Code projet"
+          incoterms: Incoterms
+          deliveryDate: "Date de livraison"
+          reverseCharge: Autoliquidation TVA
+          bankDetails: "Coordonnées bancaires"
         lineCols:
           label: Libellé
-          sku: SKU
+          reference: "Réf. article"
+          description: Description
+          productCode: Code produit
           qty: Qté
           unit: Unité
           unitPrice: PU HT
+          discount: Remise
           vat: TVA
           totalNet: Total HT
           totalGross: Total TTC
+          origin: Origine
       update:
         locked: Cette facture ne peut plus être modifiée.
         unknownField: Champ inconnu.
@@ -117,6 +131,27 @@ admin:
       iban: IBAN
       email: Email
       country: Pays
+      website: Site web
+      legalForm: Forme juridique
+      bankName: Banque
+      notes: Notes internes
+    tiers:
+      searchPlaceholder: "Nom, n° TVA…"
+      empty: Aucun tiers trouvé.
+      allTypes: Tous les types
+      deleteConfirm: "Supprimer le tiers « {name} » ?"
+      deleted: Tiers supprimé.
+      deleteError: "Suppression impossible (contraintes DB)."
+      update:
+        unknownField: Champ inconnu.
+        fieldRequired: Champ requis.
+      type:
+        label: Type
+        supplier: Fournisseur
+        client: Client
+        partner: Partenaire
+        subcontractor: Sous-traitant
+        other: Autre
     compliance:
       title: Conformité
       overall:

@@ -13,4 +13,4 @@ admin:
   erp:
     products:
       errors:
-        sku_taken: Este SKU ya está en uso.
+        reference_taken: Esta referencia ya está en uso.

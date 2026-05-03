@@ -292,6 +292,7 @@ admin:
     leave: Verlassen
   settings:
     tabs:
+      sequences: Sequenzen
       modules: Module
     cascadeLocked: 'Aktiviere zuerst „{parent}", um diese Einstellung zu ändern.'
     mediaSquareHint: 'Empfohlen: quadratisches Bild (1:1).'
@@ -443,6 +444,8 @@ shared:
       back: Zurück zur Startseite
   common:
     pagination: 'Seite {page} von {totalPages}'
+    yes: Ja
+    no: Nein
   pagination:
     previous: Zurück
     next: Weiter

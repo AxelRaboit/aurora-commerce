@@ -6,10 +6,10 @@ import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
-import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -21,7 +21,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 const { t } = useI18n();
 
 const props = defineProps({
-    supplier: { type: Object, required: true },
+    tiers: { type: Object, required: true },
     invoices: { type: Object, default: () => ({}) },
     stats: { type: Object, required: true },
     listPath: { type: String, required: true },
@@ -32,20 +32,20 @@ const props = defineProps({
     statusOptions: { type: Array, default: () => [] },
 });
 
-const supplier = ref({ ...props.supplier });
+const tiers = ref({ ...props.tiers });
 const showDeleteModal = ref(false);
 const deleting = ref(false);
 const { saveField, submit } = useInlineEdit();
 
 async function updateField(field, value) {
     const data = await saveField(props.updatePath, field, value);
-    if (data) supplier.value = data.supplier;
+    if (data) tiers.value = data.tiers;
 }
 
-async function deleteSupplier() {
+async function deleteTiers() {
     if (deleting.value) return;
     deleting.value = true;
-    const data = await submit(props.deletePath, null, { successMessage: 'admin.billing.suppliers.deleted' });
+    const data = await submit(props.deletePath, null, { successMessage: 'admin.billing.tiers.deleted' });
     deleting.value = false;
     showDeleteModal.value = false;
     if (data) window.location.href = props.listPath;
@@ -58,7 +58,7 @@ const { items, page, totalPages, total, search, onSearch, goToPage, reload } = u
     {
         initialData: props.invoices,
         extraParams: () => ({
-            supplier: props.supplier.id,
+            tiers: props.tiers.id,
             status: statusFilter.value || undefined,
         }),
     },
@@ -71,6 +71,8 @@ const STATUS_SELECT = computed(() =>
 );
 
 const { formatDateNumeric } = useDateFormat();
+
+const isSupplier = computed(() => tiers.value.type === 'supplier');
 </script>
 
 <template>
@@ -97,40 +99,56 @@ const { formatDateNumeric } = useDateFormat();
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.name') }}</dt>
                     <dd class="text-primary font-medium">
-                        <InlineField :display-value="supplier.name" :raw-value="supplier.name" type="text" v-on:save="updateField('name', $event)" />
+                        <InlineField :display-value="tiers.name" :raw-value="tiers.name" type="text" v-on:save="updateField('name', $event)" />
                     </dd>
                 </div>
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.vatNumber" :raw-value="supplier.vatNumber" type="text" v-on:save="updateField('vatNumber', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.vatNumber" :raw-value="tiers.vatNumber" type="text" v-on:save="updateField('vatNumber', $event)" /></dd>
                 </div>
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.registrationNumber') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.registrationNumber" :raw-value="supplier.registrationNumber" type="text" v-on:save="updateField('registrationNumber', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.registrationNumber" :raw-value="tiers.registrationNumber" type="text" v-on:save="updateField('registrationNumber', $event)" /></dd>
                 </div>
-                <div>
+                <div v-if="isSupplier">
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">IBAN</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.iban" :raw-value="supplier.iban" type="text" v-on:save="updateField('iban', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.iban" :raw-value="tiers.iban" type="text" v-on:save="updateField('iban', $event)" /></dd>
                 </div>
-                <div>
+                <div v-if="isSupplier">
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">BIC</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.bic" :raw-value="supplier.bic" type="text" v-on:save="updateField('bic', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.bic" :raw-value="tiers.bic" type="text" v-on:save="updateField('bic', $event)" /></dd>
                 </div>
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.country') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.countryCode" :raw-value="supplier.countryCode" type="text" v-on:save="updateField('countryCode', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.countryCode" :raw-value="tiers.countryCode" type="text" v-on:save="updateField('countryCode', $event)" /></dd>
                 </div>
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.email') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.email" :raw-value="supplier.email" type="text" v-on:save="updateField('email', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.email" :raw-value="tiers.email" type="text" v-on:save="updateField('email', $event)" /></dd>
                 </div>
                 <div>
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.phone') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.phone" :raw-value="supplier.phone" type="text" v-on:save="updateField('phone', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.phone" :raw-value="tiers.phone" type="text" v-on:save="updateField('phone', $event)" /></dd>
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
-                    <dd class="text-primary"><InlineField :display-value="supplier.address" :raw-value="supplier.address" type="text" v-on:save="updateField('address', $event)" /></dd>
+                    <dd><InlineField :display-value="tiers.address" :raw-value="tiers.address" type="text" v-on:save="updateField('address', $event)" /></dd>
+                </div>
+                <div>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.legalForm') }}</dt>
+                    <dd><InlineField :display-value="tiers.legalForm" :raw-value="tiers.legalForm" type="text" v-on:save="updateField('legalForm', $event)" /></dd>
+                </div>
+                <div>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.website') }}</dt>
+                    <dd><InlineField :display-value="tiers.website" :raw-value="tiers.website" type="text" v-on:save="updateField('website', $event)" /></dd>
+                </div>
+                <div>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.bankName') }}</dt>
+                    <dd><InlineField :display-value="tiers.bankName" :raw-value="tiers.bankName" type="text" v-on:save="updateField('bankName', $event)" /></dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.notes') }}</dt>
+                    <dd><InlineField :display-value="tiers.notes" :raw-value="tiers.notes" type="text" v-on:save="updateField('notes', $event)" /></dd>
                 </div>
             </dl>
         </div>
@@ -161,7 +179,6 @@ const { formatDateNumeric } = useDateFormat();
                         <tr>
                             <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.number') }}</th>
                             <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold hidden lg:table-cell">{{ t('admin.billing.invoices.dueAt') }}</th>
                             <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.totalGross') }}</th>
                             <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.statusLabel') }}</th>
                             <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
@@ -171,7 +188,6 @@ const { formatDateNumeric } = useDateFormat();
                         <tr v-for="invoice in items" :key="invoice.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
                             <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
                             <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateNumeric(invoice.issuedAt) }}</td>
-                            <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ formatDateNumeric(invoice.dueAt) }}</td>
                             <td class="px-4 py-3 text-primary text-right tabular-nums">{{ formatCents(invoice.totalGrossCents, invoice.currency) ?? '—' }}</td>
                             <td class="px-4 py-3"><AppBadge :color="invoice.statusColor">{{ invoice.statusLabel ?? t(`admin.billing.invoices.status.${invoice.status}`) }}</AppBadge></td>
                             <td class="px-4 py-3 text-right">
@@ -188,11 +204,11 @@ const { formatDateNumeric } = useDateFormat();
         </div>
 
         <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false">
-            <p class="text-sm text-primary">{{ t('admin.billing.suppliers.deleteConfirm', { name: supplier.name }) }}</p>
+            <p class="text-sm text-primary">{{ t('admin.billing.tiers.deleteConfirm', { name: tiers.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteSupplier">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteTiers">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

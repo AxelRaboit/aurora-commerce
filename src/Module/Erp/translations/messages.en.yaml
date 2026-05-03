@@ -13,4 +13,4 @@ admin:
   erp:
     products:
       errors:
-        sku_taken: This SKU is already used.
+        reference_taken: This reference is already used.

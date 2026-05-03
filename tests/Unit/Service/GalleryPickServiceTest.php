@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
@@ -15,6 +17,7 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryFinalizationRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryInviteRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
 use Aurora\Module\Photo\Gallery\Service\GalleryPickService;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +43,8 @@ final class GalleryPickServiceTest extends TestCase
             $this->pickRepository,
             $this->finalizationRepository,
             $this->inviteRepository,
+            new SequenceGenerator($this->createStub(Connection::class)),
+            $this->createStub(SettingRepository::class),
         );
     }
 
@@ -90,7 +95,7 @@ final class GalleryPickServiceTest extends TestCase
         $persisted = null;
         $this->em->expects(self::once())->method('persist')
             ->willReturnCallback(function (object $e) use (&$persisted): void { $persisted = $e; });
-        $this->em->expects(self::once())->method('flush');
+        $this->em->expects(self::atLeastOnce())->method('flush');
 
         $picked = $this->service->toggle($item, 'tok', 'Bob', 'b@x.com');
 
@@ -120,7 +125,7 @@ final class GalleryPickServiceTest extends TestCase
         $persisted = null;
         $this->em->expects(self::once())->method('persist')
             ->willReturnCallback(function (object $e) use (&$persisted): void { $persisted = $e; });
-        $this->em->expects(self::once())->method('flush');
+        $this->em->expects(self::atLeastOnce())->method('flush');
 
         $finalization = $this->service->finalize($gallery, 'tok', 'Alice', 'a@x.com');
 

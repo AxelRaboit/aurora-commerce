@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
-use Aurora\Module\Billing\Invoice\Contract\SupplierManagerInterface;
+use Aurora\Module\Billing\Invoice\Contract\TiersManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
+use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
+use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
@@ -33,38 +36,46 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private AuditLogger $auditLogger,
-        private SupplierManagerInterface $supplierManager,
+        private TiersManagerInterface $tiersManager,
+        private OcrJobManagerInterface $ocrJobManager,
         private InvoiceRepository $invoiceRepository,
         private SettingRepository $settingRepository,
     ) {
         $this->fieldSetters = [
             'number' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setNumber($this->stringOrNull($value)),
+            'supplierNumber' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setSupplierNumber($this->stringOrNull($value)),
             'purchaseOrderRef' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPurchaseOrderRef($this->stringOrNull($value)),
             'paymentMethod' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPaymentMethod($this->stringOrNull($value)),
             'paymentTerms' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPaymentTerms($this->stringOrNull($value)),
             'issuedAt' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setIssuedAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
             'dueAt' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setDueAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
+            'subtotalCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setSubtotalCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalNetCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalNetCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalVatCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalVatCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalGrossCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalGrossCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
-            'buyerName' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerName($this->stringOrNull($value)),
-            'buyerVatNumber' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerVatNumber($this->stringOrNull($value)),
-            'buyerAddress' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerAddress($this->stringOrNull($value)),
-            'buyerCountryCode' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBuyerCountryCode($this->stringOrNull($value)),
+            'discountCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setDiscountCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'freightCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setFreightCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'insuranceCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setInsuranceCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'discountRateBp' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setDiscountRateBp($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'reference' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setReference($this->stringOrNull($value)),
+            'project' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setProject($this->stringOrNull($value)),
+            'incoterms' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setIncoterms($this->stringOrNull($value)),
+            'deliveryDate' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setDeliveryDate($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
+            'reverseCharge' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setReverseCharge(null !== $value ? (bool) $value : null),
+            'bankDetails' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setBankDetails($this->stringOrNull($value)),
         ];
     }
 
     public function validate(Invoice $invoice): void
     {
-        if (null === $invoice->getNumber()) {
-            $prefix = $this->settingRepository->get(
-                ApplicationParameterEnum::BillingInvoicePrefix->value,
-                'FO',
-            );
-            if (null !== $prefix && '' !== $prefix) {
-                $year = (int) ($invoice->getIssuedAt() ?? new DateTimeImmutable())->format('Y');
-                $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
-            }
+        // Always generate an internal sequential number — independent of supplier's number.
+        $prefix = $this->settingRepository->get(
+            ApplicationParameterEnum::BillingInvoicePrefix->value,
+            SequencePrefixEnum::Invoice->value,
+        );
+        if (null !== $prefix && '' !== $prefix && null === $invoice->getNumber()) {
+            $year = (int) ($invoice->getIssuedAt() ?? new DateTimeImmutable())->format('Y');
+            $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
         }
 
         $invoice->setStatus(InvoiceStatusEnum::Validated);
@@ -75,18 +86,30 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         ]);
     }
 
-    public function delete(Invoice $invoice): void
+    public function delete(Invoice $invoice, bool $deleteTiers = false): void
     {
         $invoice->assertEditable();
 
         $id = $invoice->getId();
         $number = $invoice->getNumber();
+        $ocrJob = $invoice->getOcrJob();
+        $tiers = $deleteTiers ? $invoice->getTiers() : null;
 
         $this->entityManager->remove($invoice);
         $this->entityManager->flush();
 
+        // Clean up the OCR job (and its source file) that produced this invoice.
+        if ($ocrJob instanceof OcrJob) {
+            $this->ocrJobManager->delete($ocrJob);
+        }
+
+        if ($tiers instanceof Tiers) {
+            $this->tiersManager->delete($tiers);
+        }
+
         $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $id, [
             'number' => $number,
+            'tiersDeleted' => $tiers instanceof Tiers,
         ]);
     }
 
@@ -102,12 +125,23 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
         $cn = new Invoice();
         $cn->setStatus(InvoiceStatusEnum::CreditNote);
-        $cn->setNumber('AV-'.($invoice->getNumber() ?? $invoice->getId()));
-        $cn->setSupplier($invoice->getSupplier());
-        $cn->setBuyerName($invoice->getBuyerName());
-        $cn->setBuyerVatNumber($invoice->getBuyerVatNumber());
-        $cn->setBuyerAddress($invoice->getBuyerAddress());
-        $cn->setBuyerCountryCode($invoice->getBuyerCountryCode());
+
+        $cnPrefix = $this->settingRepository->get(
+            ApplicationParameterEnum::BillingCreditNotePrefix->value,
+            SequencePrefixEnum::CreditNote->value,
+        ) ?? SequencePrefixEnum::CreditNote->value;
+        $cn->setNumber($cnPrefix.'-'.($invoice->getNumber() ?? $invoice->getId()));
+        $cn->setSupplierNumber($invoice->getSupplierNumber());
+        $cn->setTiers($invoice->getTiers());
+        $cn->setBuyerTiers($invoice->getBuyerTiers());
+        $cn->setSubtotalCents(null !== $invoice->getSubtotalCents() ? -$invoice->getSubtotalCents() : null);
+        $cn->setDiscountCents($invoice->getDiscountCents());
+        $cn->setFreightCents($invoice->getFreightCents());
+        $cn->setInsuranceCents($invoice->getInsuranceCents());
+        $cn->setDiscountRateBp($invoice->getDiscountRateBp());
+        $cn->setIncoterms($invoice->getIncoterms());
+        $cn->setReverseCharge($invoice->getReverseCharge());
+        $cn->setBankDetails($invoice->getBankDetails());
         $cn->setCurrency($invoice->getCurrency());
         $cn->setIssuedAt(new DateTimeImmutable());
         $cn->setTotalNetCents(null !== $invoice->getTotalNetCents() ? -$invoice->getTotalNetCents() : null);
@@ -121,13 +155,17 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         foreach ($invoice->getLines() as $line) {
             $cnLine = new InvoiceLine();
             $cnLine->setLabel($line->getLabel());
-            $cnLine->setSku($line->getSku());
+            $cnLine->setProductCode($line->getProductCode());
             $cnLine->setUnit($line->getUnit());
             $cnLine->setQuantity($line->getQuantity());
             $cnLine->setUnitPriceCents(null !== $line->getUnitPriceCents() ? -$line->getUnitPriceCents() : null);
             $cnLine->setVatRateBp($line->getVatRateBp());
             $cnLine->setTotalNetCents(null !== $line->getTotalNetCents() ? -$line->getTotalNetCents() : null);
             $cnLine->setTotalGrossCents(null !== $line->getTotalGrossCents() ? -$line->getTotalGrossCents() : null);
+            $cnLine->setReference($line->getReference());
+            $cnLine->setDescription($line->getDescription());
+            $cnLine->setDiscountCents(null !== $line->getDiscountCents() ? -$line->getDiscountCents() : null);
+            $cnLine->setOrigin($line->getOrigin());
             $cnLine->setPosition($line->getPosition());
             $cn->addLine($cnLine);
             $this->entityManager->persist($cnLine);
@@ -169,33 +207,44 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $invoice->setOcrJob($job);
         $invoice->setDocument($job->getMedia());
         $invoice->setStatus(InvoiceStatusEnum::NeedsReview);
-        $invoice->setNumber($draft->invoiceNumber);
+        $invoice->setSupplierNumber($draft->invoiceNumber);
         $invoice->setPurchaseOrderRef($draft->purchaseOrderRef);
         $invoice->setIssuedAt($draft->issuedAt);
         $invoice->setDueAt($draft->dueAt);
         $invoice->setPaymentTerms($draft->paymentTerms);
         $invoice->setPaymentMethod($draft->paymentMethod);
         $invoice->setCurrency($this->resolveCurrency($draft->currency));
+        $invoice->setSubtotalCents($draft->subtotalCents);
         $invoice->setTotalNetCents($draft->totalNetCents);
         $invoice->setTotalVatCents($draft->totalVatCents);
         $invoice->setTotalGrossCents($draft->totalGrossCents);
-        $invoice->setSupplier($this->supplierManager->findOrCreateFromDraft($draft));
-        $invoice->setBuyerName($draft->buyerName);
-        $invoice->setBuyerVatNumber($draft->buyerVatNumber);
-        $invoice->setBuyerAddress($draft->buyerAddress);
-        $invoice->setBuyerCountryCode($draft->buyerCountryCode);
+        $invoice->setDiscountCents($draft->discountCents);
+        $invoice->setFreightCents($draft->freightCents);
+        $invoice->setInsuranceCents($draft->insuranceCents);
+        $invoice->setDiscountRateBp($draft->discountRateBp);
+        $invoice->setReference($draft->reference);
+        $invoice->setIncoterms($draft->incoterms);
+        $invoice->setDeliveryDate($draft->deliveryDate);
+        $invoice->setReverseCharge($draft->reverseCharge);
+        $invoice->setBankDetails($draft->bankDetails);
+        $invoice->setTiers($this->tiersManager->findOrCreateSupplierFromDraft($draft));
+        $invoice->setBuyerTiers($this->tiersManager->findOrCreateClientFromDraft($draft));
 
         $position = 0;
         foreach ($draft->lines as $lineDraft) {
             $line = new InvoiceLine();
             $line->setLabel($lineDraft->label);
-            $line->setSku($lineDraft->sku);
+            $line->setProductCode($lineDraft->productCode);
             $line->setUnit($lineDraft->unit);
             $line->setQuantity($lineDraft->quantity ?? '1.0000');
             $line->setUnitPriceCents($lineDraft->unitPriceCents);
             $line->setVatRateBp($lineDraft->vatRateBp);
             $line->setTotalNetCents($lineDraft->totalNetCents);
             $line->setTotalGrossCents($lineDraft->totalGrossCents);
+            $line->setReference($lineDraft->reference);
+            $line->setDescription($lineDraft->description);
+            $line->setDiscountCents($lineDraft->discountCents);
+            $line->setOrigin($lineDraft->origin);
             $line->setPosition($position++);
             $invoice->addLine($line);
         }
@@ -213,10 +262,8 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
 
     public function updateFromOcrDraft(Invoice $invoice, InvoiceDraft $draft, OcrJob $job): void
     {
-        // Preserve the invoice number if the user already set one
-        if (null === $invoice->getNumber()) {
-            $invoice->setNumber($draft->invoiceNumber);
-        }
+        // Always update supplier number from fresh OCR data
+        $invoice->setSupplierNumber($draft->invoiceNumber);
 
         $invoice->setPurchaseOrderRef($draft->purchaseOrderRef);
         $invoice->setIssuedAt($draft->issuedAt);
@@ -224,14 +271,21 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $invoice->setPaymentTerms($draft->paymentTerms);
         $invoice->setPaymentMethod($draft->paymentMethod);
         $invoice->setCurrency($this->resolveCurrency($draft->currency));
+        $invoice->setSubtotalCents($draft->subtotalCents);
         $invoice->setTotalNetCents($draft->totalNetCents);
         $invoice->setTotalVatCents($draft->totalVatCents);
         $invoice->setTotalGrossCents($draft->totalGrossCents);
-        $invoice->setSupplier($this->supplierManager->findOrCreateFromDraft($draft));
-        $invoice->setBuyerName($draft->buyerName);
-        $invoice->setBuyerVatNumber($draft->buyerVatNumber);
-        $invoice->setBuyerAddress($draft->buyerAddress);
-        $invoice->setBuyerCountryCode($draft->buyerCountryCode);
+        $invoice->setDiscountCents($draft->discountCents);
+        $invoice->setFreightCents($draft->freightCents);
+        $invoice->setInsuranceCents($draft->insuranceCents);
+        $invoice->setDiscountRateBp($draft->discountRateBp);
+        $invoice->setReference($draft->reference);
+        $invoice->setIncoterms($draft->incoterms);
+        $invoice->setDeliveryDate($draft->deliveryDate);
+        $invoice->setReverseCharge($draft->reverseCharge);
+        $invoice->setBankDetails($draft->bankDetails);
+        $invoice->setTiers($this->tiersManager->findOrCreateSupplierFromDraft($draft));
+        $invoice->setBuyerTiers($this->tiersManager->findOrCreateClientFromDraft($draft));
 
         // Rebuild lines from scratch
         foreach ($invoice->getLines()->toArray() as $line) {
@@ -243,13 +297,17 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         foreach ($draft->lines as $lineDraft) {
             $line = new InvoiceLine();
             $line->setLabel($lineDraft->label);
-            $line->setSku($lineDraft->sku);
+            $line->setProductCode($lineDraft->productCode);
             $line->setUnit($lineDraft->unit);
             $line->setQuantity($lineDraft->quantity ?? '1.0000');
             $line->setUnitPriceCents($lineDraft->unitPriceCents);
             $line->setVatRateBp($lineDraft->vatRateBp);
             $line->setTotalNetCents($lineDraft->totalNetCents);
             $line->setTotalGrossCents($lineDraft->totalGrossCents);
+            $line->setReference($lineDraft->reference);
+            $line->setDescription($lineDraft->description);
+            $line->setDiscountCents($lineDraft->discountCents);
+            $line->setOrigin($lineDraft->origin);
             $line->setPosition($position++);
             $invoice->addLine($line);
         }

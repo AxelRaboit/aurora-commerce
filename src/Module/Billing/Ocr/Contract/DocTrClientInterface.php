@@ -21,5 +21,5 @@ interface DocTrClientInterface
      *
      * @throws RuntimeException on transport, HTTP, or filesystem errors
      */
-    public function renderToPng(string $absolutePath, string $destinationPath): string;
+    public function renderToPng(string $absolutePath, string $destinationPath, int $dpi = 200): string;
 }

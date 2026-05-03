@@ -59,7 +59,7 @@ final class ListingsController extends AbstractController
         $items = array_map(static fn ($product): array => [
             'id' => $product->getId(),
             'name' => $product->getName(),
-            'sku' => $product->getSku(),
+            'reference' => $product->getReference(),
         ], $result['items']);
 
         return $this->jsonSuccess(['items' => $items, 'total' => $result['total']]);

@@ -28,13 +28,17 @@ final readonly class InvoiceLineManager implements InvoiceLineManagerInterface
         $this->fieldSetters = [
             // Label is NOT NULL in DB; collapse empty/whitespace to empty string instead of null.
             'label' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setLabel($this->stringOrNull($value) ?? ''),
-            'sku' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setSku($this->stringOrNull($value)),
+            'productCode' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setProductCode($this->stringOrNull($value)),
             'unit' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setUnit($this->stringOrNull($value)),
             'quantity' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setQuantity($this->stringOrNull($value) ?? '1.0000'),
             'unitPriceCents' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setUnitPriceCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'vatRateBp' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setVatRateBp($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalNetCents' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setTotalNetCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
             'totalGrossCents' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setTotalGrossCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'reference' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setReference($this->stringOrNull($value)),
+            'description' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setDescription($this->stringOrNull($value)),
+            'discountCents' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setDiscountCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'origin' => fn (InvoiceLine $line, mixed $value): InvoiceLine => $line->setOrigin($this->stringOrNull($value)),
         ];
     }
 

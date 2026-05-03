@@ -96,10 +96,17 @@ final class InvoicesController extends AbstractController
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('billing.invoices.delete')]
-    public function delete(Invoice $invoice): JsonResponse
+    public function delete(Invoice $invoice, Request $request): JsonResponse
     {
+        if (!$invoice->getStatus()->isDeletable()) {
+            return $this->jsonFailure('admin.billing.invoices.deleteError');
+        }
+
+        $body = json_decode($request->getContent(), true) ?? [];
+        $deleteTiers = (bool) ($body['deleteTiers'] ?? false);
+
         try {
-            $this->invoiceManager->delete($invoice);
+            $this->invoiceManager->delete($invoice, $deleteTiers);
         } catch (Throwable $throwable) {
             return $this->jsonFailure('admin.billing.invoices.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }

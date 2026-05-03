@@ -1,20 +1,22 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.suppliers'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'admin.nav.tiers'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
             {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
-            {label: 'admin.nav.suppliers'|trans},
+            {label: 'admin.nav.tiers'|trans},
         ],
     }) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('billing/admin/SuppliersApp', {
-    suppliers: suppliers,
+<div {{ vue_component('billing/admin/TiersApp', {
+    tiersData: tiers,
     search: search,
+    typeFilter: typeFilter,
+    typeOptions: typeOptions,
     listPath: listPath,
     deletePath: deletePath,
     showPath: showPath,

@@ -14,8 +14,8 @@ interface InvoiceManagerInterface
     /** Switch the invoice to the Validated status. */
     public function validate(Invoice $invoice): void;
 
-    /** Permanently delete an invoice (and its lines, via cascade). */
-    public function delete(Invoice $invoice): void;
+    /** Permanently delete an invoice (and its lines, via cascade). Optionally also deletes the linked tiers (supplier). */
+    public function delete(Invoice $invoice, bool $deleteTiers = false): void;
 
     /**
      * Inline-edit a single whitelisted field.
@@ -27,8 +27,8 @@ interface InvoiceManagerInterface
 
     /**
      * Persist a NeedsReview Invoice (with lines) populated from an OCR draft
-     * and link it to the originating job. Resolves/creates the supplier through
-     * SupplierManagerInterface — no direct EntityManager calls leak elsewhere.
+     * and link it to the originating job. Resolves/creates the tiers (supplier/client) through
+     * TiersManagerInterface — no direct EntityManager calls leak elsewhere.
      */
     public function createFromOcrDraft(InvoiceDraft $draft, OcrJob $job): Invoice;
 

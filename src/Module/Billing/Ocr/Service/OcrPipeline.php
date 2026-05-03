@@ -52,16 +52,33 @@ final readonly class OcrPipeline
         };
 
         // Stage 1 — docTR (text + layout)
+        $media = $job->getMedia();
+        $log('info', sprintf(
+            'Fichier source : %s (%s, %s)',
+            $media->getOriginalName(),
+            $media->getMimeType(),
+            $this->formatBytes($media->getSize()),
+        ));
+
         $log('info', 'Étape 1/2 : extraction docTR en cours…');
-        $this->logger->info('OCR stage 1/2: docTR extraction starting', ['job_id' => $job->getId()]);
+        $this->logger->info('OCR stage 1/2: docTR extraction starting', ['job_id' => $job->getId(), 'path' => $sourcePath]);
         $this->jobManager->markExtracting($job);
 
         $doctrPayload = $this->doctr->extract($sourcePath);
         $this->jobManager->recordDoctrResult($job, $doctrPayload);
 
+        $pageCount = count($doctrPayload['pages']);
         $textLen = mb_strlen($doctrPayload['text']);
-        $log('info', sprintf('Étape 1/2 : docTR terminé — %d caractères extraits.', $textLen), ['text_length' => $textLen]);
-        $this->logger->info('OCR stage 1/2: docTR done', ['job_id' => $job->getId(), 'text_length' => $textLen]);
+        $log('info', sprintf('Étape 1/2 : docTR terminé — %d page(s), %d caractères extraits.', $pageCount, $textLen), [
+            'pages' => $pageCount,
+            'text_length' => $textLen,
+        ]);
+        if ($textLen > 0) {
+            $preview = mb_substr(preg_replace('/\s+/', ' ', $doctrPayload['text']) ?? '', 0, 200);
+            $log('info', 'Aperçu texte : «'.$preview.(mb_strlen($doctrPayload['text']) > 200 ? '…' : '').'»');
+        }
+
+        $this->logger->info('OCR stage 1/2: docTR done', ['job_id' => $job->getId(), 'pages' => $pageCount, 'text_length' => $textLen]);
 
         // Stage 2 — Ollama VLM (structured extraction on a renderable image)
         $model = $this->ollama->getModel();
@@ -73,12 +90,32 @@ final readonly class OcrPipeline
         $this->jobManager->recordVlmResult($job, $draft, $model);
 
         $pct = round($draft->confidence * 100);
-        $log('info', sprintf('Étape 2/2 : VLM terminé — confiance %s%%, ', $pct).count($draft->lines).' ligne(s) extraite(s).', [
+        $log('info', sprintf('Étape 2/2 : VLM terminé — confiance %s%%, %d ligne(s) extraite(s).', $pct, count($draft->lines)), [
             'confidence' => $draft->confidence,
             'lines' => count($draft->lines),
         ]);
+
+        // Résumé des champs extraits
+        $extracted = array_filter([
+            'Fournisseur' => $draft->supplierName,
+            'N° TVA fournisseur' => $draft->supplierVatNumber,
+            'Acheteur' => $draft->buyerName,
+            'N° facture' => $draft->invoiceNumber,
+            'Date émission' => $draft->issuedAt?->format('Y-m-d'),
+            'Échéance' => $draft->dueAt?->format('Y-m-d'),
+            'Total TTC' => null !== $draft->totalGrossCents ? number_format($draft->totalGrossCents / 100, 2, ',', ' ').' '.$draft->currency : null,
+            'Total HT' => null !== $draft->totalNetCents ? number_format($draft->totalNetCents / 100, 2, ',', ' ').' '.$draft->currency : null,
+        ]);
+        foreach ($extracted as $label => $value) {
+            $log('info', sprintf('  %s : %s', $label, $value));
+        }
+
+        if ([] === $extracted) {
+            $log('warning', 'Aucun champ clé extrait — le document est peut-être illisible ou vide.');
+        }
+
         if ([] !== $draft->uncertainFields) {
-            $log('warning', 'Champs incertains signalés : '.implode(', ', $draft->uncertainFields), ['fields' => $draft->uncertainFields]);
+            $log('warning', 'Champs incertains : '.implode(', ', $draft->uncertainFields), ['fields' => $draft->uncertainFields]);
         }
 
         if (!$draft->isTrustworthy()) {
@@ -113,5 +150,22 @@ final readonly class OcrPipeline
             'status' => $job->getStatus()->value,
             'confidence' => $draft->confidence,
         ]);
+    }
+
+    private function formatBytes(?int $bytes): string
+    {
+        if (null === $bytes || $bytes < 0) {
+            return '?';
+        }
+
+        foreach (['o', 'Ko', 'Mo', 'Go'] as $unit) {
+            if ($bytes < 1024) {
+                return round($bytes, 1).' '.$unit;
+            }
+
+            $bytes /= 1024;
+        }
+
+        return round($bytes, 1).' To';
     }
 }

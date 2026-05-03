@@ -60,7 +60,7 @@ const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
 
 
 function emptyForm() {
-    return { name: "", sku: "", description: "", price: "", currency: DEFAULT_CURRENCY, status: "draft", type: "physical", imageId: null, imageUrl: null, stockQuantity: "" };
+    return { name: "", reference: "", description: "", price: "", currency: DEFAULT_CURRENCY, status: "draft", type: "physical", imageId: null, imageUrl: null, stockQuantity: "" };
 }
 
 function makeImageRef(form) {
@@ -101,7 +101,7 @@ async function submitCreate() {
 function buildPayload(form) {
     return {
         name: form.name,
-        sku: form.sku,
+        reference: form.reference,
         description: form.description,
         price: form.price === "" ? null : form.price,
         currency: form.currency,
@@ -124,7 +124,7 @@ function openEdit(product) {
     editingProduct.value = product;
     editForm.value = {
         name: product.name,
-        sku: product.sku,
+        reference: product.reference,
         description: product.description ?? "",
         price: product.price ?? "",
         currency: product.currency ?? DEFAULT_CURRENCY,
@@ -175,7 +175,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.sku') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.reference') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.erp.products.price') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.erp.products.stock') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.erp.products.statusLabel') }}</th>
@@ -193,7 +193,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                 <span class="font-medium text-primary truncate">{{ product.name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.sku }}</td>
+                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.reference }}</td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(product) }}</td>
                         <td class="px-6 py-3 hidden lg:table-cell">
                             <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('admin.erp.products.stockUntracked') }}</span>
@@ -224,7 +224,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
                         <p class="font-medium text-primary truncate">{{ product.name }}</p>
-                        <p class="text-xs font-mono text-muted mt-0.5">{{ product.sku }}</p>
+                        <p class="text-xs font-mono text-muted mt-0.5">{{ product.reference }}</p>
                     </div>
                     <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`admin.erp.products.status.${product.status}`) }}</AppBadge>
                 </div>
@@ -254,10 +254,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 />
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
-                        v-model="newProduct.sku"
-                        :label="t('admin.erp.products.sku')"
-                        :placeholder="t('admin.erp.products.skuAutoPlaceholder')"
-                        :error="createErrors.sku"
+                        v-model="newProduct.reference"
+                        :label="t('admin.erp.products.reference')"
+                        :placeholder="t('admin.erp.products.referenceAutoPlaceholder')"
+                        :error="createErrors.reference"
                     />
                     <AppSelect v-model="newProduct.status" :label="t('admin.erp.products.statusLabel')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
@@ -304,7 +304,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.name" :label="t('admin.erp.products.name')" :error="editErrors.name" required />
                 <div class="grid grid-cols-2 gap-3">
-                    <AppInput v-model="editForm.sku" :label="t('admin.erp.products.sku')" :error="editErrors.sku" />
+                    <AppInput v-model="editForm.reference" :label="t('admin.erp.products.reference')" :error="editErrors.reference" />
                     <AppSelect v-model="editForm.status" :label="t('admin.erp.products.statusLabel')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>

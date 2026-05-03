@@ -30,9 +30,9 @@ class ProductRepository extends ServiceEntityRepository
 
         if (null !== $search && '' !== $search) {
             $pattern = '%'.mb_strtolower($search).'%';
-            $qb->andWhere('LOWER(p.name) LIKE :search OR LOWER(p.sku) LIKE :search')
+            $qb->andWhere('LOWER(p.name) LIKE :search OR LOWER(p.reference) LIKE :search')
                 ->setParameter('search', $pattern);
-            $countQb->andWhere('LOWER(p.name) LIKE :search OR LOWER(p.sku) LIKE :search')
+            $countQb->andWhere('LOWER(p.name) LIKE :search OR LOWER(p.reference) LIKE :search')
                 ->setParameter('search', $pattern);
         }
 
@@ -69,8 +69,8 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()->getSingleScalarResult();
     }
 
-    public function findOneBySku(string $sku): ?Product
+    public function findOneByReference(string $reference): ?Product
     {
-        return $this->findOneBy(['sku' => $sku]);
+        return $this->findOneBy(['reference' => $reference]);
     }
 }

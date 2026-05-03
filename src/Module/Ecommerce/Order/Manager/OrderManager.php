@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
@@ -32,6 +36,8 @@ final readonly class OrderManager implements OrderManagerInterface
         private AuditLogger $auditLogger,
         private OrderNotificationService $notificationService,
         private OrderRefundService $refundService,
+        private SettingRepository $settingRepository,
+        private SequenceGenerator $sequenceGenerator,
     ) {}
 
     public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer, string $locale = 'fr'): Order
@@ -48,7 +54,8 @@ final readonly class OrderManager implements OrderManagerInterface
         }
 
         $order = new Order();
-        $order->setNumber($this->orderRepository->getNextOrderNumber());
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceOrderPrefix->value, SequencePrefixEnum::Order->value);
+        $order->setNumber($this->orderRepository->getNextOrderNumber($prefix ?? SequencePrefixEnum::Order->value));
         $order->setToken(bin2hex(random_bytes(16)));
         $order->setCustomer($customer);
         $order->setStatus(OrderStatusEnum::Pending);
@@ -69,7 +76,7 @@ final readonly class OrderManager implements OrderManagerInterface
             $line = new OrderLine()
                 ->setListing($listing)
                 ->setTitleSnapshot($listing->getDisplayTitle())
-                ->setSkuSnapshot($listing->getProduct()->getSku())
+                ->setReferenceSnapshot($listing->getProduct()->getReference())
                 ->setQuantity($cartItem->getQuantity())
                 ->setUnitPriceCents($cartItem->getUnitPriceCents())
                 ->setCurrency($cartItem->getCurrency());
@@ -85,6 +92,13 @@ final readonly class OrderManager implements OrderManagerInterface
         }
 
         $this->entityManager->persist($order);
+        $this->entityManager->flush();
+
+        $linePrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceOrderLinePrefix->value, SequencePrefixEnum::OrderLine->value) ?? SequencePrefixEnum::OrderLine->value;
+        foreach ($order->getLines() as $line) {
+            $line->setReference($this->sequenceGenerator->next($linePrefix));
+        }
+
         $this->entityManager->flush();
 
         $this->auditLogger->log('ecommerce', 'order.created', 'Order', $order->getId(), [

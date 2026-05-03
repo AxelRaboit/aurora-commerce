@@ -22,10 +22,15 @@ class AccessRequest
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_access_request_id', allocationSize: 1)]
     #[ORM\Column]
     #[Groups(['access_request:read'])]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[Groups(['access_request:read'])]
+    private ?string $reference = null;
 
     #[ORM\Column(length: 64, unique: true)]
     private string $token;
@@ -56,6 +61,18 @@ class AccessRequest
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
     }
 
     public function getToken(): string

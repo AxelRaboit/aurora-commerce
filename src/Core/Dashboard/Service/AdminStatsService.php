@@ -7,8 +7,9 @@ namespace Aurora\Core\Dashboard\Service;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
-use Aurora\Module\Billing\Invoice\Repository\SupplierRepository;
+use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
@@ -38,7 +39,7 @@ final readonly class AdminStatsService
         private DealRepository $dealRepository,
         private ProductRepository $productRepository,
         private InvoiceRepository $invoiceRepository,
-        private SupplierRepository $supplierRepository,
+        private TiersRepository $tiersRepository,
         private OcrJobRepository $ocrJobRepository,
         private OrderRepository $orderRepository,
         private ListingRepository $listingRepository,
@@ -148,7 +149,7 @@ final readonly class AdminStatsService
         return [
             'invoices' => array_sum($byStatus),
             'byStatus' => $byStatus,
-            'suppliers' => $this->supplierRepository->count([]),
+            'suppliers' => $this->tiersRepository->count(['type' => TiersTypeEnum::Supplier]),
             'ocrJobs' => $this->ocrJobRepository->count([]),
         ];
     }

@@ -103,6 +103,8 @@ services:
             $baseUrl: '%env(OLLAMA_URL)%'
             $model: '%env(OLLAMA_VISION_MODEL)%'
             $timeout: '%env(int:OCR_HTTP_TIMEOUT)%'
+            $numCtx: '%env(int:OCR_NUM_CTX)%'
+            $numPredict: '%env(int:OCR_NUM_PREDICT)%'
 
     Aurora\Core\Mail\Service\MailService:
         arguments:

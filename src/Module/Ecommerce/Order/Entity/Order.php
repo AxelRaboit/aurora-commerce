@@ -24,7 +24,8 @@ class Order
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_order_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 

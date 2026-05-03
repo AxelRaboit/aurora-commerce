@@ -75,7 +75,7 @@ final readonly class OrderSerializer
         return [
             'id' => $line->getId(),
             'title' => $line->getTitleSnapshot(),
-            'sku' => $line->getSkuSnapshot(),
+            'reference' => $line->getReferenceSnapshot(),
             'quantity' => $line->getQuantity(),
             'unitPrice' => $line->getUnitPriceCents() / (10 ** $currency->decimals()),
             'subtotal' => $line->getSubtotalCents() / (10 ** $currency->decimals()),

@@ -44,7 +44,7 @@ defineProps({
                     <tr v-for="line in order.lines" :key="line.id">
                         <td class="py-3">
                             <p class="text-primary">{{ line.title }}</p>
-                            <p class="text-xs font-mono text-muted">{{ line.sku }}</p>
+                            <p class="text-xs font-mono text-muted">{{ line.reference }}</p>
                         </td>
                         <td class="py-3 text-right text-secondary">{{ line.quantity }}</td>
                         <td class="py-3 text-right text-primary tabular-nums">{{ formatMoney(line.subtotal, line.currencySymbol) }}</td>

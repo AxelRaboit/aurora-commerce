@@ -12,7 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Theme
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_theme_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 

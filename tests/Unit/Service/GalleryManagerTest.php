@@ -6,6 +6,8 @@ namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Photo\Gallery\DTO\GalleryInput;
@@ -13,6 +15,7 @@ use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Manager\GalleryManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
@@ -46,8 +49,10 @@ final class GalleryManagerTest extends TestCase
             $this->em,
             $this->createStub(MediaRepository::class),
             $this->createStub(ContactRepository::class),
-            new AuditLogger($this->em, $security),
+            new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class)),
             $this->watermark,
+            new SequenceGenerator($this->createStub(Connection::class)),
+            $this->createStub(SettingRepository::class),
         );
     }
 

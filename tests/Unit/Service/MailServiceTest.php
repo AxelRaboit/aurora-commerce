@@ -7,6 +7,7 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -14,6 +15,7 @@ use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
+#[AllowMockObjectsWithoutExpectations]
 final class MailServiceTest extends TestCase
 {
     private MailerInterface $mailer;

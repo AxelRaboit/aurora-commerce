@@ -13,6 +13,10 @@ use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Repository\MenuItemRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Service\MenuLocationRegistry;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Throwable;
@@ -25,6 +29,8 @@ final readonly class MenuManager
         private MenuItemRepository $menuItemRepository,
         private MenuLocationRegistry $locationRegistry,
         private AuditLogger $auditLogger,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function isProtected(Menu $menu): bool
@@ -147,6 +153,10 @@ final readonly class MenuManager
         $menu->addItem($item);
 
         $this->entityManager->persist($item);
+        $this->entityManager->flush();
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreMenuItemPrefix->value, SequencePrefixEnum::MenuItem->value) ?? SequencePrefixEnum::MenuItem->value;
+        $item->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->flush();
 
         $this->auditLogger->log('core', 'menu.item.created', 'MenuItem', $item->getId(), ['menuId' => $menu->getId()]);

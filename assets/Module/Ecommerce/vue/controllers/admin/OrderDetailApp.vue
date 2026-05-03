@@ -86,7 +86,7 @@ const refund = useOrderRefund(props.refundPath, order);
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary">{{ line.title }}</p>
-                            <p v-if="line.sku" class="text-xs text-muted font-mono mt-0.5">{{ line.sku }}</p>
+                            <p v-if="line.reference" class="text-xs text-muted font-mono mt-0.5">{{ line.reference }}</p>
                         </div>
                         <span class="text-sm font-semibold text-primary shrink-0">{{ formatLineSubtotal(line) }}</span>
                     </div>
@@ -106,7 +106,7 @@ const refund = useOrderRefund(props.refundPath, order);
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.product') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">SKU</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.ecommerce.orders.reference') }}</th>
                             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.quantity') }}</th>
                             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.subtotal') }}</th>
                         </tr>
@@ -114,7 +114,7 @@ const refund = useOrderRefund(props.refundPath, order);
                     <tbody class="divide-y divide-line/40">
                         <tr v-for="line in order.lines" :key="line.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-4 py-3 text-primary">{{ line.title }}</td>
-                            <td class="px-4 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ line.sku ?? '—' }}</td>
+                            <td class="px-4 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ line.reference ?? '—' }}</td>
                             <td class="px-4 py-3 text-right text-secondary">× {{ line.quantity }}</td>
                             <td class="px-4 py-3 text-right text-primary font-medium">{{ formatLineSubtotal(line) }}</td>
                         </tr>

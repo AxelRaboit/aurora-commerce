@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Company\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
 use Aurora\Module\Crm\Company\DTO\CompanyInput;
 use Aurora\Module\Crm\Company\Entity\Company;
@@ -17,16 +21,20 @@ final readonly class CompanyManager implements CompanyManagerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private AuditLogger $auditLogger,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function create(CompanyInput $input): Company
     {
         $company = new Company();
         $this->applyInput($company, $input);
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmCompanyPrefix->value, SequencePrefixEnum::Company->value) ?? SequencePrefixEnum::Company->value;
+        $company->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($company);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'company.created', 'Company', $company->getId(), ['name' => $company->getName()]);
+        $this->auditLogger->log('crm', 'company.created', 'Company', $company->getId(), ['name' => $company->getName(), 'reference' => $company->getReference()]);
 
         return $company;
     }

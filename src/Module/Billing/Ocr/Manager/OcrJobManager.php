@@ -7,6 +7,10 @@ namespace Aurora\Module\Billing\Ocr\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Manager\MediaManager;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
@@ -27,6 +31,8 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         private MediaManager $mediaManager,
         private MessageBusInterface $bus,
         private AuditLogger $auditLogger,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJob
@@ -39,6 +45,10 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $job->setCreatedBy($createdBy);
 
         $this->entityManager->persist($job);
+        $this->entityManager->flush();
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::BillingOcrJobPrefix->value, SequencePrefixEnum::OcrJob->value) ?? SequencePrefixEnum::OcrJob->value;
+        $job->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->flush();
 
         $this->bus->dispatch(new ProcessOcrJobMessage($job->getId()));

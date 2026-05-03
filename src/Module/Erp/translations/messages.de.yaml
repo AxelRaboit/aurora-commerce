@@ -13,4 +13,4 @@ admin:
   erp:
     products:
       errors:
-        sku_taken: Diese SKU ist bereits vergeben.
+        reference_taken: Diese Referenz ist bereits vergeben.

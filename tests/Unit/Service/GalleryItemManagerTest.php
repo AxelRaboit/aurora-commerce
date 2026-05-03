@@ -7,12 +7,15 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Manager\GalleryItemManager;
 use Aurora\Module\Photo\Gallery\Repository\GalleryItemRepository;
 use Aurora\Module\Photo\Gallery\Service\ExifReader;
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +43,7 @@ final class GalleryItemManagerTest extends TestCase
 
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
-        $auditLogger = new AuditLogger($this->em, $security);
+        $auditLogger = new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
 
         $this->manager = new GalleryItemManager(
             $this->em,
@@ -48,6 +51,8 @@ final class GalleryItemManagerTest extends TestCase
             $this->mediaRepository,
             $auditLogger,
             $this->exifReader,
+            new SequenceGenerator($this->createStub(Connection::class)),
+            $this->createStub(SettingRepository::class),
         );
     }
 
@@ -227,7 +232,7 @@ final class GalleryItemManagerTest extends TestCase
 
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
-        $auditLogger = new AuditLogger($this->em, $security);
+        $auditLogger = new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class));
 
         $manager = new GalleryItemManager(
             $this->em,
@@ -235,6 +240,8 @@ final class GalleryItemManagerTest extends TestCase
             $this->mediaRepository,
             $auditLogger,
             $exifReader,
+            new SequenceGenerator($this->createStub(Connection::class)),
+            $this->createStub(SettingRepository::class),
         );
 
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);

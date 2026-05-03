@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Manager;
 
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
@@ -23,6 +27,8 @@ final readonly class CartManager implements CartManagerInterface
         private CartRepository $cartRepository,
         private RequestStack $requestStack,
         private Security $security,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     /**
@@ -38,6 +44,9 @@ final readonly class CartManager implements CartManagerInterface
                 $cart = new Cart()->setUser($user);
                 $this->entityManager->persist($cart);
                 $this->entityManager->flush();
+                $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
+                $cart->setReference($this->sequenceGenerator->next($cartPrefix));
+                $this->entityManager->flush();
             }
 
             return $cart;
@@ -48,6 +57,9 @@ final readonly class CartManager implements CartManagerInterface
         if (!$cart instanceof Cart && $createIfMissing) {
             $cart = new Cart()->setSessionId($sessionId);
             $this->entityManager->persist($cart);
+            $this->entityManager->flush();
+            $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
+            $cart->setReference($this->sequenceGenerator->next($cartPrefix));
             $this->entityManager->flush();
         }
 
@@ -76,6 +88,9 @@ final readonly class CartManager implements CartManagerInterface
                 ->setCurrency($product->getCurrency());
             $cart->addItem($item);
             $this->entityManager->persist($item);
+            $this->entityManager->flush();
+            $itemPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartItemPrefix->value, SequencePrefixEnum::CartItem->value) ?? SequencePrefixEnum::CartItem->value;
+            $item->setReference($this->sequenceGenerator->next($itemPrefix));
         }
 
         $this->entityManager->flush();

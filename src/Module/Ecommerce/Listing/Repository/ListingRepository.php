@@ -34,9 +34,9 @@ class ListingRepository extends ServiceEntityRepository
 
         if (null !== $search && '' !== $search) {
             $pattern = '%'.mb_strtolower($search).'%';
-            $qb->andWhere('LOWER(l.slug) LIKE :search OR LOWER(l.marketingTitle) LIKE :search OR LOWER(p.name) LIKE :search OR LOWER(p.sku) LIKE :search')
+            $qb->andWhere('LOWER(l.slug) LIKE :search OR LOWER(l.marketingTitle) LIKE :search OR LOWER(p.name) LIKE :search OR LOWER(p.reference) LIKE :search')
                 ->setParameter('search', $pattern);
-            $countQb->andWhere('LOWER(l.slug) LIKE :search OR LOWER(l.marketingTitle) LIKE :search OR LOWER(p.name) LIKE :search OR LOWER(p.sku) LIKE :search')
+            $countQb->andWhere('LOWER(l.slug) LIKE :search OR LOWER(l.marketingTitle) LIKE :search OR LOWER(p.name) LIKE :search OR LOWER(p.reference) LIKE :search')
                 ->setParameter('search', $pattern);
         }
 

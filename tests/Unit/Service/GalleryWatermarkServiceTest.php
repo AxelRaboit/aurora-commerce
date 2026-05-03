@@ -100,7 +100,8 @@ final class GalleryWatermarkServiceTest extends TestCase
         self::assertSame($tmp, $this->service->applyOrPassthrough($gallery, $tmp, null));
         self::assertSame($tmp, $this->service->applyOrPassthrough($gallery, $tmp, ''));
 
-        // Non-image source still passthrough (rendering fails gracefully).
+        // Non-image binary still passthrough (rendering fails gracefully).
+        file_put_contents($tmp, 'not-an-image');
         self::assertSame($tmp, $this->service->applyOrPassthrough($gallery, $tmp, 'Alice'));
 
         unlink($tmp);

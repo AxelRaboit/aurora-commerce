@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Core\Audit\Service;
 
 use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,6 +18,8 @@ readonly class AuditLogger
     public function __construct(
         private EntityManagerInterface $entityManager,
         private Security $security,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function log(
@@ -36,6 +42,9 @@ readonly class AuditLogger
             userName: $appUser?->getName(),
             data: $data,
         );
+
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreAuditLogPrefix->value, SequencePrefixEnum::AuditLog->value) ?? SequencePrefixEnum::AuditLog->value;
+        $log->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($log);
         $this->entityManager->flush();

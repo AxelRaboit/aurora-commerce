@@ -9,6 +9,10 @@ use Aurora\Core\Auth\DTO\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\PasswordResetManager;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Contract\FrontUserManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -34,10 +38,14 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         private PasswordResetManager $passwordResetManager,
         private AuditLogger $auditLogger,
         private UserNotificationService $notificationService,
+        private SequenceGenerator $sequenceGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     public function register(FrontRegisterInput $input): User
     {
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
+
         $user = new User();
         $user->setName($input->name);
         $user->setEmail($input->email);
@@ -45,6 +53,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         $user->setRoles([UserRoleEnum::User->value]);
         $user->setStatus(UserStatusEnum::PendingVerification);
         $user->setPassword($this->passwordHasher->hashPassword($user, $input->password));
+        $user->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

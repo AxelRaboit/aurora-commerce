@@ -63,7 +63,7 @@ final class ProductsController extends AbstractController
         try {
             $product = $this->productManager->create($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['sku' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
         return $this->jsonSuccess(['product' => $this->productSerializer->serialize($product)]);
@@ -83,7 +83,7 @@ final class ProductsController extends AbstractController
         try {
             $this->productManager->update($product, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['sku' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
         }
 
         return $this->jsonSuccess(['product' => $this->productSerializer->serialize($product)]);

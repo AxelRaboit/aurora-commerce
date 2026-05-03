@@ -70,7 +70,7 @@ async function addToCart() {
 
         <div class="space-y-6">
             <div>
-                <p class="text-xs font-mono text-muted">{{ product.sku }}</p>
+                <p class="text-xs font-mono text-muted">{{ product.reference }}</p>
                 <h1 class="text-3xl font-bold text-primary mt-1">{{ listing.displayTitle }}</h1>
             </div>
 

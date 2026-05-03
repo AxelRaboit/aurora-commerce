@@ -126,7 +126,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
         // Inline seed (fixtures don't ship with shop products).
         $product = (new Product())
             ->setName('Test Product')
-            ->setSku('TEST-'.bin2hex(random_bytes(4)))
+            ->setReference('TEST-'.bin2hex(random_bytes(4)))
             ->setPriceCents(1999)
             ->setCurrency(CurrencyEnum::EUR)
             ->setStatus(ProductStatusEnum::Active)

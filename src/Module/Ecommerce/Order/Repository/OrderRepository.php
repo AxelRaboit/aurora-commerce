@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
@@ -17,8 +18,10 @@ class OrderRepository extends ServiceEntityRepository
 {
     use PaginationTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SequenceGenerator $sequenceGenerator,
+    ) {
         parent::__construct($registry, Order::class);
     }
 
@@ -77,10 +80,12 @@ class OrderRepository extends ServiceEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
-    public function getNextOrderNumber(): string
+    /**
+     * Generate the next order number using a PostgreSQL sequence.
+     * Format: {PREFIX}-{NNNNNN} — atomic, no race condition, no gaps.
+     */
+    public function getNextOrderNumber(string $prefix = 'ORD'): string
     {
-        $count = (int) $this->createQueryBuilder('o')->select('COUNT(o.id)')->getQuery()->getSingleScalarResult();
-
-        return sprintf('ORD-%06d', $count + 1);
+        return $this->sequenceGenerator->next($prefix);
     }
 }

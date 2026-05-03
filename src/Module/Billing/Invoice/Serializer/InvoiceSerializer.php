@@ -7,8 +7,9 @@ namespace Aurora\Module\Billing\Invoice\Serializer;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
-use Aurora\Module\Billing\Invoice\Entity\Supplier;
+use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
+use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -16,32 +17,45 @@ final readonly class InvoiceSerializer
 {
     public function __construct(
         private TranslatorInterface $translator,
-        private SupplierSerializer $supplierSerializer,
+        private TiersSerializer $tiersSerializer,
+        private InvoiceRepository $invoiceRepository,
     ) {}
 
     public function serialize(Invoice $invoice): array
     {
-        $supplier = $invoice->getSupplier();
         $status = $invoice->getStatus();
 
         return [
             'id' => $invoice->getId(),
             'number' => $invoice->getNumber(),
+            'supplierNumber' => $invoice->getSupplierNumber(),
             'status' => $status->value,
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),
             'isCancelled' => $invoice->isCancelled(),
             'isCreditNote' => InvoiceStatusEnum::CreditNote === $invoice->getStatus(),
-            'supplier' => $supplier instanceof Supplier ? [
-                'id' => $supplier->getId(),
-                'name' => $supplier->getName(),
+            'isDeletable' => $invoice->getStatus()->isDeletable(),
+            'supplier' => $invoice->getTiers() instanceof Tiers ? [
+                'id' => $invoice->getTiers()->getId(),
+                'name' => $invoice->getTiers()->getName(),
             ] : null,
             'issuedAt' => $invoice->getIssuedAt()?->format('Y-m-d'),
             'dueAt' => $invoice->getDueAt()?->format('Y-m-d'),
             'currency' => $invoice->getCurrency()->value,
+            'subtotalCents' => $invoice->getSubtotalCents(),
             'totalNetCents' => $invoice->getTotalNetCents(),
             'totalVatCents' => $invoice->getTotalVatCents(),
             'totalGrossCents' => $invoice->getTotalGrossCents(),
+            'discountCents' => $invoice->getDiscountCents(),
+            'freightCents' => $invoice->getFreightCents(),
+            'insuranceCents' => $invoice->getInsuranceCents(),
+            'discountRateBp' => $invoice->getDiscountRateBp(),
+            'reference' => $invoice->getReference(),
+            'project' => $invoice->getProject(),
+            'incoterms' => $invoice->getIncoterms(),
+            'deliveryDate' => $invoice->getDeliveryDate()?->format('Y-m-d'),
+            'reverseCharge' => $invoice->getReverseCharge(),
+            'bankDetails' => $invoice->getBankDetails(),
         ];
     }
 
@@ -55,7 +69,6 @@ final readonly class InvoiceSerializer
 
         $document = $invoice->getDocument();
         $job = $invoice->getOcrJob();
-        $supplier = $invoice->getSupplier();
 
         return [
             ...$base,
@@ -64,15 +77,15 @@ final readonly class InvoiceSerializer
             'paymentMethod' => $invoice->getPaymentMethod(),
             'paidAt' => $invoice->getPaidAt()?->format('Y-m-d'),
             'notes' => $invoice->getNotes(),
-            'supplierFull' => $supplier instanceof Supplier ? $this->supplierSerializer->serialize($supplier) : null,
+            'supplierFull' => $invoice->getTiers() instanceof Tiers ? $this->tiersSerializer->serialize($invoice->getTiers()) : null,
             'creditNote' => ($cn = $invoice->getCreditNote()) instanceof Invoice ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
             'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) instanceof Invoice ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
-            'buyer' => null !== $invoice->getBuyerName() ? [
-                'name' => $invoice->getBuyerName(),
-                'vatNumber' => $invoice->getBuyerVatNumber(),
-                'address' => $invoice->getBuyerAddress(),
-                'countryCode' => $invoice->getBuyerCountryCode(),
-            ] : null,
+            'supplierInvoiceCount' => $invoice->getTiers() instanceof Tiers
+                ? $this->invoiceRepository->countForTiers($invoice->getTiers()->getId())
+                : 0,
+            'buyer' => $invoice->getBuyerTiers() instanceof Tiers
+                ? $this->tiersSerializer->serialize($invoice->getBuyerTiers())
+                : null,
             'document' => $document instanceof Media ? [
                 'id' => $document->getId(),
                 'url' => '/uploads/'.$document->getPath(),
@@ -97,13 +110,17 @@ final readonly class InvoiceSerializer
         return [
             'id' => $line->getId(),
             'label' => $line->getLabel(),
-            'sku' => $line->getSku(),
+            'productCode' => $line->getProductCode(),
             'unit' => $line->getUnit(),
             'quantity' => $line->getQuantity(),
             'unitPriceCents' => $line->getUnitPriceCents(),
             'vatRateBp' => $line->getVatRateBp(),
             'totalNetCents' => $line->getTotalNetCents(),
             'totalGrossCents' => $line->getTotalGrossCents(),
+            'reference' => $line->getReference(),
+            'description' => $line->getDescription(),
+            'discountCents' => $line->getDiscountCents(),
+            'origin' => $line->getOrigin(),
             'position' => $line->getPosition(),
         ];
     }

@@ -5,22 +5,30 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Module\Billing\Invoice\Repository\SupplierRepository;
+use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
+use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SupplierRepository::class)]
-#[ORM\Table(name: 'billing_suppliers')]
+#[ORM\Entity(repositoryClass: TiersRepository::class)]
+#[ORM\Table(name: 'billing_tiers')]
 #[ORM\HasLifecycleCallbacks]
-class Supplier
+class Tiers
 {
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_tiers_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    private ?string $reference = null;
+
+    #[ORM\Column(length: 50, enumType: TiersTypeEnum::class)]
+    private TiersTypeEnum $type;
 
     #[ORM\Column(length: 200)]
     private string $name;
@@ -49,6 +57,18 @@ class Supplier
     #[ORM\Column(length: 2, nullable: true)]
     private ?string $countryCode = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $legalForm = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $bankName = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $notes = null;
+
     /** Optional link to a CRM Company — kept loose so Billing stays independent. */
     #[ORM\ManyToOne(targetEntity: Company::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -57,6 +77,18 @@ class Supplier
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getType(): TiersTypeEnum
+    {
+        return $this->type;
+    }
+
+    public function setType(TiersTypeEnum $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getName(): string
@@ -167,6 +199,54 @@ class Supplier
         return $this;
     }
 
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): self
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getLegalForm(): ?string
+    {
+        return $this->legalForm;
+    }
+
+    public function setLegalForm(?string $legalForm): self
+    {
+        $this->legalForm = $legalForm;
+
+        return $this;
+    }
+
+    public function getBankName(): ?string
+    {
+        return $this->bankName;
+    }
+
+    public function setBankName(?string $bankName): self
+    {
+        $this->bankName = $bankName;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
+
+        return $this;
+    }
+
     public function getCompany(): ?Company
     {
         return $this->company;
@@ -175,6 +255,18 @@ class Supplier
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): self
+    {
+        $this->reference = $reference;
 
         return $this;
     }

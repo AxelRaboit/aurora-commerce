@@ -45,7 +45,7 @@ final readonly class CartSerializer
             'listingId' => $listing->getId(),
             'slug' => $listing->getSlug(),
             'title' => $listing->getDisplayTitle(),
-            'sku' => $listing->getProduct()->getSku(),
+            'reference' => $listing->getProduct()->getReference(),
             'unitPrice' => $unit,
             'unitPriceCents' => $item->getUnitPriceCents(),
             'quantity' => $item->getQuantity(),

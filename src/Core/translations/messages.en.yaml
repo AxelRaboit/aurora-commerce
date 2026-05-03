@@ -296,6 +296,7 @@ admin:
       seo: SEO
       system: System
       email: Emails
+      sequences: Sequences
       modules: Modules
     cascadeLocked: "Enable “{parent}” first to edit this setting."
     mediaSquareHint: "Recommended: square image (1:1)."
@@ -458,6 +459,8 @@ shared:
       back: Back to home
   common:
     pagination: 'Page {page} of {totalPages}'
+    yes: Yes
+    no: No
   pagination:
     previous: Previous
     next: Next

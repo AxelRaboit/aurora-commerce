@@ -292,6 +292,7 @@ admin:
     leave: Salir
   settings:
     tabs:
+      sequences: Secuencias
       modules: Módulos
     cascadeLocked: "Activa «{parent}» antes de modificar este ajuste."
     mediaSquareHint: "Recomendado: imagen cuadrada (1:1)."
@@ -443,6 +444,8 @@ shared:
       back: Volver al inicio
   common:
     pagination: 'Página {page} de {totalPages}'
+    yes: Sí
+    no: No
   pagination:
     previous: Anterior
     next: Siguiente

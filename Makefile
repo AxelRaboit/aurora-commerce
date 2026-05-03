@@ -230,6 +230,9 @@ sync-params: ## Synchronise application parameters (creates missing, deletes obs
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) aurora:menus:sync
 
+sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
+	$(CONSOLE) aurora:sequences:resync
+
 i18n: ## Dump Symfony YAML translations to assets/locales/generated/*.json (consumed by vue-i18n)
 	$(CONSOLE) app:translations:dump-js
 

@@ -93,7 +93,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                         </div>
                         <div class="min-w-0">
                             <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ listing.displayTitle }}</h2>
-                            <p class="text-xs font-mono text-muted mt-0.5 break-all">{{ listing.product.sku }} · /{{ listing.slug }}</p>
+                            <p class="text-xs font-mono text-muted mt-0.5 break-all">{{ listing.product.reference }} · /{{ listing.slug }}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between sm:justify-end gap-2 sm:shrink-0">
@@ -148,7 +148,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.ecommerce.listings.linkedProduct') }}</h3>
             <div class="bg-surface border border-line/60 rounded-lg p-4 space-y-2">
                 <p class="font-medium text-primary">{{ listing.product.name }}</p>
-                <p class="text-xs font-mono text-muted">{{ listing.product.sku }}</p>
+                <p class="text-xs font-mono text-muted">{{ listing.product.reference }}</p>
                 <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
                 <AppBadge :color="listing.product.status === ProductStatus.Active ? 'emerald' : listing.product.status === ProductStatus.Draft ? 'amber' : 'slate'">
                     {{ t(`admin.erp.products.status.${listing.product.status}`) }}

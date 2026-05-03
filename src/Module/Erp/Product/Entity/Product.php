@@ -15,14 +15,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'erp_products')]
-#[ORM\UniqueConstraint(name: 'uniq_erp_product_sku', columns: ['sku'])]
+#[ORM\UniqueConstraint(name: 'uniq_erp_product_reference', columns: ['reference'])]
 #[ORM\HasLifecycleCallbacks]
 class Product
 {
     use TimestampableTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_product_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -30,7 +31,7 @@ class Product
     private string $name;
 
     #[ORM\Column(length: 64)]
-    private string $sku;
+    private string $reference;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -118,14 +119,14 @@ class Product
         return $this;
     }
 
-    public function getSku(): string
+    public function getReference(): string
     {
-        return $this->sku;
+        return $this->reference;
     }
 
-    public function setSku(string $sku): static
+    public function setReference(string $reference): static
     {
-        $this->sku = $sku;
+        $this->reference = $reference;
 
         return $this;
     }

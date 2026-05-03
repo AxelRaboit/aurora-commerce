@@ -7,6 +7,8 @@ namespace Aurora\Core\Auth\Manager;
 use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Repository\ResetPasswordRequestRepository;
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
@@ -36,6 +38,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
         private Environment $twig,
         private TranslatorInterface $translator,
         private string $mailerFrom,
+        private SequenceGenerator $sequenceGenerator,
     ) {}
 
     /**
@@ -75,6 +78,8 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
         $expiresAt = new DateTimeImmutable('+1 hour');
 
         $resetRequest = new ResetPasswordRequest($user, $selector, $hashedToken, $expiresAt);
+        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreResetPasswordPrefix->value, SequencePrefixEnum::ResetPasswordRequest->value) ?? SequencePrefixEnum::ResetPasswordRequest->value;
+        $resetRequest->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($resetRequest);
         $this->entityManager->flush();
 
