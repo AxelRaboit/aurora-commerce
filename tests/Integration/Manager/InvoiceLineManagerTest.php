@@ -9,6 +9,7 @@ use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 
 final class InvoiceLineManagerTest extends IntegrationTestCase
 {
@@ -85,7 +86,7 @@ final class InvoiceLineManagerTest extends IntegrationTestCase
     {
         $line = $this->manager->add($this->makeInvoice());
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('admin.billing.invoices.update.unknownField');
 
         $this->manager->updateField($line, 'invoice', 999);

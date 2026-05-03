@@ -6,6 +6,7 @@ namespace Aurora\Module\Billing\Invoice\Contract;
 
 use Aurora\Module\Billing\Invoice\Entity\Supplier;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use InvalidArgumentException;
 
 interface SupplierManagerInterface
 {
@@ -14,8 +15,8 @@ interface SupplierManagerInterface
     /**
      * Inline-edit a single whitelisted field.
      *
-     * @throws \InvalidArgumentException with a translation key when the field
-     *                                   name is unknown or the value is invalid
+     * @throws InvalidArgumentException with a translation key when the field
+     *                                  name is unknown or the value is invalid
      */
     public function updateField(Supplier $supplier, string $field, mixed $value): void;
 

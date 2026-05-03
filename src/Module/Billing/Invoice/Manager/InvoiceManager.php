@@ -15,6 +15,7 @@ use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(InvoiceManagerInterface::class)]
@@ -31,15 +32,15 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         private SupplierManagerInterface $supplierManager,
     ) {
         $this->fieldSetters = [
-            'number' => fn (Invoice $invoice, mixed $value) => $invoice->setNumber($this->stringOrNull($value)),
-            'purchaseOrderRef' => fn (Invoice $invoice, mixed $value) => $invoice->setPurchaseOrderRef($this->stringOrNull($value)),
-            'paymentMethod' => fn (Invoice $invoice, mixed $value) => $invoice->setPaymentMethod($this->stringOrNull($value)),
-            'paymentTerms' => fn (Invoice $invoice, mixed $value) => $invoice->setPaymentTerms($this->stringOrNull($value)),
-            'issuedAt' => fn (Invoice $invoice, mixed $value) => $invoice->setIssuedAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
-            'dueAt' => fn (Invoice $invoice, mixed $value) => $invoice->setDueAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
-            'totalNetCents' => fn (Invoice $invoice, mixed $value) => $invoice->setTotalNetCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
-            'totalVatCents' => fn (Invoice $invoice, mixed $value) => $invoice->setTotalVatCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
-            'totalGrossCents' => fn (Invoice $invoice, mixed $value) => $invoice->setTotalGrossCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'number' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setNumber($this->stringOrNull($value)),
+            'purchaseOrderRef' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPurchaseOrderRef($this->stringOrNull($value)),
+            'paymentMethod' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPaymentMethod($this->stringOrNull($value)),
+            'paymentTerms' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setPaymentTerms($this->stringOrNull($value)),
+            'issuedAt' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setIssuedAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
+            'dueAt' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setDueAt($this->dateOrNull($value, 'admin.billing.invoices.update.invalidDate')),
+            'totalNetCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalNetCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'totalVatCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalVatCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
+            'totalGrossCents' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setTotalGrossCents($this->intOrNull($value, 'admin.billing.invoices.update.notNumeric')),
         ];
     }
 
@@ -70,7 +71,7 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
     {
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
-            throw new \InvalidArgumentException('admin.billing.invoices.update.unknownField');
+            throw new InvalidArgumentException('admin.billing.invoices.update.unknownField');
         }
 
         $setter($invoice, $value);
@@ -131,6 +132,6 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
             return CurrencyEnum::EUR;
         }
 
-        return CurrencyEnum::tryFrom(strtoupper($code)) ?? CurrencyEnum::EUR;
+        return CurrencyEnum::tryFrom(mb_strtoupper($code)) ?? CurrencyEnum::EUR;
     }
 }

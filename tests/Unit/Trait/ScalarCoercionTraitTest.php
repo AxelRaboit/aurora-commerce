@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Trait;
 
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
+use DateTimeImmutable;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 final class ScalarCoercionTraitTest extends TestCase
 {
@@ -37,7 +40,7 @@ final class ScalarCoercionTraitTest extends TestCase
     public function testStringOrNullRejectsNonScalar(): void
     {
         self::assertNull($this->sut->stringOrNull(['a']));
-        self::assertNull($this->sut->stringOrNull(new \stdClass()));
+        self::assertNull($this->sut->stringOrNull(new stdClass()));
     }
 
     public function testStringOrNullPreservesUnicodeWhitespace(): void
@@ -57,7 +60,7 @@ final class ScalarCoercionTraitTest extends TestCase
 
     public function testIntOrNullThrowsOnNonNumeric(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('shared.validation.notNumeric');
         $this->sut->intOrNull('abc');
     }
@@ -73,7 +76,7 @@ final class ScalarCoercionTraitTest extends TestCase
     public function testDateOrNullParsesIso(): void
     {
         $d = $this->sut->dateOrNull('2025-12-31');
-        self::assertInstanceOf(\DateTimeImmutable::class, $d);
+        self::assertInstanceOf(DateTimeImmutable::class, $d);
         self::assertSame('2025-12-31', $d->format('Y-m-d'));
         self::assertNull($this->sut->dateOrNull(null));
         self::assertNull($this->sut->dateOrNull(''));
@@ -81,7 +84,7 @@ final class ScalarCoercionTraitTest extends TestCase
 
     public function testDateOrNullThrowsOnGarbage(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('shared.validation.invalidDate');
         $this->sut->dateOrNull('not-a-date');
     }
@@ -90,6 +93,6 @@ final class ScalarCoercionTraitTest extends TestCase
     {
         self::assertNull($this->sut->dateOrNullSafe('not-a-date'));
         self::assertNull($this->sut->dateOrNullSafe(123));
-        self::assertInstanceOf(\DateTimeImmutable::class, $this->sut->dateOrNullSafe('2025-12-31'));
+        self::assertInstanceOf(DateTimeImmutable::class, $this->sut->dateOrNullSafe('2025-12-31'));
     }
 }

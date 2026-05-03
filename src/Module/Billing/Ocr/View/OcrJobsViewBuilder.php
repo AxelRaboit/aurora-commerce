@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function is_string;
+
 final readonly class OcrJobsViewBuilder
 {
     public function __construct(
@@ -56,7 +58,7 @@ final readonly class OcrJobsViewBuilder
 
     private function resolveStatus(mixed $value): ?OcrJobStatusEnum
     {
-        if (!\is_string($value) || '' === $value) {
+        if (!is_string($value) || '' === $value) {
             return null;
         }
 

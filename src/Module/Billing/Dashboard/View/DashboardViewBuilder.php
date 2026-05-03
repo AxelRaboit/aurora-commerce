@@ -7,6 +7,7 @@ namespace Aurora\Module\Billing\Dashboard\View;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
+use DateTimeImmutable;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -23,7 +24,7 @@ final readonly class DashboardViewBuilder
     /** @return array<string, mixed> */
     public function indexView(): array
     {
-        $now = new \DateTimeImmutable('now');
+        $now = new DateTimeImmutable('now');
         $monthStart = $now->modify('first day of this month')->setTime(0, 0);
         $monthEnd = $now->modify('last day of this month')->setTime(23, 59, 59);
         $yearStart = $now->modify('first day of January this year')->setTime(0, 0);

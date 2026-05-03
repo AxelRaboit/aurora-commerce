@@ -27,7 +27,6 @@ function statusFilterUrl(status) {
 
 <template>
     <div class="space-y-6">
-
         <div class="flex items-center justify-end gap-2">
             <AppButton variant="primary" size="md" :href="importPath">
                 <Plus class="w-4 h-4" :stroke-width="2" />
@@ -67,7 +66,6 @@ function statusFilterUrl(status) {
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
             <div class="bg-surface border border-line/60 rounded-xl p-6 lg:col-span-1">
                 <h3 class="font-semibold text-primary mb-4">{{ t('admin.billing.dashboard.statusBreakdown') }}</h3>
                 <ul class="space-y-2 text-sm">
@@ -124,6 +122,5 @@ function statusFilterUrl(status) {
                 </tbody>
             </table>
         </div>
-
     </div>
 </template>

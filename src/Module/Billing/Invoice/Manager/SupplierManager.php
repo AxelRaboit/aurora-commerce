@@ -11,6 +11,7 @@ use Aurora\Module\Billing\Invoice\Entity\Supplier;
 use Aurora\Module\Billing\Invoice\Repository\SupplierRepository;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(SupplierManagerInterface::class)]
@@ -28,15 +29,15 @@ final readonly class SupplierManager implements SupplierManagerInterface
     ) {
         $this->fieldSetters = [
             // name is NOT NULL — only assign a non-null value, ignore empty strings.
-            'name' => fn (Supplier $supplier, ?string $value) => null !== $value ? $supplier->setName($value) : null,
-            'vatNumber' => fn (Supplier $supplier, ?string $value) => $supplier->setVatNumber($value),
-            'registrationNumber' => fn (Supplier $supplier, ?string $value) => $supplier->setRegistrationNumber($value),
-            'iban' => fn (Supplier $supplier, ?string $value) => $supplier->setIban($value),
-            'bic' => fn (Supplier $supplier, ?string $value) => $supplier->setBic($value),
-            'email' => fn (Supplier $supplier, ?string $value) => $supplier->setEmail($value),
-            'phone' => fn (Supplier $supplier, ?string $value) => $supplier->setPhone($value),
-            'address' => fn (Supplier $supplier, ?string $value) => $supplier->setAddress($value),
-            'countryCode' => fn (Supplier $supplier, ?string $value) => $supplier->setCountryCode(null === $value ? null : strtoupper(substr($value, 0, 2))),
+            'name' => fn (Supplier $supplier, ?string $value): ?Supplier => null !== $value ? $supplier->setName($value) : null,
+            'vatNumber' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setVatNumber($value),
+            'registrationNumber' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setRegistrationNumber($value),
+            'iban' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setIban($value),
+            'bic' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setBic($value),
+            'email' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setEmail($value),
+            'phone' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setPhone($value),
+            'address' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setAddress($value),
+            'countryCode' => fn (Supplier $supplier, ?string $value): Supplier => $supplier->setCountryCode(null === $value ? null : mb_strtoupper(mb_substr($value, 0, 2))),
         ];
     }
 
@@ -57,7 +58,7 @@ final readonly class SupplierManager implements SupplierManagerInterface
     {
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
-            throw new \InvalidArgumentException('admin.billing.suppliers.update.unknownField');
+            throw new InvalidArgumentException('admin.billing.suppliers.update.unknownField');
         }
 
         $setter($supplier, $this->stringOrNull($value));
@@ -72,14 +73,14 @@ final readonly class SupplierManager implements SupplierManagerInterface
     {
         if (null !== $draft->supplierVatNumber) {
             $existing = $this->supplierRepository->findOneByVatNumber($draft->supplierVatNumber);
-            if (null !== $existing) {
+            if ($existing instanceof Supplier) {
                 return $existing;
             }
         }
 
         if (null !== $draft->supplierName) {
             $existing = $this->supplierRepository->findOneByNameLike($draft->supplierName);
-            if (null !== $existing) {
+            if ($existing instanceof Supplier) {
                 return $existing;
             }
         }

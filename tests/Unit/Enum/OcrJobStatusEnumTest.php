@@ -8,6 +8,8 @@ use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 final class OcrJobStatusEnumTest extends TestCase
 {
     /**
@@ -36,7 +38,7 @@ final class OcrJobStatusEnumTest extends TestCase
             self::assertContains(
                 $case->getBadgeColor(),
                 $allowed,
-                \sprintf('Status %s has unsupported badge colour %s', $case->value, $case->getBadgeColor()),
+                sprintf('Status %s has unsupported badge colour %s', $case->value, $case->getBadgeColor()),
             );
         }
     }

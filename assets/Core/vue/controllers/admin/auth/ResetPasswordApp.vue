@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { KeyRound } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
@@ -59,7 +60,7 @@ function handleSubmit(event) {
         />
 
         <div class="flex justify-end">
-            <AppButton type="submit">{{ t('admin.auth.reset_password.submit') }}</AppButton>
+            <AppButton type="submit"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.reset_password.submit') }}</AppButton>
         </div>
     </form>
 </template>

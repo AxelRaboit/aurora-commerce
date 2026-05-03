@@ -420,3 +420,8 @@ shared:
       title: Ein Fehler ist aufgetreten
       message: Der Server hat ein unerwartetes Problem festgestellt. Unser Team wurde benachrichtigt. Bitte versuche es in wenigen Augenblicken erneut.
       back: Zurück zur Startseite
+  common:
+    pagination: 'Seite {page} von {totalPages}'
+  pagination:
+    previous: Zurück
+    next: Weiter

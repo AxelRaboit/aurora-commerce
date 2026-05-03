@@ -2,6 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { UserPlus } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
@@ -97,7 +98,7 @@ function handleSubmit(event) {
                 toggleable
                 required
             />
-            <AppButton type="submit">{{ t('admin.auth.register.submit') }}</AppButton>
+            <AppButton type="submit"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.register.submit') }}</AppButton>
         </form>
 
         <div class="mt-6 flex items-center gap-4">

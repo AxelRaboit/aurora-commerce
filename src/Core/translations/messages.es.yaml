@@ -420,3 +420,8 @@ shared:
       title: Se ha producido un error
       message: El servidor ha encontrado un problema inesperado. Nuestro equipo ha sido notificado. Por favor, inténtalo de nuevo en unos instantes.
       back: Volver al inicio
+  common:
+    pagination: 'Página {page} de {totalPages}'
+  pagination:
+    previous: Anterior
+    next: Siguiente

@@ -87,6 +87,5 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
-
     </div>
 </template>

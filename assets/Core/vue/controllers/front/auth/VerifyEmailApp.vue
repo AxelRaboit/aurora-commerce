@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Check, X } from "lucide-vue-next";
+import { Check, X, LogIn, UserPlus } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
@@ -21,6 +21,7 @@ defineProps({
             <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.verify_email.success_heading') }}</h1>
             <p class="text-secondary text-sm mb-8">{{ t('front.verify_email.success_message') }}</p>
             <AppButton :href="loginPath" variant="accent">
+                <LogIn class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.login.submit') }}
             </AppButton>
         </template>
@@ -31,6 +32,7 @@ defineProps({
             <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.verify_email.error_heading') }}</h1>
             <p class="text-secondary text-sm mb-8">{{ t('front.verify_email.error_message') }}</p>
             <AppButton :href="registerPath" variant="secondary">
+                <UserPlus class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.register.submit') }}
             </AppButton>
         </template>

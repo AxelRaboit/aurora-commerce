@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Service;
 
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
+use DateTimeImmutable;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -13,6 +14,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+use function sprintf;
+
 /**
  * Streams an Invoice list as an XLSX. Money columns are emitted as native
  * numbers so spreadsheet tools sum/filter them naturally.
@@ -20,9 +23,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 final readonly class InvoiceXlsxExporter
 {
     private const string HEADER_BG = 'FF1E3A8A';
+
     private const string HEADER_TEXT = 'FFFFFFFF';
 
-    private const HEADERS = [
+    private const array HEADERS = [
         'ID',
         'Numéro',
         'Statut',
@@ -45,13 +49,13 @@ final readonly class InvoiceXlsxExporter
     {
         $spreadsheet = $this->build($invoices);
         $writer = new Xlsx($spreadsheet);
-        $filename = \sprintf('invoices-%s.xlsx', (new \DateTimeImmutable())->format('Y-m-d'));
+        $filename = sprintf('invoices-%s.xlsx', new DateTimeImmutable()->format('Y-m-d'));
 
         $response = new StreamedResponse(static function () use ($writer): void {
             $writer->save('php://output');
         });
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', \sprintf('attachment; filename="%s"', $filename));
+        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
         $response->headers->set('Cache-Control', 'no-store, max-age=0');
 
         return $response;
@@ -83,6 +87,7 @@ final readonly class InvoiceXlsxExporter
         foreach (range('A', 'M') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
         $sheet->freezePane('A2');
 
         return $spreadsheet;
@@ -104,21 +109,21 @@ final readonly class InvoiceXlsxExporter
         $supplier = $invoice->getSupplier();
         $currency = $invoice->getCurrency()->value;
 
-        $sheet->setCellValue("A{$row}", $invoice->getId());
-        $sheet->setCellValue("B{$row}", $invoice->getNumber() ?? '');
-        $sheet->setCellValue("C{$row}", $invoice->getStatus()->value);
-        $sheet->setCellValue("D{$row}", $supplier?->getName() ?? '');
-        $sheet->setCellValue("E{$row}", $supplier?->getVatNumber() ?? '');
-        $sheet->setCellValue("F{$row}", $invoice->getIssuedAt()?->format('Y-m-d') ?? '');
-        $sheet->setCellValue("G{$row}", $invoice->getDueAt()?->format('Y-m-d') ?? '');
-        $sheet->setCellValue("H{$row}", $currency);
+        $sheet->setCellValue('A'.$row, $invoice->getId());
+        $sheet->setCellValue('B'.$row, $invoice->getNumber() ?? '');
+        $sheet->setCellValue('C'.$row, $invoice->getStatus()->value);
+        $sheet->setCellValue('D'.$row, $supplier?->getName() ?? '');
+        $sheet->setCellValue('E'.$row, $supplier?->getVatNumber() ?? '');
+        $sheet->setCellValue('F'.$row, $invoice->getIssuedAt()?->format('Y-m-d') ?? '');
+        $sheet->setCellValue('G'.$row, $invoice->getDueAt()?->format('Y-m-d') ?? '');
+        $sheet->setCellValue('H'.$row, $currency);
 
-        $this->setMoneyCell($sheet, "I{$row}", $invoice->getTotalNetCents(), $currency);
-        $this->setMoneyCell($sheet, "J{$row}", $invoice->getTotalVatCents(), $currency);
-        $this->setMoneyCell($sheet, "K{$row}", $invoice->getTotalGrossCents(), $currency);
+        $this->setMoneyCell($sheet, 'I'.$row, $invoice->getTotalNetCents(), $currency);
+        $this->setMoneyCell($sheet, 'J'.$row, $invoice->getTotalVatCents(), $currency);
+        $this->setMoneyCell($sheet, 'K'.$row, $invoice->getTotalGrossCents(), $currency);
 
-        $sheet->setCellValue("L{$row}", $invoice->getPaymentMethod() ?? '');
-        $sheet->setCellValue("M{$row}", $invoice->getPaymentTerms() ?? '');
+        $sheet->setCellValue('L'.$row, $invoice->getPaymentMethod() ?? '');
+        $sheet->setCellValue('M'.$row, $invoice->getPaymentTerms() ?? '');
     }
 
     private function setMoneyCell(Worksheet $sheet, string $cell, ?int $cents, string $currency): void
@@ -126,10 +131,11 @@ final readonly class InvoiceXlsxExporter
         if (null === $cents) {
             return;
         }
+
         $sheet->setCellValue($cell, $cents / 100);
         // Excel-friendly currency format: matches the locale's display.
         $sheet->getStyle($cell)->getNumberFormat()->setFormatCode(
-            \sprintf('#,##0.00 "%s"', $currency),
+            sprintf('#,##0.00 "%s"', $currency),
         );
     }
 }

@@ -2,6 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { KeyRound } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AuthCard from "@/front/components/AuthCard.vue";
@@ -73,7 +74,7 @@ function handleSubmit(event) {
                 toggleable
                 required
             />
-            <AppButton type="submit" class="w-full">{{ t('front.reset_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('front.reset_password.submit') }}</AppButton>
         </form>
     </AuthCard>
 </template>

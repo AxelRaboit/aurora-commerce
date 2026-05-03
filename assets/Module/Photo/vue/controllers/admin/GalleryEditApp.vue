@@ -364,14 +364,20 @@ async function saveCaption(item) {
                 </span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <a :href="previewPath" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-line text-sm text-primary transition-colors">
+                <AppButton
+                    variant="secondary"
+                    size="md"
+                    :href="previewPath"
+                    target="_blank"
+                    rel="noopener"
+                >
                     <ExternalLink class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.openPublic") }}
-                </a>
-                <a v-if="exportPath" :href="exportPath" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-line text-sm text-primary transition-colors">
+                </AppButton>
+                <AppButton v-if="exportPath" variant="secondary" size="md" :href="exportPath">
                     <Download class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.admin.export") }}
-                </a>
+                </AppButton>
                 <AppButton v-if="galleryRef.finalizedAt && reopenPath" variant="ghost" v-on:click="askReopen">
                     <Unlock class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.admin.reopen") }}

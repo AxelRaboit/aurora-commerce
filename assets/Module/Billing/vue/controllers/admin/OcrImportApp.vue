@@ -88,12 +88,11 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
 
 <template>
     <div class="space-y-6">
-
         <div class="bg-surface border border-line/60 rounded-xl p-6">
             <h3 class="text-lg font-semibold text-primary mb-2">{{ t('admin.billing.ocr.upload.title') }}</h3>
             <p class="text-sm text-secondary mb-4">{{ t('admin.billing.ocr.upload.help') }}</p>
 
-            <AppFileInput :accept="OCR_ACCEPTED_MIME_TYPES" v-on:change="onFileSelected" v-slot="{ trigger }">
+            <AppFileInput v-slot="{ trigger }" :accept="OCR_ACCEPTED_MIME_TYPES" v-on:change="onFileSelected">
                 <AppButton variant="primary" size="md" :disabled="uploading" v-on:click="trigger">
                     <Upload class="w-4 h-4" :stroke-width="2" />
                     {{ uploading ? t('admin.billing.ocr.upload.uploading') : t('admin.billing.ocr.upload.cta') }}
@@ -160,6 +159,5 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
-
     </div>
 </template>

@@ -435,3 +435,8 @@ shared:
       title: An error occurred
       message: The server encountered an unexpected problem. Our team has been notified. Please try again in a few moments.
       back: Back to home
+  common:
+    pagination: 'Page {page} of {totalPages}'
+  pagination:
+    previous: Previous
+    next: Next

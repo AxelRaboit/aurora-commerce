@@ -7,11 +7,13 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Service\InvoiceExtractor;
+use DateTimeImmutable;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 final class InvoiceExtractorTest extends TestCase
 {
-    private OllamaVisionClientInterface&\PHPUnit\Framework\MockObject\Stub $ollama;
+    private OllamaVisionClientInterface&Stub $ollama;
     private InvoiceExtractor $extractor;
 
     protected function setUp(): void
@@ -65,7 +67,7 @@ final class InvoiceExtractorTest extends TestCase
         self::assertInstanceOf(InvoiceDraft::class, $draft);
         self::assertSame('Acme Corp', $draft->supplierName);
         self::assertSame('FR', $draft->supplierCountryCode);
-        self::assertEquals(new \DateTimeImmutable('2025-03-14'), $draft->issuedAt);
+        self::assertEquals(new DateTimeImmutable('2025-03-14'), $draft->issuedAt);
         self::assertSame(12000, $draft->totalGrossCents);
         self::assertSame(0.92, $draft->confidence);
         self::assertCount(1, $draft->lines);

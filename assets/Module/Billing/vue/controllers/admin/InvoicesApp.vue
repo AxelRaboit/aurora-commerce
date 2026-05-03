@@ -87,14 +87,13 @@ const { formatDateNumeric } = useDateFormat();
                 :placeholder="t('admin.billing.list.allStatuses')"
                 :allow-empty="true"
                 class="sm:max-w-xs"
-                v-on:update:modelValue="onStatusChange"
+                v-on:update:model-value="onStatusChange"
             />
             <div class="flex items-center gap-2 sm:ml-auto">
-                <a :href="exportXlsxUrl"
-                   class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-line text-sm text-primary transition-colors">
+                <AppButton variant="secondary" size="md" :href="exportXlsxUrl">
                     <Download class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.billing.invoices.exportXlsx') }}
-                </a>
+                </AppButton>
                 <AppButton variant="primary" size="md" :href="importPath">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.billing.invoices.importOcr') }}

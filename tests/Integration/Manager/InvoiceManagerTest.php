@@ -8,7 +8,9 @@ use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Tests\Integration\IntegrationTestCase;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 
 final class InvoiceManagerTest extends IntegrationTestCase
 {
@@ -69,14 +71,14 @@ final class InvoiceManagerTest extends IntegrationTestCase
 
         $this->manager->updateField($invoice, 'issuedAt', '2025-12-31');
 
-        self::assertEquals(new \DateTimeImmutable('2025-12-31'), $invoice->getIssuedAt());
+        self::assertEquals(new DateTimeImmutable('2025-12-31'), $invoice->getIssuedAt());
     }
 
     public function testUpdateFieldInvalidDateThrows(): void
     {
         $invoice = $this->makeInvoice();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('admin.billing.invoices.update.invalidDate');
 
         $this->manager->updateField($invoice, 'issuedAt', 'not-a-date');
@@ -86,7 +88,7 @@ final class InvoiceManagerTest extends IntegrationTestCase
     {
         $invoice = $this->makeInvoice();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('admin.billing.invoices.update.unknownField');
 
         $this->manager->updateField($invoice, 'status', 'paid');
@@ -105,7 +107,7 @@ final class InvoiceManagerTest extends IntegrationTestCase
     {
         $invoice = $this->makeInvoice();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('admin.billing.invoices.update.notNumeric');
 
         $this->manager->updateField($invoice, 'totalGrossCents', 'twelve');

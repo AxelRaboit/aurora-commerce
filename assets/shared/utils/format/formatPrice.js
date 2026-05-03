@@ -48,8 +48,10 @@ export function formatCents(cents, currency = "EUR", placeholder = "—") {
  */
 export function formatBpAsPercent(bp, placeholder = "—") {
     if (bp === null || bp === undefined) return placeholder;
-    return (bp / 100).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }) + "%";
+    return (
+        (bp / 100).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }) + "%"
+    );
 }

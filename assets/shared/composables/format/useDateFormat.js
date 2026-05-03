@@ -56,5 +56,11 @@ export function useDateFormat() {
         }).format(new Date(isoString));
     }
 
-    return { formatDate, formatDateShort, formatDateTime, formatDateNumeric, formatDateTimeNumeric };
+    return {
+        formatDate,
+        formatDateShort,
+        formatDateTime,
+        formatDateNumeric,
+        formatDateTimeNumeric,
+    };
 }

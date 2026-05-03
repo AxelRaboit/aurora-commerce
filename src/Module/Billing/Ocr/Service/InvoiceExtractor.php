@@ -9,6 +9,8 @@ use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceLineDraft;
 
+use function is_array;
+
 /**
  * Turns (raw OCR text + invoice image) into a structured InvoiceDraft via
  * a vision-capable LLM. The schema is enforced by Ollama's `format` field
@@ -26,7 +28,7 @@ final readonly class InvoiceExtractor
      * JSON Schema sent as Ollama's `format`. Keep keys flat snake_case —
      * that's what the model will be asked to produce.
      */
-    private const SCHEMA = [
+    private const array SCHEMA = [
         'type' => 'object',
         'properties' => [
             'supplier_name' => ['type' => ['string', 'null']],
@@ -85,46 +87,46 @@ final readonly class InvoiceExtractor
         $truncated = mb_substr($ocrText, 0, 6000);
 
         return <<<PROMPT
-You are an expert at reading supplier invoices. The user has provided one
-invoice document as both an image and as text extracted by an OCR engine.
+            You are an expert at reading supplier invoices. The user has provided one
+            invoice document as both an image and as text extracted by an OCR engine.
 
-Respond with ONE JSON object matching the provided schema. No prose, no
-Markdown fences, no commentary — only the JSON.
+            Respond with ONE JSON object matching the provided schema. No prose, no
+            Markdown fences, no commentary — only the JSON.
 
-CRITICAL ANTI-HALLUCINATION RULES:
-- ONLY return values you can literally SEE on the image OR find in the OCR text.
-- If a value is not present or unreadable, return null. NEVER guess, NEVER infer.
-- Do NOT invent: invoice numbers, dates, IBAN/BIC, VAT numbers, addresses.
-- An IBAN MUST start with 2 letters (country code) + 2 digits + the rest. If
-  what you see does not match this format, return null for the IBAN.
-- A French VAT number starts with "FR" + 11 digits/letters. Validate before returning.
-- SIRET = exactly 14 digits, SIREN = exactly 9 digits. If the visible identifier
-  doesn't match either length, return null (do not pad / truncate).
-- BIC = 8 or 11 alphanumeric characters (no spaces). Otherwise null.
-- Email: must contain "@" and a "." after it. Otherwise null.
-- Country code: ISO 3166-1 alpha-2 (2 letters). Infer ONLY from clear signals
-  (address country, "FR" prefix in VAT, IBAN country code). Otherwise null.
-- Lower "confidence" below 0.6 if ANY field had to be guessed or was ambiguous.
+            CRITICAL ANTI-HALLUCINATION RULES:
+            - ONLY return values you can literally SEE on the image OR find in the OCR text.
+            - If a value is not present or unreadable, return null. NEVER guess, NEVER infer.
+            - Do NOT invent: invoice numbers, dates, IBAN/BIC, VAT numbers, addresses.
+            - An IBAN MUST start with 2 letters (country code) + 2 digits + the rest. If
+              what you see does not match this format, return null for the IBAN.
+            - A French VAT number starts with "FR" + 11 digits/letters. Validate before returning.
+            - SIRET = exactly 14 digits, SIREN = exactly 9 digits. If the visible identifier
+              doesn't match either length, return null (do not pad / truncate).
+            - BIC = 8 or 11 alphanumeric characters (no spaces). Otherwise null.
+            - Email: must contain "@" and a "." after it. Otherwise null.
+            - Country code: ISO 3166-1 alpha-2 (2 letters). Infer ONLY from clear signals
+              (address country, "FR" prefix in VAT, IBAN country code). Otherwise null.
+            - Lower "confidence" below 0.6 if ANY field had to be guessed or was ambiguous.
 
-FORMAT RULES:
-- All monetary amounts MUST be integers in CENTS (multiply by 100). Never
-  return floats. Example: 19.90 EUR -> 1990.
-- VAT rate MUST be integer basis points (20% -> 2000, 5.5% -> 550).
-- Dates MUST be ISO format YYYY-MM-DD, copied from what's actually written.
-- Currency is ISO 4217 (EUR, USD, GBP, CHF...). Use EUR only if the symbol/code
-  is visible on the document.
-- "lines" is the list of invoice line items (one per physical line item).
-  Skip subtotals and tax-summary rows.
-- "confidence" is YOUR self-assessment between 0.0 and 1.0 of how well the
-  data was readable. Be HONEST: prefer null + low confidence over invention.
+            FORMAT RULES:
+            - All monetary amounts MUST be integers in CENTS (multiply by 100). Never
+              return floats. Example: 19.90 EUR -> 1990.
+            - VAT rate MUST be integer basis points (20% -> 2000, 5.5% -> 550).
+            - Dates MUST be ISO format YYYY-MM-DD, copied from what's actually written.
+            - Currency is ISO 4217 (EUR, USD, GBP, CHF...). Use EUR only if the symbol/code
+              is visible on the document.
+            - "lines" is the list of invoice line items (one per physical line item).
+              Skip subtotals and tax-summary rows.
+            - "confidence" is YOUR self-assessment between 0.0 and 1.0 of how well the
+              data was readable. Be HONEST: prefer null + low confidence over invention.
 
-OCR text (best-effort, may contain errors):
----
-{$truncated}
----
+            OCR text (best-effort, may contain errors):
+            ---
+            {$truncated}
+            ---
 
-Now look at the image and produce the JSON.
-PROMPT;
+            Now look at the image and produce the JSON.
+            PROMPT;
     }
 
     /**
@@ -134,9 +136,13 @@ PROMPT;
     {
         $lines = [];
         foreach ($payload['lines'] ?? [] as $row) {
-            if (!\is_array($row) || !isset($row['label'])) {
+            if (!is_array($row)) {
                 continue;
             }
+            if (!isset($row['label'])) {
+                continue;
+            }
+
             $lines[] = new InvoiceLineDraft(
                 label: (string) $row['label'],
                 sku: $this->stringOrNull($row['sku'] ?? null),
@@ -180,9 +186,9 @@ PROMPT;
         if (null === $countryCode) {
             return null;
         }
-        $countryCode = strtoupper($countryCode);
+
+        $countryCode = mb_strtoupper($countryCode);
 
         return preg_match('/^[A-Z]{2}$/', $countryCode) ? $countryCode : null;
     }
-
 }

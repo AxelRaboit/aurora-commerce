@@ -7,6 +7,7 @@ namespace Aurora\Module\Billing\Invoice\Contract;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use InvalidArgumentException;
 
 interface InvoiceManagerInterface
 {
@@ -19,8 +20,8 @@ interface InvoiceManagerInterface
     /**
      * Inline-edit a single whitelisted field.
      *
-     * @throws \InvalidArgumentException with a translation key when the field
-     *                                   name is unknown or the value is invalid
+     * @throws InvalidArgumentException with a translation key when the field
+     *                                  name is unknown or the value is invalid
      */
     public function updateField(Invoice $invoice, string $field, mixed $value): void;
 

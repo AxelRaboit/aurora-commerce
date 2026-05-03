@@ -11,6 +11,9 @@ use Aurora\Module\Billing\Ocr\Service\OcrPipeline;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
+use Throwable;
+
+use function sprintf;
 
 #[AsMessageHandler]
 final readonly class ProcessOcrJobHandler
@@ -27,7 +30,7 @@ final readonly class ProcessOcrJobHandler
         $job = $this->jobs->find($message->ocrJobId);
         if (null === $job) {
             // Job was deleted between dispatch and consume — nothing to do, don't retry.
-            throw new UnrecoverableMessageHandlingException(\sprintf('OcrJob %d not found', $message->ocrJobId));
+            throw new UnrecoverableMessageHandlingException(sprintf('OcrJob %d not found', $message->ocrJobId));
         }
 
         if ($job->getStatus()->isTerminal()) {
@@ -36,11 +39,11 @@ final readonly class ProcessOcrJobHandler
 
         try {
             $this->pipeline->run($job);
-        } catch (\Throwable $exception) {
-            $this->logger->error('OCR job failed', ['job_id' => $job->getId(), 'exception' => $exception]);
-            $this->jobManager->markFailed($job, $exception->getMessage());
+        } catch (Throwable $throwable) {
+            $this->logger->error('OCR job failed', ['job_id' => $job->getId(), 'exception' => $throwable]);
+            $this->jobManager->markFailed($job, $throwable->getMessage());
 
-            throw $exception;
+            throw $throwable;
         }
     }
 }

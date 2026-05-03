@@ -8,7 +8,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
-import { Search, FileText, Lock } from "lucide-vue-next";
+import { Search, FileText, Lock, Save } from "lucide-vue-next";
 import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 
@@ -356,6 +356,7 @@ async function saveGroup(groupName) {
                             :loading="savingGroups[groupName]"
                             v-on:click="saveGroup(groupName)"
                         >
+                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("admin.settings.save") }}
                         </AppButton>
                     </div>

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { Upload, Trash2 } from "lucide-vue-next";
+import { Upload, Trash2, Save } from "lucide-vue-next";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFileInput from "@/shared/components/form/AppFileInput.vue";
@@ -161,7 +161,7 @@ async function removePhoto() {
                     </div>
                 </div>
                 <div class="pt-1">
-                    <AppButton type="submit" :loading="moodLoading">{{ t('shared.common.save') }}</AppButton>
+                    <AppButton type="submit" :loading="moodLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </div>
             </form>
         </div>

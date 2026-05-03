@@ -2,6 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { LogIn } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
@@ -73,7 +74,7 @@ function handleSubmit(event) {
             <AppLink :href="forgotPath" class="text-sm">{{ t('admin.auth.login.forgot') }}</AppLink>
         </div>
 
-        <AppButton type="submit">{{ t('admin.auth.login.submit') }}</AppButton>
+        <AppButton type="submit"><LogIn class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.login.submit') }}</AppButton>
     </form>
 
     <div class="mt-6 flex items-center gap-4">

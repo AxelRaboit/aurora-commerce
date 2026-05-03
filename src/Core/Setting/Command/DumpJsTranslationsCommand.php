@@ -56,7 +56,7 @@ final class DumpJsTranslationsCommand extends Command
 
         try {
             $this->filesystem->mkdir($outputDir);
-        } catch (IOException $exception) {
+        } catch (IOException) {
             $io->error('Cannot create output directory: '.$outputDir);
 
             return Command::FAILURE;

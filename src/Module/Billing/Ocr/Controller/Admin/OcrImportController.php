@@ -21,6 +21,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
+
+use function in_array;
 
 #[Route('/admin/billing/ocr', name: 'billing_ocr')]
 #[IsGranted('billing.ocr.import')]
@@ -66,7 +69,8 @@ final class OcrImportController extends AbstractController
         if (null === $file) {
             return $this->jsonInvalidInput(['document' => 'admin.billing.ocr.upload.errors.missing']);
         }
-        if (!\in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
+
+        if (!in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
             return $this->jsonInvalidInput(['document' => 'admin.billing.ocr.upload.errors.unsupported']);
         }
 
@@ -111,8 +115,8 @@ final class OcrImportController extends AbstractController
     {
         try {
             $this->jobManager->delete($job);
-        } catch (\Throwable $exception) {
-            return $this->jsonFailure('admin.billing.ocr.deleteError', extra: ['detail' => $exception->getMessage()]);
+        } catch (Throwable $throwable) {
+            return $this->jsonFailure('admin.billing.ocr.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

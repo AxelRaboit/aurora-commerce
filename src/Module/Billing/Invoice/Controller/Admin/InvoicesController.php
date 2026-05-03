@@ -11,15 +11,19 @@ use Aurora\Module\Billing\Invoice\Contract\InvoiceLineManagerInterface;
 use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
-use Aurora\Module\Billing\Invoice\Service\InvoiceXlsxExporter;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
+use Aurora\Module\Billing\Invoice\Service\InvoiceXlsxExporter;
 use Aurora\Module\Billing\Invoice\View\InvoicesViewBuilder;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
+
+use function is_array;
 
 #[Route('/admin/billing/invoices', name: 'billing_invoices')]
 #[IsGranted('billing.invoices.view')]
@@ -77,14 +81,14 @@ final class InvoicesController extends AbstractController
     public function update(Invoice $invoice, Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);
-        if (!\is_array($payload) || !isset($payload['field'])) {
+        if (!is_array($payload) || !isset($payload['field'])) {
             return $this->jsonInvalidInput(['field' => 'admin.billing.invoices.update.fieldRequired']);
         }
 
         try {
             $this->invoiceManager->updateField($invoice, (string) $payload['field'], $payload['value'] ?? null);
-        } catch (\InvalidArgumentException $exception) {
-            return $this->jsonInvalidInput([(string) $payload['field'] => $exception->getMessage()]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonInvalidInput([(string) $payload['field'] => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
@@ -96,8 +100,8 @@ final class InvoicesController extends AbstractController
     {
         try {
             $this->invoiceManager->delete($invoice);
-        } catch (\Throwable $exception) {
-            return $this->jsonFailure('admin.billing.invoices.deleteError', extra: ['detail' => $exception->getMessage()]);
+        } catch (Throwable $throwable) {
+            return $this->jsonFailure('admin.billing.invoices.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();
@@ -117,19 +121,19 @@ final class InvoicesController extends AbstractController
     public function updateLine(Invoice $invoice, int $lineId, Request $request): JsonResponse
     {
         $line = $this->resolveLine($invoice, $lineId);
-        if (null === $line) {
+        if (!$line instanceof InvoiceLine) {
             return $this->jsonNotFound();
         }
 
         $payload = json_decode($request->getContent(), true);
-        if (!\is_array($payload) || !isset($payload['field'])) {
+        if (!is_array($payload) || !isset($payload['field'])) {
             return $this->jsonInvalidInput(['field' => 'admin.billing.invoices.update.fieldRequired']);
         }
 
         try {
             $this->lineManager->updateField($line, (string) $payload['field'], $payload['value'] ?? null);
-        } catch (\InvalidArgumentException $exception) {
-            return $this->jsonInvalidInput([(string) $payload['field'] => $exception->getMessage()]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonInvalidInput([(string) $payload['field'] => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
@@ -140,7 +144,7 @@ final class InvoicesController extends AbstractController
     public function deleteLine(Invoice $invoice, int $lineId): JsonResponse
     {
         $line = $this->resolveLine($invoice, $lineId);
-        if (null === $line) {
+        if (!$line instanceof InvoiceLine) {
             return $this->jsonNotFound();
         }
 

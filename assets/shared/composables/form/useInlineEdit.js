@@ -44,7 +44,11 @@ export function useInlineEdit() {
      * @returns {Promise<object|null>} parsed payload on success, null otherwise
      */
     async function submit(url, body = null, opts = {}) {
-        const { field = null, successMessage = "shared.common.saved", silent = false } = opts;
+        const {
+            field = null,
+            successMessage = "shared.common.saved",
+            silent = false,
+        } = opts;
         const data = await request(url, body);
         if (!data?.success) {
             if (!silent) toast.error(t(resolveErrorKey(data, field)));

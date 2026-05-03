@@ -1,0 +1,69 @@
+{#
+    Twig mirror of assets/shared/components/action/AppButton.vue.
+
+    Use it for the rare Twig-only screens (auth confirmations, error pages, public
+    theme CTAs). Most admin/front UI lives in Vue and should keep using <AppButton>.
+
+    Variants and sizes MUST stay in sync with AppButton.vue.
+
+    Params:
+      - href     (optional) — renders as <a>; otherwise <button>
+      - type     (optional) — button[type], default 'button'
+      - variant  (optional) — primary | secondary | danger | danger-outline
+                              | danger-subtle | accent | ghost | link | link-accent,
+                              default 'primary'
+      - size     (optional) — sm | md | lg | none, default 'md'
+      - icon     (optional) — name from @Shared/components/icon.html.twig
+      - label    (optional) — text label; can also be passed via the `content` block
+      - target / rel (optional) — fall through onto <a>
+      - extraClass   (optional) — extra Tailwind classes
+#}
+{% set _variant = variant|default('primary') %}
+{% set _size = size|default('md') %}
+{% set _type = type|default('button') %}
+
+{% set _base = 'inline-flex items-center justify-center gap-2 rounded-lg transition duration-150 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed' %}
+
+{% set _variants = {
+    primary: 'bg-accent-600 hover:bg-accent-700 text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-accent-500',
+    secondary: 'bg-surface-3 hover:bg-surface-2 text-primary border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-base',
+    danger: 'bg-rose-600 hover:bg-rose-500 text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500',
+    'danger-outline': 'bg-transparent hover:bg-rose-500/10 text-rose-400 border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500',
+    'danger-subtle': 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-900/40',
+    accent: 'bg-accent hover:bg-accent-hover text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-accent',
+    ghost: 'bg-transparent hover:bg-surface-2 text-secondary hover:text-primary',
+    link: 'bg-transparent text-muted hover:text-secondary underline p-0 text-sm',
+    'link-accent': 'bg-transparent text-accent hover:underline p-0 text-sm',
+} %}
+
+{% set _sizes = {
+    sm: 'py-1.5 px-3 text-xs',
+    md: 'py-2 px-4 text-sm',
+    lg: 'py-3 px-6 text-base',
+    none: '',
+} %}
+
+{% set _iconSizes = {
+    sm: 'w-3.5 h-3.5',
+    md: 'w-4 h-4',
+    lg: 'w-5 h-5',
+    none: 'w-3.5 h-3.5',
+} %}
+
+{% set _class = _base ~ ' ' ~ (_variants[_variant] ?? _variants.primary) ~ ' ' ~ (_sizes[_size] ?? _sizes.md) ~ ' ' ~ (extraClass|default('')) %}
+{% set _iconClass = _iconSizes[_size] ?? _iconSizes.md %}
+
+{% if href is defined and href %}
+    <a href="{{ href }}" class="{{ _class|trim }}"
+        {%- if target is defined and target %} target="{{ target }}"{% endif -%}
+        {%- if rel is defined and rel %} rel="{{ rel }}"{% endif -%}
+    >
+        {% if icon is defined and icon %}{{ include('@Shared/components/icon.html.twig', {name: icon, class: _iconClass}) }}{% endif %}
+        {% block content %}{{ label|default('') }}{% endblock %}
+    </a>
+{% else %}
+    <button type="{{ _type }}" class="{{ _class|trim }}">
+        {% if icon is defined and icon %}{{ include('@Shared/components/icon.html.twig', {name: icon, class: _iconClass}) }}{% endif %}
+        {{ block('content') ?? label|default('') }}
+    </button>
+{% endif %}

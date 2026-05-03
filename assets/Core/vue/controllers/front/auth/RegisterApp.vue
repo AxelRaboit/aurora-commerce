@@ -2,7 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Lock } from "lucide-vue-next";
+import { Lock, UserPlus, LogIn } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AuthCard from "@/front/components/AuthCard.vue";
@@ -75,7 +75,7 @@ function handleSubmit(event) {
                 toggleable
                 required
             />
-            <AppButton type="submit" class="w-full">{{ t('front.register.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('front.register.submit') }}</AppButton>
         </form>
 
         <template #footer>
@@ -94,6 +94,7 @@ function handleSubmit(event) {
             <h1 class="text-2xl font-bold text-primary mb-3">{{ t('front.register.closed_title') }}</h1>
             <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('front.register.closed_desc') }}</p>
             <AppButton :href="loginPath" variant="primary">
+                <LogIn class="w-4 h-4" :stroke-width="2" />
                 {{ t('front.login.submit') }}
             </AppButton>
         </div>

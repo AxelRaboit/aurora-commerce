@@ -104,15 +104,17 @@ async function regenerate() {
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <a
+                    <AppButton
+                        variant="secondary"
+                        size="md"
                         :href="sitemapUrl"
                         target="_blank"
                         rel="noopener"
-                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-2 hover:bg-surface-3 border border-line text-sm font-medium text-primary transition-colors w-full sm:w-auto"
+                        class="w-full sm:w-auto"
                     >
                         <ExternalLink class="w-4 h-4" :stroke-width="2" />
                         {{ t("admin.sitemap.viewXml") }}
-                    </a>
+                    </AppButton>
                     <AppButton
                         type="button"
                         variant="primary"

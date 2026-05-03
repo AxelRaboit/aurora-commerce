@@ -12,6 +12,7 @@ use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -55,6 +56,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $job->setError(null);
         $job->setStartedAt(null);
         $job->setFinishedAt(null);
+
         $this->entityManager->flush();
 
         $this->bus->dispatch(new ProcessOcrJobMessage($job->getId()));
@@ -74,8 +76,9 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
 
     public function markExtracting(OcrJob $job): void
     {
-        $job->setStartedAt(new \DateTimeImmutable());
+        $job->setStartedAt(new DateTimeImmutable());
         $job->setStatus(OcrJobStatusEnum::Extracting);
+
         $this->entityManager->flush();
     }
 
@@ -83,6 +86,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
     {
         $job->setRawDoctr($rawDoctr);
         $job->setStatus(OcrJobStatusEnum::Parsing);
+
         $this->entityManager->flush();
     }
 
@@ -93,13 +97,15 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $job->setExtracted($payload);
         $job->setConfidence($draft->confidence);
         $job->setModelUsed($modelUsed);
+
         $this->entityManager->flush();
     }
 
     public function markFinished(OcrJob $job, OcrJobStatusEnum $status): void
     {
         $job->setStatus($status);
-        $job->setFinishedAt(new \DateTimeImmutable());
+        $job->setFinishedAt(new DateTimeImmutable());
+
         $this->entityManager->flush();
 
         $this->auditLogger->log('billing', 'ocr.job.finished', 'OcrJob', $job->getId(), [
@@ -112,7 +118,8 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
     {
         $job->setStatus(OcrJobStatusEnum::Failed);
         $job->setError($error);
-        $job->setFinishedAt(new \DateTimeImmutable());
+        $job->setFinishedAt(new DateTimeImmutable());
+
         $this->entityManager->flush();
 
         $this->auditLogger->log('billing', 'ocr.job.failed', 'OcrJob', $job->getId(), [

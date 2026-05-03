@@ -9,6 +9,7 @@ use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,10 +41,10 @@ class OcrJob
     private ?string $modelUsed = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $startedAt = null;
+    private ?DateTimeImmutable $startedAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $finishedAt = null;
+    private ?DateTimeImmutable $finishedAt = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $rawDoctr = null;
@@ -114,24 +115,24 @@ class OcrJob
         return $this;
     }
 
-    public function getStartedAt(): ?\DateTimeImmutable
+    public function getStartedAt(): ?DateTimeImmutable
     {
         return $this->startedAt;
     }
 
-    public function setStartedAt(?\DateTimeImmutable $startedAt): self
+    public function setStartedAt(?DateTimeImmutable $startedAt): self
     {
         $this->startedAt = $startedAt;
 
         return $this;
     }
 
-    public function getFinishedAt(): ?\DateTimeImmutable
+    public function getFinishedAt(): ?DateTimeImmutable
     {
         return $this->finishedAt;
     }
 
-    public function setFinishedAt(?\DateTimeImmutable $finishedAt): self
+    public function setFinishedAt(?DateTimeImmutable $finishedAt): self
     {
         $this->finishedAt = $finishedAt;
 

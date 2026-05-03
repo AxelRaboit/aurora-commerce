@@ -2,6 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { LogIn } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AuthCard from "@/front/components/AuthCard.vue";
@@ -85,7 +86,7 @@ function handleSubmit(event) {
                 {{ t('front.login.remember_me') }}
             </label>
 
-            <AppButton type="submit" class="w-full">{{ t('front.login.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><LogIn class="w-4 h-4" :stroke-width="2" /> {{ t('front.login.submit') }}</AppButton>
         </form>
 
         <template #footer>

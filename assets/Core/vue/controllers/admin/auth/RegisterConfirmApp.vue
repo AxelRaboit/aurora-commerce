@@ -1,5 +1,6 @@
 <script setup>
 import AppLink from "@/shared/components/nav/AppLink.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 import { useI18n } from "vue-i18n";
 import { Mail } from "lucide-vue-next";
 
@@ -28,9 +29,10 @@ defineProps({
             <template v-else>
                 <p class="text-sm text-secondary mb-3">{{ t('admin.auth.register_confirm.resend_hint') }}</p>
                 <form method="POST" :action="resendPath">
-                    <button type="submit" class="text-sm text-accent-400 hover:underline font-medium">
+                    <AppButton type="submit" variant="link-accent" size="none">
+                        <Mail class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('admin.auth.register_confirm.resend_link') }}
-                    </button>
+                    </AppButton>
                 </form>
             </template>
         </div>

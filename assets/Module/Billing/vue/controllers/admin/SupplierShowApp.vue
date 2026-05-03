@@ -75,7 +75,6 @@ const { formatDateNumeric } = useDateFormat();
 
 <template>
     <div class="space-y-6">
-
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-surface border border-line/60 rounded-xl px-5 py-4">
@@ -151,7 +150,7 @@ const { formatDateNumeric } = useDateFormat();
                     :placeholder="t('admin.billing.list.allStatuses')"
                     :allow-empty="true"
                     class="sm:max-w-xs"
-                    v-on:update:modelValue="onStatusChange"
+                    v-on:update:model-value="onStatusChange"
                 />
             </div>
 
@@ -196,6 +195,5 @@ const { formatDateNumeric } = useDateFormat();
                 <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteSupplier">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
-
     </div>
 </template>

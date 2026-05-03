@@ -68,7 +68,7 @@ onMounted(startPolling);
                 :placeholder="t('admin.billing.list.allStatuses')"
                 :allow-empty="true"
                 class="sm:max-w-xs"
-                v-on:update:modelValue="onStatusChange"
+                v-on:update:model-value="onStatusChange"
             />
             <AppButton variant="primary" size="md" :href="importPath" class="sm:ml-auto">
                 <Plus class="w-4 h-4" :stroke-width="2" />

@@ -11,12 +11,16 @@ use Aurora\Module\Billing\Invoice\Contract\SupplierManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Supplier;
 use Aurora\Module\Billing\Invoice\Serializer\SupplierSerializer;
 use Aurora\Module\Billing\Invoice\View\SuppliersViewBuilder;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
+
+use function is_array;
 
 #[Route('/admin/billing/suppliers', name: 'billing_suppliers')]
 #[IsGranted('billing.suppliers.view')]
@@ -57,14 +61,14 @@ final class SuppliersController extends AbstractController
     public function update(Supplier $supplier, Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);
-        if (!\is_array($payload) || !isset($payload['field'])) {
+        if (!is_array($payload) || !isset($payload['field'])) {
             return $this->jsonInvalidInput(['field' => 'admin.billing.suppliers.update.fieldRequired']);
         }
 
         try {
             $this->supplierManager->updateField($supplier, (string) $payload['field'], $payload['value'] ?? null);
-        } catch (\InvalidArgumentException $exception) {
-            return $this->jsonInvalidInput([(string) $payload['field'] => $exception->getMessage()]);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonInvalidInput([(string) $payload['field'] => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['supplier' => $this->supplierSerializer->serialize($supplier)]);
@@ -76,8 +80,8 @@ final class SuppliersController extends AbstractController
     {
         try {
             $this->supplierManager->delete($supplier);
-        } catch (\Throwable $exception) {
-            return $this->jsonFailure('admin.billing.suppliers.deleteError', extra: ['detail' => $exception->getMessage()]);
+        } catch (Throwable $throwable) {
+            return $this->jsonFailure('admin.billing.suppliers.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

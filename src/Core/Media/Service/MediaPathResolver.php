@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Service;
 
 use Aurora\Core\Media\Entity\Media;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Path;
+
+use function sprintf;
 
 /**
  * Resolves the absolute filesystem path of a Media entity stored under
@@ -29,7 +32,7 @@ final readonly class MediaPathResolver
         $absolutePath = Path::join($this->uploadDir, $media->getPath());
 
         if (!is_file($absolutePath)) {
-            throw new \RuntimeException(\sprintf('Media file missing on disk: %s', $absolutePath));
+            throw new RuntimeException(sprintf('Media file missing on disk: %s', $absolutePath));
         }
 
         return $absolutePath;

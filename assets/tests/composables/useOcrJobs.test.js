@@ -50,9 +50,16 @@ describe("useOcrJobs — polling", () => {
         const fetchMock = vi.fn();
         vi.stubGlobal("fetch", fetchMock);
 
-        const jobs = ref([makeJob(1, { status: "completed", isTerminal: true })]);
+        const jobs = ref([
+            makeJob(1, { status: "completed", isTerminal: true }),
+        ]);
         let api;
-        mountWithComposable(() => { api = useOcrJobs(jobs, { statusUrlTemplate: STATUS_URL, intervalMs: INTERVAL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(jobs, {
+                statusUrlTemplate: STATUS_URL,
+                intervalMs: INTERVAL,
+            });
+        });
         api.start();
 
         await vi.advanceTimersByTimeAsync(INTERVAL * 5);
@@ -60,7 +67,10 @@ describe("useOcrJobs — polling", () => {
     });
 
     it("polls non-terminal jobs and patches them on response", async () => {
-        const updated = makeJob(1, { status: "needs_review", isTerminal: true });
+        const updated = makeJob(1, {
+            status: "needs_review",
+            isTerminal: true,
+        });
         const fetchMock = vi.fn().mockResolvedValue({
             ok: true,
             json: async () => ({ success: true, job: updated }),
@@ -69,7 +79,12 @@ describe("useOcrJobs — polling", () => {
 
         const jobs = ref([makeJob(1)]);
         let api;
-        mountWithComposable(() => { api = useOcrJobs(jobs, { statusUrlTemplate: STATUS_URL, intervalMs: INTERVAL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(jobs, {
+                statusUrlTemplate: STATUS_URL,
+                intervalMs: INTERVAL,
+            });
+        });
         api.start();
 
         await vi.advanceTimersByTimeAsync(INTERVAL + 10);
@@ -86,7 +101,10 @@ describe("useOcrJobs — polling", () => {
         const seq = [
             { success: true, job: makeJob(1, { status: "extracting" }) },
             { success: true, job: makeJob(1, { status: "parsing" }) },
-            { success: true, job: makeJob(1, { status: "completed", isTerminal: true }) },
+            {
+                success: true,
+                job: makeJob(1, { status: "completed", isTerminal: true }),
+            },
         ];
         let i = 0;
         const fetchMock = vi.fn().mockImplementation(async () => ({
@@ -97,7 +115,12 @@ describe("useOcrJobs — polling", () => {
 
         const jobs = ref([makeJob(1)]);
         let api;
-        mountWithComposable(() => { api = useOcrJobs(jobs, { statusUrlTemplate: STATUS_URL, intervalMs: INTERVAL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(jobs, {
+                statusUrlTemplate: STATUS_URL,
+                intervalMs: INTERVAL,
+            });
+        });
         api.start();
 
         await vi.advanceTimersByTimeAsync(INTERVAL * 5 + 50);
@@ -107,17 +130,26 @@ describe("useOcrJobs — polling", () => {
     });
 
     it("ignores transient HTTP errors and retries on next tick", async () => {
-        const fetchMock = vi.fn()
+        const fetchMock = vi
+            .fn()
             .mockResolvedValueOnce({ ok: false, json: async () => ({}) })
             .mockResolvedValueOnce({
                 ok: true,
-                json: async () => ({ success: true, job: makeJob(1, { status: "completed", isTerminal: true }) }),
+                json: async () => ({
+                    success: true,
+                    job: makeJob(1, { status: "completed", isTerminal: true }),
+                }),
             });
         vi.stubGlobal("fetch", fetchMock);
 
         const jobs = ref([makeJob(1)]);
         let api;
-        mountWithComposable(() => { api = useOcrJobs(jobs, { statusUrlTemplate: STATUS_URL, intervalMs: INTERVAL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(jobs, {
+                statusUrlTemplate: STATUS_URL,
+                intervalMs: INTERVAL,
+            });
+        });
         api.start();
 
         await vi.advanceTimersByTimeAsync(INTERVAL * 3 + 10);
@@ -135,7 +167,12 @@ describe("useOcrJobs — polling", () => {
 
         const jobs = ref([makeJob(1)]);
         let api;
-        mountWithComposable(() => { api = useOcrJobs(jobs, { statusUrlTemplate: STATUS_URL, intervalMs: INTERVAL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(jobs, {
+                statusUrlTemplate: STATUS_URL,
+                intervalMs: INTERVAL,
+            });
+        });
         api.start();
         api.stop();
 
@@ -154,7 +191,9 @@ describe("useOcrJobs — hasInvoice", () => {
         ["parsing", false],
     ])("status=%s → %s", (status, expected) => {
         let api;
-        mountWithComposable(() => { api = useOcrJobs(ref([]), { statusUrlTemplate: STATUS_URL }); });
+        mountWithComposable(() => {
+            api = useOcrJobs(ref([]), { statusUrlTemplate: STATUS_URL });
+        });
         expect(api.hasInvoice({ status })).toBe(expected);
     });
 });

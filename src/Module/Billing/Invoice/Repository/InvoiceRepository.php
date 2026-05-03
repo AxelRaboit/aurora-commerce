@@ -7,6 +7,7 @@ namespace Aurora\Module\Billing\Invoice\Repository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -42,6 +43,7 @@ class InvoiceRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('LOWER(i.number) LIKE :search OR LOWER(s.name) LIKE :search')
                 ->setParameter('search', $pattern);
         }
+
         if ($status instanceof InvoiceStatusEnum) {
             $queryBuilder->andWhere('i.status = :status')->setParameter('status', $status);
         }
@@ -110,7 +112,7 @@ class InvoiceRepository extends ServiceEntityRepository
      * Sum of total_gross_cents over invoices issued in the given period (all
      * statuses except draft).
      */
-    public function sumGrossInPeriod(\DateTimeInterface $from, \DateTimeInterface $to): int
+    public function sumGrossInPeriod(DateTimeInterface $from, DateTimeInterface $to): int
     {
         return (int) $this->createQueryBuilder('i')
             ->select('COALESCE(SUM(i.totalGrossCents), 0)')

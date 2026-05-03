@@ -2,6 +2,7 @@
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { Mail } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
@@ -46,7 +47,7 @@ function handleSubmit(event) {
                 autofocus
                 required
             />
-            <AppButton type="submit" class="w-full">{{ t('admin.auth.forgot_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.forgot_password.submit') }}</AppButton>
         </form>
     </template>
 

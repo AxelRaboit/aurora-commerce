@@ -100,19 +100,32 @@ const { formatDateNumeric } = useDateFormat();
         </AppModal>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
             <div class="lg:col-span-1 space-y-4">
                 <div class="bg-surface border border-line/60 rounded-xl p-6">
                     <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.document') }}</h3>
                     <template v-if="invoice.document">
-                        <a v-if="isImageMimeType(invoice.document.mimeType)" :href="invoice.document.url" target="_blank" rel="noopener" class="block">
+                        <a
+                            v-if="isImageMimeType(invoice.document.mimeType)"
+                            :href="invoice.document.url"
+                            target="_blank"
+                            rel="noopener"
+                            class="block"
+                        >
                             <img :src="invoice.document.url" :alt="invoice.document.originalName" class="w-full rounded-lg border border-line/60">
                         </a>
-                        <embed v-else-if="isPdfMimeType(invoice.document.mimeType)"
-                               :src="invoice.document.url"
-                               :type="MimeType.Pdf"
-                               class="w-full h-96 rounded-lg border border-line/60">
-                        <a v-else :href="invoice.document.url" target="_blank" rel="noopener" class="text-accent-400 hover:text-accent-300 text-sm">
+                        <embed
+                            v-else-if="isPdfMimeType(invoice.document.mimeType)"
+                            :src="invoice.document.url"
+                            :type="MimeType.Pdf"
+                            class="w-full h-96 rounded-lg border border-line/60"
+                        >
+                        <a
+                            v-else
+                            :href="invoice.document.url"
+                            target="_blank"
+                            rel="noopener"
+                            class="text-accent-400 hover:text-accent-300 text-sm"
+                        >
                             {{ invoice.document.originalName }} →
                         </a>
                         <p class="mt-2 text-xs text-muted truncate">{{ invoice.document.originalName }}</p>
@@ -183,7 +196,13 @@ const { formatDateNumeric } = useDateFormat();
                             </div>
                         </div>
                         <div class="flex items-center gap-1">
-                            <AppIconButton v-if="isNeedsReview" color="emerald" :title="t('admin.billing.invoices.show.validate')" :disabled="validating" v-on:click="validateInvoice">
+                            <AppIconButton
+                                v-if="isNeedsReview"
+                                color="emerald"
+                                :title="t('admin.billing.invoices.show.validate')"
+                                :disabled="validating"
+                                v-on:click="validateInvoice"
+                            >
                                 <Check class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="showDeleteModal = true">
@@ -235,19 +254,40 @@ const { formatDateNumeric } = useDateFormat();
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalNet') }}</dt>
                             <dd class="text-primary">
-                                <InlineField align="right" :display-value="formatCents(invoice.totalNetCents)" :raw-value="invoice.totalNetCents" type="money" :currency="invoice.currency" v-on:save="updateField('totalNetCents', $event)" />
+                                <InlineField
+                                    align="right"
+                                    :display-value="formatCents(invoice.totalNetCents)"
+                                    :raw-value="invoice.totalNetCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('totalNetCents', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalVat') }}</dt>
                             <dd class="text-primary">
-                                <InlineField align="right" :display-value="formatCents(invoice.totalVatCents)" :raw-value="invoice.totalVatCents" type="money" :currency="invoice.currency" v-on:save="updateField('totalVatCents', $event)" />
+                                <InlineField
+                                    align="right"
+                                    :display-value="formatCents(invoice.totalVatCents)"
+                                    :raw-value="invoice.totalVatCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('totalVatCents', $event)"
+                                />
                             </dd>
                         </div>
                         <div>
                             <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalGross') }}</dt>
                             <dd class="text-primary font-semibold">
-                                <InlineField align="right" :display-value="formatCents(invoice.totalGrossCents)" :raw-value="invoice.totalGrossCents" type="money" :currency="invoice.currency" v-on:save="updateField('totalGrossCents', $event)" />
+                                <InlineField
+                                    align="right"
+                                    :display-value="formatCents(invoice.totalGrossCents)"
+                                    :raw-value="invoice.totalGrossCents"
+                                    type="money"
+                                    :currency="invoice.currency"
+                                    v-on:save="updateField('totalGrossCents', $event)"
+                                />
                             </dd>
                         </div>
                     </div>
@@ -286,22 +326,52 @@ const { formatDateNumeric } = useDateFormat();
                                         <InlineField :display-value="line.sku" :raw-value="line.sku" type="text" v-on:save="updateLineField(line.id, 'sku', $event)" />
                                     </td>
                                     <td class="px-4 py-3 text-secondary">
-                                        <InlineField align="right" :display-value="line.quantity" :raw-value="line.quantity" type="text" v-on:save="updateLineField(line.id, 'quantity', $event)" />
+                                        <InlineField
+                                            align="right"
+                                            :display-value="line.quantity"
+                                            :raw-value="line.quantity"
+                                            type="text"
+                                            v-on:save="updateLineField(line.id, 'quantity', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-xs text-muted hidden md:table-cell">
                                         <InlineField :display-value="line.unit" :raw-value="line.unit" type="text" v-on:save="updateLineField(line.id, 'unit', $event)" />
                                     </td>
                                     <td class="px-4 py-3 text-secondary">
-                                        <InlineField align="right" :display-value="formatCents(line.unitPriceCents)" :raw-value="line.unitPriceCents" type="money" v-on:save="updateLineField(line.id, 'unitPriceCents', $event)" />
+                                        <InlineField
+                                            align="right"
+                                            :display-value="formatCents(line.unitPriceCents)"
+                                            :raw-value="line.unitPriceCents"
+                                            type="money"
+                                            v-on:save="updateLineField(line.id, 'unitPriceCents', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-secondary hidden lg:table-cell">
-                                        <InlineField align="right" :display-value="formatBpAsPercent(line.vatRateBp)" :raw-value="line.vatRateBp" type="number" v-on:save="updateLineField(line.id, 'vatRateBp', $event)" />
+                                        <InlineField
+                                            align="right"
+                                            :display-value="formatBpAsPercent(line.vatRateBp)"
+                                            :raw-value="line.vatRateBp"
+                                            type="number"
+                                            v-on:save="updateLineField(line.id, 'vatRateBp', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-primary">
-                                        <InlineField align="right" :display-value="formatCents(line.totalNetCents)" :raw-value="line.totalNetCents" type="money" v-on:save="updateLineField(line.id, 'totalNetCents', $event)" />
+                                        <InlineField
+                                            align="right"
+                                            :display-value="formatCents(line.totalNetCents)"
+                                            :raw-value="line.totalNetCents"
+                                            type="money"
+                                            v-on:save="updateLineField(line.id, 'totalNetCents', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-primary hidden lg:table-cell">
-                                        <InlineField align="right" :display-value="formatCents(line.totalGrossCents)" :raw-value="line.totalGrossCents" type="money" v-on:save="updateLineField(line.id, 'totalGrossCents', $event)" />
+                                        <InlineField
+                                            align="right"
+                                            :display-value="formatCents(line.totalGrossCents)"
+                                            :raw-value="line.totalGrossCents"
+                                            type="money"
+                                            v-on:save="updateLineField(line.id, 'totalGrossCents', $event)"
+                                        />
                                     </td>
                                     <td class="px-4 py-3 text-right">
                                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="deleteLine(line.id)">
@@ -314,7 +384,6 @@ const { formatDateNumeric } = useDateFormat();
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>

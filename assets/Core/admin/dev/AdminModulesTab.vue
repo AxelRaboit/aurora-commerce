@@ -6,7 +6,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import { Lock } from "lucide-vue-next";
+import { Lock, Save } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -137,6 +137,7 @@ async function save() {
                 :loading="saving"
                 v-on:click="save"
             >
+                <Save class="w-3.5 h-3.5" :stroke-width="2" />
                 {{ t("admin.settings.save") }}
             </AppButton>
         </div>

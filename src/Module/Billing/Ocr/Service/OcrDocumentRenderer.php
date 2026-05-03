@@ -6,8 +6,11 @@ namespace Aurora\Module\Billing\Ocr\Service;
 
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Path;
+
+use function sprintf;
 
 /**
  * Resolves a raster image path that the vision model can ingest.
@@ -31,9 +34,9 @@ final readonly class OcrDocumentRenderer
 
     /**
      * @param string $absoluteSourcePath path to the original document on disk
-     * @param int    $jobId               used to namespace the rendered PNG cache file
+     * @param int    $jobId              used to namespace the rendered PNG cache file
      *
-     * @throws \RuntimeException when the mime type is neither an image nor a PDF
+     * @throws RuntimeException when the mime type is neither an image nor a PDF
      */
     public function resolveImagePath(string $absoluteSourcePath, int $jobId): string
     {
@@ -41,14 +44,14 @@ final readonly class OcrDocumentRenderer
         $mimeType = MimeTypeEnum::tryFrom($rawMimeType);
 
         if (null === $mimeType || (!$mimeType->isImage() && MimeTypeEnum::Pdf !== $mimeType)) {
-            throw new \RuntimeException(\sprintf('Unsupported document mime "%s" for OCR.', $rawMimeType));
+            throw new RuntimeException(sprintf('Unsupported document mime "%s" for OCR.', $rawMimeType));
         }
 
         if ($mimeType->isImage()) {
             return $absoluteSourcePath;
         }
 
-        $destinationPath = Path::join($this->renderCacheDir, \sprintf(self::CACHED_IMAGE_FILENAME_FORMAT, $jobId));
+        $destinationPath = Path::join($this->renderCacheDir, sprintf(self::CACHED_IMAGE_FILENAME_FORMAT, $jobId));
 
         return $this->doctr->renderToPng($absoluteSourcePath, $destinationPath);
     }

@@ -12,6 +12,8 @@ use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use function is_string;
+
 final readonly class InvoicesViewBuilder
 {
     public function __construct(
@@ -59,7 +61,7 @@ final readonly class InvoicesViewBuilder
     /**
      * Same filters as the list, unbounded — used by the CSV export controller.
      *
-     * @return iterable<\Aurora\Module\Billing\Invoice\Entity\Invoice>
+     * @return iterable<Invoice>
      */
     public function findForExport(Request $request): iterable
     {
@@ -94,7 +96,7 @@ final readonly class InvoicesViewBuilder
 
     private function resolveStatus(mixed $value): ?InvoiceStatusEnum
     {
-        if (!\is_string($value) || '' === $value) {
+        if (!is_string($value) || '' === $value) {
             return null;
         }
 

@@ -10,6 +10,7 @@ use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -40,13 +41,13 @@ class Invoice
     private InvoiceStatusEnum $status = InvoiceStatusEnum::Draft;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $issuedAt = null;
+    private ?DateTimeImmutable $issuedAt = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $dueAt = null;
+    private ?DateTimeImmutable $dueAt = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $paidAt = null;
+    private ?DateTimeImmutable $paidAt = null;
 
     #[ORM\Column(length: 3, enumType: CurrencyEnum::class, options: ['default' => 'EUR'])]
     private CurrencyEnum $currency = CurrencyEnum::EUR;
@@ -132,36 +133,36 @@ class Invoice
         return $this;
     }
 
-    public function getIssuedAt(): ?\DateTimeImmutable
+    public function getIssuedAt(): ?DateTimeImmutable
     {
         return $this->issuedAt;
     }
 
-    public function setIssuedAt(?\DateTimeImmutable $issuedAt): self
+    public function setIssuedAt(?DateTimeImmutable $issuedAt): self
     {
         $this->issuedAt = $issuedAt;
 
         return $this;
     }
 
-    public function getDueAt(): ?\DateTimeImmutable
+    public function getDueAt(): ?DateTimeImmutable
     {
         return $this->dueAt;
     }
 
-    public function setDueAt(?\DateTimeImmutable $dueAt): self
+    public function setDueAt(?DateTimeImmutable $dueAt): self
     {
         $this->dueAt = $dueAt;
 
         return $this;
     }
 
-    public function getPaidAt(): ?\DateTimeImmutable
+    public function getPaidAt(): ?DateTimeImmutable
     {
         return $this->paidAt;
     }
 
-    public function setPaidAt(?\DateTimeImmutable $paidAt): self
+    public function setPaidAt(?DateTimeImmutable $paidAt): self
     {
         $this->paidAt = $paidAt;
 

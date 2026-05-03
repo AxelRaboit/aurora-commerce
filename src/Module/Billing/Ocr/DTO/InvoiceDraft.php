@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\DTO;
 
+use DateTimeImmutable;
+
 /**
  * Structured payload produced by the OCR pipeline. Mirrors the JSON schema
  * sent to the vision model (see InvoiceExtractor::SCHEMA). All fields are
@@ -12,8 +14,9 @@ namespace Aurora\Module\Billing\Ocr\DTO;
  */
 final readonly class InvoiceDraft
 {
-    private const TOTAL_TOLERANCE_CENTS = 200;
-    private const CONFIDENCE_THRESHOLD = 0.85;
+    private const int TOTAL_TOLERANCE_CENTS = 200;
+
+    private const float CONFIDENCE_THRESHOLD = 0.85;
 
     /**
      * @param list<InvoiceLineDraft> $lines
@@ -30,8 +33,8 @@ final readonly class InvoiceDraft
         public ?string $supplierCountryCode,
         public ?string $invoiceNumber,
         public ?string $purchaseOrderRef,
-        public ?\DateTimeImmutable $issuedAt,
-        public ?\DateTimeImmutable $dueAt,
+        public ?DateTimeImmutable $issuedAt,
+        public ?DateTimeImmutable $dueAt,
         public ?string $paymentTerms,
         public ?string $paymentMethod,
         public ?string $currency,
@@ -51,7 +54,8 @@ final readonly class InvoiceDraft
         if ($this->confidence < self::CONFIDENCE_THRESHOLD) {
             return false;
         }
-        if (null !== $this->totalNetCents && null !== $this->totalVatCents && null !== $this->totalGrossCents) {
+
+        if (!in_array(null, [$this->totalNetCents, $this->totalVatCents, $this->totalGrossCents], true)) {
             $expected = $this->totalNetCents + $this->totalVatCents;
             if (abs($expected - $this->totalGrossCents) > self::TOTAL_TOLERANCE_CENTS) {
                 return false;

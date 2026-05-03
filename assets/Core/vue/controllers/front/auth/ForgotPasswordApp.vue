@@ -62,7 +62,7 @@ function handleSubmit(event) {
                 autofocus
                 required
             />
-            <AppButton type="submit" class="w-full">{{ t('front.forgot_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('front.forgot_password.submit') }}</AppButton>
         </form>
 
         <template v-if="!sent" #footer>

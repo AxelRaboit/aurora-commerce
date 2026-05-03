@@ -11,9 +11,12 @@
         </div>
         <h1 class="text-2xl font-bold text-primary mb-3">{{ 'front.register.confirm_heading'|trans }}</h1>
         <p class="text-secondary text-sm leading-relaxed mb-8">{{ 'front.register.confirm_message'|trans }}</p>
-        <a href="{{ path('front_login', {locale: locale}) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-white text-sm font-bold transition-colors">
-            {{ 'front.login.submit'|trans }}
-        </a>
+        {{ include('@Shared/components/app_button.html.twig', {
+            href: path('front_login', {locale: locale}),
+            variant: 'accent',
+            icon: 'log-in',
+            label: 'front.login.submit'|trans,
+        }) }}
 
         {% if pendingEmail %}
             <div class="mt-8 pt-8 border-t border-line/40">
@@ -22,9 +25,13 @@
                 {% else %}
                     <p class="text-sm text-secondary mb-3">{{ 'front.register.resend_hint'|trans }}</p>
                     <form method="POST" action="{{ path('front_resend_verification', {locale: locale}) }}">
-                        <button type="submit" class="text-sm text-accent hover:underline font-medium">
-                            {{ 'front.register.resend_link'|trans }}
-                        </button>
+                        {{ include('@Shared/components/app_button.html.twig', {
+                            type: 'submit',
+                            variant: 'link-accent',
+                            size: 'none',
+                            icon: 'mail',
+                            label: 'front.register.resend_link'|trans,
+                        }) }}
                     </form>
                 {% endif %}
             </div>
