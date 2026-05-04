@@ -1,10 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { openMediaPicker } from "@/shared/utils/mediaPicker.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
@@ -14,8 +10,13 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import { useGalleryInvites } from "@/Module/Photo/admin/galleries/composables/useGalleryInvites.js";
-import { useGalleryFinalizations } from "@/Module/Photo/admin/galleries/composables/useGalleryFinalizations.js";
+import { useGalleryInvites } from "@photo/admin/galleries/composables/useGalleryInvites.js";
+import { useGalleryFinalizations } from "@photo/admin/galleries/composables/useGalleryFinalizations.js";
+import { useGalleryEditItems } from "@photo/admin/gallery-edit/composables/useGalleryEditItems.js";
+import { useGalleryEditConsensus } from "@photo/admin/gallery-edit/composables/useGalleryEditConsensus.js";
+import { useGalleryEditCaption } from "@photo/admin/gallery-edit/composables/useGalleryEditCaption.js";
+import { useGalleryEditReopen } from "@photo/admin/gallery-edit/composables/useGalleryEditReopen.js";
+import { useGalleryEditComments } from "@photo/admin/gallery-edit/composables/useGalleryEditComments.js";
 import { Plus, Trash2, ExternalLink, Heart, GripVertical, Pencil, Check, X, Download, Unlock, Printer, Trash, MessageSquare, UserCheck, ChevronDown, ChevronRight, Mail, Send } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -43,313 +44,32 @@ const props = defineProps({
     commentDeletePath: { type: String, default: "" },
 });
 
-const items = ref([...props.items]);
-const picks = ref({ ...props.picks });
 const galleryRef = ref({ ...props.gallery });
 const comments = ref([...props.comments]);
 const finalizations = ref([...props.finalizations]);
 const invites = ref([...props.invites]);
-// Once an invitee validates, they move out of the "Invitations" section and
-// only show under "Sélections validées" — keeps the invites pane focused on
-// what's still actionable.
 const pendingInvites = computed(() => invites.value.filter((i) => !i.finalizedAt));
-const selected = ref(new Set());
 
-function pickKindCount(itemId, kind) {
-    return picks.value.byItemId?.[itemId]?.[kind] ?? 0;
-}
+const { items, selected, allSelected, toggleSelect, toggleSelectAll, itemById, itemPreview, addPhotos, pendingDeleteItem, deleteOneLoading, askDeleteOne, confirmDeleteOne, pendingBulkDelete, bulkDeleteLoading, askBulkDelete, confirmBulkDelete, onDragStart, onDragOver, onDrop } =
+    useGalleryEditItems(props, props.items);
 
-// --- Consensus ---
-const sortByConsensus = ref(false);
-const visitorCount = computed(() => picks.value.visitorCount ?? 0);
+const { picks, sortByConsensus, visitorCount, consensusFavorite, pickKindCount, pickCount, displayedItems } =
+    useGalleryEditConsensus(props.picks, items);
 
-function consensusFavorite(itemId) {
-    return picks.value.consensusByItemId?.[itemId]?.favorite ?? 0;
-}
+const { editingCaptionId, editingCaptionDraft, startCaption, cancelCaption, saveCaption } =
+    useGalleryEditCaption(props.itemsCaptionPath, items);
 
-const displayedItems = computed(() => {
-    if (!sortByConsensus.value) return items.value;
-    return [...items.value].sort((a, b) => {
-        const diff = consensusFavorite(b.id) - consensusFavorite(a.id);
-        if (diff !== 0) return diff;
-        return a.position - b.position;
-    });
-});
+const { showReopenModal, reopenLoading, askReopen, confirmReopen } =
+    useGalleryEditReopen(props.reopenPath, galleryRef);
 
-// --- Reopen ---
-const showReopenModal = ref(false);
-const reopenLoading = ref(false);
+const { pendingCommentDelete, commentDeleteLoading, askDeleteComment, confirmDeleteComment, commentsForItem } =
+    useGalleryEditComments(props.commentDeletePath, comments);
 
-function askReopen() {
-    if (!props.reopenPath) return;
-    showReopenModal.value = true;
-}
+const { inviteForm, inviteErrors, inviteCreating, inviteSendingId, pendingInviteDelete, inviteDeleting, createInvite, sendInvite, askDeleteInvite, confirmDeleteInvite } =
+    useGalleryInvites({ create: props.invitesCreatePath, send: props.invitesSendPath, delete: props.invitesDeletePath }, invites);
 
-async function confirmReopen() {
-    if (!props.reopenPath || reopenLoading.value) return;
-    reopenLoading.value = true;
-    try {
-        const res = await fetch(props.reopenPath, { method: "POST" });
-        const data = await res.json();
-        if (data?.success) {
-            galleryRef.value = data.gallery;
-            showReopenModal.value = false;
-            toast.success(t("photo.galleries.admin.reopened"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } finally {
-        reopenLoading.value = false;
-    }
-}
-
-// --- Delete comment ---
-const pendingCommentDelete = ref(null);
-const commentDeleteLoading = ref(false);
-
-function askDeleteComment(comment) {
-    if (!props.commentDeletePath) return;
-    pendingCommentDelete.value = comment;
-}
-
-async function confirmDeleteComment() {
-    if (!pendingCommentDelete.value || commentDeleteLoading.value) return;
-    commentDeleteLoading.value = true;
-    const comment = pendingCommentDelete.value;
-    try {
-        const url = props.commentDeletePath.replace("__id__", comment.id);
-        const res = await fetch(url, { method: "POST" });
-        const data = await res.json();
-        if (data?.success) {
-            comments.value = comments.value.filter((c) => c.id !== comment.id);
-            pendingCommentDelete.value = null;
-            toast.success(t("photo.galleries.admin.comments.deleted"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } finally {
-        commentDeleteLoading.value = false;
-    }
-}
-
-function commentsForItem(itemId) {
-    return comments.value.filter((c) => c.itemId === itemId);
-}
-
-// --- Invites ---
-const {
-    inviteForm,
-    inviteErrors,
-    inviteCreating,
-    inviteSendingId,
-    pendingInviteDelete,
-    inviteDeleting,
-    createInvite,
-    sendInvite,
-    askDeleteInvite,
-    confirmDeleteInvite,
-} = useGalleryInvites(
-    { create: props.invitesCreatePath, send: props.invitesSendPath, delete: props.invitesDeletePath },
-    invites,
-);
-
-function itemById(itemId) {
-    return items.value.find((i) => i.id === itemId);
-}
-
-// --- Finalizations ---
-const {
-    expandedFinalizations,
-    finalizationsPage,
-    finalizationsTotalPages,
-    paginatedFinalizations,
-    goToFinalizationsPage,
-    toggleFinalization,
-    pendingFinalizationDelete,
-    finalizationDeleteLoading,
-    askDeleteFinalization,
-    confirmDeleteFinalization,
-} = useGalleryFinalizations(props.finalizationDeletePath, finalizations, invites, galleryRef);
-
-function itemPreview(itemId) {
-    return items.value.find((i) => i.id === itemId)?.thumb ?? null;
-}
-const editingCaptionId = ref(null);
-const editingCaptionDraft = ref("");
-
-const allSelected = computed(() => items.value.length > 0 && selected.value.size === items.value.length);
-
-function pickCount(itemId) {
-    return picks.value.byItemId?.[itemId] ?? 0;
-}
-
-function toggleSelect(itemId) {
-    if (selected.value.has(itemId)) selected.value.delete(itemId);
-    else selected.value.add(itemId);
-    selected.value = new Set(selected.value);
-}
-
-function toggleSelectAll() {
-    if (allSelected.value) selected.value = new Set();
-    else selected.value = new Set(items.value.map((i) => i.id));
-}
-
-async function addPhotos() {
-    const picked = await openMediaPicker({ imagesOnly: true, multiple: true });
-    if (!Array.isArray(picked) || picked.length === 0) return;
-
-    const mediaIds = picked.map((m) => m.id);
-    try {
-        const response = await fetch(props.itemsAddPath, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mediaIds }),
-        });
-        const data = await response.json();
-        if (!data?.success) {
-            toast.error(t("shared.common.error"));
-            return;
-        }
-        items.value = data.items ?? items.value;
-        toast.success(t("photo.galleries.itemsAdded", { count: data.added }));
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
-
-// --- Single delete ---
-const pendingDeleteItem = ref(null);
-const deleteOneLoading = ref(false);
-
-function askDeleteOne(item) {
-    pendingDeleteItem.value = item;
-}
-
-async function confirmDeleteOne() {
-    if (!pendingDeleteItem.value || deleteOneLoading.value) return;
-    deleteOneLoading.value = true;
-    const item = pendingDeleteItem.value;
-    try {
-        const response = await fetch(buildPath(props.itemsDeletePath, { id: item.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data?.success) {
-            items.value = items.value.filter((i) => i.id !== item.id);
-            selected.value.delete(item.id);
-            selected.value = new Set(selected.value);
-            pendingDeleteItem.value = null;
-            toast.success(t("photo.galleries.itemsDeleted", { count: 1 }));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        deleteOneLoading.value = false;
-    }
-}
-
-// --- Bulk delete ---
-const pendingBulkDelete = ref(false);
-const bulkDeleteLoading = ref(false);
-
-function askBulkDelete() {
-    if (selected.value.size === 0) return;
-    pendingBulkDelete.value = true;
-}
-
-async function confirmBulkDelete() {
-    if (bulkDeleteLoading.value) return;
-    const ids = Array.from(selected.value);
-    if (ids.length === 0) {
-        pendingBulkDelete.value = false;
-        return;
-    }
-    bulkDeleteLoading.value = true;
-    try {
-        const response = await fetch(props.itemsBulkDeletePath, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ itemIds: ids }),
-        });
-        const data = await response.json();
-        if (data?.success) {
-            items.value = items.value.filter((i) => !selected.value.has(i.id));
-            selected.value = new Set();
-            pendingBulkDelete.value = false;
-            toast.success(t("photo.galleries.itemsDeleted", { count: data.deleted }));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        bulkDeleteLoading.value = false;
-    }
-}
-
-// --- Drag and drop reorder ---
-let draggingIndex = null;
-
-function onDragStart(index, event) {
-    draggingIndex = index;
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", String(index));
-}
-
-function onDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-}
-
-async function onDrop(targetIndex) {
-    if (draggingIndex === null || draggingIndex === targetIndex) return;
-    const reordered = [...items.value];
-    const [moved] = reordered.splice(draggingIndex, 1);
-    reordered.splice(targetIndex, 0, moved);
-    items.value = reordered;
-    draggingIndex = null;
-
-    try {
-        await fetch(props.itemsReorderPath, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ itemIds: reordered.map((i) => i.id) }),
-        });
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
-
-// --- Caption inline edit ---
-function startCaption(item) {
-    editingCaptionId.value = item.id;
-    editingCaptionDraft.value = item.caption ?? "";
-}
-
-function cancelCaption() {
-    editingCaptionId.value = null;
-    editingCaptionDraft.value = "";
-}
-
-async function saveCaption(item) {
-    try {
-        const response = await fetch(buildPath(props.itemsCaptionPath, { id: item.id }), {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ caption: editingCaptionDraft.value }),
-        });
-        const data = await response.json();
-        if (data?.success) {
-            const target = items.value.find((i) => i.id === item.id);
-            if (target) target.caption = editingCaptionDraft.value || null;
-            cancelCaption();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
+const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, paginatedFinalizations, goToFinalizationsPage, toggleFinalization, pendingFinalizationDelete, finalizationDeleteLoading, askDeleteFinalization, confirmDeleteFinalization } =
+    useGalleryFinalizations(props.finalizationDeletePath, finalizations, invites, galleryRef);
 </script>
 
 <template>

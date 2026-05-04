@@ -1,5 +1,4 @@
 <script setup>
-import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -9,6 +8,9 @@ import MenuListPanel from "@core/admin/menus/MenuListPanel.vue";
 import MenuEditorPanel from "@core/admin/menus/MenuEditorPanel.vue";
 import MenuItemModal from "@core/admin/menus/MenuItemModal.vue";
 import { useMenuEditor } from "@core/admin/menus/composables/useMenuEditor.js";
+import { useMenuEditModal } from "@core/admin/menus/composables/useMenuEditModal.js";
+import { useMenuDeleteConfirms } from "@core/admin/menus/composables/useMenuDeleteConfirms.js";
+import { useMenuItemModal } from "@core/admin/menus/composables/useMenuItemModal.js";
 
 const { t } = useI18n();
 
@@ -43,86 +45,12 @@ const paths = {
     itemReorder: props.itemReorderPath,
 };
 
-const {
-    menus,
-    selectedMenu,
-    selectMenu,
-    updateMenu,
-    deleteMenu,
-    reorderItems,
-    saveItem,
-    deleteItem,
-} = useMenuEditor(paths, props.initialMenus);
+const { menus, selectedMenu, selectMenu, updateMenu, deleteMenu, reorderItems, saveItem, deleteItem } =
+    useMenuEditor(paths, props.initialMenus);
 
-// ── Menu edit modal ──────────────────────────────────────────────────────────
-
-const menuModal = reactive({ open: false, editing: null, saving: false });
-const menuForm = reactive({ name: "", location: "", description: "" });
-
-function openEditMenu(menu) {
-    menuModal.editing = menu;
-    menuForm.name = menu.name;
-    menuForm.location = menu.location;
-    menuForm.description = menu.description ?? "";
-    menuModal.open = true;
-}
-
-async function submitMenu() {
-    if (!menuModal.editing) return;
-    menuModal.saving = true;
-    try {
-        const ok = await updateMenu(menuModal.editing, {
-            name: menuForm.name,
-            location: menuForm.location,
-            description: menuForm.description || null,
-        });
-        if (ok) menuModal.open = false;
-    } finally {
-        menuModal.saving = false;
-    }
-}
-
-// ── Delete confirms ──────────────────────────────────────────────────────────
-
-const confirmDeleteMenu = ref(null);
-async function submitDeleteMenu() {
-    if (!confirmDeleteMenu.value) return;
-    if (await deleteMenu(confirmDeleteMenu.value)) {
-        confirmDeleteMenu.value = null;
-    }
-}
-
-const confirmDeleteItem = ref(null);
-async function submitDeleteItem() {
-    if (!confirmDeleteItem.value) return;
-    if (await deleteItem(confirmDeleteItem.value)) {
-        confirmDeleteItem.value = null;
-    }
-}
-
-// ── Item modal ───────────────────────────────────────────────────────────────
-
-const itemModal = reactive({ open: false, editing: null, saving: false });
-
-function openCreateItem() {
-    itemModal.editing = null;
-    itemModal.open = true;
-}
-
-function openEditItem(item) {
-    itemModal.editing = item;
-    itemModal.open = true;
-}
-
-async function submitItem(payload) {
-    itemModal.saving = true;
-    try {
-        const ok = await saveItem(itemModal.editing, payload);
-        if (ok) itemModal.open = false;
-    } finally {
-        itemModal.saving = false;
-    }
-}
+const { menuModal, menuForm, openEditMenu, submitMenu } = useMenuEditModal(updateMenu);
+const { confirmDeleteMenu, submitDeleteMenu, confirmDeleteItem, submitDeleteItem } = useMenuDeleteConfirms(deleteMenu, deleteItem);
+const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal(saveItem);
 </script>
 
 <template>

@@ -1,9 +1,11 @@
 <script setup>
-import { computed, ref, watch, onMounted, nextTick } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/shared/composables/useTheme.js";
-import { usePersistedExpanded } from "@/shared/composables/usePersistedExpanded.js";
+import { useResizable } from "@/shared/composables/useResizable.js";
 import { useAdminSearch } from "@core/vue/composables/useAdminSearch.js";
+import { useSidebarCollapse } from "@core/admin/sidebar/composables/useSidebarCollapse.js";
+import { useSidebarNav } from "@core/admin/sidebar/composables/useSidebarNav.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -11,79 +13,14 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import "@/css/sidebar.css";
 import {
-    LayoutDashboard,
-    FileText,
-    Layers,
-    Image,
-    Images,
-    Menu,
-    Tags as TagsIcon,
-    Users as UsersIcon,
-    Building2,
-    TrendingUp,
-    Globe,
-    Shield,
-    ShieldCheck,
-    LogOut,
-    Mail,
-    Moon,
-    Sun,
-    User,
-    ChevronsLeft,
-    ChevronsRight,
-    Menu as MenuIcon,
-    X,
-    Settings,
-    Palette,
-    MessageSquare,
-    ClipboardList,
-    Package,
-    ShoppingBag,
-    Search,
-    Loader2,
-    ChevronDown,
-    Map as MapIcon,
-    Filter,
-    Clock,
-    Receipt,
-    ScanLine,
-    Briefcase,
-    Camera,
-    ShoppingCart,
-    Gauge,
+    Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
+    ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
+    Search, Loader2, ChevronDown, Filter,
+    Clock, Layers, FileText, Tags as TagsIcon, Image,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
-import { useResizable } from "@/shared/composables/useResizable.js";
 import { modKeyLabel } from "@/shared/utils/platform.js";
-
-const ICON_MAP = {
-    "layout-dashboard": LayoutDashboard,
-    "file-text": FileText,
-    "layers": Layers,
-    "image": Image,
-    "images": Images,
-    "menu": Menu,
-    "tags": TagsIcon,
-    "users": UsersIcon,
-    "building-2": Building2,
-    "trending-up": TrendingUp,
-    "shield": Shield,
-    "settings": Settings,
-    "palette": Palette,
-    "message-square": MessageSquare,
-    "clipboard-list": ClipboardList,
-    "package": Package,
-    "shopping-bag": ShoppingBag,
-    "map": MapIcon,
-    "receipt": Receipt,
-    "scan-line": ScanLine,
-    "briefcase": Briefcase,
-    "shield-check": ShieldCheck,
-    "camera": Camera,
-    "shopping-cart": ShoppingCart,
-    "gauge": Gauge,
-};
 
 const props = defineProps({
     navSections: { type: Array, default: () => [] },
@@ -104,124 +41,25 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
+const { collapse, expand, mobileOpen, openMobile, closeMobile } = useSidebarCollapse();
 
-
-const SIDEBAR_KEY = "aurora-sidebar";
-
-function collapse() {
-    document.documentElement.classList.add("sidebar-collapsed");
-    localStorage.setItem(SIDEBAR_KEY, "collapsed");
-}
-function expand() {
-    document.documentElement.classList.remove("sidebar-collapsed");
-    localStorage.setItem(SIDEBAR_KEY, "expanded");
-}
-
-const mobileOpen = ref(false);
-function openMobile() { mobileOpen.value = true; document.body.style.overflow = "hidden"; }
-function closeMobile() { mobileOpen.value = false; document.body.style.overflow = ""; }
-
-// ── Resizable width ──────────────────────────────────────────────────────────
-const SIDEBAR_DEFAULT_WIDTH = 240; // 15rem
 const { dragging: sidebarDragging, startResize: startSidebarResize, reset: resetSidebarWidth } = useResizable({
     key: "aurora-sidebar-width",
-    defaultValue: SIDEBAR_DEFAULT_WIDTH,
+    defaultValue: 240,
     min: 200,
     max: 480,
-    onChange: (px) => {
-        document.documentElement.style.setProperty("--sidebar-width", `${px}px`);
-    },
+    onChange: (px) => { document.documentElement.style.setProperty("--sidebar-width", `${px}px`); },
 });
 
 watch(sidebarDragging, (dragging) => {
     document.documentElement.classList.toggle("sidebar-resizing", dragging);
 });
 
-const dashboardPath = computed(() => props.navSections?.[0]?.items?.[0]?.path ?? '/admin');
-
-function buildItem(item) {
-    return {
-        route: item.route,
-        path: item.path,
-        label: t(item.labelKey),
-        icon: ICON_MAP[item.icon] ?? FileText,
-        activeColor: item.activeColor ?? "accent",
-        children: (item.children ?? []).map(buildItem),
-    };
-}
-
-const groupedSections = computed(() =>
-    props.navSections.map(section => {
-        const items = section.items.map(buildItem);
-        return {
-            id: section.id,
-            label: t(`admin.nav.sections.${section.id}`),
-            items,
-        };
-    })
-);
-
-const navItems = computed(() => groupedSections.value.flatMap(s => s.items.flatMap(i => [i, ...(i.children ?? [])])));
-
-const navFilter = ref("");
-
-const displayedSections = computed(() => {
-    const q = navFilter.value.trim().toLowerCase();
-    if (!q) return groupedSections.value;
-
-    const results = [];
-    for (const section of groupedSections.value) {
-        const matchingItems = [];
-        for (const item of section.items) {
-            if (item.label.toLowerCase().includes(q)) {
-                matchingItems.push(item);
-            } else if (item.children?.length) {
-                const matchingChildren = item.children.filter(c => c.label.toLowerCase().includes(q));
-                matchingItems.push(...matchingChildren);
-            }
-        }
-        if (matchingItems.length) results.push({ ...section, items: matchingItems });
-    }
-    return results;
-});
-
-function itemClasses(item) {
-    if (isActive(item.route)) {
-        // Exact active page — full highlight
-        return item.activeColor === "rose" ? "bg-rose-600/15 text-rose-400" : "bg-accent-600/15 text-accent-400";
-    }
-    if (itemIsActive(item)) {
-        // Parent of active child — text hint only, no background
-        return item.activeColor === "rose" ? "text-rose-400 hover:bg-rose-600/10" : "text-accent-400 hover:bg-surface-2";
-    }
-    return item.activeColor === "rose"
-        ? "text-secondary hover:text-rose-400 hover:bg-rose-600/10"
-        : "text-secondary hover:text-primary hover:bg-surface-2";
-}
-
-function iconClasses(item) {
-    if (isActive(item.route) || itemIsActive(item)) {
-        return item.activeColor === "rose" ? "text-rose-400" : "text-accent-400";
-    }
-    return item.activeColor === "rose"
-        ? "text-muted group-hover:text-rose-400 transition-colors"
-        : "text-muted";
-}
-
-function isActive(route) {
-    return props.activeRoute?.startsWith(route);
-}
-
-function itemIsActive(item) {
-    return isActive(item.route) || (item.children?.some(child => isActive(child.route)) ?? false);
-}
-
-
-const { isExpanded: isGroupExpanded, toggle: toggleGroup, getRaw: getGroupRaw } = usePersistedExpanded("aurora-sidebar-groups");
-const { isExpanded: isSectionExpandedById, toggle: toggleSectionById } = usePersistedExpanded("aurora-sidebar-sections");
-
-function isSectionExpanded(section) { return isSectionExpandedById(section.id); }
-function toggleSection(section) { toggleSectionById(section.id); }
+const {
+    dashboardPath, groupedSections, navItems, navFilter, displayedSections,
+    isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
+    isActive, itemIsActive, itemClasses, iconClasses,
+} = useSidebarNav(props.navSections, props.activeRoute);
 
 const SECTION_CONFIG = {
     recent: { icon: Clock,    labelKey: "admin.search.sections.recent" },
@@ -242,25 +80,6 @@ function openSearchFromMobile() {
     closeMobile();
     openPalette();
 }
-
-// Auto-open groups that contain the active route on first load (only if never toggled by user).
-onMounted(() => {
-    groupedSections.value.forEach(section => {
-        section.items.forEach(item => {
-            if (item.children?.length && getGroupRaw(item.route) === undefined && item.children.some(c => isActive(c.route))) {
-                toggleGroup(item.route);
-            }
-        });
-    });
-});
-
-// Scroll the nav so the active item is visible without manual scrolling.
-// `block: "nearest"` only scrolls if the item is offscreen, so users who land
-// on a top entry don't see a jarring jump.
-onMounted(() => nextTick(() => {
-    const active = document.querySelector(".sidebar-nav [data-sidebar-active='true']");
-    active?.scrollIntoView({ block: "nearest", behavior: "instant" });
-}));
 </script>
 
 <template>

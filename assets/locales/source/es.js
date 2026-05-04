@@ -197,6 +197,7 @@ export default {
                 "Ninguna página seleccionada — muestra la lista de artículos por defecto.",
             searchPost: "Buscar una página…",
             orId: "o introducir el ID:",
+            sequenceSearch: "Buscar una secuencia…",
         },
         users: {
             searchPlaceholder: "Buscar por nombre o email…",

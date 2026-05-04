@@ -1,12 +1,5 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { ref, reactive, computed, onMounted, watch } from "vue";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
-import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { UserStatus } from "@core/utils/enums/user/userStatus.js";
 import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -22,6 +15,10 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import UserRowActions from "@core/admin/users/UserRowActions.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
+import { useUsersSearch } from "@core/admin/users/composables/useUsersSearch.js";
+import { useUsersInvite } from "@core/admin/users/composables/useUsersInvite.js";
+import { useUsersEdit } from "@core/admin/users/composables/useUsersEdit.js";
+import { useUsersActions } from "@core/admin/users/composables/useUsersActions.js";
 
 const { t } = useI18n();
 const { formatDate, formatDateShort } = useDateFormat();
@@ -44,260 +41,10 @@ const props = defineProps({
     currentUserId: { type: Number, default: 0 },
 });
 
-const selectableUsers = ref([]);
-
-async function loadSelectableUsers() {
-    if (selectableUsers.value.length) return;
-    try {
-        const response = await fetch(props.selectablePath);
-        const data = await response.json();
-        selectableUsers.value = data.success ? data.items : [];
-    } catch {
-        selectableUsers.value = [];
-    }
-}
-
-const search = ref("");
-const roleFilter = ref("");
-
-const { items: users, loading, page, totalPages, total, load: fetchUsers, goToPage, reset: resetUsers } = usePaginatedFetch(
-    () => props.listPath,
-    () => ({
-        ...(search.value && { search: search.value }),
-        ...(roleFilter.value && { role: roleFilter.value }),
-    }),
-);
-
-onMounted(fetchUsers);
-
-watch([search, roleFilter], useDebounce(resetUsers, 300));
-
-// ── Invite modal ─────────────────────────────────────────────────────────────
-const inviteModal = reactive({ open: false, errors: {}, saving: false });
-const inviteForm = reactive({
-    name: "",
-    email: "",
-    role: props.roles[0]?.value ?? "",
-    message: "",
-});
-
-function openInvite() {
-    inviteModal.errors = {};
-    inviteForm.name = "";
-    inviteForm.email = "";
-    inviteForm.role = props.roles[0]?.value ?? "";
-    inviteForm.message = "";
-    inviteModal.open = true;
-}
-
-async function submitInvite() {
-    inviteModal.saving = true;
-    inviteModal.errors = {};
-    try {
-        const response = await fetch(props.invitePath, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(inviteForm),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            inviteModal.errors = data.errors ?? {};
-            return;
-        }
-        toast.success(t("admin.users.invitationSent"));
-        inviteModal.open = false;
-        fetchUsers();
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        inviteModal.saving = false;
-    }
-}
-
-// ── View modal ───────────────────────────────────────────────────────────────
-const viewingUser = ref(null);
-async function openView(user) {
-    // Show the row data immediately, then enrich with subordinates from the detail endpoint.
-    viewingUser.value = { ...user, subordinates: [], subordinatesCount: 0 };
-    try {
-        const response = await fetch(buildPath(props.showPath, { id: user.id }));
-        const data = await response.json();
-        if (data.success && viewingUser.value?.id === user.id) {
-            viewingUser.value = data.user;
-        }
-    } catch {
-        // Fail silent — the basic row data is already visible.
-    }
-}
-
-// ── Edit modal ───────────────────────────────────────────────────────────────
-const editModal = reactive({ open: false, editing: null, errors: {}, saving: false, photoUploading: false });
-const editForm = reactive({ name: "", email: "", role: "", password: "", managerId: null });
-
-const managerOptions = computed(() => {
-    const editingId = editModal.editing?.id ?? 0;
-    return [
-        { value: "", label: "—" },
-        ...selectableUsers.value
-            .filter((u) => u.id !== editingId)
-            .map((u) => ({ value: String(u.id), label: u.name })),
-    ];
-});
-
-function openEdit(user) {
-    editModal.editing = user;
-    editModal.errors = {};
-    editForm.name = user.name;
-    editForm.email = user.email;
-    editForm.role = user.role ?? props.roles[0]?.value ?? "";
-    editForm.password = "";
-    editForm.managerId = user.managerId ? String(user.managerId) : "";
-    editModal.open = true;
-    loadSelectableUsers();
-}
-
-async function onPhotoSelected(file) {
-    if (!file || !editModal.editing) return;
-    editModal.photoUploading = true;
-    try {
-        const formData = new FormData();
-        formData.append("photo", file);
-        const url = buildPath(props.photoUploadPath, { id: editModal.editing.id });
-        const response = await fetch(url, { method: HttpMethod.Post, body: formData });
-        const data = await response.json();
-        if (!data.success) {
-            const message = data.errors?.photo ?? data.error ?? "shared.common.error";
-            toast.error(t(message));
-            return;
-        }
-        editModal.editing = data.user;
-        toast.success(t("admin.users.photo.uploaded"));
-        fetchUsers();
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        editModal.photoUploading = false;
-    }
-}
-
-async function removePhoto() {
-    if (!editModal.editing) return;
-    editModal.photoUploading = true;
-    try {
-        const url = buildPath(props.photoDeletePath, { id: editModal.editing.id });
-        const response = await fetch(url, { method: HttpMethod.Post });
-        const data = await response.json();
-        if (!data.success) {
-            toast.error(t(data.error ?? "shared.common.error"));
-            return;
-        }
-        editModal.editing = data.user;
-        toast.success(t("admin.users.photo.removed"));
-        fetchUsers();
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        editModal.photoUploading = false;
-    }
-}
-
-async function submitEdit() {
-    if (!editModal.editing) return;
-    editModal.saving = true;
-    editModal.errors = {};
-    try {
-        const url = buildPath(props.updatePath, { id: editModal.editing.id });
-        const payload = {
-            ...editForm,
-            managerId: editForm.managerId ? Number(editForm.managerId) : null,
-        };
-        const response = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            editModal.errors = data.errors ?? {};
-            return;
-        }
-        toast.success(t("shared.common.saved"));
-        editModal.open = false;
-        fetchUsers();
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        editModal.saving = false;
-    }
-}
-
-// ── Row actions ──────────────────────────────────────────────────────────────
-async function resendInvitation(user) {
-    try {
-        const response = await fetch(buildPath(props.resendInvitationPath, { id: user.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t("admin.users.invitationResent"));
-            fetchUsers();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
-
-const togglingUser = ref(null);
-function askToggleDisabled(user) {
-    togglingUser.value = user;
-}
-async function confirmToggleDisabled() {
-    const user = togglingUser.value;
-    if (!user) return;
-    try {
-        const response = await fetch(buildPath(props.toggleDisabledPath, { id: user.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t("shared.common.saved"));
-            fetchUsers();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        togglingUser.value = null;
-    }
-}
-
-const deletingUser = ref(null);
-async function confirmDelete() {
-    const user = deletingUser.value;
-    if (!user) return;
-    try {
-        const response = await fetch(buildPath(props.deletePath, { id: user.id }), { method: HttpMethod.Post });
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t("shared.common.deleted"));
-            fetchUsers();
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        deletingUser.value = null;
-    }
-}
-
-function statusBadgeColor(status) {
-    if ("active" === status) return "emerald";
-    if ("invited" === status) return "amber";
-    return "rose";
-}
-
-const isCurrent = (user) => user.id === props.currentUserId;
-const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user.rolePriority;
+const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPage } = useUsersSearch(props.listPath);
+const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers);
+const { editModal, editForm, managerOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
 </script>
 
 <template>
@@ -457,7 +204,7 @@ const canActOn = (user) => !isCurrent(user) && props.currentUserPriority >= user
                 </div>
 
                 <p v-if="viewingUser.moodMessage" class="text-sm text-secondary italic border-l-2 border-accent-500/40 pl-3">
-                    “{{ viewingUser.moodMessage }}”
+                    "{{ viewingUser.moodMessage }}"
                 </p>
 
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">

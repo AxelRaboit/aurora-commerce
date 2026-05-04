@@ -1,16 +1,18 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { ref, reactive, onMounted } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { Search, FileText, Lock, Save } from "lucide-vue-next";
-import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
+import { useSettingsForm } from "@core/admin/settings/composables/useSettingsForm.js";
+import { useSettingsPostPicker } from "@core/admin/settings/composables/useSettingsPostPicker.js";
+import { useSettingsSequenceFilter } from "@core/admin/settings/composables/useSettingsSequenceFilter.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -22,9 +24,7 @@ const props = defineProps({
 const { t } = useI18n();
 
 const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "email", "sequences"];
-
 const availableGroups = groupOrder.filter((groupName) => props.groups[groupName]);
-
 const activeTab = ref(availableGroups[0] ?? "general");
 
 const tabLabels = {
@@ -38,177 +38,14 @@ const tabLabels = {
     sequences: () => t("admin.settings.tabs.sequences"),
 };
 
-const fieldValues = reactive({});
-const initialValues = {};
-const parameterByKey = {};
-const mediaState = reactive({}); // key -> { id, url } for type='media' parameters
-for (const groupName of availableGroups) {
-    for (const parameter of props.groups[groupName]) {
-        const value = parameter.value ?? "";
-        fieldValues[parameter.key] = value;
-        initialValues[parameter.key] = value;
-        parameterByKey[parameter.key] = parameter;
-        if (parameter.type === ParameterType.Media) {
-            mediaState[parameter.key] = {
-                id: value ? Number(value) : null,
-                url: parameter.mediaUrl ?? null,
-            };
-        }
-    }
-}
+const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
+    useSettingsForm(props.groups, availableGroups, props.updatePath);
 
-function onMediaChange(parameter, picked) {
-    const id = picked?.id ?? null;
-    const url = picked?.url ?? null;
-    mediaState[parameter.key] = { id, url };
-    fieldValues[parameter.key] = id ? String(id) : "";
-}
+const { postPickerLabels, postPickerSearch, postPickerResults, postPickerOpen, resolvePostLabel, searchPosts, selectPost, clearPost, onPostPickerBlur, onPostPickerFocus } =
+    useSettingsPostPicker(props.groups, availableGroups, fieldValues, props.postSearchPath);
 
-function dependencyDepth(parameter) {
-    let depth = 0;
-    let current = parameter.requires;
-    while (current) {
-        depth++;
-        current = parameterByKey[current]?.requires;
-    }
-    return depth;
-}
-
-function isLocked(parameter) {
-    return parameter.requires ? fieldValues[parameter.requires] !== "1" : false;
-}
-
-function lockReason(parameter) {
-    const parent = parameter.requires ? parameterByKey[parameter.requires] : null;
-    return parent ? t("admin.settings.cascadeLocked", { parent: parent.label }) : "";
-}
-
-function onBoolChange(parameter, enabled) {
-    fieldValues[parameter.key] = enabled ? "1" : "0";
-    // Mirror server-side cascade: turning a parent off forces dependents off.
-    if (!enabled) {
-        for (const child of Object.values(parameterByKey)) {
-            if (child.requires === parameter.key && fieldValues[child.key] === "1") {
-                onBoolChange(child, false);
-            }
-        }
-    }
-}
-
-const savingGroups = reactive({});
-
-// Post picker state (for parameters of type "post")
-const postPickerLabels = reactive({});   // key => { id, title }
-const postPickerSearch = reactive({});   // key => string
-const postPickerResults = reactive({});  // key => array
-const postPickerOpen = reactive({});     // key => bool
-const postPickerSearchAbort = {};        // key => AbortController
-
-async function resolvePostLabel(key) {
-    const id = fieldValues[key];
-    if (!id || !props.postSearchPath) return;
-    try {
-        const response = await fetch(`${props.postSearchPath}?ids=${id}`);
-        const json = await response.json();
-        const post = json.results?.[0];
-        if (post) postPickerLabels[key] = { id: post.id, title: post.title ?? `#${post.id}` };
-    } catch { /* ignore */ }
-}
-
-async function searchPosts(key, query) {
-    if (!props.postSearchPath) return;
-    if (postPickerSearchAbort[key]) postPickerSearchAbort[key].abort();
-    if (!query.trim()) { postPickerResults[key] = []; postPickerOpen[key] = false; return; }
-    postPickerSearchAbort[key] = new AbortController();
-    try {
-        const response = await fetch(`${props.postSearchPath}?q=${encodeURIComponent(query)}`, {
-            signal: postPickerSearchAbort[key].signal,
-        });
-        const json = await response.json();
-        postPickerResults[key] = json.results ?? [];
-        postPickerOpen[key] = true;
-    } catch (error) {
-        if (error.name !== "AbortError") postPickerOpen[key] = false;
-    }
-}
-
-function selectPost(key, post) {
-    fieldValues[key] = String(post.id);
-    postPickerLabels[key] = { id: post.id, title: post.title ?? `#${post.id}` };
-    postPickerSearch[key] = "";
-    postPickerResults[key] = [];
-    postPickerOpen[key] = false;
-}
-
-function clearPost(key) {
-    fieldValues[key] = "";
-    postPickerLabels[key] = null;
-}
-
-function onPostPickerBlur(key) {
-    setTimeout(() => { postPickerOpen[key] = false; }, 150);
-}
-
-function onPostPickerFocus(key) {
-    if (postPickerResults[key]?.length) postPickerOpen[key] = true;
-}
-
-onMounted(() => {
-    for (const groupName of availableGroups) {
-        for (const parameter of props.groups[groupName]) {
-            if (parameter.type === ParameterType.Post && fieldValues[parameter.key]) {
-                resolvePostLabel(parameter.key);
-            }
-        }
-    }
-});
-
-async function saveGroup(groupName) {
-    savingGroups[groupName] = true;
-
-    // Only persist parameters that actually changed, ordered by dependency depth
-    // ascending so parents are written before their children (avoids 409 when
-    // enabling a chain like CRM → ERP → E-Commerce in a single save).
-    const changed = props.groups[groupName]
-        .filter((p) => fieldValues[p.key] !== initialValues[p.key])
-        .sort((a, b) => dependencyDepth(a) - dependencyDepth(b));
-
-    if (changed.length === 0) {
-        savingGroups[groupName] = false;
-        toast.success(t("admin.settings.saved"));
-        return;
-    }
-
-    try {
-        for (const parameter of changed) {
-            const response = await fetch(props.updatePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ key: parameter.key, value: fieldValues[parameter.key] }),
-            });
-
-            const result = await response.json();
-
-            if (!result.ok) {
-                if (result.error === SettingErrorCode.CascadeViolation) {
-                    const parent = parameterByKey[result.parentKey];
-                    toast.error(t("admin.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
-                } else {
-                    toast.error(t("shared.common.error"));
-                }
-                return;
-            }
-
-            initialValues[parameter.key] = fieldValues[parameter.key];
-        }
-
-        toast.success(t("admin.settings.saved"));
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        savingGroups[groupName] = false;
-    }
-}
+const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, goToSequencePage } =
+    useSettingsSequenceFilter(props.groups);
 </script>
 
 <template>
@@ -243,8 +80,14 @@ async function saveGroup(groupName) {
                 :key="groupName"
             >
                 <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
+                    <AppSearchInput
+                        v-if="groupName === 'sequences'"
+                        v-model="sequenceSearch"
+                        :placeholder="t('admin.settings.sequenceSearch')"
+                    />
+
                     <div
-                        v-for="parameter in groups[groupName]"
+                        v-for="parameter in (groupName === 'sequences' ? paginatedSequences : groups[groupName])"
                         :key="parameter.key"
                     >
                         <template v-if="parameter.type === ParameterType.Bool">
@@ -348,6 +191,13 @@ async function saveGroup(groupName) {
                             <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
                         </template>
                     </div>
+
+                    <AppPagination
+                        v-if="groupName === 'sequences' && sequenceTotalPages > 1"
+                        :page="sequencePage"
+                        :total-pages="sequenceTotalPages"
+                        v-on:change="goToSequencePage"
+                    />
 
                     <div class="pt-2 border-t border-line flex justify-end">
                         <AppButton

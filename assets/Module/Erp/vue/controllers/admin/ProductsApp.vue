@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useProductsOptions } from "@erp/admin/products/composables/useProductsOptions.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useProductsCreate } from "@erp/admin/products/composables/useProductsCreate.js";
+import { useProductsEdit } from "@erp/admin/products/composables/useProductsEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -18,12 +18,9 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, Plus, Eye, Save, } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validation/validators.js";
+import { Pencil, Trash2, Plus, Eye, Save } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
-import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
 
 const { t } = useI18n();
 
@@ -42,118 +39,11 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
     { initialSearch: props.search, initialData: props.products },
 );
 
-const STATUS_OPTIONS = computed(() => [
-    { value: "draft", label: t("admin.erp.products.status.draft") },
-    { value: "active", label: t("admin.erp.products.status.active") },
-    { value: "archived", label: t("admin.erp.products.status.archived") },
-]);
+const { STATUS_OPTIONS, STATUS_TONE, TYPE_OPTIONS, TYPE_TONE } = useProductsOptions();
 
-const STATUS_TONE = { draft: "amber", active: "emerald", archived: "slate" };
-
-const TYPE_OPTIONS = computed(() => [
-    { value: "physical", label: t("admin.erp.products.types.physical") },
-    { value: "digital", label: t("admin.erp.products.types.digital") },
-    { value: "service", label: t("admin.erp.products.types.service") },
-]);
-
-const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
-
-
-function emptyForm() {
-    return { name: "", reference: "", description: "", price: "", currency: DEFAULT_CURRENCY, status: "draft", type: "physical", imageId: null, imageUrl: null, stockQuantity: "" };
-}
-
-function makeImageRef(form) {
-    return computed({
-        get: () => ({ id: form.value.imageId, url: form.value.imageUrl }),
-        set: (v) => {
-            form.value.imageId = v.id;
-            form.value.imageUrl = v.url;
-        },
-    });
-}
-
-
-// --- Create ---
-const showCreate = ref(false);
-const newProduct = ref(emptyForm());
-const newProductImage = makeImageRef(newProduct);
-const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-
-function openCreate() {
-    newProduct.value = emptyForm();
-    clearCreate();
-    showCreate.value = true;
-}
-
-async function submitCreate() {
-    if (!validateCreate({
-        name: () => required(t("admin.erp.products.errors.name_required"))(newProduct.value.name),
-    })) return;
-
-    const data = await createRequest(props.createPath, buildPayload(newProduct.value));
-    if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t("admin.erp.products.created")); reset(); }
-    else setCreateErrors(translateServerErrors(t, data.errors));
-}
-
-function buildPayload(form) {
-    return {
-        name: form.name,
-        reference: form.reference,
-        description: form.description,
-        price: form.price === "" ? null : form.price,
-        currency: form.currency,
-        status: form.status,
-        type: form.type,
-        imageId: form.imageId,
-        stockQuantity: form.stockQuantity === "" ? null : Number(form.stockQuantity),
-    };
-}
-
-// --- Edit ---
-const showEdit = ref(false);
-const editingProduct = ref(null);
-const editForm = ref(emptyForm());
-const editFormImage = makeImageRef(editForm);
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-
-function openEdit(product) {
-    editingProduct.value = product;
-    editForm.value = {
-        name: product.name,
-        reference: product.reference,
-        description: product.description ?? "",
-        price: product.price ?? "",
-        currency: product.currency ?? DEFAULT_CURRENCY,
-        status: product.status ?? "draft",
-        type: product.type ?? "physical",
-        imageId: product.image?.id ?? null,
-        imageUrl: product.image?.url ?? null,
-        stockQuantity: product.stockQuantity ?? "",
-    };
-    clearEdit();
-    showEdit.value = true;
-}
-
-async function submitEdit() {
-    if (!validateEdit({
-        name: () => required(t("admin.erp.products.errors.name_required"))(editForm.value.name),
-    })) return;
-
-    const url = buildPath(props.updatePath, { id: editingProduct.value.id });
-    const data = await editRequest(url, buildPayload(editForm.value));
-    if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t("admin.erp.products.updated")); reset(); }
-    else setEditErrors(translateServerErrors(t, data.errors));
-}
-
-// --- Delete ---
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), 'admin.erp.products.deleted',
-);
+const { showCreate, newProduct, newProductImage, createErrors, createLoading, openCreate, submitCreate } = useProductsCreate(props.createPath, reset);
+const { showEdit, editingProduct, editForm, editFormImage, editErrors, editLoading, openEdit, submitEdit } = useProductsEdit(props.updatePath, reset);
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "admin.erp.products.deleted");
 </script>
 
 <template>

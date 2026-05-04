@@ -197,6 +197,7 @@ export default {
                 "Keine Seite ausgewählt — zeigt standardmäßig die Artikelliste.",
             searchPost: "Seite suchen…",
             orId: "oder ID eingeben:",
+            sequenceSearch: "Sequenz suchen…",
         },
         users: {
             searchPlaceholder: "Nach Name oder E-Mail suchen…",

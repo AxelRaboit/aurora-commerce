@@ -1,12 +1,11 @@
 <script setup>
-import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
-import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useContactSearch } from "@/shared/composables/search/useContactSearch.js";
+import { galleryCoverState, onGalleryCoverChange, isExpiryInPast } from "@photo/admin/galleries/composables/useGalleryForm.js";
+import { useGalleriesCrud } from "@photo/admin/galleries/composables/useGalleriesCrud.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
@@ -23,10 +22,6 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as ImageIcon, User, X } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
-import { useContactSearch } from "@/shared/composables/search/useContactSearch.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -48,157 +43,14 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
     { initialSearch: props.search, initialData: props.galleries },
 );
 
-function emptyForm() {
-    return {
-        title: "",
-        slug: "",
-        description: "",
-        password: "",
-        clearPassword: false,
-        expiresAt: "",
-        allowOriginals: true,
-        allowZipDownload: true,
-        picksRequireIdentity: false,
-        maxPicks: "",
-        allowVisitorComments: false,
-        watermarkEnabled: false,
-        watermarkText: "",
-        clientContactId: null,
-        clientLabel: null,
-        coverMediaId: null,
-        coverMediaUrl: null,
-    };
-}
+const { contactSearchQuery, contactSearchResults, contactSearchOpen, onContactQueryInput, selectContact, clearContact } =
+    useContactSearch(props.contactsSearchPath);
 
-function coverState(form) {
-    return { id: form.coverMediaId, url: form.coverMediaUrl };
-}
+const { showCreate, newForm, createErrors, createLoading, openCreate, onCreateTitleChange, onCreateSlugInput, submitCreate, showEdit, editForm, editingHasPassword, editErrors, editLoading, openGallery, openEdit, submitEdit, pendingDelete, deleteLoading, confirmDelete, doDelete } =
+    useGalleriesCrud(props, reload);
 
-function onCoverChange(form, picked) {
-    form.coverMediaId = picked?.id ?? null;
-    form.coverMediaUrl = picked?.url ?? null;
-}
-
-function isExpiryInPast(value) {
-    if (!value) return false;
-    const picked = new Date(value);
-    if (isNaN(picked.getTime())) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return picked < today;
-}
-
-// --- Contact picker (CRM link) ---
-const { contactSearchQuery, contactSearchResults, contactSearchOpen, onContactQueryInput, selectContact, clearContact } = useContactSearch(props.contactsSearchPath);
-
-function slugify(input) {
-    return String(input || "")
-        .toLowerCase()
-        .normalize("NFD").replace(/[̀-ͯ]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-        .slice(0, 80);
-}
-
-// --- Create ---
-const showCreate = ref(false);
-const newForm = ref(emptyForm());
-const { errors: createErrors, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-
-// True until the user manually edits the slug field — auto-sync stops then.
-const slugManuallyEdited = ref(false);
-
-function openCreate() {
-    newForm.value = emptyForm();
-    slugManuallyEdited.value = false;
-    clearCreate();
-    showCreate.value = true;
-}
-
-function onCreateTitleChange(value) {
-    newForm.value.title = value;
-    if (!slugManuallyEdited.value) newForm.value.slug = slugify(value);
-}
-
-function onCreateSlugInput(value) {
-    newForm.value.slug = value;
-    slugManuallyEdited.value = true;
-}
-
-async function submitCreate() {
-    const errs = {};
-    if (required("required")(newForm.value.title)) errs.title = t("photo.galleries.errors.title_required");
-    if (required("required")(newForm.value.slug)) errs.slug = t("photo.galleries.errors.slug_required");
-    if (Object.keys(errs).length) { setCreateErrors(errs); return; }
-
-    const data = await createRequest(props.createPath, newForm.value);
-    if (!data?.success) { setCreateErrors(translateServerErrors(t, data?.errors)); return; }
-    toast.success(t("photo.galleries.created"));
-    showCreate.value = false;
-    reload();
-}
-
-// --- Edit ---
-const showEdit = ref(false);
-const editForm = ref(emptyForm());
-const editingId = ref(null);
-const editingHasPassword = ref(false);
-const { errors: editErrors, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-
-function openGallery(g) {
-    window.location.href = buildPath(props.editPath, { id: g.id });
-}
-
-function openEdit(g) {
-    editingId.value = g.id;
-    editingHasPassword.value = !!g.hasPassword;
-    editForm.value = {
-        title: g.title ?? "",
-        slug: g.slug ?? "",
-        description: g.description ?? "",
-        password: "",
-        clearPassword: false,
-        expiresAt: g.expiresAt ? g.expiresAt.slice(0, 10) : "",
-        allowOriginals: !!g.allowOriginals,
-        allowZipDownload: !!g.allowZipDownload,
-        picksRequireIdentity: !!g.picksRequireIdentity,
-        maxPicks: g.maxPicks ?? "",
-        allowVisitorComments: !!g.allowVisitorComments,
-        watermarkEnabled: !!g.watermarkEnabled,
-        watermarkText: g.watermarkText ?? "",
-        clientContactId: g.client?.id ?? null,
-        clientLabel: g.client ? `${g.client.name}${g.client.email ? " — " + g.client.email : ""}` : null,
-        coverMediaId: g.coverMediaId ?? null,
-        coverMediaUrl: g.coverMediaUrl ?? null,
-    };
-    clearEdit();
-    showEdit.value = true;
-}
-
-async function submitEdit() {
-    const errs = {};
-    if (required("required")(editForm.value.title)) errs.title = t("photo.galleries.errors.title_required");
-    if (required("required")(editForm.value.slug)) errs.slug = t("photo.galleries.errors.slug_required");
-    if (Object.keys(errs).length) { setEditErrors(errs); return; }
-
-    const data = await editRequest(
-        buildPath(props.updatePath, { id: editingId.value }),
-        editForm.value,
-    );
-    if (!data?.success) { setEditErrors(translateServerErrors(t, data?.errors)); return; }
-    toast.success(t("photo.galleries.updated"));
-    showEdit.value = false;
-    reload();
-}
-
-// --- Delete ---
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath,
-    () => reload(),
-    "photo.galleries.deleted",
-);
+const coverState = galleryCoverState;
+const onCoverChange = onGalleryCoverChange;
 </script>
 
 <template>

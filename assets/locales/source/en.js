@@ -196,6 +196,7 @@ export default {
                 "No page selected — showing the article list by default.",
             searchPost: "Search a page…",
             orId: "or enter ID:",
+            sequenceSearch: "Search a sequence…",
         },
         users: {
             searchPlaceholder: "Search by name or email…",

@@ -1,11 +1,10 @@
 <script setup>
-import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useContactsCreate } from "@crm/admin/contacts/composables/useContactsCreate.js";
+import { useContactsEdit } from "@crm/admin/contacts/composables/useContactsEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -17,10 +16,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
-import { Plus, Pencil, Trash2, Eye, Save, } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required, email as emailValidator } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { Plus, Pencil, Trash2, Eye, Save } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -39,75 +35,9 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
     { initialSearch: props.search, initialData: props.contacts },
 );
 
-// --- Create ---
-const showCreate = ref(false);
-const newContact = ref(emptyForm());
-const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-
-function emptyForm() {
-    return { firstName: "", lastName: "", email: "", phone: "", company: "", notes: "" };
-}
-
-function openCreate() {
-    newContact.value = emptyForm();
-    clearCreate();
-    showCreate.value = true;
-}
-
-async function submitCreate() {
-    if (!validateCreate({
-        firstName: () => required(t("admin.crm.contacts.errors.first_name_required"))(newContact.value.firstName),
-        lastName: () => required(t("admin.crm.contacts.errors.last_name_required"))(newContact.value.lastName),
-        email: () => newContact.value.email ? emailValidator(t("admin.crm.contacts.errors.email_invalid"))(newContact.value.email) : null,
-    })) return;
-
-    const data = await createRequest(props.createPath, newContact.value);
-    if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t('admin.crm.contacts.created')); reset(); }
-    else setCreateErrors(translateServerErrors(t, data.errors));
-}
-
-// --- Edit ---
-const showEdit = ref(false);
-const editingContact = ref(null);
-const editForm = ref(emptyForm());
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-
-function openEdit(contact) {
-    editingContact.value = contact;
-    editForm.value = {
-        firstName: contact.firstName,
-        lastName: contact.lastName,
-        email: contact.email ?? "",
-        phone: contact.phone ?? "",
-        company: contact.company ?? "",
-        notes: contact.notes ?? "",
-    };
-    clearEdit();
-    showEdit.value = true;
-}
-
-async function submitEdit() {
-    if (!validateEdit({
-        firstName: () => required(t("admin.crm.contacts.errors.first_name_required"))(editForm.value.firstName),
-        lastName: () => required(t("admin.crm.contacts.errors.last_name_required"))(editForm.value.lastName),
-        email: () => editForm.value.email ? emailValidator(t("admin.crm.contacts.errors.email_invalid"))(editForm.value.email) : null,
-    })) return;
-
-    const url = buildPath(props.updatePath, { id: editingContact.value.id });
-    const data = await editRequest(url, editForm.value);
-    if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t('admin.crm.contacts.updated')); reset(); }
-    else setEditErrors(translateServerErrors(t, data.errors));
-}
-
-// --- Delete ---
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), 'admin.crm.contacts.deleted',
-);
-
+const { showCreate, newContact, createErrors, createLoading, openCreate, submitCreate } = useContactsCreate(props.createPath, reset);
+const { showEdit, editingContact, editForm, editErrors, editLoading, openEdit, submitEdit } = useContactsEdit(props.updatePath, reset);
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "admin.crm.contacts.deleted");
 </script>
 
 <template>

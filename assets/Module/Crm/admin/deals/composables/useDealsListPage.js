@@ -1,0 +1,38 @@
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
+
+export function useDealsListPage(props) {
+    const { t } = useI18n();
+
+    const stageOptions = computed(() =>
+        props.stages.map((s) => ({
+            value: s,
+            label: t(`admin.crm.deals.stages.${s}`),
+        })),
+    );
+
+    const {
+        items,
+        page,
+        totalPages,
+        search: searchInput,
+        onSearch,
+        goToPage,
+        reload: reset,
+    } = useListPage(props.listPath, {
+        initialSearch: props.search,
+        initialData: props.deals,
+    });
+
+    return {
+        stageOptions,
+        items,
+        page,
+        totalPages,
+        searchInput,
+        onSearch,
+        goToPage,
+        reset,
+    };
+}
