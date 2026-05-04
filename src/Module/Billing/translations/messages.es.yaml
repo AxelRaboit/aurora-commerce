@@ -200,7 +200,8 @@ admin:
       createdAt: Creada
       retry: Reintentar
       retryQueued: Tarea reencolada.
-      deleteConfirm: "¿Eliminar la tarea #{id}? También se eliminará el archivo original."
+      deleteConfirm: "¿Eliminar la tarea #{id}? También se eliminarán la factura vinculada (si existe) y el archivo original."
+      deleteTiersToo: "Eliminar también el tercero «{name}» (sin otras facturas vinculadas)"
       deleted: Tarea eliminada.
       deleteError: "No se puede eliminar (restricciones DB)."
       creditNote:

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Serializer;
 
+use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use DateTimeInterface;
@@ -33,7 +34,11 @@ final readonly class OcrJobSerializer
             'modelUsed' => $job->getModelUsed(),
             'confidence' => $job->getConfidence(),
             'error' => $job->getError(),
-            'invoiceId' => $this->invoiceRepository->findOneBy(['ocrJob' => $job])?->getId(),
+            'invoiceId' => ($invoice = $this->invoiceRepository->findOneBy(['ocrJob' => $job]))?->getId(),
+            'invoiceCanDeleteTiers' => $invoice?->getStatus()->isDeletable()
+                && $invoice->getTiers() instanceof Tiers
+                && 1 === $this->invoiceRepository->countForTiers($invoice->getTiers()->getId()),
+            'invoiceSupplierName' => $invoice?->getTiers()?->getName(),
             'logs' => $job->getLogs(),
             'createdAt' => $job->getCreatedAt()->format(DateTimeInterface::ATOM),
             'finishedAt' => $job->getFinishedAt()?->format(DateTimeInterface::ATOM),

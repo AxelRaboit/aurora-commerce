@@ -18,8 +18,8 @@ interface OcrJobManagerInterface
     /** Reset a (typically failed) job and re-dispatch it. */
     public function retry(OcrJob $job): void;
 
-    /** Delete the job (Media stays — it may be referenced by an Invoice). */
-    public function delete(OcrJob $job): void;
+    /** Delete the job and its Media. Optionally also deletes the linked invoice (if deletable) and its supplier tiers. */
+    public function delete(OcrJob $job, bool $deleteTiers = false): void;
 
     /** Mark the job as Extracting + record startedAt. */
     public function markExtracting(OcrJob $job): void;

@@ -195,7 +195,8 @@ admin:
       empty: Aucun job OCR.
       retry: Relancer
       retryQueued: Job remis en file d'attente.
-      deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi le fichier source."
+      deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi la facture liée (si elle existe) et le fichier source."
+      deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
       deleted: Job supprimé.
       deleteError: "Suppression impossible (contraintes DB)."
       creditNote:

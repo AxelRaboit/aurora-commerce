@@ -200,7 +200,8 @@ admin:
       createdAt: Erstellt
       retry: Erneut versuchen
       retryQueued: Job neu eingereiht.
-      deleteConfirm: "Job #{id} löschen? Die Quelldatei wird ebenfalls entfernt."
+      deleteConfirm: "Job #{id} löschen? Die verknüpfte Rechnung (falls vorhanden) und die Quelldatei werden ebenfalls entfernt."
+      deleteTiersToo: 'Geschäftspartner "{name}" ebenfalls löschen (keine weiteren verknüpften Rechnungen)'
       deleted: Job gelöscht.
       deleteError: "Löschen nicht möglich (DB-Constraint)."
       creditNote:

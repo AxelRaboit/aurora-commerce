@@ -168,7 +168,12 @@ onMounted(() => {
 // ── Delete ────────────────────────────────────────────────────────────────────
 const pendingDelete = ref(null);
 const deleteLoading = ref(false);
+const deleteTiersToo = ref(false);
 const logsJob = ref(null);
+
+const canDeleteTiers = computed(() =>
+    !!pendingDelete.value?.invoiceCanDeleteTiers
+);
 
 // Keep logsJob in sync with polling updates
 watch(jobs, (newJobs) => {
@@ -181,7 +186,7 @@ watch(jobs, (newJobs) => {
 async function doDelete() {
     if (deleteLoading.value || !pendingDelete.value) return;
     deleteLoading.value = true;
-    const data = await request(buildPath(props.deletePath, { id: pendingDelete.value.id }));
+    const data = await request(buildPath(props.deletePath, { id: pendingDelete.value.id }), { deleteTiers: deleteTiersToo.value });
     deleteLoading.value = false;
     if (!data?.success) { toast.error(t(data?.error ?? 'shared.common.error')); return; }
     const deletedId = pendingDelete.value.id;
@@ -189,6 +194,7 @@ async function doDelete() {
     const linked = previews.value.find(p => p.jobId === deletedId);
     if (linked) removePreview(linked.key);
     pendingDelete.value = null;
+    deleteTiersToo.value = false;
     toast.success(t('admin.billing.ocr.deleted'));
 }
 
@@ -367,11 +373,15 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             </AppModalFooter>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null; deleteTiersToo = false">
             <p class="text-sm text-primary">{{ t('admin.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <label v-if="canDeleteTiers" class="flex items-center gap-2 mt-3 text-sm text-secondary cursor-pointer select-none">
+                <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
+                {{ t('admin.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
+            </label>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>

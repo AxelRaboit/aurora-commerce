@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Contract\MediaManagerInterface;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
-use Aurora\Core\Media\Manager\MediaManager;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
+use Aurora\Module\Billing\Invoice\Contract\TiersManagerInterface;
+use Aurora\Module\Billing\Invoice\Entity\Invoice;
+use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
@@ -28,11 +32,13 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MediaManager $mediaManager,
+        private MediaManagerInterface $mediaManager,
         private MessageBusInterface $bus,
         private AuditLogger $auditLogger,
         private SequenceGenerator $sequenceGenerator,
         private SettingRepository $settingRepository,
+        private InvoiceRepository $invoiceRepository,
+        private TiersManagerInterface $tiersManager,
     ) {}
 
     public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJob
@@ -75,10 +81,26 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->auditLogger->log('billing', 'ocr.job.retried', 'OcrJob', $job->getId());
     }
 
-    public function delete(OcrJob $job): void
+    public function delete(OcrJob $job, bool $deleteTiers = false): void
     {
         $id = $job->getId();
         $media = $job->getMedia();
+        $tiers = null;
+        $invoiceId = null;
+        $invoiceNumber = null;
+
+        $invoice = $this->invoiceRepository->findOneBy(['ocrJob' => $job]);
+        if ($invoice instanceof Invoice && $invoice->getStatus()->isDeletable()) {
+            $tiers = $deleteTiers ? $invoice->getTiers() : null;
+            $invoiceId = $invoice->getId();
+            $invoiceNumber = $invoice->getNumber();
+            $this->entityManager->remove($invoice);
+            $this->entityManager->flush();
+        }
+
+        if ($tiers instanceof Tiers) {
+            $this->tiersManager->delete($tiers);
+        }
 
         $this->entityManager->remove($job);
         $this->entityManager->flush();
@@ -87,6 +109,13 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         // for this OCR job and has no other owner once the job is gone.
         // Invoice.document is SET NULL by the DB cascade if it referenced the same media.
         $this->mediaManager->delete($media);
+
+        if (null !== $invoiceId) {
+            $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $invoiceId, [
+                'number' => $invoiceNumber,
+                'tiersDeleted' => $tiers instanceof Tiers,
+            ]);
+        }
 
         $this->auditLogger->log('billing', 'ocr.job.deleted', 'OcrJob', $id);
     }

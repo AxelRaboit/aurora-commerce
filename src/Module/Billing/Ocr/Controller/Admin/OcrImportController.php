@@ -112,10 +112,13 @@ final class OcrImportController extends AbstractController
     }
 
     #[Route('/jobs/{id}/delete', name: '_jobs_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    public function deleteJob(OcrJob $job): JsonResponse
+    public function deleteJob(OcrJob $job, Request $request): JsonResponse
     {
+        $body = json_decode($request->getContent(), true) ?? [];
+        $deleteTiers = (bool) ($body['deleteTiers'] ?? false);
+
         try {
-            $this->jobManager->delete($job);
+            $this->jobManager->delete($job, $deleteTiers);
         } catch (Throwable $throwable) {
             return $this->jsonFailure('admin.billing.ocr.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }
