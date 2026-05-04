@@ -5,7 +5,9 @@ import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useContactSearch } from "@/shared/composables/search/useContactSearch.js";
 import { galleryCoverState, onGalleryCoverChange, isExpiryInPast } from "@photo/admin/galleries/composables/useGalleryForm.js";
-import { useGalleriesCrud } from "@photo/admin/galleries/composables/useGalleriesCrud.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useGalleriesCreate } from "@photo/admin/galleries/composables/useGalleriesCreate.js";
+import { useGalleriesEdit } from "@photo/admin/galleries/composables/useGalleriesEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
@@ -46,8 +48,14 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 const { contactSearchQuery, contactSearchResults, contactSearchOpen, onContactQueryInput, selectContact, clearContact } =
     useContactSearch(props.contactsSearchPath);
 
-const { showCreate, newForm, createErrors, createLoading, openCreate, onCreateTitleChange, onCreateSlugInput, submitCreate, showEdit, editForm, editingHasPassword, editErrors, editLoading, openGallery, openEdit, submitEdit, pendingDelete, deleteLoading, confirmDelete, doDelete } =
-    useGalleriesCrud(props, reload);
+const { showCreate, newForm, createErrors, createLoading, openCreate, onCreateTitleChange, onCreateSlugInput, submitCreate } =
+    useGalleriesCreate(props.createPath, reload);
+
+const { showEdit, editForm, editingHasPassword, editErrors, editLoading, openGallery, openEdit, submitEdit } =
+    useGalleriesEdit(props, reload);
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } =
+    useDelete(props.deletePath, () => reload(), "photo.galleries.deleted");
 
 const coverState = galleryCoverState;
 const onCoverChange = onGalleryCoverChange;
