@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('core/admin/ThemesApp', {
+<div {{ vue_component('core/admin/themes/ThemesApp', {
     themes: themes,
     activatePath: path('admin_themes_activate', {id: '__id__'}),
     updatePath: path('admin_themes_update', {id: '__id__'}),

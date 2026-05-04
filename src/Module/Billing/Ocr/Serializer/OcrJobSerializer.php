@@ -35,6 +35,8 @@ final readonly class OcrJobSerializer
             'confidence' => $job->getConfidence(),
             'error' => $job->getError(),
             'invoiceId' => ($invoice = $this->invoiceRepository->findOneBy(['ocrJob' => $job]))?->getId(),
+            'invoiceStatus' => $invoice?->getStatus()->value,
+            'invoiceCanValidate' => $invoice?->getStatus()->isEditable() ?? false,
             'invoiceCanDeleteTiers' => $invoice?->getStatus()->isDeletable()
                 && $invoice->getTiers() instanceof Tiers
                 && 1 === $this->invoiceRepository->countForTiers($invoice->getTiers()->getId()),

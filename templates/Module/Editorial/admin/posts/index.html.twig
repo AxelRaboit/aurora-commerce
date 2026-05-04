@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('editorial/admin/PostsApp', {
+<div {{ vue_component('editorial/admin/posts/PostsApp', {
     postsPath: path('admin_posts'),
     posts: posts,
     search: search,

@@ -86,6 +86,9 @@ final readonly class InvoiceSerializer
             'buyer' => $invoice->getBuyerTiers() instanceof Tiers
                 ? $this->tiersSerializer->serialize($invoice->getBuyerTiers())
                 : null,
+            'buyerInvoiceCount' => $invoice->getBuyerTiers() instanceof Tiers
+                ? $this->invoiceRepository->countAsBuyerForTiers($invoice->getBuyerTiers()->getId())
+                : 0,
             'document' => $document instanceof Media ? [
                 'id' => $document->getId(),
                 'url' => '/uploads/'.$document->getPath(),

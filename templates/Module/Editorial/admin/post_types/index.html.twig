@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('editorial/admin/PostTypesApp', {
+<div {{ vue_component('editorial/admin/post-types/PostTypesApp', {
     postTypes: postTypes,
     taxonomies: taxonomies,
     createPath: path('admin_post_types_create'),

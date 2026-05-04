@@ -199,10 +199,13 @@ Configured in `config/packages/twig.yaml`. Add one entry per module.
 ### 5.3 Assets / Vue components
 
 ```
-assets/Core/vue/controllers/admin/<C>.vue       → vue_component('core/admin/<C>')
-assets/Module/Editorial/vue/controllers/...     → vue_component('editorial/admin/<C>')
-assets/Module/Crm/vue/controllers/admin/<C>.vue → vue_component('crm/admin/<C>')
+assets/Core/admin/<C>.vue                → vue_component('core/admin/<C>')
+assets/Module/Editorial/admin/<C>.vue    → vue_component('editorial/admin/<C>')
+assets/Module/Crm/admin/<C>.vue          → vue_component('crm/admin/<C>')
 ```
+
+Il n'y a pas de dossier `vue/` dans aurora-core — les controllers vivent directement sous
+`admin/`, `front/` etc. Le dossier `vue/` existe uniquement dans campus (projet legacy/V2).
 
 `assets/app.js` merges one glob per module. Add a new glob + key-replace when adding a module.
 
@@ -244,7 +247,7 @@ Add one mapping block per new module.
 5. Add Twig namespace to `config/packages/twig.yaml`
 6. Add Vue glob + alias to `assets/app.js` + `vite.config.js` + `vitest.config.js`
 7. Create templates under `templates/Module/<Name>/admin/`
-8. Create Vue controllers under `assets/Module/<Name>/vue/controllers/`
+8. Create Vue controllers under `assets/Module/<Name>/admin/` (or `front/`), co-localisés avec leurs composables dans `admin/{feature}/composables/`
 9. Create `src/Module/<Name>/translations/messages.{fr,en,es,de}.yaml` and register the path in `config/packages/translation.yaml` (`framework.translator.paths`); add to `SOURCE_DIRS` in `DumpJsTranslationsCommand` so the keys also flow to vue-i18n
 10. Add Vue-only labels (form fields, editor blocks…) under `assets/locales/source/{locale}.js`
 11. Add validator messages to `src/Core/translations/validators.*.yaml` if needed (or to the module's own file)

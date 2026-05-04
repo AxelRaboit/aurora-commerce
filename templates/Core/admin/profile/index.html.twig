@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('core/admin/ProfileApp', {
+<div {{ vue_component('core/admin/profile/ProfileApp', {
     userName: app.user.name,
     userEmail: app.user.email,
     userPhotoUrl: app.user.profilePhotoUrl ?? '',

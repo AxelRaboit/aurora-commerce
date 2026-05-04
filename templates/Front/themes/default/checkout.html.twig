@@ -3,7 +3,7 @@
 {% block title %}{{ 'front.checkout.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/CheckoutApp', {
+<div {{ vue_component('ecommerce/front/checkout/CheckoutApp', {
     cart: cart,
     initialForm: initialForm,
     requiresShipping: requiresShipping,

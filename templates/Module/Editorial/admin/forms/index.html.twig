@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('editorial/admin/FormsApp', {
+<div {{ vue_component('editorial/admin/forms/FormsApp', {
     locales: locales,
     listPath: path('admin_forms_list'),
     getPath: path('admin_forms_get', {id: '__id__'}),

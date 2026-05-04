@@ -1,24 +1,13 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import AppChart from "@/shared/components/display/AppChart.vue";
-import {
-    FileText,
-    Image as ImageIcon,
-    Menu as MenuIcon,
-    Users,
-    Building2,
-    TrendingUp,
-    Package,
-    Receipt,
-    ShoppingCart,
-    Camera,
-    Store,
-    ScanText,
-} from "lucide-vue-next";
+import { FileText, Image as ImageIcon, Menu as MenuIcon, Users, Building2, TrendingUp, Package, Receipt, ShoppingCart, Camera, Store, ScanText } from "lucide-vue-next";
+import { useDashboardModule } from "@core/admin/dashboard/composables/useDashboardModule.js";
+import { useDashboardCharts } from "@core/admin/dashboard/composables/useDashboardCharts.js";
 
 const props = defineProps({
     stats: { type: Object, default: () => ({}) },
@@ -28,7 +17,11 @@ const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
 const { formatSize } = useFileSize();
 
-const ACTIVE_MODULE_KEY = "aurora-dashboard-module";
+const stats = computed(() => props.stats ?? {});
+const { activeModule, selectModule } = useDashboardModule();
+const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasProducts, invoicesByStatusData, hasInvoices, ordersByStatusData, hasOrders, formatCurrency, formatValue } =
+    useDashboardCharts(stats);
+
 const MODULES = [
     { id: "editorial",  label: () => t("admin.nav.sections.editorial"),  icon: FileText },
     { id: "crm",        label: () => t("admin.nav.sections.crm"),        icon: Users },
@@ -37,127 +30,6 @@ const MODULES = [
     { id: "ecommerce",  label: () => t("admin.nav.sections.ecommerce"),  icon: ShoppingCart },
     { id: "photo",      label: () => t("admin.nav.sections.photo"),      icon: Camera },
 ];
-
-const activeModule = ref(localStorage.getItem(ACTIVE_MODULE_KEY) || "editorial");
-
-function selectModule(id) {
-    activeModule.value = id;
-    localStorage.setItem(ACTIVE_MODULE_KEY, id);
-}
-
-const stats = computed(() => props.stats ?? {});
-
-// ── Editorial ──
-const postsByMonthData = computed(() => {
-    const series = stats.value.postsByMonth ?? [];
-    return {
-        labels: series.map(s => s.month),
-        datasets: [{
-            label: t("admin.stats.posts"),
-            data: series.map(s => s.count),
-            borderColor: "#818cf8",
-            backgroundColor: "rgba(129, 140, 248, 0.15)",
-            fill: true,
-            tension: 0.3,
-        }],
-    };
-});
-
-// ── CRM ──
-const STAGE_COLORS = {
-    lead: "#94a3b8",
-    qualified: "#60a5fa",
-    proposal: "#a78bfa",
-    negotiation: "#fbbf24",
-    won: "#34d399",
-    lost: "#f87171",
-};
-
-const dealsByStageData = computed(() => {
-    const series = stats.value.crm?.dealsByStage ?? [];
-    return {
-        labels: series.map(s => t(`admin.crm.deals.stages.${s.stage}`)),
-        datasets: [{
-            data: series.map(s => s.count),
-            backgroundColor: series.map(s => STAGE_COLORS[s.stage] ?? "#94a3b8"),
-            borderWidth: 0,
-        }],
-    };
-});
-
-const hasDeals = computed(() => (stats.value.crm?.dealsByStage ?? []).some(s => s.count > 0));
-
-// ── ERP ──
-const productsByStatusData = computed(() => {
-    const erp = stats.value.erp ?? {};
-    return {
-        labels: [
-            t("admin.erp.products.status.draft"),
-            t("admin.erp.products.status.active"),
-            t("admin.erp.products.status.archived"),
-        ],
-        datasets: [{
-            data: [erp.draft ?? 0, erp.active ?? 0, erp.archived ?? 0],
-            backgroundColor: ["#fbbf24", "#34d399", "#94a3b8"],
-            borderWidth: 0,
-        }],
-    };
-});
-
-const hasProducts = computed(() => (stats.value.erp?.products ?? 0) > 0);
-
-// ── Billing ──
-const INVOICE_STATUS_COLORS = {
-    draft: "#94a3b8",
-    needs_review: "#fbbf24",
-    validated: "#60a5fa",
-    paid: "#34d399",
-    archived: "#6b7280",
-    credit_note: "#a78bfa",
-};
-
-const invoicesByStatusData = computed(() => {
-    const byStatus = stats.value.billing?.byStatus ?? {};
-    const entries = Object.entries(byStatus).filter(([, v]) => v > 0);
-    return {
-        labels: entries.map(([k]) => t(`admin.billing.invoices.status.${k}`, k)),
-        datasets: [{
-            data: entries.map(([, v]) => v),
-            backgroundColor: entries.map(([k]) => INVOICE_STATUS_COLORS[k] ?? "#94a3b8"),
-            borderWidth: 0,
-        }],
-    };
-});
-
-const hasInvoices = computed(() => (stats.value.billing?.invoices ?? 0) > 0);
-
-// ── Ecommerce ──
-const ORDER_STATUS_COLORS = {
-    pending: "#fbbf24",
-    paid: "#34d399",
-    shipped: "#60a5fa",
-    delivered: "#a78bfa",
-    cancelled: "#f87171",
-    refunded: "#94a3b8",
-};
-
-const ordersByStatusData = computed(() => {
-    const byStatus = stats.value.ecommerce?.byStatus ?? {};
-    const entries = Object.entries(byStatus).filter(([, v]) => v > 0);
-    return {
-        labels: entries.map(([k]) => t(`admin.ecommerce.orders.status.${k}`, k)),
-        datasets: [{
-            data: entries.map(([, v]) => v),
-            backgroundColor: entries.map(([k]) => ORDER_STATUS_COLORS[k] ?? "#94a3b8"),
-            borderWidth: 0,
-        }],
-    };
-});
-
-const hasOrders = computed(() => (stats.value.ecommerce?.orders ?? 0) > 0);
-
-const formatCurrency = (cents) => new Intl.NumberFormat(undefined, { style: "currency", currency: "EUR" }).format((cents ?? 0) / 100);
-const formatValue = (value) => new Intl.NumberFormat(undefined, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value ?? 0);
 </script>
 
 <template>

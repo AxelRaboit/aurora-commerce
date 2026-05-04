@@ -10,6 +10,7 @@ use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\DTO\InvoiceLineDraft;
 
 use function is_array;
+use function mb_strlen;
 
 /**
  * Turns (raw OCR text + invoice image) into a structured InvoiceDraft via
@@ -61,13 +62,13 @@ final readonly class InvoiceExtractor
             'incoterms' => ['type' => ['string', 'null'], 'description' => 'Incoterms rule, e.g. EXW, FOB, CIF, DDP'],
             'reverse_charge' => ['type' => ['boolean', 'null'], 'description' => 'True when VAT auto-liquidation (autoliquidation) applies'],
             'bank_details' => ['type' => ['string', 'null'], 'description' => 'Bank transfer details printed on the invoice (if different from supplier IBAN)'],
-            'subtotal_cents' => ['type' => ['integer', 'null'], 'description' => 'Sum of line totals before global discount/freight/insurance adjustments'],
-            'total_net_cents' => ['type' => ['integer', 'null']],
-            'total_vat_cents' => ['type' => ['integer', 'null']],
-            'total_gross_cents' => ['type' => ['integer', 'null']],
-            'discount_cents' => ['type' => ['integer', 'null'], 'description' => 'Global discount/rebate in cents (positive = deduction)'],
-            'freight_cents' => ['type' => ['integer', 'null'], 'description' => 'Freight/shipping charges in cents'],
-            'insurance_cents' => ['type' => ['integer', 'null'], 'description' => 'Insurance charges in cents'],
+            'subtotal_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw amount string from the invoice (e.g. "1.200,00" or "2,290.00"). We convert to cents.'],
+            'total_net_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw amount string from the invoice.'],
+            'total_vat_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw amount string from the invoice.'],
+            'total_gross_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw amount string from the invoice.'],
+            'discount_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw discount/rebate amount string from the invoice (positive = deduction).'],
+            'freight_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw freight/shipping amount string from the invoice.'],
+            'insurance_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw insurance amount string from the invoice.'],
             'discount_rate_bp' => ['type' => ['integer', 'null'], 'description' => 'Global discount rate in basis points (e.g. 500 = 5%)'],
             'lines' => [
                 'type' => 'array',
@@ -80,11 +81,11 @@ final readonly class InvoiceExtractor
                         'product_code' => ['type' => ['string', 'null'], 'description' => 'Product code / article reference on the line'],
                         'unit' => ['type' => ['string', 'null'], 'description' => 'pcs, kg, m, m2, h, l, ...'],
                         'quantity' => ['type' => ['string', 'null']],
-                        'unit_price_cents' => ['type' => ['integer', 'null']],
-                        'discount_cents' => ['type' => ['integer', 'null'], 'description' => 'Line-level discount in cents'],
+                        'unit_price_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw unit price string from the invoice.'],
+                        'discount_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw line discount string from the invoice.'],
                         'vat_rate_bp' => ['type' => ['integer', 'null']],
-                        'total_net_cents' => ['type' => ['integer', 'null']],
-                        'total_gross_cents' => ['type' => ['integer', 'null']],
+                        'total_net_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw line total (excl. VAT) string from the invoice.'],
+                        'total_gross_cents' => ['type' => ['string', 'null'], 'description' => 'Copy the raw line total (incl. VAT) string from the invoice.'],
                         'origin' => ['type' => ['string', 'null'], 'description' => 'ISO 3166-1 alpha-2 country of origin (customs)'],
                     ],
                     'required' => ['label'],
@@ -142,8 +143,20 @@ final readonly class InvoiceExtractor
               Do NOT lower confidence just because some optional fields are absent.
 
             FORMAT RULES:
-            - All monetary amounts MUST be integers in CENTS (multiply by 100). Never
-              return floats. Example: 19.90 EUR -> 1990.
+            - For all monetary amount fields (subtotal_cents, total_net_cents,
+              total_vat_cents, total_gross_cents, discount_cents, freight_cents,
+              insurance_cents, unit_price_cents, line total_net_cents, line
+              total_gross_cents, line discount_cents): return the raw string
+              EXACTLY as printed on the invoice — do NOT compute, do NOT convert,
+              do NOT multiply. We parse it ourselves.
+              Examples of what to copy verbatim:
+                Invoice shows "19.90"        → return "19.90"
+                Invoice shows "1.200.00"     → return "1.200.00"
+                Invoice shows "2.290.00"     → return "2.290.00"
+                Invoice shows "2,290.00"     → return "2,290.00"
+                Invoice shows "1.200,00"     → return "1.200,00"
+                Invoice shows "100.000,00"   → return "100.000,00"
+              If the amount is absent or unreadable, return null.
             - VAT rate MUST be integer basis points (20% -> 2000, 5.5% -> 550).
             - Dates MUST be ISO format YYYY-MM-DD, copied from what's actually written.
             - Currency is ISO 4217 (EUR, USD, GBP, CHF...). Use EUR only if the symbol/code
@@ -182,13 +195,13 @@ final readonly class InvoiceExtractor
                 productCode: $this->stringOrNull($row['product_code'] ?? null),
                 unit: $this->stringOrNull($row['unit'] ?? null),
                 quantity: $this->stringOrNull($row['quantity'] ?? null),
-                unitPriceCents: $this->intOrNullSafe($row['unit_price_cents'] ?? null),
+                unitPriceCents: $this->parseMoneyCents($row['unit_price_cents'] ?? null),
                 vatRateBp: $this->intOrNullSafe($row['vat_rate_bp'] ?? null),
-                totalNetCents: $this->intOrNullSafe($row['total_net_cents'] ?? null),
-                totalGrossCents: $this->intOrNullSafe($row['total_gross_cents'] ?? null),
+                totalNetCents: $this->parseMoneyCents($row['total_net_cents'] ?? null),
+                totalGrossCents: $this->parseMoneyCents($row['total_gross_cents'] ?? null),
                 reference: $this->stringOrNull($row['reference'] ?? null),
                 description: $this->stringOrNull($row['description'] ?? null),
-                discountCents: $this->intOrNullSafe($row['discount_cents'] ?? null),
+                discountCents: $this->parseMoneyCents($row['discount_cents'] ?? null),
                 origin: $this->normalizeCountryCode($row['origin'] ?? null),
             );
         }
@@ -224,13 +237,13 @@ final readonly class InvoiceExtractor
             incoterms: $this->stringOrNull($payload['incoterms'] ?? null),
             reverseCharge: isset($payload['reverse_charge']) ? (bool) $payload['reverse_charge'] : null,
             bankDetails: $this->stringOrNull($payload['bank_details'] ?? null),
-            subtotalCents: $this->intOrNullSafe($payload['subtotal_cents'] ?? null),
-            totalNetCents: $this->intOrNullSafe($payload['total_net_cents'] ?? null),
-            totalVatCents: $this->intOrNullSafe($payload['total_vat_cents'] ?? null),
-            totalGrossCents: $this->intOrNullSafe($payload['total_gross_cents'] ?? null),
-            discountCents: $this->intOrNullSafe($payload['discount_cents'] ?? null),
-            freightCents: $this->intOrNullSafe($payload['freight_cents'] ?? null),
-            insuranceCents: $this->intOrNullSafe($payload['insurance_cents'] ?? null),
+            subtotalCents: $this->parseMoneyCents($payload['subtotal_cents'] ?? null),
+            totalNetCents: $this->parseMoneyCents($payload['total_net_cents'] ?? null),
+            totalVatCents: $this->parseMoneyCents($payload['total_vat_cents'] ?? null),
+            totalGrossCents: $this->parseMoneyCents($payload['total_gross_cents'] ?? null),
+            discountCents: $this->parseMoneyCents($payload['discount_cents'] ?? null),
+            freightCents: $this->parseMoneyCents($payload['freight_cents'] ?? null),
+            insuranceCents: $this->parseMoneyCents($payload['insurance_cents'] ?? null),
             discountRateBp: $this->intOrNullSafe($payload['discount_rate_bp'] ?? null),
             lines: $lines,
             confidence: (float) ($payload['confidence'] ?? 0.0),
@@ -239,6 +252,62 @@ final readonly class InvoiceExtractor
                 static fn (mixed $v): bool => is_string($v) && '' !== $v,
             )),
         );
+    }
+
+    /**
+     * Parse a monetary string (as copied verbatim from the invoice) into integer cents.
+     * Mirrors the JS parseMoney() util: separator followed by 1-2 digits at the end
+     * is the decimal separator; separator followed by 3 digits is a thousands separator.
+     *
+     * Also handles the fallback where the model returned a numeric value instead of a
+     * string: a non-integer float is treated as a euro amount (multiply by 100); a plain
+     * integer is trusted as-is (the model may have already computed cents correctly).
+     */
+    private function parseMoneyCents(mixed $value): ?int
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        // Model returned a plain number instead of the requested string.
+        if (is_int($value)) {
+            return $value;
+        }
+
+        if (is_float($value)) {
+            // Non-integer float → model returned euros → multiply.
+            if (abs($value - round($value)) > 0.001) {
+                return (int) round($value * 100);
+            }
+
+            return (int) $value;
+        }
+
+        if (!is_string($value) || '' === mb_trim($value)) {
+            return null;
+        }
+
+        $str = mb_trim($value);
+
+        // Strip a trailing currency symbol/code if present (e.g. "2.290,00 EUR").
+        $str = preg_replace('/\s*[A-Z€£$]{1,3}\s*$/u', '', $str) ?? $str;
+        $str = mb_trim($str);
+
+        // Detect decimal separator: a separator followed by 1-2 digits at the end.
+        if (preg_match('/[.,](\d{1,2})$/', $str, $m)) {
+            $decLen = mb_strlen($m[1]);
+            $intPart = preg_replace('/[.,]/', '', mb_substr($str, 0, -$decLen - 1)) ?? '';
+            $normalized = $intPart.'.'.$m[1];
+        } else {
+            // No decimal part — strip all separators.
+            $normalized = preg_replace('/[.,]/', '', $str) ?? $str;
+        }
+
+        if (!is_numeric($normalized)) {
+            return null;
+        }
+
+        return (int) round((float) $normalized * 100);
     }
 
     private function normalizeCountryCode(mixed $value): ?string

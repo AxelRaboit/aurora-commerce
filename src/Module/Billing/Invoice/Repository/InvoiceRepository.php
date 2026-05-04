@@ -119,6 +119,16 @@ class InvoiceRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countAsBuyerForTiers(int $tiersId): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->andWhere('IDENTITY(i.buyerTiers) = :tiersId')
+            ->setParameter('tiersId', $tiersId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     /**
      * Sum of total_gross_cents over invoices issued in the given period (all
      * statuses except draft).

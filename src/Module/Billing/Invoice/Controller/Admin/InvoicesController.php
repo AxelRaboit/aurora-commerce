@@ -104,9 +104,10 @@ final class InvoicesController extends AbstractController
 
         $body = json_decode($request->getContent(), true) ?? [];
         $deleteTiers = (bool) ($body['deleteTiers'] ?? false);
+        $deleteBuyer = (bool) ($body['deleteBuyer'] ?? false);
 
         try {
-            $this->invoiceManager->delete($invoice, $deleteTiers);
+            $this->invoiceManager->delete($invoice, $deleteTiers, $deleteBuyer);
         } catch (Throwable $throwable) {
             return $this->jsonFailure('admin.billing.invoices.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }

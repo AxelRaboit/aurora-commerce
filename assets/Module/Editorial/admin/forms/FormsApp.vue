@@ -1,0 +1,476 @@
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+<script setup>
+import { VueDraggable } from "vue-draggable-plus";
+import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
+import { useFormsList } from "@editorial/admin/forms/composables/useFormsList.js";
+import { useFormEditor } from "@editorial/admin/forms/composables/useFormEditor.js";
+import { useFormFields } from "@editorial/admin/forms/composables/useFormFields.js";
+import { useFormSubmissions } from "@editorial/admin/forms/composables/useFormSubmissions.js";
+import {
+    ClipboardList,
+    Plus,
+    Trash2,
+    GripVertical,
+    Pencil,
+    Download,
+    Settings,
+    Layers,
+    Inbox,
+    Save, } from "lucide-vue-next";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import { slugify } from "@/shared/utils/format/slugify.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+
+const { t } = useI18n();
+const { formatDateTime } = useDateFormat();
+
+const props = defineProps({
+    locales: { type: Array, default: () => ["fr"] },
+    listPath: { type: String, required: true },
+    getPath: { type: String, required: true },
+    createPath: { type: String, required: true },
+    updatePath: { type: String, required: true },
+    deletePath: { type: String, required: true },
+    fieldCreatePath: { type: String, required: true },
+    fieldUpdatePath: { type: String, required: true },
+    fieldDeletePath: { type: String, required: true },
+    fieldReorderPath: { type: String, required: true },
+    submissionsPath: { type: String, required: true },
+    exportPath: { type: String, required: true },
+});
+
+const { forms, loading, page, totalPages, total, fetchForms, goToPage } = useFormsList(props.listPath);
+
+const { selectedForm, editingForm, formErrors, saving, activeTab, activeLocale, showDeleteConfirm, deleting, slugLocked, sharedSlug, isCreating, emptyForm, defaultLocale, formTitle, isLocaleFilled, localeFieldError, jsonRequest, startCreate, selectForm, onTitleInput, onSlugInput, onSharedSlugToggle, saveForm, confirmDelete } =
+    useFormEditor(props, fetchForms);
+
+const tabs = computed(() => {
+    if (isCreating.value) return [{ key: "settings", label: t("admin.forms.tabs.settings"), icon: Settings }];
+    return [
+        { key: "settings", label: t("admin.forms.tabs.settings"), icon: Settings },
+        { key: "fields",   label: t("admin.forms.tabs.fields"),   icon: Layers },
+        { key: "submissions", label: t("admin.forms.tabs.submissions"), icon: Inbox },
+    ];
+});
+
+const { showFieldModal, editingField, fieldOptionsText, fieldErrors, fieldSaving, fieldActiveLocale, FIELD_TYPES, fieldHasOptions, fieldTypeLabel, fieldLabel, openAddField, openEditField, submitField, pendingDeleteField, deleteFieldLoading, confirmDeleteField, doDeleteField, onFieldsReordered } =
+    useFormFields(props, selectedForm, editingForm, jsonRequest);
+
+const { submissionFields, viewingSubmission, submissions, submissionsLoading, submissionsPage, submissionsTotalPages, submissionsTotal, fetchSubmissions, goToSubmissionsPage, resetSubmissions, exportCsv, submissionValue, onTabChange: onTabChangeBase } =
+    useFormSubmissions(props.submissionsPath, props.exportPath, selectedForm, activeLocale);
+
+function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
+</script>
+
+<template>
+    <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
+        <div class="lg:w-72 shrink-0 flex flex-col gap-3">
+            <AppButton variant="primary" size="md" class="w-full justify-center" v-on:click="startCreate">
+                <Plus class="w-4 h-4 shrink-0" :stroke-width="2" />
+                {{ t("admin.forms.create") }}
+            </AppButton>
+
+            <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+                <AppNoData v-if="!loading && !forms.length" :message="t('admin.forms.empty')" />
+                <ul v-else class="divide-y divide-line/60">
+                    <li
+                        v-for="form in forms"
+                        :key="form.id"
+                        class="px-4 py-3 cursor-pointer hover:bg-surface-2/50 transition-colors flex items-start gap-2"
+                        :class="selectedForm?.id === form.id ? 'bg-accent-600/10' : ''"
+                        v-on:click="selectForm(form)"
+                    >
+                        <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
+                            <p class="text-xs text-muted">{{ form.submissionCount }} {{ t("admin.forms.submissions_count") }}</p>
+                        </div>
+                        <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("admin.forms.inactive") }}</AppBadge>
+                    </li>
+                </ul>
+            </div>
+
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        </div>
+
+        <div v-if="selectedForm || isCreating" class="flex-1 min-w-0 min-h-0 bg-surface border border-line/60 rounded-xl overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-line/60">
+                <div class="flex items-center gap-2 min-w-0">
+                    <ClipboardList class="w-5 h-5 shrink-0 text-accent-400" :stroke-width="2" />
+                    <h2 class="text-base font-semibold text-primary truncate">
+                        {{ isCreating ? t("admin.forms.newForm") : (formTitle(selectedForm) || "—") }}
+                    </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <AppButton
+                        v-if="!isCreating"
+                        variant="danger"
+                        size="md"
+                        v-on:click="showDeleteConfirm = true"
+                    >
+                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                    <AppButton
+                        v-if="activeTab === 'settings'"
+                        variant="primary"
+                        size="md"
+                        :disabled="saving"
+                        v-on:click="saveForm"
+                    >
+                        <Save v-if="!saving" class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ saving ? t("shared.common.loading") : t("shared.common.save") }}
+                    </AppButton>
+                </div>
+            </div>
+
+            <div class="flex gap-1 px-5 pt-3 border-b border-line/60">
+                <AppTab
+                    v-for="tab in tabs"
+                    :key="tab.key"
+                    variant="underline"
+                    size="sm"
+                    :active="activeTab === tab.key"
+                    v-on:click="onTabChange(tab.key)"
+                >
+                    <component :is="tab.icon" class="w-4 h-4" :stroke-width="2" />
+                    {{ tab.label }}
+                </AppTab>
+            </div>
+
+            <div v-if="activeTab === 'settings'" class="p-5 space-y-4 overflow-y-auto flex-1">
+                <div v-if="locales.length > 1" class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <div class="flex gap-1">
+                        <button
+                            v-for="locale in locales"
+                            :key="locale"
+                            type="button"
+                            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
+                            :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            v-on:click="activeLocale = locale"
+                        >
+                            {{ locale.toUpperCase() }}
+                            <span
+                                class="inline-block w-1.5 h-1.5 rounded-full"
+                                :class="isLocaleFilled(locale) ? 'bg-emerald-400' : 'bg-muted/40'"
+                                :title="isLocaleFilled(locale) ? t('admin.forms.localeFilled') : t('admin.forms.localeEmpty')"
+                            />
+                        </button>
+                    </div>
+                    <p class="text-xs text-muted">{{ t("admin.forms.localesOptional") }}</p>
+                </div>
+
+                <div :class="sharedSlug ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-4'">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.title") }}</label>
+                        <input
+                            v-model="editingForm.translations[activeLocale].title"
+                            type="text"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
+                            :class="localeFieldError(formErrors, activeLocale, 'title') ? 'border-rose-500' : 'border-line/60'"
+                            :placeholder="t('admin.forms.titlePlaceholder')"
+                            v-on:input="onTitleInput"
+                        >
+                        <p v-if="localeFieldError(formErrors, activeLocale, 'title')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'title') }}</p>
+                    </div>
+                    <div v-if="!sharedSlug" class="flex flex-col gap-1.5">
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.slug") }}</label>
+                        <input
+                            v-model="editingForm.translations[activeLocale].slug"
+                            type="text"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
+                            :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
+                            :placeholder="t('admin.forms.slugPlaceholder')"
+                            v-on:input="onSlugInput"
+                        >
+                        <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.description") }}</label>
+                    <textarea
+                        v-model="editingForm.translations[activeLocale].description"
+                        rows="3"
+                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
+                        :placeholder="t('admin.forms.descriptionPlaceholder')"
+                    />
+                </div>
+
+                <hr class="border-line/40">
+
+                <div class="space-y-2">
+                    <div v-if="locales.length > 1" class="flex items-center gap-2">
+                        <input
+                            id="shared-slug"
+                            v-model="sharedSlug"
+                            type="checkbox"
+                            class="rounded border-line text-accent-600 focus:ring-accent-500"
+                            v-on:change="onSharedSlugToggle"
+                        >
+                        <label for="shared-slug" class="text-sm text-primary cursor-pointer">{{ t("admin.forms.sharedSlug") }}</label>
+                    </div>
+
+                    <div v-if="sharedSlug" class="flex flex-col gap-1.5">
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.slug") }}</label>
+                        <input
+                            v-model="editingForm.translations[activeLocale].slug"
+                            type="text"
+                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
+                            :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
+                            :placeholder="t('admin.forms.slugPlaceholder')"
+                            v-on:input="onSlugInput"
+                        >
+                        <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
+                    </div>
+                </div>
+
+                <hr class="border-line/40">
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.notifyEmail") }}</label>
+                    <input
+                        v-model="editingForm.notifyEmail"
+                        type="email"
+                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
+                        :placeholder="t('admin.forms.notifyEmailPlaceholder')"
+                    >
+                    <p class="text-xs text-muted">{{ t("admin.forms.notifyEmailHint") }}</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors"
+                        :class="editingForm.active ? 'bg-accent-600' : 'bg-surface-3'"
+                        v-on:click="editingForm.active = !editingForm.active"
+                    >
+                        <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.active ? 'translate-x-4' : 'translate-x-0.5'" />
+                    </button>
+                    <label class="text-sm text-primary cursor-pointer" v-on:click="editingForm.active = !editingForm.active">{{ t("admin.forms.active") }}</label>
+                </div>
+            </div>
+
+            <div v-if="activeTab === 'fields'" class="p-5 flex flex-col gap-4 overflow-y-auto flex-1">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-secondary">{{ t("admin.forms.fieldsHint") }}</p>
+                    <AppButton variant="secondary" size="md" v-on:click="openAddField">
+                        <Plus class="w-4 h-4" :stroke-width="2" />
+                        {{ t("admin.forms.addField") }}
+                    </AppButton>
+                </div>
+
+                <div v-if="editingForm.fields.length === 0" class="py-10 text-center text-sm text-muted">
+                    {{ t("admin.forms.fieldsEmpty") }}
+                </div>
+
+                <VueDraggable
+                    v-else
+                    v-model="editingForm.fields"
+                    handle=".drag-handle"
+                    :animation="150"
+                    class="space-y-2"
+                    v-on:end="onFieldsReordered"
+                >
+                    <div
+                        v-for="field in editingForm.fields"
+                        :key="field.id"
+                        class="flex items-center gap-3 px-4 py-3 bg-surface hover:bg-surface-2/50 border border-line/60 rounded-lg transition-colors"
+                    >
+                        <GripVertical class="drag-handle w-4 h-4 text-muted cursor-grab active:cursor-grabbing shrink-0" :stroke-width="2" />
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-sm font-medium text-primary">{{ fieldLabel(field) || "—" }}</span>
+                                <AppBadge v-if="field.required" color="amber">{{ t("admin.forms.required") }}</AppBadge>
+                                <AppBadge color="accent">{{ fieldTypeLabel(field.type) }}</AppBadge>
+                            </div>
+                        </div>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
+                            <Pencil class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                </VueDraggable>
+            </div>
+
+            <div v-if="activeTab === 'submissions'" class="flex flex-col gap-4 overflow-y-auto flex-1">
+                <div class="flex items-center justify-between px-5 pt-5">
+                    <p class="text-sm text-secondary">{{ submissionsTotal }} {{ t("admin.forms.submissionsCount") }}</p>
+                    <AppButton variant="secondary" size="md" :disabled="!submissions.length" v-on:click="exportCsv">
+                        <Download class="w-4 h-4" :stroke-width="2" />
+                        {{ t("admin.forms.exportCsv") }}
+                    </AppButton>
+                </div>
+
+                <div class="bg-surface border-t border-line/60 overflow-hidden">
+                    <AppNoData v-if="!submissionsLoading && !submissions.length" :message="t('admin.forms.submissionsEmpty')" />
+                    <div v-else class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-surface-2/50 border-b border-line/40">
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.submittedAt") }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.locale") }}</th>
+                                    <th v-for="field in submissionFields" :key="field.id" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap max-w-xs">{{ fieldLabel(field) }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.edit") }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-line/40">
+                                <tr v-for="submission in submissions" :key="submission.id" class="group hover:bg-surface-2/40 transition-colors">
+                                    <td class="px-4 py-3 text-xs text-muted whitespace-nowrap">{{ formatDateTime(submission.submittedAt) }}</td>
+                                    <td class="px-4 py-3 text-xs text-muted whitespace-nowrap uppercase">{{ submission.locale }}</td>
+                                    <td v-for="field in submissionFields" :key="field.id" class="px-4 py-3 text-sm text-secondary max-w-xs truncate">
+                                        {{ submissionValue(submission, field) }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <AppIconButton color="accent" :title="t('admin.forms.viewSubmission')" v-on:click="viewingSubmission = submission">
+                                            <Pencil class="w-4 h-4" :stroke-width="2" />
+                                        </AppIconButton>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="px-5 pb-5">
+                    <AppPagination :page="submissionsPage" :total-pages="submissionsTotalPages" v-on:change="goToSubmissionsPage" />
+                </div>
+            </div>
+        </div>
+
+        <div v-else class="flex-1 flex items-center justify-center text-sm text-muted bg-surface border border-line/60 rounded-xl">
+            {{ t("admin.forms.selectOrCreate") }}
+        </div>
+    </div>
+
+    <AppModal :show="showFieldModal" max-width="sm" v-on:close="showFieldModal = false">
+        <h3 class="text-base font-semibold text-primary">
+            {{ editingFieldId !== null ? t("admin.forms.editField") : t("admin.forms.addFieldTitle") }}
+        </h3>
+        <div class="space-y-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldType") }}</label>
+                <select
+                    v-model="editingField.type"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
+                >
+                    <option v-for="ft in FIELD_TYPES" :key="ft.value" :value="ft.value">{{ ft.label }}</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input id="field-required" v-model="editingField.required" type="checkbox" class="rounded border-line text-accent-600 focus:ring-accent-500">
+                <label for="field-required" class="text-sm text-primary">{{ t("admin.forms.fieldRequired") }}</label>
+            </div>
+
+            <hr class="border-line/40">
+
+            <div v-if="locales.length > 1" class="flex gap-1">
+                <button
+                    v-for="locale in locales"
+                    :key="locale"
+                    type="button"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
+                    :class="fieldActiveLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    v-on:click="fieldActiveLocale = locale"
+                >
+                    {{ locale.toUpperCase() }}
+                    <span
+                        class="inline-block w-1.5 h-1.5 rounded-full"
+                        :class="editingField.translations[locale]?.label?.trim() ? 'bg-emerald-400' : 'bg-muted/40'"
+                    />
+                </button>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldLabel") }}</label>
+                <input
+                    v-model="editingField.translations[fieldActiveLocale].label"
+                    type="text"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
+                    :class="localeFieldError(fieldErrors, fieldActiveLocale, 'label') ? 'border-rose-500' : 'border-line/60'"
+                    :placeholder="t('admin.forms.fieldLabelPlaceholder')"
+                >
+                <p v-if="localeFieldError(fieldErrors, fieldActiveLocale, 'label')" class="text-xs text-rose-400">{{ localeFieldError(fieldErrors, fieldActiveLocale, 'label') }}</p>
+            </div>
+
+            <div v-if="!fieldHasOptions" class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldPlaceholder") }}</label>
+                <input
+                    v-model="editingField.translations[fieldActiveLocale].placeholder"
+                    type="text"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
+                    :placeholder="t('admin.forms.fieldPlaceholderPlaceholder')"
+                >
+            </div>
+
+            <div v-if="fieldHasOptions" class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldOptions") }}</label>
+                <textarea
+                    v-model="fieldOptionsText[fieldActiveLocale]"
+                    rows="4"
+                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary font-mono focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
+                    :placeholder="t('admin.forms.fieldOptionsPlaceholder')"
+                />
+                <p class="text-xs text-muted">{{ t("admin.forms.fieldOptionsHint") }}</p>
+            </div>
+        </div>
+
+        <AppModalFooter bordered>
+            <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+        </AppModalFooter>
+    </AppModal>
+
+    <AppModal :show="showDeleteConfirm" max-width="sm" v-on:close="showDeleteConfirm = false">
+        <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.deleteConfirmTitle") }}</h3>
+        <p class="text-sm text-secondary">{{ t("admin.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
+        <AppModalFooter bordered>
+            <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="danger" size="md" :disabled="deleting" v-on:click="confirmDelete">
+                {{ t("shared.common.delete") }}
+            </AppButton>
+        </AppModalFooter>
+    </AppModal>
+
+    <AppModal :show="!!viewingSubmission" max-width="md" v-on:close="viewingSubmission = null">
+        <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.viewSubmission") }}</h3>
+        <div class="space-y-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("admin.forms.submittedAt") }}</label>
+                <p class="text-sm text-muted">{{ viewingSubmission ? formatDateTime(viewingSubmission.submittedAt) : "" }}</p>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("admin.forms.locale") }}</label>
+                <p class="text-sm text-muted uppercase">{{ viewingSubmission?.locale }}</p>
+            </div>
+            <div v-for="field in submissionFields" :key="field.id" class="flex flex-col gap-1">
+                <label class="text-xs text-secondary uppercase tracking-wide">{{ fieldLabel(field) }}</label>
+                <p class="text-sm text-primary whitespace-pre-wrap bg-surface-2 rounded px-3 py-2">
+                    {{ submissionValue(viewingSubmission, field) }}
+                </p>
+            </div>
+        </div>
+        <div class="flex justify-end pt-2 border-t border-line">
+            <AppButton variant="ghost" size="md" v-on:click="viewingSubmission = null">{{ t("shared.common.cancel") }}</AppButton>
+        </div>
+    </AppModal>
+
+    <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
+        <p class="text-sm text-primary">{{ t('admin.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
+        <div class="flex justify-end gap-2 pt-3 border-t border-line">
+            <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null">{{ t('shared.common.cancel') }}</AppButton>
+            <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField">{{ t('shared.common.delete') }}</AppButton>
+        </div>
+    </AppModal>
+</template>

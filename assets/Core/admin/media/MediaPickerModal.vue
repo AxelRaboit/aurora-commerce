@@ -1,8 +1,10 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { MediaTypeFilter } from "@core/utils/enums/media/mediaTypeFilter.js";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useMediaPickerData }      from "@core/admin/media/composables/useMediaPickerData.js";
+import { useMediaPickerSelection } from "@core/admin/media/composables/useMediaPickerSelection.js";
+import { useMediaPickerUpload }    from "@core/admin/media/composables/useMediaPickerUpload.js";
+import { useMediaPickerEdit }      from "@core/admin/media/composables/useMediaPickerEdit.js";
 import {
     Folder,
     FolderOpen,
@@ -44,287 +46,33 @@ const { formatSize } = useFileSize();
 const { formatDateTime } = useDateFormat();
 
 const props = defineProps({
-    show: { type: Boolean, default: false },
+    show:       { type: Boolean, default: false },
     imagesOnly: { type: Boolean, default: false },
-    multiple: { type: Boolean, default: false },
-    listPath: { type: String, default: "/admin/media/list" },
-    uploadPath: { type: String, default: "/admin/media/upload" },
-    editPath: { type: String, default: "/admin/media/__id__/edit" },
+    multiple:   { type: Boolean, default: false },
+    listPath:   { type: String,  default: "/admin/media/list" },
+    uploadPath: { type: String,  default: "/admin/media/upload" },
+    editPath:   { type: String,  default: "/admin/media/__id__/edit" },
 });
 
-const emit = defineEmits(["close", "select"]);
-
-// ── Data ─────────────────────────────────────────────────────────────────────
-const items = ref([]);
-const folders = ref([]);
-const loading = ref(false);
-const search = ref("");
-const currentFolderId = ref(null);
-// true = flat cross-folder browse; false + currentFolderId=null = root only
-const allMediaView = ref(true);
-const typeFilter = ref(MediaTypeFilter.All);
-const selected = ref(null);
+const emit           = defineEmits(["close", "select"]);
 const searchInputRef = ref(null);
-let abortCtrl = null;
-
-const FILTERS = computed(() => {
-    if (props.imagesOnly) return [{ key: MediaTypeFilter.All, label: t("shared.media.filters.all"), icon: Files }];
-    return [
-        { key: MediaTypeFilter.All, label: t("shared.media.filters.all"), icon: Files },
-        { key: MediaTypeFilter.Image, label: t("shared.media.filters.image"), icon: ImageIcon },
-        { key: MediaTypeFilter.Video, label: t("shared.media.filters.video"), icon: Film },
-        { key: MediaTypeFilter.Document, label: t("shared.media.filters.document"), icon: FileText },
-    ];
-});
-
-const folderTree = computed(() => buildFolderTree(folders.value));
-const collapsed = ref(new Set());
-const flatFolders = computed(() => flattenFolders(folderTree.value, 0, collapsed.value));
-
-const visibleItems = computed(() => {
-    return items.value.filter((m) => {
-        if (props.imagesOnly && !m.isImage) return false;
-        if (typeFilter.value === MediaTypeFilter.Image) return m.mimeType?.startsWith("image/");
-        if (typeFilter.value === MediaTypeFilter.Video) return m.mimeType?.startsWith("video/");
-        if (typeFilter.value === MediaTypeFilter.Document) return !m.mimeType?.startsWith("image/") && !m.mimeType?.startsWith("video/");
-        return true;
-    });
-});
-
-const childFolders = computed(() =>
-    folders.value
-        .filter((f) => (f.parentId ?? null) === (currentFolderId.value ?? null))
-        .sort((a, b) => a.name.localeCompare(b.name)),
-);
-
-// ── Loading ──────────────────────────────────────────────────────────────────
-async function load() {
-    abortCtrl?.abort();
-    abortCtrl = new AbortController();
-    loading.value = true;
-    try {
-        const url = new URL(props.listPath, window.location.origin);
-        if (search.value.trim()) url.searchParams.set("search", search.value.trim());
-        if (currentFolderId.value) url.searchParams.set("folderId", String(currentFolderId.value));
-        else if (allMediaView.value) url.searchParams.set("all", "1");
-        // else: no folderId + no all → backend returns root-only media
-        const response = await fetch(url, { signal: abortCtrl.signal, headers: { Accept: "application/json" } });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        items.value = data.items ?? [];
-        folders.value = data.folders ?? folders.value;
-        if (selected.value && !items.value.some((m) => m.id === selected.value.id)) {
-            selected.value = null;
-        }
-    } catch (e) {
-        if (e.name !== "AbortError") items.value = [];
-    } finally {
-        loading.value = false;
-    }
-}
-
-watch(currentFolderId, load);
-
-watch(
-    () => props.show,
-    async (visible) => {
-        if (visible) {
-            await load();
-            await nextTick();
-            searchInputRef.value?.focus();
-        } else {
-            selected.value = null;
-            search.value = "";
-            typeFilter.value = MediaTypeFilter.All;
-        }
-    },
-    { immediate: true },
-);
-
-// ── Folder navigation ────────────────────────────────────────────────────────
-function selectFolder(id) {
-    allMediaView.value = false;
-    currentFolderId.value = id;
-}
-
-function selectAllMedia() {
-    allMediaView.value = true;
-    currentFolderId.value = null;
-    load();
-}
-
-function selectRoot() {
-    allMediaView.value = false;
-    currentFolderId.value = null;
-    load();
-}
-
-function toggleCollapse(id) {
-    const next = new Set(collapsed.value);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    collapsed.value = next;
-}
-
-const currentFolderName = computed(() => {
-    if (!currentFolderId.value) return null;
-    return folders.value.find((f) => f.id === currentFolderId.value)?.name ?? null;
-});
-
-// ── Selection ────────────────────────────────────────────────────────────────
-const multiSelected = ref([]); // array of media items in multiple mode
-
-function isSelected(item) {
-    if (props.multiple) return multiSelected.value.some((m) => m.id === item.id);
-    return selected.value?.id === item.id;
-}
-
-function pick(item) {
-    if (props.multiple) {
-        const idx = multiSelected.value.findIndex((m) => m.id === item.id);
-        if (idx >= 0) multiSelected.value.splice(idx, 1);
-        else multiSelected.value.push(item);
-        return;
-    }
-    selected.value = item;
-}
-
-// ── Mobile UI state ──────────────────────────────────────────────────────────
 const foldersOpenMobile = ref(false);
 
-function pickFolderMobile(id) {
-    selectFolder(id);
-    foldersOpenMobile.value = false;
-}
+// selected is shared between data (reset after reload) and selection (pick/isSelected)
+const selected = ref(null);
 
-function confirm() {
-    if (props.multiple) {
-        if (multiSelected.value.length > 0) emit("select", [...multiSelected.value]);
-        return;
-    }
-    if (selected.value) emit("select", selected.value);
-}
+const { items, folders, loading, search, currentFolderId, allMediaView, typeFilter, FILTERS, folderTree, collapsed, flatFolders, visibleItems, childFolders, currentFolderName, load, selectFolder, selectAllMedia, selectRoot, toggleCollapse } =
+    useMediaPickerData({ listPath: props.listPath, show: props.show, imagesOnly: props.imagesOnly, searchInputRef, selected });
 
-function close() {
-    emit("close");
-}
+const { multiSelected, isSelected, pick, confirm, close, pickFolderMobile } =
+    useMediaPickerSelection({ show: props.show, multiple: props.multiple, emit, selectFolder, foldersOpenMobile, selected });
 
-// ── Keyboard ─────────────────────────────────────────────────────────────────
-function onKey(event) {
-    if (!props.show) return;
-    if (event.key === "Escape") {
-        event.preventDefault();
-        close();
-        return;
-    }
-    if (event.key === "Enter" && selected.value && document.activeElement?.tagName !== "INPUT") {
-        event.preventDefault();
-        confirm();
-    }
-}
+const { fileInputRef, uploading, dragOver, uploadFiles, onDragOver, onDragLeave, onDrop } =
+    useMediaPickerUpload({ uploadPath: props.uploadPath, imagesOnly: props.imagesOnly, items, currentFolderId, selected });
 
-onMounted(() => document.addEventListener("keydown", onKey));
-onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
+const { editAlt, editCaption, editSaving, editSaved, saveEdit } =
+    useMediaPickerEdit({ editPath: props.editPath, items, selected });
 
-// ── Upload ───────────────────────────────────────────────────────────────────
-const fileInputRef = ref(null);
-const uploading = ref(false);
-const dragOver = ref(false);
-
-async function uploadFiles(files) {
-    if (!files?.length) return;
-    uploading.value = true;
-    let lastUploaded = null;
-    try {
-        for (const file of files) {
-            const body = new FormData();
-            body.append("image", file);
-            if (currentFolderId.value) body.append("folderId", String(currentFolderId.value));
-            const response = await fetch(props.uploadPath, { method: HttpMethod.Post, body });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (data.success && data.media) {
-                items.value.unshift(data.media);
-                lastUploaded = data.media;
-            }
-        }
-        if (lastUploaded && (!props.imagesOnly || lastUploaded.isImage)) {
-            selected.value = lastUploaded;
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        uploading.value = false;
-    }
-}
-
-function onDragOver(event) {
-    if (!event.dataTransfer.types.includes("Files")) return;
-    event.preventDefault();
-    dragOver.value = true;
-}
-
-function onDragLeave(event) {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-        dragOver.value = false;
-    }
-}
-
-function onDrop(event) {
-    if (!event.dataTransfer.types.includes("Files")) return;
-    event.preventDefault();
-    dragOver.value = false;
-    uploadFiles(Array.from(event.dataTransfer.files ?? []));
-}
-
-// ── Inline edit (alt + caption) ──────────────────────────────────────────────
-const editAlt = ref("");
-const editCaption = ref("");
-const editSaving = ref(false);
-const editSaved = ref(false);
-let savedTimer = null;
-
-watch(selected, (item) => {
-    editAlt.value = item?.alt ?? "";
-    editCaption.value = item?.caption ?? "";
-    editSaved.value = false;
-});
-
-async function saveEdit() {
-    const item = selected.value;
-    if (!item) return;
-    if (editAlt.value === (item.alt ?? "") && editCaption.value === (item.caption ?? "")) return;
-    editSaving.value = true;
-    try {
-        const url = buildPath(props.editPath, { id: item.id });
-        const response = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                alt: editAlt.value,
-                caption: editCaption.value,
-                focalX: item.focalX ?? null,
-                focalY: item.focalY ?? null,
-                folderId: item.folderId ?? null,
-            }),
-        });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        if (!data.success) throw new Error();
-        const index = items.value.findIndex((m) => m.id === item.id);
-        if (index !== -1) items.value[index] = data.media;
-        selected.value = data.media;
-        editSaved.value = true;
-        if (savedTimer) clearTimeout(savedTimer);
-        savedTimer = setTimeout(() => { editSaved.value = false; }, 2000);
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        editSaving.value = false;
-    }
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function typeIcon(item) {
     if (item.isImage) return ImageIcon;
     if (item.mimeType?.startsWith("video/")) return Film;

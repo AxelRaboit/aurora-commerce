@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('billing/admin/OcrImportApp', {
+<div {{ vue_component('billing/admin/ocr/OcrImportApp', {
     recentJobs: recentJobs,
     uploadPath: uploadPath,
     jobsPath: jobsPath,
@@ -23,5 +23,6 @@
     statusUrlTemplate: statusUrlTemplate,
     retryPath: retryPath,
     deletePath: deletePath,
+    validatePathTemplate: validatePathTemplate,
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

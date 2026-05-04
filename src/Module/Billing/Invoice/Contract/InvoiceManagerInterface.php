@@ -14,8 +14,8 @@ interface InvoiceManagerInterface
     /** Switch the invoice to the Validated status. */
     public function validate(Invoice $invoice): void;
 
-    /** Permanently delete an invoice (and its lines, via cascade). Optionally also deletes the linked tiers (supplier). */
-    public function delete(Invoice $invoice, bool $deleteTiers = false): void;
+    /** Permanently delete an invoice (and its lines, via cascade). Optionally also deletes the linked supplier and/or buyer tiers. */
+    public function delete(Invoice $invoice, bool $deleteTiers = false, bool $deleteBuyer = false): void;
 
     /**
      * Inline-edit a single whitelisted field.

@@ -23,7 +23,9 @@ use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Throwable;
 
 #[AsAlias(InvoiceManagerInterface::class)]
 final readonly class InvoiceManager implements InvoiceManagerInterface
@@ -40,6 +42,7 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         private OcrJobManagerInterface $ocrJobManager,
         private InvoiceRepository $invoiceRepository,
         private SettingRepository $settingRepository,
+        private LoggerInterface $logger,
     ) {
         $this->fieldSetters = [
             'number' => fn (Invoice $invoice, mixed $value): Invoice => $invoice->setNumber($this->stringOrNull($value)),
@@ -86,7 +89,7 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         ]);
     }
 
-    public function delete(Invoice $invoice, bool $deleteTiers = false): void
+    public function delete(Invoice $invoice, bool $deleteTiers = false, bool $deleteBuyer = false): void
     {
         $invoice->assertEditable();
 
@@ -94,23 +97,38 @@ final readonly class InvoiceManager implements InvoiceManagerInterface
         $number = $invoice->getNumber();
         $ocrJob = $invoice->getOcrJob();
         $tiers = $deleteTiers ? $invoice->getTiers() : null;
+        $buyer = $deleteBuyer ? $invoice->getBuyerTiers() : null;
 
         $this->entityManager->remove($invoice);
         $this->entityManager->flush();
 
-        // Clean up the OCR job (and its source file) that produced this invoice.
-        if ($ocrJob instanceof OcrJob) {
-            $this->ocrJobManager->delete($ocrJob);
-        }
+        // Everything after flush() is best-effort. Any failure here must NOT
+        // bubble up to the controller — the invoice is already removed from the DB
+        // and a jsonFailure response would leave the frontend stuck on a dead page.
+        try {
+            if ($ocrJob instanceof OcrJob) {
+                $this->ocrJobManager->delete($ocrJob);
+            }
 
-        if ($tiers instanceof Tiers) {
-            $this->tiersManager->delete($tiers);
-        }
+            if ($tiers instanceof Tiers) {
+                $this->tiersManager->delete($tiers);
+            }
 
-        $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $id, [
-            'number' => $number,
-            'tiersDeleted' => $tiers instanceof Tiers,
-        ]);
+            if ($buyer instanceof Tiers) {
+                $this->tiersManager->delete($buyer);
+            }
+
+            $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $id, [
+                'number' => $number,
+                'tiersDeleted' => $tiers instanceof Tiers,
+                'buyerDeleted' => $buyer instanceof Tiers,
+            ]);
+        } catch (Throwable $throwable) {
+            $this->logger->error('Invoice post-delete cleanup failed', [
+                'invoiceId' => $id,
+                'error' => $throwable->getMessage(),
+            ]);
+        }
     }
 
     public function createCreditNote(Invoice $invoice, ?string $reason = null): Invoice

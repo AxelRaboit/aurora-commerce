@@ -21,7 +21,8 @@ export function useApiRequest() {
             if (
                 !response.ok &&
                 response.status !== HttpStatus.UnprocessableEntity &&
-                response.status !== HttpStatus.Conflict
+                response.status !== HttpStatus.Conflict &&
+                response.status !== HttpStatus.BadRequest
             )
                 throw new Error(`HTTP ${response.status}`);
             return await response.json();

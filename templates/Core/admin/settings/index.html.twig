@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('core/admin/SettingsApp', {
+<div {{ vue_component('core/admin/settings/SettingsApp', {
     groups: groups,
     updatePath: path('admin_settings_update'),
     mediaPickerPath: mediaPickerPath,

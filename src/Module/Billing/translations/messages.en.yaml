@@ -25,6 +25,7 @@ admin:
       empty: No invoices yet.
       deleteConfirm: "Delete invoice {number}?"
       deleteTiersToo: "Also delete third party \"{name}\" (no other linked invoices)"
+      deleteBuyerToo: "Also delete client \"{name}\" (no other linked invoices)"
       deleted: Invoice deleted.
       deleteError: "Could not delete (DB constraint)."
       number: "#"
@@ -154,6 +155,10 @@ admin:
         other: Other
     compliance:
       title: Compliance
+      status:
+        ok: Compliant
+        warning: Warning
+        error: Anomaly
       overall:
         ok: "All checks passed — compliant with anti-VAT-fraud law."
         warning: Some items require attention.
@@ -172,6 +177,7 @@ admin:
           gaps: "{n} gap(s) detected"
           noNumberedInvoices: No numbered invoices found.
           description: "Verifies that invoice numbering is continuous and gap-free, as required by French tax law."
+          year: "Year {year}"
           invoiceCount: "{n} invoices"
           gapUnit: gap(s)
           missingNumbers: Missing numbers
@@ -195,6 +201,8 @@ admin:
       empty: No OCR jobs.
       retry: Retry
       retryQueued: Job re-queued.
+      validateConfirm: "Validate the invoice for job #{id}?"
+      validateHelp: "The invoice will be marked as Validated and can no longer be edited."
       deleteConfirm: "Delete job #{id}? This also removes the linked invoice (if any) and the source file."
       deleteTiersToo: "Also delete third party \"{name}\" (no other linked invoices)"
       deleted: Job deleted.
@@ -229,5 +237,6 @@ admin:
         extracting: Extracting
         parsing: Parsing
         completed: Completed
+        readyToValidate: Ready to validate
         failed: Failed
         needs_review: Anomaly detected

@@ -25,6 +25,7 @@ admin:
       empty: Aucune facture pour l'instant.
       deleteConfirm: "Supprimer la facture {number} ?"
       deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
+      deleteBuyerToo: "Supprimer aussi le client « {name} » (aucune autre facture liée)"
       deleted: Facture supprimée.
       deleteError: "Suppression impossible (contraintes DB)."
       number: "N°"
@@ -154,6 +155,10 @@ admin:
         other: Autre
     compliance:
       title: Conformité
+      status:
+        ok: Conforme
+        warning: Attention
+        error: Anomalie
       overall:
         ok: "Toutes les vérifications sont passées — conforme loi anti-fraude TVA."
         warning: Des points d'attention ont été détectés.
@@ -172,6 +177,7 @@ admin:
           gaps: "{n} trou(s) détecté(s)"
           noNumberedInvoices: Aucune facture numérotée trouvée.
           description: "Vérifie que la numérotation est continue et sans trou (art. 242 nonies A CGI)."
+          year: "Exercice {year}"
           invoiceCount: "{n} factures"
           gapUnit: trou(s)
           missingNumbers: Numéros manquants
@@ -195,6 +201,8 @@ admin:
       empty: Aucun job OCR.
       retry: Relancer
       retryQueued: Job remis en file d'attente.
+      validateConfirm: "Valider la facture du job #{id} ?"
+      validateHelp: "La facture passera en statut « Validée » et ne pourra plus être modifiée."
       deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi la facture liée (si elle existe) et le fichier source."
       deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
       deleted: Job supprimé.
@@ -229,5 +237,6 @@ admin:
         extracting: Extraction
         parsing: Analyse
         completed: Terminé
+        readyToValidate: À valider
         failed: Échec
         needs_review: Anomalie détectée
