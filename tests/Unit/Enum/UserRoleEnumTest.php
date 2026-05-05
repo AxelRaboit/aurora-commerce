@@ -12,10 +12,7 @@ final class UserRoleEnumTest extends TestCase
     public function testPriorityOrder(): void
     {
         self::assertGreaterThan(UserRoleEnum::Admin->priority(), UserRoleEnum::Dev->priority());
-        self::assertGreaterThan(UserRoleEnum::Editor->priority(), UserRoleEnum::Admin->priority());
-        self::assertGreaterThan(UserRoleEnum::Author->priority(), UserRoleEnum::Editor->priority());
-        self::assertGreaterThan(UserRoleEnum::Contributor->priority(), UserRoleEnum::Author->priority());
-        self::assertGreaterThan(UserRoleEnum::User->priority(), UserRoleEnum::Contributor->priority());
+        self::assertGreaterThan(UserRoleEnum::User->priority(), UserRoleEnum::Admin->priority());
     }
 
     public function testSelectableForAdmin(): void
@@ -24,6 +21,7 @@ final class UserRoleEnumTest extends TestCase
 
         self::assertNotContains(UserRoleEnum::Dev, $selectable);
         self::assertContains(UserRoleEnum::Admin, $selectable);
+        self::assertContains(UserRoleEnum::User, $selectable);
     }
 
     public function testAllAssignableValues(): void
@@ -42,7 +40,7 @@ final class UserRoleEnumTest extends TestCase
 
     public function testHighestPriorityForRolesReturnsMaxPriority(): void
     {
-        $roles = [UserRoleEnum::User->value, UserRoleEnum::Admin->value, UserRoleEnum::Editor->value];
+        $roles = [UserRoleEnum::User->value, UserRoleEnum::Admin->value];
 
         self::assertSame(UserRoleEnum::Admin->priority(), UserRoleEnum::highestPriorityForRoles($roles));
     }

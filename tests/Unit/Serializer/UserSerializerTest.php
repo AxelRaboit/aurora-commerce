@@ -48,7 +48,7 @@ final class UserSerializerTest extends TestCase
 
     public function testRolePriorityPicksHighestWhenMultipleRolesPresent(): void
     {
-        $user = $this->makeUser([UserRoleEnum::Editor->value, UserRoleEnum::Dev->value]);
+        $user = $this->makeUser([UserRoleEnum::Admin->value, UserRoleEnum::Dev->value]);
 
         $payload = $this->serializer->serialize($user);
 

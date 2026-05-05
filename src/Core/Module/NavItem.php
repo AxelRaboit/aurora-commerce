@@ -13,7 +13,7 @@ final readonly class NavItem
         public string $route,
         public string $labelKey,
         public string $icon,
-        public ?string $requiredRole = null,
+        public ?string $requiredPrivilege = null,
         public string $activeColor = 'accent',
         public ?string $activeRoutePrefix = null,
         public array $children = [],

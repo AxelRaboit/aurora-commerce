@@ -8,7 +8,6 @@ use Aurora\Core\Module\ModuleInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
-use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Module\Ecommerce\Service\EcommerceContext;
 
 final readonly class EcommerceModule implements ModuleInterface
@@ -23,12 +22,12 @@ final readonly class EcommerceModule implements ModuleInterface
     public function getPermissions(): array
     {
         return [
-            new NavPermission('ecommerce.listings.view', UserRoleEnum::Editor->value),
-            new NavPermission('ecommerce.listings.create', UserRoleEnum::Editor->value),
-            new NavPermission('ecommerce.listings.edit', UserRoleEnum::Editor->value),
-            new NavPermission('ecommerce.listings.delete', UserRoleEnum::Admin->value),
-            new NavPermission('ecommerce.orders.view', UserRoleEnum::Editor->value),
-            new NavPermission('ecommerce.orders.manage', UserRoleEnum::Editor->value),
+            new NavPermission('ecommerce.listings.view'),
+            new NavPermission('ecommerce.listings.create'),
+            new NavPermission('ecommerce.listings.edit'),
+            new NavPermission('ecommerce.listings.delete'),
+            new NavPermission('ecommerce.orders.view'),
+            new NavPermission('ecommerce.orders.manage'),
         ];
     }
 
@@ -40,8 +39,8 @@ final readonly class EcommerceModule implements ModuleInterface
 
         return [
             new NavSection('ecommerce', [
-                new NavItem('ecommerce_listings', 'admin.nav.listings', 'shopping-bag', UserRoleEnum::Editor->value),
-                new NavItem('ecommerce_orders', 'admin.nav.orders', 'receipt', UserRoleEnum::Editor->value),
+                new NavItem('ecommerce_listings', 'admin.nav.listings', 'shopping-bag'),
+                new NavItem('ecommerce_orders', 'admin.nav.orders', 'receipt'),
             ], priority: 60),
         ];
     }

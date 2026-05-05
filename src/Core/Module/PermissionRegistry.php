@@ -6,10 +6,10 @@ namespace Aurora\Core\Module;
 
 final class PermissionRegistry
 {
-    /** @var array<string, string> permission name -> required role */
+    /** @var list<string> all registered privilege names */
     private array $permissions = [];
 
-    /** @var array<string, array<string, string>> module id -> (permission name -> required role) */
+    /** @var array<string, list<string>> module id -> privilege names */
     private array $byModule = [];
 
     /** @param iterable<ModuleInterface> $modules */
@@ -20,29 +20,26 @@ final class PermissionRegistry
             $this->byModule[$moduleId] ??= [];
 
             foreach ($module->getPermissions() as $permission) {
-                $this->permissions[$permission->name] = $permission->requiredRole;
-                $this->byModule[$moduleId][$permission->name] = $permission->requiredRole;
+                $this->permissions[] = $permission->name;
+                $this->byModule[$moduleId][] = $permission->name;
             }
         }
-    }
 
-    public function getRequiredRole(string $permissionName): ?string
-    {
-        return $this->permissions[$permissionName] ?? null;
+        $this->permissions = array_unique($this->permissions);
     }
 
     public function has(string $permissionName): bool
     {
-        return isset($this->permissions[$permissionName]);
+        return in_array($permissionName, $this->permissions, true);
     }
 
-    /** @return array<string, string> */
+    /** @return list<string> */
     public function all(): array
     {
         return $this->permissions;
     }
 
-    /** @return array<string, array<string, string>> */
+    /** @return array<string, list<string>> */
     public function byModule(): array
     {
         return $this->byModule;

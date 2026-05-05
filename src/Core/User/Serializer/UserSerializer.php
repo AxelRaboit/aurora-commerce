@@ -18,12 +18,18 @@ final readonly class UserSerializer
      */
     public function serialize(User $user): array
     {
-        // Visible role for the badge (Dev intentionally excluded — its presence is shown via `isDev`).
-        $primaryRole = array_find([UserRoleEnum::Admin, UserRoleEnum::Editor, UserRoleEnum::Author, UserRoleEnum::Contributor], fn ($candidate): bool => in_array($candidate->value, $user->getRoles(), true));
+        // Visible role for the badge. Dev is hidden (shown via isDev flag). ROLE_USER is only
+        // shown when it is the user's actual highest role — it is excluded when Admin or Dev is
+        // present because getRoles() always appends ROLE_USER via the entity getter.
+        $effectivePriority = UserRoleEnum::highestPriorityForRoles($user->getRoles());
+        $primaryRole = match (true) {
+            $effectivePriority >= UserRoleEnum::Dev->priority() => null,
+            $effectivePriority >= UserRoleEnum::Admin->priority() => UserRoleEnum::Admin,
+            default => UserRoleEnum::User,
+        };
 
         // Effective priority used by the frontend `canActOn` guard. MUST consider the Dev role,
         // otherwise a Dev user serialises as priority 0 and any admin appears able to edit them.
-        $effectivePriority = UserRoleEnum::highestPriorityForRoles($user->getRoles());
 
         $manager = $user->getManager();
 

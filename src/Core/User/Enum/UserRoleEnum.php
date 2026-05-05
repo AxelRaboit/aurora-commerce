@@ -7,9 +7,6 @@ namespace Aurora\Core\User\Enum;
 enum UserRoleEnum: string
 {
     case User = 'ROLE_USER';
-    case Contributor = 'ROLE_CONTRIBUTOR';
-    case Author = 'ROLE_AUTHOR';
-    case Editor = 'ROLE_EDITOR';
     case Admin = 'ROLE_ADMIN';
     case Dev = 'ROLE_DEV';
 
@@ -18,9 +15,6 @@ enum UserRoleEnum: string
         return match ($this) {
             self::Dev => 100,
             self::Admin => 80,
-            self::Editor => 60,
-            self::Author => 40,
-            self::Contributor => 20,
             self::User => 0,
         };
     }
@@ -29,9 +23,6 @@ enum UserRoleEnum: string
     {
         return match ($this) {
             self::User => 'Utilisateur',
-            self::Contributor => 'Contributeur',
-            self::Author => 'Auteur',
-            self::Editor => 'Éditeur',
             self::Admin => 'Administrateur',
             self::Dev => 'Développeur',
         };
@@ -55,11 +46,13 @@ enum UserRoleEnum: string
     }
 
     /**
+     * Roles that admins can assign to other users (Dev excluded — only Dev can self-assign Dev).
+     *
      * @return list<self>
      */
     public static function selectableForAdmin(): array
     {
-        return [self::Admin, self::Editor, self::Author, self::Contributor];
+        return [self::Admin, self::User];
     }
 
     /**
@@ -71,7 +64,7 @@ enum UserRoleEnum: string
     }
 
     /**
-     * All roles that can be assigned (Dev + Admin roles). Used for DTO validation.
+     * All roles that can be assigned via the admin UI (Dev included).
      *
      * @return list<string>
      */

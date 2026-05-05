@@ -54,6 +54,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private array $roles = [];
 
+    /**
+     * Explicit privileges granted to this user (module permission strings, e.g. "crm.companies.manage").
+     * ROLE_DEV and ROLE_ADMIN bypass privilege checks entirely; only ROLE_USER is constrained by this list.
+     *
+     * @var list<string>
+     */
+    #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
+    private array $privileges = [];
+
     #[ORM\Column]
     private string $password;
 
@@ -359,6 +369,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getSubordinates(): Collection
     {
         return $this->subordinates;
+    }
+
+    /** @return list<string> */
+    public function getPrivileges(): array
+    {
+        return $this->privileges;
+    }
+
+    public function setPrivileges(array $privileges): static
+    {
+        $this->privileges = array_values(array_unique($privileges));
+
+        return $this;
+    }
+
+    public function hasPrivilege(string $privilege): bool
+    {
+        return in_array($privilege, $this->privileges, true);
     }
 
     public function eraseCredentials(): void {}

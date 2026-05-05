@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Module;
 
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Resolves module-defined permission strings (e.g. "crm.contacts.view")
- * to the role check declared in each module's getPermissions() list.
+ * Resolves module privilege strings (e.g. "crm.contacts.view") to an access decision.
+ *
+ * Rules:
+ *   - ROLE_DEV  → always granted (bypass everything)
+ *   - ROLE_ADMIN → always granted (full access)
+ *   - ROLE_USER  → granted only if the privilege is in the user's explicit privileges list
  */
 final class ModulePermissionVoter extends Voter
 {
@@ -27,8 +33,19 @@ final class ModulePermissionVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        $requiredRole = $this->permissionRegistry->getRequiredRole($attribute);
+        if ($this->security->decide($token, [UserRoleEnum::Dev->value])) {
+            return true;
+        }
 
-        return null !== $requiredRole && $this->security->decide($token, [$requiredRole]);
+        if ($this->security->decide($token, [UserRoleEnum::Admin->value])) {
+            return true;
+        }
+
+        $user = $token->getUser();
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        return $user->hasPrivilege($attribute);
     }
 }

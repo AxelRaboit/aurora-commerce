@@ -213,8 +213,9 @@ final class MediaActionsTest extends IntegrationTestCase
 
     public function testNonAdminCannotAccessMediaAdmin(): void
     {
-        $editor = $this->createTestUser('editor', role: UserRoleEnum::Editor);
-        $this->client->loginUser($editor, 'admin');
+        // ROLE_USER without media privilege should be denied
+        $user = $this->createTestUser('plain-user', role: UserRoleEnum::User);
+        $this->client->loginUser($user, 'admin');
 
         $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_media_list'));
 

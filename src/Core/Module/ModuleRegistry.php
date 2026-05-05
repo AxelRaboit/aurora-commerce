@@ -59,7 +59,7 @@ final readonly class ModuleRegistry
     /** @return array<string, mixed>|null null when the item is filtered by role */
     private function resolveItem(NavItem $item): ?array
     {
-        if (null !== $item->requiredRole && !$this->security->isGranted($item->requiredRole)) {
+        if (null !== $item->requiredPrivilege && !$this->security->isGranted($item->requiredPrivilege)) {
             return null;
         }
 

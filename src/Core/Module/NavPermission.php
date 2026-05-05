@@ -8,6 +8,5 @@ final readonly class NavPermission
 {
     public function __construct(
         public string $name,
-        public string $requiredRole,
     ) {}
 }

@@ -8,7 +8,6 @@ use Aurora\Core\Module\ModuleInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
-use Aurora\Core\User\Enum\UserRoleEnum;
 
 final class CoreModule implements ModuleInterface
 {
@@ -20,14 +19,14 @@ final class CoreModule implements ModuleInterface
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.dashboard.view', UserRoleEnum::Editor->value),
-            new NavPermission('core.media.view', UserRoleEnum::Editor->value),
-            new NavPermission('core.media.manage', UserRoleEnum::Admin->value),
-            new NavPermission('core.menus.manage', UserRoleEnum::Admin->value),
-            new NavPermission('core.search.view', UserRoleEnum::Editor->value),
-            new NavPermission('core.users.manage', UserRoleEnum::Admin->value),
-            new NavPermission('core.settings.manage', UserRoleEnum::Admin->value),
-            new NavPermission('core.themes.manage', UserRoleEnum::Admin->value),
+            new NavPermission('core.dashboard.view'),
+            new NavPermission('core.media.view'),
+            new NavPermission('core.media.manage'),
+            new NavPermission('core.menus.manage'),
+            new NavPermission('core.search.view'),
+            new NavPermission('core.users.manage'),
+            new NavPermission('core.settings.manage'),
+            new NavPermission('core.themes.manage'),
         ];
     }
 
@@ -40,12 +39,12 @@ final class CoreModule implements ModuleInterface
             new NavSection('platform', [
                 new NavItem('admin_media', 'admin.nav.media', 'image'),
                 new NavItem('admin_menus', 'admin.nav.menus', 'menu'),
-                new NavItem('admin_users', 'admin.nav.users', 'users', UserRoleEnum::Admin->value),
-                new NavItem('admin_settings', 'admin.nav.settings', 'settings', UserRoleEnum::Admin->value),
-                new NavItem('admin_themes', 'admin.nav.themes', 'palette', UserRoleEnum::Admin->value),
+                new NavItem('admin_users', 'admin.nav.users', 'users'),
+                new NavItem('admin_settings', 'admin.nav.settings', 'settings'),
+                new NavItem('admin_themes', 'admin.nav.themes', 'palette'),
             ], priority: 20),
             new NavSection('dev', [
-                new NavItem('dev_dashboard', 'admin.nav.administration', 'shield', UserRoleEnum::Dev->value, 'rose', 'dev_'),
+                new NavItem('dev_dashboard', 'admin.nav.administration', 'shield', 'rose', 'dev_'),
             ], priority: 1000),
         ];
     }
