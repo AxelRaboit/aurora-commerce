@@ -237,6 +237,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $createdPosts = [];
 
+        // Pre-compute media URLs for EditorJS image blocks
+        $u0 = isset($media[0]) ? $media[0]->getPublicUrl().'?v=0' : '';
+        $u1 = isset($media[1]) ? $media[1]->getPublicUrl().'?v=0' : '';
+        $u2 = isset($media[2]) ? $media[2]->getPublicUrl().'?v=0' : '';
+        $u3 = isset($media[3]) ? $media[3]->getPublicUrl().'?v=0' : '';
+
         /** @var array<int, array{fr: array{title: string, slug: string, excerpt: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}, en: array{title: string, slug: string, excerpt: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}, media: ?Media}> $posts */
         $posts = [
             [
@@ -245,12 +251,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'bienvenue-sur-aurora',
                     'excerpt' => 'Découvrez Aurora, la plateforme qui unifie CRM, ERP, e-commerce, facturation et gestion documentaire.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => 'Une plateforme pour tout gérer', 'level' => 2]],
-                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'CRM & Gestion commerciale', 'level' => 3]],
+                        ['type' => 'header',    'data' => ['text' => 'Une plateforme pour tout gérer', 'level' => 2]],
+                        ['type' => 'paragraph', 'data' => ['text' => "Aurora unifie CRM, ERP, e-commerce, facturation, GED et photographie dans un seul espace d'administration. ".self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u0, 'width' => 1280, 'height' => 853], 'caption' => 'L\'interface Aurora — tableau de bord principal', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
+                        ['type' => 'header',    'data' => ['text' => 'CRM & Gestion commerciale', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Gérez vos contacts, entreprises et opportunités depuis une interface unifiée. Suivez chaque deal de la prospection à la signature. '.self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'E-commerce intégré', 'level' => 3]],
+                        ['type' => 'header',    'data' => ['text' => 'E-commerce intégré', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Publiez votre catalogue, gérez les commandes et les paiements Stripe sans quitter votre espace admin. '.self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u1, 'width' => 1280, 'height' => 720], 'caption' => 'Module e-commerce Aurora — gestion des listings', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
+                        ['type' => 'header',    'data' => ['text' => 'GED & Facturation', 'level' => 3]],
+                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ],
                 ],
                 'en' => [
@@ -258,7 +268,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'welcome-to-aurora',
                     'excerpt' => 'Discover Aurora, the platform that unifies CRM, ERP, e-commerce, billing and document management.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => 'One platform to manage everything', 'level' => 2]],
+                        ['type' => 'header',    'data' => ['text' => 'One platform to manage everything', 'level' => 2]],
+                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u0, 'width' => 1280, 'height' => 853], 'caption' => 'Aurora admin dashboard', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ],
                 ],
@@ -270,13 +282,15 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'meilleures-pratiques-developpement-web-2025',
                     'excerpt' => 'Symfony, Vue.js, Vite, Tailwind CSS — le stack moderne pour construire des applications web performantes.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => 'Le stack moderne en 2025', 'level' => 2]],
-                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'Symfony 7 & PHP 8.4', 'level' => 3]],
+                        ['type' => 'header',    'data' => ['text' => 'Le stack moderne en 2025', 'level' => 2]],
+                        ['type' => 'paragraph', 'data' => ['text' => 'Le développement web évolue vite. En 2025, les meilleures équipes s\'appuient sur des outils modernes, typés et performants. '.self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u1, 'width' => 1280, 'height' => 720], 'caption' => "Architecture d'une application Aurora moderne", 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
+                        ['type' => 'header',    'data' => ['text' => 'Symfony 7 & PHP 8.4', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Les attributs PHP 8.4, les readonly properties et les énumérations font de PHP un langage moderne et expressif. '.self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'Vue.js 3 & Composition API', 'level' => 3]],
+                        ['type' => 'header',    'data' => ['text' => 'Vue.js 3 & Composition API', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'Tailwind CSS v4', 'level' => 3]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u2, 'width' => 800, 'height' => 1000], 'caption' => 'Développement front-end avec Vue.js 3', 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
+                        ['type' => 'header',    'data' => ['text' => 'Tailwind CSS v4', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Le utility-first CSS framework repensé avec une configuration CSS-native et des performances de build imbattables. '.self::LOREM]],
                     ],
                 ],
@@ -285,7 +299,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'web-development-best-practices-2025',
                     'excerpt' => 'Symfony, Vue.js, Vite, Tailwind CSS — the modern stack for performant web applications.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => 'The modern stack in 2025', 'level' => 2]],
+                        ['type' => 'header',    'data' => ['text' => 'The modern stack in 2025', 'level' => 2]],
+                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u1, 'width' => 1280, 'height' => 720], 'caption' => 'Modern web development architecture', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ],
                 ],
@@ -297,12 +313,14 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'aurora-transforme-gestion-entreprise',
                     'excerpt' => 'Retour d\'expérience après 6 mois d\'utilisation — témoignage d\'un dirigeant de PME.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => '6 mois avec Aurora : notre bilan', 'level' => 2]],
+                        ['type' => 'header',    'data' => ['text' => '6 mois avec Aurora : notre bilan', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Avant Aurora, notre équipe jonglait entre 4 outils différents pour gérer les clients, les stocks, les commandes et la facturation. '.self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'Ce qui a changé', 'level' => 3]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u3, 'width' => 1200, 'height' => 800], 'caption' => 'L\'équipe Aurora Tech dans leurs nouveaux locaux', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
+                        ['type' => 'header',    'data' => ['text' => 'Ce qui a changé', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => 'Le premier bénéfice immédiat : la centralisation des données. Un seul endroit pour trouver l\'historique d\'un client, ses commandes, ses factures. '.self::LOREM]],
-                        ['type' => 'heading',   'data' => ['text' => 'Le module GED', 'level' => 3]],
-                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u2, 'width' => 800, 'height' => 1000], 'caption' => 'Tableau de bord CRM Aurora — pipeline deals', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
+                        ['type' => 'header',    'data' => ['text' => 'Le module GED', 'level' => 3]],
+                        ['type' => 'paragraph', 'data' => ['text' => 'Tous nos contrats, guides techniques et supports marketing sont maintenant centralisés. La recherche par catégorie nous fait gagner un temps précieux. '.self::LOREM]],
                     ],
                 ],
                 'en' => [
@@ -310,7 +328,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'slug' => 'aurora-transforms-business-management',
                     'excerpt' => 'A 6-month experience report — testimonial from an SME founder.',
                     'blocks' => [
-                        ['type' => 'heading',   'data' => ['text' => '6 months with Aurora: our review', 'level' => 2]],
+                        ['type' => 'header',    'data' => ['text' => '6 months with Aurora: our review', 'level' => 2]],
+                        ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                        ['type' => 'image',     'data' => ['file' => ['url' => $u3, 'width' => 1200, 'height' => 800], 'caption' => 'Aurora Tech team at the office', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ],
                 ],
@@ -364,10 +384,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'media' => $media[3] ?? null,
                 'ago' => '3 days',
                 'blocks' => [
-                    ['type' => 'heading',   'data' => ['text' => 'Une journée dédiée à l\'innovation', 'level' => 2]],
+                    ['type' => 'header',   'data' => ['text' => 'Une journée dédiée à l\'innovation', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => 'Plus de 200 développeurs et dirigeants réunis pour découvrir les nouveautés Aurora. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img3, 'width' => 1200, 'height' => 800], 'caption' => 'Aurora Tech Day 2025 — Grande salle des conférences', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
-                    ['type' => 'heading',   'data' => ['text' => 'Les annonces phares', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'Les annonces phares', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Démonstration en direct du module GED', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
@@ -379,12 +399,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'media' => $media[0] ?? null,
                 'ago' => '10 days',
                 'blocks' => [
-                    ['type' => 'heading',   'data' => ['text' => 'Notre vision pour les 18 prochains mois', 'level' => 2]],
+                    ['type' => 'header',   'data' => ['text' => 'Notre vision pour les 18 prochains mois', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => 'Nous avons écouté vos retours. Voici les priorités qui guideront le développement d\'Aurora jusqu\'en 2026. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Feuille de route Aurora 2025-2026', 'withBorder' => false, 'withBackground' => true, 'stretched' => false]],
-                    ['type' => 'heading',   'data' => ['text' => 'Module Suivi & Workflow', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'Module Suivi & Workflow', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                    ['type' => 'heading',   'data' => ['text' => 'Intelligence artificielle intégrée', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'Intelligence artificielle intégrée', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                 ],
             ],
@@ -394,12 +414,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'media' => $media[1] ?? null,
                 'ago' => '5 days',
                 'blocks' => [
-                    ['type' => 'heading',   'data' => ['text' => 'Prérequis', 'level' => 2]],
+                    ['type' => 'header',   'data' => ['text' => 'Prérequis', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => 'Aurora est installé, vous avez un projet client. Maintenant, créons un module sur-mesure. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img1, 'width' => 1280, 'height' => 720], 'caption' => "Structure d'un module Aurora", 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
-                    ['type' => 'heading',   'data' => ['text' => 'Étape 1 : Créer l\'entité', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'Étape 1 : Créer l\'entité', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                    ['type' => 'heading',   'data' => ['text' => 'Étape 2 : Le composant Vue', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'Étape 2 : Le composant Vue', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img2, 'width' => 800, 'height' => 1000], 'caption' => 'Le résultat final dans l\'admin', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
                 ],
@@ -410,10 +430,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'media' => $media[2] ?? null,
                 'ago' => '2 days',
                 'blocks' => [
-                    ['type' => 'heading',   'data' => ['text' => 'L\'IA au service de la productivité', 'level' => 2]],
+                    ['type' => 'header',   'data' => ['text' => 'L\'IA au service de la productivité', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img2, 'width' => 800, 'height' => 1000], 'caption' => 'Interface Aurora avec suggestions IA', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
-                    ['type' => 'heading',   'data' => ['text' => 'OCR et extraction de données', 'level' => 3]],
+                    ['type' => 'header',   'data' => ['text' => 'OCR et extraction de données', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                 ],
             ],
@@ -423,7 +443,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'media' => $media[0] ?? null,
                 'ago' => '15 days',
                 'blocks' => [
-                    ['type' => 'heading',   'data' => ['text' => 'Checklist sécurité production', 'level' => 2]],
+                    ['type' => 'header',   'data' => ['text' => 'Checklist sécurité production', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Dashboard monitoring Aurora', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],

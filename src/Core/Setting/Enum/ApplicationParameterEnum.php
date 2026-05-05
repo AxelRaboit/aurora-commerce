@@ -237,7 +237,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::AllowedUploadExtensions => 'jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip',
             self::Timezone => 'Europe/Paris',
             self::DateFormat => 'd/m/Y',
-            self::CommentsEnabled => '0',
+            self::CommentsEnabled => '1',
             self::CommentModerationEnabled => '1',
             self::MaintenanceMode => '0',
             self::AdminRegistrationEnabled => '0',
