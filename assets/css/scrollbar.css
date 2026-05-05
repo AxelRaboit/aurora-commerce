@@ -1,3 +1,37 @@
+/* ── Global scrollbar styling ─────────────────────────────────────────────── */
+/* Applies the theme scrollbar to every scrollable element, both vertical     */
+/* and horizontal. scrollbar-hide and scrollbar-thin remain as utilities for  */
+/* components that need to override or hide their scrollbar explicitly.       */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar);
+    border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-scrollbar-hover);
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ── Utility overrides ───────────────────────────────────────────────────── */
+
 @utility scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
