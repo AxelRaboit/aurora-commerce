@@ -270,7 +270,7 @@ function openViewWithPrivileges(user) {
             </div>
         </AppModal>
 
-        <AppModal :show="editModal.open" :max-width="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length ? '6xl' : 'md'" :scrollable="true" v-on:close="editModal.open = false">
+        <AppModal :show="editModal.open" :max-width="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length ? '7xl' : 'md'" :scrollable="true" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
@@ -298,10 +298,12 @@ function openViewWithPrivileges(user) {
                 <div class="flex gap-6">
                     <!-- Left: form fields -->
                     <div class="flex-1 min-w-0 space-y-4">
-                        <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
-                        <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
-                        <AppMultiselect v-model="editForm.role" :options="roles" :label="t('admin.users.role')" :allow-empty="false" :error="editModal.errors.role ?? ''" />
-                        <AppMultiselect v-model="editForm.managerId" :options="managerOptions" :label="t('admin.users.manager.label')" :allow-empty="true" :error="editModal.errors.managerId ?? ''" />
+                        <div class="grid grid-cols-2 gap-4">
+                            <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
+                            <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
+                            <AppMultiselect v-model="editForm.role" :options="roles" :label="t('admin.users.role')" :allow-empty="false" :error="editModal.errors.role ?? ''" />
+                            <AppMultiselect v-model="editForm.managerId" :options="managerOptions" :label="t('admin.users.manager.label')" :allow-empty="true" :error="editModal.errors.managerId ?? ''" />
+                        </div>
                         <AppInput v-model="editForm.password" :label="t('admin.users.newPassword')" type="password" :placeholder="t('admin.users.newPasswordPlaceholder')" :error="editModal.errors.password ?? ''" />
                     </div>
 
