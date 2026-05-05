@@ -72,6 +72,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) aurora:application-parameter; \
 	$(CONSOLE) aurora:menus:sync; \
+	$(CONSOLE) aurora:privileges:sync; \
 	$(CONSOLE) app:translations:dump-js; \
 	$(PNPM) --dir=$(AURORA) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
@@ -224,11 +225,19 @@ migration-generate: ## Generate a blank migration
 migration-diff: ## Generate a migration from entity changes
 	$(CONSOLE) doctrine:migrations:diff
 
+sync: ## Run all sync commands (params, menus, privileges)
+	make sync-params
+	make sync-menus
+	make sync-privileges
+
 sync-params: ## Synchronise application parameters (creates missing, deletes obsolete)
 	$(CONSOLE) aurora:application-parameter
 
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) aurora:menus:sync
+
+sync-privileges: ## Purge obsolete privileges from users after module changes
+	$(CONSOLE) aurora:privileges:sync
 
 sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
 	$(CONSOLE) aurora:sequences:resync

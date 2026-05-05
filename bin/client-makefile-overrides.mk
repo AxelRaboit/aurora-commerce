@@ -46,6 +46,7 @@ install-dev: ## Install for local development
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync
+	$(CONSOLE) aurora:privileges:sync
 	make dev
 	@echo "✅ Admin user: admin@aurora.app / password"
 
@@ -56,6 +57,7 @@ install-prod: ## Install for production
 	make migrate-f
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync
+	$(CONSOLE) aurora:privileges:sync
 	make build
 	make cc-prod
 
@@ -72,6 +74,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) aurora:application-parameter; \
 	$(CONSOLE) aurora:menus:sync; \
+	$(CONSOLE) aurora:privileges:sync; \
 	$(AURORA_ENV) $(PNPM) --dir=$(AURORA) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
@@ -86,4 +89,5 @@ aurora-update: ## Pull latest Aurora changes
 	$(PNPM) --dir=$(AURORA) install
 	$(PNPM) install
 	make migrate
+	$(CONSOLE) aurora:privileges:sync
 	@echo "✅ Aurora updated"
