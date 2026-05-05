@@ -44,7 +44,7 @@ final class CoreModule implements ModuleInterface
                 new NavItem('admin_themes', 'admin.nav.themes', 'palette'),
             ], priority: 20),
             new NavSection('dev', [
-                new NavItem('dev_dashboard', 'admin.nav.administration', 'shield', 'rose', 'dev_'),
+                new NavItem('dev_dashboard', 'admin.nav.administration', 'shield', 'ROLE_DEV', 'rose', 'dev_'),
             ], priority: 1000),
         ];
     }
