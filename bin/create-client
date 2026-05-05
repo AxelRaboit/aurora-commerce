@@ -59,7 +59,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,assets,src/{Custom,},templates/Custom,config/packages,config/routes,migrations}
+mkdir -p "$DEST"/{bin,public,src/{Custom,},templates/Custom,config/packages,config/routes,migrations}
 touch "$DEST/src/Custom/.gitkeep"
 touch "$DEST/templates/Custom/.gitkeep"
 touch "$DEST/migrations/.gitkeep"
@@ -316,10 +316,6 @@ framework:
 EOF
 
 # twig.yaml — strict_variables for test env only (paths registered by AuroraBundle)
-# Add client module twig paths here as you create modules:
-#   twig:
-#     paths:
-#       '%kernel.project_dir%/templates/Module/MyModule': 'MyModule'
 cat > "$DEST/config/packages/twig.yaml" <<'EOF'
 when@test:
     twig:
@@ -351,9 +347,9 @@ aurora:
     resource: '../${AURORA_VENDOR_PATH}/src/'
     type: attribute
 
-# Client custom controllers — scans all of src/Custom/ recursively
+# Client custom controllers
 custom:
-    resource: '../src/Custom/'
+    resource: '../src/Custom/Controller/'
     type: attribute
 EOF
 
@@ -362,7 +358,7 @@ EOF
 # ---------------------------------------------------------------------------
 
 info "Writing config/services.yaml..."
-cat > "$DEST/config/services.yaml" <<EOF
+cat > "$DEST/config/services.yaml" <<'EOF'
 parameters:
     app.admin_email: '%env(ADMIN_EMAIL)%'
     app.mailer_from: '%env(MAILER_FROM)%'
@@ -374,173 +370,6 @@ services:
 
     App\Custom\:
         resource: '../src/Custom/'
-
-    # Point the i18n dump command at the aurora package dir so it scans aurora's
-    # own translation files and outputs generated JSON where aurora's i18n.js
-    # expects them. Add extra source dirs here for each client module you create:
-    #   \$extraSourceDirs:
-    #       - '%kernel.project_dir%/src/Custom/MyModule/translations'
-    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
-        arguments:
-            \$auroraDir: '%kernel.project_dir%/${AURORA_VENDOR_PATH}'
-EOF
-
-# ---------------------------------------------------------------------------
-# package.json — client-owned Vite build
-# ---------------------------------------------------------------------------
-
-info "Writing package.json..."
-AURORA_PKG="$AURORA_DIR/package.json"
-VUE_VERSION="$(node -e "console.log(require('${AURORA_PKG}').dependencies.vue)" 2>/dev/null || echo '^3.5.0')"
-VUE_I18N_VERSION="$(node -e "console.log(require('${AURORA_PKG}').dependencies['vue-i18n'])" 2>/dev/null || echo '^11.0.0')"
-VUE_SONNER_VERSION="$(node -e "console.log(require('${AURORA_PKG}').dependencies['vue-sonner'])" 2>/dev/null || echo '^2.0.0')"
-AXIOS_VERSION="$(node -e "console.log(require('${AURORA_PKG}').dependencies.axios)" 2>/dev/null || echo '^1.9.0')"
-LUCIDE_VERSION="$(node -e "console.log(require('${AURORA_PKG}').dependencies['lucide-vue-next'])" 2>/dev/null || echo '^1.0.0')"
-TAILWIND_VITE="$(node -e "console.log(require('${AURORA_PKG}').devDependencies['@tailwindcss/vite'])" 2>/dev/null || echo '^4.2.2')"
-TAILWIND="$(node -e "console.log(require('${AURORA_PKG}').devDependencies.tailwindcss)" 2>/dev/null || echo '^4.2.2')"
-VITE_VERSION="$(node -e "console.log(require('${AURORA_PKG}').devDependencies.vite)" 2>/dev/null || echo '^8.0.0')"
-VITE_VUE="$(node -e "console.log(require('${AURORA_PKG}').devDependencies['@vitejs/plugin-vue'])" 2>/dev/null || echo '^6.0.0')"
-VITE_SF="$(node -e "console.log(require('${AURORA_PKG}').devDependencies['vite-plugin-symfony'])" 2>/dev/null || echo '^8.2.0')"
-STIMULUS="$(node -e "console.log(require('${AURORA_PKG}').devDependencies['@hotwired/stimulus'])" 2>/dev/null || echo '^3.0.0')"
-STIMULUS_BRIDGE="$(node -e "console.log(require('${AURORA_PKG}').devDependencies['@symfony/stimulus-bridge'])" 2>/dev/null || echo '^4.0.0')"
-
-cat > "$DEST/package.json" <<EOF
-{
-    "private": true,
-    "license": "UNLICENSED",
-    "scripts": {
-        "predev": "php bin/console app:translations:dump-js",
-        "prebuild": "php bin/console app:translations:dump-js",
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "vite preview"
-    },
-    "devDependencies": {
-        "@hotwired/stimulus": "${STIMULUS}",
-        "@symfony/stimulus-bridge": "${STIMULUS_BRIDGE}",
-        "@symfony/ux-vue": "file:${AURORA_VENDOR_PATH}/vendor/symfony/ux-vue/assets",
-        "@tailwindcss/vite": "${TAILWIND_VITE}",
-        "@vitejs/plugin-vue": "${VITE_VUE}",
-        "tailwindcss": "${TAILWIND}",
-        "vite": "${VITE_VERSION}",
-        "vite-plugin-symfony": "${VITE_SF}"
-    },
-    "dependencies": {
-        "axios": "${AXIOS_VERSION}",
-        "lucide-vue-next": "${LUCIDE_VERSION}",
-        "vue": "${VUE_VERSION}",
-        "vue-i18n": "${VUE_I18N_VERSION}",
-        "vue-sonner": "${VUE_SONNER_VERSION}"
-    }
-}
-EOF
-
-# ---------------------------------------------------------------------------
-# vite.config.js
-# ---------------------------------------------------------------------------
-
-info "Writing vite.config.js..."
-cat > "$DEST/vite.config.js" <<EOF
-import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
-import vue from '@vitejs/plugin-vue';
-import symfonyPlugin from 'vite-plugin-symfony';
-import path from 'path';
-
-const AURORA = path.resolve(__dirname, '${AURORA_VENDOR_PATH}');
-
-export default defineConfig({
-    plugins: [
-        tailwindcss(),
-        vue(),
-        symfonyPlugin({ stimulus: true }),
-    ],
-    resolve: {
-        alias: {
-            '@': path.resolve(AURORA, 'assets'),
-            '@core': path.resolve(AURORA, 'assets/Core'),
-            '@editorial': path.resolve(AURORA, 'assets/Module/Editorial'),
-            '@crm': path.resolve(AURORA, 'assets/Module/Crm'),
-            '@erp': path.resolve(AURORA, 'assets/Module/Erp'),
-            '@ecommerce': path.resolve(AURORA, 'assets/Module/Ecommerce'),
-            '@photo': path.resolve(AURORA, 'assets/Module/Photo'),
-            '@billing': path.resolve(AURORA, 'assets/Module/Billing'),
-            '@shared': path.resolve(AURORA, 'assets/shared'),
-            // Add client module aliases here:
-            // '@mymodule': path.resolve(__dirname, 'assets/Module/MyModule'),
-        },
-        // Deduplicate shared packages to avoid dual-instance issues when files
-        // from vendor/aurora/assets/ and client assets/ resolve the same package.
-        dedupe: ['vue', 'vue-i18n', 'vue-sonner', '@hotwired/stimulus', '@symfony/ux-vue'],
-    },
-    build: {
-        rolldownOptions: {
-            input: {
-                // Client app.js wraps aurora's app.js and adds client-specific modules.
-                app: path.resolve(__dirname, 'assets/app.js'),
-                flash: path.resolve(AURORA, 'assets/flash.js'),
-                theme: path.resolve(AURORA, 'assets/theme.js'),
-                guest: path.resolve(AURORA, 'assets/admin/guest/index.js'),
-            },
-        },
-    },
-    server: {
-        fs: {
-            allow: [__dirname, AURORA],
-        },
-    },
-});
-EOF
-
-# ---------------------------------------------------------------------------
-# assets/controllers.json
-# ---------------------------------------------------------------------------
-
-info "Writing assets/controllers.json..."
-cat > "$DEST/assets/controllers.json" <<'EOF'
-{
-    "controllers": {
-        "@symfony/ux-vue": {
-            "vue": {
-                "enabled": true,
-                "fetch": "eager"
-            }
-        }
-    },
-    "entrypoints": []
-}
-EOF
-
-# ---------------------------------------------------------------------------
-# assets/app.js
-# ---------------------------------------------------------------------------
-
-info "Writing assets/app.js..."
-cat > "$DEST/assets/app.js" <<'EOF'
-// Bootstraps the full Aurora app (Stimulus, i18n, CSS, Vue component registry).
-import "@/app.js";
-
-// Register client-specific Vue modules here as you create them.
-// Example for a "Soudure" module:
-//
-// import { defineAsyncComponent } from "vue";
-// const auroraResolver = window.resolveVueComponent;
-// const soudureModules = import.meta.glob("./Module/Soudure/admin/**/*.vue");
-// const soudureContext = Object.fromEntries(
-//     Object.entries(soudureModules).map(([key, loader]) => [
-//         key.replace("./Module/Soudure/", "./soudure/"),
-//         loader,
-//     ]),
-// );
-// window.resolveVueComponent = (name) => {
-//     const componentPath = `./${name}.vue`;
-//     if (componentPath in soudureContext) {
-//         return defineAsyncComponent(() =>
-//             soudureContext[componentPath]().then((m) => m.default ?? m),
-//         );
-//     }
-//     return auroraResolver(name);
-// };
 EOF
 
 # ---------------------------------------------------------------------------

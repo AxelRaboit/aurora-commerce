@@ -5,15 +5,15 @@ install: install-dev ## Install the project (alias for install-dev)
 
 stop: ## Stop dev server and kill Vite
 	symfony server:stop
-	@pkill -f "pnpm.*dev" 2>/dev/null || true
+	@pkill -f "pnpm.*$(AURORA).*dev" 2>/dev/null || true
 	@docker compose stop database 2>/dev/null || true
 
 start: ## Start dev server + Vite dev server
 	@docker compose up -d database 2>/dev/null || true
 	symfony server:start -d
 	@[ -d "$(AURORA)/vendor" ] || $(COMPOSER) install --working-dir=$(AURORA) --no-scripts
-	@[ -d "node_modules" ] || $(PNPM) install
-	$(PNPM) run dev
+	@[ -d "$(AURORA)/node_modules" ] || $(PNPM) --dir=$(AURORA) install
+	$(PNPM) --dir=$(AURORA) run dev
 
 install-dev: ## Install for local development
 	$(COMPOSER) install --no-scripts
@@ -22,7 +22,8 @@ install-dev: ## Install for local development
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
-	$(PNPM) install
+	$(PNPM) --dir=$(AURORA) install
+	@ln -sf ../$(AURORA)/public/build public/build
 	make setup-dirs
 	make db-create
 	make migrate
@@ -34,7 +35,7 @@ install-dev: ## Install for local development
 
 install-prod: ## Install for production
 	$(COMPOSER) install --no-dev --optimize-autoloader
-	$(PNPM) install --frozen-lockfile
+	$(PNPM) --dir=$(AURORA) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
 	$(CONSOLE) aurora:application-parameter
@@ -51,11 +52,11 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	echo "🚀 Deploying version $$APP_VERSION..."; \
 	echo "$$APP_VERSION" > VERSION; \
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
-	$(PNPM) install --frozen-lockfile; \
+	$(PNPM) --dir=$(AURORA) install --frozen-lockfile; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) aurora:application-parameter; \
 	$(CONSOLE) aurora:menus:sync; \
-	$(PNPM) run build; \
+	$(PNPM) --dir=$(AURORA) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
 
@@ -66,6 +67,6 @@ aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
-	$(PNPM) install
+	$(PNPM) --dir=$(AURORA) install
 	make migrate
 	@echo "✅ Aurora updated"
