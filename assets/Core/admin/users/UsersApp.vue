@@ -1,9 +1,6 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { toast } from "vue-sonner";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -50,33 +47,11 @@ const props = defineProps({
 
 const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPage } = useUsersSearch(props.listPath);
 const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers);
-const { editModal, editForm, managerOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+const { editModal, editForm, managerOptions, pendingPrivileges, togglePrivilege, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
 const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
-
-// Privileges management (Dev only)
-const pendingPrivileges = ref([]);
-const { loading: privilegesLoading, request: privilegesRequest } = useApiRequest();
 
 function openViewWithPrivileges(user) {
     openView(user);
-    pendingPrivileges.value = [...(user.privileges ?? [])];
-}
-
-function togglePrivilege(name) {
-    const idx = pendingPrivileges.value.indexOf(name);
-    if (idx >= 0) pendingPrivileges.value.splice(idx, 1);
-    else pendingPrivileges.value.push(name);
-}
-
-async function savePrivileges() {
-    if (!viewingUser.value || !props.privilegesPath) return;
-    const url = buildPath(props.privilegesPath, { id: viewingUser.value.id });
-    const data = await privilegesRequest(url, { privileges: pendingPrivileges.value });
-    if (data?.success) {
-        viewingUser.value = data.user;
-        pendingPrivileges.value = [...(data.user.privileges ?? [])];
-        toast.success(t('admin.users.privileges.saved'));
-    }
 }
 </script>
 
@@ -289,30 +264,6 @@ async function savePrivileges() {
                     </div>
                 </div>
 
-                <!-- Privileges section — Dev only, not shown for Dev targets -->
-                <div v-if="isDev && viewingUser && !viewingUser.isDev && privilegesByModule.length" class="border-t border-line/40 pt-4 space-y-3">
-                    <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.users.privileges.title') }}</p>
-                    <div v-for="group in privilegesByModule" :key="group.module" class="space-y-1.5">
-                        <p class="text-xs font-medium text-muted capitalize">{{ group.module }}</p>
-                        <div class="flex flex-wrap gap-3">
-                            <AppCheckbox
-                                v-for="priv in group.privileges"
-                                :key="priv"
-                                :model-value="pendingPrivileges.includes(priv)"
-                                v-on:update:model-value="togglePrivilege(priv)"
-                            >
-                                <span class="font-mono text-xs">{{ priv }}</span>
-                            </AppCheckbox>
-                        </div>
-                    </div>
-                    <div class="flex justify-end pt-1">
-                        <AppButton variant="primary" size="sm" :loading="privilegesLoading" v-on:click="savePrivileges">
-                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('admin.users.privileges.save') }}
-                        </AppButton>
-                    </div>
-                </div>
-
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingUser = null">{{ t('shared.common.close') }}</AppButton>
                 </AppModalFooter>
@@ -378,6 +329,24 @@ async function savePrivileges() {
                     :placeholder="t('admin.users.newPasswordPlaceholder')"
                     :error="editModal.errors.password ?? ''"
                 />
+                <!-- Privileges — Dev only, not shown for Dev targets -->
+                <div v-if="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length" class="border-t border-line/40 pt-4 space-y-3">
+                    <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.users.privileges.title') }}</p>
+                    <div v-for="group in privilegesByModule" :key="group.module" class="space-y-1.5">
+                        <p class="text-xs font-medium text-muted capitalize">{{ group.module }}</p>
+                        <div class="flex flex-wrap gap-3">
+                            <AppCheckbox
+                                v-for="priv in group.privileges"
+                                :key="priv"
+                                :model-value="pendingPrivileges.includes(priv)"
+                                v-on:update:model-value="togglePrivilege(priv)"
+                            >
+                                <span class="text-xs">{{ t('admin.permissions.names.' + priv, priv) }}</span>
+                            </AppCheckbox>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>

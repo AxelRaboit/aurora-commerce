@@ -7,6 +7,14 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 export function useUsersEdit(props, fetchUsers) {
     const { t } = useI18n();
 
+    const pendingPrivileges = ref([]);
+
+    function togglePrivilege(name) {
+        const idx = pendingPrivileges.value.indexOf(name);
+        if (idx >= 0) pendingPrivileges.value.splice(idx, 1);
+        else pendingPrivileges.value.push(name);
+    }
+
     const selectableUsers = ref([]);
 
     async function loadSelectableUsers() {
@@ -53,6 +61,7 @@ export function useUsersEdit(props, fetchUsers) {
         editForm.role = user.role ?? props.roles[0]?.value ?? "";
         editForm.password = "";
         editForm.managerId = user.managerId ? String(user.managerId) : "";
+        pendingPrivileges.value = [...(user.privileges ?? [])];
         editModal.open = true;
         loadSelectableUsers();
     }
@@ -134,6 +143,21 @@ export function useUsersEdit(props, fetchUsers) {
                 editModal.errors = data.errors ?? {};
                 return;
             }
+
+            // Save privileges alongside if the endpoint is available and user is not Dev
+            if (props.privilegesPath && !editModal.editing.isDev) {
+                const privUrl = buildPath(props.privilegesPath, {
+                    id: editModal.editing.id,
+                });
+                await fetch(privUrl, {
+                    method: HttpMethod.Post,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        privileges: pendingPrivileges.value,
+                    }),
+                });
+            }
+
             toast.success(t("shared.common.saved"));
             editModal.open = false;
             fetchUsers();
@@ -148,6 +172,8 @@ export function useUsersEdit(props, fetchUsers) {
         editModal,
         editForm,
         managerOptions,
+        pendingPrivileges,
+        togglePrivilege,
         openEdit,
         onPhotoSelected,
         removePhoto,
