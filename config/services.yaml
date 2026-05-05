@@ -48,6 +48,10 @@ services:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
+    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
+        arguments:
+            $auroraDir: '%kernel.project_dir%'
+
     Aurora\Core\Twig\VersionExtension:
         arguments:
             $projectDir: '%kernel.project_dir%'
@@ -60,9 +64,6 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
-        arguments:
-            $projectDir: '%kernel.project_dir%'
 
     Aurora\Core\Module\ModuleRegistry:
         arguments:
