@@ -63,17 +63,15 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 <template>
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="flex-1 max-w-md">
-                <AppSearchInput v-model="search" :placeholder="t('admin.users.searchPlaceholder')" />
-            </div>
+            <AppSearchInput v-model="search" :placeholder="t('admin.users.searchPlaceholder')" class="flex-1" />
             <AppMultiselect
                 v-model="roleFilter"
                 :options="roles"
                 :placeholder="t('admin.users.allRoles')"
                 :allow-empty="true"
-                class="sm:max-w-xs"
+                class="sm:w-48 shrink-0"
             />
-            <AppButton variant="primary" size="md" class="sm:ml-auto" v-on:click="openInvite">
+            <AppButton variant="primary" size="md" class="shrink-0" v-on:click="openInvite">
                 <UserPlus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.users.invite') }}
             </AppButton>
