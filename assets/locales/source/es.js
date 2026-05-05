@@ -1438,6 +1438,31 @@ export default {
                         delete: "Eliminar un producto",
                     },
                 },
+                billing: {
+                    invoices: {
+                        view: "Ver facturas",
+                        create: "Crear una factura",
+                        edit: "Editar una factura",
+                        delete: "Eliminar una factura",
+                    },
+                    tiers: { manage: "Gestionar terceros" },
+                    ocr: { import: "Importar vía OCR" },
+                },
+                photo: {
+                    galleries: {
+                        view: "Ver galerías",
+                        create: "Crear una galería",
+                        edit: "Editar una galería",
+                        delete: "Eliminar una galería",
+                    },
+                },
+                ged: {
+                    documents: {
+                        manage: "Gestionar documentos",
+                        delete: "Eliminar documentos",
+                    },
+                    categories: { manage: "Gestionar categorías" },
+                },
             },
         },
         modules: {
@@ -1446,14 +1471,14 @@ export default {
             ecommerce: "E-commerce",
             editorial: "Editorial",
             erp: "ERP",
+            billing: "Facturación",
+            photo: "Fotografía",
+            ged: "GED",
             media: "Medios",
             users: "Usuarios",
         },
         roles: {
             ROLE_USER: "Usuario",
-            ROLE_CONTRIBUTOR: "Colaborador",
-            ROLE_AUTHOR: "Autor",
-            ROLE_EDITOR: "Editor",
             ROLE_ADMIN: "Administrador",
             ROLE_DEV: "Desarrollador",
         },
