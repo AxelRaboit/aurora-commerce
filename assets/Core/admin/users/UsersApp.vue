@@ -21,6 +21,7 @@ import { useUsersSearch } from "@core/admin/users/composables/useUsersSearch.js"
 import { useUsersInvite } from "@core/admin/users/composables/useUsersInvite.js";
 import { useUsersEdit } from "@core/admin/users/composables/useUsersEdit.js";
 import { useUsersActions } from "@core/admin/users/composables/useUsersActions.js";
+import { useUsersPrivileges } from "@core/admin/users/composables/useUsersPrivileges.js";
 
 const { t } = useI18n();
 const { formatDate, formatDateShort } = useDateFormat();
@@ -47,12 +48,16 @@ const props = defineProps({
 
 const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPage } = useUsersSearch(props.listPath);
 const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers);
-const { editModal, editForm, managerOptions, pendingPrivileges, togglePrivilege, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+const { editModal, editForm, managerOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+
 const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
 
 function openViewWithPrivileges(user) {
     openView(user);
 }
+
+const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, savePrivileges } = useUsersPrivileges(props, fetchUsers);
+
 </script>
 
 <template>
@@ -100,10 +105,12 @@ function openViewWithPrivileges(user) {
                         :user="user"
                         :is-dev="isDev"
                         :can-act="canActOn(user)"
+                        :has-privileges="privilegesByModule.length > 0"
                         :impersonate-path="impersonatePath"
                         v-on:view="openViewWithPrivileges"
                         v-on:resend="resendInvitation"
                         v-on:edit="openEdit"
+                        v-on:privileges="openPrivileges"
                         v-on:toggle-disabled="askToggleDisabled"
                         v-on:delete="deletingUser = $event"
                     />
@@ -152,10 +159,12 @@ function openViewWithPrivileges(user) {
                                     :user="user"
                                     :is-dev="isDev"
                                     :can-act="canActOn(user)"
+                                    :has-privileges="privilegesByModule.length > 0"
                                     :impersonate-path="impersonatePath"
                                     v-on:view="openViewWithPrivileges"
                                     v-on:resend="resendInvitation"
                                     v-on:edit="openEdit"
+                                    v-on:privileges="openPrivileges"
                                     v-on:toggle-disabled="askToggleDisabled"
                                     v-on:delete="deletingUser = $event"
                                 />
@@ -270,7 +279,7 @@ function openViewWithPrivileges(user) {
             </div>
         </AppModal>
 
-        <AppModal :show="editModal.open" :max-width="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length ? '7xl' : 'md'" :scrollable="true" v-on:close="editModal.open = false">
+        <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
@@ -283,7 +292,13 @@ function openViewWithPrivileges(user) {
                                     <Upload class="w-3.5 h-3.5" :stroke-width="2" />
                                     {{ t('admin.users.photo.upload') }}
                                 </AppButton>
-                                <AppButton v-if="editModal.editing?.profilePhotoUrl" variant="ghost" size="sm" :loading="editModal.photoUploading" v-on:click="removePhoto">
+                                <AppButton
+                                    v-if="editModal.editing?.profilePhotoUrl"
+                                    variant="ghost"
+                                    size="sm"
+                                    :loading="editModal.photoUploading"
+                                    v-on:click="removePhoto"
+                                >
                                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                                     {{ t('admin.users.photo.remove') }}
                                 </AppButton>
@@ -294,39 +309,33 @@ function openViewWithPrivileges(user) {
                 </div>
             </div>
 
-            <form v-on:submit.prevent="submitEdit">
-                <div class="flex gap-6">
-                    <!-- Left: form fields -->
-                    <div class="flex-1 min-w-0 space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
-                            <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
-                            <AppMultiselect v-model="editForm.role" :options="roles" :label="t('admin.users.role')" :allow-empty="false" :error="editModal.errors.role ?? ''" />
-                            <AppMultiselect v-model="editForm.managerId" :options="managerOptions" :label="t('admin.users.manager.label')" :allow-empty="true" :error="editModal.errors.managerId ?? ''" />
-                        </div>
-                        <AppInput v-model="editForm.password" :label="t('admin.users.newPassword')" type="password" :placeholder="t('admin.users.newPasswordPlaceholder')" :error="editModal.errors.password ?? ''" />
-                    </div>
-
-                    <!-- Right: privileges — Dev only, not shown for Dev targets -->
-                    <div v-if="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length" class="w-96 shrink-0 border-l border-line/40 pl-6 space-y-3">
-                        <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.users.privileges.title') }}</p>
-                        <div v-for="group in privilegesByModule" :key="group.module" class="space-y-1.5">
-                            <p class="text-xs font-medium text-muted capitalize">{{ t('admin.modules.' + group.module, group.module) }}</p>
-                            <div class="grid grid-cols-2 gap-2">
-                                <AppCheckbox
-                                    v-for="priv in group.privileges"
-                                    :key="priv"
-                                    :model-value="pendingPrivileges.includes(priv)"
-                                    v-on:update:model-value="togglePrivilege(priv)"
-                                >
-                                    <span class="text-xs">{{ t('admin.permissions.names.' + priv, priv) }}</span>
-                                </AppCheckbox>
-                            </div>
-                        </div>
-                    </div>
+            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+                <div class="grid grid-cols-2 gap-4">
+                    <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
+                    <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
+                    <AppMultiselect
+                        v-model="editForm.role"
+                        :options="roles"
+                        :label="t('admin.users.role')"
+                        :allow-empty="false"
+                        :error="editModal.errors.role ?? ''"
+                    />
+                    <AppMultiselect
+                        v-model="editForm.managerId"
+                        :options="managerOptions"
+                        :label="t('admin.users.manager.label')"
+                        :allow-empty="true"
+                        :error="editModal.errors.managerId ?? ''"
+                    />
                 </div>
-
-                <div class="flex items-center justify-end gap-2 pt-4 mt-2 border-t border-line/40">
+                <AppInput
+                    v-model="editForm.password"
+                    :label="t('admin.users.newPassword')"
+                    type="password"
+                    :placeholder="t('admin.users.newPasswordPlaceholder')"
+                    :error="editModal.errors.password ?? ''"
+                />
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
@@ -334,6 +343,39 @@ function openViewWithPrivileges(user) {
                     </AppButton>
                 </div>
             </form>
+        </AppModal>
+
+        <!-- Privileges modal — dedicated, Dev only -->
+        <AppModal :show="privilegesModal.open" max-width="2xl" :scrollable="true" v-on:close="privilegesModal.open = false">
+            <div v-if="privilegesModal.user" class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <AppAvatar variant="solid" :name="privilegesModal.user.name" :photo-url="privilegesModal.user.profilePhotoUrl ?? ''" :size="40" />
+                    <div>
+                        <h3 class="text-base font-semibold text-primary">{{ privilegesModal.user.name }}</h3>
+                        <p class="text-xs text-muted">{{ t('admin.users.privileges.title') }}</p>
+                    </div>
+                </div>
+                <div v-for="group in privilegesByModule" :key="group.module" class="space-y-2">
+                    <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.modules.' + group.module, group.module) }}</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <AppCheckbox
+                            v-for="priv in group.privileges"
+                            :key="priv"
+                            :model-value="pendingPrivileges.includes(priv)"
+                            v-on:update:model-value="togglePrivilege(priv)"
+                        >
+                            <span class="text-xs">{{ t('admin.permissions.names.' + priv, priv) }}</span>
+                        </AppCheckbox>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
+                    <AppButton variant="ghost" size="md" v-on:click="privilegesModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="privilegesModal.saving" v-on:click="savePrivileges">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.save') }}
+                    </AppButton>
+                </div>
+            </div>
         </AppModal>
 
         <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
