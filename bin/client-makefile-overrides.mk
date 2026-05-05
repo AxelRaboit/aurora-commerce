@@ -57,6 +57,7 @@ install-dev: ## Install for local development
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync
 	$(CONSOLE) aurora:privileges:sync
+	make sync-jsconfig
 	make dev
 	@echo "✅ Admin user: admin@aurora.app / password"
 
@@ -89,6 +90,9 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
 
+sync-jsconfig: ## Regenerate jsconfig.json from aurora module aliases (run after aurora-update)
+	node $(AURORA)/bin/sync-client-jsconfig
+
 aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) update axelraboit/aurora
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
@@ -100,4 +104,5 @@ aurora-update: ## Pull latest Aurora changes
 	$(PNPM) install
 	make migrate
 	$(CONSOLE) aurora:privileges:sync
+	make sync-jsconfig
 	@echo "✅ Aurora updated"

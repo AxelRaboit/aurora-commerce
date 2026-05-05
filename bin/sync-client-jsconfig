@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+/**
+ * Generates / updates jsconfig.json in an aurora client project.
+ *
+ * Run from the client project root:
+ *   node vendor/axelraboit/aurora/bin/sync-client-jsconfig
+ *
+ * Discovers module aliases dynamically by scanning
+ * vendor/aurora/assets/Module/ so new modules are picked up automatically.
+ */
+
+const { readdirSync, writeFileSync, existsSync } = require("fs");
+const { resolve, join } = require("path");
+
+const AURORA_DIR   = resolve(__dirname, "..");
+const CLIENT_DIR   = process.cwd();
+const AURORA_VENDOR = "vendor/axelraboit/aurora";
+
+// Static aliases
+const paths = {
+    "@/*":       [`${AURORA_VENDOR}/assets/*`],
+    "@core/*":   [`${AURORA_VENDOR}/assets/Core/*`],
+    "@shared/*": [`${AURORA_VENDOR}/assets/shared/*`],
+    "@client/*": ["assets/client/*"],
+};
+
+// Dynamic module aliases — one per Module/<Name>/ directory
+const modulesDir = join(AURORA_DIR, "assets", "Module");
+if (existsSync(modulesDir)) {
+    for (const entry of readdirSync(modulesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        paths[`@${entry.name.toLowerCase()}/*`] = [
+            `${AURORA_VENDOR}/assets/Module/${entry.name}/*`,
+        ];
+    }
+}
+
+const jsconfig = {
+    compilerOptions: { baseUrl: ".", paths },
+    include: ["assets/**/*", `${AURORA_VENDOR}/assets/**/*`],
+};
+
+const dest = join(CLIENT_DIR, "jsconfig.json");
+writeFileSync(dest, JSON.stringify(jsconfig, null, 4) + "\n", "utf8");
+console.log(`  ✓ jsconfig.json updated (${Object.keys(paths).length} aliases)`);
