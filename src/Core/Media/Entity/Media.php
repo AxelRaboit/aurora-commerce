@@ -272,6 +272,11 @@ class Media implements TimestampableInterface
         return str_starts_with($this->mimeType, 'image/');
     }
 
+    public function isVideo(): bool
+    {
+        return str_starts_with($this->mimeType, 'video/');
+    }
+
     public function getPublicUrl(): string
     {
         return '/uploads/'.$this->path;

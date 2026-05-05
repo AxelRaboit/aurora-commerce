@@ -42,6 +42,7 @@ final readonly class MediaSerializer
             'folderId' => $media->getFolder()?->getId(),
             'folderName' => $media->getFolder()?->getName(),
             'isImage' => $media->isImage(),
+            'isVideo' => $media->isVideo(),
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
             'position' => $media->getPosition(),

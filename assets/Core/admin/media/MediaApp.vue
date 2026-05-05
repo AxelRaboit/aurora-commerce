@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -401,6 +401,20 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     object-fit="cover"
                                     :focal-point="item.focalPositionCss ?? '50% 50%'"
                                 />
+                                <template v-else-if="item.isVideo">
+                                    <video
+                                        :src="item.url"
+                                        class="w-full h-full object-cover"
+                                        preload="metadata"
+                                        muted
+                                        playsinline
+                                    />
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div class="bg-black/50 rounded-full p-2">
+                                            <Play class="w-6 h-6 text-white fill-white" :stroke-width="0" />
+                                        </div>
+                                    </div>
+                                </template>
                                 <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
                                 <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
                                 <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
@@ -542,8 +556,16 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             :style="{ left: `${editForm.focalX * 100}%`, top: `${editForm.focalY * 100}%` }"
                         />
                     </div>
+                    <div v-else-if="editingMedia?.isVideo" class="bg-surface-2 rounded-md overflow-hidden">
+                        <video
+                            :src="editingMedia.url"
+                            controls
+                            class="w-full h-auto block"
+                            preload="metadata"
+                        />
+                    </div>
                     <div v-else class="bg-surface-2 rounded-md p-8 flex flex-col items-center">
-                        <ImageIcon class="w-16 h-16 text-muted" :stroke-width="1.5" />
+                        <Film class="w-16 h-16 text-muted" :stroke-width="1.5" />
                         <p class="mt-2 text-xs text-muted">{{ editingMedia?.mimeType }}</p>
                     </div>
                     <div v-if="editingMedia?.isImage" class="flex items-center justify-between text-xs text-muted">
@@ -735,8 +757,15 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     rounded="rounded-lg"
                     class="max-w-full max-h-[70vh]"
                 />
+                <video
+                    v-else-if="previewMedia?.isVideo"
+                    :src="previewMedia.url"
+                    controls
+                    class="max-w-full max-h-[70vh] rounded-lg"
+                    preload="metadata"
+                />
                 <div v-else class="flex flex-col items-center gap-3 py-12">
-                    <ImageIcon class="w-16 h-16 text-muted" :stroke-width="1.5" />
+                    <Film class="w-16 h-16 text-muted" :stroke-width="1.5" />
                     <p class="text-sm text-muted">{{ previewMedia?.mimeType }}</p>
                     <a :href="previewMedia?.url" target="_blank" class="text-sm text-accent-400 hover:underline">{{ t("admin.media.open") }}</a>
                 </div>
