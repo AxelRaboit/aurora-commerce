@@ -413,6 +413,38 @@ done
 cat "$AURORA_DIR/bin/client-makefile-overrides.mk" >> "$DEST/Makefile"
 
 # ---------------------------------------------------------------------------
+# jsconfig.json — IDE path aliases (Volar/VS Code)
+# Without this, the editor cannot resolve the @ alias (defined in vendor/aurora
+# vite.config.js, invisible from the client root) so autocomplete and
+# go-to-definition would not work in assets/client/ files.
+# ---------------------------------------------------------------------------
+
+info "Writing jsconfig.json..."
+cat > "$DEST/jsconfig.json" <<EOF
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*":          ["${AURORA_VENDOR_PATH}/assets/*"],
+            "@core/*":      ["${AURORA_VENDOR_PATH}/assets/Core/*"],
+            "@editorial/*": ["${AURORA_VENDOR_PATH}/assets/Module/Editorial/*"],
+            "@crm/*":       ["${AURORA_VENDOR_PATH}/assets/Module/Crm/*"],
+            "@erp/*":       ["${AURORA_VENDOR_PATH}/assets/Module/Erp/*"],
+            "@ecommerce/*": ["${AURORA_VENDOR_PATH}/assets/Module/Ecommerce/*"],
+            "@photo/*":     ["${AURORA_VENDOR_PATH}/assets/Module/Photo/*"],
+            "@billing/*":   ["${AURORA_VENDOR_PATH}/assets/Module/Billing/*"],
+            "@shared/*":    ["${AURORA_VENDOR_PATH}/assets/shared/*"],
+            "@client/*":    ["assets/client/*"]
+        }
+    },
+    "include": [
+        "assets/**/*",
+        "${AURORA_VENDOR_PATH}/assets/**/*"
+    ]
+}
+EOF
+
+# ---------------------------------------------------------------------------
 # package.json (shared runtime deps for client Vue components)
 # ---------------------------------------------------------------------------
 
