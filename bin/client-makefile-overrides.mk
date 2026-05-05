@@ -22,6 +22,13 @@ fixtures: ## Drop DB, re-run migrations, load fixtures and sync all
 	$(CONSOLE) aurora:privileges:sync
 	@echo "✅ Fixtures loaded"
 
+demo: ## Load demo fixtures (DemoFixtures group) + run all syncs
+	$(CONSOLE) doctrine:fixtures:load --group=demo --no-interaction
+	$(CONSOLE) aurora:application-parameter
+	$(CONSOLE) aurora:menus:sync
+	$(CONSOLE) aurora:privileges:sync
+	@echo "✅ Demo data loaded"
+
 stop: ## Stop dev server and kill Vite
 	symfony server:stop
 	@pkill -f "pnpm.*$(AURORA).*dev" 2>/dev/null || true
