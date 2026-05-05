@@ -22,7 +22,7 @@ const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 te
     <form class="space-y-3" v-on:submit.prevent="$emit('submit')">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-                <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.name") }}</label>
+                <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.name") }} <span class="text-rose-500">*</span></label>
                 <input
                     :class="inputClass"
                     type="text"
@@ -34,7 +34,7 @@ const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 te
                 <p v-if="errors.authorName" class="mt-1 text-xs text-rose-500">{{ errors.authorName }}</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.email") }}</label>
+                <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.email") }} <span class="text-rose-500">*</span></label>
                 <input
                     :class="inputClass"
                     type="email"
@@ -46,7 +46,7 @@ const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 te
             </div>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.content") }}</label>
+            <label class="block text-sm font-medium text-secondary mb-1">{{ t("shared.comment.content") }} <span class="text-rose-500">*</span></label>
             <textarea
                 :class="inputClass + ' resize-y'"
                 :value="content"
