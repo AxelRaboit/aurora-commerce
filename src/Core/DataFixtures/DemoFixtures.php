@@ -322,7 +322,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $post = new Post();
             $post->setPostType($postType)
                  ->setStatus(PostStatusEnum::Published)
-                 ->setPublishedAt(new DateTimeImmutable('-'.($idx + 1).' weeks'));
+                 ->setPublishedAt(new DateTimeImmutable('-'.($idx + 1).' weeks'))
+                 ->setFeaturedMedia($def['media'] ?? null);
 
             foreach (['fr', 'en'] as $locale) {
                 $loc = $def[$locale];
@@ -431,7 +432,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         ];
         foreach ($extraDefs as $extra) {
             $p = new Post();
-            $p->setPostType($postType)->setStatus(PostStatusEnum::Published)->setPublishedAt(new DateTimeImmutable('-'.$extra['ago']));
+            $p->setPostType($postType)
+              ->setStatus(PostStatusEnum::Published)
+              ->setPublishedAt(new DateTimeImmutable('-'.$extra['ago']))
+              ->setFeaturedMedia($extra['media'] ?? null);
             $tr = new PostTranslation();
             $tr->setPost($p)->setLocale('fr')->setTitle($extra['title'])->setSlug($extra['slug'])
                ->setBlocks($extra['blocks'])
