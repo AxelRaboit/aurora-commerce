@@ -26,6 +26,8 @@ admin:
       deleteWarning: Cette action est irréversible.
       noCategory: Sans catégorie
       chooseFile: Choisir un fichier
+      titlePlaceholder: Titre du document…
+      descriptionPlaceholder: Description optionnelle…
       status_draft: Brouillon
       status_published: Publié
       status_archived: Archivé
@@ -45,5 +47,7 @@ admin:
       empty: Aucune catégorie pour le moment
       deleteConfirm: "Êtes-vous sûr de vouloir supprimer la catégorie « {name} » ?"
       deleteWarning: Les documents liés ne seront pas supprimés.
+      namePlaceholder: Nom de la catégorie…
+      descriptionPlaceholder: Description optionnelle…
       errors:
         name_required: Le nom est obligatoire

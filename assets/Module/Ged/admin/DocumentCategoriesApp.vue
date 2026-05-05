@@ -111,8 +111,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.categories.create") }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <AppInput v-model="newCategory.name" :label="t('admin.ged.categories.name')" :error="createErrors.name" required />
-                <AppInput v-model="newCategory.description" :label="t('admin.ged.categories.description')" />
+                <AppInput
+                    v-model="newCategory.name"
+                    :label="t('admin.ged.categories.name')"
+                    :placeholder="t('admin.ged.categories.namePlaceholder')"
+                    :error="createErrors.name"
+                    required
+                />
+                <AppInput v-model="newCategory.description" :label="t('admin.ged.categories.description')" :placeholder="t('admin.ged.categories.descriptionPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
@@ -123,8 +129,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.categories.edit", { name: editingCategory?.name ?? "" }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <AppInput v-model="editForm.name" :label="t('admin.ged.categories.name')" :error="editErrors.name" required />
-                <AppInput v-model="editForm.description" :label="t('admin.ged.categories.description')" />
+                <AppInput
+                    v-model="editForm.name"
+                    :label="t('admin.ged.categories.name')"
+                    :placeholder="t('admin.ged.categories.namePlaceholder')"
+                    :error="editErrors.name"
+                    required
+                />
+                <AppInput v-model="editForm.description" :label="t('admin.ged.categories.description')" :placeholder="t('admin.ged.categories.descriptionPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>

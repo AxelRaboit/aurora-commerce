@@ -148,8 +148,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppModal :show="showCreate" v-on:close="showCreate = false">
             <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.documents.create") }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <AppInput v-model="newDoc.title" :label="t('admin.ged.documents.title')" :error="createErrors.title" required />
-                <AppInput v-model="newDoc.description" :label="t('admin.ged.documents.description')" />
+                <AppInput
+                    v-model="newDoc.title"
+                    :label="t('admin.ged.documents.title')"
+                    :placeholder="t('admin.ged.documents.titlePlaceholder')"
+                    :error="createErrors.title"
+                    required
+                />
+                <AppInput v-model="newDoc.description" :label="t('admin.ged.documents.description')" :placeholder="t('admin.ged.documents.descriptionPlaceholder')" />
                 <AppMultiselect
                     v-model="newDoc.categoryId"
                     :label="t('admin.ged.documents.category')"
@@ -181,8 +187,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppModal :show="showEdit" v-on:close="showEdit = false">
             <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.documents.edit", { title: editingDoc?.title ?? "" }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <AppInput v-model="editForm.title" :label="t('admin.ged.documents.title')" :error="editErrors.title" required />
-                <AppInput v-model="editForm.description" :label="t('admin.ged.documents.description')" />
+                <AppInput
+                    v-model="editForm.title"
+                    :label="t('admin.ged.documents.title')"
+                    :placeholder="t('admin.ged.documents.titlePlaceholder')"
+                    :error="editErrors.title"
+                    required
+                />
+                <AppInput v-model="editForm.description" :label="t('admin.ged.documents.description')" :placeholder="t('admin.ged.documents.descriptionPlaceholder')" />
                 <AppMultiselect
                     v-model="editForm.categoryId"
                     :label="t('admin.ged.documents.category')"
