@@ -270,7 +270,7 @@ function openViewWithPrivileges(user) {
             </div>
         </AppModal>
 
-        <AppModal :show="editModal.open" :max-width="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length ? '4xl' : 'md'" :scrollable="true" v-on:close="editModal.open = false">
+        <AppModal :show="editModal.open" :max-width="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length ? '6xl' : 'md'" :scrollable="true" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
@@ -306,11 +306,11 @@ function openViewWithPrivileges(user) {
                     </div>
 
                     <!-- Right: privileges — Dev only, not shown for Dev targets -->
-                    <div v-if="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length" class="w-64 shrink-0 border-l border-line/40 pl-6 space-y-3">
+                    <div v-if="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length" class="w-96 shrink-0 border-l border-line/40 pl-6 space-y-3">
                         <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.users.privileges.title') }}</p>
                         <div v-for="group in privilegesByModule" :key="group.module" class="space-y-1.5">
                             <p class="text-xs font-medium text-muted capitalize">{{ t('admin.modules.' + group.module, group.module) }}</p>
-                            <div class="flex flex-col gap-2">
+                            <div class="grid grid-cols-2 gap-2">
                                 <AppCheckbox
                                     v-for="priv in group.privileges"
                                     :key="priv"
