@@ -1388,6 +1388,46 @@ export default {
                 users: {
                     photo_uploaded: "Photo de profil ajoutée",
                     photo_removed: "Photo de profil supprimée",
+                    privileges_updated: "Privilèges mis à jour",
+                },
+                billing: {
+                    invoice: {
+                        created: "Facture créée",
+                        updated: "Facture modifiée",
+                        deleted: "Facture supprimée",
+                        validated: "Facture validée",
+                    },
+                    tiers: {
+                        created: "Tiers créé",
+                        updated: "Tiers modifié",
+                        deleted: "Tiers supprimé",
+                    },
+                    ocr: {
+                        "job.created": "Import OCR lancé",
+                        "job.finished": "Import OCR terminé",
+                        "job.retried": "Import OCR relancé",
+                        "job.deleted": "Import OCR supprimé",
+                        "invoice.deleted": "Facture OCR supprimée",
+                    },
+                },
+                photo: {
+                    gallery: {
+                        created: "Galerie créée",
+                        updated: "Galerie modifiée",
+                        deleted: "Galerie supprimée",
+                    },
+                },
+                ged: {
+                    document: {
+                        created: "Document créé",
+                        updated: "Document modifié",
+                        deleted: "Document supprimé",
+                    },
+                    category: {
+                        created: "Catégorie créée",
+                        updated: "Catégorie modifiée",
+                        deleted: "Catégorie supprimée",
+                    },
                 },
             },
         },
@@ -1451,6 +1491,31 @@ export default {
                         delete: "Supprimer un produit",
                     },
                 },
+                billing: {
+                    invoices: {
+                        view: "Voir les factures",
+                        create: "Créer une facture",
+                        edit: "Modifier une facture",
+                        delete: "Supprimer une facture",
+                    },
+                    tiers: { manage: "Gérer les tiers" },
+                    ocr: { import: "Importer via OCR" },
+                },
+                photo: {
+                    galleries: {
+                        view: "Voir les galeries",
+                        create: "Créer une galerie",
+                        edit: "Modifier une galerie",
+                        delete: "Supprimer une galerie",
+                    },
+                },
+                ged: {
+                    documents: {
+                        manage: "Gérer les documents",
+                        delete: "Supprimer des documents",
+                    },
+                    categories: { manage: "Gérer les catégories" },
+                },
             },
         },
         modules: {
@@ -1459,14 +1524,14 @@ export default {
             ecommerce: "E-commerce",
             editorial: "Éditorial",
             erp: "ERP",
+            billing: "Facturation",
+            photo: "Photographie",
+            ged: "GED",
             media: "Médias",
             users: "Utilisateurs",
         },
         roles: {
             ROLE_USER: "Utilisateur",
-            ROLE_CONTRIBUTOR: "Contributeur",
-            ROLE_AUTHOR: "Auteur",
-            ROLE_EDITOR: "Éditeur",
             ROLE_ADMIN: "Administrateur",
             ROLE_DEV: "Développeur",
         },

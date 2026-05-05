@@ -1414,6 +1414,31 @@ export default {
                         delete: "Delete a product",
                     },
                 },
+                billing: {
+                    invoices: {
+                        view: "View invoices",
+                        create: "Create an invoice",
+                        edit: "Edit an invoice",
+                        delete: "Delete an invoice",
+                    },
+                    tiers: { manage: "Manage tiers" },
+                    ocr: { import: "Import via OCR" },
+                },
+                photo: {
+                    galleries: {
+                        view: "View galleries",
+                        create: "Create a gallery",
+                        edit: "Edit a gallery",
+                        delete: "Delete a gallery",
+                    },
+                },
+                ged: {
+                    documents: {
+                        manage: "Manage documents",
+                        delete: "Delete documents",
+                    },
+                    categories: { manage: "Manage categories" },
+                },
             },
         },
         modules: {
@@ -1422,14 +1447,14 @@ export default {
             ecommerce: "E-commerce",
             editorial: "Editorial",
             erp: "ERP",
+            billing: "Billing",
+            photo: "Photography",
+            ged: "DMS",
             media: "Media",
             users: "Users",
         },
         roles: {
             ROLE_USER: "User",
-            ROLE_CONTRIBUTOR: "Contributor",
-            ROLE_AUTHOR: "Author",
-            ROLE_EDITOR: "Editor",
             ROLE_ADMIN: "Admin",
             ROLE_DEV: "Developer",
         },
