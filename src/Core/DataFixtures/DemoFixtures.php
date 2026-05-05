@@ -796,8 +796,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 $p->setStockQuantity($def['stock']);
             }
 
-            if (isset($media[$i])) {
-                $p->setImage($media[$i]);
+            // Cycle through image media so every product gets a visual.
+            $imageMedia = array_values(array_filter($media, static fn ($m): bool => str_starts_with((string) $m->getMimeType(), 'image/')));
+            if ([] !== $imageMedia) {
+                $p->setImage($imageMedia[$i % count($imageMedia)]);
             }
 
             $em->persist($p);
