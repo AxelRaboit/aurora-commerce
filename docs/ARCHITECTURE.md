@@ -102,20 +102,46 @@ App\Module\Crm\CrmModule:
 The Twig function `sidebar_nav_sections()` calls the registry and returns the resolved
 nav sections to the admin layout template.
 
-### 3.3 Permission system
+### 3.3 Role & privilege system
 
-Each module declares named permissions via `NavPermission` objects:
+Aurora uses **three flat roles** instead of a hierarchy:
+
+| Role | Priority | Description |
+|---|---|---|
+| `ROLE_DEV` | 100 | Developer — bypasses **all** privilege checks |
+| `ROLE_ADMIN` | 80 | Administrator — full access to all module features |
+| `ROLE_USER` | 0 | Regular user — access limited to explicitly granted privileges |
+
+Role hierarchy in `security.yaml`: `ROLE_DEV → ROLE_ADMIN → ROLE_USER`.
+
+**Privileges** are fine-grained permission strings (e.g. `crm.contacts.view`) stored as a JSON
+array on each `User` entity. Each module declares the privileges it owns via `NavPermission`:
 
 ```php
-new NavPermission('crm.contacts.view',   UserRoleEnum::Editor->value),
-new NavPermission('crm.contacts.create', UserRoleEnum::Editor->value),
-new NavPermission('crm.contacts.edit',   UserRoleEnum::Editor->value),
-new NavPermission('crm.contacts.delete', UserRoleEnum::Admin->value),
+// In CrmModule::getPermissions()
+new NavPermission('crm.contacts.view'),
+new NavPermission('crm.contacts.create'),
+new NavPermission('crm.contacts.delete'),
 ```
 
-A custom Symfony Voter (`ModulePermissionVoter`) resolves these permission strings
-to role checks. Controllers use `#[IsGranted('crm.contacts.view')]` instead of
-`#[IsGranted('ROLE_EDITOR')]`.
+The custom `ModulePermissionVoter` resolves `#[IsGranted('crm.contacts.view')]` as:
+
+1. `ROLE_DEV` → **always granted** (bypass)
+2. `ROLE_ADMIN` → **always granted** (full access)
+3. `ROLE_USER` → granted only if `user.privileges` contains the string
+
+Assigning privileges to users is done via the Dev-only section in the user detail modal
+(`/admin/users`) or programmatically.
+
+**Sync command** — run after adding/removing module privileges to purge obsolete entries
+and report new ones:
+
+```bash
+make sync-privileges    # php bin/console aurora:privileges:sync
+```
+
+This command is automatically called by `make install-dev`, `make deploy-prod`, and
+`make aurora-update`.
 
 ---
 
@@ -238,7 +264,43 @@ mappings:
 
 Add one mapping block per new module.
 
-### 5.6 Adding a new module (checklist)
+### 5.6 Client extensions (`AURORA_CLIENT_DIR`)
+
+Aurora can be installed as a Composer package in a **client project** (`aurora-client`).
+Client projects can add their own Vue components without modifying vendor code:
+
+```
+CLIENT_DIR/
+  assets/
+    client/
+      Module/
+        Tracking/
+          admin/
+            ProjectsApp.vue
+```
+
+Set the environment variable before running Vite:
+
+```bash
+AURORA_CLIENT_DIR=./assets/client pnpm --dir=vendor/aurora run dev
+```
+
+In `vite.config.js` (aurora-core), `AURORA_CLIENT_DIR` is mapped to the `@client` alias.
+`assets/app.js` scans `@client/Module/**/*.vue` and registers the components with the same
+naming convention as first-party modules:
+
+```
+@client/Module/Tracking/admin/ProjectsApp.vue  →  vue_component('tracking/admin/ProjectsApp')
+```
+
+The client's `services.yaml` must also register its module class with `aurora.module` and
+configure the `DumpJsTranslationsCommand` to include the client's translation dirs.
+
+See the client `Makefile` variables `CLIENT_ASSETS` and `AURORA_ENV` for how this is wired.
+
+---
+
+### 5.7 Adding a new module (checklist)
 
 1. Create `src/Module/<Name>/` with domain subfolders
 2. Implement `<Name>Module.php` (ModuleInterface) — declare nav + permissions
@@ -405,5 +467,9 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 - [x] Module/Photo — Client gallery delivery (galleries, items, invites, picks, watermarking)
 - [x] Core/Sequence — Named PostgreSQL sequences for all PKs + configurable business reference numbers
 - [x] Core/Media — Module-scoped upload dirs (`media/`, `ocr/`, `users/`, `photo/`) with `%app.upload_dir%`
+- [x] Auth: simplified 3-role system (User/Admin/Dev) + per-user fine-grained privileges
+- [x] Privileges UI — Dev can assign module privileges to users from the user detail modal
+- [x] `aurora:privileges:sync` — purges obsolete privilege strings after module changes
+- [x] Client extension system — `AURORA_CLIENT_DIR` + `@client` alias for custom Vue modules in client projects
 - [ ] Editor.js block: ProductGrid (Editorial → Ecommerce, embed listings in posts/pages)
 - [ ] ThemeResolver multi-path (per-module front templates)
