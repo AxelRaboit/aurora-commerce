@@ -1,6 +1,6 @@
+<script setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-<script setup>
 import { VueDraggable } from "vue-draggable-plus";
 import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
 import { useFormsList } from "@editorial/admin/forms/composables/useFormsList.js";

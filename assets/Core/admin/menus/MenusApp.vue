@@ -11,6 +11,7 @@ import { useMenuEditor } from "@core/admin/menus/composables/useMenuEditor.js";
 import { useMenuEditModal } from "@core/admin/menus/composables/useMenuEditModal.js";
 import { useMenuDeleteConfirms } from "@core/admin/menus/composables/useMenuDeleteConfirms.js";
 import { useMenuItemModal } from "@core/admin/menus/composables/useMenuItemModal.js";
+import { Save } from "lucide-vue-next";
 
 const { t } = useI18n();
 

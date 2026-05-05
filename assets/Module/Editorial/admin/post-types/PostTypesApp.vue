@@ -1,5 +1,5 @@
-import { useI18n } from "vue-i18n";
 <script setup>
+import { useI18n } from "vue-i18n";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { usePostTypeSelect } from "@editorial/admin/post-types/composables/usePostTypeSelect.js";
