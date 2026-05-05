@@ -1060,6 +1060,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (0 === $vi) {
                 $fin = new GalleryFinalization();
                 $fin->setGallery($g1)
+                    ->setVisitorToken($visitor['token'])
                     ->setVisitorName($visitor['name'])
                     ->setVisitorEmail($visitor['email']);
                 $em->persist($fin);
