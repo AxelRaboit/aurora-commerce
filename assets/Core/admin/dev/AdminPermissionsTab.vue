@@ -36,11 +36,7 @@ const filteredModules = computed(() => {
             const matchingPerms = moduleEntry.permissions.filter((permission) => {
                 if (moduleHit) return true;
                 const label = t(`admin.permissions.names.${permission.name}`);
-                const role = t(`admin.roles.${permission.role}`);
-                return matches(permission.name, query)
-                    || matches(label, query)
-                    || matches(permission.role, query)
-                    || matches(role, query);
+                return matches(permission.name, query) || matches(label, query);
             });
             return matchingPerms.length ? { ...moduleEntry, permissions: matchingPerms } : null;
         })
@@ -65,13 +61,13 @@ const filteredModules = computed(() => {
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.permissions.name') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.permissions.role') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted font-mono">{{ t('admin.permissions.key') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-for="permission in moduleEntry.permissions" :key="permission.name" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-2"><span class="text-primary text-sm">{{ t(`admin.permissions.names.${permission.name}`) }}</span></td>
-                        <td class="px-4 py-2"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-surface-2 text-secondary">{{ t(`admin.roles.${permission.role}`) }}</span></td>
+                        <td class="px-4 py-2"><span class="font-mono text-xs text-muted">{{ permission.name }}</span></td>
                     </tr>
                 </tbody>
             </table>

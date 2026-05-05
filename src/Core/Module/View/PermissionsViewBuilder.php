@@ -22,8 +22,8 @@ final readonly class PermissionsViewBuilder
         $modules = [];
         foreach ($this->permissionRegistry->byModule() as $moduleId => $permissions) {
             $items = [];
-            foreach ($permissions as $name => $role) {
-                $items[] = ['name' => $name, 'role' => $role];
+            foreach ($permissions as $name) {
+                $items[] = ['name' => $name];
             }
 
             $modules[] = ['id' => $moduleId, 'permissions' => $items];

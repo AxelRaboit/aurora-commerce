@@ -1390,6 +1390,44 @@ export default {
                     photo_removed: "Photo de profil supprimée",
                     privileges_updated: "Privilèges mis à jour",
                 },
+                core: {
+                    auth: {
+                        login: "Connexion",
+                        login_failed: "Échec de connexion",
+                        logout: "Déconnexion",
+                    },
+                    settings: { updated: "Paramètre modifié" },
+                    menu: {
+                        created: "Menu créé",
+                        updated: "Menu modifié",
+                        deleted: "Menu supprimé",
+                        item: {
+                            created: "Élément de menu ajouté",
+                            updated: "Élément de menu modifié",
+                            deleted: "Élément de menu supprimé",
+                        },
+                    },
+                    user: {
+                        created: "Utilisateur créé",
+                        updated: "Utilisateur modifié",
+                        deleted: "Utilisateur supprimé",
+                        role_updated: "Rôle mis à jour",
+                        privileges_updated: "Privilèges mis à jour",
+                        status_toggled: "Statut modifié",
+                    },
+                    front_user: {
+                        profile_updated: "Profil mis à jour",
+                        account_deleted: "Compte supprimé",
+                    },
+                    password_reset: {
+                        link_requested: "Réinitialisation demandée",
+                        completed: "Mot de passe réinitialisé",
+                    },
+                    access_request: {
+                        approved: "Demande d'accès approuvée",
+                        rejected: "Demande d'accès rejetée",
+                    },
+                },
                 billing: {
                     invoice: {
                         created: "Facture créée",
@@ -1432,12 +1470,13 @@ export default {
             },
         },
         permissions: {
-            intro: "Liste en lecture seule des permissions déclarées par chaque module.",
-            empty: "Aucune permission enregistrée.",
-            none: "Aucune permission pour ce module.",
-            name: "Nom",
+            intro: "Liste en lecture seule des privilèges déclarés par chaque module. ROLE_ADMIN et ROLE_DEV ont accès à tout.",
+            empty: "Aucun privilège enregistré.",
+            none: "Aucun privilège pour ce module.",
+            name: "Description",
+            key: "Identifiant",
             role: "Rôle requis",
-            searchPlaceholder: "Rechercher par nom, module ou rôle…",
+            searchPlaceholder: "Rechercher par nom ou module…",
             names: {
                 core: {
                     dashboard: { view: "Voir le tableau de bord" },

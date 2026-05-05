@@ -1360,16 +1360,56 @@ export default {
                 users: {
                     photo_uploaded: "Profile photo uploaded",
                     photo_removed: "Profile photo removed",
+                    privileges_updated: "Privileges updated",
+                },
+                core: {
+                    auth: {
+                        login: "Login",
+                        login_failed: "Login failed",
+                        logout: "Logout",
+                    },
+                    settings: { updated: "Setting updated" },
+                    menu: {
+                        created: "Menu created",
+                        updated: "Menu updated",
+                        deleted: "Menu deleted",
+                        item: {
+                            created: "Menu item added",
+                            updated: "Menu item updated",
+                            deleted: "Menu item deleted",
+                        },
+                    },
+                    user: {
+                        created: "User created",
+                        updated: "User updated",
+                        deleted: "User deleted",
+                        role_updated: "Role updated",
+                        privileges_updated: "Privileges updated",
+                        status_toggled: "Status changed",
+                    },
+                    front_user: {
+                        profile_updated: "Profile updated",
+                        account_deleted: "Account deleted",
+                    },
+                    password_reset: {
+                        link_requested: "Password reset requested",
+                        completed: "Password reset completed",
+                    },
+                    access_request: {
+                        approved: "Access request approved",
+                        rejected: "Access request rejected",
+                    },
                 },
             },
         },
         permissions: {
-            intro: "Read-only listing of permissions declared by each module.",
-            empty: "No permissions registered.",
-            none: "No permissions for this module.",
-            name: "Name",
+            intro: "Read-only listing of privileges declared by each module. ROLE_ADMIN and ROLE_DEV have full access.",
+            empty: "No privileges registered.",
+            none: "No privileges for this module.",
+            name: "Description",
+            key: "Identifier",
             role: "Required role",
-            searchPlaceholder: "Search by name, module or role…",
+            searchPlaceholder: "Search by name or module…",
             names: {
                 core: {
                     dashboard: { view: "View the dashboard" },
