@@ -48,7 +48,13 @@ const props = defineProps({
     emptyTrashPath: { type: String, default: "" },
 });
 
-const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
+const parsedPostTypes  = props.postTypes ?? [];
+const parsedTaxonomies = props.taxonomies ?? [];
+const parsedLocales    = props.locales ?? DEFAULT_LOCALES;
+
+// removePost must be defined before usePostsTrash which receives it as argument
+const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
+    usePostList(props.postsPath, props.posts, props.search, () => (trashed.value ? { trashed: "1" } : {}));
 
 const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
     initial: props.trashed,
@@ -63,12 +69,7 @@ const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
     onSync: () => performSearch(),
 });
 
-const parsedPostTypes  = props.postTypes ?? [];
-const parsedTaxonomies = props.taxonomies ?? [];
-const parsedLocales    = props.locales ?? DEFAULT_LOCALES;
-
-const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
-    usePostList(props.postsPath, props.posts, props.search, () => (trashed.value ? { trashed: "1" } : {}));
+const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
 
 const { view, editingPostId, openCreate, openEdit, closeEditor, onEditorSaved } = usePostsEditor(addPost, updatePost);
 
