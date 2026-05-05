@@ -1214,8 +1214,17 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     private function createMenuItems(EntityManagerInterface $em): void
     {
-        $primary = $em->getRepository(Menu::class)->findOneBy(['location' => 'primary']);
-        $footer = $em->getRepository(Menu::class)->findOneBy(['location' => 'footer']);
+        // Menus may not exist yet (aurora:menus:sync runs after fixtures).
+        // Create them if missing so demo items are always populated.
+        $primary = $em->getRepository(Menu::class)->findOneBy(['location' => 'primary'])
+            ?? new Menu()->setName('Menu principal')->setLocation('primary');
+        $em->persist($primary);
+
+        $footer = $em->getRepository(Menu::class)->findOneBy(['location' => 'footer'])
+            ?? new Menu()->setName('Menu pied de page')->setLocation('footer');
+        $em->persist($footer);
+
+        $em->flush();
 
         if ($primary instanceof Menu) {
             $primaryItems = [
