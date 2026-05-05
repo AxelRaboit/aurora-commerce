@@ -20,11 +20,12 @@ use Symfony\Component\Yaml\Yaml;
  *
  * - Scans messages.{locale}.yaml in every module translations directory and deep-merges them.
  * - Converts Symfony-style `%var%` placeholders to vue-i18n-style `{var}`.
- * - Writes assets/locales/generated/{locale}.json inside the aurora package directory.
+ * - Writes assets/locales/generated/{locale}.json (gitignored).
  *
- * $auroraDir must point to the aurora-core root (= kernel.project_dir in standalone,
- * = vendor/axelraboit/aurora in a client project).
- * $extraSourceDirs accepts additional absolute paths for client-specific translation files.
+ * `assets/i18n.js` deep-merges these generated catalogues with manual JS source files
+ * (assets/locales/source/{locale}.js), with YAML winning on conflicts. This means:
+ *   - Shared keys (used in both Twig and Vue) live ONLY in YAML — single source of truth.
+ *   - Vue-only keys (admin form labels, etc.) stay in the JS source files.
  */
 #[AsCommand(name: 'app:translations:dump-js', description: 'Dump Symfony YAML translations as JSON for vue-i18n')]
 final class DumpJsTranslationsCommand extends Command
@@ -42,8 +43,7 @@ final class DumpJsTranslationsCommand extends Command
     private const string OUTPUT_DIR = 'assets/locales/generated';
 
     public function __construct(
-        private readonly string $auroraDir,
-        private readonly array $extraSourceDirs = [],
+        private readonly string $projectDir,
         private readonly Filesystem $filesystem = new Filesystem(),
     ) {
         parent::__construct();
@@ -52,7 +52,7 @@ final class DumpJsTranslationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $outputDir = Path::join($this->auroraDir, self::OUTPUT_DIR);
+        $outputDir = Path::join($this->projectDir, self::OUTPUT_DIR);
 
         try {
             $this->filesystem->mkdir($outputDir);
@@ -67,18 +67,7 @@ final class DumpJsTranslationsCommand extends Command
             $sourcesFound = 0;
 
             foreach (self::SOURCE_DIRS as $sourceDir) {
-                $sourcePath = Path::join($this->auroraDir, $sourceDir, sprintf('messages.%s.yaml', $locale));
-                if (!is_file($sourcePath)) {
-                    continue;
-                }
-
-                $tree = Yaml::parseFile($sourcePath) ?? [];
-                $merged = $this->deepMerge($merged, is_array($tree) ? $tree : []);
-                ++$sourcesFound;
-            }
-
-            foreach ($this->extraSourceDirs as $extraDir) {
-                $sourcePath = Path::join($extraDir, sprintf('messages.%s.yaml', $locale));
+                $sourcePath = Path::join($this->projectDir, $sourceDir, sprintf('messages.%s.yaml', $locale));
                 if (!is_file($sourcePath)) {
                     continue;
                 }
@@ -100,7 +89,7 @@ final class DumpJsTranslationsCommand extends Command
                 $outPath,
                 json_encode($converted, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n",
             );
-            $io->writeln(sprintf('  <info>✓</info> %s (%d keys from %d source(s))', basename($outPath), $this->countLeaves($converted), $sourcesFound));
+            $io->writeln(sprintf('  <info>✓</info> %s (%d keys from %d module(s))', basename($outPath), $this->countLeaves($converted), $sourcesFound));
         }
 
         $io->success('Translations dumped. vue-i18n will auto-pick them on next dev/build.');
@@ -108,6 +97,7 @@ final class DumpJsTranslationsCommand extends Command
         return Command::SUCCESS;
     }
 
+    /** Recursively merges $source into $target. Source wins on scalar conflicts. */
     private function deepMerge(array $target, array $source): array
     {
         foreach ($source as $key => $value) {
@@ -121,6 +111,12 @@ final class DumpJsTranslationsCommand extends Command
         return $target;
     }
 
+    /**
+     * Recursively prepares messages for vue-i18n consumption:
+     *  - Symfony `%var%` placeholders → `{var}`
+     *  - Bare `@` characters (e.g. in `you@example.com` placeholders) escaped as `{'@'}` so
+     *    vue-i18n's linked-message parser doesn't treat them as `@:other.key` syntax.
+     */
     private function convertPlaceholders(mixed $value): mixed
     {
         if (is_string($value)) {
