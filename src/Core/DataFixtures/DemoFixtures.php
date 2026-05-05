@@ -10,6 +10,8 @@ use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Service\SettingsManager;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -73,6 +75,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
+        private readonly SettingsManager $settingsManager,
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
         private readonly Filesystem $fs = new Filesystem(),
@@ -109,6 +112,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createMenuItems($manager);
 
         $manager->flush();
+
+        // Assign logo and favicon after flush so IDs are available.
+        // Use the hero image (media[0]) as logo and the landscape (media[1]) as favicon.
+        if (isset($media[0]) && null !== $media[0]->getId()) {
+            $this->settingsManager->set(ApplicationParameterEnum::LogoMediaId->value, (string) $media[0]->getId());
+        }
+
+        if (isset($media[1]) && null !== $media[1]->getId()) {
+            $this->settingsManager->set(ApplicationParameterEnum::FaviconMediaId->value, (string) $media[1]->getId());
+        }
     }
 
     // ── Users ─────────────────────────────────────────────────────────────────
