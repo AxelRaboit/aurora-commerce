@@ -403,7 +403,7 @@ cp "$AURORA_DIR/Makefile" "$DEST/Makefile"
 sed -i "s|^AURORA        = \.$|AURORA        = ${AURORA_VENDOR_PATH}|" "$DEST/Makefile"
 
 # Remove targets overridden by client-specific versions (avoids make warnings)
-for target in install-dev install-prod deploy-prod aurora-update start; do
+for target in install-dev install-prod deploy-prod aurora-update start build dev; do
     awk -v t="$target" '/^[a-zA-Z]/{ in_target=($0 ~ "^"t":") } !in_target{ print }' \
         "$DEST/Makefile" > "$DEST/Makefile.tmp" && mv "$DEST/Makefile.tmp" "$DEST/Makefile"
 done
