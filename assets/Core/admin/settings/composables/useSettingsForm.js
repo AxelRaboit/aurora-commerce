@@ -102,7 +102,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
 
                 const result = await response.json();
 
-                if (!result.ok) {
+                if (!result.success) {
                     if (result.error === SettingErrorCode.CascadeViolation) {
                         const parent = parameterByKey[result.parentKey];
                         toast.error(
