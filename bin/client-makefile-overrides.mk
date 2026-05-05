@@ -4,8 +4,11 @@
 # AURORA_CLIENT_DIR is read by aurora's vite.config.js and app.js to expose
 # this client's custom Vue components (and Stimulus controllers, CSS) via the
 # @client alias. Place client modules in assets/client/Module/<Name>/...
+# NODE_PATH lets Node resolve packages (vue, vue-i18n, …) from aurora's
+# node_modules even when the importing file lives outside vendor/aurora.
 CLIENT_ASSETS = $(CURDIR)/assets/client
-AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS)
+AURORA_NODE   = $(CURDIR)/$(AURORA)/node_modules
+AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS) NODE_PATH=$(AURORA_NODE)
 
 install: install-dev ## Install the project (alias for install-dev)
 
@@ -35,6 +38,7 @@ install-dev: ## Install for local development
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) --dir=$(AURORA) install
+	$(PNPM) install
 	@ln -sf ../$(AURORA)/public/build public/build
 	make setup-dirs
 	make db-create
@@ -80,5 +84,6 @@ aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) --dir=$(AURORA) install
+	$(PNPM) install
 	make migrate
 	@echo "✅ Aurora updated"

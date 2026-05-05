@@ -412,6 +412,30 @@ done
 cat "$AURORA_DIR/bin/client-makefile-overrides.mk" >> "$DEST/Makefile"
 
 # ---------------------------------------------------------------------------
+# package.json (shared runtime deps for client Vue components)
+# ---------------------------------------------------------------------------
+
+info "Writing package.json..."
+AURORA_PKG="$AURORA_DIR/package.json"
+read_dep() {
+    php -r "echo json_decode(file_get_contents('${AURORA_PKG}'))->dependencies->{'$1'} ?? '';"
+}
+cat > "$DEST/package.json" <<EOF
+{
+    "private": true,
+    "license": "UNLICENSED",
+    "description": "Shared runtime deps for client Vue components. Aurora's vite.config.js dedupes these so we still get a single instance at runtime.",
+    "dependencies": {
+        "axios": "$(read_dep axios)",
+        "lucide-vue-next": "$(read_dep lucide-vue-next)",
+        "vue": "$(read_dep vue)",
+        "vue-i18n": "$(read_dep vue-i18n)",
+        "vue-sonner": "$(read_dep vue-sonner)"
+    }
+}
+EOF
+
+# ---------------------------------------------------------------------------
 # README.md
 # ---------------------------------------------------------------------------
 

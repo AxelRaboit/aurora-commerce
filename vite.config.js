@@ -32,6 +32,11 @@ export default defineConfig({
             '@shared': path.resolve(__dirname, 'assets/shared'),
             '@client': CLIENT_DIR,
         },
+        // When client Vue files (in @client) import shared packages, Rolldown
+        // walks up looking for node_modules and finds the client project's
+        // (which also has these packages). Dedupe forces a single instance so
+        // we don't get duplicate Vue / vue-i18n at runtime.
+        dedupe: ['vue', 'vue-i18n', 'vue-sonner', 'lucide-vue-next', '@hotwired/stimulus', '@symfony/ux-vue'],
     },
     server: {
         fs: {
