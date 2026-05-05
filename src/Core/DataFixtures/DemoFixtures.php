@@ -1226,88 +1226,84 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $em->flush();
 
-        if ($primary instanceof Menu) {
-            $primaryItems = [
-                ['fr' => 'Accueil',          'en' => 'Home',           'url' => '/',                  'type' => MenuItemTargetTypeEnum::Home],
-                ['fr' => 'Notre histoire',   'en' => 'Our story',      'url' => '/notre-histoire',    'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'Solutions',        'en' => 'Solutions',      'url' => '/solutions',         'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'Blog',             'en' => 'Blog',           'url' => '/blog',              'type' => MenuItemTargetTypeEnum::PostTypeArchive],
-                ['fr' => 'Tarifs',           'en' => 'Pricing',        'url' => '/tarifs',            'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'Boutique',         'en' => 'Shop',           'url' => '/shop',              'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'Ressources',       'en' => 'Resources',      'url' => '/ressources',        'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'À propos',         'en' => 'About',          'url' => '/a-propos',          'type' => MenuItemTargetTypeEnum::CustomUrl],
-                ['fr' => 'Contact',          'en' => 'Contact',        'url' => '/contact',           'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ];
-            foreach ($primaryItems as $pos => $def) {
-                $item = new MenuItem();
-                $item->setMenu($primary)
-                     ->setTargetType($def['type'])
-                     ->setCustomUrl($def['url'])
-                     ->setPosition($pos);
-                $em->persist($item);
-                foreach (['fr', 'en'] as $locale) {
-                    $tr = new MenuItemTranslation();
-                    $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $def['fr'] : $def['en']);
-                    $em->persist($tr);
-                }
+        $primaryItems = [
+            ['fr' => 'Accueil',          'en' => 'Home',           'url' => '/',                  'type' => MenuItemTargetTypeEnum::Home],
+            ['fr' => 'Notre histoire',   'en' => 'Our story',      'url' => '/notre-histoire',    'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Solutions',        'en' => 'Solutions',      'url' => '/solutions',         'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Blog',             'en' => 'Blog',           'url' => '/blog',              'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Tarifs',           'en' => 'Pricing',        'url' => '/tarifs',            'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Boutique',         'en' => 'Shop',           'url' => '/shop',              'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Ressources',       'en' => 'Resources',      'url' => '/ressources',        'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'À propos',         'en' => 'About',          'url' => '/a-propos',          'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ['fr' => 'Contact',          'en' => 'Contact',        'url' => '/contact',           'type' => MenuItemTargetTypeEnum::CustomUrl],
+        ];
+        foreach ($primaryItems as $pos => $def) {
+            $item = new MenuItem();
+            $item->setMenu($primary)
+                 ->setTargetType($def['type'])
+                 ->setCustomUrl($def['url'])
+                 ->setPosition($pos);
+            $em->persist($item);
+            foreach (['fr', 'en'] as $locale) {
+                $tr = new MenuItemTranslation();
+                $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $def['fr'] : $def['en']);
+                $em->persist($tr);
             }
         }
 
-        if ($footer instanceof Menu) {
-            $sections = [
-                ['fr' => 'Produit',     'en' => 'Product',      'url' => null, 'children' => [
-                    ['fr' => 'Fonctionnalités',  'en' => 'Features',    'url' => '/fonctionnalites'],
-                    ['fr' => 'Tarifs',           'en' => 'Pricing',     'url' => '/tarifs'],
-                    ['fr' => 'Roadmap',          'en' => 'Roadmap',     'url' => '/roadmap'],
-                    ['fr' => 'Nouveautés',       'en' => 'Changelog',   'url' => '/changelog'],
-                ]],
-                ['fr' => 'Ressources',  'en' => 'Resources',    'url' => null, 'children' => [
-                    ['fr' => 'Documentation',   'en' => 'Documentation', 'url' => '/docs'],
-                    ['fr' => 'Blog',            'en' => 'Blog',         'url' => '/blog'],
-                    ['fr' => 'Tutoriels',       'en' => 'Tutorials',    'url' => '/tutoriels'],
-                    ['fr' => 'Status',          'en' => 'Status',       'url' => 'https://status.aurora.app'],
-                ]],
-                ['fr' => 'Entreprise',  'en' => 'Company',      'url' => null, 'children' => [
-                    ['fr' => 'À propos',        'en' => 'About',        'url' => '/a-propos'],
-                    ['fr' => 'Équipe',          'en' => 'Team',         'url' => '/equipe'],
-                    ['fr' => 'Carrières',       'en' => 'Careers',      'url' => '/carrieres'],
-                    ['fr' => 'Presse',          'en' => 'Press',        'url' => '/presse'],
-                ]],
-                ['fr' => 'Légal',       'en' => 'Legal',        'url' => null, 'children' => [
-                    ['fr' => 'CGU',             'en' => 'Terms',        'url' => '/cgu'],
-                    ['fr' => 'Confidentialité', 'en' => 'Privacy',      'url' => '/confidentialite'],
-                    ['fr' => 'Cookies',         'en' => 'Cookies',      'url' => '/cookies'],
-                    ['fr' => 'Contact',         'en' => 'Contact',      'url' => '/contact'],
-                ]],
-            ];
+        $sections = [
+            ['fr' => 'Produit',     'en' => 'Product',      'url' => null, 'children' => [
+                ['fr' => 'Fonctionnalités',  'en' => 'Features',    'url' => '/fonctionnalites'],
+                ['fr' => 'Tarifs',           'en' => 'Pricing',     'url' => '/tarifs'],
+                ['fr' => 'Roadmap',          'en' => 'Roadmap',     'url' => '/roadmap'],
+                ['fr' => 'Nouveautés',       'en' => 'Changelog',   'url' => '/changelog'],
+            ]],
+            ['fr' => 'Ressources',  'en' => 'Resources',    'url' => null, 'children' => [
+                ['fr' => 'Documentation',   'en' => 'Documentation', 'url' => '/docs'],
+                ['fr' => 'Blog',            'en' => 'Blog',         'url' => '/blog'],
+                ['fr' => 'Tutoriels',       'en' => 'Tutorials',    'url' => '/tutoriels'],
+                ['fr' => 'Status',          'en' => 'Status',       'url' => 'https://status.aurora.app'],
+            ]],
+            ['fr' => 'Entreprise',  'en' => 'Company',      'url' => null, 'children' => [
+                ['fr' => 'À propos',        'en' => 'About',        'url' => '/a-propos'],
+                ['fr' => 'Équipe',          'en' => 'Team',         'url' => '/equipe'],
+                ['fr' => 'Carrières',       'en' => 'Careers',      'url' => '/carrieres'],
+                ['fr' => 'Presse',          'en' => 'Press',        'url' => '/presse'],
+            ]],
+            ['fr' => 'Légal',       'en' => 'Legal',        'url' => null, 'children' => [
+                ['fr' => 'CGU',             'en' => 'Terms',        'url' => '/cgu'],
+                ['fr' => 'Confidentialité', 'en' => 'Privacy',      'url' => '/confidentialite'],
+                ['fr' => 'Cookies',         'en' => 'Cookies',      'url' => '/cookies'],
+                ['fr' => 'Contact',         'en' => 'Contact',      'url' => '/contact'],
+            ]],
+        ];
 
-            $pos = 0;
-            foreach ($sections as $section) {
-                $parent = new MenuItem();
-                $parent->setMenu($footer)
-                       ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
-                       ->setCustomUrl($section['url'])
-                       ->setPosition($pos++);
-                $em->persist($parent);
+        $pos = 0;
+        foreach ($sections as $section) {
+            $parent = new MenuItem();
+            $parent->setMenu($footer)
+                   ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
+                   ->setCustomUrl($section['url'])
+                   ->setPosition($pos++);
+            $em->persist($parent);
+            foreach (['fr', 'en'] as $locale) {
+                $tr = new MenuItemTranslation();
+                $tr->setMenuItem($parent)->setLocale($locale)->setLabel('fr' === $locale ? $section['fr'] : $section['en']);
+                $em->persist($tr);
+            }
+
+            foreach ($section['children'] as $childPos => $child) {
+                $item = new MenuItem();
+                $item->setMenu($footer)
+                     ->setParent($parent)
+                     ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
+                     ->setCustomUrl($child['url'])
+                     ->setPosition($childPos);
+                $em->persist($item);
                 foreach (['fr', 'en'] as $locale) {
                     $tr = new MenuItemTranslation();
-                    $tr->setMenuItem($parent)->setLocale($locale)->setLabel('fr' === $locale ? $section['fr'] : $section['en']);
+                    $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $child['fr'] : $child['en']);
                     $em->persist($tr);
-                }
-
-                foreach ($section['children'] as $childPos => $child) {
-                    $item = new MenuItem();
-                    $item->setMenu($footer)
-                         ->setParent($parent)
-                         ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
-                         ->setCustomUrl($child['url'])
-                         ->setPosition($childPos);
-                    $em->persist($item);
-                    foreach (['fr', 'en'] as $locale) {
-                        $tr = new MenuItemTranslation();
-                        $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $child['fr'] : $child['en']);
-                        $em->persist($tr);
-                    }
                 }
             }
         }
