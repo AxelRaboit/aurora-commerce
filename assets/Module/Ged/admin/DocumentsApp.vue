@@ -8,7 +8,7 @@ import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -41,16 +41,13 @@ const statusOptions = [
 
 const statusBadgeColor = { draft: "secondary", published: "success", archived: "accent" };
 
-const categoryOptions = [
-    { value: "", label: t("admin.ged.documents.noCategory") },
-    ...props.categories.map((c) => ({ value: String(c.id), label: c.name })),
-];
+const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath, { initialSearch: props.search, initialData: props.documents },
 );
 
-function emptyForm() { return { title: "", description: "", status: "draft", categoryId: "", fileId: null, fileName: null }; }
+function emptyForm() { return { title: "", description: "", status: "draft", categoryId: null, fileId: null, fileName: null }; }
 
 // Create
 const showCreate = ref(false);
@@ -62,7 +59,7 @@ function openCreate() { newDoc.value = emptyForm(); clearCreate(); showCreate.va
 function onFilePickedCreate(media) { newDoc.value.fileId = media.id; newDoc.value.fileName = media.fileName; showMediaPickerCreate.value = false; }
 async function submitCreate() {
     if (!validateCreate({ title: () => required(t("admin.ged.documents.errors.title_required"))(newDoc.value.title) })) return;
-    const payload = { ...newDoc.value, categoryId: newDoc.value.categoryId ? Number(newDoc.value.categoryId) : null };
+    const payload = { ...newDoc.value };
     const data = await createRequest(props.createPath, payload);
     if (!data) return;
     if (data.success) { showCreate.value = false; toast.success(t("admin.ged.documents.created")); reset(); }
@@ -78,14 +75,14 @@ const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setE
 const { loading: editLoading, request: editRequest } = useApiRequest();
 function openEdit(doc) {
     editingDoc.value = doc;
-    editForm.value = { title: doc.title, description: doc.description ?? "", status: doc.status, categoryId: doc.categoryId ? String(doc.categoryId) : "", fileId: doc.fileId, fileName: doc.fileName };
+    editForm.value = { title: doc.title, description: doc.description ?? "", status: doc.status, categoryId: doc.categoryId ?? null, fileId: doc.fileId, fileName: doc.fileName };
     clearEdit(); showEdit.value = true;
 }
 function onFilePickedEdit(media) { editForm.value.fileId = media.id; editForm.value.fileName = media.fileName; showMediaPickerEdit.value = false; }
 async function submitEdit() {
     if (!validateEdit({ title: () => required(t("admin.ged.documents.errors.title_required"))(editForm.value.title) })) return;
     const url = buildPath(props.updatePath, { id: editingDoc.value.id });
-    const payload = { ...editForm.value, categoryId: editForm.value.categoryId ? Number(editForm.value.categoryId) : null };
+    const payload = { ...editForm.value };
     const data = await editRequest(url, payload);
     if (!data) return;
     if (data.success) { showEdit.value = false; toast.success(t("admin.ged.documents.updated")); reset(); }
@@ -153,8 +150,20 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput v-model="newDoc.title" :label="t('admin.ged.documents.title')" :error="createErrors.title" required />
                 <AppInput v-model="newDoc.description" :label="t('admin.ged.documents.description')" />
-                <AppSelect v-model="newDoc.categoryId" :label="t('admin.ged.documents.category')" :options="categoryOptions" />
-                <AppSelect v-model="newDoc.status" :label="t('admin.ged.documents.status')" :options="statusOptions" />
+                <AppMultiselect
+                    v-model="newDoc.categoryId"
+                    :label="t('admin.ged.documents.category')"
+                    :options="categoryOptions"
+                    :allow-empty="true"
+                    :placeholder="t('admin.ged.documents.noCategory')"
+                />
+                <AppMultiselect
+                    v-model="newDoc.status"
+                    :label="t('admin.ged.documents.status')"
+                    :options="statusOptions"
+                    :allow-empty="false"
+                    :searchable="false"
+                />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerCreate = true">
                         <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.ged.documents.chooseFile") }}
@@ -174,8 +183,20 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.title" :label="t('admin.ged.documents.title')" :error="editErrors.title" required />
                 <AppInput v-model="editForm.description" :label="t('admin.ged.documents.description')" />
-                <AppSelect v-model="editForm.categoryId" :label="t('admin.ged.documents.category')" :options="categoryOptions" />
-                <AppSelect v-model="editForm.status" :label="t('admin.ged.documents.status')" :options="statusOptions" />
+                <AppMultiselect
+                    v-model="editForm.categoryId"
+                    :label="t('admin.ged.documents.category')"
+                    :options="categoryOptions"
+                    :allow-empty="true"
+                    :placeholder="t('admin.ged.documents.noCategory')"
+                />
+                <AppMultiselect
+                    v-model="editForm.status"
+                    :label="t('admin.ged.documents.status')"
+                    :options="statusOptions"
+                    :allow-empty="false"
+                    :searchable="false"
+                />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerEdit = true">
                         <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.ged.documents.chooseFile") }}
