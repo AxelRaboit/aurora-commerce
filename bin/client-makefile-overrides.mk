@@ -12,6 +12,16 @@ AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS) NODE_PATH=$(AURORA_NODE)
 
 install: install-dev ## Install the project (alias for install-dev)
 
+fixtures: ## Drop DB, re-run migrations, load fixtures and sync all
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+	$(CONSOLE) doctrine:database:create --if-not-exists
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	$(CONSOLE) doctrine:fixtures:load --no-interaction
+	$(CONSOLE) aurora:application-parameter
+	$(CONSOLE) aurora:menus:sync
+	$(CONSOLE) aurora:privileges:sync
+	@echo "✅ Fixtures loaded"
+
 stop: ## Stop dev server and kill Vite
 	symfony server:stop
 	@pkill -f "pnpm.*$(AURORA).*dev" 2>/dev/null || true
