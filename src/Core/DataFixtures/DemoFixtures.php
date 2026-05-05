@@ -109,7 +109,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
-        $this->createMenuItems($manager);
+        $this->createMenuItems($manager, $media);
 
         $manager->flush();
 
@@ -1212,10 +1212,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     // ── Menus ─────────────────────────────────────────────────────────────────
 
-    private function createMenuItems(EntityManagerInterface $em): void
+    /** @param Media[] $media */
+    private function createMenuItems(EntityManagerInterface $em, array $media): void
     {
-        // Menus may not exist yet (aurora:menus:sync runs after fixtures).
-        // Create them if missing so demo items are always populated.
+        // ── Ensure menus exist ────────────────────────────────────────────────
         $primary = $em->getRepository(Menu::class)->findOneBy(['location' => 'primary'])
             ?? new Menu()->setName('Menu principal')->setLocation('primary');
         $em->persist($primary);
@@ -1224,88 +1224,167 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ?? new Menu()->setName('Menu pied de page')->setLocation('footer');
         $em->persist($footer);
 
+        // ── Retrieve real entities to link ────────────────────────────────────
+        $pageType = $em->getRepository(PostType::class)->findOneBy(['slug' => 'page']);
+        $articleType = $em->getRepository(PostType::class)->findOneBy(['slug' => 'article']);
+        $contactForm = $em->getRepository(Form::class)->findOneBy([]);
+
+        // ── Create Page posts that don't exist yet ────────────────────────────
+        $pageDefs = [
+            ['fr_title' => 'Notre histoire', 'fr_slug' => 'notre-histoire', 'en_title' => 'Our Story',     'en_slug' => 'our-story',
+                'fr_text' => 'Aurora Tech est née en 2022 de la conviction qu\'une PME mérite les mêmes outils qu\'un grand groupe. '.self::LOREM,
+                'en_text' => 'Aurora Tech was founded in 2022 with the belief that SMEs deserve the same tools as large corporations. '.self::LOREM,
+                'media' => $media[0] ?? null],
+            ['fr_title' => 'Solutions Aurora', 'fr_slug' => 'solutions', 'en_title' => 'Aurora Solutions', 'en_slug' => 'solutions',
+                'fr_text' => 'De la gestion commerciale à la facturation, Aurora couvre l\'ensemble de vos processus métier. '.self::LOREM,
+                'en_text' => 'From sales management to invoicing, Aurora covers all your business processes. '.self::LOREM,
+                'media' => $media[1] ?? null],
+            ['fr_title' => 'Tarifs', 'fr_slug' => 'tarifs', 'en_title' => 'Pricing', 'en_slug' => 'pricing',
+                'fr_text' => 'Choisissez la formule adaptée à votre équipe. Tous nos abonnements incluent les mises à jour et le support. '.self::LOREM,
+                'en_text' => 'Choose the plan that fits your team. All subscriptions include updates and support. '.self::LOREM,
+                'media' => $media[2] ?? null],
+            ['fr_title' => 'Ressources', 'fr_slug' => 'ressources', 'en_title' => 'Resources', 'en_slug' => 'resources',
+                'fr_text' => 'Documentation, tutoriels vidéo, webinaires et modèles prêts à l\'emploi pour démarrer rapidement. '.self::LOREM,
+                'en_text' => 'Documentation, video tutorials, webinars and ready-to-use templates to get started quickly. '.self::LOREM,
+                'media' => $media[3] ?? null],
+            ['fr_title' => 'À propos', 'fr_slug' => 'a-propos', 'en_title' => 'About Us', 'en_slug' => 'about-us',
+                'fr_text' => 'Une équipe de passionnés qui construit la suite logicielle dont les PME françaises ont besoin. '.self::LOREM,
+                'en_text' => 'A passionate team building the software suite that French SMEs need. '.self::LOREM,
+                'media' => $media[0] ?? null],
+            ['fr_title' => 'Mentions légales', 'fr_slug' => 'cgu', 'en_title' => 'Terms of Service', 'en_slug' => 'terms',
+                'fr_text' => 'Conditions générales d\'utilisation de la plateforme Aurora. '.self::LOREM, 'en_text' => self::LOREM, 'media' => null],
+            ['fr_title' => 'Politique de confidentialité', 'fr_slug' => 'confidentialite', 'en_title' => 'Privacy Policy', 'en_slug' => 'privacy',
+                'fr_text' => 'Comment nous collectons, utilisons et protégeons vos données personnelles. '.self::LOREM, 'en_text' => self::LOREM, 'media' => null],
+            ['fr_title' => 'Équipe Aurora', 'fr_slug' => 'equipe', 'en_title' => 'Our Team', 'en_slug' => 'team',
+                'fr_text' => 'Rencontrez les personnes qui construisent Aurora chaque jour. '.self::LOREM, 'en_text' => self::LOREM, 'media' => $media[2] ?? null],
+        ];
+
+        /** @var array<string, Post> $pages key = fr_slug */
+        $pages = [];
+        foreach ($pageDefs as $pd) {
+            if (!$pageType instanceof PostType) {
+                break;
+            }
+
+            $page = new Post();
+            $page->setPostType($pageType)->setStatus(PostStatusEnum::Published)->setFeaturedMedia($pd['media']);
+            $trFr = new PostTranslation();
+            $trFr->setPost($page)->setLocale('fr')->setTitle($pd['fr_title'])->setSlug($pd['fr_slug'])
+                 ->setBlocks([['type' => 'paragraph', 'data' => ['text' => $pd['fr_text']]]])
+                 ->setSearchContent($pd['fr_text']);
+            $trEn = new PostTranslation();
+            $trEn->setPost($page)->setLocale('en')->setTitle($pd['en_title'])->setSlug($pd['en_slug'])
+                 ->setBlocks([['type' => 'paragraph', 'data' => ['text' => $pd['en_text']]]])
+                 ->setSearchContent($pd['en_text']);
+            $em->persist($trFr);
+            $em->persist($trEn);
+            $em->persist($page);
+            $pages[$pd['fr_slug']] = $page;
+        }
+
         $em->flush();
 
-        $primaryItems = [
-            ['fr' => 'Accueil',          'en' => 'Home',           'url' => '/',                  'type' => MenuItemTargetTypeEnum::Home],
-            ['fr' => 'Notre histoire',   'en' => 'Our story',      'url' => '/notre-histoire',    'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Solutions',        'en' => 'Solutions',      'url' => '/solutions',         'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Blog',             'en' => 'Blog',           'url' => '/blog',              'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Tarifs',           'en' => 'Pricing',        'url' => '/tarifs',            'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Boutique',         'en' => 'Shop',           'url' => '/shop',              'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Ressources',       'en' => 'Resources',      'url' => '/ressources',        'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'À propos',         'en' => 'About',          'url' => '/a-propos',          'type' => MenuItemTargetTypeEnum::CustomUrl],
-            ['fr' => 'Contact',          'en' => 'Contact',        'url' => '/contact',           'type' => MenuItemTargetTypeEnum::CustomUrl],
-        ];
-        foreach ($primaryItems as $pos => $def) {
+        // ── Helper: create a menu item ────────────────────────────────────────
+        $addItem = function (
+            Menu $menu,
+            string $frLabel,
+            string $enLabel,
+            MenuItemTargetTypeEnum $type,
+            int $pos,
+            ?int $targetId = null,
+            ?string $customUrl = null,
+            ?MenuItem $parent = null,
+        ) use ($em): MenuItem {
             $item = new MenuItem();
-            $item->setMenu($primary)
-                 ->setTargetType($def['type'])
-                 ->setCustomUrl($def['url'])
-                 ->setPosition($pos);
+            $item->setMenu($menu)->setTargetType($type)->setPosition($pos);
+            if (null !== $targetId) {
+                $item->setTargetId($targetId);
+            }
+
+            if (null !== $customUrl) {
+                $item->setCustomUrl($customUrl);
+            }
+
+            if ($parent instanceof MenuItem) {
+                $item->setParent($parent);
+            }
+
             $em->persist($item);
             foreach (['fr', 'en'] as $locale) {
                 $tr = new MenuItemTranslation();
-                $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $def['fr'] : $def['en']);
+                $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $frLabel : $enLabel);
                 $em->persist($tr);
             }
-        }
 
-        $sections = [
-            ['fr' => 'Produit',     'en' => 'Product',      'url' => null, 'children' => [
-                ['fr' => 'Fonctionnalités',  'en' => 'Features',    'url' => '/fonctionnalites'],
-                ['fr' => 'Tarifs',           'en' => 'Pricing',     'url' => '/tarifs'],
-                ['fr' => 'Roadmap',          'en' => 'Roadmap',     'url' => '/roadmap'],
-                ['fr' => 'Nouveautés',       'en' => 'Changelog',   'url' => '/changelog'],
-            ]],
-            ['fr' => 'Ressources',  'en' => 'Resources',    'url' => null, 'children' => [
-                ['fr' => 'Documentation',   'en' => 'Documentation', 'url' => '/docs'],
-                ['fr' => 'Blog',            'en' => 'Blog',         'url' => '/blog'],
-                ['fr' => 'Tutoriels',       'en' => 'Tutorials',    'url' => '/tutoriels'],
-                ['fr' => 'Status',          'en' => 'Status',       'url' => 'https://status.aurora.app'],
-            ]],
-            ['fr' => 'Entreprise',  'en' => 'Company',      'url' => null, 'children' => [
-                ['fr' => 'À propos',        'en' => 'About',        'url' => '/a-propos'],
-                ['fr' => 'Équipe',          'en' => 'Team',         'url' => '/equipe'],
-                ['fr' => 'Carrières',       'en' => 'Careers',      'url' => '/carrieres'],
-                ['fr' => 'Presse',          'en' => 'Press',        'url' => '/presse'],
-            ]],
-            ['fr' => 'Légal',       'en' => 'Legal',        'url' => null, 'children' => [
-                ['fr' => 'CGU',             'en' => 'Terms',        'url' => '/cgu'],
-                ['fr' => 'Confidentialité', 'en' => 'Privacy',      'url' => '/confidentialite'],
-                ['fr' => 'Cookies',         'en' => 'Cookies',      'url' => '/cookies'],
-                ['fr' => 'Contact',         'en' => 'Contact',      'url' => '/contact'],
-            ]],
-        ];
+            return $item;
+        };
 
+        // ── Primary navigation ────────────────────────────────────────────────
         $pos = 0;
-        foreach ($sections as $section) {
-            $parent = new MenuItem();
-            $parent->setMenu($footer)
-                   ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
-                   ->setCustomUrl($section['url'])
-                   ->setPosition($pos++);
-            $em->persist($parent);
-            foreach (['fr', 'en'] as $locale) {
-                $tr = new MenuItemTranslation();
-                $tr->setMenuItem($parent)->setLocale($locale)->setLabel('fr' === $locale ? $section['fr'] : $section['en']);
-                $em->persist($tr);
-            }
+        $addItem($primary, 'Accueil', 'Home', MenuItemTargetTypeEnum::Home, $pos++);
+        if (isset($pages['notre-histoire'])) {
+            $addItem($primary, 'Notre histoire', 'Our Story', MenuItemTargetTypeEnum::Post, $pos++, $pages['notre-histoire']->getId());
+        }
 
-            foreach ($section['children'] as $childPos => $child) {
-                $item = new MenuItem();
-                $item->setMenu($footer)
-                     ->setParent($parent)
-                     ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
-                     ->setCustomUrl($child['url'])
-                     ->setPosition($childPos);
-                $em->persist($item);
-                foreach (['fr', 'en'] as $locale) {
-                    $tr = new MenuItemTranslation();
-                    $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $child['fr'] : $child['en']);
-                    $em->persist($tr);
-                }
+        if (isset($pages['solutions'])) {
+            $addItem($primary, 'Solutions', 'Solutions', MenuItemTargetTypeEnum::Post, $pos++, $pages['solutions']->getId());
+        }
+
+        if ($articleType instanceof PostType) {
+            $addItem($primary, 'Blog', 'Blog', MenuItemTargetTypeEnum::PostTypeArchive, $pos++, $articleType->getId());
+        }
+
+        if (isset($pages['tarifs'])) {
+            $addItem($primary, 'Tarifs', 'Pricing', MenuItemTargetTypeEnum::Post, $pos++, $pages['tarifs']->getId());
+        }
+
+        // Boutique → front shop (custom URL, locale-prefixed in front routing)
+        $addItem($primary, 'Boutique', 'Shop', MenuItemTargetTypeEnum::CustomUrl, $pos++, null, '/fr/shop');
+        if (isset($pages['ressources'])) {
+            $addItem($primary, 'Ressources', 'Resources', MenuItemTargetTypeEnum::Post, $pos++, $pages['ressources']->getId());
+        }
+
+        if (isset($pages['a-propos'])) {
+            $addItem($primary, 'À propos', 'About', MenuItemTargetTypeEnum::Post, $pos++, $pages['a-propos']->getId());
+        }
+
+        // Contact → link to the contact form's front page (use the form's slug via custom URL)
+        if ($contactForm instanceof Form) {
+            $contactFormSlug = $contactForm->getTranslation('fr')?->getSlug();
+            if (null !== $contactFormSlug) {
+                $addItem($primary, 'Contact', 'Contact', MenuItemTargetTypeEnum::CustomUrl, $pos++, null, '/fr/forms/'.$contactFormSlug);
             }
         }
+
+        // ── Footer navigation (grouped sections) ─────────────────────────────
+        $pos = 0;
+
+        // Produit
+        $sect = $addItem($footer, 'Produit', 'Product', MenuItemTargetTypeEnum::CustomUrl, $pos++);
+        $addItem($footer, 'Fonctionnalités', 'Features', MenuItemTargetTypeEnum::Post, 0, isset($pages['solutions']) ? $pages['solutions']->getId() : null, null, $sect);
+        $addItem($footer, 'Tarifs', 'Pricing', MenuItemTargetTypeEnum::Post, 1, isset($pages['tarifs']) ? $pages['tarifs']->getId() : null, null, $sect);
+        $addItem($footer, 'Roadmap', 'Roadmap', MenuItemTargetTypeEnum::CustomUrl, 2, null, '/roadmap', $sect);
+        $addItem($footer, 'Blog', 'Blog', $articleType instanceof PostType ? MenuItemTargetTypeEnum::PostTypeArchive : MenuItemTargetTypeEnum::CustomUrl, 3, $articleType?->getId(), null, $sect);
+
+        // Ressources
+        $sect2 = $addItem($footer, 'Ressources', 'Resources', MenuItemTargetTypeEnum::Post, $pos++, isset($pages['ressources']) ? $pages['ressources']->getId() : null);
+        $addItem($footer, 'Documentation', 'Documentation', MenuItemTargetTypeEnum::CustomUrl, 0, null, '/docs', $sect2);
+        $addItem($footer, 'Tutoriels', 'Tutorials', MenuItemTargetTypeEnum::CustomUrl, 1, null, '/tutoriels', $sect2);
+        if ($contactForm instanceof Form) {
+            $contactFormSlug = $contactForm->getTranslation('fr')?->getSlug();
+            $addItem($footer, 'Formulaire contact', 'Contact form', MenuItemTargetTypeEnum::CustomUrl, 2, null, null !== $contactFormSlug ? '/fr/forms/'.$contactFormSlug : '/contact', $sect2);
+        }
+
+        // Entreprise
+        $sect3 = $addItem($footer, 'Entreprise', 'Company', MenuItemTargetTypeEnum::CustomUrl, $pos++);
+        $addItem($footer, 'À propos', 'About', MenuItemTargetTypeEnum::Post, 0, isset($pages['a-propos']) ? $pages['a-propos']->getId() : null, null, $sect3);
+        $addItem($footer, 'Équipe', 'Team', MenuItemTargetTypeEnum::Post, 1, isset($pages['equipe']) ? $pages['equipe']->getId() : null, null, $sect3);
+        $addItem($footer, 'Carrières', 'Careers', MenuItemTargetTypeEnum::CustomUrl, 2, null, '/carrieres', $sect3);
+
+        // Légal
+        $sect4 = $addItem($footer, 'Légal', 'Legal', MenuItemTargetTypeEnum::CustomUrl, $pos++);
+        $addItem($footer, 'CGU', 'Terms', MenuItemTargetTypeEnum::Post, 0, isset($pages['cgu']) ? $pages['cgu']->getId() : null, null, $sect4);
+        $addItem($footer, 'Confidentialité', 'Privacy', MenuItemTargetTypeEnum::Post, 1, isset($pages['confidentialite']) ? $pages['confidentialite']->getId() : null, null, $sect4);
+        $addItem($footer, 'Cookies', 'Cookies', MenuItemTargetTypeEnum::CustomUrl, 2, null, '/cookies', $sect4);
     }
 }
