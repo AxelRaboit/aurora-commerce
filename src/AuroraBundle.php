@@ -115,7 +115,7 @@ class AuroraBundle extends AbstractBundle
 
         $builder->prependExtensionConfig('framework', [
             'default_locale' => 'fr',
-            'enabled_locales' => ['fr', 'en', 'es', 'de'],
+            'enabled_locales' => ['fr', 'en'],
             'translator' => [
                 'default_path' => $dir.'/src/Core/translations',
                 'paths' => [

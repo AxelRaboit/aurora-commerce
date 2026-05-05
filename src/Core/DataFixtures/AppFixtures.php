@@ -33,12 +33,8 @@ class AppFixtures extends Fixture
         // Locales
         $frenchLocale = new Locale()->setCode(LocaleEnum::French->value)->setName('Français')->setIsDefault(true)->setPosition(0);
         $englishLocale = new Locale()->setCode(LocaleEnum::English->value)->setName('English')->setPosition(1);
-        $spanishLocale = new Locale()->setCode(LocaleEnum::Spanish->value)->setName('Español')->setPosition(2);
-        $germanLocale = new Locale()->setCode(LocaleEnum::German->value)->setName('Deutsch')->setPosition(3);
         $manager->persist($frenchLocale);
         $manager->persist($englishLocale);
-        $manager->persist($spanishLocale);
-        $manager->persist($germanLocale);
 
         // Built-in post types
         $pageType = new PostType()
@@ -62,8 +58,8 @@ class AppFixtures extends Fixture
 
         // Built-in taxonomies
         $taxonomyLabels = [
-            'tag' => ['fr' => 'Étiquette', 'en' => 'Tag', 'es' => 'Etiqueta', 'de' => 'Schlagwort'],
-            'category' => ['fr' => 'Catégorie', 'en' => 'Category', 'es' => 'Categoría', 'de' => 'Kategorie'],
+            'tag' => ['fr' => 'Étiquette', 'en' => 'Tag'],
+            'category' => ['fr' => 'Catégorie', 'en' => 'Category'],
         ];
 
         foreach ($taxonomyLabels as $slug => $labels) {

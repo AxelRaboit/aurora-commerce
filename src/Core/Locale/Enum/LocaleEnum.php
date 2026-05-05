@@ -8,8 +8,6 @@ enum LocaleEnum: string
 {
     case French = 'fr';
     case English = 'en';
-    case Spanish = 'es';
-    case German = 'de';
 
     public static function values(): array
     {
