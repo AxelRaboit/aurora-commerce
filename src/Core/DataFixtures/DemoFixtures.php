@@ -534,8 +534,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ['type' => FormFieldTypeEnum::Textarea, 'fr' => 'Message',          'en' => 'Message',        'ph_fr' => 'Votre message…',          'ph_en' => 'Your message…',         'req' => true],
                 ],
                 'submissions' => [
-                    ['name' => 'Pierre Dubois', 'email' => 'pierre.dubois@tech-innovation.fr', 'subject' => 'Demande commerciale', 'message' => 'Bonjour, je souhaite un devis pour une licence CRM 10 utilisateurs.'],
-                    ['name' => 'Camille Leroy', 'email' => 'c.leroy@biomed-france.com',        'subject' => 'Support technique',   'message' => 'Problème de synchronisation des données. Pouvez-vous nous aider ?'],
+                    ['Nom complet' => 'Pierre Dubois',   'Adresse email' => 'pierre.dubois@tech-innovation.fr', 'Téléphone' => '+33 6 12 34 56 78', 'Sujet' => 'Demande commerciale', 'Message' => "Bonjour, nous souhaitons migrer notre outil CRM actuel vers Aurora. Pouvez-vous nous envoyer un devis pour 10 utilisateurs avec le module GED inclus ? Merci d'avance."],
+                    ['Nom complet' => 'Camille Leroy',   'Adresse email' => 'c.leroy@biomed-france.com',        'Téléphone' => '+33 6 23 45 67 89', 'Sujet' => 'Support technique',   'Message' => 'Depuis la mise à jour de vendredi, nos données CRM ne se synchronisent plus correctement avec l\'ERP. Les stocks ne sont plus à jour côté e-commerce. Urgence niveau 2.'],
+                    ['Nom complet' => 'François Moreau', 'Adresse email' => 'f.moreau@retail-connect.fr',       'Téléphone' => '+33 6 34 56 78 90', 'Sujet' => 'Partenariat',         'Message' => 'Nous sommes un intégrateur spécialisé en transformation digitale pour les réseaux de distribution. Aurora correspond parfaitement à nos besoins clients. Pouvons-nous discuter d\'un partenariat revendeur ?'],
+                    ['Nom complet' => 'Julie Chen',      'Adresse email' => 'julie.chen@tech-innovation.fr',    'Téléphone' => '',                  'Sujet' => 'Demande commerciale', 'Message' => 'Suite à notre démo de la semaine dernière, mon équipe est convaincue. Nous aimerions démarrer avec la Suite Complète Aurora pour 15 utilisateurs. Quelles sont les prochaines étapes ?'],
+                    ['Nom complet' => 'Isabelle Renard', 'Adresse email' => 'i.renard@nexus-digital.fr',        'Téléphone' => '+33 6 67 89 01 23', 'Sujet' => 'Autre',               'Message' => 'Bonjour, je cherche à intégrer Aurora dans notre stack Vercel + Next.js via API. Disposez-vous d\'une documentation sur votre API REST et les webhooks disponibles ?'],
+                    ['Nom complet' => 'David Beaumont',  'Adresse email' => 'd.beaumont@leclerc-nord.fr',       'Téléphone' => '+33 6 78 90 12 34', 'Sujet' => 'Support technique',   'Message' => 'Le module Billing plante lors de l\'import OCR de factures PDF multi-pages. Log d\'erreur joint. Merci de traiter en priorité car nous avons 200+ factures en attente de traitement.'],
                 ],
             ],
             [
@@ -548,9 +552,14 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ['type' => FormFieldTypeEnum::Checkbox, 'fr' => "J'accepte de recevoir des communications Aurora", 'en' => 'I agree to receive Aurora communications', 'ph_fr' => '', 'ph_en' => '', 'req' => true],
                 ],
                 'submissions' => [
-                    ['email' => 'fan1@example.com',  'prenom' => 'Julie'],
-                    ['email' => 'fan2@example.com',  'prenom' => 'Marc'],
-                    ['email' => 'fan3@example.com',  'prenom' => 'Sophie'],
+                    ['Votre email' => 'julie.martin@gmail.com',       'Prénom' => 'Julie',     "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'marc.fontaine@outlook.fr',     'Prénom' => 'Marc',      "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'sophie.bernard@yahoo.fr',      'Prénom' => 'Sophie',    "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'thomas.dev@protonmail.com',    'Prénom' => 'Thomas',    "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'alice.designer@gmail.com',     'Prénom' => 'Alice',     "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'hugo.cto@startupfactory.fr',   'Prénom' => 'Hugo',      "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'nathalie.rh@clinique-sj.fr',   'Prénom' => 'Nathalie',  "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'pierre.pdg@ecobuilding.fr',    'Prénom' => 'Pierre',    "J'accepte de recevoir des communications Aurora" => true],
                 ],
             ],
         ];
