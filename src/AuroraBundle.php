@@ -78,6 +78,13 @@ class AuroraBundle extends AbstractBundle
                         'prefix' => 'Aurora\Module\Billing',
                         'alias' => 'AuroraBilling',
                     ],
+                    'AuroraGed' => [
+                        'type' => 'attribute',
+                        'is_bundle' => false,
+                        'dir' => $dir.'/src/Module/Ged',
+                        'prefix' => 'Aurora\Module\Ged',
+                        'alias' => 'AuroraGed',
+                    ],
                 ],
             ],
         ]);
@@ -95,6 +102,7 @@ class AuroraBundle extends AbstractBundle
                 $dir.'/templates/Module/Ecommerce' => 'Ecommerce',
                 $dir.'/templates/Module/Photo' => 'Photo',
                 $dir.'/templates/Module/Billing' => 'Billing',
+                $dir.'/templates/Module/Ged' => 'Ged',
             ],
         ]);
 
@@ -117,6 +125,7 @@ class AuroraBundle extends AbstractBundle
                     $dir.'/src/Module/Ecommerce/translations',
                     $dir.'/src/Module/Photo/translations',
                     $dir.'/src/Module/Billing/translations',
+                    $dir.'/src/Module/Ged/translations',
                 ],
                 'fallbacks' => ['fr'],
             ],

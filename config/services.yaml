@@ -93,6 +93,9 @@ services:
     Aurora\Module\Billing\BillingModule:
         tags: [aurora.module]
 
+    Aurora\Module\Ged\GedModule:
+        tags: [aurora.module]
+
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:
             $baseUrl: '%env(OCR_DOCTR_URL)%'

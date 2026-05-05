@@ -1,0 +1,49 @@
+admin:
+  modules:
+    ged: DMS
+  nav:
+    sections:
+      ged: DMS
+    documents: Documents
+    ged_categories: Categories
+  ged:
+    documents:
+      reference: Reference
+      title: Title
+      description: Description
+      status: Status
+      category: Category
+      file: File
+      add: New document
+      create: Create a document
+      edit: "Edit document {title}"
+      searchPlaceholder: Search a document…
+      created: Document created successfully
+      updated: Document updated
+      deleted: Document deleted
+      empty: No documents yet
+      deleteConfirm: "Are you sure you want to delete document « {title} »?"
+      deleteWarning: This action cannot be undone.
+      noCategory: No category
+      chooseFile: Choose a file
+      status_draft: Draft
+      status_published: Published
+      status_archived: Archived
+      errors:
+        title_required: Title is required
+    categories:
+      name: Name
+      slug: Identifier
+      description: Description
+      add: New category
+      create: Create a category
+      edit: "Edit category {name}"
+      searchPlaceholder: Search a category…
+      created: Category created successfully
+      updated: Category updated
+      deleted: Category deleted
+      empty: No categories yet
+      deleteConfirm: "Are you sure you want to delete category « {name} »?"
+      deleteWarning: Linked documents will not be deleted.
+      errors:
+        name_required: Name is required

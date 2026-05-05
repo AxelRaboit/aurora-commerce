@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Ged\DocumentCategory\Serializer;
+
+use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
+use DateTimeInterface;
+
+final readonly class DocumentCategorySerializer
+{
+    public function serialize(DocumentCategory $category): array
+    {
+        return [
+            'id' => $category->getId(),
+            'name' => $category->getName(),
+            'slug' => $category->getSlug(),
+            'description' => $category->getDescription(),
+            'createdAt' => $category->getCreatedAt()->format(DateTimeInterface::ATOM),
+            'updatedAt' => $category->getUpdatedAt()->format(DateTimeInterface::ATOM),
+        ];
+    }
+}

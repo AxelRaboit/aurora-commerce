@@ -29,6 +29,7 @@ export default defineConfig({
             '@ecommerce': path.resolve(__dirname, 'assets/Module/Ecommerce'),
             '@photo': path.resolve(__dirname, 'assets/Module/Photo'),
             '@billing': path.resolve(__dirname, 'assets/Module/Billing'),
+            '@ged': path.resolve(__dirname, 'assets/Module/Ged'),
             '@shared': path.resolve(__dirname, 'assets/shared'),
             '@client': CLIENT_DIR,
         },

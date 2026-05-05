@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Ged\DocumentCategory\View;
+
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
+use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+final readonly class DocumentCategoriesViewBuilder
+{
+    public function __construct(
+        private DocumentCategoryRepository $categoryRepository,
+        private DocumentCategorySerializer $categorySerializer,
+        private UrlGeneratorInterface $urlGenerator,
+    ) {}
+
+    public function indexView(PaginationRequest $pagination): array
+    {
+        return [
+            'categories' => $this->buildListPayload($pagination),
+            'search' => $pagination->search ?? '',
+            'createPath' => $this->urlGenerator->generate('ged_categories_create'),
+            'updatePath' => $this->urlGenerator->generate('ged_categories_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('ged_categories_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('ged_categories_list'),
+        ];
+    }
+
+    public function buildListPayload(PaginationRequest $pagination): array
+    {
+        $result = $this->categoryRepository->findPaginated($pagination->page, search: $pagination->search);
+
+        return [
+            'success' => true,
+            'items' => array_map($this->categorySerializer->serialize(...), $result['items']),
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'totalPages' => $result['totalPages'],
+        ];
+    }
+}

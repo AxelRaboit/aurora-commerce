@@ -43,4 +43,5 @@ enum SequencePrefixEnum: string
     case GalleryFinalization = 'GFN';
     case GalleryItemComment = 'GIC';
     case GalleryPick = 'GPK';
+    case GedDocument = 'DOC';
 }

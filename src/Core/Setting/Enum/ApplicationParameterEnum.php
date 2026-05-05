@@ -39,6 +39,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoAdminEnabled = 'photo_admin_enabled';
     case PhotoFrontEnabled = 'photo_front_enabled';
     case BillingAdminEnabled = 'billing_admin_enabled';
+    case GedAdminEnabled = 'ged_admin_enabled';
+    case GedDocumentPrefix = 'ged_document_prefix';
     case BillingInvoicePrefix = 'billing_invoice_prefix';
     case BillingCreditNotePrefix = 'billing_credit_note_prefix';
     case EcommerceOrderPrefix = 'ecommerce_order_prefix';
@@ -112,6 +114,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoAdminEnabled => 'Administration Photo activée',
             self::PhotoFrontEnabled => 'Galeries publiques activées (front)',
             self::BillingAdminEnabled => 'Administration facturation activée',
+            self::GedAdminEnabled => 'Administration GED activée',
+            self::GedDocumentPrefix => 'Préfixe des références documents GED',
             self::BillingInvoicePrefix => 'Préfixe des numéros de factures',
             self::BillingCreditNotePrefix => 'Préfixe des numéros d\'avoirs',
             self::EcommerceOrderPrefix => 'Préfixe des numéros de commandes',
@@ -190,6 +194,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CrmCompanyPrefix => 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.',
             self::EcommerceOrderPrefix => 'Préfixe du numéro de commande auto-généré (ex: ORD). Laissez vide pour désactiver.',
             self::BillingAdminEnabled => "Active la section Facturation dans l'administration (factures fournisseurs, OCR, import). Décocher cache la sidebar et 404 les routes /admin/billing/*.",
+            self::GedAdminEnabled => "Active la section GED dans l'administration. Décocher cache la sidebar et 404 les routes /admin/ged/*.",
+            self::GedDocumentPrefix => 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.',
             self::EmailLocale => 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.',
             self::PhotoGalleryPrefix => 'Préfixe de la référence galerie photo auto-générée (ex: GAL).',
             self::EditorialPostPrefix => 'Préfixe de la référence article auto-générée (ex: ART).',
@@ -252,6 +258,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoAdminEnabled => '1',
             self::PhotoFrontEnabled => '1',
             self::BillingAdminEnabled => '1',
+            self::GedAdminEnabled => '1',
+            self::GedDocumentPrefix => 'DOC',
             self::BillingInvoicePrefix => SequencePrefixEnum::Invoice->value,
             self::BillingCreditNotePrefix => SequencePrefixEnum::CreditNote->value,
             self::EcommerceOrderPrefix => SequencePrefixEnum::Order->value,
@@ -293,7 +301,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
@@ -362,8 +370,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled => 'modules',
-            self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix => 'sequences',
+            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'modules',
+            self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
         };
