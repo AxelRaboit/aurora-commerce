@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Wrapper for the i18n dump command, used by package.json's predev/prebuild
+# hooks. When AURORA_CLIENT_DIR is set, we're running inside a client project
+# (pnpm cwd is vendor/aurora) — in that case, run the client's bin/console so
+# the client's services.yaml override (with $extraSourceDirs) is applied.
+
+if [ -n "${AURORA_CLIENT_DIR:-}" ]; then
+    CLIENT_ROOT="$(cd "${AURORA_CLIENT_DIR}/../.." && pwd)"
+    exec php "${CLIENT_ROOT}/bin/console" app:translations:dump-js
+fi
+
+exec php bin/console app:translations:dump-js

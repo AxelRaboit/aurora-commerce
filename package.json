@@ -2,9 +2,9 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
-        "i18n": "php bin/console app:translations:dump-js",
-        "predev": "php bin/console app:translations:dump-js",
-        "prebuild": "php bin/console app:translations:dump-js",
+        "i18n": "bash ./bin/dump-translations",
+        "predev": "bash ./bin/dump-translations",
+        "prebuild": "bash ./bin/dump-translations",
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
