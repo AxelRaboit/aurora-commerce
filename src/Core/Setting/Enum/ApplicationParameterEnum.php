@@ -360,6 +360,19 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         };
     }
 
+    public function getModuleId(): ?string
+    {
+        return match ($this) {
+            self::CrmAdminEnabled => 'crm',
+            self::ErpAdminEnabled => 'erp',
+            self::EcommerceAdminEnabled => 'ecommerce',
+            self::PhotoAdminEnabled => 'photo',
+            self::BillingAdminEnabled => 'billing',
+            self::GedAdminEnabled => 'ged',
+            default => null,
+        };
+    }
+
     public function getGroup(): string
     {
         return match ($this) {
