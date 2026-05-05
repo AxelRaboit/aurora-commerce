@@ -22,6 +22,7 @@ install-dev: ## Install for local development
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
+	$(PNPM) --dir=$(AURORA) install
 	$(PNPM) install
 	make setup-dirs
 	make db-create
@@ -66,6 +67,7 @@ aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
+	$(PNPM) --dir=$(AURORA) install
 	$(PNPM) install
 	make migrate
 	@echo "✅ Aurora updated"

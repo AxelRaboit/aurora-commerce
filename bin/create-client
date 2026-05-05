@@ -411,8 +411,8 @@ cat > "$DEST/package.json" <<EOF
     "scripts": {
         "predev": "php bin/console app:translations:dump-js",
         "prebuild": "php bin/console app:translations:dump-js",
-        "dev": "vite",
-        "build": "vite build",
+        "dev": "NODE_PATH=./${AURORA_VENDOR_PATH}/node_modules vite",
+        "build": "NODE_PATH=./${AURORA_VENDOR_PATH}/node_modules vite build",
         "preview": "vite preview"
     },
     "devDependencies": {
