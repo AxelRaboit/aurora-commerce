@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\View;
 
+use Aurora\Core\Module\PermissionRegistry;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 
-/**
- * Builds the Twig payload for the admin users page. Centralises the role
- * options + current-user priority shape so the controller stays focused on
- * JSON CRUD operations.
- */
 final readonly class UsersViewBuilder
 {
+    public function __construct(private PermissionRegistry $permissionRegistry) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -32,10 +30,22 @@ final readonly class UsersViewBuilder
             ? UserRoleEnum::highestPriorityForRoles($currentUser->getRoles())
             : 0;
 
+        // All privileges grouped by module — used by the Dev UI to assign privileges per user.
+        $privilegesByModule = [];
+        foreach ($this->permissionRegistry->byModule() as $moduleId => $privileges) {
+            if ([] !== $privileges) {
+                $privilegesByModule[] = [
+                    'module' => $moduleId,
+                    'privileges' => $privileges,
+                ];
+            }
+        }
+
         return [
             'roles' => $roles,
             'isDev' => $isDev,
             'currentUserPriority' => $currentUserPriority,
+            'privilegesByModule' => $privilegesByModule,
         ];
     }
 }

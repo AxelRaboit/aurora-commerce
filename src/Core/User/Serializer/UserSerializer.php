@@ -75,6 +75,7 @@ final readonly class UserSerializer
             ...$this->serialize($user),
             'subordinates' => $subordinates,
             'subordinatesCount' => count($subordinates),
+            'privileges' => $user->getPrivileges(),
         ];
     }
 }

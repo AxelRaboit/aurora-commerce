@@ -253,6 +253,12 @@ export default {
                 none: "No manager",
                 subordinates: "Direct reports ({count})",
             },
+            privileges: {
+                title: "Privileges",
+                save: "Save privileges",
+                saved: "Privileges updated",
+                no_dev_target: "Cannot assign privileges to a Dev user.",
+            },
             photo: {
                 upload: "Change photo",
                 remove: "Remove photo",

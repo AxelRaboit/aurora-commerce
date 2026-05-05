@@ -256,6 +256,12 @@ export default {
                 none: "Aucun responsable",
                 subordinates: "Subordonnés ({count})",
             },
+            privileges: {
+                title: "Privilèges",
+                save: "Enregistrer les privilèges",
+                saved: "Privilèges mis à jour",
+                no_dev_target: "Impossible d'assigner des privilèges à un Dev.",
+            },
             photo: {
                 upload: "Changer la photo",
                 remove: "Supprimer la photo",

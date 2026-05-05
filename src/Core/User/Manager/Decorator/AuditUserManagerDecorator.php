@@ -154,6 +154,16 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         return $this->inner->findValidInvitation($selector, $token);
     }
 
+    public function updatePrivileges(User $user, array $privileges): void
+    {
+        $this->inner->updatePrivileges($user, $privileges);
+
+        $this->auditLogger->log('core', 'user.privileges_updated', 'User', $user->getId(), [
+            'name' => $user->getName(),
+            'privileges' => $privileges,
+        ]);
+    }
+
     public function canActOn(User $actor, User $target): bool
     {
         return $this->inner->canActOn($actor, $target);

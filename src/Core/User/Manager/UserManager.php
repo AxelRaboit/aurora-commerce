@@ -194,6 +194,13 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
+    /** @param list<string> $privileges */
+    public function updatePrivileges(User $user, array $privileges): void
+    {
+        $user->setPrivileges($privileges);
+        $this->entityManager->flush();
+    }
+
     public function delete(User $user): void
     {
         $this->entityManager->remove($user);

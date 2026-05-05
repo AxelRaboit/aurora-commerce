@@ -15,6 +15,8 @@
     roles: roles,
     isDev: isDev,
     currentUserPriority: currentUserPriority,
+    privilegesByModule: privilegesByModule,
+    privilegesPath: path('admin_users_privileges', {id: '__id__'}),
     listPath: path('admin_users_list'),
     invitePath: path('admin_users_invite'),
     updatePath: path('admin_users_update', {id: '__id__'}),

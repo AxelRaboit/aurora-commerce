@@ -33,6 +33,9 @@ interface UserManagerInterface
 
     public function changeMoodMessage(User $user, ?string $moodMessage): void;
 
+    /** @param list<string> $privileges */
+    public function updatePrivileges(User $user, array $privileges): void;
+
     public function delete(User $user): void;
 
     public function isPasswordValid(User $user, string $plainPassword): bool;
