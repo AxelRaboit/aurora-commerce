@@ -10,9 +10,16 @@ import enSource from "@/locales/source/en.js";
 import frYaml from "@/locales/generated/fr.json";
 import enYaml from "@/locales/generated/en.json";
 
+// Optional client-specific locale sources (e.g. custom module permission names).
+// Resolves via the @client alias; returns {} when AURORA_CLIENT_DIR is unset.
+const clientLocales = import.meta.glob("@client/locales/*.js", { eager: true });
+const clientFr = clientLocales["@client/locales/fr.js"]?.default ?? {};
+const clientEn = clientLocales["@client/locales/en.js"]?.default ?? {};
+
 // YAML wins on conflict so updates to messages.yaml propagate without touching JS sources.
-const fr = deepMerge(frSource, frYaml);
-const en = deepMerge(enSource, enYaml);
+// Client wins last so custom modules can override or extend any key.
+const fr = deepMerge(deepMerge(frSource, frYaml), clientFr);
+const en = deepMerge(deepMerge(enSource, enYaml), clientEn);
 
 export function createAppI18n(locale = "fr") {
     return createI18n({
