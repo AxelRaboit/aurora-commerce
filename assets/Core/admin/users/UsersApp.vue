@@ -309,7 +309,7 @@ function openViewWithPrivileges(user) {
                     <div v-if="isDev && editModal.editing && !editModal.editing.isDev && privilegesByModule.length" class="w-64 shrink-0 border-l border-line/40 pl-6 space-y-3">
                         <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.users.privileges.title') }}</p>
                         <div v-for="group in privilegesByModule" :key="group.module" class="space-y-1.5">
-                            <p class="text-xs font-medium text-muted capitalize">{{ group.module }}</p>
+                            <p class="text-xs font-medium text-muted capitalize">{{ t('admin.modules.' + group.module, group.module) }}</p>
                             <div class="flex flex-col gap-2">
                                 <AppCheckbox
                                     v-for="priv in group.privileges"
