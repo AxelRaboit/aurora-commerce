@@ -6,6 +6,10 @@ namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\MenuItemTranslation;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -102,6 +106,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
+        $this->createMenuItems($manager);
 
         $manager->flush();
     }
@@ -344,19 +349,93 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $createdPosts[] = $post;
         }
 
-        // 3 more posts — variety
+        // Extra posts with rich EditorJS content including images
+        $img0 = isset($media[0]) ? $media[0]->getPublicUrl() : '';
+        $img1 = isset($media[1]) ? $media[1]->getPublicUrl() : '';
+        $img2 = isset($media[2]) ? $media[2]->getPublicUrl() : '';
+        $img3 = isset($media[3]) ? $media[3]->getPublicUrl() : '';
+
+        /** @var array<int, array{title: string, slug: string, media: ?Media, ago: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}> $extraDefs */
         $extraDefs = [
-            ['title' => 'Retour sur Aurora Tech Day 2025', 'slug' => 'aurora-tech-day-2025', 'media' => $media[3] ?? null, 'ago' => '3 days'],
-            ['title' => 'Roadmap Aurora 2025-2026 : les grandes orientations', 'slug' => 'roadmap-aurora-2025-2026', 'media' => $media[0] ?? null, 'ago' => '10 days'],
-            ['title' => 'Tutoriel : créer votre premier module client Aurora', 'slug' => 'tutoriel-premier-module-client', 'media' => $media[1] ?? null, 'ago' => '5 days'],
+            [
+                'title' => 'Retour sur Aurora Tech Day 2025',
+                'slug' => 'aurora-tech-day-2025',
+                'media' => $media[3] ?? null,
+                'ago' => '3 days',
+                'blocks' => [
+                    ['type' => 'heading',   'data' => ['text' => 'Une journée dédiée à l\'innovation', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'Plus de 200 développeurs et dirigeants réunis pour découvrir les nouveautés Aurora. '.self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img3, 'width' => 1200, 'height' => 800], 'caption' => 'Aurora Tech Day 2025 — Grande salle des conférences', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
+                    ['type' => 'heading',   'data' => ['text' => 'Les annonces phares', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Démonstration en direct du module GED', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                ],
+            ],
+            [
+                'title' => 'Roadmap Aurora 2025-2026 : les grandes orientations',
+                'slug' => 'roadmap-aurora-2025-2026',
+                'media' => $media[0] ?? null,
+                'ago' => '10 days',
+                'blocks' => [
+                    ['type' => 'heading',   'data' => ['text' => 'Notre vision pour les 18 prochains mois', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'Nous avons écouté vos retours. Voici les priorités qui guideront le développement d\'Aurora jusqu\'en 2026. '.self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Feuille de route Aurora 2025-2026', 'withBorder' => false, 'withBackground' => true, 'stretched' => false]],
+                    ['type' => 'heading',   'data' => ['text' => 'Module Suivi & Workflow', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'heading',   'data' => ['text' => 'Intelligence artificielle intégrée', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                ],
+            ],
+            [
+                'title' => 'Tutoriel : créer votre premier module client Aurora',
+                'slug' => 'tutoriel-premier-module-client',
+                'media' => $media[1] ?? null,
+                'ago' => '5 days',
+                'blocks' => [
+                    ['type' => 'heading',   'data' => ['text' => 'Prérequis', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'Aurora est installé, vous avez un projet client. Maintenant, créons un module sur-mesure. '.self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img1, 'width' => 1280, 'height' => 720], 'caption' => "Structure d'un module Aurora", 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
+                    ['type' => 'heading',   'data' => ['text' => 'Étape 1 : Créer l\'entité', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'heading',   'data' => ['text' => 'Étape 2 : Le composant Vue', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img2, 'width' => 800, 'height' => 1000], 'caption' => 'Le résultat final dans l\'admin', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
+                ],
+            ],
+            [
+                'title' => 'Aurora & l\'IA : automatisez vos processus métier',
+                'slug' => 'aurora-ia-automatisation-processus',
+                'media' => $media[2] ?? null,
+                'ago' => '2 days',
+                'blocks' => [
+                    ['type' => 'heading',   'data' => ['text' => 'L\'IA au service de la productivité', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img2, 'width' => 800, 'height' => 1000], 'caption' => 'Interface Aurora avec suggestions IA', 'withBorder' => false, 'withBackground' => false, 'stretched' => false]],
+                    ['type' => 'heading',   'data' => ['text' => 'OCR et extraction de données', 'level' => 3]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                ],
+            ],
+            [
+                'title' => 'Guide : Sécuriser Aurora en production',
+                'slug' => 'guide-securiser-aurora-production',
+                'media' => $media[0] ?? null,
+                'ago' => '15 days',
+                'blocks' => [
+                    ['type' => 'heading',   'data' => ['text' => 'Checklist sécurité production', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                    ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Dashboard monitoring Aurora', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
+                    ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
+                ],
+            ],
         ];
         foreach ($extraDefs as $extra) {
             $p = new Post();
             $p->setPostType($postType)->setStatus(PostStatusEnum::Published)->setPublishedAt(new DateTimeImmutable('-'.$extra['ago']));
             $tr = new PostTranslation();
             $tr->setPost($p)->setLocale('fr')->setTitle($extra['title'])->setSlug($extra['slug'])
-               ->setBlocks([['type' => 'paragraph', 'data' => ['text' => self::LOREM]]])
-               ->setSearchContent(self::LOREM);
+               ->setBlocks($extra['blocks'])
+               ->setSearchContent($this->blocksText($extra['blocks']));
             if (null !== $extra['media']) {
                 $tr->setOgImage($extra['media']);
             }
@@ -551,9 +630,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     {
         $companies = [];
         $companyDefs = [
-            ['name' => 'Tech Innovation SARL',   'industry' => 'Informatique & Logiciels', 'website' => 'https://tech-innovation.fr', 'phone' => '+33 1 42 00 11 22', 'address' => '15 rue de la Paix, 75001 Paris'],
-            ['name' => 'BioMed France',           'industry' => 'Santé & Biotechnologies',  'website' => 'https://biomed-france.com',   'phone' => '+33 4 91 55 66 77', 'address' => '8 avenue du Prado, 13008 Marseille'],
-            ['name' => 'Retail Connect SAS',      'industry' => 'Commerce & Distribution',  'website' => 'https://retail-connect.fr',   'phone' => '+33 4 72 11 33 55', 'address' => '42 cours Gambetta, 69007 Lyon'],
+            ['name' => 'Tech Innovation SARL',     'industry' => 'Informatique & Logiciels',  'website' => 'https://tech-innovation.fr',    'phone' => '+33 1 42 00 11 22', 'address' => '15 rue de la Paix, 75001 Paris'],
+            ['name' => 'BioMed France',             'industry' => 'Santé & Biotechnologies',   'website' => 'https://biomed-france.com',     'phone' => '+33 4 91 55 66 77', 'address' => '8 avenue du Prado, 13008 Marseille'],
+            ['name' => 'Retail Connect SAS',        'industry' => 'Commerce & Distribution',   'website' => 'https://retail-connect.fr',     'phone' => '+33 4 72 11 33 55', 'address' => '42 cours Gambetta, 69007 Lyon'],
+            ['name' => 'Nexus Digital Agency',      'industry' => 'Marketing & Communication', 'website' => 'https://nexus-digital.fr',      'phone' => '+33 1 55 35 00 10', 'address' => '22 rue de Rivoli, 75004 Paris'],
+            ['name' => 'Groupe Leclerc Nord',       'industry' => 'Grande Distribution',       'website' => 'https://leclerc-nord.fr',       'phone' => '+33 3 20 44 55 66', 'address' => '1 rue du Commerce, 59000 Lille'],
+            ['name' => 'Clinique Saint-Joseph',     'industry' => 'Santé',                     'website' => 'https://clinique-sj.fr',        'phone' => '+33 2 31 06 00 00', 'address' => '2 rue Saint-Ouen, 14000 Caen'],
+            ['name' => 'FinTech Horizons SAS',      'industry' => 'Finance & Assurance',       'website' => 'https://fintech-horizons.fr',   'phone' => '+33 1 83 62 10 20', 'address' => '17 rue de la Bourse, 75002 Paris'],
+            ['name' => 'EcoBuilding Constructions', 'industry' => 'BTP & Construction',        'website' => 'https://ecobuilding.fr',        'phone' => '+33 4 37 00 33 44', 'address' => '5 allée des Bâtisseurs, 38000 Grenoble'],
+            ['name' => 'LogiMove Transport',        'industry' => 'Logistique & Transport',    'website' => 'https://logimove.fr',           'phone' => '+33 5 57 85 00 70', 'address' => 'Zone Portuaire, 33000 Bordeaux'],
+            ['name' => 'StartupFactory Lyon',       'industry' => 'Incubateur & Startup',      'website' => 'https://startupfactory.fr',     'phone' => '+33 4 26 68 77 88', 'address' => 'EMLYON, 23 av. Guy de Collongue, 69130 Écully'],
         ];
         foreach ($companyDefs as $def) {
             $c = new Company();
@@ -568,11 +654,21 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $contacts = [];
         $contactDefs = [
-            ['first' => 'Pierre',  'last' => 'Dubois',   'email' => 'pierre.dubois@tech-innovation.fr', 'phone' => '+33 6 12 34 56 78', 'company' => 0],
-            ['first' => 'Camille', 'last' => 'Leroy',    'email' => 'c.leroy@biomed-france.com',        'phone' => '+33 6 23 45 67 89', 'company' => 1],
-            ['first' => 'François', 'last' => 'Moreau',   'email' => 'f.moreau@retail-connect.fr',       'phone' => '+33 6 34 56 78 90', 'company' => 2],
-            ['first' => 'Julie',   'last' => 'Chen',     'email' => 'julie.chen@tech-innovation.fr',    'phone' => '+33 6 45 67 89 01', 'company' => 0],
-            ['first' => 'Marc',    'last' => 'Fontaine', 'email' => 'marc.fontaine@prospect.com',       'phone' => '+33 6 56 78 90 12', 'company' => null],
+            ['first' => 'Pierre',    'last' => 'Dubois',    'email' => 'pierre.dubois@tech-innovation.fr',  'phone' => '+33 6 12 34 56 78', 'company' => 0],
+            ['first' => 'Camille',   'last' => 'Leroy',     'email' => 'c.leroy@biomed-france.com',         'phone' => '+33 6 23 45 67 89', 'company' => 1],
+            ['first' => 'François',  'last' => 'Moreau',    'email' => 'f.moreau@retail-connect.fr',        'phone' => '+33 6 34 56 78 90', 'company' => 2],
+            ['first' => 'Julie',     'last' => 'Chen',      'email' => 'julie.chen@tech-innovation.fr',     'phone' => '+33 6 45 67 89 01', 'company' => 0],
+            ['first' => 'Marc',      'last' => 'Fontaine',  'email' => 'marc.fontaine@prospect.com',        'phone' => '+33 6 56 78 90 12', 'company' => null],
+            ['first' => 'Isabelle',  'last' => 'Renard',    'email' => 'i.renard@nexus-digital.fr',         'phone' => '+33 6 67 89 01 23', 'company' => 3],
+            ['first' => 'David',     'last' => 'Beaumont',  'email' => 'd.beaumont@leclerc-nord.fr',        'phone' => '+33 6 78 90 12 34', 'company' => 4],
+            ['first' => 'Nathalie',  'last' => 'Simon',     'email' => 'n.simon@clinique-sj.fr',            'phone' => '+33 6 89 01 23 45', 'company' => 5],
+            ['first' => 'Antoine',   'last' => 'Garnier',   'email' => 'a.garnier@fintech-horizons.fr',     'phone' => '+33 6 90 12 34 56', 'company' => 6],
+            ['first' => 'Laure',     'last' => 'Michaud',   'email' => 'l.michaud@ecobuilding.fr',          'phone' => '+33 6 01 23 45 67', 'company' => 7],
+            ['first' => 'Sébastien', 'last' => 'Blanc',     'email' => 's.blanc@logimove.fr',               'phone' => '+33 6 12 23 34 45', 'company' => 8],
+            ['first' => 'Emma',      'last' => 'Rousseau',  'email' => 'e.rousseau@startupfactory.fr',      'phone' => '+33 6 23 34 45 56', 'company' => 9],
+            ['first' => 'Thomas',    'last' => 'Lambert',   'email' => 'tlambert@prospect.io',              'phone' => '+33 6 34 45 56 67', 'company' => null],
+            ['first' => 'Céline',    'last' => 'Dupuis',    'email' => 'celine.dupuis@startup-prospect.fr', 'phone' => '+33 6 45 56 67 78', 'company' => null],
+            ['first' => 'Hugo',      'last' => 'Marchand',  'email' => 'h.marchand@tech-innovation.fr',     'phone' => '+33 6 56 67 78 89', 'company' => 0],
         ];
         foreach ($contactDefs as $def) {
             $c = new Contact();
@@ -624,11 +720,22 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     {
         $products = [];
         $defs = [
-            ['ref' => 'LIC-CRM-001',  'name' => 'Aurora CRM — Licence annuelle',        'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 79900,  'stock' => null, 'desc' => 'Accès complet au module CRM Aurora. Contacts, entreprises, deals, pipeline Kanban. Licence par utilisateur / an.'],
-            ['ref' => 'LIC-ERP-001',  'name' => 'Aurora ERP — Licence annuelle',         'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 99900,  'stock' => null, 'desc' => 'Gestion des produits, stocks, fournisseurs et commandes. Licence par utilisateur / an.'],
-            ['ref' => 'HW-NAS-001',   'name' => 'Serveur NAS 4 baies (8 To)',            'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 64900,  'stock' => 12,   'desc' => 'Serveur de stockage réseau 4 baies, 8 To (2×4 To RAID 1). Idéal pour la GED et sauvegardes.'],
-            ['ref' => 'HW-USB-010',   'name' => 'Clé USB sécurisée 256 Go × 10',         'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 14900,  'stock' => 48,   'desc' => 'Pack de 10 clés USB chiffrées AES-256, 256 Go, compatibles USB-C et USB-A.'],
-            ['ref' => 'SRV-DEV-001',  'name' => 'Formation Développement Web (3 jours)', 'type' => ProductTypeEnum::Service,   'status' => ProductStatusEnum::Active,   'price' => 189000, 'stock' => null, 'desc' => 'Formation intensive 3 jours : Symfony 7, Vue.js 3, Vite. Groupe de 5 à 8 personnes. Intra-entreprise.'],
+            ['ref' => 'LIC-CRM-001',  'name' => 'Aurora CRM — Licence annuelle',              'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 79900,   'stock' => null, 'desc' => 'Accès complet au module CRM Aurora. Contacts, entreprises, deals, pipeline Kanban. Licence par utilisateur / an.'],
+            ['ref' => 'LIC-ERP-001',  'name' => 'Aurora ERP — Licence annuelle',               'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 99900,   'stock' => null, 'desc' => 'Gestion des produits, stocks, fournisseurs et commandes. Licence par utilisateur / an.'],
+            ['ref' => 'LIC-GED-001',  'name' => 'Aurora GED — Licence annuelle',               'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 59900,   'stock' => null, 'desc' => 'Gestion électronique de documents : catégories, statuts, métadonnées, fichiers liés.'],
+            ['ref' => 'LIC-PHOTO-001', 'name' => 'Aurora Photo — Licence annuelle',             'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 69900,   'stock' => null, 'desc' => 'Galeries de livraison photo client avec sélections, commentaires et téléchargements sécurisés.'],
+            ['ref' => 'LIC-FULL-001', 'name' => 'Aurora Suite Complète — Licence annuelle',    'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 299000,  'stock' => null, 'desc' => 'Tous les modules Aurora inclus : CRM, ERP, E-commerce, Billing, GED, Photo, Editorial.'],
+            ['ref' => 'HW-NAS-001',   'name' => 'Serveur NAS 4 baies (8 To)',                  'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 64900,   'stock' => 12,   'desc' => 'Serveur de stockage réseau 4 baies, 8 To (2×4 To RAID 1). Idéal pour la GED et sauvegardes.'],
+            ['ref' => 'HW-NAS-002',   'name' => 'Serveur NAS 8 baies Pro (24 To)',              'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 149900,  'stock' => 5,    'desc' => 'Serveur NAS professionnel 8 baies, 24 To RAID 5. Parfait pour les équipes de 20+ personnes.'],
+            ['ref' => 'HW-USB-010',   'name' => 'Clé USB sécurisée 256 Go × 10',               'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 14900,   'stock' => 48,   'desc' => 'Pack de 10 clés USB chiffrées AES-256, 256 Go, compatibles USB-C et USB-A.'],
+            ['ref' => 'HW-DOCK-001',  'name' => "Station d'accueil USB-C 12 ports",            'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 18900,   'stock' => 24,   'desc' => '12 ports : 3× USB-A, 2× USB-C, HDMI, DisplayPort, Ethernet, SD, audio. Charge 96 W.'],
+            ['ref' => 'HW-SCR-001',   'name' => 'Écran 27" 4K IPS — Ergonomie Pro',            'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Active,   'price' => 44900,   'stock' => 18,   'desc' => 'Moniteur 27 pouces 4K IPS, 120 Hz, Delta E < 2, certifié Pantone. Pied réglable + pivot.'],
+            ['ref' => 'SRV-DEV-001',  'name' => 'Formation Développement Web (3 jours)',        'type' => ProductTypeEnum::Service,   'status' => ProductStatusEnum::Active,   'price' => 189000,  'stock' => null, 'desc' => 'Formation intensive 3 jours : Symfony 7, Vue.js 3, Vite. Groupe de 5 à 8 personnes. Intra-entreprise.'],
+            ['ref' => 'SRV-AUDIT-001', 'name' => 'Audit & Conseil Sécurité SI (2 jours)',        'type' => ProductTypeEnum::Service,   'status' => ProductStatusEnum::Active,   'price' => 280000,  'stock' => null, 'desc' => 'Audit de sécurité complet : tests de pénétration, analyse des risques, rapport détaillé.'],
+            ['ref' => 'SRV-MAINT-001', 'name' => 'Contrat Maintenance Annuel',                   'type' => ProductTypeEnum::Service,   'status' => ProductStatusEnum::Active,   'price' => 120000,  'stock' => null, 'desc' => 'Support niveau 2, mises à jour, sauvegardes supervisées, SLA 4h. Engagement 12 mois.'],
+            ['ref' => 'SRV-ONBRD-001', 'name' => 'Onboarding & Déploiement Aurora',              'type' => ProductTypeEnum::Service,   'status' => ProductStatusEnum::Active,   'price' => 350000,  'stock' => null, 'desc' => 'Installation, configuration, migration de données et formation utilisateurs. Forfait clé en main.'],
+            ['ref' => 'LIC-CMS-001',  'name' => 'Aurora Editorial CMS — Licence annuelle',      'type' => ProductTypeEnum::Digital,   'status' => ProductStatusEnum::Active,   'price' => 49900,   'stock' => null, 'desc' => 'CMS éditorial complet : articles, taxonomies, formulaires, commentaires, SEO intégré.'],
+            ['ref' => 'HW-KBD-001',   'name' => 'Clavier Mécanique sans fil — Compact',        'type' => ProductTypeEnum::Physical,  'status' => ProductStatusEnum::Archived, 'price' => 12900,   'stock' => 0,    'desc' => 'Clavier 75% switches silencieux, autonomie 3 mois, compatible Windows/macOS/Linux. (Archivé)'],
         ];
         foreach ($defs as $i => $def) {
             $p = new Product();
@@ -661,9 +768,19 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     {
         $listings = [];
         $listingDefs = [
-            ['product' => 0, 'slug' => 'aurora-crm-licence-annuelle',       'title' => 'Aurora CRM — Licence annuelle',        'desc' => 'Gérez tous vos clients, contacts et deals depuis une interface unifiée. Essai 30 jours inclus.', 'media' => 0],
-            ['product' => 2, 'slug' => 'serveur-nas-4-baies',               'title' => 'Serveur NAS 4 baies 8 To',              'desc' => 'La solution de stockage réseau idéale pour les PME. Livraison en 48h, installation incluse.', 'media' => 1],
-            ['product' => 4, 'slug' => 'formation-developpement-web-3-jours', 'title' => 'Formation Développement Web 3 jours',   'desc' => 'Devenez expert Symfony + Vue.js en 3 jours intensifs. Certification incluse.', 'media' => 3],
+            ['product' => 0,  'slug' => 'aurora-crm-licence-annuelle',         'title' => 'Aurora CRM — Licence annuelle',              'desc' => 'Gérez tous vos clients, contacts et deals depuis une interface unifiée. Essai 30 jours inclus.', 'media' => 0],
+            ['product' => 1,  'slug' => 'aurora-erp-licence-annuelle',          'title' => 'Aurora ERP — Licence annuelle',               'desc' => 'Gérez vos stocks, fournisseurs et produits avec Aurora ERP. Import/export Excel inclus.', 'media' => 1],
+            ['product' => 2,  'slug' => 'aurora-ged-licence-annuelle',          'title' => 'Aurora GED — Gestion Documentaire',          'desc' => 'Centralisez tous vos documents, contrats et ressources internes. Accès par rôle.', 'media' => 0],
+            ['product' => 4,  'slug' => 'aurora-suite-complete',                'title' => 'Aurora Suite Complète — Tous Modules',       'desc' => 'L\'offre tout-en-un : CRM, ERP, E-commerce, Billing, GED, Photo et Editorial. Économisez 40%.', 'media' => 1],
+            ['product' => 5,  'slug' => 'serveur-nas-4-baies',                  'title' => 'Serveur NAS 4 baies 8 To',                   'desc' => 'La solution de stockage réseau idéale pour les PME. Livraison en 48h, installation incluse.', 'media' => 2],
+            ['product' => 6,  'slug' => 'serveur-nas-8-baies-pro-24to',         'title' => 'Serveur NAS 8 baies Pro 24 To',              'desc' => 'Pour les équipes exigeantes : 24 To, RAID 5, interface web d\'administration, backups auto.', 'media' => 3],
+            ['product' => 8,  'slug' => 'station-accueil-usb-c-12-ports',       'title' => "Station d'accueil USB-C 12 ports",           'desc' => 'Connectez tout en un port. Compatible MacBook, Dell XPS, Lenovo ThinkPad et plus.', 'media' => 2],
+            ['product' => 9,  'slug' => 'ecran-27-pouces-4k-ips',               'title' => 'Écran 27" 4K IPS Ergonomie Pro',             'desc' => 'Couleurs certifiées Pantone, dalle IPS sans flickering, idéal pour designers et devs.', 'media' => 1],
+            ['product' => 10, 'slug' => 'formation-developpement-web-3-jours',  'title' => 'Formation Développement Web 3 jours',        'desc' => 'Devenez expert Symfony + Vue.js en 3 jours intensifs. Certification incluse.', 'media' => 3],
+            ['product' => 11, 'slug' => 'audit-conseil-securite-si',            'title' => 'Audit & Conseil Sécurité Informatique',      'desc' => 'Nos experts sécurisent votre SI : pentest, analyse de risques, rapport d\'actions correctives.', 'media' => 0],
+            ['product' => 12, 'slug' => 'contrat-maintenance-annuel',            'title' => 'Contrat de Maintenance Annuel',               'desc' => 'Tranquillité d\'esprit : support dédié, SLA garanti, mises à jour et sauvegardes supervisées.', 'media' => 2],
+            ['product' => 13, 'slug' => 'onboarding-deploiement-aurora',         'title' => 'Pack Onboarding & Déploiement Aurora',       'desc' => 'Démarrez sereinement : installation, configuration, migration et formation. Clé en main.', 'media' => 3],
+            ['product' => 14, 'slug' => 'aurora-editorial-cms',                 'title' => 'Aurora Editorial CMS',                       'desc' => 'Publiez facilement articles, pages et formulaires avec un éditeur bloc moderne.', 'media' => 0],
         ];
         foreach ($listingDefs as $def) {
             $l = new Listing();
@@ -752,9 +869,26 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     private function createBilling(EntityManagerInterface $em, array $media): void
     {
         $tiersDefs = [
-            ['type' => TiersTypeEnum::Supplier, 'name' => 'Dell Technologies France', 'email' => 'business@dell.com',        'phone' => '+33 1 70 37 60 00', 'address' => '1 Rond-Point Benjamin Franklin, 34000 Montpellier'],
-            ['type' => TiersTypeEnum::Supplier, 'name' => 'SFR Business',             'email' => 'sfr-business@sfr.fr',      'phone' => '+33 9 70 00 19 19', 'address' => '16 rue du Général Foy, 75008 Paris'],
-            ['type' => TiersTypeEnum::Client,   'name' => 'Tech Innovation SARL',     'email' => 'compta@tech-innovation.fr', 'phone' => '+33 1 42 00 11 22', 'address' => '15 rue de la Paix, 75001 Paris'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'Dell Technologies France',   'email' => 'business@dell.com',            'phone' => '+33 1 70 37 60 00', 'address' => '1 Rond-Point Benjamin Franklin, 34000 Montpellier'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'SFR Business',               'email' => 'sfr-business@sfr.fr',          'phone' => '+33 9 70 00 19 19', 'address' => '16 rue du Général Foy, 75008 Paris'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'Tech Innovation SARL',       'email' => 'compta@tech-innovation.fr',    'phone' => '+33 1 42 00 11 22', 'address' => '15 rue de la Paix, 75001 Paris'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'BioMed France',              'email' => 'comptabilite@biomed-france.com', 'phone' => '+33 4 91 55 66 77', 'address' => '8 avenue du Prado, 13008 Marseille'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'Retail Connect SAS',         'email' => 'finance@retail-connect.fr',    'phone' => '+33 4 72 11 33 55', 'address' => '42 cours Gambetta, 69007 Lyon'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'OVHcloud',                   'email' => 'facturation@ovhcloud.com',     'phone' => '+33 9 72 10 10 07', 'address' => '2 rue Kellermann, 59100 Roubaix'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'Google Workspace',           'email' => 'billing@google.com',          'phone' => '+33 1 70 36 34 36', 'address' => '8 rue de Londres, 75009 Paris'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'AWS France',                 'email' => 'aws-billing@amazon.com',      'phone' => '+33 1 85 08 90 90', 'address' => '31 Place des Corolles, 92400 Courbevoie'],
+            ['type' => TiersTypeEnum::Partner,       'name' => 'Agence Pixel — Design',      'email' => 'devis@agence-pixel.fr',       'phone' => '+33 1 44 00 55 66', 'address' => '12 rue Oberkampf, 75011 Paris'],
+            ['type' => TiersTypeEnum::Partner,       'name' => 'ConseilPro Avocats',         'email' => 'contact@conseilpro.fr',       'phone' => '+33 1 53 04 40 40', 'address' => '10 boulevard Haussmann, 75009 Paris'],
+            ['type' => TiersTypeEnum::Subcontractor, 'name' => 'DevStudio — Freelance Dev',  'email' => 'hello@devstudio.io',          'phone' => '+33 6 77 88 99 00', 'address' => 'Remote — 33000 Bordeaux'],
+            ['type' => TiersTypeEnum::Subcontractor, 'name' => 'UX Lab — UI Design',        'email' => 'studio@uxlab.fr',             'phone' => '+33 6 11 22 33 44', 'address' => 'Remote — 69000 Lyon'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'Stripe Inc.',                'email' => 'support@stripe.com',          'phone' => '+1 888 926 2289',   'address' => '354 Oyster Point Blvd, San Francisco CA'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'GitHub Enterprise',          'email' => 'enterprise@github.com',       'phone' => '+1 877 448 4820',   'address' => '88 Colin P Kelly Jr St, San Francisco CA'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'Groupe Leclerc Nord',        'email' => 'achats@leclerc-nord.fr',      'phone' => '+33 3 20 44 55 66', 'address' => '1 rue du Commerce, 59000 Lille'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'Clinique Saint-Joseph',      'email' => 'dsi@clinique-sj.fr',         'phone' => '+33 2 31 06 00 00', 'address' => '2 rue Saint-Ouen, 14000 Caen'],
+            ['type' => TiersTypeEnum::Partner,       'name' => 'Héber Consulting',           'email' => 'axel@heber-consulting.fr',    'phone' => '+33 6 50 22 33 11', 'address' => 'Remote — 75000 Paris'],
+            ['type' => TiersTypeEnum::Supplier,      'name' => 'Adobe Creative Cloud',       'email' => 'billing@adobe.com',          'phone' => '+33 1 85 65 30 30', 'address' => '4 rue de la Victoire, 75009 Paris'],
+            ['type' => TiersTypeEnum::Client,        'name' => 'StartupFactory Lyon',        'email' => 'daf@startupfactory.fr',      'phone' => '+33 4 26 68 77 88', 'address' => 'EMLYON, 23 avenue Guy de Collongue, 69130 Écully'],
+            ['type' => TiersTypeEnum::Subcontractor, 'name' => 'DataInsight Analytics',      'email' => 'data@datainsight.fr',        'phone' => '+33 6 44 55 66 77', 'address' => 'Remote — 31000 Toulouse'],
         ];
         $tiers = [];
         foreach ($tiersDefs as $def) {
@@ -821,6 +955,39 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
               ->setTotalNetCents(8990)
               ->setTotalGrossCents(10788);
         $em->persist($line2);
+
+        // Additional invoices for variety
+        $extraInvoices = [
+            ['ti' => 5, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Hébergement OVHcloud — Serveur dédié 3 mois', 'net' => 44700,  'gross' => 53640, 'project' => 'Infrastructure Prod',   'ago' => '-2 months', 'terms' => '30 jours net'],
+            ['ti' => 6, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Google Workspace Business Plus — 10 licences', 'net' => 13200,  'gross' => 15840, 'project' => 'Outils bureautique',    'ago' => '-45 days',  'terms' => 'Mensuel'],
+            ['ti' => 7, 'status' => InvoiceStatusEnum::Validated,  'label' => 'AWS EC2 + RDS — Octobre 2025',                 'net' => 28600,  'gross' => 34320, 'project' => 'Cloud Aurora Tech',     'ago' => '-10 days',  'terms' => 'À réception'],
+            ['ti' => 8, 'status' => InvoiceStatusEnum::NeedsReview, 'label' => 'Prestation design UI — Refonte charte Q4',      'net' => 18000,  'gross' => 21600, 'project' => 'Refonte Marque 2025',   'ago' => '-5 days',   'terms' => '30 jours fin de mois'],
+            ['ti' => 9, 'status' => InvoiceStatusEnum::Draft,      'label' => 'Dev front-end Aurora — Sprint 8',               'net' => 9600,   'gross' => 11520, 'project' => 'Aurora v2.1',            'ago' => '-2 days',   'terms' => '15 jours'],
+            ['ti' => 10, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Stripe — Commission transactions Octobre 2025', 'net' => 4200,   'gross' => 5040,  'project' => 'E-commerce',             'ago' => '-30 days',  'terms' => 'Mensuel'],
+            ['ti' => 11, 'status' => InvoiceStatusEnum::Validated,  'label' => 'Adobe CC — 5 licences annuelles',               'net' => 31500,  'gross' => 37800, 'project' => 'Studio créatif',         'ago' => '-7 days',   'terms' => 'Annuel'],
+            ['ti' => 12, 'status' => InvoiceStatusEnum::Draft,      'label' => 'Analyse données — Dashboard Q3 2025',           'net' => 7200,   'gross' => 8640,  'project' => 'BI & Analytics',         'ago' => '-1 day',    'terms' => '30 jours net'],
+        ];
+        foreach ($extraInvoices as $ei) {
+            $inv = new Invoice();
+            $inv->setTiers($tiers[$ei['ti']] ?? $tiers[0])
+                ->setStatus($ei['status'])
+                ->setIssuedAt(new DateTimeImmutable($ei['ago']))
+                ->setDueAt(new DateTimeImmutable($ei['ago'].' +30 days'))
+                ->setSubtotalCents($ei['net'])
+                ->setTotalNetCents($ei['net'])
+                ->setTotalVatCents((int) ($ei['net'] * 0.2))
+                ->setTotalGrossCents($ei['gross'])
+                ->setCurrency(CurrencyEnum::EUR)
+                ->setProject($ei['project'])
+                ->setPaymentTerms($ei['terms']);
+            $em->persist($inv);
+
+            $line = new InvoiceLine();
+            $line->setInvoice($inv)->setLabel($ei['label'])->setQuantity('1')
+                 ->setUnitPriceCents($ei['net'])->setVatRateBp(2000)
+                 ->setTotalNetCents($ei['net'])->setTotalGrossCents($ei['gross']);
+            $em->persist($line);
+        }
     }
 
     // ── Photo ─────────────────────────────────────────────────────────────────
@@ -869,6 +1036,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $c = new GalleryItemComment();
             $c->setGalleryItem($items1[$ci % count($items1)])
               ->setContent($text)
+              ->setVisitorToken(bin2hex(random_bytes(8)))
               ->setVisitorName('Visiteur '.($ci + 1));
             $em->persist($c);
         }
@@ -990,6 +1158,100 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             }
 
             $em->persist($d);
+        }
+    }
+
+    // ── Menus ─────────────────────────────────────────────────────────────────
+
+    private function createMenuItems(EntityManagerInterface $em): void
+    {
+        $primary = $em->getRepository(Menu::class)->findOneBy(['location' => 'primary']);
+        $footer = $em->getRepository(Menu::class)->findOneBy(['location' => 'footer']);
+
+        if ($primary instanceof Menu) {
+            $primaryItems = [
+                ['fr' => 'Accueil',          'en' => 'Home',           'url' => '/',                  'type' => MenuItemTargetTypeEnum::Home],
+                ['fr' => 'Notre histoire',   'en' => 'Our story',      'url' => '/notre-histoire',    'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'Solutions',        'en' => 'Solutions',      'url' => '/solutions',         'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'Blog',             'en' => 'Blog',           'url' => '/blog',              'type' => MenuItemTargetTypeEnum::PostTypeArchive],
+                ['fr' => 'Tarifs',           'en' => 'Pricing',        'url' => '/tarifs',            'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'Boutique',         'en' => 'Shop',           'url' => '/shop',              'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'Ressources',       'en' => 'Resources',      'url' => '/ressources',        'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'À propos',         'en' => 'About',          'url' => '/a-propos',          'type' => MenuItemTargetTypeEnum::CustomUrl],
+                ['fr' => 'Contact',          'en' => 'Contact',        'url' => '/contact',           'type' => MenuItemTargetTypeEnum::CustomUrl],
+            ];
+            foreach ($primaryItems as $pos => $def) {
+                $item = new MenuItem();
+                $item->setMenu($primary)
+                     ->setTargetType($def['type'])
+                     ->setCustomUrl($def['url'])
+                     ->setPosition($pos);
+                $em->persist($item);
+                foreach (['fr', 'en'] as $locale) {
+                    $tr = new MenuItemTranslation();
+                    $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $def['fr'] : $def['en']);
+                    $em->persist($tr);
+                }
+            }
+        }
+
+        if ($footer instanceof Menu) {
+            $sections = [
+                ['fr' => 'Produit',     'en' => 'Product',      'url' => null, 'children' => [
+                    ['fr' => 'Fonctionnalités',  'en' => 'Features',    'url' => '/fonctionnalites'],
+                    ['fr' => 'Tarifs',           'en' => 'Pricing',     'url' => '/tarifs'],
+                    ['fr' => 'Roadmap',          'en' => 'Roadmap',     'url' => '/roadmap'],
+                    ['fr' => 'Nouveautés',       'en' => 'Changelog',   'url' => '/changelog'],
+                ]],
+                ['fr' => 'Ressources',  'en' => 'Resources',    'url' => null, 'children' => [
+                    ['fr' => 'Documentation',   'en' => 'Documentation', 'url' => '/docs'],
+                    ['fr' => 'Blog',            'en' => 'Blog',         'url' => '/blog'],
+                    ['fr' => 'Tutoriels',       'en' => 'Tutorials',    'url' => '/tutoriels'],
+                    ['fr' => 'Status',          'en' => 'Status',       'url' => 'https://status.aurora.app'],
+                ]],
+                ['fr' => 'Entreprise',  'en' => 'Company',      'url' => null, 'children' => [
+                    ['fr' => 'À propos',        'en' => 'About',        'url' => '/a-propos'],
+                    ['fr' => 'Équipe',          'en' => 'Team',         'url' => '/equipe'],
+                    ['fr' => 'Carrières',       'en' => 'Careers',      'url' => '/carrieres'],
+                    ['fr' => 'Presse',          'en' => 'Press',        'url' => '/presse'],
+                ]],
+                ['fr' => 'Légal',       'en' => 'Legal',        'url' => null, 'children' => [
+                    ['fr' => 'CGU',             'en' => 'Terms',        'url' => '/cgu'],
+                    ['fr' => 'Confidentialité', 'en' => 'Privacy',      'url' => '/confidentialite'],
+                    ['fr' => 'Cookies',         'en' => 'Cookies',      'url' => '/cookies'],
+                    ['fr' => 'Contact',         'en' => 'Contact',      'url' => '/contact'],
+                ]],
+            ];
+
+            $pos = 0;
+            foreach ($sections as $section) {
+                $parent = new MenuItem();
+                $parent->setMenu($footer)
+                       ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
+                       ->setCustomUrl($section['url'])
+                       ->setPosition($pos++);
+                $em->persist($parent);
+                foreach (['fr', 'en'] as $locale) {
+                    $tr = new MenuItemTranslation();
+                    $tr->setMenuItem($parent)->setLocale($locale)->setLabel('fr' === $locale ? $section['fr'] : $section['en']);
+                    $em->persist($tr);
+                }
+
+                foreach ($section['children'] as $childPos => $child) {
+                    $item = new MenuItem();
+                    $item->setMenu($footer)
+                         ->setParent($parent)
+                         ->setTargetType(MenuItemTargetTypeEnum::CustomUrl)
+                         ->setCustomUrl($child['url'])
+                         ->setPosition($childPos);
+                    $em->persist($item);
+                    foreach (['fr', 'en'] as $locale) {
+                        $tr = new MenuItemTranslation();
+                        $tr->setMenuItem($item)->setLocale($locale)->setLabel('fr' === $locale ? $child['fr'] : $child['en']);
+                        $em->persist($tr);
+                    }
+                }
+            }
         }
     }
 }
