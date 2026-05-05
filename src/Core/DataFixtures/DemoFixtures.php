@@ -21,10 +21,20 @@ use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Editorial\Comment\Entity\Comment;
+use Aurora\Module\Editorial\Comment\Enum\CommentStatusEnum;
+use Aurora\Module\Editorial\Form\Entity\Form;
+use Aurora\Module\Editorial\Form\Entity\FormField;
+use Aurora\Module\Editorial\Form\Entity\FormFieldTranslation;
+use Aurora\Module\Editorial\Form\Entity\FormSubmission;
+use Aurora\Module\Editorial\Form\Entity\FormTranslation;
+use Aurora\Module\Editorial\Form\Enum\FormFieldTypeEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Entity\PostTranslation;
 use Aurora\Module\Editorial\Post\Entity\PostType;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
+use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
@@ -33,7 +43,10 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
+use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
+use Aurora\Module\Photo\Gallery\Entity\GalleryItemComment;
+use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -79,7 +92,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $media = $this->createMedia($manager);
         $postType = $manager->getRepository(PostType::class)->findOneBy(['slug' => 'article']);
 
-        $this->createEditorial($manager, $postType, $media, $users);
+        $posts = $this->createEditorial($manager, $postType, $media, $users);
+        $this->createComments($manager, $posts);
+        $this->createForms($manager);
+        $this->createTaxonomies($manager, $postType);
         [$companies, $contacts] = $this->createCrm($manager, $users);
         $products = $this->createErp($manager, $media);
         $listings = $this->createEcommerce($manager, $products, $media, $users);
@@ -207,11 +223,14 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         return implode(' ', $parts);
     }
 
-    private function createEditorial(EntityManagerInterface $em, ?PostType $postType, array $media, array $users): void
+    /** @return Post[] */
+    private function createEditorial(EntityManagerInterface $em, ?PostType $postType, array $media, array $users): array
     {
         if (!$postType instanceof PostType) {
-            return;
+            return [];
         }
+
+        $createdPosts = [];
 
         /** @var array<int, array{fr: array{title: string, slug: string, excerpt: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}, en: array{title: string, slug: string, excerpt: string, blocks: array<int, array{type: string, data: array<string, mixed>}>}, media: ?Media}> $posts */
         $posts = [
@@ -322,6 +341,206 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             }
 
             $em->persist($post);
+            $createdPosts[] = $post;
+        }
+
+        // 3 more posts — variety
+        $extraDefs = [
+            ['title' => 'Retour sur Aurora Tech Day 2025', 'slug' => 'aurora-tech-day-2025', 'media' => $media[3] ?? null, 'ago' => '3 days'],
+            ['title' => 'Roadmap Aurora 2025-2026 : les grandes orientations', 'slug' => 'roadmap-aurora-2025-2026', 'media' => $media[0] ?? null, 'ago' => '10 days'],
+            ['title' => 'Tutoriel : créer votre premier module client Aurora', 'slug' => 'tutoriel-premier-module-client', 'media' => $media[1] ?? null, 'ago' => '5 days'],
+        ];
+        foreach ($extraDefs as $extra) {
+            $p = new Post();
+            $p->setPostType($postType)->setStatus(PostStatusEnum::Published)->setPublishedAt(new DateTimeImmutable('-'.$extra['ago']));
+            $tr = new PostTranslation();
+            $tr->setPost($p)->setLocale('fr')->setTitle($extra['title'])->setSlug($extra['slug'])
+               ->setBlocks([['type' => 'paragraph', 'data' => ['text' => self::LOREM]]])
+               ->setSearchContent(self::LOREM);
+            if (null !== $extra['media']) {
+                $tr->setOgImage($extra['media']);
+            }
+
+            $em->persist($tr);
+            $em->persist($p);
+            $createdPosts[] = $p;
+        }
+
+        return $createdPosts;
+    }
+
+    // ── Comments ──────────────────────────────────────────────────────────────
+
+    /** @param Post[] $posts */
+    private function createComments(EntityManagerInterface $em, array $posts): void
+    {
+        $commentData = [
+            ['name' => 'Pierre Dupont',    'email' => 'pierre.dupont@example.com', 'status' => CommentStatusEnum::Approved, 'text' => 'Article très intéressant ! J\'ai particulièrement apprécié la partie sur les meilleures pratiques. Merci pour ce partage.'],
+            ['name' => 'Camille Martin',   'email' => 'camille.martin@example.com', 'status' => CommentStatusEnum::Approved, 'text' => 'Exactement ce que je cherchais. On utilise Aurora depuis 3 mois et les résultats sont au rendez-vous.'],
+            ['name' => 'François Petit',   'email' => 'f.petit@company.fr',        'status' => CommentStatusEnum::Approved, 'text' => "Super contenu ! Question : est-ce qu'Aurora supporte le multi-tenant ? Merci d'avance."],
+            ['name' => 'Alice Bernard',    'email' => 'alice@startup.io',           'status' => CommentStatusEnum::Pending,  'text' => 'Bonne introduction, mais j\'aurais aimé plus de détails sur la partie déploiement.'],
+            ['name' => 'Marc Fontaine',    'email' => 'marc.fontaine@mail.com',     'status' => CommentStatusEnum::Approved, 'text' => 'Le module GED est vraiment bien pensé. On l\'a intégré à nos processus RH.'],
+            ['name' => 'Sophie Leblond',   'email' => 'sophie.l@example.org',       'status' => CommentStatusEnum::Pending,  'text' => 'Avez-vous prévu un module de gestion de projet ? Ce serait un excellent complément !'],
+        ];
+
+        foreach ($posts as $postIdx => $post) {
+            // Assign 2-3 comments per post, cycling through commentData
+            $count = (0 === $postIdx % 2) ? 3 : 2;
+            for ($i = 0; $i < $count; ++$i) {
+                $cd = $commentData[($postIdx * 2 + $i) % count($commentData)];
+                $c = new Comment();
+                $c->setPost($post)
+                  ->setAuthorName($cd['name'])
+                  ->setAuthorEmail($cd['email'])
+                  ->setContent($cd['text'])
+                  ->setStatus($cd['status']);
+                $em->persist($c);
+            }
+        }
+    }
+
+    // ── Forms ─────────────────────────────────────────────────────────────────
+
+    private function createForms(EntityManagerInterface $em): void
+    {
+        $formDefs = [
+            [
+                'slug' => 'contact',
+                'fr' => 'Nous contacter',
+                'en' => 'Contact Us',
+                'fields' => [
+                    ['type' => FormFieldTypeEnum::Text,     'fr' => 'Nom complet',      'en' => 'Full name',      'ph_fr' => 'Jean Dupont',              'ph_en' => 'John Doe',             'req' => true],
+                    ['type' => FormFieldTypeEnum::Email,    'fr' => 'Adresse email',    'en' => 'Email address',  'ph_fr' => 'jean@exemple.fr',          'ph_en' => 'john@example.com',     'req' => true],
+                    ['type' => FormFieldTypeEnum::Tel,      'fr' => 'Téléphone',        'en' => 'Phone',          'ph_fr' => '+33 6 00 00 00 00',       'ph_en' => '+1 555 000 0000',       'req' => false],
+                    ['type' => FormFieldTypeEnum::Select,   'fr' => 'Sujet',            'en' => 'Subject',        'ph_fr' => 'Choisissez un sujet',     'ph_en' => 'Choose a subject',      'req' => true,
+                        'opts_fr' => ['Demande commerciale', 'Support technique', 'Partenariat', 'Autre'],
+                        'opts_en' => ['Sales inquiry', 'Technical support', 'Partnership', 'Other']],
+                    ['type' => FormFieldTypeEnum::Textarea, 'fr' => 'Message',          'en' => 'Message',        'ph_fr' => 'Votre message…',          'ph_en' => 'Your message…',         'req' => true],
+                ],
+                'submissions' => [
+                    ['name' => 'Pierre Dubois', 'email' => 'pierre.dubois@tech-innovation.fr', 'subject' => 'Demande commerciale', 'message' => 'Bonjour, je souhaite un devis pour une licence CRM 10 utilisateurs.'],
+                    ['name' => 'Camille Leroy', 'email' => 'c.leroy@biomed-france.com',        'subject' => 'Support technique',   'message' => 'Problème de synchronisation des données. Pouvez-vous nous aider ?'],
+                ],
+            ],
+            [
+                'slug' => 'newsletter',
+                'fr' => 'Inscription Newsletter',
+                'en' => 'Newsletter Sign-up',
+                'fields' => [
+                    ['type' => FormFieldTypeEnum::Email, 'fr' => 'Votre email', 'en' => 'Your email', 'ph_fr' => 'vous@exemple.fr', 'ph_en' => 'you@example.com', 'req' => true],
+                    ['type' => FormFieldTypeEnum::Text,  'fr' => 'Prénom',      'en' => 'First name', 'ph_fr' => 'Prénom',          'ph_en' => 'First name',      'req' => false],
+                    ['type' => FormFieldTypeEnum::Checkbox, 'fr' => "J'accepte de recevoir des communications Aurora", 'en' => 'I agree to receive Aurora communications', 'ph_fr' => '', 'ph_en' => '', 'req' => true],
+                ],
+                'submissions' => [
+                    ['email' => 'fan1@example.com',  'prenom' => 'Julie'],
+                    ['email' => 'fan2@example.com',  'prenom' => 'Marc'],
+                    ['email' => 'fan3@example.com',  'prenom' => 'Sophie'],
+                ],
+            ],
+        ];
+
+        foreach ($formDefs as $fd) {
+            $form = new Form();
+            $em->persist($form);
+
+            foreach (['fr', 'en'] as $locale) {
+                $ft = new FormTranslation();
+                $ft->setForm($form)->setLocale($locale)->setTitle($fd[$locale])->setSlug($fd['slug']);
+                $em->persist($ft);
+            }
+
+            foreach ($fd['fields'] as $pos => $fieldDef) {
+                $field = new FormField();
+                $field->setForm($form)->setType($fieldDef['type'])->setRequired($fieldDef['req'])->setPosition($pos);
+                $em->persist($field);
+
+                foreach (['fr', 'en'] as $locale) {
+                    $fft = new FormFieldTranslation();
+                    $fft->setField($field)->setLocale($locale)
+                        ->setLabel('fr' === $locale ? $fieldDef['fr'] : $fieldDef['en'])
+                        ->setPlaceholder('fr' === $locale ? ($fieldDef['ph_fr'] ?: null) : ($fieldDef['ph_en'] ?: null));
+                    if (isset($fieldDef['opts_fr']) && 'fr' === $locale) {
+                        $fft->setOptions($fieldDef['opts_fr']);
+                    }
+
+                    if (isset($fieldDef['opts_en']) && 'en' === $locale) {
+                        $fft->setOptions($fieldDef['opts_en']);
+                    }
+
+                    $em->persist($fft);
+                }
+            }
+
+            foreach ($fd['submissions'] as $sub) {
+                $fs = new FormSubmission();
+                $fs->setForm($form)->setData($sub)->setLocale('fr');
+                $em->persist($fs);
+            }
+        }
+    }
+
+    // ── Taxonomies ────────────────────────────────────────────────────────────
+
+    private function createTaxonomies(EntityManagerInterface $em, ?PostType $postType): void
+    {
+        if (!$postType instanceof PostType) {
+            return;
+        }
+
+        // Add more terms to the existing "tag" taxonomy
+        $tagTaxonomy = $em->getRepository(Taxonomy::class)->findOneBy(['slug' => 'tag']);
+        if ($tagTaxonomy instanceof Taxonomy) {
+            $tagTerms = ['Symfony', 'Vue.js', 'PHP', 'Tailwind CSS', 'PostgreSQL', 'DevOps', 'Open Source'];
+            foreach ($tagTerms as $name) {
+                $slug = mb_strtolower(str_replace([' ', '.'], ['-', ''], $name));
+                $term = new TaxonomyTerm();
+                $term->setTaxonomy($tagTaxonomy);
+                foreach (['fr', 'en'] as $locale) {
+                    $term->translate($locale)->setName($name)->setSlug($slug);
+                }
+
+                $em->persist($term);
+            }
+        }
+
+        // Add more terms to the existing "category" taxonomy
+        $catTaxonomy = $em->getRepository(Taxonomy::class)->findOneBy(['slug' => 'category']);
+        if ($catTaxonomy instanceof Taxonomy) {
+            $cats = [
+                ['fr' => 'Tutoriels', 'en' => 'Tutorials', 'slug' => 'tutoriels'],
+                ['fr' => 'Actualités', 'en' => 'News', 'slug' => 'actualites'],
+                ['fr' => 'Études de cas', 'en' => 'Case Studies', 'slug' => 'etudes-de-cas'],
+                ['fr' => 'Produit', 'en' => 'Product', 'slug' => 'produit'],
+            ];
+            foreach ($cats as $cat) {
+                $term = new TaxonomyTerm();
+                $term->setTaxonomy($catTaxonomy);
+                $term->translate('fr')->setName($cat['fr'])->setSlug($cat['slug']);
+                $term->translate('en')->setName($cat['en'])->setSlug($cat['slug']);
+                $em->persist($term);
+            }
+        }
+
+        // Create a custom "Ressources" taxonomy
+        $resTaxonomy = new Taxonomy();
+        $resTaxonomy->setSlug('ressource')->setHierarchical(false)->setIsBuiltIn(false);
+        $resTaxonomy->translate('fr')->setLabel('Ressource');
+        $resTaxonomy->translate('en')->setLabel('Resource');
+        $resTaxonomy->getPostTypes()->add($postType);
+        $em->persist($resTaxonomy);
+
+        $resTerms = [
+            ['fr' => 'Documentation', 'en' => 'Documentation', 'slug' => 'documentation'],
+            ['fr' => 'Vidéo',         'en' => 'Video',          'slug' => 'video'],
+            ['fr' => 'Webinaire',     'en' => 'Webinar',        'slug' => 'webinar'],
+            ['fr' => 'Template',      'en' => 'Template',       'slug' => 'template'],
+        ];
+        foreach ($resTerms as $rt) {
+            $term = new TaxonomyTerm();
+            $term->setTaxonomy($resTaxonomy);
+            $term->translate('fr')->setName($rt['fr'])->setSlug($rt['slug']);
+            $term->translate('en')->setName($rt['en'])->setSlug($rt['slug']);
+            $em->persist($term);
         }
     }
 
@@ -370,11 +589,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         $dealDefs = [
-            ['name' => 'Projet CRM Sur-mesure',     'stage' => DealStageEnum::Won,         'value' => '45000.00', 'contact' => 0, 'company' => 0, 'closing' => '-1 month'],
-            ['name' => 'Refonte Site Web BioMed',   'stage' => DealStageEnum::Proposal,    'value' => '12000.00', 'contact' => 1, 'company' => 1, 'closing' => '+2 months'],
-            ['name' => 'Solution E-commerce',        'stage' => DealStageEnum::Negotiation, 'value' => '28500.00', 'contact' => 2, 'company' => 2, 'closing' => '+3 weeks'],
-            ['name' => 'Formation équipe dev',       'stage' => DealStageEnum::Qualified,   'value' => '4800.00',  'contact' => 3, 'company' => 0, 'closing' => '+6 weeks'],
-            ['name' => 'Audit infrastructure SI',    'stage' => DealStageEnum::Lead,        'value' => '8000.00',  'contact' => 4, 'company' => null, 'closing' => '+2 months'],
+            ['name' => 'Projet CRM Sur-mesure',          'stage' => DealStageEnum::Won,         'value' => '45000.00', 'contact' => 0, 'company' => 0,    'closing' => '-1 month'],
+            ['name' => 'Refonte Site Web BioMed',         'stage' => DealStageEnum::Proposal,    'value' => '12000.00', 'contact' => 1, 'company' => 1,    'closing' => '+2 months'],
+            ['name' => 'Solution E-commerce',             'stage' => DealStageEnum::Negotiation, 'value' => '28500.00', 'contact' => 2, 'company' => 2,    'closing' => '+3 weeks'],
+            ['name' => 'Formation équipe dev',            'stage' => DealStageEnum::Qualified,   'value' => '4800.00',  'contact' => 3, 'company' => 0,    'closing' => '+6 weeks'],
+            ['name' => 'Audit infrastructure SI',         'stage' => DealStageEnum::Lead,        'value' => '8000.00',  'contact' => 4, 'company' => null, 'closing' => '+2 months'],
+            ['name' => 'Licence Aurora ERP — Tech Inno.', 'stage' => DealStageEnum::Won,         'value' => '99900.00', 'contact' => 0, 'company' => 0,    'closing' => '-2 months'],
+            ['name' => 'Migration Cloud BioMed',          'stage' => DealStageEnum::Lost,        'value' => '35000.00', 'contact' => 1, 'company' => 1,    'closing' => '-3 weeks'],
+            ['name' => 'Intégration Stripe Retail',       'stage' => DealStageEnum::Qualified,   'value' => '9500.00',  'contact' => 2, 'company' => 2,    'closing' => '+1 month'],
+            ['name' => 'Déploiement GED entreprise',      'stage' => DealStageEnum::Proposal,    'value' => '18000.00', 'contact' => 3, 'company' => 0,    'closing' => '+5 weeks'],
+            ['name' => 'Support & Maintenance annuel',    'stage' => DealStageEnum::Negotiation, 'value' => '24000.00', 'contact' => 4, 'company' => null, 'closing' => '+3 months'],
         ];
         foreach ($dealDefs as $def) {
             $d = new Deal();
@@ -605,30 +829,117 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     {
         [$marie] = $users;
 
-        $gallery = new Gallery();
-        $gallery->setTitle('Portfolio Projets Aurora Tech 2025')
-                ->setSlug('portfolio-aurora-tech-2025')
-                ->setDescription('Sélection de visuels réalisés pour nos projets clients en 2025. Galerie privée — accès sur invitation.')
-                ->setCreatedBy($marie)
-                ->setAllowOriginals(true)
-                ->setAllowZipDownload(true)
-                ->setAllowVisitorComments(false);
+        // Gallery 1 — Portfolio (with visitor picks + comments)
+        $g1 = new Gallery();
+        $g1->setTitle('Portfolio Projets Aurora Tech 2025')
+           ->setSlug('portfolio-aurora-tech-2025')
+           ->setDescription('Sélection de visuels réalisés pour nos projets clients en 2025. Galerie privée — accès sur invitation.')
+           ->setCreatedBy($marie)
+           ->setAllowOriginals(true)
+           ->setAllowZipDownload(true)
+           ->setAllowVisitorComments(true)
+           ->setMaxPicks(5);
 
         if (isset($media[0])) {
-            $gallery->setCoverMedia($media[0]);
+            $g1->setCoverMedia($media[0]);
         }
 
-        $em->persist($gallery);
+        $em->persist($g1);
 
-        foreach (array_slice($media, 0, 4) as $i => $m) {
-            if (!str_contains((string) $m->getMimeType(), 'image')) {
+        $imageMedia = array_values(array_filter(array_slice($media, 0, 5), fn ($m): bool => str_contains((string) $m->getMimeType(), 'image')));
+        $items1 = [];
+        foreach ($imageMedia as $i => $m) {
+            $item = new GalleryItem();
+            $item->setGallery($g1)->setMedia($m)->setNumber($i + 1);
+            $em->persist($item);
+            $items1[] = $item;
+        }
+
+        // Visitor comments on gallery 1
+        $commentTexts = [
+            'Superbes photos ! Le rendu est vraiment professionnel.',
+            'J\'adore la 3ème photo, les couleurs sont magnifiques.',
+            'Peut-on télécharger les originaux ? Merci !',
+        ];
+        foreach ($commentTexts as $ci => $text) {
+            if (!isset($items1[$ci % count($items1)])) {
                 continue;
             }
 
+            $c = new GalleryItemComment();
+            $c->setGalleryItem($items1[$ci % count($items1)])
+              ->setContent($text)
+              ->setVisitorName('Visiteur '.($ci + 1));
+            $em->persist($c);
+        }
+
+        // Visitor picks on gallery 1
+        $visitors = [
+            ['token' => bin2hex(random_bytes(8)), 'name' => 'Pierre Dubois',  'email' => 'pierre.dubois@tech-innovation.fr'],
+            ['token' => bin2hex(random_bytes(8)), 'name' => 'Camille Leroy',  'email' => 'c.leroy@biomed-france.com'],
+        ];
+        foreach ($visitors as $vi => $visitor) {
+            foreach (array_slice($items1, 0, 2) as $item) {
+                $pick = new GalleryPick();
+                $pick->setGalleryItem($item)
+                     ->setVisitorToken($visitor['token'])
+                     ->setVisitorName($visitor['name'])
+                     ->setVisitorEmail($visitor['email']);
+                $em->persist($pick);
+            }
+
+            // Finalization for first visitor
+            if (0 === $vi) {
+                $fin = new GalleryFinalization();
+                $fin->setGallery($g1)
+                    ->setVisitorName($visitor['name'])
+                    ->setVisitorEmail($visitor['email']);
+                $em->persist($fin);
+            }
+        }
+
+        // Gallery 2 — Mariage Dupont (simple, no interactions yet)
+        $g2 = new Gallery();
+        $g2->setTitle('Mariage Dupont — Juin 2025')
+           ->setSlug('mariage-dupont-juin-2025')
+           ->setDescription('Livraison photos du mariage de Pierre & Julie Dupont, 14 juin 2025.')
+           ->setCreatedBy($marie)
+           ->setAllowOriginals(true)
+           ->setAllowZipDownload(true)
+           ->setAllowVisitorComments(true)
+           ->setMaxPicks(30);
+
+        if (isset($media[2])) {
+            $g2->setCoverMedia($media[2]);
+        }
+
+        $em->persist($g2);
+
+        foreach ($imageMedia as $i => $m) {
             $item = new GalleryItem();
-            $item->setGallery($gallery)
-                 ->setMedia($m)
-                 ->setNumber($i + 1);
+            $item->setGallery($g2)->setMedia($m)->setNumber($i + 1);
+            $em->persist($item);
+        }
+
+        // Gallery 3 — Conférence Aurora Tech Day
+        $g3 = new Gallery();
+        $g3->setTitle('Aurora Tech Day 2025 — Photos')
+           ->setSlug('aurora-tech-day-2025-photos')
+           ->setDescription("Galerie des photos officielles de l'Aurora Tech Day du 15 mai 2025.")
+           ->setCreatedBy($marie)
+           ->setAllowOriginals(false)
+           ->setAllowZipDownload(false)
+           ->setAllowVisitorComments(false);
+
+        if (isset($media[1])) {
+            $g3->setCoverMedia($media[1]);
+        }
+
+        $em->persist($g3);
+
+        foreach ($imageMedia as $i => $m) {
+            $item = new GalleryItem();
+            $item->setGallery($g3)->setMedia($m)->setNumber($i + 1);
             $em->persist($item);
         }
     }
@@ -638,9 +949,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     private function createGed(EntityManagerInterface $em, array $media): void
     {
         $catDefs = [
-            ['name' => 'Contrats Clients',       'slug' => 'contrats-clients',       'desc' => 'Contrats signés avec nos clients et partenaires commerciaux.'],
-            ['name' => 'Documentation Technique', 'slug' => 'doc-technique',          'desc' => 'Guides d\'installation, spécifications et manuels techniques.'],
-            ['name' => 'Ressources Marketing',    'slug' => 'ressources-marketing',   'desc' => 'Visuels, présentations et supports de communication.'],
+            ['name' => 'Contrats Clients',         'slug' => 'contrats-clients',       'desc' => 'Contrats signés avec nos clients et partenaires commerciaux.'],
+            ['name' => 'Documentation Technique',  'slug' => 'doc-technique',          'desc' => 'Guides d\'installation, spécifications et manuels techniques.'],
+            ['name' => 'Ressources Marketing',     'slug' => 'ressources-marketing',   'desc' => 'Visuels, présentations et supports de communication.'],
+            ['name' => 'Ressources Humaines',      'slug' => 'ressources-humaines',    'desc' => 'Fiches de poste, procédures RH et documents administratifs du personnel.'],
+            ['name' => 'Finance & Comptabilité',   'slug' => 'finance-comptabilite',   'desc' => 'Rapports financiers, budgets et documents comptables.'],
+            ['name' => 'Qualité & Conformité',     'slug' => 'qualite-conformite',     'desc' => 'Politiques qualité, audits et certifications.'],
         ];
         $categories = [];
         foreach ($catDefs as $def) {
@@ -651,10 +965,19 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         $docDefs = [
-            ['title' => 'Contrat Tech Innovation SARL 2025',          'cat' => 0, 'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'file' => 5],
-            ['title' => "Guide d'installation Aurora v2.0",           'cat' => 1, 'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'file' => null],
-            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 0, 'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'file' => null],
+            ['title' => 'Contrat Tech Innovation SARL 2025',           'cat' => 0, 'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'file' => 5],
+            ['title' => 'Contrat BioMed France — Maintenance 2025',    'cat' => 0, 'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de maintenance et support niveau 2 pour la suite Aurora.', 'file' => null],
+            ['title' => 'Avenant Contrat Retail Connect — Jan 2025',   'cat' => 0, 'status' => DocumentStatusEnum::Draft,     'desc' => 'Avenant tarifaire en cours de négociation pour le renouvellement 2025.', 'file' => null],
+            ['title' => "Guide d'installation Aurora v2.0",            'cat' => 1, 'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'file' => null],
+            ['title' => 'API Aurora — Documentation Développeur v2.1', 'cat' => 1, 'status' => DocumentStatusEnum::Published, 'desc' => 'Référence complète de l\'API REST Aurora : endpoints, authentification, exemples.', 'file' => null],
+            ['title' => 'Architecture Technique Aurora — Whitepaper',  'cat' => 1, 'status' => DocumentStatusEnum::Archived,  'desc' => 'Document d\'architecture technique v1.x (archivé, remplacé par la version 2.x).', 'file' => null],
+            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 4, 'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'file' => null],
+            ['title' => 'Budget Prévisionnel 2025 — Aurora Tech',      'cat' => 4, 'status' => DocumentStatusEnum::Published, 'desc' => 'Budget prévisionnel approuvé par le comité de direction le 10 janvier 2025.', 'file' => null],
             ['title' => 'Charte Graphique Aurora — Brand Guidelines',  'cat' => 2, 'status' => DocumentStatusEnum::Published, 'desc' => 'Couleurs, typographies, logos et règles d\'utilisation de la marque Aurora.', 'file' => 0],
+            ['title' => 'Kit Presse Aurora Tech Day 2025',             'cat' => 2, 'status' => DocumentStatusEnum::Published, 'desc' => 'Communiqué de presse, visuels HD et biographies intervenants.', 'file' => null],
+            ['title' => 'Fiche de Poste — Développeur Full Stack',     'cat' => 3, 'status' => DocumentStatusEnum::Published, 'desc' => 'Description du poste, compétences requises et processus de recrutement.', 'file' => null],
+            ['title' => 'Politique de Télétravail — Aurora Tech',      'cat' => 3, 'status' => DocumentStatusEnum::Published, 'desc' => 'Règles et procédures applicables au travail à distance.', 'file' => null],
+            ['title' => 'Certification ISO 27001 — Audit 2024',        'cat' => 5, 'status' => DocumentStatusEnum::Published, 'desc' => 'Rapport d\'audit de conformité ISO 27001 réalisé en novembre 2024.', 'file' => null],
         ];
         foreach ($docDefs as $def) {
             $d = new Document();
