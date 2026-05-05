@@ -32,6 +32,8 @@ const props = defineProps({
     currentUserPriority: { type: Number, default: 0 },
     privilegesByModule: { type: Array, default: () => [] },
     privilegesPath: { type: String, default: "" },
+    agencies: { type: Array, default: () => [] },
+    services: { type: Array, default: () => [] },
     listPath: { type: String, required: true },
     invitePath: { type: String, required: true },
     updatePath: { type: String, required: true },
@@ -48,7 +50,7 @@ const props = defineProps({
 
 const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPage } = useUsersSearch(props.listPath);
 const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers);
-const { editModal, editForm, managerOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+const { editModal, editForm, managerOptions, agencyOptions, serviceOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
 
 const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
 
@@ -324,6 +326,20 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :label="t('admin.users.manager.label')"
                         :allow-empty="true"
                         :error="editModal.errors.managerId ?? ''"
+                    />
+                    <AppMultiselect
+                        v-if="agencyOptions.length > 1"
+                        v-model="editForm.agencyId"
+                        :options="agencyOptions"
+                        :label="t('admin.nav.agencies')"
+                        :allow-empty="true"
+                    />
+                    <AppMultiselect
+                        v-if="serviceOptions.length > 1"
+                        v-model="editForm.serviceId"
+                        :options="serviceOptions"
+                        :label="t('admin.nav.services')"
+                        :allow-empty="true"
                     />
                 </div>
                 <AppInput

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Entity;
 
+use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
@@ -90,6 +92,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subordinates')]
     #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?User $manager = null;
+
+    #[ORM\ManyToOne(targetEntity: Agency::class)]
+    #[ORM\JoinColumn(name: 'agency_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Agency $agency = null;
+
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\JoinColumn(name: 'service_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Service $service = null;
 
     /** @var Collection<int, User> */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'manager')]
@@ -390,4 +400,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function eraseCredentials(): void {}
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
+
+        return $this;
+    }
 }

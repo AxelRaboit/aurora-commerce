@@ -26,6 +26,8 @@ final readonly class UserInput
         #[Assert\Length(min: 8, minMessage: 'admin.users.errors.password_too_short')]
         public ?string $password = null,
         public ?int $managerId = null,
+        public ?int $agencyId = null,
+        public ?int $serviceId = null,
     ) {}
 
     public static function fromRequest(Request $request): self
@@ -35,6 +37,8 @@ final readonly class UserInput
 
         $password = Str::trimOrNullFromArray($data, 'password');
         $managerId = $data['managerId'] ?? null;
+        $agencyId = $data['agencyId'] ?? null;
+        $serviceId = $data['serviceId'] ?? null;
 
         return new self(
             name: Str::trimFromArray($data, 'name'),
@@ -43,6 +47,8 @@ final readonly class UserInput
             locale: Str::trimFromArray($data, 'locale', 'fr') ?: 'fr',
             password: '' === $password ? null : $password,
             managerId: is_numeric($managerId) ? (int) $managerId : null,
+            agencyId: is_numeric($agencyId) ? (int) $agencyId : null,
+            serviceId: is_numeric($serviceId) ? (int) $serviceId : null,
         );
     }
 }

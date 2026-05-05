@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\View;
 
+use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Module\PermissionRegistry;
+use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
@@ -18,6 +22,8 @@ final readonly class UsersViewBuilder
     public function __construct(
         private PermissionRegistry $permissionRegistry,
         private SettingRepository $settingRepository,
+        private AgencyRepository $agencyRepository,
+        private ServiceRepository $serviceRepository,
     ) {
         $toggles = [];
         foreach (ApplicationParameterEnum::cases() as $case) {
@@ -66,11 +72,23 @@ final readonly class UsersViewBuilder
             ];
         }
 
+        $agencies = array_map(
+            static fn (Agency $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
+            $this->agencyRepository->findAllAlphabetical(),
+        );
+
+        $services = array_map(
+            static fn (Service $service): array => ['value' => (string) $service->getId(), 'label' => $service->getName()],
+            $this->serviceRepository->findAllAlphabetical(),
+        );
+
         return [
             'roles' => $roles,
             'isDev' => $isDev,
             'currentUserPriority' => $currentUserPriority,
             'privilegesByModule' => $privilegesByModule,
+            'agencies' => $agencies,
+            'services' => $services,
         ];
     }
 }

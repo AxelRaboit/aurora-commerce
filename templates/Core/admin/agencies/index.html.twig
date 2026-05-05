@@ -1,0 +1,18 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'admin.nav.agencies'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [{label: 'admin.nav.agencies'|trans}],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/admin/agencies/AgenciesApp', {
+    agencies: agencies,
+    createPath: path('admin_agencies_create'),
+    updatePath: path('admin_agencies_update', {id: '__id__'}),
+    deletePath: path('admin_agencies_delete', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

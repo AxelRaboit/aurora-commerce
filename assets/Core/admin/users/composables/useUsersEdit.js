@@ -33,6 +33,8 @@ export function useUsersEdit(props, fetchUsers) {
         role: "",
         password: "",
         managerId: null,
+        agencyId: null,
+        serviceId: null,
     });
 
     const managerOptions = computed(() => {
@@ -40,10 +42,20 @@ export function useUsersEdit(props, fetchUsers) {
         return [
             { value: "", label: "—" },
             ...selectableUsers.value
-                .filter((u) => u.id !== editingId)
-                .map((u) => ({ value: String(u.id), label: u.name })),
+                .filter((user) => user.id !== editingId)
+                .map((user) => ({ value: String(user.id), label: user.name })),
         ];
     });
+
+    const agencyOptions = computed(() => [
+        { value: "", label: "—" },
+        ...(props.agencies ?? []),
+    ]);
+
+    const serviceOptions = computed(() => [
+        { value: "", label: "—" },
+        ...(props.services ?? []),
+    ]);
 
     function openEdit(user) {
         editModal.editing = user;
@@ -53,6 +65,8 @@ export function useUsersEdit(props, fetchUsers) {
         editForm.role = user.role ?? props.roles[0]?.value ?? "";
         editForm.password = "";
         editForm.managerId = user.managerId ? String(user.managerId) : "";
+        editForm.agencyId = user.agencyId ? String(user.agencyId) : "";
+        editForm.serviceId = user.serviceId ? String(user.serviceId) : "";
         editModal.open = true;
         loadSelectableUsers();
     }
@@ -123,6 +137,10 @@ export function useUsersEdit(props, fetchUsers) {
                 managerId: editForm.managerId
                     ? Number(editForm.managerId)
                     : null,
+                agencyId: editForm.agencyId ? Number(editForm.agencyId) : null,
+                serviceId: editForm.serviceId
+                    ? Number(editForm.serviceId)
+                    : null,
             };
             const response = await fetch(url, {
                 method: HttpMethod.Post,
@@ -134,7 +152,6 @@ export function useUsersEdit(props, fetchUsers) {
                 editModal.errors = data.errors ?? {};
                 return;
             }
-
             toast.success(t("shared.common.saved"));
             editModal.open = false;
             fetchUsers();
@@ -149,6 +166,8 @@ export function useUsersEdit(props, fetchUsers) {
         editModal,
         editForm,
         managerOptions,
+        agencyOptions,
+        serviceOptions,
         openEdit,
         onPhotoSelected,
         removePhoto,

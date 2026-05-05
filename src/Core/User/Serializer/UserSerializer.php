@@ -51,6 +51,11 @@ final readonly class UserSerializer
             'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'managerId' => $manager?->getId(),
             'manager' => $manager instanceof User ? ['id' => $manager->getId(), 'name' => $manager->getName()] : null,
+            'agencyId' => $user->getAgency()?->getId(),
+            'agencyName' => $user->getAgency()?->getName(),
+            'serviceId' => $user->getService()?->getId(),
+            'serviceName' => $user->getService()?->getName(),
+            'privileges' => $user->getPrivileges(),
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),
             'createdAt' => $user->getCreatedAt()->format(DATE_ATOM),
         ];
@@ -75,7 +80,6 @@ final readonly class UserSerializer
             ...$this->serialize($user),
             'subordinates' => $subordinates,
             'subordinatesCount' => count($subordinates),
-            'privileges' => $user->getPrivileges(),
         ];
     }
 }

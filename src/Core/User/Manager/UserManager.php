@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Manager;
 
+use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\InvitationManager;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Contract\UserManagerInterface;
@@ -36,6 +40,8 @@ final readonly class UserManager implements UserManagerInterface
         private EmailVerificationManager $emailVerificationManager,
         private SequenceGenerator $sequenceGenerator,
         private SettingRepository $settingRepository,
+        private AgencyRepository $agencyRepository,
+        private ServiceRepository $serviceRepository,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -191,6 +197,17 @@ final readonly class UserManager implements UserManagerInterface
     public function changeMoodMessage(User $user, ?string $moodMessage): void
     {
         $user->setMoodMessage($moodMessage);
+        $this->entityManager->flush();
+    }
+
+    public function updateAgencyAndService(User $user, ?int $agencyId, ?int $serviceId): void
+    {
+        $agency = null !== $agencyId ? $this->agencyRepository->find($agencyId) : null;
+        $service = null !== $serviceId ? $this->serviceRepository->find($serviceId) : null;
+
+        $user->setAgency($agency instanceof Agency ? $agency : null);
+        $user->setService($service instanceof Service ? $service : null);
+
         $this->entityManager->flush();
     }
 

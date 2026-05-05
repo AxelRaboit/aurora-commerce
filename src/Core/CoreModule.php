@@ -25,6 +25,8 @@ final class CoreModule implements ModuleInterface
             new NavPermission('core.menus.manage'),
             new NavPermission('core.search.view'),
             new NavPermission('core.users.manage'),
+            new NavPermission('core.agencies.manage'),
+            new NavPermission('core.services.manage'),
             new NavPermission('core.settings.manage'),
             new NavPermission('core.themes.manage'),
         ];
@@ -40,6 +42,8 @@ final class CoreModule implements ModuleInterface
                 new NavItem('admin_media', 'admin.nav.media', 'image'),
                 new NavItem('admin_menus', 'admin.nav.menus', 'menu'),
                 new NavItem('admin_users', 'admin.nav.users', 'users'),
+                new NavItem('admin_agencies', 'admin.nav.agencies', 'building-2'),
+                new NavItem('admin_services', 'admin.nav.services', 'briefcase'),
                 new NavItem('admin_settings', 'admin.nav.settings', 'settings'),
                 new NavItem('admin_themes', 'admin.nav.themes', 'palette'),
             ], priority: 20),
