@@ -76,7 +76,7 @@ async function regenerate() {
     try {
         const response = await fetch(props.invalidatePath, { method: HttpMethod.Post });
         const result = await response.json();
-        if (result.ok) {
+        if (result.success) {
             stats.value = result.stats;
             toast.success(t("admin.sitemap.regenerated"));
         } else {

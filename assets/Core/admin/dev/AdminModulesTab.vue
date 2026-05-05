@@ -84,7 +84,7 @@ async function save() {
 
             const result = await res.json();
 
-            if (!result.ok) {
+            if (!result.success) {
                 if (result.error === SettingErrorCode.CascadeViolation) {
                     const parent = parameterByKey[result.parentKey];
                     toast.error(t("admin.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
