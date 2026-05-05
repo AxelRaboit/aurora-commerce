@@ -29,7 +29,7 @@ onMounted(() => {
 
 <template>
     <div class="space-y-3">
-        <div v-if="data?.modules?.length" class="max-w-xs">
+        <div v-if="data?.modules?.length">
             <AppMultiselect
                 :model-value="module"
                 :options="moduleOptions"
