@@ -87,7 +87,7 @@ function openSearchFromMobile() {
     <aside id="sidebar" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
         <div class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200">
             <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
-                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto shrink-0 object-contain">
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-8 shrink-0 object-cover rounded-xl">
                 <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
                     <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">{{ siteName }}</span>
@@ -95,7 +95,7 @@ function openSearchFromMobile() {
                 </div>
             </a>
             <a :href="dashboardPath" class="sh-logo-collapsed">
-                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-auto object-contain">
+                <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-8 object-cover rounded-xl">
                 <AppLogo v-else :size="32" />
             </a>
             <button
