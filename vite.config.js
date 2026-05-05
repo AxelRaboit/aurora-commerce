@@ -4,6 +4,15 @@ import vue from '@vitejs/plugin-vue';
 import symfonyPlugin from 'vite-plugin-symfony';
 import path from 'path';
 
+// AURORA_CLIENT_DIR points to a client project's extension dir (e.g.
+// aurora-client/assets/client). When set, aurora's Vite scans that dir for
+// additional Vue components, controllers and CSS, exposed under the @client
+// alias. Standalone aurora dev leaves the var unset; the alias then resolves
+// to an empty placeholder dir so import.meta.glob('@client/...') returns {}.
+const CLIENT_DIR = process.env.AURORA_CLIENT_DIR
+    ? path.resolve(process.env.AURORA_CLIENT_DIR)
+    : path.resolve(__dirname, 'assets/.client-fallback');
+
 export default defineConfig({
     plugins: [
         tailwindcss(),
@@ -21,6 +30,12 @@ export default defineConfig({
             '@photo': path.resolve(__dirname, 'assets/Module/Photo'),
             '@billing': path.resolve(__dirname, 'assets/Module/Billing'),
             '@shared': path.resolve(__dirname, 'assets/shared'),
+            '@client': CLIENT_DIR,
+        },
+    },
+    server: {
+        fs: {
+            allow: [path.resolve(__dirname), CLIENT_DIR],
         },
     },
     build: {

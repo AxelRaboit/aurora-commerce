@@ -1,6 +1,12 @@
 # === Client overrides ===
 # These targets replace aurora's defaults with client-specific behaviour.
 
+# AURORA_CLIENT_DIR is read by aurora's vite.config.js and app.js to expose
+# this client's custom Vue components (and Stimulus controllers, CSS) via the
+# @client alias. Place client modules in assets/client/Module/<Name>/...
+CLIENT_ASSETS = $(CURDIR)/assets/client
+AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS)
+
 install: install-dev ## Install the project (alias for install-dev)
 
 stop: ## Stop dev server and kill Vite
@@ -13,7 +19,13 @@ start: ## Start dev server + Vite dev server
 	symfony server:start -d
 	@[ -d "$(AURORA)/vendor" ] || $(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	@[ -d "$(AURORA)/node_modules" ] || $(PNPM) --dir=$(AURORA) install
-	$(PNPM) --dir=$(AURORA) run dev
+	$(AURORA_ENV) $(PNPM) --dir=$(AURORA) run dev
+
+build: ## Build assets for production
+	$(AURORA_ENV) $(PNPM) --dir=$(AURORA) run build
+
+dev: ## Start Vite dev server
+	$(AURORA_ENV) $(PNPM) --dir=$(AURORA) run dev
 
 install-dev: ## Install for local development
 	$(COMPOSER) install --no-scripts
@@ -56,7 +68,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
 	$(CONSOLE) aurora:application-parameter; \
 	$(CONSOLE) aurora:menus:sync; \
-	$(PNPM) --dir=$(AURORA) run build; \
+	$(AURORA_ENV) $(PNPM) --dir=$(AURORA) run build; \
 	APP_ENV=prod APP_DEBUG=0 $(CONSOLE) cache:clear --env=prod; \
 	echo "✅ Deployed $$APP_VERSION"
 

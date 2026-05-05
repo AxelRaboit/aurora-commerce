@@ -18,19 +18,21 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Dumps Symfony YAML translations to JSON files consumed by vue-i18n at runtime.
  *
- * - Scans messages.{locale}.yaml in every module translations directory and deep-merges them.
+ * - Scans messages.{locale}.yaml in every aurora module translations directory and deep-merges them.
+ * - Also scans any extra source dirs supplied by client projects (custom modules).
  * - Converts Symfony-style `%var%` placeholders to vue-i18n-style `{var}`.
- * - Writes assets/locales/generated/{locale}.json (gitignored).
+ * - Writes {auroraDir}/assets/locales/generated/{locale}.json (gitignored).
  *
  * `assets/i18n.js` deep-merges these generated catalogues with manual JS source files
- * (assets/locales/source/{locale}.js), with YAML winning on conflicts. This means:
- *   - Shared keys (used in both Twig and Vue) live ONLY in YAML — single source of truth.
- *   - Vue-only keys (admin form labels, etc.) stay in the JS source files.
+ * (assets/locales/source/{locale}.js), with YAML winning on conflicts.
+ *
+ * Standalone aurora-core: $auroraDir = $projectDir, $extraSourceDirs = [].
+ * Aurora-client project:  $auroraDir = vendor/axelraboit/aurora, $extraSourceDirs = client module translations.
  */
 #[AsCommand(name: 'app:translations:dump-js', description: 'Dump Symfony YAML translations as JSON for vue-i18n')]
 final class DumpJsTranslationsCommand extends Command
 {
-    private const array SOURCE_DIRS = [
+    private const array AURORA_SOURCE_DIRS = [
         'src/Core/translations',
         'src/Module/Editorial/translations',
         'src/Module/Crm/translations',
@@ -42,8 +44,12 @@ final class DumpJsTranslationsCommand extends Command
 
     private const string OUTPUT_DIR = 'assets/locales/generated';
 
+    /**
+     * @param list<string> $extraSourceDirs absolute paths to additional translation dirs
+     */
     public function __construct(
-        private readonly string $projectDir,
+        private readonly string $auroraDir,
+        private readonly array $extraSourceDirs = [],
         private readonly Filesystem $filesystem = new Filesystem(),
     ) {
         parent::__construct();
@@ -52,7 +58,7 @@ final class DumpJsTranslationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $outputDir = Path::join($this->projectDir, self::OUTPUT_DIR);
+        $outputDir = Path::join($this->auroraDir, self::OUTPUT_DIR);
 
         try {
             $this->filesystem->mkdir($outputDir);
@@ -66,15 +72,18 @@ final class DumpJsTranslationsCommand extends Command
             $merged = [];
             $sourcesFound = 0;
 
-            foreach (self::SOURCE_DIRS as $sourceDir) {
-                $sourcePath = Path::join($this->projectDir, $sourceDir, sprintf('messages.%s.yaml', $locale));
-                if (!is_file($sourcePath)) {
-                    continue;
+            foreach (self::AURORA_SOURCE_DIRS as $relativeDir) {
+                $sourcePath = Path::join($this->auroraDir, $relativeDir, sprintf('messages.%s.yaml', $locale));
+                if ($this->mergeIfExists($sourcePath, $merged)) {
+                    ++$sourcesFound;
                 }
+            }
 
-                $tree = Yaml::parseFile($sourcePath) ?? [];
-                $merged = $this->deepMerge($merged, is_array($tree) ? $tree : []);
-                ++$sourcesFound;
+            foreach ($this->extraSourceDirs as $absoluteDir) {
+                $sourcePath = Path::join($absoluteDir, sprintf('messages.%s.yaml', $locale));
+                if ($this->mergeIfExists($sourcePath, $merged)) {
+                    ++$sourcesFound;
+                }
             }
 
             if (0 === $sourcesFound) {
@@ -89,12 +98,27 @@ final class DumpJsTranslationsCommand extends Command
                 $outPath,
                 json_encode($converted, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n",
             );
-            $io->writeln(sprintf('  <info>✓</info> %s (%d keys from %d module(s))', basename($outPath), $this->countLeaves($converted), $sourcesFound));
+            $io->writeln(sprintf('  <info>✓</info> %s (%d keys from %d source(s))', basename($outPath), $this->countLeaves($converted), $sourcesFound));
         }
 
         $io->success('Translations dumped. vue-i18n will auto-pick them on next dev/build.');
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Returns true if the file existed and was merged into $merged.
+     */
+    private function mergeIfExists(string $sourcePath, array &$merged): bool
+    {
+        if (!is_file($sourcePath)) {
+            return false;
+        }
+
+        $tree = Yaml::parseFile($sourcePath) ?? [];
+        $merged = $this->deepMerge($merged, is_array($tree) ? $tree : []);
+
+        return true;
     }
 
     /** Recursively merges $source into $target. Source wins on scalar conflicts. */

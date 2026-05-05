@@ -62,7 +62,7 @@ services:
 
     Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
         arguments:
-            $projectDir: '%kernel.project_dir%'
+            $auroraDir: '%kernel.project_dir%'
 
     Aurora\Core\Module\ModuleRegistry:
         arguments:

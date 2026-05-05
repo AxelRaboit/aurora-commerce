@@ -41,6 +41,13 @@ const photoModules = import.meta.glob([
 ]);
 const billingModules = import.meta.glob("./Module/Billing/admin/**/*.vue");
 
+// Optional client extension modules. Resolves via the @client alias which
+// points to AURORA_CLIENT_DIR (or an empty fallback when unset). Components
+// at @client/Module/<Name>/admin/Foo.vue are exposed as ./<name>/admin/Foo.vue
+// so the client can use vue_component('<name>/admin/Foo') in Twig — same
+// convention as aurora's first-party modules.
+const clientModules = import.meta.glob("@client/Module/**/*.vue");
+
 const vueContext = {
     ...Object.fromEntries(
         Object.entries(coreModules).map(([key, loader]) => [
@@ -83,6 +90,17 @@ const vueContext = {
             key.replace("./Module/Billing/", "./billing/"),
             loader,
         ]),
+    ),
+    // Client modules: extract "<ModuleName>/<rest>.vue" from any key shape and
+    // remap to "./<modulename>/<rest>.vue". Works regardless of how Vite
+    // normalises alias paths in the returned glob keys.
+    ...Object.fromEntries(
+        Object.entries(clientModules).map(([key, loader]) => {
+            const match = key.match(/Module\/([^/]+)\/(.*)$/);
+            if (!match) return [key, loader];
+            const [, moduleName, rest] = match;
+            return [`./${moduleName.toLowerCase()}/${rest}`, loader];
+        }),
     ),
 };
 

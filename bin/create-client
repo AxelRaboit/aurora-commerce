@@ -59,10 +59,11 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,src/{Custom,},templates/Custom,config/packages,config/routes,migrations}
+mkdir -p "$DEST"/{bin,public,src/{Custom,},templates/Custom,config/packages,config/routes,migrations,assets/client/Module}
 touch "$DEST/src/Custom/.gitkeep"
 touch "$DEST/templates/Custom/.gitkeep"
 touch "$DEST/migrations/.gitkeep"
+touch "$DEST/assets/client/Module/.gitkeep"
 
 # ---------------------------------------------------------------------------
 # composer.json
@@ -358,7 +359,7 @@ EOF
 # ---------------------------------------------------------------------------
 
 info "Writing config/services.yaml..."
-cat > "$DEST/config/services.yaml" <<'EOF'
+cat > "$DEST/config/services.yaml" <<EOF
 parameters:
     app.admin_email: '%env(ADMIN_EMAIL)%'
     app.mailer_from: '%env(MAILER_FROM)%'
@@ -370,6 +371,15 @@ services:
 
     App\Custom\:
         resource: '../src/Custom/'
+
+    # Aurora's translation dumper writes JSON files to vendor/aurora/assets/locales/
+    # so vue-i18n (running from aurora's app.js) can import them. Add each client
+    # module's translations dir to \$extraSourceDirs as you create them, e.g.:
+    #     - '%kernel.project_dir%/src/Custom/MyModule/translations'
+    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
+        arguments:
+            \$auroraDir: '%kernel.project_dir%/${AURORA_VENDOR_PATH}'
+            \$extraSourceDirs: []
 EOF
 
 # ---------------------------------------------------------------------------
