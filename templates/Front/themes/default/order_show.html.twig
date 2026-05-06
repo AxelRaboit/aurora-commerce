@@ -1,6 +1,6 @@
 {% extends 'Front/themes/default/layout.html.twig' %}
 
-{% block title %}{{ 'front.order.title'|trans }} {{ order.number }} — {{ context.siteName }}{% endblock %}
+{% block title %}{{ 'frontend.order.title'|trans }} {{ order.number }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/front/OrderShowApp', {

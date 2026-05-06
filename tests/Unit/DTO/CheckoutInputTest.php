@@ -55,7 +55,7 @@ final class CheckoutInputTest extends TestCase
         foreach ($errors as $error) {
             $messages[] = $error->getMessage();
         }
-        self::assertContains('front.checkout.errors.email_required', $messages);
+        self::assertContains('frontend.checkout.errors.email_required', $messages);
     }
 
     public function testValidationFailsWhenEmailInvalid(): void
@@ -67,7 +67,7 @@ final class CheckoutInputTest extends TestCase
         foreach ($errors as $error) {
             $messages[] = $error->getMessage();
         }
-        self::assertContains('front.checkout.errors.email_invalid', $messages);
+        self::assertContains('frontend.checkout.errors.email_invalid', $messages);
     }
 
     public function testValidationPassesWithMinimumValidPayload(): void
@@ -84,10 +84,10 @@ final class CheckoutInputTest extends TestCase
 
         $errors = $input->shippingErrors();
 
-        self::assertSame('front.checkout.errors.address_required', $errors['addressLine1']);
-        self::assertSame('front.checkout.errors.city_required', $errors['city']);
-        self::assertSame('front.checkout.errors.postal_required', $errors['postalCode']);
-        self::assertSame('front.checkout.errors.country_required', $errors['country']);
+        self::assertSame('frontend.checkout.errors.address_required', $errors['addressLine1']);
+        self::assertSame('frontend.checkout.errors.city_required', $errors['city']);
+        self::assertSame('frontend.checkout.errors.postal_required', $errors['postalCode']);
+        self::assertSame('frontend.checkout.errors.country_required', $errors['country']);
     }
 
     public function testShippingErrorsRejectsUnsupportedCountry(): void
@@ -102,7 +102,7 @@ final class CheckoutInputTest extends TestCase
         );
 
         $errors = $input->shippingErrors();
-        self::assertSame('front.checkout.errors.country_invalid', $errors['country']);
+        self::assertSame('frontend.checkout.errors.country_invalid', $errors['country']);
     }
 
     public function testShippingErrorsEmptyForCompletePayload(): void

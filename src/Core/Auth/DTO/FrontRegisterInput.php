@@ -10,15 +10,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class FrontRegisterInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'front.errors.name_required')]
+        #[Assert\NotBlank(message: 'frontend.errors.name_required')]
         #[Assert\Length(max: 100)]
         public string $name,
-        #[Assert\NotBlank(message: 'front.errors.email_required')]
-        #[Assert\Email(message: 'front.errors.email_invalid')]
+        #[Assert\NotBlank(message: 'frontend.errors.email_required')]
+        #[Assert\Email(message: 'frontend.errors.email_invalid')]
         #[Assert\Length(max: 180)]
         public string $email,
-        #[Assert\NotBlank(message: 'front.errors.password_required')]
-        #[Assert\Length(min: 8, minMessage: 'front.errors.password_too_short')]
+        #[Assert\NotBlank(message: 'frontend.errors.password_required')]
+        #[Assert\Length(min: 8, minMessage: 'frontend.errors.password_too_short')]
         public string $password,
         public string $locale,
     ) {}

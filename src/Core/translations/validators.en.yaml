@@ -144,7 +144,7 @@ backend:
       translations_required: At least one language must be filled in.
       type_required: Field type is required.
       field_label_required: At least one label is required.
-front:
+frontend:
   errors:
     name_required: Name is required.
     email_required: Email address is required.

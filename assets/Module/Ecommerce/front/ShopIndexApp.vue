@@ -26,9 +26,9 @@ function pageUrl(n) {
 
 <template>
     <section>
-        <h1 class="text-3xl font-bold mb-6">{{ t('front.shop.title') }}</h1>
+        <h1 class="text-3xl font-bold mb-6">{{ t('frontend.shop.title') }}</h1>
 
-        <p v-if="!listings.length" class="text-muted">{{ t('front.shop.empty') }}</p>
+        <p v-if="!listings.length" class="text-muted">{{ t('frontend.shop.empty') }}</p>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <article
@@ -45,26 +45,26 @@ function pageUrl(n) {
                             object-fit="cover"
                             loading="lazy"
                         />
-                        <div v-else class="w-full h-full flex items-center justify-center text-muted text-xs">{{ t('front.shop.no_image') }}</div>
+                        <div v-else class="w-full h-full flex items-center justify-center text-muted text-xs">{{ t('frontend.shop.no_image') }}</div>
                     </div>
                     <div class="p-4 space-y-2">
                         <div class="flex items-start justify-between gap-2">
                             <h2 class="text-lg font-semibold text-primary">{{ listing.displayTitle }}</h2>
                             <span v-if="listing.product.type === 'digital'" class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-500/15 text-accent-400">
-                                {{ t('front.shop.type.digital') }}
+                                {{ t('frontend.shop.type.digital') }}
                             </span>
                             <span v-else-if="listing.product.type === 'service'" class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-violet-500/15 text-violet-400">
-                                {{ t('front.shop.type.service') }}
+                                {{ t('frontend.shop.type.service') }}
                             </span>
                         </div>
                         <p v-if="listing.product.price !== null" class="text-base font-bold text-accent">
                             {{ formatMoney(listing.product.price, listing.product.currencySymbol) }}
                         </p>
                         <p v-if="listing.product.stockTracked && !listing.product.inStock" class="text-xs text-rose-400 font-medium">
-                            {{ t('front.shop.out_of_stock') }}
+                            {{ t('frontend.shop.out_of_stock') }}
                         </p>
                         <p v-else-if="listing.product.isLowStock" class="text-xs text-amber-400">
-                            {{ t('front.shop.low_stock', { count: listing.product.stockQuantity }) }}
+                            {{ t('frontend.shop.low_stock', { count: listing.product.stockQuantity }) }}
                         </p>
                     </div>
                 </a>

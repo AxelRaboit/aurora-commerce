@@ -39,7 +39,7 @@ async function addToCart() {
         });
         const data = await res.json();
         if (data.success) {
-            toast.success(t("front.shop.added_to_cart"));
+            toast.success(t("frontend.shop.added_to_cart"));
             document.dispatchEvent(new CustomEvent("cart:changed", { detail: { count: data.cart?.totalQuantity ?? 0 } }));
         } else {
             toast.error(data.error || t("shared.common.error"));
@@ -63,7 +63,7 @@ async function addToCart() {
                     object-fit="cover"
                 />
                 <div v-else class="w-full h-full flex items-center justify-center text-muted">
-                    {{ t('front.shop.no_image') }}
+                    {{ t('frontend.shop.no_image') }}
                 </div>
             </div>
         </div>
@@ -80,12 +80,12 @@ async function addToCart() {
 
             <template v-if="product.stockTracked">
                 <p v-if="!product.inStock" class="inline-flex items-center px-3 py-1.5 rounded text-sm font-medium bg-rose-500/15 text-rose-400">
-                    {{ t('front.shop.out_of_stock') }}
+                    {{ t('frontend.shop.out_of_stock') }}
                 </p>
                 <p v-else-if="product.isLowStock" class="text-sm text-amber-400">
-                    {{ t('front.shop.low_stock', { count: product.stockQuantity }) }}
+                    {{ t('frontend.shop.low_stock', { count: product.stockQuantity }) }}
                 </p>
-                <p v-else class="text-sm text-emerald-400">{{ t('front.shop.in_stock') }}</p>
+                <p v-else class="text-sm text-emerald-400">{{ t('frontend.shop.in_stock') }}</p>
             </template>
 
             <div v-if="isInStock" class="flex items-end gap-3">
@@ -104,7 +104,7 @@ async function addToCart() {
                     :loading="adding"
                     v-on:click="addToCart"
                 >
-                    {{ t('front.shop.add_to_cart') }}
+                    {{ t('frontend.shop.add_to_cart') }}
                 </AppButton>
             </div>
 
@@ -113,7 +113,7 @@ async function addToCart() {
             </div>
 
             <AppLink :href="shopPath" variant="muted" size="sm" class="inline-block">
-                ← {{ t('front.shop.back_to_list') }}
+                ← {{ t('frontend.shop.back_to_list') }}
             </AppLink>
         </div>
     </article>

@@ -22,11 +22,11 @@ final class FrontUserChecker implements UserCheckerInterface
         }
 
         if (UserStatusEnum::PendingVerification === $user->getStatus()) {
-            throw new CustomUserMessageAccountStatusException('front.errors.email_not_verified');
+            throw new CustomUserMessageAccountStatusException('frontend.errors.email_not_verified');
         }
 
         if (UserStatusEnum::Disabled === $user->getStatus()) {
-            throw new CustomUserMessageAccountStatusException('front.errors.account_disabled');
+            throw new CustomUserMessageAccountStatusException('frontend.errors.account_disabled');
         }
     }
 }

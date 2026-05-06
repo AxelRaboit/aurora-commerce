@@ -16,28 +16,28 @@ defineProps({
     <section class="space-y-6">
         <div class="text-center space-y-2">
             <div class="inline-flex w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 items-center justify-center text-3xl">✓</div>
-            <h1 class="text-3xl font-bold">{{ t('front.order.thanks') }}</h1>
-            <p class="text-muted">{{ t('front.order.confirmation_intro', { number: order.number }) }}</p>
+            <h1 class="text-3xl font-bold">{{ t('frontend.order.thanks') }}</h1>
+            <p class="text-muted">{{ t('frontend.order.confirmation_intro', { number: order.number }) }}</p>
         </div>
 
         <div class="bg-surface border border-line rounded-xl p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <div>
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('front.order.number') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('frontend.order.number') }}</p>
                     <p class="font-mono text-primary">{{ order.number }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('front.order.status') }}</p>
-                    <p class="text-emerald-400 font-medium">{{ t('front.order.status_' + order.status) }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('frontend.order.status') }}</p>
+                    <p class="text-emerald-400 font-medium">{{ t('frontend.order.status_' + order.status) }}</p>
                 </div>
             </div>
 
             <table class="w-full text-sm border-t border-line">
                 <thead>
                     <tr class="text-xs text-muted uppercase">
-                        <th class="text-left py-2">{{ t('front.order.product') }}</th>
-                        <th class="text-right py-2">{{ t('front.order.qty') }}</th>
-                        <th class="text-right py-2">{{ t('front.order.subtotal') }}</th>
+                        <th class="text-left py-2">{{ t('frontend.order.product') }}</th>
+                        <th class="text-right py-2">{{ t('frontend.order.qty') }}</th>
+                        <th class="text-right py-2">{{ t('frontend.order.subtotal') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -52,7 +52,7 @@ defineProps({
                 </tbody>
                 <tfoot>
                     <tr class="border-t border-line">
-                        <td colspan="2" class="pt-3 text-right font-semibold">{{ t('front.cart.total') }}</td>
+                        <td colspan="2" class="pt-3 text-right font-semibold">{{ t('frontend.cart.total') }}</td>
                         <td class="pt-3 text-right text-xl font-bold text-accent">{{ formatMoney(order.total, order.currencySymbol) }}</td>
                     </tr>
                 </tfoot>
@@ -60,7 +60,7 @@ defineProps({
         </div>
 
         <div v-if="order.requiresShipping" class="bg-surface border border-line rounded-xl p-6 space-y-2">
-            <h2 class="font-semibold text-primary mb-2">{{ t('front.checkout.shipping') }}</h2>
+            <h2 class="font-semibold text-primary mb-2">{{ t('frontend.checkout.shipping') }}</h2>
             <p class="text-secondary text-sm">{{ order.name }}</p>
             <p class="text-secondary text-sm">{{ order.addressLine1 }}</p>
             <p v-if="order.addressLine2" class="text-secondary text-sm">{{ order.addressLine2 }}</p>
@@ -70,7 +70,7 @@ defineProps({
 
         <div class="text-center">
             <AppLink :href="shopPath" variant="muted" size="sm">
-                ← {{ t('front.cart.continue_shopping') }}
+                ← {{ t('frontend.cart.continue_shopping') }}
             </AppLink>
         </div>
     </section>

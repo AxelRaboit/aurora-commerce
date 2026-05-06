@@ -1622,7 +1622,7 @@ export default {
             },
         },
     },
-    front: {
+    frontend: {
         login: {
             title: "Connexion",
             heading: "Connexion",

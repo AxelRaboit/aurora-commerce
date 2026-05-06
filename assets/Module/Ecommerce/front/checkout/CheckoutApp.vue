@@ -38,7 +38,7 @@ function handleSubmit() {
 
 <template>
     <section>
-        <h1 class="text-3xl font-bold mb-6">{{ t('front.checkout.title') }}</h1>
+        <h1 class="text-3xl font-bold mb-6">{{ t('frontend.checkout.title') }}</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-4">
@@ -48,19 +48,19 @@ function handleSubmit() {
 
                 <!-- Contact -->
                 <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <h2 class="text-lg font-semibold text-primary">{{ t('front.checkout.contact') }}</h2>
+                    <h2 class="text-lg font-semibold text-primary">{{ t('frontend.checkout.contact') }}</h2>
                     <AppInput
                         v-model="form.email"
                         type="email"
                         name="email"
-                        :label="t('front.checkout.email')"
+                        :label="t('frontend.checkout.email')"
                         :error="errors.email"
                         :required="true"
                     />
                     <AppInput
                         v-model="form.name"
                         name="name"
-                        :label="t('front.checkout.name')"
+                        :label="t('frontend.checkout.name')"
                         :error="errors.name"
                         :required="true"
                     />
@@ -68,21 +68,21 @@ function handleSubmit() {
 
                 <!-- Shipping -->
                 <div v-if="requiresShipping" class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <h2 class="text-lg font-semibold text-primary">{{ t('front.checkout.shipping') }}</h2>
+                    <h2 class="text-lg font-semibold text-primary">{{ t('frontend.checkout.shipping') }}</h2>
                     <AppInput
                         v-model="form.addressLine1"
                         name="addressLine1"
-                        :label="t('front.checkout.address_line_1')"
+                        :label="t('frontend.checkout.address_line_1')"
                         :error="errors.addressLine1"
                         :required="true"
                     />
-                    <AppInput v-model="form.addressLine2" name="addressLine2" :label="t('front.checkout.address_line_2')" :error="errors.addressLine2" />
+                    <AppInput v-model="form.addressLine2" name="addressLine2" :label="t('frontend.checkout.address_line_2')" :error="errors.addressLine2" />
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div class="sm:col-span-2">
                             <AppInput
                                 v-model="form.city"
                                 name="city"
-                                :label="t('front.checkout.city')"
+                                :label="t('frontend.checkout.city')"
                                 :error="errors.city"
                                 :required="true"
                             />
@@ -90,33 +90,33 @@ function handleSubmit() {
                         <AppInput
                             v-model="form.postalCode"
                             name="postalCode"
-                            :label="t('front.checkout.postal_code')"
+                            :label="t('frontend.checkout.postal_code')"
                             :error="errors.postalCode"
                             :required="true"
                         />
                     </div>
                     <AppMultiselect
                         v-model="form.country"
-                        :label="t('front.checkout.country')"
-                        :placeholder="t('front.checkout.country_placeholder')"
+                        :label="t('frontend.checkout.country')"
+                        :placeholder="t('frontend.checkout.country_placeholder')"
                         :options="countryOptions"
                         :error="errors.country"
                         :required="true"
                     />
-                    <AppTextarea v-model="form.notes" name="notes" :label="t('front.checkout.notes')" :rows="3" />
+                    <AppTextarea v-model="form.notes" name="notes" :label="t('frontend.checkout.notes')" :rows="3" />
                 </div>
 
                 <!-- Digital -->
                 <div v-else class="bg-surface border border-line rounded-xl p-6 space-y-3">
-                    <h2 class="text-lg font-semibold text-primary">{{ t('front.checkout.digital_delivery') }}</h2>
-                    <p class="text-sm text-secondary">{{ t('front.checkout.digital_delivery_hint') }}</p>
-                    <AppTextarea v-model="form.notes" name="notes" :label="t('front.checkout.notes')" :rows="3" />
+                    <h2 class="text-lg font-semibold text-primary">{{ t('frontend.checkout.digital_delivery') }}</h2>
+                    <p class="text-sm text-secondary">{{ t('frontend.checkout.digital_delivery_hint') }}</p>
+                    <AppTextarea v-model="form.notes" name="notes" :label="t('frontend.checkout.notes')" :rows="3" />
                 </div>
 
                 <!-- Stripe -->
                 <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <h2 class="text-lg font-semibold text-primary">{{ t('front.checkout.payment') }}</h2>
-                    <p class="text-xs text-muted">{{ t('front.checkout.demo_card_hint') }}</p>
+                    <h2 class="text-lg font-semibold text-primary">{{ t('frontend.checkout.payment') }}</h2>
+                    <p class="text-xs text-muted">{{ t('frontend.checkout.demo_card_hint') }}</p>
                     <div id="card-element" class="px-3 py-3 rounded-md bg-surface-2 border border-line" :class="{ 'border-red-500': cardError }" />
                     <p v-if="cardError" class="text-xs text-red-500">{{ cardError }}</p>
                 </div>
@@ -125,7 +125,7 @@ function handleSubmit() {
             <!-- Summary -->
             <aside>
                 <div class="bg-surface border border-line rounded-xl p-6 space-y-3 lg:sticky lg:top-4">
-                    <h2 class="text-lg font-semibold text-primary mb-3">{{ t('front.checkout.summary') }}</h2>
+                    <h2 class="text-lg font-semibold text-primary mb-3">{{ t('frontend.checkout.summary') }}</h2>
                     <ul class="space-y-2 text-sm border-b border-line pb-3">
                         <li v-for="item in cart.items" :key="item.id" class="flex justify-between gap-3">
                             <span class="text-secondary">{{ item.title }} × {{ item.quantity }}</span>
@@ -133,7 +133,7 @@ function handleSubmit() {
                         </li>
                     </ul>
                     <div class="flex items-center justify-between pt-2">
-                        <span class="font-semibold text-primary">{{ t('front.cart.total') }}</span>
+                        <span class="font-semibold text-primary">{{ t('frontend.cart.total') }}</span>
                         <span class="text-xl font-bold text-accent">{{ formatMoney(cart.total, cart.currencySymbol) }}</span>
                     </div>
                     <AppButton
@@ -144,7 +144,7 @@ function handleSubmit() {
                         class="w-full"
                         v-on:click="handleSubmit"
                     >
-                        {{ processing ? t('front.checkout.processing') : t('front.checkout.confirm') }}
+                        {{ processing ? t('frontend.checkout.processing') : t('frontend.checkout.confirm') }}
                     </AppButton>
                 </div>
             </aside>

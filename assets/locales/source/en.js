@@ -1546,7 +1546,7 @@ export default {
             },
         },
     },
-    front: {
+    frontend: {
         login: {
             title: "Sign in",
             heading: "Sign in",

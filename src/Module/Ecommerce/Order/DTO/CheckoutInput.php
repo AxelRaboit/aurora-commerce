@@ -11,10 +11,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class CheckoutInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'front.checkout.errors.email_required')]
-        #[Assert\Email(message: 'front.checkout.errors.email_invalid')]
+        #[Assert\NotBlank(message: 'frontend.checkout.errors.email_required')]
+        #[Assert\Email(message: 'frontend.checkout.errors.email_invalid')]
         public string $email = '',
-        #[Assert\NotBlank(message: 'front.checkout.errors.name_required')]
+        #[Assert\NotBlank(message: 'frontend.checkout.errors.name_required')]
         #[Assert\Length(max: 200)]
         public string $name = '',
         #[Assert\Length(max: 200)]
@@ -56,21 +56,21 @@ final readonly class CheckoutInput
     {
         $errors = [];
         if (null === $this->addressLine1 || '' === $this->addressLine1) {
-            $errors['addressLine1'] = 'front.checkout.errors.address_required';
+            $errors['addressLine1'] = 'frontend.checkout.errors.address_required';
         }
 
         if (null === $this->city || '' === $this->city) {
-            $errors['city'] = 'front.checkout.errors.city_required';
+            $errors['city'] = 'frontend.checkout.errors.city_required';
         }
 
         if (null === $this->postalCode || '' === $this->postalCode) {
-            $errors['postalCode'] = 'front.checkout.errors.postal_required';
+            $errors['postalCode'] = 'frontend.checkout.errors.postal_required';
         }
 
         if (null === $this->country || '' === $this->country) {
-            $errors['country'] = 'front.checkout.errors.country_required';
+            $errors['country'] = 'frontend.checkout.errors.country_required';
         } elseif (!in_array($this->country, CountryEnum::values(), true)) {
-            $errors['country'] = 'front.checkout.errors.country_invalid';
+            $errors['country'] = 'frontend.checkout.errors.country_invalid';
         }
 
         return $errors;

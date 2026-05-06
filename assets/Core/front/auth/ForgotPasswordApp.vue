@@ -25,23 +25,23 @@ const { errors, submitOnValid } = useAuthForm(props.initialErrors);
 function handleSubmit(event) {
     submitOnValid(event, {
         email: () => compose(
-            required(t("front.errors.email_required")),
-            emailValidator(t("front.errors.email_invalid")),
+            required(t("frontend.errors.email_required")),
+            emailValidator(t("frontend.errors.email_invalid")),
         )(email.value),
     });
 }
 </script>
 
 <template>
-    <AuthCard :heading="t('front.forgot_password.heading')" :subtitle="t('front.forgot_password.subtitle')">
+    <AuthCard :heading="t('frontend.forgot_password.heading')" :subtitle="t('frontend.forgot_password.subtitle')">
         <template #icon><Mail class="w-6 h-6" :stroke-width="2" /></template>
         <div v-if="sent" class="text-center">
             <div class="w-14 h-14 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-6">
                 <Mail class="w-7 h-7 text-emerald-400" :stroke-width="2" />
             </div>
-            <p class="text-secondary text-sm leading-relaxed mb-6">{{ t('front.forgot_password.sent') }}</p>
+            <p class="text-secondary text-sm leading-relaxed mb-6">{{ t('frontend.forgot_password.sent') }}</p>
             <p class="text-sm text-secondary">
-                <AppLink :href="loginPath" variant="front">{{ t('front.forgot_password.back_login') }}</AppLink>
+                <AppLink :href="loginPath" variant="front">{{ t('frontend.forgot_password.back_login') }}</AppLink>
             </p>
         </div>
 
@@ -56,19 +56,19 @@ function handleSubmit(event) {
                 v-model="email"
                 name="email"
                 type="email"
-                :label="t('front.login.email')"
-                :placeholder="t('front.login.email_placeholder')"
+                :label="t('frontend.login.email')"
+                :placeholder="t('frontend.login.email_placeholder')"
                 :error="errors.email"
                 autocomplete="email"
                 autofocus
                 required
             />
-            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('front.forgot_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('frontend.forgot_password.submit') }}</AppButton>
         </form>
 
         <template v-if="!sent" #footer>
             <p class="mt-6 text-center text-sm text-secondary">
-                <AppLink :href="loginPath" variant="front">{{ t('front.forgot_password.back_login') }}</AppLink>
+                <AppLink :href="loginPath" variant="front">{{ t('frontend.forgot_password.back_login') }}</AppLink>
             </p>
         </template>
     </AuthCard>

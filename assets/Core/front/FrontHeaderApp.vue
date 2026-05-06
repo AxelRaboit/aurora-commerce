@@ -96,7 +96,7 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
             <details v-if="primaryMenuItems.length" class="md:hidden order-last basis-full">
                 <summary class="list-none flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:opacity-80" style="color: var(--th-header-text, var(--th-primary));">
                     <Menu class="w-5 h-5" :stroke-width="2" />
-                    <span class="text-sm">{{ t('front.menu.label') }}</span>
+                    <span class="text-sm">{{ t('frontend.menu.label') }}</span>
                 </summary>
                 <ul class="mt-2 space-y-1 border-t pt-2" style="border-color: var(--th-header-border, var(--color-border));">
                     <li v-for="item in primaryMenuItems" :key="item.id">
@@ -136,7 +136,7 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
                         style="color: var(--th-header-text, var(--th-primary));"
                     >
                         <User class="w-4 h-4" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ currentUser ? currentUser.name : t('front.menu.account') }}</span>
+                        <span class="hidden sm:inline">{{ currentUser ? currentUser.name : t('frontend.menu.account') }}</span>
                         <span
                             v-show="cartCount > 0"
                             class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-white text-xs tabular-nums"
@@ -154,7 +154,7 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
                                 >
                                     <span class="flex items-center gap-2">
                                         <ShoppingCart class="w-4 h-4" :stroke-width="2" />
-                                        {{ t('front.cart.title') }}
+                                        {{ t('frontend.cart.title') }}
                                     </span>
                                     <span
                                         v-if="cartCount > 0"
@@ -168,7 +168,7 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
                                     style="color: var(--th-primary);"
                                 >
                                     <Package class="w-4 h-4" :stroke-width="2" />
-                                    {{ t('front.account.orders') }}
+                                    {{ t('frontend.account.orders') }}
                                 </a>
                             </template>
                             <div v-if="ecommerceEnabled && accountMenuItems.length" class="border-t" style="border-color: var(--color-border);" />

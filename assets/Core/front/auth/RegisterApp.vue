@@ -28,10 +28,10 @@ const { errors, submitOnValid } = useAuthForm(props.initialErrors);
 
 function handleSubmit(event) {
     submitOnValid(event, {
-        name: () => required(t("front.errors.name_required"))(name.value),
+        name: () => required(t("frontend.errors.name_required"))(name.value),
         email: () => compose(
-            required(t("front.errors.email_required")),
-            emailValidator(t("front.errors.email_invalid")),
+            required(t("frontend.errors.email_required")),
+            emailValidator(t("frontend.errors.email_invalid")),
         )(email.value),
         password: () => passwordValidator(t)(password.value),
     });
@@ -41,16 +41,16 @@ function handleSubmit(event) {
 <template>
     <AuthCard
         v-if="registrationEnabled"
-        :heading="t('front.register.heading')"
-        :subtitle="t('front.register.subtitle')"
+        :heading="t('frontend.register.heading')"
+        :subtitle="t('frontend.register.subtitle')"
     >
         <template #icon><UserPlus class="w-6 h-6" :stroke-width="2" /></template>
         <form method="POST" :action="registerPath" class="space-y-5" v-on:submit.prevent="handleSubmit">
             <AppInput
                 v-model="name"
                 name="name"
-                :label="t('front.register.name')"
-                :placeholder="t('front.register.name_placeholder')"
+                :label="t('frontend.register.name')"
+                :placeholder="t('frontend.register.name_placeholder')"
                 :error="errors.name"
                 autocomplete="name"
                 autofocus
@@ -60,8 +60,8 @@ function handleSubmit(event) {
                 v-model="email"
                 name="email"
                 type="email"
-                :label="t('front.register.email')"
-                :placeholder="t('front.register.email_placeholder')"
+                :label="t('frontend.register.email')"
+                :placeholder="t('frontend.register.email_placeholder')"
                 :error="errors.email"
                 autocomplete="email"
                 required
@@ -69,34 +69,34 @@ function handleSubmit(event) {
             <AppInput
                 v-model="password"
                 name="password"
-                :label="t('front.register.password')"
+                :label="t('frontend.register.password')"
                 placeholder="••••••••"
                 :error="errors.password"
                 autocomplete="new-password"
                 toggleable
                 required
             />
-            <AppButton type="submit" class="w-full"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('front.register.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('frontend.register.submit') }}</AppButton>
         </form>
 
         <template #footer>
             <p class="mt-6 text-center text-sm text-secondary">
-                {{ t('front.register.already_account') }}
-                <AppLink :href="loginPath" variant="front">{{ t('front.register.login_link') }}</AppLink>
+                {{ t('frontend.register.already_account') }}
+                <AppLink :href="loginPath" variant="front">{{ t('frontend.register.login_link') }}</AppLink>
             </p>
         </template>
     </AuthCard>
 
     <AuthCard
         v-else
-        :heading="t('front.register.closed_title')"
-        :subtitle="t('front.register.closed_desc')"
+        :heading="t('frontend.register.closed_title')"
+        :subtitle="t('frontend.register.closed_desc')"
     >
         <template #icon><Lock class="w-6 h-6" :stroke-width="2" /></template>
         <div class="text-center">
             <AppButton :href="loginPath" variant="primary">
                 <LogIn class="w-4 h-4" :stroke-width="2" />
-                {{ t('front.login.submit') }}
+                {{ t('frontend.login.submit') }}
             </AppButton>
         </div>
     </AuthCard>

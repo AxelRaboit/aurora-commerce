@@ -98,12 +98,12 @@ function broadcastCartChange(count) {
 
 <template>
     <section>
-        <h1 class="text-3xl font-bold mb-6">{{ t('front.cart.title') }}</h1>
+        <h1 class="text-3xl font-bold mb-6">{{ t('frontend.cart.title') }}</h1>
 
         <div v-if="isEmpty" class="bg-surface border border-line rounded-xl p-8 text-center space-y-4">
-            <p class="text-muted">{{ t('front.cart.empty') }}</p>
+            <p class="text-muted">{{ t('frontend.cart.empty') }}</p>
             <AppButton :href="shopPath" variant="accent">
-                {{ t('front.cart.browse_shop') }}
+                {{ t('frontend.cart.browse_shop') }}
             </AppButton>
         </div>
 
@@ -144,16 +144,16 @@ function broadcastCartChange(count) {
             </div>
 
             <div class="bg-surface border border-line rounded-xl p-6 flex items-center justify-between">
-                <span class="text-lg font-semibold text-primary">{{ t('front.cart.total') }}</span>
+                <span class="text-lg font-semibold text-primary">{{ t('frontend.cart.total') }}</span>
                 <span class="text-2xl font-bold text-accent tabular-nums transition-all">{{ formatMoney(cart.total, cart.currencySymbol) }}</span>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:justify-between gap-3">
                 <AppLink :href="shopPath" variant="muted" size="sm" class="self-center">
-                    ← {{ t('front.cart.continue_shopping') }}
+                    ← {{ t('frontend.cart.continue_shopping') }}
                 </AppLink>
                 <AppButton :href="checkoutPath" variant="accent" size="lg">
-                    {{ t('front.cart.checkout') }}
+                    {{ t('frontend.cart.checkout') }}
                 </AppButton>
             </div>
         </div>

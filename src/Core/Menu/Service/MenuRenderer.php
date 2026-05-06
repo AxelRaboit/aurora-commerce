@@ -212,12 +212,12 @@ final class MenuRenderer
 
         // 2. Natural label from target
         return match ($item->getTargetType()) {
-            MenuItemTargetTypeEnum::Home => $this->translator->trans('front.menu.home', [], 'messages', $locale),
-            MenuItemTargetTypeEnum::FrontLogin => $this->translator->trans('front.menu.login', [], 'messages', $locale),
-            MenuItemTargetTypeEnum::FrontRegister => $this->translator->trans('front.menu.register', [], 'messages', $locale),
-            MenuItemTargetTypeEnum::FrontAccount => $this->translator->trans('front.menu.account', [], 'messages', $locale),
-            MenuItemTargetTypeEnum::FrontLogout => $this->translator->trans('front.menu.logout', [], 'messages', $locale),
-            MenuItemTargetTypeEnum::FrontShop => $this->translator->trans('front.shop.title', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::Home => $this->translator->trans('frontend.menu.home', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::FrontLogin => $this->translator->trans('frontend.menu.login', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::FrontRegister => $this->translator->trans('frontend.menu.register', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::FrontAccount => $this->translator->trans('frontend.menu.account', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::FrontLogout => $this->translator->trans('frontend.menu.logout', [], 'messages', $locale),
+            MenuItemTargetTypeEnum::FrontShop => $this->translator->trans('frontend.shop.title', [], 'messages', $locale),
             MenuItemTargetTypeEnum::Post => $this->postLabel($item, $locale),
             MenuItemTargetTypeEnum::Term => $this->termLabel($item, $locale),
             MenuItemTargetTypeEnum::PostTypeArchive => $this->postTypeRepository->find($item->getTargetId())?->getLabel(),

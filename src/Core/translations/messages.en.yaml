@@ -275,7 +275,7 @@ backend:
       modules: Modules
     cascadeLocked: "Enable “{parent}” first to edit this setting."
     mediaSquareHint: "Recommended: square image (1:1)."
-front:
+frontend:
   menu:
     home: Home
     login: Sign in

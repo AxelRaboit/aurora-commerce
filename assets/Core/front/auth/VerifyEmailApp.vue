@@ -15,8 +15,8 @@ defineProps({
 
 <template>
     <AuthCard
-        :heading="success ? t('front.verify_email.success_heading') : t('front.verify_email.error_heading')"
-        :subtitle="success ? t('front.verify_email.success_message') : t('front.verify_email.error_message')"
+        :heading="success ? t('frontend.verify_email.success_heading') : t('frontend.verify_email.error_heading')"
+        :subtitle="success ? t('frontend.verify_email.success_message') : t('frontend.verify_email.error_message')"
     >
         <template #icon>
             <Check v-if="success" class="w-6 h-6" :stroke-width="2" />
@@ -25,11 +25,11 @@ defineProps({
         <div class="text-center">
             <AppButton v-if="success" :href="loginPath" variant="accent">
                 <LogIn class="w-4 h-4" :stroke-width="2" />
-                {{ t('front.login.submit') }}
+                {{ t('frontend.login.submit') }}
             </AppButton>
             <AppButton v-else :href="registerPath" variant="secondary">
                 <UserPlus class="w-4 h-4" :stroke-width="2" />
-                {{ t('front.register.submit') }}
+                {{ t('frontend.register.submit') }}
             </AppButton>
         </div>
     </AuthCard>

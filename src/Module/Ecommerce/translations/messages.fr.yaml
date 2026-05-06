@@ -94,7 +94,7 @@ ecommerce:
       delay: Le remboursement apparaîtra sur votre compte bancaire sous 5 à 10 jours ouvrés.
       cta: Voir ma commande
       support: 'Pour toute question, n''hésitez pas à nous contacter en réponse à ce message.'
-front:
+frontend:
   shop:
     title: Boutique
     empty: Aucun produit disponible pour le moment.

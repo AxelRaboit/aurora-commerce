@@ -94,7 +94,7 @@ ecommerce:
       delay: The refund will appear on your bank account within 5 to 10 business days.
       cta: View my order
       support: 'For any question, feel free to reply to this email.'
-front:
+frontend:
   shop:
     title: Shop
     empty: No products available yet.

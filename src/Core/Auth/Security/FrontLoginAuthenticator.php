@@ -68,12 +68,12 @@ final class FrontLoginAuthenticator extends AbstractLoginFormAuthenticator
 
         // Block unverified users
         if (method_exists($user, 'getStatus') && UserStatusEnum::PendingVerification === $user->getStatus()) {
-            throw new CustomUserMessageAuthenticationException('front.errors.email_not_verified');
+            throw new CustomUserMessageAuthenticationException('frontend.errors.email_not_verified');
         }
 
         // Block disabled users
         if (method_exists($user, 'getStatus') && UserStatusEnum::Disabled === $user->getStatus()) {
-            throw new CustomUserMessageAuthenticationException('front.errors.account_disabled');
+            throw new CustomUserMessageAuthenticationException('frontend.errors.account_disabled');
         }
 
         $locale = $request->request->getString('_locale', 'fr');

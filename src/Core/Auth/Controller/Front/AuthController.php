@@ -92,7 +92,7 @@ class AuthController extends AbstractController
         $errors = $this->payloadValidator->errors($input);
 
         if ([] === $errors && $this->userRepository->findOneBy(['email' => $input->email, 'type' => UserTypeEnum::Frontend])) {
-            $errors['email'] = 'front.errors.email_taken';
+            $errors['email'] = 'frontend.errors.email_taken';
         }
 
         if ([] === $errors) {
@@ -205,9 +205,9 @@ class AuthController extends AbstractController
             $confirm = $request->request->getString('password_confirmation');
 
             if ('' === $password || mb_strlen($password) < 8) {
-                $errors['password'] = $this->translator->trans('front.errors.password_too_short');
+                $errors['password'] = $this->translator->trans('frontend.errors.password_too_short');
             } elseif ($password !== $confirm) {
-                $errors['password_confirmation'] = $this->translator->trans('front.errors.passwords_mismatch');
+                $errors['password_confirmation'] = $this->translator->trans('frontend.errors.passwords_mismatch');
             }
 
             if ([] === $errors) {

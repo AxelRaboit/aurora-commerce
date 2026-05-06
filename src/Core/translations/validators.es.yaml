@@ -144,7 +144,7 @@ backend:
       translations_required: Al menos un idioma debe estar rellenado.
       type_required: El tipo de campo es obligatorio.
       field_label_required: Al menos una etiqueta es obligatoria.
-front:
+frontend:
   errors:
     name_required: El nombre es obligatorio.
     email_required: La dirección de correo es obligatoria.

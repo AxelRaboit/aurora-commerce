@@ -27,23 +27,23 @@ function handleSubmit(event) {
         password: () => passwordValidator(t)(password.value),
         password_confirmation: () => password.value === passwordConfirmation.value
             ? null
-            : t("front.errors.passwords_mismatch"),
+            : t("frontend.errors.passwords_mismatch"),
     });
 }
 </script>
 
 <template>
     <AuthCard
-        :heading="t('front.reset_password.heading')"
-        :subtitle="invalid ? '' : t('front.reset_password.subtitle')"
+        :heading="t('frontend.reset_password.heading')"
+        :subtitle="invalid ? '' : t('frontend.reset_password.subtitle')"
     >
         <template #icon><KeyRound class="w-6 h-6" :stroke-width="2" /></template>
         <template v-if="invalid">
             <div class="rounded-lg bg-danger-soft border border-danger/30 px-4 py-4 text-sm text-danger mb-6">
-                {{ t('front.reset_password.invalid_link') }}
+                {{ t('frontend.reset_password.invalid_link') }}
             </div>
             <p class="text-center">
-                <AppLink :href="forgotPath" variant="front-accent" class="text-sm">{{ t('front.forgot_password.submit') }}</AppLink>
+                <AppLink :href="forgotPath" variant="front-accent" class="text-sm">{{ t('frontend.forgot_password.submit') }}</AppLink>
             </p>
         </template>
 
@@ -57,7 +57,7 @@ function handleSubmit(event) {
             <AppInput
                 v-model="password"
                 name="password"
-                :label="t('front.reset_password.new_password')"
+                :label="t('frontend.reset_password.new_password')"
                 placeholder="••••••••"
                 :error="errors.password"
                 autocomplete="new-password"
@@ -68,14 +68,14 @@ function handleSubmit(event) {
             <AppInput
                 v-model="passwordConfirmation"
                 name="password_confirmation"
-                :label="t('front.reset_password.confirm_password')"
+                :label="t('frontend.reset_password.confirm_password')"
                 placeholder="••••••••"
                 :error="errors.password_confirmation"
                 autocomplete="new-password"
                 toggleable
                 required
             />
-            <AppButton type="submit" class="w-full"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('front.reset_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('frontend.reset_password.submit') }}</AppButton>
         </form>
     </AuthCard>
 </template>

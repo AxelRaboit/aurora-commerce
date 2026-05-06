@@ -125,12 +125,12 @@ final readonly class MenuItemSerializer
     private function resolveTargetPreview(MenuItem $item, array $postCache, array $termCache, array $postTypeCache): array
     {
         return match ($item->getTargetType()) {
-            MenuItemTargetTypeEnum::Home => ['label' => $this->translator->trans('front.menu.home'), 'hint' => '/'],
-            MenuItemTargetTypeEnum::FrontLogin => ['label' => $this->translator->trans('front.menu.login'), 'hint' => '/login'],
-            MenuItemTargetTypeEnum::FrontRegister => ['label' => $this->translator->trans('front.menu.register'), 'hint' => '/register'],
-            MenuItemTargetTypeEnum::FrontAccount => ['label' => $this->translator->trans('front.menu.account'), 'hint' => '/account'],
-            MenuItemTargetTypeEnum::FrontLogout => ['label' => $this->translator->trans('front.menu.logout'), 'hint' => '/logout'],
-            MenuItemTargetTypeEnum::FrontShop => ['label' => $this->translator->trans('front.shop.title'), 'hint' => '/shop'],
+            MenuItemTargetTypeEnum::Home => ['label' => $this->translator->trans('frontend.menu.home'), 'hint' => '/'],
+            MenuItemTargetTypeEnum::FrontLogin => ['label' => $this->translator->trans('frontend.menu.login'), 'hint' => '/login'],
+            MenuItemTargetTypeEnum::FrontRegister => ['label' => $this->translator->trans('frontend.menu.register'), 'hint' => '/register'],
+            MenuItemTargetTypeEnum::FrontAccount => ['label' => $this->translator->trans('frontend.menu.account'), 'hint' => '/account'],
+            MenuItemTargetTypeEnum::FrontLogout => ['label' => $this->translator->trans('frontend.menu.logout'), 'hint' => '/logout'],
+            MenuItemTargetTypeEnum::FrontShop => ['label' => $this->translator->trans('frontend.shop.title'), 'hint' => '/shop'],
             MenuItemTargetTypeEnum::CustomUrl => ['label' => $item->getCustomUrl() ?? '', 'hint' => $item->getCustomUrl() ?? ''],
             MenuItemTargetTypeEnum::Post => $this->postPreview($item, $postCache),
             MenuItemTargetTypeEnum::Term => $this->termPreview($item, $termCache),
