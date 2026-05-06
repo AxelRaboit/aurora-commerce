@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Service;
 
+use Aurora\Core\Menu\Contract\MenuLocationProviderInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 
 /**
  * Registry of menu locations expected by the application/theme.
- *
- * Each location has a slug (used as Menu.location), a default name, an
- * optional description, and an optional list of `defaultItems` seeded the
- * first time the menu is created via `aurora:menus:sync`.
+ * Locations are contributed by registered MenuLocationProviderInterface services
+ * (e.g. EditorialFront) and can also be added at runtime via register().
  */
 final class MenuLocationRegistry
 {
@@ -23,28 +22,17 @@ final class MenuLocationRegistry
      *     defaultItems: array<int, array{targetType: MenuItemTargetTypeEnum, visibility?: MenuItemVisibilityEnum}>,
      * }>
      */
-    private array $locations = [
-        'primary' => [
-            'name' => 'Menu principal',
-            'description' => 'Navigation affichée dans le header du site public.',
-            'defaultItems' => [],
-        ],
-        'footer' => [
-            'name' => 'Menu pied de page',
-            'description' => 'Liens secondaires affichés dans le footer.',
-            'defaultItems' => [],
-        ],
-        'account' => [
-            'name' => 'Menu compte',
-            'description' => 'Dropdown utilisateur dans le header (connexion, profil, déconnexion).',
-            'defaultItems' => [
-                ['targetType' => MenuItemTargetTypeEnum::FrontAccount, 'visibility' => MenuItemVisibilityEnum::AuthenticatedOnly],
-                ['targetType' => MenuItemTargetTypeEnum::FrontLogin, 'visibility' => MenuItemVisibilityEnum::GuestsOnly],
-                ['targetType' => MenuItemTargetTypeEnum::FrontRegister, 'visibility' => MenuItemVisibilityEnum::GuestsOnly],
-                ['targetType' => MenuItemTargetTypeEnum::FrontLogout, 'visibility' => MenuItemVisibilityEnum::AuthenticatedOnly],
-            ],
-        ],
-    ];
+    private array $locations = [];
+
+    /** @param iterable<MenuLocationProviderInterface> $providers */
+    public function __construct(iterable $providers)
+    {
+        foreach ($providers as $provider) {
+            foreach ($provider->getMenuLocations() as $location => $meta) {
+                $this->locations[$location] = $meta;
+            }
+        }
+    }
 
     /**
      * @return array<string, array{name: string, description: ?string, defaultItems: array<int, array<string, mixed>>}>

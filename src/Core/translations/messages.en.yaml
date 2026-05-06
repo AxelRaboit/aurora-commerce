@@ -110,11 +110,11 @@ admin:
       post_type_archive: Post type archive
       home: Home
       custom_url: Custom URL
-      front_login: Login page
-      front_register: Register page
-      front_account: My account
-      front_shop: Shop
-      front_logout: Sign out
+      frontend_login: Login page
+      frontend_register: Register page
+      frontend_account: My account
+      frontend_shop: Shop
+      frontend_logout: Sign out
     visibilities:
       always: Always visible
       guests_only: Guests only

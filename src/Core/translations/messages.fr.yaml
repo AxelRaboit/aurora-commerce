@@ -111,11 +111,11 @@ admin:
       post_type_archive: Archive de type
       home: Accueil
       custom_url: URL personnalisée
-      front_login: Page de connexion
-      front_register: Page d'inscription
-      front_account: Mon compte
-      front_shop: Boutique
-      front_logout: Se déconnecter
+      frontend_login: Page de connexion
+      frontend_register: Page d'inscription
+      frontend_account: Mon compte
+      frontend_shop: Boutique
+      frontend_logout: Se déconnecter
     visibilities:
       always: Toujours visible
       guests_only: Invités uniquement
