@@ -30,6 +30,7 @@ final readonly class CartViewBuilder
             'cart' => $this->cartSerializer->serialize($cart),
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }

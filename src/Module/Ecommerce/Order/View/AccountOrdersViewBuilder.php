@@ -38,6 +38,7 @@ final readonly class AccountOrdersViewBuilder
             ],
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }

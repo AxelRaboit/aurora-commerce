@@ -21,7 +21,12 @@ final readonly class FrontViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function baseView(string $locale, string $pageDescription = '', array $alternates = []): array
+    /**
+     * @param bool $showFrontMenus Pass true only for fronts that have registered menu locations (e.g. Editorial).
+     *
+     * @return array<string, mixed>
+     */
+    public function baseView(string $locale, string $pageDescription = '', array $alternates = [], bool $showFrontMenus = false): array
     {
         return [
             'locale' => $locale,
@@ -29,6 +34,7 @@ final readonly class FrontViewBuilder
             'themeContext' => $this->themeContext,
             'pageDescription' => $pageDescription ?: ($this->frontContext->siteDescription() ?? ''),
             'alternates' => $alternates,
+            'showFrontMenus' => $showFrontMenus,
         ];
     }
 }

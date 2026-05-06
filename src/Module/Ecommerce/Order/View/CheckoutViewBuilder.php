@@ -40,6 +40,7 @@ final readonly class CheckoutViewBuilder
             'submitPath' => $submitPath,
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }
@@ -53,6 +54,7 @@ final readonly class CheckoutViewBuilder
             'order' => $this->orderSerializer->serialize($order),
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }

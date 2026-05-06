@@ -38,6 +38,7 @@ final readonly class ShopViewBuilder
             ],
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }
@@ -51,6 +52,7 @@ final readonly class ShopViewBuilder
             'listing' => $this->listingSerializer->serialize($listing),
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }

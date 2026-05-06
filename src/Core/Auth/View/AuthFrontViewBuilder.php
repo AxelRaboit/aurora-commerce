@@ -121,6 +121,7 @@ final readonly class AuthFrontViewBuilder
         return [
             'locale' => $locale,
             'context' => $this->frontContext,
+            'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
     }

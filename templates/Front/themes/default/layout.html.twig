@@ -34,8 +34,8 @@
         siteLogoUrl: siteLogoUrl ?? '',
         headerCustomText: themeContext.headerCustomText() ?? '',
         currentUser: app.user ? {name: app.user.name} : null,
-        primaryMenuItems: menu_items('primary', locale),
-        accountMenuItems: menu_items('account', locale),
+        primaryMenuItems: showFrontMenus|default(false) ? menu_items('primary', locale) : [],
+        accountMenuItems: showFrontMenus|default(false) ? menu_items('account', locale) : [],
         localeSwitcher: {
             enabled: context.activeLocales|length > 1,
             locales: switcherLocales,
@@ -48,7 +48,7 @@
 
     <div {{ vue_component('core/front/FrontFooterApp', {
         footerText: themeContext.footerText(context.siteName),
-        footerMenuItems: menu_items('footer', locale),
+        footerMenuItems: showFrontMenus|default(false) ? menu_items('footer', locale) : [],
     }) }}></div>
 </body>
 </html>
