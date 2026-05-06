@@ -20,8 +20,10 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { List, Columns2, Pencil, Trash2, Eye, Plus, Save } from "lucide-vue-next";
 import { stageBadge, stageBadgeBordered } from "@crm/utils/deals/stageStyles.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     initialView: { type: String, default: "list" },
@@ -88,7 +90,13 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                         :placeholder="t('admin.crm.deals.searchPlaceholder')"
                         v-on:search="onSearch"
                     />
-                    <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+                    <AppButton
+                        v-if="can('crm.deals.manage')"
+                        variant="primary"
+                        size="md"
+                        class="w-full sm:w-auto"
+                        v-on:click="openCreate"
+                    >
                         <Plus class="w-4 h-4" :stroke-width="2" />
                         {{ t('admin.crm.deals.add') }}
                     </AppButton>
@@ -108,8 +116,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                             <span class="text-xs text-secondary font-medium">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</span>
                             <div class="flex items-center gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.deals.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.deals.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </div>
                     </div>
@@ -139,8 +147,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
                                         <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton v-if="can('crm.deals.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton v-if="can('crm.deals.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
                                 </td>
                             </tr>

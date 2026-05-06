@@ -14,8 +14,10 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { truncate } from "@/shared/utils/format/truncate.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatDateShort, formatDateTime } = useDateFormat();
 
 const props = defineProps({
@@ -125,13 +127,13 @@ function statusBadgeColor(status) {
                         <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                        <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
                             <Check class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                        <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
                             <Ban class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
+                        <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                     </div>
@@ -171,13 +173,13 @@ function statusBadgeColor(status) {
                                 <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                                <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
                                     <Check class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                                <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
                                     <Ban class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
+                                <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>
@@ -222,13 +224,13 @@ function statusBadgeColor(status) {
                 </div>
             </div>
             <AppModalFooter bordered>
-                <AppIconButton v-if="viewingComment?.status !== 'approved'" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
+                <AppIconButton v-if="viewingComment?.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
                     <Check class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton v-if="viewingComment?.status !== 'spam'" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(viewingComment); viewingComment = null">
+                <AppIconButton v-if="viewingComment?.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(viewingComment); viewingComment = null">
                     <Ban class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(viewingComment); viewingComment = null">
+                <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(viewingComment); viewingComment = null">
                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
                 <AppIconButton color="default" :title="t('shared.common.cancel')" v-on:click="viewingComment = null">

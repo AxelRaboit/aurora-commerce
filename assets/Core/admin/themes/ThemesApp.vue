@@ -12,8 +12,10 @@ import { useThemesActivate } from "@core/admin/themes/composables/useThemesActiv
 import { useThemesCreate } from "@core/admin/themes/composables/useThemesCreate.js";
 import { useThemesEdit } from "@core/admin/themes/composables/useThemesEdit.js";
 import { useThemesDelete } from "@core/admin/themes/composables/useThemesDelete.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     themes: { type: Array, default: () => [] },
@@ -34,7 +36,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold text-primary">{{ t("admin.themes.title") }}</h1>
-            <AppButton variant="primary" size="md" v-on:click="openCreate">
+            <AppButton v-if="can('core.themes.manage')" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("admin.themes.new") }}
             </AppButton>
@@ -77,6 +79,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
 
                 <div class="flex items-center gap-2 mt-auto pt-2 border-t border-line">
                     <AppButton
+                        v-if="can('core.themes.manage')"
                         size="sm"
                         :variant="theme.active ? 'ghost' : 'secondary'"
                         :disabled="theme.active"
@@ -86,11 +89,12 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                         <Check class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.themes.activate") }}
                     </AppButton>
-                    <AppButton size="sm" variant="ghost" v-on:click="openEdit(theme)">
+                    <AppButton v-if="can('core.themes.manage')" size="sm" variant="ghost" v-on:click="openEdit(theme)">
                         <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.themes.edit") }}
                     </AppButton>
                     <AppButton
+                        v-if="can('core.themes.manage')"
                         size="sm"
                         variant="ghost"
                         :disabled="theme.slug === 'default' || theme.active"

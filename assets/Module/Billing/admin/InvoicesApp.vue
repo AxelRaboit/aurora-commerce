@@ -16,8 +16,10 @@ import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { Plus, Eye, Trash2, Download, Calendar, TrendingUp, AlertCircle, FileText } from "lucide-vue-next";
 import { formatCents } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     invoices: { type: Object, default: () => ({}) },
@@ -126,7 +128,7 @@ const { formatDateNumeric } = useDateFormat();
                     <Download class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.billing.invoices.exportXlsx') }}
                 </AppButton>
-                <AppButton variant="primary" size="md" :href="importPath">
+                <AppButton v-if="can('billing.invoices.edit')" variant="primary" size="md" :href="importPath">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t('admin.billing.invoices.importOcr') }}
                 </AppButton>
@@ -164,7 +166,7 @@ const { formatDateNumeric } = useDateFormat();
                                 <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="goToInvoice(invoice.id)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="invoice.isDeletable" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(invoice)">
+                                <AppIconButton v-if="invoice.isDeletable && can('billing.invoices.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(invoice)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

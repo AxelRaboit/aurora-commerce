@@ -12,8 +12,10 @@ import { useMenuEditModal } from "@core/admin/menus/composables/useMenuEditModal
 import { useMenuDeleteConfirms } from "@core/admin/menus/composables/useMenuDeleteConfirms.js";
 import { useMenuItemModal } from "@core/admin/menus/composables/useMenuItemModal.js";
 import { Save } from "lucide-vue-next";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     initialMenus: { type: Array, default: () => [] },

@@ -24,8 +24,10 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as ImageIcon, User, X } from "lucide-vue-next";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
@@ -70,7 +72,7 @@ const onCoverChange = onGalleryCoverChange;
                 class="flex-1"
                 v-on:update:model-value="onSearch"
             />
-            <AppButton variant="primary" v-on:click="openCreate">
+            <AppButton v-if="can('photo.galleries.create')" variant="primary" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("photo.galleries.add") }}
             </AppButton>
@@ -113,10 +115,10 @@ const onCoverChange = onGalleryCoverChange;
                         <AppIconButton v-if="editPath" color="sky" :title="t('photo.galleries.openEditor')" :href="buildPath(editPath, { id: g.id })">
                             <ImageIcon class="w-3.5 h-3.5" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton :title="t('shared.common.edit')" v-on:click="openEdit(g)">
+                        <AppIconButton v-if="can('photo.galleries.edit')" :title="t('shared.common.edit')" v-on:click="openEdit(g)">
                             <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(g)">
+                        <AppIconButton v-if="can('photo.galleries.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(g)">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         </AppIconButton>
                     </div>

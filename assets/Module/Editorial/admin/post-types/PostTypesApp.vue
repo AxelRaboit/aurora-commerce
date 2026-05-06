@@ -18,8 +18,10 @@ import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     postTypes: { type: Array, default: () => [] },
@@ -49,7 +51,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.title") }}</h2>
-                <AppButton variant="primary" size="md" v-on:click="openCreatePostType">
+                <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreatePostType">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.postTypes.add") }}
                 </AppButton>
@@ -90,12 +92,12 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton variant="ghost" size="md" v-on:click="openEditPostType(selected)">
+                            <AppButton v-if="can('editorial.post_types.manage')" variant="ghost" size="md" v-on:click="openEditPostType(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
                             <AppButton
-                                v-if="!selected.isBuiltIn"
+                                v-if="!selected.isBuiltIn && can('editorial.post_types.manage')"
                                 variant="danger"
                                 size="md"
                                 v-on:click="deletingPostType = selected"
@@ -110,7 +112,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.fields.title") }}</h4>
-                        <AppButton variant="primary" size="md" v-on:click="openCreateField">
+                        <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreateField">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("admin.postTypes.fields.add") }}
                         </AppButton>
@@ -146,10 +148,10 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             <AppBadge v-if="field.required" color="rose">{{ t("admin.postTypes.fields.required") }}</AppBadge>
                             <AppBadge v-if="field.translatable" color="sky">{{ t("admin.postTypes.fields.translatable") }}</AppBadge>
                             <div class="flex items-center gap-0.5">
-                                <AppIconButton color="accent" v-on:click="openEditField(field)">
+                                <AppIconButton v-if="can('editorial.post_types.manage')" color="accent" v-on:click="openEditField(field)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" v-on:click="deletingField = field">
+                                <AppIconButton v-if="can('editorial.post_types.manage')" color="rose" v-on:click="deletingField = field">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

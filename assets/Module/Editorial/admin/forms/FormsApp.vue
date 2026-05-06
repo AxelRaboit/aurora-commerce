@@ -28,8 +28,10 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { slugify } from "@/shared/utils/format/slugify.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatDateTime } = useDateFormat();
 
 const props = defineProps({
@@ -73,7 +75,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
 <template>
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <div class="lg:w-72 shrink-0 flex flex-col gap-3">
-            <AppButton variant="primary" size="md" class="w-full justify-center" v-on:click="startCreate">
+            <AppButton
+                v-if="can('editorial.forms.manage')"
+                variant="primary"
+                size="md"
+                class="w-full justify-center"
+                v-on:click="startCreate"
+            >
                 <Plus class="w-4 h-4 shrink-0" :stroke-width="2" />
                 {{ t("admin.forms.create") }}
             </AppButton>
@@ -111,7 +119,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 </div>
                 <div class="flex items-center gap-2">
                     <AppButton
-                        v-if="!isCreating"
+                        v-if="!isCreating && can('editorial.forms.manage')"
                         variant="danger"
                         size="md"
                         v-on:click="showDeleteConfirm = true"
@@ -262,7 +270,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             <div v-if="activeTab === 'fields'" class="p-5 flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between">
                     <p class="text-sm text-secondary">{{ t("admin.forms.fieldsHint") }}</p>
-                    <AppButton variant="secondary" size="md" v-on:click="openAddField">
+                    <AppButton v-if="can('editorial.forms.manage')" variant="secondary" size="md" v-on:click="openAddField">
                         <Plus class="w-4 h-4" :stroke-width="2" />
                         {{ t("admin.forms.addField") }}
                     </AppButton>
@@ -293,10 +301,10 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                                 <AppBadge color="accent">{{ fieldTypeLabel(field.type) }}</AppBadge>
                             </div>
                         </div>
-                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
+                        <AppIconButton v-if="can('editorial.forms.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
+                        <AppIconButton v-if="can('editorial.forms.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                     </div>

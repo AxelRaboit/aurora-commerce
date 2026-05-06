@@ -14,8 +14,10 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Eye, Trash2 } from "lucide-vue-next";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     tiersData: { type: Object, default: () => ({}) },
@@ -100,7 +102,7 @@ const TYPE_BADGE = {
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: tiers.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
+                                <AppIconButton v-if="can('billing.tiers.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

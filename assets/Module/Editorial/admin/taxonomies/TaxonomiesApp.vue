@@ -21,8 +21,10 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import TermNode from "@editorial/admin/taxonomies/TermNode.vue";
 import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     taxonomies: { type: Array, default: () => [] },
@@ -133,7 +135,7 @@ const parentOptions = computed(() => {
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.title") }}</h2>
-                <AppButton variant="primary" size="md" v-on:click="openCreateTaxonomy">
+                <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTaxonomy">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.taxonomies.addTaxonomy") }}
                 </AppButton>
@@ -177,12 +179,12 @@ const parentOptions = computed(() => {
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
+                            <AppButton v-if="can('editorial.taxonomies.manage')" variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
                             <AppButton
-                                v-if="!selected.isBuiltIn"
+                                v-if="!selected.isBuiltIn && can('editorial.taxonomies.manage')"
                                 variant="danger"
                                 size="md"
                                 v-on:click="deletingTaxonomy = selected"
@@ -212,7 +214,7 @@ const parentOptions = computed(() => {
                                     {{ locale.toUpperCase() }}
                                 </button>
                             </div>
-                            <AppButton variant="primary" size="md" v-on:click="openCreateTerm()">
+                            <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("admin.taxonomies.terms.addTerm") }}
                             </AppButton>

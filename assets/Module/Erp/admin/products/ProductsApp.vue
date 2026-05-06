@@ -21,8 +21,10 @@ import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     products: { type: Object, default: () => ({}) },
@@ -54,7 +56,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 :placeholder="t('admin.erp.products.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton
+                v-if="can('erp.products.create')"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openCreate"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.erp.products.add') }}
             </AppButton>
@@ -97,8 +105,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>
                     </tr>
@@ -122,8 +130,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <p class="text-sm text-secondary">{{ formatProductPrice(product) }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
             </div>

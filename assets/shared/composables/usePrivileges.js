@@ -1,6 +1,8 @@
 const isDev = window.__isDev__ === true;
 const isAdmin = window.__isAdmin__ === true;
-const privileges = new Set(Array.isArray(window.__privileges__) ? window.__privileges__ : []);
+const privileges = new Set(
+    Array.isArray(window.__privileges__) ? window.__privileges__ : [],
+);
 
 /**
  * Returns whether the current user can perform an action identified by a privilege string.

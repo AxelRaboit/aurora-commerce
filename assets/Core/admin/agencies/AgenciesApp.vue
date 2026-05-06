@@ -10,8 +10,10 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useAgenciesList } from "@core/admin/agencies/composables/useAgenciesList.js";
 import { useAgenciesEdit } from "@core/admin/agencies/composables/useAgenciesEdit.js";
 import { useAgenciesDelete } from "@core/admin/agencies/composables/useAgenciesDelete.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { isAdmin } = usePrivileges();
 
 const props = defineProps({
     agencies: { type: Array, default: () => [] },
@@ -29,7 +31,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold text-primary">{{ t("admin.agencies.title") }}</h1>
-            <AppButton variant="primary" size="md" v-on:click="openCreate">
+            <AppButton v-if="isAdmin" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("admin.agencies.new") }}
             </AppButton>
@@ -49,10 +51,10 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                         <td class="px-4 py-3 font-medium text-primary">{{ agency.name }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(agency)">
+                                <AppIconButton v-if="isAdmin" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(agency)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="deletingAgency = agency">
+                                <AppIconButton v-if="isAdmin" color="rose" :title="t('shared.common.delete')" v-on:click="deletingAgency = agency">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

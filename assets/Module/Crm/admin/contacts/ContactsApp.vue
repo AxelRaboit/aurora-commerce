@@ -50,7 +50,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 :placeholder="t('admin.crm.contacts.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton v-if="can('crm.contacts.create')" variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton
+                v-if="can('crm.contacts.create')"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openCreate"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.crm.contacts.add') }}
             </AppButton>

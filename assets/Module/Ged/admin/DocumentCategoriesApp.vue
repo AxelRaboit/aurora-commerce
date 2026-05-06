@@ -17,8 +17,10 @@ import { Plus, Pencil, Trash2, Save } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const props = defineProps({
     categories: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
@@ -75,7 +77,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     <div class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('admin.ged.categories.searchPlaceholder')" v-on:search="onSearch" />
-            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton
+                v-if="can('ged.documents.manage')"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openCreate"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("admin.ged.categories.add") }}
             </AppButton>
         </div>
@@ -95,8 +103,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ cat.slug }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('ged.documents.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('ged.documents.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>
                     </tr>

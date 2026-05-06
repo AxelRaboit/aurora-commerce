@@ -28,8 +28,10 @@ import { useMediaDelete } from "@core/admin/media/composables/useMediaDelete.js"
 import { useMediaFolders } from "@core/admin/media/composables/useMediaFolders.js";
 import { useMediaBulkActions } from "@core/admin/media/composables/useMediaBulkActions.js";
 import { useMediaDragDrop } from "@core/admin/media/composables/useMediaDragDrop.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatSize } = useFileSize();
 const { formatDateTime } = useDateFormat();
 
@@ -124,6 +126,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     v-on:change="uploadFiles"
                 >
                 <AppButton
+                    v-if="can('core.media.manage')"
                     variant="primary"
                     size="md"
                     class="w-full sm:w-auto"
@@ -292,7 +295,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <Move class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("admin.media.move") }}
                         </AppButton>
-                        <AppButton size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
+                        <AppButton v-if="can('core.media.manage')" size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("shared.common.delete") }}
                         </AppButton>
@@ -640,7 +643,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         <Crop class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("admin.media.crop") }}
                     </AppButton>
-                    <AppButton variant="danger" size="md" class="w-full sm:w-auto order-3 sm:order-1" v-on:click="askDeleteMedia(editingMedia)">
+                    <AppButton
+                        v-if="can('core.media.manage')"
+                        variant="danger"
+                        size="md"
+                        class="w-full sm:w-auto order-3 sm:order-1"
+                        v-on:click="askDeleteMedia(editingMedia)"
+                    >
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>
