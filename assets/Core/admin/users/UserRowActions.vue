@@ -12,6 +12,7 @@ const props = defineProps({
     canAct: { type: Boolean, required: true },
     hasPrivileges: { type: Boolean, default: false },
     impersonatePath: { type: String, default: "" },
+    impersonateFrontPath: { type: String, default: "" },
 });
 
 const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabled", "delete"]);
@@ -35,10 +36,18 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
             <Mail class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>
         <AppIconButton
-            v-if="isDev && canAct"
+            v-if="isDev && canAct && user.type === 'backend'"
             color="amber"
             :title="t('backend.users.impersonate', { name: user.name })"
             :href="buildPath(impersonatePath, { email: user.email })"
+        >
+            <LogIn class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="isDev && user.type === 'frontend' && impersonateFrontPath"
+            color="violet"
+            :title="t('backend.users.impersonateFront', { name: user.name })"
+            :href="buildPath(impersonateFrontPath, { id: user.id })"
         >
             <LogIn class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>

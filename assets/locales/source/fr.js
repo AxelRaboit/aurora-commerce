@@ -236,6 +236,7 @@ export default {
             you: "Vous",
             empty: "Aucun utilisateur trouvé.",
             impersonate: "Se connecter en tant que {name}",
+            impersonateFront: "Voir le front en tant que {name}",
             dev_granted: "Rôle Dev attribué.",
             dev_revoked: "Rôle Dev retiré.",
             deleteConfirm: "Supprimer {name} ? Cette action est irréversible.",

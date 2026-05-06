@@ -40,6 +40,7 @@ const props = defineProps({
     resendInvitationPath: { type: String, required: true },
     toggleDisabledPath: { type: String, required: true },
     impersonatePath: { type: String, default: "" },
+    impersonateFrontPath: { type: String, default: "" },
     deletePath: { type: String, required: true },
     photoUploadPath: { type: String, required: true },
     photoDeletePath: { type: String, required: true },
@@ -108,6 +109,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :can-act="canActOn(user)"
                         :has-privileges="privilegesByModule.length > 0"
                         :impersonate-path="impersonatePath"
+                        :impersonate-front-path="impersonateFrontPath"
                         v-on:view="openViewWithPrivileges"
                         v-on:resend="resendInvitation"
                         v-on:edit="openEdit"
@@ -166,6 +168,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                     :can-act="canActOn(user)"
                                     :has-privileges="privilegesByModule.length > 0"
                                     :impersonate-path="impersonatePath"
+                                    :impersonate-front-path="impersonateFrontPath"
                                     v-on:view="openViewWithPrivileges"
                                     v-on:resend="resendInvitation"
                                     v-on:edit="openEdit"

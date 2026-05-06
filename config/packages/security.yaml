@@ -73,6 +73,7 @@ security:
         - { path: ^/backend/verify-email, roles: PUBLIC_ACCESS }
         - { path: ^/backend/resend-verification, roles: PUBLIC_ACCESS }
         - { path: ^/front-login-check, roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/impersonate/', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/forgot-password', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/reset-password', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }

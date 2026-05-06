@@ -234,6 +234,7 @@ export default {
             you: "You",
             empty: "No users found.",
             impersonate: "Impersonate {name}",
+            impersonateFront: "View frontend as {name}",
             dev_granted: "Dev role granted.",
             dev_revoked: "Dev role revoked.",
             deleteConfirm: "Delete {name}? This action cannot be undone.",

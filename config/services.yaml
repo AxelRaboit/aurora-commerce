@@ -45,6 +45,10 @@ services:
         arguments:
             $providers: !tagged_iterator aurora.menu_location_provider
 
+    Aurora\Core\Auth\Service\ImpersonationTokenService:
+        arguments:
+            $secret: '%kernel.secret%'
+
     Aurora\Core\Auth\Manager\AccessRequestManager:
         arguments:
             $adminEmail: '%app.admin_email%'
