@@ -116,6 +116,6 @@ final readonly class ProductManager implements ProductManagerInterface
             return;
         }
 
-        throw new InvalidArgumentException($this->translator->trans('admin.erp.products.errors.reference_taken'));
+        throw new InvalidArgumentException($this->translator->trans('backend.erp.products.errors.reference_taken'));
     }
 }

@@ -84,7 +84,7 @@ function onSearch(value) {
 const deletePost = usePostDelete(
     () => (trashed.value ? props.forceDeletePath : props.deletePath),
     (id) => removePost(id),
-    () => (trashed.value ? "admin.posts.deletedForever" : "admin.posts.deleted"),
+    () => (trashed.value ? "backend.posts.deletedForever" : "backend.posts.deleted"),
 );
 
 const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(props.showPath, props.locales);
@@ -250,14 +250,14 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
 
             <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" v-on:close="deletePost.pendingDelete.value = null">
                 <p class="text-sm text-primary">
-                    {{ t(trashed ? "admin.posts.forceDeleteConfirm" : "admin.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
+                    {{ t(trashed ? "backend.posts.forceDeleteConfirm" : "backend.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
                 </p>
                 <div class="flex justify-end gap-2 mt-2">
                     <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
                         {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
-                        {{ t(trashed ? "admin.posts.forceDelete" : "common.delete") }}
+                        {{ t(trashed ? "backend.posts.forceDelete" : "common.delete") }}
                     </AppButton>
                 </div>
             </AppModal>

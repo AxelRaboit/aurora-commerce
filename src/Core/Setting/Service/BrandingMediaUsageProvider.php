@@ -24,8 +24,8 @@ final readonly class BrandingMediaUsageProvider implements MediaUsageProviderInt
         $settingsUrl = $this->urlGenerator->generate('backend_settings');
 
         $checks = [
-            [ApplicationParameterEnum::LogoMediaId, 'admin.media.usage.brandingLogo'],
-            [ApplicationParameterEnum::FaviconMediaId, 'admin.media.usage.brandingFavicon'],
+            [ApplicationParameterEnum::LogoMediaId, 'backend.media.usage.brandingLogo'],
+            [ApplicationParameterEnum::FaviconMediaId, 'backend.media.usage.brandingFavicon'],
         ];
         foreach ($checks as [$param, $labelKey]) {
             $value = (int) ($this->settingRepository->get($param->value, '') ?? '');
@@ -33,7 +33,7 @@ final readonly class BrandingMediaUsageProvider implements MediaUsageProviderInt
                 $usages[] = [
                     'type' => 'branding.setting',
                     'label' => $this->translator->trans($labelKey),
-                    'detail' => $this->translator->trans('admin.media.usage.brandingDetail'),
+                    'detail' => $this->translator->trans('backend.media.usage.brandingDetail'),
                     'href' => $settingsUrl,
                 ];
             }

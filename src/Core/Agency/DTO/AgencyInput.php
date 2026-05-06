@@ -10,8 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class AgencyInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'admin.agencies.errors.name_required')]
-        #[Assert\Length(max: 150, maxMessage: 'admin.agencies.errors.name_too_long')]
+        #[Assert\NotBlank(message: 'backend.agencies.errors.name_required')]
+        #[Assert\Length(max: 150, maxMessage: 'backend.agencies.errors.name_too_long')]
         public string $name,
     ) {}
 

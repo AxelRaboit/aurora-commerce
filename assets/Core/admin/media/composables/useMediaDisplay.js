@@ -1,11 +1,11 @@
 import { ref, computed } from "vue";
 
 export const TYPE_FILTERS = [
-    { key: "all", label: "admin.media.filterAll" },
-    { key: "image", label: "admin.media.filterImages" },
-    { key: "video", label: "admin.media.filterVideos" },
-    { key: "application/pdf", label: "admin.media.filterPdf" },
-    { key: "other", label: "admin.media.filterOther" },
+    { key: "all", label: "backend.media.filterAll" },
+    { key: "image", label: "backend.media.filterImages" },
+    { key: "video", label: "backend.media.filterVideos" },
+    { key: "application/pdf", label: "backend.media.filterPdf" },
+    { key: "other", label: "backend.media.filterOther" },
 ];
 
 export function useMediaDisplay(media) {

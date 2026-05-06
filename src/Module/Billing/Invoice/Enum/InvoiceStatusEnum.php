@@ -39,7 +39,7 @@ enum InvoiceStatusEnum: string
 
     public function getLabelKey(): string
     {
-        return 'admin.billing.invoices.status.'.$this->value;
+        return 'backend.billing.invoices.status.'.$this->value;
     }
 
     public function getBadgeColor(): string

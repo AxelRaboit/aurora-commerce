@@ -162,7 +162,7 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-            return $this->jsonFailure('admin.users.cannot_disable_self');
+            return $this->jsonFailure('backend.users.cannot_disable_self');
         }
 
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
@@ -184,7 +184,7 @@ final class UsersController extends AbstractController
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->jsonInvalidInput(['photo' => 'admin.users.photo.errors.missing'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing'], Response::HTTP_OK);
         }
 
         try {
@@ -214,7 +214,7 @@ final class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
         if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
-            return $this->jsonFailure('admin.users.cannot_delete_self');
+            return $this->jsonFailure('backend.users.cannot_delete_self');
         }
 
         if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
@@ -237,7 +237,7 @@ final class UsersController extends AbstractController
 
         // Dev users are not privilege-restricted, no need to manage their list
         if (in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
-            return $this->jsonFailure('admin.users.privileges.no_dev_target');
+            return $this->jsonFailure('backend.users.privileges.no_dev_target');
         }
 
         $privileges = $this->decodeJson($request)['privileges'] ?? [];

@@ -108,7 +108,7 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->folderId) {
             $folder = $this->folderRepository->find($input->folderId);
             if (null === $folder) {
-                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.folder_not_found', ['{id}' => $input->folderId]));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.folder_not_found', ['{id}' => $input->folderId]));
             }
         }
 
@@ -151,7 +151,7 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->parentId) {
             $parent = $this->folderRepository->find($input->parentId);
             if (null === $parent) {
-                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
             }
 
             $folder->setParent($parent);
@@ -174,11 +174,11 @@ final readonly class MediaManager implements MediaManagerInterface
         if (null !== $input->parentId) {
             $newParent = $this->folderRepository->find($input->parentId);
             if (null === $newParent) {
-                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
             }
 
             if ($newParent === $folder || $newParent->isDescendantOf($folder)) {
-                throw new InvalidArgumentException($this->translator->trans('admin.media.errors.folder_self_nested'));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.folder_self_nested'));
             }
         }
 

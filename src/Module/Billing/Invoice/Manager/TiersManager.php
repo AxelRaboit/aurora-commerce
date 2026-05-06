@@ -69,7 +69,7 @@ final readonly class TiersManager implements TiersManagerInterface
     {
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
-            throw new InvalidArgumentException('admin.billing.tiers.update.unknownField');
+            throw new InvalidArgumentException('backend.billing.tiers.update.unknownField');
         }
 
         $setter($tiers, $this->stringOrNull($value));

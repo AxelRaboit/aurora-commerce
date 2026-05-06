@@ -69,11 +69,11 @@ final class OcrImportController extends AbstractController
         /** @var UploadedFile|null $file */
         $file = $request->files->get('document');
         if (null === $file) {
-            return $this->jsonInvalidInput(['document' => 'admin.billing.ocr.upload.errors.missing']);
+            return $this->jsonInvalidInput(['document' => 'backend.billing.ocr.upload.errors.missing']);
         }
 
         if (!in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
-            return $this->jsonInvalidInput(['document' => 'admin.billing.ocr.upload.errors.unsupported']);
+            return $this->jsonInvalidInput(['document' => 'backend.billing.ocr.upload.errors.unsupported']);
         }
 
         $user = $this->getUser();
@@ -121,7 +121,7 @@ final class OcrImportController extends AbstractController
         try {
             $this->jobManager->delete($job, $deleteTiers);
         } catch (Throwable $throwable) {
-            return $this->jsonFailure('admin.billing.ocr.deleteError', extra: ['detail' => $throwable->getMessage()]);
+            return $this->jsonFailure('backend.billing.ocr.deleteError', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

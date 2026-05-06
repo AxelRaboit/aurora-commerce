@@ -54,7 +54,7 @@ const { showEdit, editingListing, editForm, editFormImage, editErrors, editLoadi
     useListingsEdit(props.updatePath, reset);
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => { reset(); loadProducts(); }, "admin.ecommerce.listings.deleted",
+    props.deletePath, () => { reset(); loadProducts(); }, "backend.ecommerce.listings.deleted",
 );
 
 </script>

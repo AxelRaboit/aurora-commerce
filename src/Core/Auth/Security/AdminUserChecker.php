@@ -22,11 +22,11 @@ final class AdminUserChecker implements UserCheckerInterface
         }
 
         if (UserStatusEnum::PendingVerification === $user->getStatus()) {
-            throw new CustomUserMessageAccountStatusException('admin.errors.email_not_verified');
+            throw new CustomUserMessageAccountStatusException('backend.errors.email_not_verified');
         }
 
         if (UserStatusEnum::Disabled === $user->getStatus()) {
-            throw new CustomUserMessageAccountStatusException('admin.errors.account_disabled');
+            throw new CustomUserMessageAccountStatusException('backend.errors.account_disabled');
         }
     }
 }

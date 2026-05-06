@@ -39,7 +39,7 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 
 const { showCreate, newContact, createErrors, createLoading, openCreate, submitCreate } = useContactsCreate(props.createPath, reset);
 const { showEdit, editingContact, editForm, editErrors, editLoading, openEdit, submitEdit } = useContactsEdit(props.updatePath, reset);
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "admin.crm.contacts.deleted");
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "backend.crm.contacts.deleted");
 </script>
 
 <template>

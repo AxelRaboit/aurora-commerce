@@ -43,7 +43,7 @@ final readonly class MenuPickerService
                     'id' => (int) $post->getId(),
                     'label' => null !== $title && '' !== $title
                         ? $title
-                        : $this->translator->trans('admin.menus.preview.untitled'),
+                        : $this->translator->trans('backend.menus.preview.untitled'),
                     'hint' => $post->getPostType()->getLabel(),
                 ];
             },
@@ -70,7 +70,7 @@ final readonly class MenuPickerService
                     'id' => (int) $term->getId(),
                     'label' => null !== $name && '' !== $name
                         ? $name
-                        : $this->translator->trans('admin.menus.preview.unnamed'),
+                        : $this->translator->trans('backend.menus.preview.unnamed'),
                     'hint' => $hint,
                 ];
             },

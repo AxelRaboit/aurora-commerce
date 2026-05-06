@@ -93,7 +93,7 @@ async function submitEdit() {
 
 // Delete
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), "admin.ged.documents.deleted",
+    props.deletePath, () => reset(), "backend.ged.documents.deleted",
 );
 </script>
 

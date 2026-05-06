@@ -45,7 +45,7 @@ final class OcrJobStatusEnumTest extends TestCase
 
     public function testLabelKeyFollowsConvention(): void
     {
-        self::assertSame('admin.billing.ocr.status.queued', OcrJobStatusEnum::Queued->getLabelKey());
-        self::assertSame('admin.billing.ocr.status.needs_review', OcrJobStatusEnum::NeedsReview->getLabelKey());
+        self::assertSame('backend.billing.ocr.status.queued', OcrJobStatusEnum::Queued->getLabelKey());
+        self::assertSame('backend.billing.ocr.status.needs_review', OcrJobStatusEnum::NeedsReview->getLabelKey());
     }
 }

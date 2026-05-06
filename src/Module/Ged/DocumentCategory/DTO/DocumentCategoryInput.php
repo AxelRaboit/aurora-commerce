@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class DocumentCategoryInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'admin.ged.categories.errors.name_required')]
+        #[Assert\NotBlank(message: 'backend.ged.categories.errors.name_required')]
         #[Assert\Length(max: 150)]
         public string $name = '',
         public ?string $description = null,

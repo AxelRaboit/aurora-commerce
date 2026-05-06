@@ -147,7 +147,7 @@ class Invoice
     public function assertEditable(): void
     {
         if (!$this->status->isEditable()) {
-            throw new InvalidArgumentException('admin.billing.invoices.update.locked');
+            throw new InvalidArgumentException('backend.billing.invoices.update.locked');
         }
     }
 

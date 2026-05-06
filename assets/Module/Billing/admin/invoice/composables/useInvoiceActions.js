@@ -48,7 +48,7 @@ export function useInvoiceActions(
         if (validating.value) return;
         validating.value = true;
         const data = await submit(props.validatePath, null, {
-            successMessage: "admin.billing.invoices.show.validated",
+            successMessage: "backend.billing.invoices.show.validated",
         });
         if (data) invoice.value = data.invoice;
         validating.value = false;
@@ -63,7 +63,7 @@ export function useInvoiceActions(
                 deleteTiers: deleteTiersToo.value,
                 deleteBuyer: deleteBuyerToo.value,
             },
-            { successMessage: "admin.billing.invoices.deleted" },
+            { successMessage: "backend.billing.invoices.deleted" },
         );
         deleting.value = false;
         // Always redirect: even when submit() returns null (post-flush cleanup failed
@@ -74,7 +74,7 @@ export function useInvoiceActions(
 
     async function addLine() {
         const data = await submit(props.lineCreatePath, null, {
-            successMessage: "admin.billing.invoices.show.lineAdded",
+            successMessage: "backend.billing.invoices.show.lineAdded",
         });
         if (data) invoice.value = data.invoice;
     }
@@ -92,7 +92,7 @@ export function useInvoiceActions(
         const data = await submit(
             buildPath(props.lineDeletePathTemplate, { lineId }),
             null,
-            { successMessage: "admin.billing.invoices.show.lineDeleted" },
+            { successMessage: "backend.billing.invoices.show.lineDeleted" },
         );
         if (data) invoice.value = data.invoice;
     }

@@ -23,7 +23,7 @@ enum OcrJobStatusEnum: string
 
     public function getLabelKey(): string
     {
-        return 'admin.billing.ocr.status.'.$this->value;
+        return 'backend.billing.ocr.status.'.$this->value;
     }
 
     /** Progress percentage (0–100), null for states where progress is not meaningful. */

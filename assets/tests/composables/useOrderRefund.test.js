@@ -127,7 +127,7 @@ describe("useOrderRefund", () => {
                 ok: true,
                 status: 200,
                 json: async () => ({
-                    error: "admin.ecommerce.errors.refund_failed",
+                    error: "backend.ecommerce.errors.refund_failed",
                 }),
             }),
         );

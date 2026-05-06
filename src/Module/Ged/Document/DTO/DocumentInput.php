@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class DocumentInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'admin.ged.documents.errors.title_required')]
+        #[Assert\NotBlank(message: 'backend.ged.documents.errors.title_required')]
         #[Assert\Length(max: 200)]
         public string $title = '',
         public ?string $description = null,

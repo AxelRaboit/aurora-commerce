@@ -15,7 +15,7 @@ final readonly class UserNotificationService
     {
         $this->mail->send(
             $email,
-            'admin.mail.user.subject_account_deleted',
+            'backend.mail.user.subject_account_deleted',
             '@Core/email/user_account_deleted.html.twig',
             ['name' => $name],
             locale: $locale,
@@ -26,7 +26,7 @@ final readonly class UserNotificationService
     {
         $this->mail->send(
             $user->getEmail(),
-            'admin.mail.user.subject_role_changed',
+            'backend.mail.user.subject_role_changed',
             '@Core/email/user_role_changed.html.twig',
             ['user' => $user, 'newRole' => $newRole],
             locale: $user->getLocale()->value,

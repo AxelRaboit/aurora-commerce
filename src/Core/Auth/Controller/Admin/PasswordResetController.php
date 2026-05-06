@@ -38,7 +38,7 @@ final class PasswordResetController extends AbstractController
         if ($request->isMethod(HttpMethodEnum::Post->value)) {
             $email = mb_trim($request->request->get('email', ''));
             $this->passwordResetManager->sendResetLink($email);
-            $status = $this->translator->trans('admin.auth.forgot_password.sent');
+            $status = $this->translator->trans('backend.auth.forgot_password.sent');
         }
 
         return $this->render('@Core/admin/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
@@ -54,7 +54,7 @@ final class PasswordResetController extends AbstractController
         $resetRequest = $this->passwordResetManager->validateToken($selector, $token);
 
         if (!$resetRequest instanceof ResetPasswordRequest) {
-            $this->addFlash('error', $this->translator->trans('admin.auth.reset_password.invalid_link'));
+            $this->addFlash('error', $this->translator->trans('backend.auth.reset_password.invalid_link'));
 
             return $this->redirectToRoute('backend_forgot_password');
         }
@@ -67,7 +67,7 @@ final class PasswordResetController extends AbstractController
             $errors = $this->payloadValidator->errors($input);
             if ([] === $errors) {
                 $this->passwordResetManager->resetPassword($resetRequest, $input->password);
-                $this->addFlash('success', $this->translator->trans('admin.auth.reset_password.success'));
+                $this->addFlash('success', $this->translator->trans('backend.auth.reset_password.success'));
 
                 return $this->redirectToRoute('backend_login');
             }

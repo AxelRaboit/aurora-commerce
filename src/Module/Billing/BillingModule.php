@@ -54,7 +54,7 @@ final readonly class BillingModule implements ModuleInterface
                     ],
                 ),
                 new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users'),
-                new NavItem('backend_billing_compliance', 'admin.billing.compliance.title', 'shield-check'),
+                new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check'),
             ], priority: 55),
         ];
     }

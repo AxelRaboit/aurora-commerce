@@ -79,7 +79,7 @@ final class InvoiceManagerTest extends IntegrationTestCase
         $invoice = $this->makeInvoice();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('admin.billing.invoices.update.invalidDate');
+        $this->expectExceptionMessage('backend.billing.invoices.update.invalidDate');
 
         $this->manager->updateField($invoice, 'issuedAt', 'not-a-date');
     }
@@ -89,7 +89,7 @@ final class InvoiceManagerTest extends IntegrationTestCase
         $invoice = $this->makeInvoice();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('admin.billing.invoices.update.unknownField');
+        $this->expectExceptionMessage('backend.billing.invoices.update.unknownField');
 
         $this->manager->updateField($invoice, 'status', 'paid');
     }
@@ -108,7 +108,7 @@ final class InvoiceManagerTest extends IntegrationTestCase
         $invoice = $this->makeInvoice();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('admin.billing.invoices.update.notNumeric');
+        $this->expectExceptionMessage('backend.billing.invoices.update.notNumeric');
 
         $this->manager->updateField($invoice, 'totalGrossCents', 'twelve');
     }

@@ -14,6 +14,6 @@ enum TiersTypeEnum: string
 
     public function getLabelKey(): string
     {
-        return 'admin.billing.tiers.type.'.$this->value;
+        return 'backend.billing.tiers.type.'.$this->value;
     }
 }

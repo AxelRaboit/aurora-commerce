@@ -149,7 +149,7 @@ final readonly class MenuItemSerializer
         $post = null !== $targetId ? ($postCache[$targetId] ?? $this->postRepository->find($targetId)) : null;
         if (null === $post) {
             return [
-                'label' => $this->translator->trans('admin.menus.preview.post_deleted'),
+                'label' => $this->translator->trans('backend.menus.preview.post_deleted'),
                 'hint' => '#'.$item->getTargetId(),
                 'missing' => true,
             ];
@@ -158,7 +158,7 @@ final readonly class MenuItemSerializer
         $translation = $post->getTranslations()->first() ?: null;
 
         return [
-            'label' => $translation?->getTitle() ?? $this->translator->trans('admin.menus.preview.untitled'),
+            'label' => $translation?->getTitle() ?? $this->translator->trans('backend.menus.preview.untitled'),
             'hint' => sprintf('/%s/%s', $post->getPostType()->getSlug(), $translation?->getSlug() ?? ''),
         ];
     }
@@ -174,7 +174,7 @@ final readonly class MenuItemSerializer
         $term = null !== $targetId ? ($termCache[$targetId] ?? $this->termRepository->find($targetId)) : null;
         if (null === $term) {
             return [
-                'label' => $this->translator->trans('admin.menus.preview.term_deleted'),
+                'label' => $this->translator->trans('backend.menus.preview.term_deleted'),
                 'hint' => '#'.$item->getTargetId(),
                 'missing' => true,
             ];
@@ -183,7 +183,7 @@ final readonly class MenuItemSerializer
         $translation = $term->getTranslations()->first() ?: null;
 
         return [
-            'label' => $translation?->getName() ?? $this->translator->trans('admin.menus.preview.unnamed'),
+            'label' => $translation?->getName() ?? $this->translator->trans('backend.menus.preview.unnamed'),
             'hint' => sprintf('/%s/%s', $term->getTaxonomy()->getSlug(), $translation?->getSlug() ?? ''),
         ];
     }
@@ -199,7 +199,7 @@ final readonly class MenuItemSerializer
         $postType = null !== $targetId ? ($postTypeCache[$targetId] ?? $this->postTypeRepository->find($targetId)) : null;
         if (null === $postType) {
             return [
-                'label' => $this->translator->trans('admin.menus.preview.post_type_deleted'),
+                'label' => $this->translator->trans('backend.menus.preview.post_type_deleted'),
                 'hint' => '#'.$item->getTargetId(),
                 'missing' => true,
             ];

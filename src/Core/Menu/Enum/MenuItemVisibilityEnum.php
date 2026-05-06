@@ -12,6 +12,6 @@ enum MenuItemVisibilityEnum: string
 
     public function labelKey(): string
     {
-        return sprintf('admin.menus.visibilities.%s', $this->value);
+        return sprintf('backend.menus.visibilities.%s', $this->value);
     }
 }

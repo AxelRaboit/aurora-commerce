@@ -63,11 +63,11 @@ const {
 } = useSidebarNav(props.navSections, props.activeRoute);
 
 const SECTION_CONFIG = {
-    recent: { icon: Clock,    labelKey: "admin.search.sections.recent" },
-    nav:    { icon: Layers,   labelKey: "admin.search.sections.nav"    },
-    post:   { icon: FileText, labelKey: "admin.search.sections.posts"  },
-    term:   { icon: TagsIcon, labelKey: "admin.search.sections.terms"  },
-    media:  { icon: Image,    labelKey: "admin.search.sections.media"  },
+    recent: { icon: Clock,    labelKey: "backend.search.sections.recent" },
+    nav:    { icon: Layers,   labelKey: "backend.search.sections.nav"    },
+    post:   { icon: FileText, labelKey: "backend.search.sections.posts"  },
+    term:   { icon: TagsIcon, labelKey: "backend.search.sections.terms"  },
+    media:  { icon: Image,    labelKey: "backend.search.sections.media"  },
 };
 
 const {

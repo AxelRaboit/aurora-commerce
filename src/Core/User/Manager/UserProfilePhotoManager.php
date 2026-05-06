@@ -38,12 +38,12 @@ final readonly class UserProfilePhotoManager
     {
         $size = $file->getSize();
         if (false !== $size && $size > self::MAX_SIZE_BYTES) {
-            throw new InvalidArgumentException('admin.users.photo.errors.too_large');
+            throw new InvalidArgumentException('backend.users.photo.errors.too_large');
         }
 
         $mimeType = $file->getMimeType();
         if (null === $mimeType || !in_array($mimeType, self::ALLOWED_MIME_TYPES, true)) {
-            throw new InvalidArgumentException('admin.users.photo.errors.invalid_type');
+            throw new InvalidArgumentException('backend.users.photo.errors.invalid_type');
         }
 
         if (!$this->filesystem->exists($this->uploadDir)) {

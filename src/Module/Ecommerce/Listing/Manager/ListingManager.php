@@ -100,7 +100,7 @@ final readonly class ListingManager implements ListingManagerInterface
     {
         $product = null !== $input->productId ? $this->productRepository->find($input->productId) : null;
         if (null === $product) {
-            throw new InvalidArgumentException($this->translator->trans('admin.ecommerce.listings.errors.product_not_found'));
+            throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listings.errors.product_not_found'));
         }
 
         return $product;
@@ -110,7 +110,7 @@ final readonly class ListingManager implements ListingManagerInterface
     {
         $existing = $this->listingRepository->findOneByProduct($product);
         if ($existing instanceof Listing) {
-            throw new InvalidArgumentException($this->translator->trans('admin.ecommerce.listings.errors.product_already_listed'));
+            throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listings.errors.product_already_listed'));
         }
     }
 
@@ -125,6 +125,6 @@ final readonly class ListingManager implements ListingManagerInterface
             return;
         }
 
-        throw new InvalidArgumentException($this->translator->trans('admin.ecommerce.listings.errors.slug_taken'));
+        throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listings.errors.slug_taken'));
     }
 }

@@ -12,18 +12,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class UserInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'admin.users.errors.name_required')]
-        #[Assert\Length(max: 100, maxMessage: 'admin.users.errors.name_too_long')]
+        #[Assert\NotBlank(message: 'backend.users.errors.name_required')]
+        #[Assert\Length(max: 100, maxMessage: 'backend.users.errors.name_too_long')]
         public string $name,
-        #[Assert\NotBlank(message: 'admin.users.errors.email_required')]
-        #[Assert\Email(message: 'admin.users.errors.email_invalid')]
-        #[Assert\Length(max: 180, maxMessage: 'admin.users.errors.email_too_long')]
+        #[Assert\NotBlank(message: 'backend.users.errors.email_required')]
+        #[Assert\Email(message: 'backend.users.errors.email_invalid')]
+        #[Assert\Length(max: 180, maxMessage: 'backend.users.errors.email_too_long')]
         public string $email,
-        #[Assert\NotBlank(message: 'admin.users.errors.role_required')]
-        #[Assert\Choice(callback: [UserRoleEnum::class, 'allAssignableValues'], message: 'admin.users.errors.role_invalid')]
+        #[Assert\NotBlank(message: 'backend.users.errors.role_required')]
+        #[Assert\Choice(callback: [UserRoleEnum::class, 'allAssignableValues'], message: 'backend.users.errors.role_invalid')]
         public string $role,
         public string $locale = 'fr',
-        #[Assert\Length(min: 8, minMessage: 'admin.users.errors.password_too_short')]
+        #[Assert\Length(min: 8, minMessage: 'backend.users.errors.password_too_short')]
         public ?string $password = null,
         public ?int $managerId = null,
         public ?int $agencyId = null,

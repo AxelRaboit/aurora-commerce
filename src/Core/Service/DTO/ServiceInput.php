@@ -10,8 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final readonly class ServiceInput
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'admin.services.errors.name_required')]
-        #[Assert\Length(max: 150, maxMessage: 'admin.services.errors.name_too_long')]
+        #[Assert\NotBlank(message: 'backend.services.errors.name_required')]
+        #[Assert\Length(max: 150, maxMessage: 'backend.services.errors.name_too_long')]
         public string $name,
     ) {}
 

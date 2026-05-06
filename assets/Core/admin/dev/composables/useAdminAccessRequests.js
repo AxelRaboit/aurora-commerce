@@ -43,13 +43,13 @@ export function useAdminAccessRequests(
 
     const statusLabel = ref({
         [AccessRequestStatus.Pending]: t(
-            "admin.access_requests.status_pending",
+            "backend.access_requests.status_pending",
         ),
         [AccessRequestStatus.Approved]: t(
-            "admin.access_requests.status_approved",
+            "backend.access_requests.status_approved",
         ),
         [AccessRequestStatus.Rejected]: t(
-            "admin.access_requests.status_rejected",
+            "backend.access_requests.status_rejected",
         ),
     });
 

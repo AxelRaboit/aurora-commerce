@@ -16,7 +16,10 @@ export function useInvoiceCreditNote(
         const data = await submit(
             creditNotePath,
             { reason: creditNoteReason.value || null },
-            { successMessage: "admin.billing.invoices.show.creditNoteCreated" },
+            {
+                successMessage:
+                    "backend.billing.invoices.show.creditNoteCreated",
+            },
         );
         creatingCreditNote.value = false;
         if (data) {

@@ -81,7 +81,7 @@ final class ProfileController extends AbstractController
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
             return $this->jsonInvalidInput([
-                'current_password' => $this->translator->trans('admin.profile.errors.current_password_invalid'),
+                'current_password' => $this->translator->trans('backend.profile.errors.current_password_invalid'),
             ], Response::HTTP_OK);
         }
 
@@ -98,7 +98,7 @@ final class ProfileController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
 
         if (!$this->isCsrfTokenValid('profile_delete', $data['_token'] ?? '')) {
-            return $this->jsonFailure($this->translator->trans('admin.profile.errors.invalid_csrf'), Response::HTTP_FORBIDDEN);
+            return $this->jsonFailure($this->translator->trans('backend.profile.errors.invalid_csrf'), Response::HTTP_FORBIDDEN);
         }
 
         $tokenStorage->setToken(null);
@@ -133,7 +133,7 @@ final class ProfileController extends AbstractController
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->jsonInvalidInput(['photo' => 'admin.users.photo.errors.missing'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing'], Response::HTTP_OK);
         }
 
         try {
@@ -164,7 +164,7 @@ final class ProfileController extends AbstractController
         $locale = LocaleEnum::tryFrom($data['locale'] ?? '');
 
         if (null === $locale) {
-            return $this->jsonFailure($this->translator->trans('admin.profile.errors.invalid_locale'));
+            return $this->jsonFailure($this->translator->trans('backend.profile.errors.invalid_locale'));
         }
 
         $request->getSession()->set('_locale', $locale->value);

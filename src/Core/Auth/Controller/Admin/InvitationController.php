@@ -33,7 +33,7 @@ final class InvitationController extends AbstractController
     {
         $user = $this->userManager->findValidInvitation($selector, $token);
         if (!$user instanceof User) {
-            $this->addFlash('error', $this->translator->trans('admin.auth.invitation.expired'));
+            $this->addFlash('error', $this->translator->trans('backend.auth.invitation.expired'));
 
             return $this->redirectToRoute('backend_login');
         }
@@ -53,7 +53,7 @@ final class InvitationController extends AbstractController
 
             $this->security->login($user);
 
-            $this->addFlash('success', $this->translator->trans('admin.auth.invitation.success'));
+            $this->addFlash('success', $this->translator->trans('backend.auth.invitation.success'));
 
             return new RedirectResponse($this->generateUrl('backend_dashboard'));
         }

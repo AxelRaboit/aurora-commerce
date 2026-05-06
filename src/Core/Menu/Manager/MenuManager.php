@@ -43,15 +43,15 @@ final readonly class MenuManager
     public function createMenu(string $name, string $location, ?string $description = null): Menu
     {
         if ('' === mb_trim($name)) {
-            throw new InvalidArgumentException('admin.menus.errors.name_required');
+            throw new InvalidArgumentException('backend.menus.errors.name_required');
         }
 
         if (!preg_match('/^[a-z0-9_-]+$/', $location)) {
-            throw new InvalidArgumentException('admin.menus.errors.location_format');
+            throw new InvalidArgumentException('backend.menus.errors.location_format');
         }
 
         if ($this->menuRepository->findByLocation($location) instanceof Menu) {
-            throw new InvalidArgumentException('admin.menus.errors.location_taken');
+            throw new InvalidArgumentException('backend.menus.errors.location_taken');
         }
 
         $menu = new Menu();
@@ -70,21 +70,21 @@ final readonly class MenuManager
     public function updateMenu(Menu $menu, string $name, string $location, ?string $description = null): void
     {
         if ('' === mb_trim($name)) {
-            throw new InvalidArgumentException('admin.menus.errors.name_required');
+            throw new InvalidArgumentException('backend.menus.errors.name_required');
         }
 
         if (!preg_match('/^[a-z0-9_-]+$/', $location)) {
-            throw new InvalidArgumentException('admin.menus.errors.location_format');
+            throw new InvalidArgumentException('backend.menus.errors.location_format');
         }
 
         if ($this->isProtected($menu) && $location !== $menu->getLocation()) {
-            throw new InvalidArgumentException('admin.menus.errors.location_locked');
+            throw new InvalidArgumentException('backend.menus.errors.location_locked');
         }
 
         if ($location !== $menu->getLocation()) {
             $existing = $this->menuRepository->findByLocation($location);
             if ($existing instanceof Menu && $existing->getId() !== $menu->getId()) {
-                throw new InvalidArgumentException('admin.menus.errors.location_taken');
+                throw new InvalidArgumentException('backend.menus.errors.location_taken');
             }
         }
 
@@ -100,7 +100,7 @@ final readonly class MenuManager
     public function deleteMenu(Menu $menu): void
     {
         if ($this->isProtected($menu)) {
-            throw new InvalidArgumentException('admin.menus.errors.menu_protected');
+            throw new InvalidArgumentException('backend.menus.errors.menu_protected');
         }
 
         $id = $menu->getId();
@@ -134,7 +134,7 @@ final readonly class MenuManager
         if (!empty($options['parentId'])) {
             $parent = $this->menuItemRepository->find($options['parentId']);
             if (!$parent instanceof MenuItem || $parent->getMenu()->getId() !== $menu->getId()) {
-                throw new InvalidArgumentException('admin.menus.errors.parent_invalid');
+                throw new InvalidArgumentException('backend.menus.errors.parent_invalid');
             }
         }
 
@@ -229,12 +229,12 @@ final readonly class MenuManager
                 $newParent = null;
                 if (!empty($entry['parentId'])) {
                     if (!isset($itemsById[$entry['parentId']])) {
-                        throw new InvalidArgumentException('admin.menus.errors.parent_invalid');
+                        throw new InvalidArgumentException('backend.menus.errors.parent_invalid');
                     }
 
                     $newParent = $itemsById[$entry['parentId']];
                     if ($this->wouldCreateCycle($item, $newParent)) {
-                        throw new InvalidArgumentException('admin.menus.errors.parent_cycle');
+                        throw new InvalidArgumentException('backend.menus.errors.parent_cycle');
                     }
                 }
 
@@ -287,11 +287,11 @@ final readonly class MenuManager
     private function validateTarget(MenuItemTargetTypeEnum $targetType, ?int $targetId, ?string $customUrl): void
     {
         if ($targetType->requiresTargetId() && null === $targetId) {
-            throw new InvalidArgumentException('admin.menus.errors.target_required');
+            throw new InvalidArgumentException('backend.menus.errors.target_required');
         }
 
         if ($targetType->requiresCustomUrl() && (null === $customUrl || '' === mb_trim($customUrl))) {
-            throw new InvalidArgumentException('admin.menus.errors.custom_url_required');
+            throw new InvalidArgumentException('backend.menus.errors.custom_url_required');
         }
     }
 

@@ -14,7 +14,7 @@ final class InvoiceStatusEnumTest extends TestCase
         $allowed = ['accent', 'rose', 'sky', 'amber', 'emerald', 'violet', 'slate', 'gray'];
         foreach (InvoiceStatusEnum::cases() as $case) {
             self::assertContains($case->getBadgeColor(), $allowed);
-            self::assertSame('admin.billing.invoices.status.'.$case->value, $case->getLabelKey());
+            self::assertSame('backend.billing.invoices.status.'.$case->value, $case->getLabelKey());
         }
     }
 

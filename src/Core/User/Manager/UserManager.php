@@ -132,7 +132,7 @@ final readonly class UserManager implements UserManagerInterface
     public function update(User $user, string $name, string $email): void
     {
         if ($this->isEmailTaken($email, $user)) {
-            throw new InvalidArgumentException('admin.users.errors.email_taken');
+            throw new InvalidArgumentException('backend.users.errors.email_taken');
         }
 
         $user->setName($name);
@@ -144,11 +144,11 @@ final readonly class UserManager implements UserManagerInterface
     public function updateWithRole(User $user, string $name, string $email, string $role, ?string $password = null): void
     {
         if (!in_array($role, UserRoleEnum::allAssignableValues(), true)) {
-            throw new InvalidArgumentException('admin.users.errors.role_invalid');
+            throw new InvalidArgumentException('backend.users.errors.role_invalid');
         }
 
         if ($this->isEmailTaken($email, $user)) {
-            throw new InvalidArgumentException('admin.users.errors.email_taken');
+            throw new InvalidArgumentException('backend.users.errors.email_taken');
         }
 
         $user->setName($name);
@@ -243,7 +243,7 @@ final readonly class UserManager implements UserManagerInterface
     public function invite(string $name, string $email, string $role, ?string $customMessage): User
     {
         if (!in_array($role, UserRoleEnum::allAssignableValues(), true)) {
-            throw new InvalidArgumentException('admin.users.errors.role_invalid');
+            throw new InvalidArgumentException('backend.users.errors.role_invalid');
         }
 
         $user = new User();

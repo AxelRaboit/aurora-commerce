@@ -47,16 +47,16 @@ final readonly class UserHierarchyManager
         }
 
         if ($managerId === $user->getId()) {
-            throw new InvalidArgumentException('admin.users.errors.manager_self');
+            throw new InvalidArgumentException('backend.users.errors.manager_self');
         }
 
         $manager = $this->userRepository->find($managerId);
         if (!$manager instanceof User) {
-            throw new InvalidArgumentException('admin.users.errors.manager_not_found');
+            throw new InvalidArgumentException('backend.users.errors.manager_not_found');
         }
 
         if ($this->wouldCreateCycle($user, $manager)) {
-            throw new InvalidArgumentException('admin.users.errors.manager_cycle');
+            throw new InvalidArgumentException('backend.users.errors.manager_cycle');
         }
 
         $user->setManager($manager);

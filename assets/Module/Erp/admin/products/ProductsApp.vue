@@ -45,7 +45,7 @@ const { STATUS_OPTIONS, STATUS_TONE, TYPE_OPTIONS, TYPE_TONE } = useProductsOpti
 
 const { showCreate, newProduct, newProductImage, createErrors, createLoading, openCreate, submitCreate } = useProductsCreate(props.createPath, reset);
 const { showEdit, editingProduct, editForm, editFormImage, editErrors, editLoading, openEdit, submitEdit } = useProductsEdit(props.updatePath, reset);
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "admin.erp.products.deleted");
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "backend.erp.products.deleted");
 </script>
 
 <template>

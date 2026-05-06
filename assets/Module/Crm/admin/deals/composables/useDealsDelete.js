@@ -17,7 +17,7 @@ export function useDealsDelete(
             reset();
             if (kanbanColumnsLoaded.value) ensureKanbanColumns(true);
         },
-        "admin.crm.deals.deleted",
+        "backend.crm.deals.deleted",
     );
 
     return { pendingDelete, deleteLoading, confirmDelete, doDelete };

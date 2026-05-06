@@ -14,7 +14,7 @@ final readonly class MenuItemPayload
      * @param array<string, string|null> $translations LocaleEnum → label (or null to clear)
      */
     public function __construct(
-        #[Assert\NotNull(message: 'admin.menus.errors.target_type_invalid')]
+        #[Assert\NotNull(message: 'backend.menus.errors.target_type_invalid')]
         public ?MenuItemTargetTypeEnum $targetType,
         public ?int $targetId,
         public ?string $customUrl,
