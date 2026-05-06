@@ -94,7 +94,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     <div class="flex flex-col items-end gap-1 shrink-0">
                         <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
                         <div class="flex items-center gap-1">
-                            <AppBadge :color="user.type === 'admin' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
+                            <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
                             <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
                             <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
                         </div>
@@ -152,7 +152,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                             </div>
                         </td>
                         <td class="px-4 py-3 hidden lg:table-cell">
-                            <AppBadge :color="user.type === 'admin' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
+                            <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
                         </td>
                         <td class="px-4 py-3">
                             <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
