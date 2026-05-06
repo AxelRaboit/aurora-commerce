@@ -258,6 +258,16 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 </dl>
 
                 <div class="border-t border-line/40 pt-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div v-if="viewingUser.agencyName">
+                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('admin.nav.agencies') }}</p>
+                            <p class="text-sm text-primary">{{ viewingUser.agencyName }}</p>
+                        </div>
+                        <div v-if="viewingUser.serviceName">
+                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('admin.nav.services') }}</p>
+                            <p class="text-sm text-primary">{{ viewingUser.serviceName }}</p>
+                        </div>
+                    </div>
                     <div>
                         <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.manager.label') }}</p>
                         <p v-if="viewingUser.manager" class="text-sm text-primary">{{ viewingUser.manager.name }}</p>
