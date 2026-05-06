@@ -21,7 +21,6 @@ final class CoreModule implements ModuleInterface
         return [
             new NavPermission('core.media.view'),
             new NavPermission('core.media.manage'),
-            new NavPermission('core.menus.manage'),
             new NavPermission('core.search.view'),
             new NavPermission('core.users.manage'),
             new NavPermission('core.agencies.manage'),
@@ -39,7 +38,6 @@ final class CoreModule implements ModuleInterface
             ], priority: 10),
             new NavSection('platform', [
                 new NavItem('backend_media', 'admin.nav.media', 'image'),
-                new NavItem('backend_menus', 'admin.nav.menus', 'menu'),
                 new NavItem('backend_users', 'admin.nav.users', 'users'),
                 new NavItem('backend_agencies', 'admin.nav.agencies', 'building-2'),
                 new NavItem('backend_services', 'admin.nav.services', 'briefcase'),

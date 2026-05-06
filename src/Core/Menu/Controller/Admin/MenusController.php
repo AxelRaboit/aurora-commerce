@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/menus', name: 'backend_menus')]
-#[IsGranted('core.menus.manage')]
+#[IsGranted('editorial.menus.manage')]
 class MenusController extends AbstractController
 {
     use JsonRequestTrait;
@@ -48,7 +48,7 @@ class MenusController extends AbstractController
         /** @var list<string> $locales */
         $locales = $this->getParameter('kernel.enabled_locales');
 
-        return $this->render('@Core/admin/menus/index.html.twig', $this->viewBuilder->indexView($locales));
+        return $this->render('@Editorial/admin/menus/index.html.twig', $this->viewBuilder->indexView($locales));
     }
 
     // ── Menus CRUD ────────────────────────────────────────────────────────────

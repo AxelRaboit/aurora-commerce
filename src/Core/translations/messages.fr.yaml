@@ -98,28 +98,6 @@ admin:
       folder_not_found: Le dossier {id} est introuvable.
       folder_self_nested: Un dossier ne peut pas être déplacé dans lui-même ou un de ses sous-dossiers.
       parent_folder_not_found: Le dossier parent {id} est introuvable.
-  menus:
-    preview:
-      untitled: (sans titre)
-      unnamed: (sans nom)
-      post_deleted: ⚠ Article supprimé
-      term_deleted: ⚠ Terme supprimé
-      post_type_deleted: ⚠ Type supprimé
-    targetTypes:
-      post: Article / Page
-      term: Terme de taxonomie
-      post_type_archive: Archive de type
-      home: Accueil
-      custom_url: URL personnalisée
-      frontend_login: Page de connexion
-      frontend_register: Page d'inscription
-      frontend_account: Mon compte
-      frontend_shop: Boutique
-      frontend_logout: Se déconnecter
-    visibilities:
-      always: Toujours visible
-      guests_only: Invités uniquement
-      authenticated_only: Connectés uniquement
   tabs:
     access_requests: Demandes d'accès
     audit: Audit

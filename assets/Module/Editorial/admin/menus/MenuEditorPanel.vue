@@ -8,7 +8,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import MenuItemRow from "@core/admin/menus/MenuItemRow.vue";
+import MenuItemRow from "@editorial/admin/menus/MenuItemRow.vue";
 
 const { t } = useI18n();
 
