@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/erp/products', name: 'erp_products')]
+#[Route('/backend/erp/products', name: 'backend_erp_products')]
 #[IsGranted('erp.products.view')]
 final class ProductsController extends AbstractController
 {

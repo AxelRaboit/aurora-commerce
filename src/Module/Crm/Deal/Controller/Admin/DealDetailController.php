@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/crm/deals/{id}', name: 'crm_deals_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
+#[Route('/backend/crm/deals/{id}', name: 'backend_crm_deals_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
 #[IsGranted('crm.deals.manage')]
 final class DealDetailController extends AbstractController
 {
