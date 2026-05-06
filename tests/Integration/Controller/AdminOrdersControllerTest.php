@@ -36,7 +36,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
 
         $container = static::getContainer();
         $userRepository = $container->get(UserRepository::class);
-        $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app', 'type' => 'admin']);
+        $admin = $userRepository->findOneBy(['email' => 'dev@aurora.app', 'type' => 'admin']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
 

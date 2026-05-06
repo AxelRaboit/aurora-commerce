@@ -113,7 +113,7 @@ class AppFixtures extends Fixture
 
         // Admin user (backend)
         $adminUser = new User();
-        $adminUser->setEmail('admin@aurora.app')
+        $adminUser->setEmail('dev@aurora.app')
              ->setName('Admin User')
              ->setRoles([UserRoleEnum::Dev->value])
              ->setPassword($this->hasher->hashPassword($adminUser, 'password'));
@@ -121,7 +121,7 @@ class AppFixtures extends Fixture
 
         // Frontend user — same email, accessible via front login
         $frontUser = new User();
-        $frontUser->setEmail('admin@aurora.app')
+        $frontUser->setEmail('dev@aurora.app')
              ->setName('Admin User')
              ->setType(UserTypeEnum::FrontUser)
              ->setRoles([UserRoleEnum::User->value])
