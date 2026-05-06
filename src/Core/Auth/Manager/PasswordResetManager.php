@@ -55,7 +55,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
 
         ['selector' => $selector, 'plainToken' => $plainToken, 'expiresAt' => $expiresAt] = $this->createRequestForUser($user);
 
-        $resetUrl = $this->urlGenerator->generate('admin_reset_password', [
+        $resetUrl = $this->urlGenerator->generate('backend_reset_password', [
             'selector' => $selector,
             'token' => $plainToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);

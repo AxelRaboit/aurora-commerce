@@ -29,9 +29,9 @@ final readonly class ContactsViewBuilder
         return [
             'contacts' => $this->buildListPayload($pagination),
             'search' => $pagination->search ?? '',
-            'createPath' => $this->urlGenerator->generate('crm_contacts_create'),
-            'updatePath' => $this->urlGenerator->generate('crm_contacts_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('crm_contacts_delete', ['id' => '__id__']),
+            'createPath' => $this->urlGenerator->generate('backend_crm_contacts_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_contacts_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_contacts_delete', ['id' => '__id__']),
         ];
     }
 

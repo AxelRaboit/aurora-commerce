@@ -11,8 +11,8 @@
 
 {% block content %}
     <div {{ vue_component('core/admin/auth/RegisterConfirmApp', {
-        loginPath: path('admin_login'),
-        resendPath: path('admin_resend_verification'),
+        loginPath: path('backend_login'),
+        resendPath: path('backend_resend_verification'),
         pendingEmail: pendingEmail ?? '',
         resent: resent,
     }) }}></div>

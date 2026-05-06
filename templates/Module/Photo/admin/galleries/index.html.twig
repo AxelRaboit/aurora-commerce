@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.photo'|trans, href: path('admin_galleries')},
+            {label: 'admin.modules.photo'|trans, href: path('backend_galleries')},
             {label: 'admin.nav.galleries'|trans},
         ],
     }) }}

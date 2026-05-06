@@ -34,9 +34,9 @@ final readonly class TiersViewBuilder
                 'value' => $t->value,
                 'labelKey' => $t->getLabelKey(),
             ], TiersTypeEnum::cases()),
-            'listPath' => $this->urlGenerator->generate('billing_tiers_list'),
-            'deletePath' => $this->urlGenerator->generate('billing_tiers_delete', ['id' => '__id__']),
-            'showPath' => $this->urlGenerator->generate('billing_tiers_show', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_billing_tiers_list'),
+            'deletePath' => $this->urlGenerator->generate('backend_billing_tiers_delete', ['id' => '__id__']),
+            'showPath' => $this->urlGenerator->generate('backend_billing_tiers_show', ['id' => '__id__']),
         ];
     }
 
@@ -57,11 +57,11 @@ final readonly class TiersViewBuilder
                 'totalInvoiced' => $this->invoiceRepository->sumGrossForTiers($tiers->getId()),
                 'invoiceCount' => $this->invoiceRepository->countForTiers($tiers->getId()),
             ],
-            'listPath' => $this->urlGenerator->generate('billing_tiers'),
-            'invoicesListPath' => $this->urlGenerator->generate('billing_invoices_list'),
-            'invoiceShowPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
-            'updatePath' => $this->urlGenerator->generate('billing_tiers_update', ['id' => $tiers->getId()]),
-            'deletePath' => $this->urlGenerator->generate('billing_tiers_delete', ['id' => $tiers->getId()]),
+            'listPath' => $this->urlGenerator->generate('backend_billing_tiers'),
+            'invoicesListPath' => $this->urlGenerator->generate('backend_billing_invoices_list'),
+            'invoiceShowPath' => $this->urlGenerator->generate('backend_billing_invoices_show', ['id' => '__id__']),
+            'updatePath' => $this->urlGenerator->generate('backend_billing_tiers_update', ['id' => $tiers->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_billing_tiers_delete', ['id' => $tiers->getId()]),
             'statusOptions' => array_map(static fn (InvoiceStatusEnum $s): array => [
                 'value' => $s->value,
                 'labelKey' => $s->getLabelKey(),

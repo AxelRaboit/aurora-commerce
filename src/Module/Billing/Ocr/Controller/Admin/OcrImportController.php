@@ -25,7 +25,7 @@ use Throwable;
 
 use function in_array;
 
-#[Route('/backend/billing/ocr', name: 'billing_ocr')]
+#[Route('/backend/billing/ocr', name: 'backend_billing_ocr')]
 #[IsGranted('billing.ocr.import')]
 final class OcrImportController extends AbstractController
 {
@@ -52,14 +52,14 @@ final class OcrImportController extends AbstractController
 
         return $this->render('@Billing/admin/ocr/import.html.twig', [
             'recentJobs' => array_map($this->jobSerializer->serialize(...), $recent),
-            'uploadPath' => $this->generateUrl('billing_ocr_import_upload'),
-            'jobsPath' => $this->generateUrl('billing_ocr_jobs'),
-            'invoicesPath' => $this->generateUrl('billing_invoices'),
-            'invoiceShowPath' => $this->generateUrl('billing_invoices_show', ['id' => '__id__']),
-            'statusUrlTemplate' => $this->generateUrl('billing_ocr_jobs_status', ['id' => '__id__']),
-            'retryPath' => $this->generateUrl('billing_ocr_jobs_retry', ['id' => '__id__']),
-            'deletePath' => $this->generateUrl('billing_ocr_jobs_delete', ['id' => '__id__']),
-            'validatePathTemplate' => $this->generateUrl('billing_invoices_validate', ['id' => '__id__']),
+            'uploadPath' => $this->generateUrl('backend_billing_ocr_import_upload'),
+            'jobsPath' => $this->generateUrl('backend_billing_ocr_jobs'),
+            'invoicesPath' => $this->generateUrl('backend_billing_invoices'),
+            'invoiceShowPath' => $this->generateUrl('backend_billing_invoices_show', ['id' => '__id__']),
+            'statusUrlTemplate' => $this->generateUrl('backend_billing_ocr_jobs_status', ['id' => '__id__']),
+            'retryPath' => $this->generateUrl('backend_billing_ocr_jobs_retry', ['id' => '__id__']),
+            'deletePath' => $this->generateUrl('backend_billing_ocr_jobs_delete', ['id' => '__id__']),
+            'validatePathTemplate' => $this->generateUrl('backend_billing_invoices_validate', ['id' => '__id__']),
         ]);
     }
 

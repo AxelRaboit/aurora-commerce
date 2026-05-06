@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/crm/contacts', name: 'crm_contacts')]
+#[Route('/backend/crm/contacts', name: 'backend_crm_contacts')]
 #[IsGranted('crm.contacts.view')]
 final class ContactsController extends AbstractController
 {

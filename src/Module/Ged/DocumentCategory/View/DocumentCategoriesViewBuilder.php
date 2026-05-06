@@ -22,10 +22,10 @@ final readonly class DocumentCategoriesViewBuilder
         return [
             'categories' => $this->buildListPayload($pagination),
             'search' => $pagination->search ?? '',
-            'createPath' => $this->urlGenerator->generate('ged_categories_create'),
-            'updatePath' => $this->urlGenerator->generate('ged_categories_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('ged_categories_delete', ['id' => '__id__']),
-            'listPath' => $this->urlGenerator->generate('ged_categories_list'),
+            'createPath' => $this->urlGenerator->generate('backend_ged_categories_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_ged_categories_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_ged_categories_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_ged_categories_list'),
         ];
     }
 

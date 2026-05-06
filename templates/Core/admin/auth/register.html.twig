@@ -14,8 +14,8 @@
 
 {% block content %}
     <div {{ vue_component('core/admin/auth/RegisterApp', {
-        registerPath: path('admin_register'),
-        loginPath: path('admin_login'),
+        registerPath: path('backend_register'),
+        loginPath: path('backend_login'),
         registrationEnabled: registrationEnabled,
         initialErrors: errors,
         values: {name: values.name ?? '', email: values.email ?? ''},

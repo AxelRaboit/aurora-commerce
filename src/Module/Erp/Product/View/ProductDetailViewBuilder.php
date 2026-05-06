@@ -32,10 +32,10 @@ final readonly class ProductDetailViewBuilder
         return [
             'product' => $this->productSerializer->serialize($product),
             'activity' => ProductActivitySerializer::serialize($result),
-            'backPath' => $this->urlGenerator->generate('erp_products'),
-            'updatePath' => $this->urlGenerator->generate('erp_products_update', ['id' => $product->getId()]),
-            'deletePath' => $this->urlGenerator->generate('erp_products_delete', ['id' => $product->getId()]),
-            'activityPath' => $this->urlGenerator->generate('erp_products_activity', ['id' => $product->getId()]),
+            'backPath' => $this->urlGenerator->generate('backend_erp_products'),
+            'updatePath' => $this->urlGenerator->generate('backend_erp_products_update', ['id' => $product->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_erp_products_delete', ['id' => $product->getId()]),
+            'activityPath' => $this->urlGenerator->generate('backend_erp_products_activity', ['id' => $product->getId()]),
         ];
     }
 }

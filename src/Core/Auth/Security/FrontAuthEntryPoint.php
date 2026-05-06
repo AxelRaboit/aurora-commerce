@@ -24,6 +24,6 @@ final readonly class FrontAuthEntryPoint implements AuthenticationEntryPointInte
             );
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('admin_login'));
+        return new RedirectResponse($this->urlGenerator->generate('backend_login'));
     }
 }

@@ -11,8 +11,8 @@
 {% block body %}
 <div {{ vue_component('core/admin/services/ServicesApp', {
     services: services,
-    createPath: path('admin_services_create'),
-    updatePath: path('admin_services_update', {id: '__id__'}),
-    deletePath: path('admin_services_delete', {id: '__id__'}),
+    createPath: path('backend_services_create'),
+    updatePath: path('backend_services_update', {id: '__id__'}),
+    deletePath: path('backend_services_delete', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

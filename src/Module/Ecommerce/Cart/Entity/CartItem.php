@@ -10,7 +10,7 @@ use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
-#[ORM\Table(name: 'ecommerce_cart_items')]
+#[ORM\Table(name: 'backend_ecommerce_cart_items')]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_cart_item_listing', columns: ['cart_id', 'listing_id'])]
 class CartItem
 {

@@ -29,12 +29,12 @@ final readonly class InvitationManager
             return;
         }
 
-        $invitationUrl = $this->urlGenerator->generate('admin_invitation_accept', [
+        $invitationUrl = $this->urlGenerator->generate('backend_invitation_accept', [
             'selector' => $selector,
             'token' => $plainToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $loginUrl = $this->urlGenerator->generate('admin_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $loginUrl = $this->urlGenerator->generate('backend_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $siteName = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
 
         $body = $this->twig->render('@Shared/email/invitation.html.twig', [

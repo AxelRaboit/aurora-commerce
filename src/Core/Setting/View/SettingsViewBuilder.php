@@ -61,8 +61,8 @@ final readonly class SettingsViewBuilder
 
         return [
             'groups' => $groups,
-            'mediaPickerPath' => $this->urlGenerator->generate('admin_media'),
-            'postSearchPath' => $this->urlGenerator->generate('admin_posts_search'),
+            'mediaPickerPath' => $this->urlGenerator->generate('backend_media'),
+            'postSearchPath' => $this->urlGenerator->generate('backend_posts_search'),
         ];
     }
 

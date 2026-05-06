@@ -28,11 +28,11 @@ final class AccessRequestController extends AbstractController
         private readonly AccessRequestViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/access-request', name: 'admin_access_request')]
+    #[Route('/access-request', name: 'backend_access_request')]
     public function __invoke(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('backend_dashboard');
         }
 
         $accessRequestEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true);
@@ -51,6 +51,6 @@ final class AccessRequestController extends AbstractController
         $this->accessRequestManager->create($input->email, $input->name, $input->message);
         $this->addFlash('success', $this->translator->trans('admin.auth.access_request.success_toast'));
 
-        return $this->redirectToRoute('admin_login');
+        return $this->redirectToRoute('backend_login');
     }
 }

@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
+            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
             {label: 'admin.billing.compliance.title'|trans},
         ],
     }) }}
@@ -13,8 +13,8 @@
 
 {% block body %}
 <div {{ vue_component('billing/admin/ComplianceApp', {
-    reportPath: path('billing_compliance_report'),
-    invoicesPath: path('billing_invoices'),
-    showPath: path('billing_invoices_show', {id: '__id__'}),
+    reportPath: path('backend_billing_compliance_report'),
+    invoicesPath: path('backend_billing_invoices'),
+    showPath: path('backend_billing_invoices_show', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

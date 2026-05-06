@@ -26,11 +26,11 @@ final class PasswordResetController extends AbstractController
         private readonly PasswordResetViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/forgot-password', name: 'admin_forgot_password')]
+    #[Route('/forgot-password', name: 'backend_forgot_password')]
     public function forgot(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('backend_dashboard');
         }
 
         $status = null;
@@ -44,11 +44,11 @@ final class PasswordResetController extends AbstractController
         return $this->render('@Core/admin/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
     }
 
-    #[Route('/reset-password/{selector}/{token}', name: 'admin_reset_password')]
+    #[Route('/reset-password/{selector}/{token}', name: 'backend_reset_password')]
     public function reset(string $selector, string $token, Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('backend_dashboard');
         }
 
         $resetRequest = $this->passwordResetManager->validateToken($selector, $token);
@@ -56,7 +56,7 @@ final class PasswordResetController extends AbstractController
         if (!$resetRequest instanceof ResetPasswordRequest) {
             $this->addFlash('error', $this->translator->trans('admin.auth.reset_password.invalid_link'));
 
-            return $this->redirectToRoute('admin_forgot_password');
+            return $this->redirectToRoute('backend_forgot_password');
         }
 
         $errors = [];
@@ -69,7 +69,7 @@ final class PasswordResetController extends AbstractController
                 $this->passwordResetManager->resetPassword($resetRequest, $input->password);
                 $this->addFlash('success', $this->translator->trans('admin.auth.reset_password.success'));
 
-                return $this->redirectToRoute('admin_login');
+                return $this->redirectToRoute('backend_login');
             }
         }
 

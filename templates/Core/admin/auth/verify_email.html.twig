@@ -12,7 +12,7 @@
 {% block content %}
     <div {{ vue_component('core/admin/auth/VerifyEmailApp', {
         success: success,
-        loginPath: path('admin_login'),
-        registerPath: path('admin_register'),
+        loginPath: path('backend_login'),
+        registerPath: path('backend_register'),
     }) }}></div>
 {% endblock %}

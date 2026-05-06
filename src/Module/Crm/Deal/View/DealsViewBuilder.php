@@ -36,13 +36,13 @@ final readonly class DealsViewBuilder
             'deals' => $this->buildListPayload($pagination),
             'search' => $pagination->search ?? '',
             'stages' => array_map(static fn (DealStageEnum $stage): string => $stage->value, DealStageEnum::cases()),
-            'createPath' => $this->urlGenerator->generate('crm_deals_create'),
-            'updatePath' => $this->urlGenerator->generate('crm_deals_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('crm_deals_delete', ['id' => '__id__']),
-            'listPath' => $this->urlGenerator->generate('crm_deals_list'),
-            'kanbanColumnsPath' => $this->urlGenerator->generate('crm_deals_kanban_columns'),
-            'contactsListPath' => $this->urlGenerator->generate('crm_contacts_list'),
-            'companiesListPath' => $this->urlGenerator->generate('crm_companies_list'),
+            'createPath' => $this->urlGenerator->generate('backend_crm_deals_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_deals_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_deals_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_crm_deals_list'),
+            'kanbanColumnsPath' => $this->urlGenerator->generate('backend_crm_deals_kanban_columns'),
+            'contactsListPath' => $this->urlGenerator->generate('backend_crm_contacts_list'),
+            'companiesListPath' => $this->urlGenerator->generate('backend_crm_companies_list'),
         ];
     }
 

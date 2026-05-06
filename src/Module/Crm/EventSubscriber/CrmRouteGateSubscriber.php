@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final readonly class CrmRouteGateSubscriber implements EventSubscriberInterface
 {
-    private const string ADMIN_PREFIX = 'crm_';
+    private const string ADMIN_PREFIX = 'backend_crm_';
 
     public function __construct(private CrmContext $crmContext) {}
 

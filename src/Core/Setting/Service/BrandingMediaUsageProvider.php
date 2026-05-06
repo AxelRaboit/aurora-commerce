@@ -21,7 +21,7 @@ final readonly class BrandingMediaUsageProvider implements MediaUsageProviderInt
     public function findUsages(int $mediaId): array
     {
         $usages = [];
-        $settingsUrl = $this->urlGenerator->generate('admin_settings');
+        $settingsUrl = $this->urlGenerator->generate('backend_settings');
 
         $checks = [
             [ApplicationParameterEnum::LogoMediaId, 'admin.media.usage.brandingLogo'],

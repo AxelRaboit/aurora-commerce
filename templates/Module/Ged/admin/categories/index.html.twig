@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.ged'|trans, href: path('ged_documents')},
+            {label: 'admin.modules.ged'|trans, href: path('backend_ged_documents')},
             {label: 'admin.nav.ged_categories'|trans},
         ],
     }) }}

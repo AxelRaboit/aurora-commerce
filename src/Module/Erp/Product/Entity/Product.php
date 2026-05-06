@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ORM\Table(name: 'erp_products')]
+#[ORM\Table(name: 'backend_erp_products')]
 #[ORM\UniqueConstraint(name: 'uniq_erp_product_reference', columns: ['reference'])]
 #[ORM\HasLifecycleCallbacks]
 class Product

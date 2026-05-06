@@ -31,8 +31,8 @@ final readonly class OrdersViewBuilder
             'search' => $pagination->search ?? '',
             'currentStatus' => $status instanceof OrderStatusEnum ? $status->value : '',
             'stats' => $this->orderRepository->countByStatus(),
-            'showPath' => $this->urlGenerator->generate('ecommerce_orders_show', ['id' => '__id__']),
-            'listPath' => $this->urlGenerator->generate('ecommerce_orders_list'),
+            'showPath' => $this->urlGenerator->generate('backend_ecommerce_orders_show', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_ecommerce_orders_list'),
         ];
     }
 }

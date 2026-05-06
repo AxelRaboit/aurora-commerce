@@ -13,7 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
-#[ORM\Table(name: 'ged_documents')]
+#[ORM\Table(name: 'backend_ged_documents')]
 #[ORM\HasLifecycleCallbacks]
 class Document
 {

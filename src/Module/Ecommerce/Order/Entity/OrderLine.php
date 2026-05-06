@@ -10,7 +10,7 @@ use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderLineRepository::class)]
-#[ORM\Table(name: 'ecommerce_order_lines')]
+#[ORM\Table(name: 'backend_ecommerce_order_lines')]
 class OrderLine
 {
     #[ORM\Id]

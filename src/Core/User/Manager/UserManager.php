@@ -87,7 +87,7 @@ final readonly class UserManager implements UserManagerInterface
     {
         $token = $this->emailVerificationManager->generateToken($user);
 
-        $verifyUrl = $this->urlGenerator->generate('admin_verify_email', [
+        $verifyUrl = $this->urlGenerator->generate('backend_verify_email', [
             'token' => $token,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 

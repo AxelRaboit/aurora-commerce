@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.crm'|trans, href: path('crm_contacts')},
+            {label: 'admin.modules.crm'|trans, href: path('backend_crm_contacts')},
             {label: 'admin.nav.deals'|trans},
         ],
     }) }}
@@ -25,9 +25,9 @@
     kanbanColumnsPath: kanbanColumnsPath,
     contactsListPath: contactsListPath,
     companiesListPath: companiesListPath,
-    listRoutePath: path('crm_deals'),
-    kanbanRoutePath: path('crm_deals_kanban'),
-    updateStagePath: path('crm_deals_stage', {id: '__id__'}),
-    showPath: path('crm_deals_show', {id: '__id__'}),
+    listRoutePath: path('backend_crm_deals'),
+    kanbanRoutePath: path('backend_crm_deals_kanban'),
+    updateStagePath: path('backend_crm_deals_stage', {id: '__id__'}),
+    showPath: path('backend_crm_deals_show', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

@@ -67,7 +67,7 @@
                     <div>
                         {{ include('@Shared/components/app_logo.html.twig', {
                             gradientId: 'app-logo-hero',
-                            href: path('admin_login'),
+                            href: path('backend_login'),
                             linkClass: 'inline-flex items-center gap-3 mb-8',
                             withText: true,
                             appVersion: appVersion ?? null,
@@ -81,7 +81,7 @@
             <div class="flex min-h-screen flex-col items-center justify-center bg-bg px-4 py-12">
                 {{ include('@Shared/components/app_logo.html.twig', {
                     gradientId: 'app-logo-stack',
-                    href: path('admin_login'),
+                    href: path('backend_login'),
                     linkClass: 'flex flex-col items-center gap-2 mb-6',
                     withText: true,
                     textClass: 'text-primary font-bold text-2xl',

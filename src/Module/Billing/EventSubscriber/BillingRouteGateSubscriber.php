@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final readonly class BillingRouteGateSubscriber implements EventSubscriberInterface
 {
-    private const string ADMIN_PREFIX = 'billing_';
+    private const string ADMIN_PREFIX = 'backend_billing_';
 
     public function __construct(private BillingContext $billingContext) {}
 

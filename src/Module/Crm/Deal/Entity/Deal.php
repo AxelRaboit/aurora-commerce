@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DealRepository::class)]
-#[ORM\Table(name: 'crm_deals')]
+#[ORM\Table(name: 'backend_crm_deals')]
 #[ORM\HasLifecycleCallbacks]
 class Deal
 {

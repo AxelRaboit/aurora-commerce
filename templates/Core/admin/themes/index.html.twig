@@ -13,9 +13,9 @@
 {% block body %}
 <div {{ vue_component('core/admin/themes/ThemesApp', {
     themes: themes,
-    activatePath: path('admin_themes_activate', {id: '__id__'}),
-    updatePath: path('admin_themes_update', {id: '__id__'}),
-    deletePath: path('admin_themes_delete', {id: '__id__'}),
-    createPath: path('admin_themes_create'),
+    activatePath: path('backend_themes_activate', {id: '__id__'}),
+    updatePath: path('backend_themes_update', {id: '__id__'}),
+    deletePath: path('backend_themes_delete', {id: '__id__'}),
+    createPath: path('backend_themes_create'),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

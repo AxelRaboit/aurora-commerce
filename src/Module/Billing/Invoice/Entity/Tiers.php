@@ -12,7 +12,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TiersRepository::class)]
-#[ORM\Table(name: 'billing_tiers')]
+#[ORM\Table(name: 'backend_billing_tiers')]
 #[ORM\HasLifecycleCallbacks]
 class Tiers
 {

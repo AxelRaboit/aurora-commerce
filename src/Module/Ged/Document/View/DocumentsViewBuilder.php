@@ -32,11 +32,11 @@ final readonly class DocumentsViewBuilder
             'documents' => $this->buildListPayload($pagination),
             'categories' => $categories,
             'search' => $pagination->search ?? '',
-            'createPath' => $this->urlGenerator->generate('ged_documents_create'),
-            'updatePath' => $this->urlGenerator->generate('ged_documents_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('ged_documents_delete', ['id' => '__id__']),
-            'listPath' => $this->urlGenerator->generate('ged_documents_list'),
-            'mediaPickerPath' => $this->urlGenerator->generate('admin_media_list'),
+            'createPath' => $this->urlGenerator->generate('backend_ged_documents_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_ged_documents_list'),
+            'mediaPickerPath' => $this->urlGenerator->generate('backend_media_list'),
         ];
     }
 

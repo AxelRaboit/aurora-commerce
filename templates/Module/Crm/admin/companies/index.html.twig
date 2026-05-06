@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.crm'|trans, href: path('crm_contacts')},
+            {label: 'admin.modules.crm'|trans, href: path('backend_crm_contacts')},
             {label: 'admin.nav.companies'|trans},
         ],
     }) }}
@@ -19,6 +19,6 @@
     updatePath: updatePath,
     deletePath: deletePath,
     listPath: listPath,
-    showPath: path('crm_companies_show', {id: '__id__'}),
+    showPath: path('backend_crm_companies_show', {id: '__id__'}),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

@@ -37,7 +37,7 @@ final readonly class ErpModule implements ModuleInterface
 
         return [
             new NavSection('erp', [
-                new NavItem('erp_products', 'admin.nav.products', 'package'),
+                new NavItem('backend_erp_products', 'admin.nav.products', 'package'),
             ], priority: 50),
         ];
     }

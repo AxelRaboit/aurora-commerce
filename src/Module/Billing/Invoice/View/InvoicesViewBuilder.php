@@ -45,11 +45,11 @@ final readonly class InvoicesViewBuilder
                 'totalInvoices' => array_sum($counts),
             ],
             'search' => $pagination->search ?? '',
-            'listPath' => $this->urlGenerator->generate('billing_invoices_list'),
-            'showPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('billing_invoices_delete', ['id' => '__id__']),
-            'exportXlsxPath' => $this->urlGenerator->generate('billing_invoices_export_xlsx'),
-            'importPath' => $this->urlGenerator->generate('billing_ocr_import'),
+            'listPath' => $this->urlGenerator->generate('backend_billing_invoices_list'),
+            'showPath' => $this->urlGenerator->generate('backend_billing_invoices_show', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_billing_invoices_delete', ['id' => '__id__']),
+            'exportXlsxPath' => $this->urlGenerator->generate('backend_billing_invoices_export_xlsx'),
+            'importPath' => $this->urlGenerator->generate('backend_billing_ocr_import'),
             'statusOptions' => array_map(static fn (InvoiceStatusEnum $status): array => [
                 'value' => $status->value,
                 'labelKey' => $status->getLabelKey(),
@@ -63,20 +63,20 @@ final readonly class InvoicesViewBuilder
     {
         return [
             'invoice' => $this->invoiceSerializer->serializeDetail($invoice),
-            'listPath' => $this->urlGenerator->generate('billing_invoices'),
-            'validatePath' => $this->urlGenerator->generate('billing_invoices_validate', ['id' => $invoice->getId()]),
-            'deletePath' => $this->urlGenerator->generate('billing_invoices_delete', ['id' => $invoice->getId()]),
-            'updatePath' => $this->urlGenerator->generate('billing_invoices_update', ['id' => $invoice->getId()]),
-            'tiersUpdatePathTemplate' => $this->urlGenerator->generate('billing_tiers_update', ['id' => '__id__']),
-            'lineCreatePath' => $this->urlGenerator->generate('billing_invoices_lines_create', ['id' => $invoice->getId()]),
-            'lineUpdatePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_update', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
-            'lineDeletePathTemplate' => $this->urlGenerator->generate('billing_invoices_lines_delete', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
-            'creditNotePath' => $this->urlGenerator->generate('billing_invoices_credit_note', ['id' => $invoice->getId()]),
-            'importPath' => $this->urlGenerator->generate('billing_ocr_import'),
+            'listPath' => $this->urlGenerator->generate('backend_billing_invoices'),
+            'validatePath' => $this->urlGenerator->generate('backend_billing_invoices_validate', ['id' => $invoice->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_billing_invoices_delete', ['id' => $invoice->getId()]),
+            'updatePath' => $this->urlGenerator->generate('backend_billing_invoices_update', ['id' => $invoice->getId()]),
+            'tiersUpdatePathTemplate' => $this->urlGenerator->generate('backend_billing_tiers_update', ['id' => '__id__']),
+            'lineCreatePath' => $this->urlGenerator->generate('backend_billing_invoices_lines_create', ['id' => $invoice->getId()]),
+            'lineUpdatePathTemplate' => $this->urlGenerator->generate('backend_billing_invoices_lines_update', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
+            'lineDeletePathTemplate' => $this->urlGenerator->generate('backend_billing_invoices_lines_delete', ['id' => $invoice->getId(), 'lineId' => '__lineId__']),
+            'creditNotePath' => $this->urlGenerator->generate('backend_billing_invoices_credit_note', ['id' => $invoice->getId()]),
+            'importPath' => $this->urlGenerator->generate('backend_billing_ocr_import'),
             'ocrRetryPath' => $invoice->getOcrJob() instanceof OcrJob
-                ? $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => $invoice->getOcrJob()->getId()])
+                ? $this->urlGenerator->generate('backend_billing_ocr_jobs_retry', ['id' => $invoice->getOcrJob()->getId()])
                 : null,
-            'showPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
+            'showPath' => $this->urlGenerator->generate('backend_billing_invoices_show', ['id' => '__id__']),
         ];
     }
 

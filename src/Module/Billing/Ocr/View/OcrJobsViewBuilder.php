@@ -27,13 +27,13 @@ final readonly class OcrJobsViewBuilder
     {
         return [
             'jobs' => $this->buildListPayload($pagination, $request),
-            'listPath' => $this->urlGenerator->generate('billing_ocr_jobs_list'),
-            'statusUrlTemplate' => $this->urlGenerator->generate('billing_ocr_jobs_status', ['id' => '__id__']),
-            'retryPath' => $this->urlGenerator->generate('billing_ocr_jobs_retry', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('billing_ocr_jobs_delete', ['id' => '__id__']),
-            'invoicesPath' => $this->urlGenerator->generate('billing_invoices'),
-            'invoiceShowPath' => $this->urlGenerator->generate('billing_invoices_show', ['id' => '__id__']),
-            'importPath' => $this->urlGenerator->generate('billing_ocr_import'),
+            'listPath' => $this->urlGenerator->generate('backend_billing_ocr_jobs_list'),
+            'statusUrlTemplate' => $this->urlGenerator->generate('backend_billing_ocr_jobs_status', ['id' => '__id__']),
+            'retryPath' => $this->urlGenerator->generate('backend_billing_ocr_jobs_retry', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_billing_ocr_jobs_delete', ['id' => '__id__']),
+            'invoicesPath' => $this->urlGenerator->generate('backend_billing_invoices'),
+            'invoiceShowPath' => $this->urlGenerator->generate('backend_billing_invoices_show', ['id' => '__id__']),
+            'importPath' => $this->urlGenerator->generate('backend_billing_ocr_import'),
             'statusOptions' => array_map(fn (OcrJobStatusEnum $status): array => [
                 'value' => $status->value,
                 'label' => $this->translator->trans($status->getLabelKey()),

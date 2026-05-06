@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: order.number,
         crumbs: [
-            {label: 'admin.modules.ecommerce'|trans, href: path('ecommerce_listings')},
+            {label: 'admin.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
             {label: 'admin.nav.orders'|trans, href: backPath},
             {label: order.number},
         ],

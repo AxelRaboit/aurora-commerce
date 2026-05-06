@@ -34,10 +34,10 @@ final readonly class ContactDetailViewBuilder
         return [
             'contact' => $this->contactSerializer->serialize($contact),
             'activity' => $activity,
-            'editPath' => $this->urlGenerator->generate('crm_contacts', []),
-            'backPath' => $this->urlGenerator->generate('crm_contacts'),
-            'updatePath' => $this->urlGenerator->generate('crm_contacts_update', ['id' => $contact->getId()]),
-            'deletePath' => $this->urlGenerator->generate('crm_contacts_delete', ['id' => $contact->getId()]),
+            'editPath' => $this->urlGenerator->generate('backend_crm_contacts', []),
+            'backPath' => $this->urlGenerator->generate('backend_crm_contacts'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_contacts_update', ['id' => $contact->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_contacts_delete', ['id' => $contact->getId()]),
         ];
     }
 }

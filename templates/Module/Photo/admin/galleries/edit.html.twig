@@ -6,8 +6,8 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: gallery.title,
         crumbs: [
-            {label: 'admin.modules.photo'|trans, href: path('admin_galleries')},
-            {label: 'admin.nav.galleries'|trans, href: path('admin_galleries')},
+            {label: 'admin.modules.photo'|trans, href: path('backend_galleries')},
+            {label: 'admin.nav.galleries'|trans, href: path('backend_galleries')},
             {label: gallery.title},
         ],
     }) }}
@@ -21,7 +21,7 @@
     comments: comments,
     finalizations: finalizations,
     invites: invites,
-    backPath: path('admin_galleries'),
+    backPath: path('backend_galleries'),
     previewPath: previewPath,
     reopenPath: reopenPath,
     finalizationDeletePath: finalizationDeletePath,

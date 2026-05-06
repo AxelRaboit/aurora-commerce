@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: invoice.number ?? ('Facture #' ~ invoice.id),
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('billing_invoices')},
+            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
             {label: 'admin.nav.invoices'|trans, href: listPath},
             {label: invoice.number ?? ('#' ~ invoice.id)},
         ],

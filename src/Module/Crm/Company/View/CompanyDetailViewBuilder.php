@@ -34,11 +34,11 @@ final readonly class CompanyDetailViewBuilder
         return [
             'company' => $this->companySerializer->serialize($company),
             'contacts' => $contacts,
-            'backPath' => $this->urlGenerator->generate('crm_companies'),
-            'updatePath' => $this->urlGenerator->generate('crm_companies_update', ['id' => $company->getId()]),
-            'deletePath' => $this->urlGenerator->generate('crm_companies_delete', ['id' => $company->getId()]),
-            'createContactPath' => $this->urlGenerator->generate('crm_contacts_create'),
-            'contactsListPath' => $this->urlGenerator->generate('crm_contacts_list'),
+            'backPath' => $this->urlGenerator->generate('backend_crm_companies'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_companies_update', ['id' => $company->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_companies_delete', ['id' => $company->getId()]),
+            'createContactPath' => $this->urlGenerator->generate('backend_crm_contacts_create'),
+            'contactsListPath' => $this->urlGenerator->generate('backend_crm_contacts_list'),
         ];
     }
 }

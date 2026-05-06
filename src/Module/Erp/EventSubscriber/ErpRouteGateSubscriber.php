@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final readonly class ErpRouteGateSubscriber implements EventSubscriberInterface
 {
-    private const string ADMIN_PREFIX = 'erp_';
+    private const string ADMIN_PREFIX = 'backend_erp_';
 
     public function __construct(private ErpContext $erpContext) {}
 

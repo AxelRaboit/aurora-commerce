@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.erp'|trans, href: path('erp_products')},
+            {label: 'admin.modules.erp'|trans, href: path('backend_erp_products')},
             {label: 'admin.nav.products'|trans},
         ],
     }) }}
@@ -19,6 +19,6 @@
     updatePath: updatePath,
     deletePath: deletePath,
     showPath: showPath,
-    listPath: path('erp_products_list'),
+    listPath: path('backend_erp_products_list'),
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

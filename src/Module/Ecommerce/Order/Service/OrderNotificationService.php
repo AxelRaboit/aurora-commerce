@@ -23,7 +23,7 @@ readonly class OrderNotificationService
         $context = $this->buildContext($order);
         $this->mail->send($order->getEmail(), 'ecommerce.mail.subject.paid', '@Ecommerce/email/order_paid.html.twig', $context, locale: $order->getLocale());
         $this->mail->sendToAdmin('ecommerce.mail.subject.admin_new', '@Ecommerce/email/order_paid_admin.html.twig', $context + [
-            'adminUrl' => $this->urlGenerator->generate('ecommerce_orders_show', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'adminUrl' => $this->urlGenerator->generate('backend_ecommerce_orders_show', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
     }
 

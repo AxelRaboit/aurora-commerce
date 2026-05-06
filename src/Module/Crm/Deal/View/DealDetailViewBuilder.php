@@ -26,10 +26,10 @@ final readonly class DealDetailViewBuilder
     {
         return [
             'deal' => $this->dealSerializer->serialize($deal),
-            'backPath' => $this->urlGenerator->generate('crm_deals'),
-            'updatePath' => $this->urlGenerator->generate('crm_deals_update', ['id' => $deal->getId()]),
-            'deletePath' => $this->urlGenerator->generate('crm_deals_delete', ['id' => $deal->getId()]),
-            'updateStagePath' => $this->urlGenerator->generate('crm_deals_stage', ['id' => $deal->getId()]),
+            'backPath' => $this->urlGenerator->generate('backend_crm_deals'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_deals_update', ['id' => $deal->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_deals_delete', ['id' => $deal->getId()]),
+            'updateStagePath' => $this->urlGenerator->generate('backend_crm_deals_stage', ['id' => $deal->getId()]),
         ];
     }
 }

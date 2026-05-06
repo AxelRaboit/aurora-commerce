@@ -29,10 +29,10 @@ final readonly class CompaniesViewBuilder
         return [
             'companies' => $this->buildListPayload($pagination),
             'search' => $pagination->search ?? '',
-            'createPath' => $this->urlGenerator->generate('crm_companies_create'),
-            'updatePath' => $this->urlGenerator->generate('crm_companies_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('crm_companies_delete', ['id' => '__id__']),
-            'listPath' => $this->urlGenerator->generate('crm_companies_list'),
+            'createPath' => $this->urlGenerator->generate('backend_crm_companies_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_crm_companies_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_crm_companies_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_crm_companies_list'),
         ];
     }
 

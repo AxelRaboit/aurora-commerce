@@ -36,14 +36,14 @@
         activeRoute: app.request.attributes.get('_route'),
         logoutCsrf: csrf_token('logout'),
         frontPath: path('front_root'),
-        profilePath: path('profile'),
-        logoutPath: path('admin_logout'),
+        profilePath: path('backend_profile'),
+        logoutPath: path('backend_logout'),
         locale: app.request.locale,
         mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',
         siteName: siteName ?? '',
         siteLogoUrl: siteLogoUrl ?? '',
         appVersion: appVersion is defined ? appVersion : '',
-        searchPath: path('admin_search'),
+        searchPath: path('backend_search'),
     }) }}></div>
 
     <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
@@ -55,7 +55,7 @@
                 {% block content %}{{ 'admin.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
                 {% block actions %}
                     {{ include('@Shared/components/app_link.html.twig', {
-                        href: path('admin_dashboard', {_switch_user: '_exit'}),
+                        href: path('backend_dashboard', {_switch_user: '_exit'}),
                         variant: 'inherit',
                         extraClass: 'ml-2 font-medium',
                         label: 'admin.impersonation.leave'|trans,

@@ -31,10 +31,10 @@ final readonly class ProductsViewBuilder
         return [
             'products' => $this->buildListPayload($pagination, $request),
             'search' => $pagination->search ?? '',
-            'createPath' => $this->urlGenerator->generate('erp_products_create'),
-            'updatePath' => $this->urlGenerator->generate('erp_products_update', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('erp_products_delete', ['id' => '__id__']),
-            'showPath' => $this->urlGenerator->generate('erp_products_show', ['id' => '__id__']),
+            'createPath' => $this->urlGenerator->generate('backend_erp_products_create'),
+            'updatePath' => $this->urlGenerator->generate('backend_erp_products_update', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_erp_products_delete', ['id' => '__id__']),
+            'showPath' => $this->urlGenerator->generate('backend_erp_products_show', ['id' => '__id__']),
         ];
     }
 

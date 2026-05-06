@@ -142,10 +142,10 @@ final readonly class CartManager implements CartManagerInterface
     private function getOrCreateSessionId(): string
     {
         $session = $this->requestStack->getSession();
-        $sessionId = $session->get('ecommerce_cart_session');
+        $sessionId = $session->get('backend_ecommerce_cart_session');
         if (!is_string($sessionId) || '' === $sessionId) {
             $sessionId = bin2hex(random_bytes(16));
-            $session->set('ecommerce_cart_session', $sessionId);
+            $session->set('backend_ecommerce_cart_session', $sessionId);
         }
 
         return $sessionId;

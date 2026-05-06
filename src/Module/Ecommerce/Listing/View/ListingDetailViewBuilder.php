@@ -25,9 +25,9 @@ final readonly class ListingDetailViewBuilder
     {
         return [
             'listing' => $this->listingSerializer->serialize($listing),
-            'backPath' => $this->urlGenerator->generate('ecommerce_listings'),
-            'updatePath' => $this->urlGenerator->generate('ecommerce_listings_update', ['id' => $listing->getId()]),
-            'deletePath' => $this->urlGenerator->generate('ecommerce_listings_delete', ['id' => $listing->getId()]),
+            'backPath' => $this->urlGenerator->generate('backend_ecommerce_listings'),
+            'updatePath' => $this->urlGenerator->generate('backend_ecommerce_listings_update', ['id' => $listing->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_ecommerce_listings_delete', ['id' => $listing->getId()]),
         ];
     }
 }

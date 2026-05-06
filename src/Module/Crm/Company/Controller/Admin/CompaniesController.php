@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/crm/companies', name: 'crm_companies')]
+#[Route('/backend/crm/companies', name: 'backend_crm_companies')]
 #[IsGranted('crm.companies.manage')]
 final class CompaniesController extends AbstractController
 {

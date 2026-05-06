@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.ecommerce'|trans, href: path('ecommerce_listings')},
+            {label: 'admin.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
             {label: 'admin.nav.listings'|trans},
         ],
     }) }}
@@ -19,7 +19,7 @@
     updatePath: updatePath,
     deletePath: deletePath,
     showPath: showPath,
-    listPath: path('ecommerce_listings_list'),
+    listPath: path('backend_ecommerce_listings_list'),
     productsPath: productsPath,
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

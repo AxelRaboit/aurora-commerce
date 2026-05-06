@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: company.name,
         crumbs: [
-            {label: 'admin.modules.crm'|trans, href: path('crm_contacts')},
+            {label: 'admin.modules.crm'|trans, href: path('backend_crm_contacts')},
             {label: 'admin.nav.companies'|trans, href: backPath},
             {label: company.name},
         ],

@@ -28,14 +28,14 @@ final class InvitationController extends AbstractController
         private readonly InvitationViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/invitation/{selector}/{token}', name: 'admin_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
+    #[Route('/invitation/{selector}/{token}', name: 'backend_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
     public function accept(Request $request, string $selector, string $token): Response
     {
         $user = $this->userManager->findValidInvitation($selector, $token);
         if (!$user instanceof User) {
             $this->addFlash('error', $this->translator->trans('admin.auth.invitation.expired'));
 
-            return $this->redirectToRoute('admin_login');
+            return $this->redirectToRoute('backend_login');
         }
 
         if ($request->isMethod(HttpMethodEnum::Post->value)) {
@@ -55,7 +55,7 @@ final class InvitationController extends AbstractController
 
             $this->addFlash('success', $this->translator->trans('admin.auth.invitation.success'));
 
-            return new RedirectResponse($this->generateUrl('admin_dashboard'));
+            return new RedirectResponse($this->generateUrl('backend_dashboard'));
         }
 
         return $this->render('@Core/admin/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token));

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/ecommerce/listings/{id}', name: 'ecommerce_listings_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
+#[Route('/backend/ecommerce/listings/{id}', name: 'backend_ecommerce_listings_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
 #[IsGranted('ecommerce.listings.view')]
 final class ListingDetailController extends AbstractController
 {

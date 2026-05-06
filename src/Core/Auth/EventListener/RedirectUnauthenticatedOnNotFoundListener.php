@@ -44,13 +44,13 @@ final readonly class RedirectUnauthenticatedOnNotFoundListener
         }
 
         $event->setResponse(new RedirectResponse(
-            $this->urlGenerator->generate('admin_login'),
+            $this->urlGenerator->generate('backend_login'),
         ));
     }
 
     private function isProtectedPath(string $path): bool
     {
-        $adminPrefix = $this->urlGenerator->generate('admin_dashboard');
+        $adminPrefix = $this->urlGenerator->generate('backend_dashboard');
         $devPrefix = $this->urlGenerator->generate('dev_dashboard');
 
         return str_starts_with($path, $adminPrefix) || str_starts_with($path, $devPrefix);

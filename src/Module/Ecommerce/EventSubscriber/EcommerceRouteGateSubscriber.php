@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final readonly class EcommerceRouteGateSubscriber implements EventSubscriberInterface
 {
     /** @var array<int, string> */
-    private const array ADMIN_PREFIXES = ['ecommerce_'];
+    private const array ADMIN_PREFIXES = ['backend_ecommerce_'];
 
     /** @var array<int, string> */
     private const array FRONT_PREFIXES = [
