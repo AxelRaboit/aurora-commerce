@@ -16,7 +16,7 @@ class DashboardController extends AbstractController
 {
     public function __construct(private readonly DashboardViewBuilder $viewBuilder) {}
 
-    #[Route('', name: 'backend_dashboard')]
+    #[Route('', name: 'dashboard')]
     public function index(): Response
     {
         return $this->render('@Core/admin/dashboard/index.html.twig', $this->viewBuilder->indexView());
