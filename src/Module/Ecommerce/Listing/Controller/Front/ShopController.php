@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Controller\Front;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
@@ -26,7 +27,7 @@ class ShopController extends AbstractController
         private readonly ShopViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/{locale}/shop', name: 'frontend_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/shop', name: 'frontend_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -37,7 +38,7 @@ class ShopController extends AbstractController
         return $this->render($this->themeResolver->resolve('shop_index'), $this->viewBuilder->indexView($page, $locale));
     }
 
-    #[Route('/{locale}/shop/{slug}', name: 'frontend_shop_product', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/shop/{slug}', name: 'frontend_shop_product', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function show(string $locale, string $slug, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);

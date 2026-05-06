@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
@@ -26,7 +27,7 @@ class AccountOrdersController extends AbstractController
         private readonly AccountOrdersViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/{locale}/account/orders', name: 'frontend_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/account/orders', name: 'frontend_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);

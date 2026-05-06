@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Controller\Front;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
@@ -49,7 +50,7 @@ class CheckoutController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
-    #[Route('/{locale}/checkout', name: 'frontend_checkout', requirements: ['locale' => '[a-z]{2}'], methods: ['GET', 'POST'], priority: 8)]
+    #[Route('/{locale}/checkout', name: 'frontend_checkout', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value], priority: 8)]
     public function checkout(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -111,7 +112,7 @@ class CheckoutController extends AbstractController
         }
     }
 
-    #[Route('/{locale}/order/{token}/payment-return', name: 'frontend_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/order/{token}/payment-return', name: 'frontend_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function paymentReturn(string $locale, string $token, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -138,7 +139,7 @@ class CheckoutController extends AbstractController
         return $this->redirectToRoute('frontend_order_show', ['locale' => $locale, 'token' => $token]);
     }
 
-    #[Route('/{locale}/order/{token}', name: 'frontend_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/order/{token}', name: 'frontend_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function show(string $locale, string $token, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);

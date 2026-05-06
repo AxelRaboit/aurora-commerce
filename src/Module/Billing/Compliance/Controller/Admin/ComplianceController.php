@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Compliance\Controller\Admin;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Module\Billing\Compliance\View\ComplianceViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,13 +21,13 @@ final class ComplianceController extends AbstractController
 
     public function __construct(private readonly ComplianceViewBuilder $viewBuilder) {}
 
-    #[Route('', name: '', methods: ['GET'])]
+    #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
         return $this->render('@Billing/admin/compliance/index.html.twig');
     }
 
-    #[Route('/report', name: '_report', methods: ['GET'])]
+    #[Route('/report', name: '_report', methods: [HttpMethodEnum::Get->value])]
     public function report(): JsonResponse
     {
         return $this->jsonSuccess($this->viewBuilder->buildReport());

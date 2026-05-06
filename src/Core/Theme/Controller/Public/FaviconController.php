@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Controller\Public;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,7 +24,7 @@ final readonly class FaviconController
 {
     public function __construct(private ThemeContext $themeContext) {}
 
-    #[Route('/favicon.svg', name: 'favicon', methods: ['GET'])]
+    #[Route('/favicon.svg', name: 'favicon', methods: [HttpMethodEnum::Get->value])]
     public function __invoke(): Response
     {
         $hex = mb_ltrim($this->themeContext->primaryColor(), '#');

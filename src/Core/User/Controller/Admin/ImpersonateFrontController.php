@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\User\Controller\Admin;
 
 use Aurora\Core\Auth\Service\ImpersonationTokenService;
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/users/{id}/impersonate-frontend', name: 'backend_users_impersonate_frontend', methods: ['GET'])]
+#[Route('/backend/users/{id}/impersonate-frontend', name: 'backend_users_impersonate_frontend', methods: [HttpMethodEnum::Get->value])]
 #[IsGranted('ROLE_ADMIN')]
 final class ImpersonateFrontController extends AbstractController
 {
