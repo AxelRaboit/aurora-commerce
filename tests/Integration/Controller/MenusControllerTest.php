@@ -24,7 +24,7 @@ final class MenusControllerTest extends IntegrationTestCase
         parent::setUp();
         $this->client = static::createClient();
 
-        $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin@aurora.app']);
+        $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin@aurora.app', 'type' => 'admin']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
 

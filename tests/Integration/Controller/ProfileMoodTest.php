@@ -23,7 +23,7 @@ final class ProfileMoodTest extends IntegrationTestCase
         $this->client = static::createClient();
 
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app']);
+        $admin = $userRepository->findOneBy(['email' => 'admin@aurora.app', 'type' => 'admin']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
 
@@ -89,7 +89,7 @@ final class ProfileMoodTest extends IntegrationTestCase
         $repository = static::getContainer()->get(UserRepository::class);
         // Clear identity map to force a fresh read after the request.
         $repository->getEntityManager()->clear();
-        $admin = $repository->findOneBy(['email' => 'admin@aurora.app']);
+        $admin = $repository->findOneBy(['email' => 'admin@aurora.app', 'type' => 'admin']);
         self::assertInstanceOf(User::class, $admin);
 
         return $admin;

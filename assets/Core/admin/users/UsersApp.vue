@@ -94,6 +94,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     <div class="flex flex-col items-end gap-1 shrink-0">
                         <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
                         <div class="flex items-center gap-1">
+                            <AppBadge :color="user.type === 'admin' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
                             <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
                             <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
                         </div>
@@ -126,6 +127,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.name') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.email') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.users.role') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.detail.type') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.status') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.created') }}</th>
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
@@ -148,6 +150,9 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                 <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
                                 <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
                             </div>
+                        </td>
+                        <td class="px-4 py-3 hidden lg:table-cell">
+                            <AppBadge :color="user.type === 'admin' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
                         </td>
                         <td class="px-4 py-3">
                             <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>

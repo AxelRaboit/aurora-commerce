@@ -10,6 +10,7 @@ use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Entity\PostTranslation;
 use Aurora\Module\Editorial\Post\Entity\PostType;
@@ -110,13 +111,22 @@ class AppFixtures extends Fixture
             $manager->persist($setting);
         }
 
-        // Admin user
-        $user = new User();
-        $user->setEmail('admin@aurora.app')
+        // Admin user (backend)
+        $adminUser = new User();
+        $adminUser->setEmail('admin@aurora.app')
              ->setName('Admin User')
              ->setRoles([UserRoleEnum::Dev->value])
-             ->setPassword($this->hasher->hashPassword($user, 'password'));
-        $manager->persist($user);
+             ->setPassword($this->hasher->hashPassword($adminUser, 'password'));
+        $manager->persist($adminUser);
+
+        // Frontend user — same email, accessible via front login
+        $frontUser = new User();
+        $frontUser->setEmail('admin@aurora.app')
+             ->setName('Admin User')
+             ->setType(UserTypeEnum::FrontUser)
+             ->setRoles([UserRoleEnum::User->value])
+             ->setPassword($this->hasher->hashPassword($frontUser, 'password'));
+        $manager->persist($frontUser);
 
         // Sample page
         $homePage = new Post()->setPostType($pageType)->setStatus(PostStatusEnum::Published);
