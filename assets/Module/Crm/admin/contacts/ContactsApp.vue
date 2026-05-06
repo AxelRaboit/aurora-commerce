@@ -17,8 +17,10 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { Plus, Pencil, Trash2, Eye, Save } from "lucide-vue-next";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     contacts: { type: Object, default: () => ({}) },
@@ -48,7 +50,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 :placeholder="t('admin.crm.contacts.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton v-if="can('crm.contacts.create')" variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('admin.crm.contacts.add') }}
             </AppButton>
@@ -73,8 +75,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
             </div>
