@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { Eye, EyeOff } from "lucide-vue-next";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 
@@ -15,6 +16,8 @@ const props = defineProps({
 });
 
 defineEmits(['update:modelValue']);
+
+const { t } = useI18n();
 
 const revealed = ref(false);
 const inputType = computed(() => {
@@ -58,6 +61,6 @@ defineExpose({
                 <EyeOff v-else class="w-4 h-4" :stroke-width="2" />
             </button>
         </div>
-        <p v-if="error" class="text-xs text-red-500">{{ error }}</p>
+        <p v-if="error" class="text-xs text-red-500">{{ t(error, error) }}</p>
     </div>
 </template>

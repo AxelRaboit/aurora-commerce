@@ -1,5 +1,8 @@
 <script setup>
+import { useI18n } from "vue-i18n";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
+
+const { t } = useI18n();
 
 defineProps({
     modelValue: { type: String, default: '' },
@@ -30,6 +33,6 @@ defineEmits(['update:modelValue']);
             ]"
             v-on:input="$emit('update:modelValue', $event.target.value)"
         />
-        <p v-if="error" class="text-xs text-red-500">{{ error }}</p>
+        <p v-if="error" class="text-xs text-red-500">{{ t(error, error) }}</p>
     </div>
 </template>

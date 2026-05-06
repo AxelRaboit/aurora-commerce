@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\DataFixtures;
 
+use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Service\SettingsManager;
 use Aurora\Core\User\Entity\User;
@@ -96,6 +98,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         assert($manager instanceof EntityManagerInterface);
 
         $users = $this->createUsers($manager);
+        $this->createAgenciesAndServices($manager, $users);
         $media = $this->createMedia($manager);
         $postType = $manager->getRepository(PostType::class)->findOneBy(['slug' => 'article']);
 
@@ -179,6 +182,49 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     }
 
     // ── Media ─────────────────────────────────────────────────────────────────
+
+    // ── Agencies & Services ───────────────────────────────────────────────────
+
+    /** @param User[] $users */
+    private function createAgenciesAndServices(EntityManagerInterface $em, array $users): void
+    {
+        $agencyDefs = [
+            'Agence Nord',
+            'Agence Sud',
+            'Agence Est',
+            'Agence Ouest',
+            'Siège Social',
+        ];
+
+        $serviceDefs = [
+            'Développement',
+            'Commercial',
+            'Ressources Humaines',
+            'Direction',
+            'Marketing',
+        ];
+
+        $agencies = [];
+        foreach ($agencyDefs as $name) {
+            $agency = new Agency()->setName($name);
+            $em->persist($agency);
+            $agencies[] = $agency;
+        }
+
+        $services = [];
+        foreach ($serviceDefs as $name) {
+            $service = new Service()->setName($name);
+            $em->persist($service);
+            $services[] = $service;
+        }
+
+        $em->flush();
+
+        foreach ($users as $index => $user) {
+            $user->setAgency($agencies[$index % count($agencies)]);
+            $user->setService($services[$index % count($services)]);
+        }
+    }
 
     /** @return Media[] */
     private function createMedia(EntityManagerInterface $em): array

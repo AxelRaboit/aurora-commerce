@@ -72,6 +72,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                     :label="t('admin.services.name')"
                     :placeholder="t('admin.services.namePlaceholder')"
                     :error="editModal.errors.name ?? ''"
+                    :required="true"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t("shared.common.cancel") }}</AppButton>

@@ -72,6 +72,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                     :label="t('admin.agencies.name')"
                     :placeholder="t('admin.agencies.namePlaceholder')"
                     :error="editModal.errors.name ?? ''"
+                    :required="true"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
