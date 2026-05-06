@@ -19,7 +19,6 @@ final class CoreModule implements ModuleInterface
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.dashboard.view'),
             new NavPermission('core.media.view'),
             new NavPermission('core.media.manage'),
             new NavPermission('core.menus.manage'),

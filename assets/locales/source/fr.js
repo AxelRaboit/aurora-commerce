@@ -1509,7 +1509,6 @@ export default {
             searchPlaceholder: "Rechercher par nom ou module…",
             names: {
                 core: {
-                    dashboard: { view: "Voir le tableau de bord" },
                     media: {
                         view: "Voir les médias",
                         manage: "Gérer les médias",

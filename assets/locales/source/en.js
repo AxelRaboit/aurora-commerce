@@ -1442,7 +1442,6 @@ export default {
             searchPlaceholder: "Search by name or module…",
             names: {
                 core: {
-                    dashboard: { view: "View the dashboard" },
                     media: { view: "View media", manage: "Manage media" },
                     menus: { manage: "Manage menus" },
                     search: { view: "Use the search" },
