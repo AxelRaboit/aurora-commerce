@@ -49,7 +49,7 @@ class CheckoutController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
-    #[Route('/{locale}/checkout', name: 'front_checkout', requirements: ['locale' => '[a-z]{2}'], methods: ['GET', 'POST'], priority: 8)]
+    #[Route('/{locale}/checkout', name: 'frontend_checkout', requirements: ['locale' => '[a-z]{2}'], methods: ['GET', 'POST'], priority: 8)]
     public function checkout(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -57,7 +57,7 @@ class CheckoutController extends AbstractController
 
         $cart = $this->cartManager->getCurrentCart();
         if (0 === $cart->getItems()->count()) {
-            return $this->redirectToRoute('front_cart', ['locale' => $locale]);
+            return $this->redirectToRoute('frontend_cart', ['locale' => $locale]);
         }
 
         $cartRequiresShipping = $this->cartContainsPhysicalItem($cart);
@@ -67,7 +67,7 @@ class CheckoutController extends AbstractController
         }
 
         $formData = $this->initialFormData($cartRequiresShipping);
-        $submitPath = $this->urlGenerator->generate('front_checkout', ['locale' => $locale]);
+        $submitPath = $this->urlGenerator->generate('frontend_checkout', ['locale' => $locale]);
 
         return $this->render(
             $this->themeResolver->resolve('checkout'),
@@ -97,7 +97,7 @@ class CheckoutController extends AbstractController
             $order->setStripePaymentIntentId($paymentIntent->id);
             $this->entityManager->flush();
 
-            $returnUrl = $this->urlGenerator->generate('front_order_payment_return', [
+            $returnUrl = $this->urlGenerator->generate('frontend_order_payment_return', [
                 'locale' => $locale,
                 'token' => $order->getToken(),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -111,7 +111,7 @@ class CheckoutController extends AbstractController
         }
     }
 
-    #[Route('/{locale}/order/{token}/payment-return', name: 'front_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/order/{token}/payment-return', name: 'frontend_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
     public function paymentReturn(string $locale, string $token, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -135,10 +135,10 @@ class CheckoutController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('front_order_show', ['locale' => $locale, 'token' => $token]);
+        return $this->redirectToRoute('frontend_order_show', ['locale' => $locale, 'token' => $token]);
     }
 
-    #[Route('/{locale}/order/{token}', name: 'front_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/order/{token}', name: 'frontend_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: ['GET'], priority: 8)]
     public function show(string $locale, string $token, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);

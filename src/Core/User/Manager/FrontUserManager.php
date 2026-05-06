@@ -67,7 +67,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
     {
         $token = $this->emailVerificationManager->generateToken($user);
 
-        $verifyUrl = $this->urlGenerator->generate('front_verify_email', [
+        $verifyUrl = $this->urlGenerator->generate('frontend_verify_email', [
             'token' => $token,
             'locale' => $locale,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -105,7 +105,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
 
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'front_user.profile_updated', 'User', $user->getId(), ['email' => $user->getEmail()]);
+        $this->auditLogger->log('core', 'frontend_user.profile_updated', 'User', $user->getId(), ['email' => $user->getEmail()]);
     }
 
     public function deleteAccount(User $user): void
@@ -119,7 +119,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'front_user.account_deleted', 'User', $id, ['email' => $email]);
+        $this->auditLogger->log('core', 'frontend_user.account_deleted', 'User', $id, ['email' => $email]);
     }
 
     public function resendVerificationEmail(string $email, string $locale): void
@@ -149,7 +149,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
 
         ['selector' => $selector, 'plainToken' => $plainToken, 'expiresAt' => $expiresAt] = $this->passwordResetManager->createRequestForUser($user);
 
-        $resetUrl = $this->urlGenerator->generate('front_reset_password', [
+        $resetUrl = $this->urlGenerator->generate('frontend_reset_password', [
             'locale' => $locale,
             'selector' => $selector,
             'token' => $plainToken,

@@ -5,7 +5,7 @@
 {% block body %}
 <div {{ vue_component('core/front/auth/VerifyEmailApp', {
     success: success,
-    loginPath: path('front_login', {locale: locale}),
-    registerPath: path('front_register', {locale: locale}),
+    loginPath: path('frontend_login', {locale: locale}),
+    registerPath: path('frontend_register', {locale: locale}),
 }) }}></div>
 {% endblock %}

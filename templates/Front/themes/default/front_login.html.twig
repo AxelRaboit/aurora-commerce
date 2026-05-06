@@ -5,11 +5,11 @@
 {% block body %}
     <div {{ vue_component('core/front/auth/LoginApp', {
         checkPath: checkPath,
-        csrfToken: csrf_token('front_authenticate'),
+        csrfToken: csrf_token('frontend_authenticate'),
         locale: locale,
-        forgotPath: path('front_forgot_password', {locale: locale}),
-        registerPath: path('front_register', {locale: locale}),
-        registrationEnabled: context.setting('front_registration_enabled') == '1',
+        forgotPath: path('frontend_forgot_password', {locale: locale}),
+        registerPath: path('frontend_register', {locale: locale}),
+        registrationEnabled: context.setting('frontend_registration_enabled') == '1',
         lastEmail: lastEmail,
         errorMessage: error ? error.messageKey|trans(error.messageData, 'security') : '',
         resetSuccess: app.request.query.get('reset') ? true : false,

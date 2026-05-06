@@ -4,8 +4,8 @@
 
 {% block body %}
     <div {{ vue_component('core/front/auth/RegisterConfirmApp', {
-        loginPath: path('front_login', {locale: locale}),
-        resendPath: path('front_resend_verification', {locale: locale}),
+        loginPath: path('frontend_login', {locale: locale}),
+        resendPath: path('frontend_resend_verification', {locale: locale}),
         pendingEmail: pendingEmail|default(''),
         resent: resent|default(false),
     }) }}></div>

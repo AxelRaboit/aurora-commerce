@@ -27,11 +27,11 @@ final readonly class EcommerceRouteGateSubscriber implements EventSubscriberInte
 
     /** @var array<int, string> */
     private const array FRONT_PREFIXES = [
-        'front_shop',
-        'front_cart',
-        'front_checkout',
-        'front_order_show',
-        'front_account_orders',
+        'frontend_shop',
+        'frontend_cart',
+        'frontend_checkout',
+        'frontend_order_show',
+        'frontend_account_orders',
     ];
 
     public function __construct(private EcommerceContext $ecommerceContext) {}

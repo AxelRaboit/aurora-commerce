@@ -35,7 +35,7 @@
         userPhotoUrl: app.user.profilePhotoUrl ?? '',
         activeRoute: app.request.attributes.get('_route'),
         logoutCsrf: csrf_token('logout'),
-        frontPath: path('front_root'),
+        frontPath: path('frontend_root'),
         profilePath: path('backend_profile'),
         logoutPath: path('backend_logout'),
         locale: app.request.locale,

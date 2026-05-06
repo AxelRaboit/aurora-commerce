@@ -6,9 +6,9 @@
 <div {{ vue_component('ecommerce/front/CartApp', {
     initialCart: cart,
     locale: locale,
-    updatePath: path('front_cart_update', {locale: locale}),
-    removePath: path('front_cart_remove', {locale: locale}),
-    shopPath: path('front_shop_index', {locale: locale}),
-    checkoutPath: path('front_checkout', {locale: locale}),
+    updatePath: path('frontend_cart_update', {locale: locale}),
+    removePath: path('frontend_cart_remove', {locale: locale}),
+    shopPath: path('frontend_shop_index', {locale: locale}),
+    checkoutPath: path('frontend_checkout', {locale: locale}),
 }) }}></div>
 {% endblock %}

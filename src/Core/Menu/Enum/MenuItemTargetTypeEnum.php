@@ -11,11 +11,11 @@ enum MenuItemTargetTypeEnum: string
     case PostTypeArchive = 'post_type_archive';
     case Home = 'home';
     case CustomUrl = 'custom_url';
-    case FrontLogin = 'front_login';
-    case FrontRegister = 'front_register';
-    case FrontAccount = 'front_account';
-    case FrontLogout = 'front_logout';
-    case FrontShop = 'front_shop';
+    case FrontLogin = 'frontend_login';
+    case FrontRegister = 'frontend_register';
+    case FrontAccount = 'frontend_account';
+    case FrontLogout = 'frontend_logout';
+    case FrontShop = 'frontend_shop';
 
     public function labelKey(): string
     {

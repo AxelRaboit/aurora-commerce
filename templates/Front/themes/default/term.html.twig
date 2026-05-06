@@ -24,7 +24,7 @@
             {{ include('Front/themes/default/_pagination.html.twig', {
                 page: posts.page,
                 totalPages: posts.totalPages,
-                route: 'front_term',
+                route: 'frontend_term',
                 params: {locale: locale, taxonomySlug: taxonomy.slug, termSlug: termTranslation.slug},
             }) }}
         {% endif %}

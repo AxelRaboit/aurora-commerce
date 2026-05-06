@@ -26,7 +26,7 @@ class AccountOrdersController extends AbstractController
         private readonly AccountOrdersViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/{locale}/account/orders', name: 'front_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/account/orders', name: 'frontend_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -34,7 +34,7 @@ class AccountOrdersController extends AbstractController
 
         $user = $this->security->getUser();
         if (!$user instanceof User) {
-            return $this->redirectToRoute('front_login', ['locale' => $locale]);
+            return $this->redirectToRoute('frontend_login', ['locale' => $locale]);
         }
 
         $page = max(1, (int) $request->query->get('page', '1'));

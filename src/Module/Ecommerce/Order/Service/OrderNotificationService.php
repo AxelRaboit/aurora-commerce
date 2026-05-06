@@ -53,7 +53,7 @@ readonly class OrderNotificationService
         return [
             'order' => $order,
             'currency' => $order->getCurrency(),
-            'orderUrl' => $this->urlGenerator->generate('front_order_show', [
+            'orderUrl' => $this->urlGenerator->generate('frontend_order_show', [
                 'locale' => $this->settingRepository->getOrDefault(ApplicationParameterEnum::DefaultLocale),
                 'token' => $order->getToken(),
             ], UrlGeneratorInterface::ABSOLUTE_URL),

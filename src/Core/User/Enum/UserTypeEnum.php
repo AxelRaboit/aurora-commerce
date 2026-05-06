@@ -7,7 +7,7 @@ namespace Aurora\Core\User\Enum;
 enum UserTypeEnum: string
 {
     case Admin = 'admin';
-    case FrontUser = 'front_user';
+    case FrontUser = 'frontend_user';
 
     public function label(): string
     {

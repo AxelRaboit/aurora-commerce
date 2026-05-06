@@ -136,13 +136,13 @@ final class MenuRenderer
     private function resolveUrl(MenuItem $item, string $locale): ?string
     {
         return match ($item->getTargetType()) {
-            MenuItemTargetTypeEnum::Home => $this->urlGenerator->generate('front_home', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontLogin => $this->urlGenerator->generate('front_login', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontRegister => $this->urlGenerator->generate('front_register', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontAccount => $this->urlGenerator->generate('front_account', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontLogout => $this->urlGenerator->generate('front_logout', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::Home => $this->urlGenerator->generate('frontend_home', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::FrontLogin => $this->urlGenerator->generate('frontend_login', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::FrontRegister => $this->urlGenerator->generate('frontend_register', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::FrontAccount => $this->urlGenerator->generate('frontend_account', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::FrontLogout => $this->urlGenerator->generate('frontend_logout', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceFrontEnabled->value, true)
-                ? $this->urlGenerator->generate('front_shop_index', ['locale' => $locale])
+                ? $this->urlGenerator->generate('frontend_shop_index', ['locale' => $locale])
                 : null,
             MenuItemTargetTypeEnum::CustomUrl => $item->getCustomUrl() ?: null,
             MenuItemTargetTypeEnum::Post => $this->resolvePostUrl($item, $locale),
@@ -163,7 +163,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('front_post', [
+        return $this->urlGenerator->generate('frontend_post', [
             'locale' => $locale,
             'postTypeSlug' => $post->getPostType()->getSlug(),
             'slug' => $translation->getSlug(),
@@ -182,7 +182,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('front_term', [
+        return $this->urlGenerator->generate('frontend_term', [
             'locale' => $locale,
             'taxonomySlug' => $term->getTaxonomy()->getSlug(),
             'termSlug' => $translation->getSlug(),
@@ -196,7 +196,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('front_archive', [
+        return $this->urlGenerator->generate('frontend_archive', [
             'locale' => $locale,
             'postTypeSlug' => $postType->getSlug(),
         ]);

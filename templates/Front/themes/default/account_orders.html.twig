@@ -6,8 +6,8 @@
 <div {{ vue_component('ecommerce/front/AccountOrdersApp', {
     orders: orders,
     locale: locale,
-    accountPath: path('front_account', {locale: locale}),
-    shopPath: path('front_shop_index', {locale: locale}),
-    orderPathBase: path('front_order_show', {locale: locale, token: '00000000000000000000000000000000'})|replace({'/00000000000000000000000000000000': ''}),
+    accountPath: path('frontend_account', {locale: locale}),
+    shopPath: path('frontend_shop_index', {locale: locale}),
+    orderPathBase: path('frontend_order_show', {locale: locale, token: '00000000000000000000000000000000'})|replace({'/00000000000000000000000000000000': ''}),
 }) }}></div>
 {% endblock %}

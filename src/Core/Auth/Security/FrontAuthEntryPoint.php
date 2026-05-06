@@ -20,7 +20,7 @@ final readonly class FrontAuthEntryPoint implements AuthenticationEntryPointInte
         // If the path looks like a front locale path (/fr/... /en/... etc.), redirect to front login.
         if (preg_match('#^/([a-z]{2})/#', $request->getPathInfo(), $matches)) {
             return new RedirectResponse(
-                $this->urlGenerator->generate('front_login', ['locale' => $matches[1]]),
+                $this->urlGenerator->generate('frontend_login', ['locale' => $matches[1]]),
             );
         }
 

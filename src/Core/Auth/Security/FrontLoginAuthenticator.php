@@ -50,7 +50,7 @@ final class FrontLoginAuthenticator extends AbstractLoginFormAuthenticator
             }),
             new PasswordCredentials($request->request->getString('password')),
             [
-                new CsrfTokenBadge('front_authenticate', $request->request->getString('_csrf_token')),
+                new CsrfTokenBadge('frontend_authenticate', $request->request->getString('_csrf_token')),
                 new RememberMeBadge(),
                 new UserBadge($email),
             ],
@@ -82,13 +82,13 @@ final class FrontLoginAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('front_account', ['locale' => $locale]));
+        return new RedirectResponse($this->urlGenerator->generate('frontend_account', ['locale' => $locale]));
     }
 
     protected function getLoginUrl(Request $request): string
     {
         $locale = $request->request->getString('_locale', 'fr');
 
-        return $this->urlGenerator->generate('front_login', ['locale' => $locale]);
+        return $this->urlGenerator->generate('frontend_login', ['locale' => $locale]);
     }
 }

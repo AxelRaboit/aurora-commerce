@@ -33,7 +33,7 @@ class CartController extends AbstractController
         private readonly CartViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/{locale}/cart', name: 'front_cart', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
+    #[Route('/{locale}/cart', name: 'frontend_cart', requirements: ['locale' => '[a-z]{2}'], methods: ['GET'], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -44,7 +44,7 @@ class CartController extends AbstractController
         return $this->render($this->themeResolver->resolve('cart'), $this->viewBuilder->indexView($cart, $locale));
     }
 
-    #[Route('/{locale}/cart/add', name: 'front_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    #[Route('/{locale}/cart/add', name: 'frontend_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
     public function add(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -62,7 +62,7 @@ class CartController extends AbstractController
         return $this->respond($request, $locale);
     }
 
-    #[Route('/{locale}/cart/update', name: 'front_cart_update', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    #[Route('/{locale}/cart/update', name: 'frontend_cart_update', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
     public function update(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -78,7 +78,7 @@ class CartController extends AbstractController
         return $this->respond($request, $locale);
     }
 
-    #[Route('/{locale}/cart/remove', name: 'front_cart_remove', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
+    #[Route('/{locale}/cart/remove', name: 'frontend_cart_remove', requirements: ['locale' => '[a-z]{2}'], methods: ['POST'], priority: 8)]
     public function remove(string $locale, Request $request): Response
     {
         $this->assertActiveLocale($this->frontContext, $locale);
@@ -93,7 +93,7 @@ class CartController extends AbstractController
         return $this->respond($request, $locale);
     }
 
-    #[Route('/cart/count', name: 'front_cart_count', methods: ['GET'])]
+    #[Route('/cart/count', name: 'frontend_cart_count', methods: ['GET'])]
     public function count(): JsonResponse
     {
         $cart = $this->cartManager->getCurrentCart(false);
@@ -127,6 +127,6 @@ class CartController extends AbstractController
             return $this->jsonSuccess(['cart' => $this->cartSerializer->serialize($cart)]);
         }
 
-        return $this->redirectToRoute('front_cart', ['locale' => $locale]);
+        return $this->redirectToRoute('frontend_cart', ['locale' => $locale]);
     }
 }
