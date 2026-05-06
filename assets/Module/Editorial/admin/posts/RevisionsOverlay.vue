@@ -45,7 +45,7 @@ watch(
 async function fetchRevisions() {
     loadingList.value = true;
     try {
-        const response = await fetch(`/admin/posts/${props.postId}/revisions`);
+        const response = await fetch(`/backend/posts/${props.postId}/revisions`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         revisions.value = data.revisions ?? [];
@@ -60,7 +60,7 @@ async function selectRevision(revision) {
     selectedRevision.value = null;
     loadingSelected.value = true;
     try {
-        const response = await fetch(`/admin/posts/${props.postId}/revisions/${revision.id}`);
+        const response = await fetch(`/backend/posts/${props.postId}/revisions/${revision.id}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         selectedRevision.value = data.revision ?? null;
@@ -75,7 +75,7 @@ async function restore() {
     if (!selectedRevision.value) return;
     restoring.value = true;
     try {
-        const response = await fetch(`/admin/posts/${props.postId}/revisions/${selectedRevision.value.id}/restore`, {
+        const response = await fetch(`/backend/posts/${props.postId}/revisions/${selectedRevision.value.id}/restore`, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
         });

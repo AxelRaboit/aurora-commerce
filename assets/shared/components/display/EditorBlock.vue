@@ -33,7 +33,7 @@ const { t } = useI18n();
 const props = defineProps({
     modelValue: { type: Array, default: () => [] },
     placeholder: { type: String, default: "" },
-    uploadUrl: { type: String, default: "/admin/media/upload" },
+    uploadUrl: { type: String, default: "/backend/media/upload" },
     postTypes: { type: Array, default: () => [] },
 });
 

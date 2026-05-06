@@ -51,7 +51,7 @@ watch(search, useDebounce(runSearch, 200));
 async function runSearch() {
     loading.value = true;
     try {
-        const url = new URL("/admin/posts/search", window.location.origin);
+        const url = new URL("/backend/posts/search", window.location.origin);
         if (search.value) url.searchParams.set("q", search.value);
         if (props.field.options?.postTypeId) url.searchParams.set("postTypeId", String(props.field.options.postTypeId));
         const response = await fetch(url);
@@ -75,7 +75,7 @@ async function resolveMissingIds() {
         return;
     }
     try {
-        const url = new URL("/admin/posts/search", window.location.origin);
+        const url = new URL("/backend/posts/search", window.location.origin);
         url.searchParams.set("ids", missing.join(","));
         const response = await fetch(url);
         if (!response.ok) return;
@@ -121,7 +121,7 @@ async function uploadMedia(event) {
     try {
         const body = new FormData();
         body.append("image", file);
-        const response = await fetch("/admin/media/upload", { method: HttpMethod.Post, body });
+        const response = await fetch("/backend/media/upload", { method: HttpMethod.Post, body });
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (data.success) update(data.file?.id ?? null);

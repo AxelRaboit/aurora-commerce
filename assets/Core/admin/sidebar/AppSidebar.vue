@@ -31,13 +31,13 @@ const props = defineProps({
     activeRoute: { type: String, default: "" },
     logoutCsrf: { type: String, default: "" },
     frontPath: { type: String, default: "/" },
-    profilePath: { type: String, default: "/admin/profile" },
+    profilePath: { type: String, default: "/backend/profile" },
     logoutPath: { type: String, default: "/logout" },
     mailpitUrl: { type: String, default: "" },
     siteName: { type: String, default: "Aurora" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
-    searchPath: { type: String, default: "/admin/search" },
+    searchPath: { type: String, default: "/backend/search" },
 });
 
 const { t } = useI18n();

@@ -7,7 +7,7 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
  * add/remove selections. The selection is owned by the caller (form state).
  */
 export function useRelatedSearch({
-    searchPath = "/admin/posts/search",
+    searchPath = "/backend/posts/search",
     excludeId = null,
     getSelectedIds,
     addId,

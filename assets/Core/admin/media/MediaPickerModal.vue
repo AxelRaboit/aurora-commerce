@@ -49,9 +49,9 @@ const props = defineProps({
     show:       { type: Boolean, default: false },
     imagesOnly: { type: Boolean, default: false },
     multiple:   { type: Boolean, default: false },
-    listPath:   { type: String,  default: "/admin/media/list" },
-    uploadPath: { type: String,  default: "/admin/media/upload" },
-    editPath:   { type: String,  default: "/admin/media/__id__/edit" },
+    listPath:   { type: String,  default: "/backend/media/list" },
+    uploadPath: { type: String,  default: "/backend/media/upload" },
+    editPath:   { type: String,  default: "/backend/media/__id__/edit" },
 });
 
 const emit           = defineEmits(["close", "select"]);
@@ -388,7 +388,7 @@ function dimensions(item) {
                         </div>
 
                         <AppLink
-                            :href="`/admin/media?focus=${selected.id}`"
+                            :href="`/backend/media?focus=${selected.id}`"
                             target="_blank"
                             variant="front"
                             class="inline-flex items-center gap-1.5 text-xs"

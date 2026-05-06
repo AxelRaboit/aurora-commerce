@@ -43,7 +43,7 @@ export default class PostsListBlock {
             title: data.title ?? "",
         };
         this.#postTypes = config.postTypes ?? [];
-        this.#searchUrl = config.searchUrl ?? "/admin/posts/search";
+        this.#searchUrl = config.searchUrl ?? "/backend/posts/search";
         this.#labels = {
             title: config.titleLabel ?? "Titre (optionnel)",
             postType: config.postTypeLabel ?? "Type de contenu",

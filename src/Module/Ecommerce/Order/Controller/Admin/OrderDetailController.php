@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/ecommerce/orders/{id}', name: 'ecommerce_orders', requirements: ['id' => '\d+|__id__'])]
+#[Route('/backend/ecommerce/orders/{id}', name: 'ecommerce_orders', requirements: ['id' => '\d+|__id__'])]
 #[IsGranted('ecommerce.orders.view')]
 final class OrderDetailController extends AbstractController
 {

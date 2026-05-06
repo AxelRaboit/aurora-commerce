@@ -7,8 +7,8 @@ import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { useOcrJobs } from "@billing/admin/ocr/composables/useOcrJobs.js";
 
-const STATUS_URL = "/admin/billing/ocr/jobs/__id__/status";
-const RETRY_URL = "/admin/billing/ocr/jobs/__id__/retry";
+const STATUS_URL = "/backend/billing/ocr/jobs/__id__/status";
+const RETRY_URL = "/backend/billing/ocr/jobs/__id__/retry";
 const INTERVAL = 100;
 
 function makeJob(id, overrides = {}) {
@@ -90,7 +90,7 @@ describe("useOcrJobs — polling", () => {
         await vi.advanceTimersByTimeAsync(INTERVAL + 10);
 
         expect(fetchMock).toHaveBeenCalledWith(
-            "/admin/billing/ocr/jobs/1/status",
+            "/backend/billing/ocr/jobs/1/status",
             expect.objectContaining({ headers: expect.any(Object) }),
         );
         expect(jobs.value[0].status).toBe("needs_review");

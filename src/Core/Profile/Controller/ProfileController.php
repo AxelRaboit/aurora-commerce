@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/admin/profile', name: 'profile')]
+#[Route('/backend/profile', name: 'profile')]
 #[IsGranted(UserRoleEnum::Admin->value)]
 final class ProfileController extends AbstractController
 {

@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/agencies', name: 'admin_agencies')]
+#[Route('/backend/agencies', name: 'admin_agencies')]
 #[IsGranted('ROLE_ADMIN')]
 final class AgenciesController extends AbstractController
 {

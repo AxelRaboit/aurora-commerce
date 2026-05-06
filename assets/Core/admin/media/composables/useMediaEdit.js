@@ -51,7 +51,7 @@ export function useMediaEdit(props, media) {
         historyLoading.value = true;
         try {
             const res = await fetch(
-                `/admin/media/${editingMedia.value.id}/history`,
+                `/backend/media/${editingMedia.value.id}/history`,
             );
             const data = await res.json();
             mediaHistory.value = data.items ?? [];
@@ -66,7 +66,7 @@ export function useMediaEdit(props, media) {
         if (!editingMedia.value) return;
         try {
             const res = await fetch(
-                `/admin/media/${editingMedia.value.id}/usage`,
+                `/backend/media/${editingMedia.value.id}/usage`,
             );
             mediaUsage.value = await res.json();
         } catch {

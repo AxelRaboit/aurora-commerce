@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/ged/documents', name: 'ged_documents')]
+#[Route('/backend/ged/documents', name: 'ged_documents')]
 #[IsGranted('ged.documents.manage')]
 final class DocumentsController extends AbstractController
 {

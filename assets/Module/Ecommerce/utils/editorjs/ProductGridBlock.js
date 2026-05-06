@@ -34,7 +34,7 @@ export default class ProductGridBlock {
             title: data.title ?? "",
         };
         this.#searchUrl =
-            config.searchUrl ?? "/admin/ecommerce/listings/search";
+            config.searchUrl ?? "/backend/ecommerce/listings/search";
         this.#labels = {
             title: config.titleLabel ?? "Titre (optionnel)",
             columns: config.columnsLabel ?? "Colonnes",

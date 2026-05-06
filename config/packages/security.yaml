@@ -24,7 +24,7 @@ security:
         # ── Admin / CMS backend ───────────────────────────────────────────────
         admin:
             context: admin
-            pattern: ^/(admin|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
+            pattern: ^/(backend|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
             provider: admin_user_provider
             user_checker: Aurora\Core\Auth\Security\AdminUserChecker
             form_login:
@@ -78,7 +78,7 @@ security:
         - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/resend-verification', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/verify-email', roles: PUBLIC_ACCESS }
-        - { path: ^/admin, roles: ROLE_USER }
+        - { path: ^/backend, roles: ROLE_USER }
         - { path: ^/dev, roles: ROLE_DEV }
         - { path: '^/[a-z]{2}/account', roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }

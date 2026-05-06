@@ -25,7 +25,7 @@ use Throwable;
 
 use function is_array;
 
-#[Route('/admin/billing/invoices', name: 'billing_invoices')]
+#[Route('/backend/billing/invoices', name: 'billing_invoices')]
 #[IsGranted('billing.invoices.view')]
 final class InvoicesController extends AbstractController
 {

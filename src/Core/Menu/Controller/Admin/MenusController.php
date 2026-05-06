@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/menus', name: 'admin_menus')]
+#[Route('/backend/menus', name: 'admin_menus')]
 #[IsGranted('core.menus.manage')]
 class MenusController extends AbstractController
 {

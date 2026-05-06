@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/settings', name: 'admin_settings')]
+#[Route('/backend/settings', name: 'admin_settings')]
 #[IsGranted('core.settings.manage')]
 final class SettingsController extends AbstractController
 {

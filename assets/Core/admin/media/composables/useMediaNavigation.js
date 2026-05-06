@@ -53,7 +53,7 @@ export function useMediaNavigation(props, clearSelection) {
         history.pushState(
             { folderId, search, all: false },
             "",
-            mediaUrl("/admin/media", folderId, search),
+            mediaUrl("/backend/media", folderId, search),
         );
     }
 
@@ -62,7 +62,7 @@ export function useMediaNavigation(props, clearSelection) {
         history.pushState(
             { folderId: null, search, all: true },
             "",
-            mediaUrl("/admin/media", null, search, true),
+            mediaUrl("/backend/media", null, search, true),
         );
     }
 
@@ -78,7 +78,7 @@ export function useMediaNavigation(props, clearSelection) {
         if (!initialFocusId) return;
         try {
             const response = await fetch(
-                `/admin/media/${initialFocusId}/info`,
+                `/backend/media/${initialFocusId}/info`,
                 { headers: { Accept: "application/json" } },
             );
             if (!response.ok) return;
@@ -107,7 +107,11 @@ export function useMediaNavigation(props, clearSelection) {
                 all: false,
             },
             "",
-            mediaUrl("/admin/media", currentFolderId.value, searchQuery.value),
+            mediaUrl(
+                "/backend/media",
+                currentFolderId.value,
+                searchQuery.value,
+            ),
         );
         window.addEventListener("popstate", onPopState);
     });

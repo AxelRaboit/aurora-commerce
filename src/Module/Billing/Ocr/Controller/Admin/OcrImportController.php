@@ -25,7 +25,7 @@ use Throwable;
 
 use function in_array;
 
-#[Route('/admin/billing/ocr', name: 'billing_ocr')]
+#[Route('/backend/billing/ocr', name: 'billing_ocr')]
 #[IsGranted('billing.ocr.import')]
 final class OcrImportController extends AbstractController
 {

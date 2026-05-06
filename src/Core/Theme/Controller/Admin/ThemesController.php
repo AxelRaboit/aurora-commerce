@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/themes', name: 'admin_themes')]
+#[Route('/backend/themes', name: 'admin_themes')]
 #[IsGranted('core.themes.manage')]
 final class ThemesController extends AbstractController
 {

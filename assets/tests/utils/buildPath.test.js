@@ -3,24 +3,24 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 describe("buildPath", () => {
     it("replaces a single placeholder", () => {
-        expect(buildPath("/admin/users/__id__/edit", { id: 42 })).toBe(
-            "/admin/users/42/edit",
+        expect(buildPath("/backend/users/__id__/edit", { id: 42 })).toBe(
+            "/backend/users/42/edit",
         );
     });
 
     it("replaces multiple placeholders", () => {
         expect(
-            buildPath("/admin/posts/__id__/fields/__fieldId__", {
+            buildPath("/backend/posts/__id__/fields/__fieldId__", {
                 id: 1,
                 fieldId: 7,
             }),
-        ).toBe("/admin/posts/1/fields/7");
+        ).toBe("/backend/posts/1/fields/7");
     });
 
     it("URI-encodes values with special characters", () => {
         expect(
-            buildPath("/admin/parameters/__key__", { key: "site/name" }),
-        ).toBe("/admin/parameters/site%2Fname");
+            buildPath("/backend/parameters/__key__", { key: "site/name" }),
+        ).toBe("/backend/parameters/site%2Fname");
     });
 
     it("URI-encodes emails", () => {
@@ -30,14 +30,14 @@ describe("buildPath", () => {
     });
 
     it("returns the template untouched when params is empty", () => {
-        expect(buildPath("/admin/users", {})).toBe("/admin/users");
-        expect(buildPath("/admin/users")).toBe("/admin/users");
+        expect(buildPath("/backend/users", {})).toBe("/backend/users");
+        expect(buildPath("/backend/users")).toBe("/backend/users");
     });
 
     it("leaves unknown placeholders intact", () => {
         // Caller should know what to fill — silent tolerance keeps it composable.
-        expect(buildPath("/admin/__a__/__b__", { a: 1 })).toBe(
-            "/admin/1/__b__",
+        expect(buildPath("/backend/__a__/__b__", { a: 1 })).toBe(
+            "/backend/1/__b__",
         );
     });
 

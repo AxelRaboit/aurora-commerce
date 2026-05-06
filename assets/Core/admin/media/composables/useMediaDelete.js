@@ -16,7 +16,7 @@ export function useMediaDelete(props, media, editingMedia) {
         deletingMediaUsage.value = null;
         deletingMediaUsageLoading.value = true;
         try {
-            const response = await fetch(`/admin/media/${item.id}/usage`, {
+            const response = await fetch(`/backend/media/${item.id}/usage`, {
                 headers: { Accept: "application/json" },
             });
             if (response.ok) deletingMediaUsage.value = await response.json();

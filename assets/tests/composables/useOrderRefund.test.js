@@ -40,7 +40,7 @@ describe("useOrderRefund", () => {
     it("open() resets state and shows the modal", () => {
         const order = ref({ id: 1, status: "paid" });
         const api = mountWithComposable(() =>
-            useOrderRefund("/admin/orders/1/refund", order),
+            useOrderRefund("/backend/orders/1/refund", order),
         );
         api.refundAmount.value = "10";
         api.isFullRefund.value = false;
@@ -76,14 +76,14 @@ describe("useOrderRefund", () => {
 
         const order = ref({ id: 7, status: "paid", number: "ORD-7" });
         const api = mountWithComposable(() =>
-            useOrderRefund("/admin/orders/7/refund", order),
+            useOrderRefund("/backend/orders/7/refund", order),
         );
 
         api.open();
         await api.confirm();
 
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/admin/orders/7/refund");
+        expect(url).toBe("/backend/orders/7/refund");
         expect(JSON.parse(options.body)).toEqual({});
 
         expect(order.value).toMatchObject({
