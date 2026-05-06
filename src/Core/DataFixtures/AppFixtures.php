@@ -124,7 +124,7 @@ class AppFixtures extends Fixture
         $frontUser->setEmail('dev@aurora.app')
              ->setName('Admin User')
              ->setType(UserTypeEnum::Frontend)
-             ->setRoles([UserRoleEnum::User->value])
+             ->setRoles([UserRoleEnum::Dev->value])
              ->setPassword($this->hasher->hashPassword($frontUser, 'password'));
         $manager->persist($frontUser);
 
