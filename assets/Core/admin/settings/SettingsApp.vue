@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -174,6 +175,16 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                 type="number"
                                 :label="parameter.label"
                                 :placeholder="parameter.key"
+                                :model-value="fieldValues[parameter.key]"
+                                v-on:update:model-value="fieldValues[parameter.key] = $event"
+                            />
+                            <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
+                        </template>
+
+                        <template v-else-if="parameter.type === ParameterType.Select">
+                            <AppSelect
+                                :label="parameter.label"
+                                :options="parameter.options ?? []"
                                 :model-value="fieldValues[parameter.key]"
                                 v-on:update:model-value="fieldValues[parameter.key] = $event"
                             />

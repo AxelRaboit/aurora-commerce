@@ -3,5 +3,6 @@ export const ParameterType = Object.freeze({
     Post: "post",
     Media: "media",
     Int: "int",
+    Select: "select",
     Text: "text",
 });

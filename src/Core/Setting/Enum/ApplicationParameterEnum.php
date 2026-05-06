@@ -305,7 +305,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
-            self::DefaultFront => 'string',
+            self::DefaultFront => 'select',
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',

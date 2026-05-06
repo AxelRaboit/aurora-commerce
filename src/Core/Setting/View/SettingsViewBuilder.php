@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\View;
 
+use Aurora\Core\Frontend\Service\FrontRegistry;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -20,6 +21,7 @@ final readonly class SettingsViewBuilder
         private SettingRepository $settingRepository,
         private MediaRepository $mediaRepository,
         private UrlGeneratorInterface $urlGenerator,
+        private FrontRegistry $frontRegistry,
     ) {}
 
     /**
@@ -56,6 +58,7 @@ final readonly class SettingsViewBuilder
                 'value' => $value,
                 'requires' => $parameter->getCascadeRequires(),
                 'mediaUrl' => 'media' === $parameter->getType() ? $this->resolveMediaUrl($value) : null,
+                'options' => 'select' === $parameter->getType() ? $this->resolveSelectOptions($parameter) : null,
             ];
         }
 
@@ -64,6 +67,19 @@ final readonly class SettingsViewBuilder
             'mediaPickerPath' => $this->urlGenerator->generate('backend_media'),
             'postSearchPath' => $this->urlGenerator->generate('backend_posts_search'),
         ];
+    }
+
+    /** @return list<array{value: string, label: string}>|null */
+    private function resolveSelectOptions(ApplicationParameterEnum $parameter): ?array
+    {
+        if (ApplicationParameterEnum::DefaultFront === $parameter) {
+            return array_map(
+                static fn ($front): array => ['value' => $front->getSlug(), 'label' => $front->getLabel()],
+                $this->frontRegistry->all(),
+            );
+        }
+
+        return null;
     }
 
     public function resolveMediaUrl(?string $rawId): ?string
