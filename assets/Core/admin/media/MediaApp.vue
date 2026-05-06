@@ -94,13 +94,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <template v-if="allMediaView">
                     <span class="flex items-center gap-1.5 text-primary shrink-0">
                         <Layers class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.media.allMedia") }}
+                        {{ t("backend.media.allMedia") }}
                     </span>
                 </template>
                 <template v-else>
                     <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
                         <Home class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.media.rootFolder") }}
+                        {{ t("backend.media.rootFolder") }}
                     </button>
                     <template v-for="crumb in breadcrumbs" :key="crumb.id">
                         <ChevronRight class="w-3 h-3 shrink-0" :stroke-width="2" />
@@ -113,7 +113,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div class="w-full sm:w-64">
                     <AppSearchInput
                         v-model="searchQuery"
-                        :placeholder="t('admin.media.searchPlaceholder')"
+                        :placeholder="t('backend.media.searchPlaceholder')"
                         v-on:search="(q) => navigateTo(currentFolderId, q)"
                     />
                 </div>
@@ -134,7 +134,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     v-on:click="uploadInput?.click()"
                 >
                     <Upload class="w-4 h-4" :stroke-width="2" />
-                    {{ t("admin.media.upload") }}
+                    {{ t("backend.media.upload") }}
                 </AppButton>
             </div>
         </div>
@@ -144,7 +144,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div v-if="favouriteFolders.length" class="space-y-0.5">
                     <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide flex items-center gap-1.5 px-1">
                         <Star class="w-3 h-3 text-amber-400" :stroke-width="2" fill="currentColor" />
-                        {{ t("admin.media.favourites") }}
+                        {{ t("backend.media.favourites") }}
                     </h3>
                     <button
                         v-for="fav in favouriteFolders"
@@ -161,10 +161,10 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                    <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.media.folders") }}</h2>
+                    <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.media.folders") }}</h2>
                     <AppIconButton
                         v-if="can('core.media.manage')"
-                        :title="t('admin.media.newFolder')"
+                        :title="t('backend.media.newFolder')"
                         v-on:click="openCreateFolder"
                     >
                         <Plus class="w-3.5 h-3.5" :stroke-width="2" />
@@ -180,7 +180,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         v-on:click="navigateToAll()"
                     >
                         <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="flex-1 text-sm font-medium">{{ t("admin.media.allMedia") }}</span>
+                        <span class="flex-1 text-sm font-medium">{{ t("backend.media.allMedia") }}</span>
                     </button>
                     <button
                         type="button"
@@ -197,7 +197,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         v-on:drop="onFolderDrop($event, null)"
                     >
                         <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="flex-1 text-sm font-medium">{{ t("admin.media.rootFolder") }}</span>
+                        <span class="flex-1 text-sm font-medium">{{ t("backend.media.rootFolder") }}</span>
                     </button>
                     <div
                         v-for="folder in flatFolders"
@@ -211,7 +211,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             v-if="folder.childCount > 0"
                             type="button"
                             class="p-1 -ml-1 text-muted hover:text-primary rounded shrink-0"
-                            :title="collapsedFolderIds.has(folder.id) ? t('admin.media.expand') : t('admin.media.collapse')"
+                            :title="collapsedFolderIds.has(folder.id) ? t('backend.media.expand') : t('backend.media.collapse')"
                             v-on:click.stop="toggleCollapse(folder.id)"
                         >
                             <ChevronRight v-if="collapsedFolderIds.has(folder.id)" class="w-3 h-3" :stroke-width="2" />
@@ -241,7 +241,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                 type="button"
                                 class="p-1 rounded transition-colors"
                                 :class="favouriteFolderIds.has(folder.id) ? 'text-amber-400' : 'text-muted hover:text-amber-400'"
-                                :title="favouriteFolderIds.has(folder.id) ? t('admin.media.unfavourite') : t('admin.media.favourite')"
+                                :title="favouriteFolderIds.has(folder.id) ? t('backend.media.unfavourite') : t('backend.media.favourite')"
                                 v-on:click.stop="toggleFavourite(folder.id)"
                             >
                                 <Star class="w-3.5 h-3.5" :stroke-width="2" :fill="favouriteFolderIds.has(folder.id) ? 'currentColor' : 'none'" />
@@ -257,7 +257,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
                 <div v-if="totalStorageBytes > 0" class="pt-3 border-t border-line/40 space-y-1.5">
                     <div class="flex items-center justify-between text-xs text-muted">
-                        <span class="flex items-center gap-1"><HardDrive class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.storage") }}</span>
+                        <span class="flex items-center gap-1"><HardDrive class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.storage") }}</span>
                         <span>{{ formatSize(totalStorageBytes) }}</span>
                     </div>
                 </div>
@@ -271,7 +271,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             >
                 <div v-if="filesDragOver" class="absolute inset-0 z-10 rounded-xl border-2 border-dashed border-accent-400 bg-accent-500/10 flex flex-col items-center justify-center gap-3 pointer-events-none">
                     <Upload class="w-14 h-14 text-accent-400" :stroke-width="1.5" />
-                    <span class="text-base font-medium text-accent-400">{{ t("admin.media.dropToUpload") }}</span>
+                    <span class="text-base font-medium text-accent-400">{{ t("backend.media.dropToUpload") }}</span>
                 </div>
 
                 <div v-if="uploadProgress.length" class="space-y-1.5 bg-surface border border-line/60 rounded-xl p-3">
@@ -287,12 +287,12 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
 
                 <div v-if="selectedIds.size" class="flex flex-wrap items-center gap-2 bg-accent-500/10 border border-accent-400/30 rounded-xl px-4 py-2.5">
-                    <span class="text-sm font-medium text-accent-400">{{ selectedIds.size }} {{ t("admin.media.selected") }}</span>
+                    <span class="text-sm font-medium text-accent-400">{{ selectedIds.size }} {{ t("backend.media.selected") }}</span>
                     <div class="flex gap-2 ml-auto flex-wrap">
-                        <AppButton size="sm" variant="ghost" v-on:click="selectAll">{{ t("admin.media.selectAll") }}</AppButton>
+                        <AppButton size="sm" variant="ghost" v-on:click="selectAll">{{ t("backend.media.selectAll") }}</AppButton>
                         <AppButton size="sm" variant="ghost" v-on:click="() => { bulkMoveTargetId = null; }" v-on:click.prevent="openBulkMove = true">
                             <Move class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("admin.media.move") }}
+                            {{ t("backend.media.move") }}
                         </AppButton>
                         <AppButton v-if="can('core.media.manage')" size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
@@ -320,7 +320,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     <div class="ml-auto flex items-center gap-1.5">
                         <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
                             <button
-                                v-for="s in [{k:'position',l:'#',title:t('admin.media.sortPositionHint')},{k:'name',l:'A-Z',title:t('admin.media.sortName')},{k:'size',l:'KB',title:t('admin.media.sortSize')},{k:'date',l:t('admin.media.sortDate'),title:t('admin.media.sortDate')}]"
+                                v-for="s in [{k:'position',l:'#',title:t('backend.media.sortPositionHint')},{k:'name',l:'A-Z',title:t('backend.media.sortName')},{k:'size',l:'KB',title:t('backend.media.sortSize')},{k:'date',l:t('backend.media.sortDate'),title:t('backend.media.sortDate')}]"
                                 :key="s.k"
                                 type="button"
                                 class="px-2 py-0.5 rounded text-xs transition-colors flex items-center gap-1"
@@ -347,7 +347,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </div>
                 </div>
 
-                <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">{{ t("admin.media.altWarning") }}</AppMessage>
+                <AppMessage v-if="media.some((m) => !m.alt)" variant="warning">{{ t("backend.media.altWarning") }}</AppMessage>
 
                 <div v-if="mediaLoading" class="flex items-center justify-center py-16 text-muted text-sm">
                     <span class="animate-pulse">{{ t('shared.common.loading') }}</span>
@@ -355,7 +355,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
                 <template v-else>
                     <div v-if="childFolders.length && !searchQuery" class="space-y-2">
-                        <p class="text-xs text-muted uppercase tracking-wide px-1">{{ t("admin.media.subfolders") }}</p>
+                        <p class="text-xs text-muted uppercase tracking-wide px-1">{{ t("backend.media.subfolders") }}</p>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                             <button
                                 v-for="folder in childFolders"
@@ -372,9 +372,9 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         </div>
                     </div>
 
-                    <AppNoData v-if="!displayedMedia.length && (!childFolders.length || searchQuery)" :message="t('admin.media.empty')" />
+                    <AppNoData v-if="!displayedMedia.length && (!childFolders.length || searchQuery)" :message="t('backend.media.empty')" />
 
-                    <p v-if="displayedMedia.length && childFolders.length && !searchQuery" class="text-xs text-muted uppercase tracking-wide px-1 mt-4">{{ t("admin.media.files") }}</p>
+                    <p v-if="displayedMedia.length && childFolders.length && !searchQuery" class="text-xs text-muted uppercase tracking-wide px-1 mt-4">{{ t("backend.media.files") }}</p>
 
                     <div v-if="displayedMedia.length && viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                         <div
@@ -418,15 +418,15 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     </div>
                                 </template>
                                 <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
-                                <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("admin.media.missingAlt") }}</div>
+                                <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("backend.media.missingAlt") }}</div>
                                 <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.preview')" v-on:click.stop="previewMedia = item">
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.preview')" v-on:click.stop="previewMedia = item">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </button>
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.copyUrl')" v-on:click.stop="copyUrl(item)">
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.copyUrl')" v-on:click.stop="copyUrl(item)">
                                         <Copy class="w-4 h-4" :stroke-width="2" />
                                     </button>
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('admin.media.qrCode')" v-on:click.stop="openQr(item)">
+                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.qrCode')" v-on:click.stop="openQr(item)">
                                         <QrCode class="w-4 h-4" :stroke-width="2" />
                                     </button>
                                 </div>
@@ -446,9 +446,9 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <thead>
                                 <tr class="bg-surface-2/50 border-b border-line/40">
                                     <th v-if="isSelecting" class="w-8 px-3 py-2" />
-                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.media.filename") }}</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden sm:table-cell">{{ t("admin.media.mimeType") }}</th>
-                                    <th class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.media.size") }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.media.filename") }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden sm:table-cell">{{ t("backend.media.mimeType") }}</th>
+                                    <th class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.media.size") }}</th>
                                     <th class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted w-24">{{ t("shared.common.actions") }}</th>
                                 </tr>
                             </thead>
@@ -501,11 +501,11 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
         <AppModal :show="!!editingMedia" max-width="3xl" scrollable v-on:close="closeEditMedia">
             <div class="flex items-center justify-between gap-4 mb-1">
-                <h3 class="text-lg font-semibold text-primary truncate">{{ t("admin.media.editMedia") }}</h3>
+                <h3 class="text-lg font-semibold text-primary truncate">{{ t("backend.media.editMedia") }}</h3>
                 <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'edit' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'edit'">{{ t("admin.media.tabEdit") }}</button>
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'history' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="openHistoryTab">{{ t("admin.media.tabHistory") }}</button>
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'usage' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("admin.media.tabUsage") }}</button>
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'edit' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'edit'">{{ t("backend.media.tabEdit") }}</button>
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'history' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="openHistoryTab">{{ t("backend.media.tabHistory") }}</button>
+                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'usage' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("backend.media.tabUsage") }}</button>
                 </div>
             </div>
 
@@ -515,24 +515,24 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     <div class="grid grid-cols-3 gap-3">
                         <div class="bg-surface-2 rounded-xl p-3 text-center">
                             <div class="text-2xl font-bold text-primary">{{ mediaUsage.total }}</div>
-                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageTotal") }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("backend.media.usageTotal") }}</div>
                         </div>
                         <div class="bg-surface-2 rounded-xl p-3 text-center">
                             <div class="text-2xl font-bold text-primary">{{ mediaUsage.directCount }}</div>
-                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageDirect") }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("backend.media.usageDirect") }}</div>
                         </div>
                         <div class="bg-surface-2 rounded-xl p-3 text-center">
                             <div class="text-2xl font-bold text-primary">{{ mediaUsage.contentCount }}</div>
-                            <div class="text-xs text-muted mt-1">{{ t("admin.media.usageContent") }}</div>
+                            <div class="text-xs text-muted mt-1">{{ t("backend.media.usageContent") }}</div>
                         </div>
                     </div>
-                    <p v-if="mediaUsage.total === 0" class="text-xs text-muted text-center">{{ t("admin.media.usageNone") }}</p>
+                    <p v-if="mediaUsage.total === 0" class="text-xs text-muted text-center">{{ t("backend.media.usageNone") }}</p>
                 </template>
             </div>
 
             <div v-if="editTab === 'history'" class="space-y-2 min-h-32">
                 <div v-if="historyLoading" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
-                <div v-else-if="!mediaHistory.length" class="text-center py-8 text-muted text-sm">{{ t("admin.media.noHistory") }}</div>
+                <div v-else-if="!mediaHistory.length" class="text-center py-8 text-muted text-sm">{{ t("backend.media.noHistory") }}</div>
                 <div v-else class="divide-y divide-line/40">
                     <div v-for="entry in mediaHistory" :key="entry.id" class="py-2.5 flex items-start gap-3">
                         <div class="flex-1 min-w-0">
@@ -571,14 +571,14 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         <p class="mt-2 text-xs text-muted">{{ editingMedia?.mimeType }}</p>
                     </div>
                     <div v-if="editingMedia?.isImage" class="flex items-center justify-between text-xs text-muted">
-                        <span>{{ t("admin.media.focalHint") }}</span>
+                        <span>{{ t("backend.media.focalHint") }}</span>
                         <button
                             v-if="editForm.focalX !== null"
                             type="button"
                             class="text-accent-400 hover:underline"
                             v-on:click="resetFocalPoint"
                         >
-                            {{ t("admin.media.resetFocal") }}
+                            {{ t("backend.media.resetFocal") }}
                         </button>
                     </div>
                 </div>
@@ -586,21 +586,21 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div class="space-y-3">
                     <AppInput
                         v-model="editForm.alt"
-                        :label="t('admin.media.alt')"
+                        :label="t('backend.media.alt')"
                         :error="editErrors.alt ?? ''"
-                        :placeholder="t('admin.media.altPlaceholder')"
+                        :placeholder="t('backend.media.altPlaceholder')"
                     />
                     <AppTextarea
                         v-model="editForm.caption"
-                        :label="t('admin.media.caption')"
-                        :placeholder="t('admin.media.captionPlaceholder')"
+                        :label="t('backend.media.caption')"
+                        :placeholder="t('backend.media.captionPlaceholder')"
                         :rows="3"
                     />
                     <AppMultiselect
                         v-model="editForm.folderId"
                         :options="folderEditOptions"
-                        :label="t('admin.media.folder')"
-                        :placeholder="t('admin.media.rootFolder')"
+                        :label="t('backend.media.folder')"
+                        :placeholder="t('backend.media.rootFolder')"
                         :allow-empty="true"
                         track-by="id"
                         option-label="displayLabel"
@@ -608,15 +608,15 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
                     <dl class="text-xs text-muted space-y-0.5 pt-2 border-t border-line">
                         <div class="flex justify-between"><dt>ID</dt><dd class="font-mono select-all">{{ editingMedia?.id }}</dd></div>
-                        <div class="flex justify-between"><dt>{{ t("admin.media.filename") }}</dt><dd class="font-mono">{{ editingMedia?.originalName }}</dd></div>
-                        <div class="flex justify-between"><dt>{{ t("admin.media.size") }}</dt><dd>{{ formatSize(editingMedia?.size ?? 0) }}</dd></div>
-                        <div v-if="editingMedia?.width" class="flex justify-between"><dt>{{ t("admin.media.dimensions") }}</dt><dd>{{ editingMedia.width }}×{{ editingMedia.height }}</dd></div>
-                        <div class="flex justify-between"><dt>{{ t("admin.media.mimeType") }}</dt><dd>{{ editingMedia?.mimeType }}</dd></div>
-                        <div v-if="editingMedia?.uploadedBy" class="flex justify-between"><dt>{{ t("admin.media.uploadedBy") }}</dt><dd>{{ editingMedia.uploadedBy }}</dd></div>
-                        <div v-if="editingMedia?.createdAt" class="flex justify-between"><dt>{{ t("admin.media.createdAt") }}</dt><dd>{{ formatDateTime(editingMedia.createdAt) }}</dd></div>
-                        <div v-if="editingMedia?.updatedAt" class="flex justify-between"><dt>{{ t("admin.media.updatedAt") }}</dt><dd>{{ formatDateTime(editingMedia.updatedAt) }}</dd></div>
+                        <div class="flex justify-between"><dt>{{ t("backend.media.filename") }}</dt><dd class="font-mono">{{ editingMedia?.originalName }}</dd></div>
+                        <div class="flex justify-between"><dt>{{ t("backend.media.size") }}</dt><dd>{{ formatSize(editingMedia?.size ?? 0) }}</dd></div>
+                        <div v-if="editingMedia?.width" class="flex justify-between"><dt>{{ t("backend.media.dimensions") }}</dt><dd>{{ editingMedia.width }}×{{ editingMedia.height }}</dd></div>
+                        <div class="flex justify-between"><dt>{{ t("backend.media.mimeType") }}</dt><dd>{{ editingMedia?.mimeType }}</dd></div>
+                        <div v-if="editingMedia?.uploadedBy" class="flex justify-between"><dt>{{ t("backend.media.uploadedBy") }}</dt><dd>{{ editingMedia.uploadedBy }}</dd></div>
+                        <div v-if="editingMedia?.createdAt" class="flex justify-between"><dt>{{ t("backend.media.createdAt") }}</dt><dd>{{ formatDateTime(editingMedia.createdAt) }}</dd></div>
+                        <div v-if="editingMedia?.updatedAt" class="flex justify-between"><dt>{{ t("backend.media.updatedAt") }}</dt><dd>{{ formatDateTime(editingMedia.updatedAt) }}</dd></div>
                         <div v-if="editingMedia?.permalink" class="flex justify-between items-center gap-2 pt-1 border-t border-line/40">
-                            <dt class="shrink-0">{{ t("admin.media.permalink") }}</dt>
+                            <dt class="shrink-0">{{ t("backend.media.permalink") }}</dt>
                             <dd class="font-mono text-xs text-accent-400 truncate cursor-pointer hover:underline" :title="editingMedia.permalink" v-on:click="copyUrl(editingMedia)">{{ editingMedia.permalink }}</dd>
                         </div>
                     </dl>
@@ -640,7 +640,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         v-on:click="openCrop(editingMedia)"
                     >
                         <Crop class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.media.crop") }}
+                        {{ t("backend.media.crop") }}
                     </AppButton>
                     <AppButton
                         v-if="can('core.media.manage')"
@@ -654,7 +654,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </AppButton>
                     <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="openQr(editingMedia)">
                         <QrCode class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.media.qrCode") }}
+                        {{ t("backend.media.qrCode") }}
                     </AppButton>
                     <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-3" v-on:click="closeEditMedia">{{ t("shared.common.cancel") }}</AppButton>
                 </div>
@@ -663,19 +663,19 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
         <AppModal :show="folderModal.open" max-width="md" v-on:close="folderModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ folderModal.editing ? t("admin.media.editFolder") : t("admin.media.createFolder") }}
+                {{ folderModal.editing ? t("backend.media.editFolder") : t("backend.media.createFolder") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitFolder">
                 <AppInput
                     v-model="folderForm.name"
-                    :label="t('admin.media.folderName')"
+                    :label="t('backend.media.folderName')"
                     :error="folderModal.errors.name ?? ''"
                 />
                 <AppMultiselect
                     v-model="folderForm.parentId"
                     :options="folderParentSelectOptions"
-                    :label="t('admin.media.parentFolder')"
-                    :placeholder="t('admin.media.rootFolder')"
+                    :label="t('backend.media.parentFolder')"
+                    :placeholder="t('backend.media.rootFolder')"
                     :allow-empty="true"
                     track-by="id"
                     option-label="displayLabel"
@@ -688,8 +688,8 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
         </AppModal>
 
         <AppModal :show="pendingBulkDelete" max-width="sm" v-on:close="pendingBulkDelete = false">
-            <h3 class="text-base font-semibold text-primary">{{ t("admin.media.bulkDeleteConfirm", { count: selectedIds.size }) }}</h3>
-            <p class="text-sm text-secondary">{{ t("admin.media.bulkDeleteConfirmDesc") }}</p>
+            <h3 class="text-base font-semibold text-primary">{{ t("backend.media.bulkDeleteConfirm", { count: selectedIds.size }) }}</h3>
+            <p class="text-sm text-secondary">{{ t("backend.media.bulkDeleteConfirmDesc") }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="doBulkDelete">{{ t("shared.common.delete") }}</AppButton>
@@ -697,16 +697,16 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
         </AppModal>
 
         <AppModal :show="!!deletingMedia" max-width="md" v-on:close="deletingMedia = null">
-            <p class="text-sm text-primary mb-3">{{ t("admin.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
+            <p class="text-sm text-primary mb-3">{{ t("backend.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
 
-            <div v-if="deletingMediaUsageLoading" class="text-xs text-muted italic">{{ t("admin.media.checkingUsage") }}</div>
+            <div v-if="deletingMediaUsageLoading" class="text-xs text-muted italic">{{ t("backend.media.checkingUsage") }}</div>
 
             <div v-else-if="deletingMediaUsage && deletingMediaUsage.total > 0" class="rounded-lg border border-amber-500/40 bg-amber-500/5 p-3 space-y-2 mb-2">
                 <p class="text-sm font-medium text-amber-600 dark:text-amber-400">
-                    {{ t("admin.media.usageWarning", { count: deletingMediaUsage.total }) }}
+                    {{ t("backend.media.usageWarning", { count: deletingMediaUsage.total }) }}
                 </p>
                 <div v-for="group in deletingMediaUsage.groups" :key="group.type" class="text-xs text-secondary">
-                    <p class="font-semibold uppercase tracking-wide text-[10px] text-muted mb-0.5">{{ t(`admin.media.usageGroups.${group.type}`) }}</p>
+                    <p class="font-semibold uppercase tracking-wide text-[10px] text-muted mb-0.5">{{ t(`backend.media.usageGroups.${group.type}`) }}</p>
                     <ul class="space-y-0.5 ml-1">
                         <li v-for="(usage, idx) in group.items" :key="idx" class="flex items-center gap-1.5">
                             <span class="w-1 h-1 bg-current rounded-full opacity-50" />
@@ -726,18 +726,18 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
             </div>
 
-            <p v-else-if="deletingMediaUsage" class="text-xs text-emerald-500 italic">{{ t("admin.media.usageNone") }}</p>
+            <p v-else-if="deletingMediaUsage" class="text-xs text-emerald-500 italic">{{ t("backend.media.usageNone") }}</p>
 
             <div class="flex justify-end gap-2 mt-4">
                 <AppButton variant="ghost" size="md" v-on:click="deletingMedia = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">
-                    {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("admin.media.deleteAnyway") : t("shared.common.delete") }}
+                    {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("backend.media.deleteAnyway") : t("shared.common.delete") }}
                 </AppButton>
             </div>
         </AppModal>
 
         <AppModal :show="!!deletingFolder" max-width="sm" v-on:close="deletingFolder = null">
-            <p class="text-sm text-primary">{{ t("admin.media.deleteFolderConfirm", { name: deletingFolder?.name }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.media.deleteFolderConfirm", { name: deletingFolder?.name }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingFolder = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteFolder">{{ t("shared.common.delete") }}</AppButton>
@@ -749,7 +749,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <h3 class="text-sm font-medium text-primary truncate">{{ previewMedia?.originalName }}</h3>
                 <div class="flex gap-2 shrink-0">
                     <AppButton size="sm" variant="ghost" v-on:click="copyUrl(previewMedia)">
-                        <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.copyUrl") }}
+                        <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.copyUrl") }}
                     </AppButton>
                     <AppButton size="sm" variant="ghost" v-on:click="openQr(previewMedia)">
                         <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> QR
@@ -775,24 +775,24 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div v-else class="flex flex-col items-center gap-3 py-12">
                     <Film class="w-16 h-16 text-muted" :stroke-width="1.5" />
                     <p class="text-sm text-muted">{{ previewMedia?.mimeType }}</p>
-                    <a :href="previewMedia?.url" target="_blank" class="text-sm text-accent-400 hover:underline">{{ t("admin.media.open") }}</a>
+                    <a :href="previewMedia?.url" target="_blank" class="text-sm text-accent-400 hover:underline">{{ t("backend.media.open") }}</a>
                 </div>
             </div>
             <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted">
-                <div class="flex justify-between"><dt>{{ t("admin.media.size") }}</dt><dd>{{ formatSize(previewMedia?.size ?? 0) }}</dd></div>
-                <div v-if="previewMedia?.width" class="flex justify-between"><dt>{{ t("admin.media.dimensions") }}</dt><dd>{{ previewMedia.width }}×{{ previewMedia.height }}</dd></div>
+                <div class="flex justify-between"><dt>{{ t("backend.media.size") }}</dt><dd>{{ formatSize(previewMedia?.size ?? 0) }}</dd></div>
+                <div v-if="previewMedia?.width" class="flex justify-between"><dt>{{ t("backend.media.dimensions") }}</dt><dd>{{ previewMedia.width }}×{{ previewMedia.height }}</dd></div>
             </dl>
         </AppModal>
 
         <MediaQrModal :media="qrMedia" v-on:close="qrMedia = null" />
 
         <AppModal :show="openBulkMove" max-width="sm" v-on:close="openBulkMove = false">
-            <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.bulkMove", { count: selectedIds.size }) }}</h3>
+            <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.bulkMove", { count: selectedIds.size }) }}</h3>
             <AppMultiselect
                 v-model="bulkMoveTargetId"
-                :options="[{ id: null, displayLabel: t('admin.media.rootFolder') }, ...allFlatFolders.map(f => ({ id: f.id, displayLabel: '  '.repeat(f.depth) + f.name }))]"
-                :label="t('admin.media.folder')"
-                :placeholder="t('admin.media.rootFolder')"
+                :options="[{ id: null, displayLabel: t('backend.media.rootFolder') }, ...allFlatFolders.map(f => ({ id: f.id, displayLabel: '  '.repeat(f.depth) + f.name }))]"
+                :label="t('backend.media.folder')"
+                :placeholder="t('backend.media.rootFolder')"
                 :allow-empty="true"
                 track-by="id"
                 option-label="displayLabel"

@@ -83,28 +83,28 @@ const { formatDateNumeric } = useDateFormat();
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-surface border border-line/60 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.thisMonth') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.dashboard.stats.thisMonth') }}</p>
                     <Calendar class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
                 <p class="text-xl font-semibold text-primary tabular-nums">{{ formatCents(stats.monthGrossCents) }}</p>
             </div>
             <div class="bg-surface border border-line/60 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.thisYear') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.dashboard.stats.thisYear') }}</p>
                     <TrendingUp class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
                 <p class="text-xl font-semibold text-primary tabular-nums">{{ formatCents(stats.yearGrossCents) }}</p>
             </div>
             <div class="bg-surface border border-line/60 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.needsReview') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.dashboard.stats.needsReview') }}</p>
                     <AlertCircle class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
                 <p class="text-xl font-semibold text-primary tabular-nums">{{ stats.needsReviewCount }}</p>
             </div>
             <div class="bg-surface border border-line/60 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.dashboard.stats.totalInvoices') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.dashboard.stats.totalInvoices') }}</p>
                     <FileText class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
                 <p class="text-xl font-semibold text-primary tabular-nums">{{ stats.totalInvoices }}</p>
@@ -113,12 +113,12 @@ const { formatDateNumeric } = useDateFormat();
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
             <div class="flex-1">
-                <AppSearchInput v-model="search" :placeholder="t('admin.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
+                <AppSearchInput v-model="search" :placeholder="t('backend.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
             </div>
             <AppMultiselect
                 v-model="statusFilter"
                 :options="STATUS_SELECT"
-                :placeholder="t('admin.billing.list.allStatuses')"
+                :placeholder="t('backend.billing.list.allStatuses')"
                 :allow-empty="true"
                 class="sm:max-w-xs"
                 v-on:update:model-value="onStatusChange"
@@ -126,26 +126,26 @@ const { formatDateNumeric } = useDateFormat();
             <div class="flex items-center gap-2">
                 <AppButton variant="secondary" size="md" :href="exportXlsxUrl">
                     <Download class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.billing.invoices.exportXlsx') }}
+                    {{ t('backend.billing.invoices.exportXlsx') }}
                 </AppButton>
                 <AppButton v-if="can('billing.invoices.edit')" variant="primary" size="md" :href="importPath">
                     <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.billing.invoices.importOcr') }}
+                    {{ t('backend.billing.invoices.importOcr') }}
                 </AppButton>
             </div>
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!items?.length" :message="t('admin.billing.invoices.empty')" />
+            <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.number') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.supplier') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.dueAt') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.totalGross') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.statusLabel') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.number') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.supplier') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.issuedAt') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.dueAt') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.totalGross') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.statusLabel') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -159,7 +159,7 @@ const { formatDateNumeric } = useDateFormat();
                             {{ formatCents(invoice.totalGrossCents, invoice.currency) }}
                         </td>
                         <td class="px-6 py-3">
-                            <AppBadge :color="invoice.statusColor">{{ t(`admin.billing.invoices.status.${invoice.status}`) }}</AppBadge>
+                            <AppBadge :color="invoice.statusColor">{{ t(`backend.billing.invoices.status.${invoice.status}`) }}</AppBadge>
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
@@ -179,8 +179,8 @@ const { formatDateNumeric } = useDateFormat();
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.billing.invoices.deleteConfirm', { number: pendingDelete?.number ?? ('#' + (pendingDelete?.id ?? '')) }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.invoices.deleteConfirm', { number: pendingDelete?.number ?? ('#' + (pendingDelete?.id ?? '')) }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

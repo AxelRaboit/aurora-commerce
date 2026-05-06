@@ -42,10 +42,10 @@ const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate
 const { loading: createLoading, request: createRequest } = useApiRequest();
 function openCreate() { newCategory.value = emptyForm(); clearCreate(); showCreate.value = true; }
 async function submitCreate() {
-    if (!validateCreate({ name: () => required(t("admin.ged.categories.errors.name_required"))(newCategory.value.name) })) return;
+    if (!validateCreate({ name: () => required(t("backend.ged.categories.errors.name_required"))(newCategory.value.name) })) return;
     const data = await createRequest(props.createPath, newCategory.value);
     if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t("admin.ged.categories.created")); reset(); }
+    if (data.success) { showCreate.value = false; toast.success(t("backend.ged.categories.created")); reset(); }
     else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
@@ -60,11 +60,11 @@ function openEdit(category) {
     clearEdit(); showEdit.value = true;
 }
 async function submitEdit() {
-    if (!validateEdit({ name: () => required(t("admin.ged.categories.errors.name_required"))(editForm.value.name) })) return;
+    if (!validateEdit({ name: () => required(t("backend.ged.categories.errors.name_required"))(editForm.value.name) })) return;
     const url = buildPath(props.updatePath, { id: editingCategory.value.id });
     const data = await editRequest(url, editForm.value);
     if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t("admin.ged.categories.updated")); reset(); }
+    if (data.success) { showEdit.value = false; toast.success(t("backend.ged.categories.updated")); reset(); }
     else setEditErrors(translateServerErrors(t, data.errors));
 }
 
@@ -76,7 +76,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 <template>
     <div class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
-            <AppSearchInput v-model="searchInput" :placeholder="t('admin.ged.categories.searchPlaceholder')" v-on:search="onSearch" />
+            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.categories.searchPlaceholder')" v-on:search="onSearch" />
             <AppButton
                 v-if="can('ged.documents.manage')"
                 variant="primary"
@@ -84,7 +84,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 class="w-full sm:w-auto"
                 v-on:click="openCreate"
             >
-                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("admin.ged.categories.add") }}
+                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.categories.add") }}
             </AppButton>
         </div>
 
@@ -92,8 +92,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.ged.categories.name") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.ged.categories.slug") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.categories.name") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.categories.slug") }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -109,7 +109,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="3" class="px-6 py-8 text-center text-sm text-muted">{{ t("admin.ged.categories.empty") }}</td>
+                        <td :colspan="3" class="px-6 py-8 text-center text-sm text-muted">{{ t("backend.ged.categories.empty") }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -117,16 +117,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.categories.create") }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.categories.create") }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newCategory.name"
-                    :label="t('admin.ged.categories.name')"
-                    :placeholder="t('admin.ged.categories.namePlaceholder')"
+                    :label="t('backend.ged.categories.name')"
+                    :placeholder="t('backend.ged.categories.namePlaceholder')"
                     :error="createErrors.name"
                     required
                 />
-                <AppInput v-model="newCategory.description" :label="t('admin.ged.categories.description')" :placeholder="t('admin.ged.categories.descriptionPlaceholder')" />
+                <AppInput v-model="newCategory.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.descriptionPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
@@ -135,16 +135,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.categories.edit", { name: editingCategory?.name ?? "" }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.categories.edit", { name: editingCategory?.name ?? "" }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.ged.categories.name')"
-                    :placeholder="t('admin.ged.categories.namePlaceholder')"
+                    :label="t('backend.ged.categories.name')"
+                    :placeholder="t('backend.ged.categories.namePlaceholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppInput v-model="editForm.description" :label="t('admin.ged.categories.description')" :placeholder="t('admin.ged.categories.descriptionPlaceholder')" />
+                <AppInput v-model="editForm.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.descriptionPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
@@ -153,8 +153,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="confirmDelete(null)">
-            <p class="text-sm text-primary">{{ t("admin.ged.categories.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("admin.ged.categories.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.categories.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.categories.deleteWarning") }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t("shared.common.delete") }}</AppButton>

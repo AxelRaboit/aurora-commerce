@@ -46,9 +46,9 @@ const { loading: editLoading, request: editRequest } = useApiRequest();
 
 async function submitEdit() {
     if (!validateEdit({
-        firstName: () => required(t("admin.crm.contacts.errors.first_name_required"))(editForm.value.firstName),
-        lastName: () => required(t("admin.crm.contacts.errors.last_name_required"))(editForm.value.lastName),
-        email: () => editForm.value.email ? emailValidator(t("admin.crm.contacts.errors.email_invalid"))(editForm.value.email) : null,
+        firstName: () => required(t("backend.crm.contacts.errors.first_name_required"))(editForm.value.firstName),
+        lastName: () => required(t("backend.crm.contacts.errors.last_name_required"))(editForm.value.lastName),
+        email: () => editForm.value.email ? emailValidator(t("backend.crm.contacts.errors.email_invalid"))(editForm.value.email) : null,
     })) return;
 
     const data = await editRequest(props.updatePath, editForm.value);
@@ -66,7 +66,7 @@ async function submitEdit() {
 const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
 
 const actionLabel = (action) => {
-    const map = { 'contact.created': t('admin.crm.activity.created'), 'contact.updated': t('admin.crm.activity.updated'), 'contact.deleted': t('admin.crm.activity.deleted') };
+    const map = { 'contact.created': t('backend.crm.activity.created'), 'contact.updated': t('backend.crm.activity.updated'), 'contact.deleted': t('backend.crm.activity.deleted') };
     return map[action] ?? action;
 };
 </script>
@@ -98,19 +98,19 @@ const actionLabel = (action) => {
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div v-if="contact.email" class="min-w-0">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.email') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.crm.contacts.email') }}</dt>
                         <dd><AppLink :href="`mailto:${contact.email}`" class="text-accent-400 hover:underline break-all">{{ contact.email }}</AppLink></dd>
                     </div>
                     <div v-if="contact.phone">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.phone') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.crm.contacts.phone') }}</dt>
                         <dd class="text-primary">{{ contact.phone }}</dd>
                     </div>
                     <div v-if="contact.company">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.company') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.crm.contacts.company') }}</dt>
                         <dd class="text-primary">{{ contact.company }}</dd>
                     </div>
                     <div v-if="contact.notes" class="sm:col-span-2">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.crm.contacts.notes') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.crm.contacts.notes') }}</dt>
                         <dd class="text-secondary text-sm whitespace-pre-wrap break-words">{{ contact.notes }}</dd>
                     </div>
                 </dl>
@@ -118,9 +118,9 @@ const actionLabel = (action) => {
         </div>
 
         <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.crm.activity.title') }}</h3>
+            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.crm.activity.title') }}</h3>
 
-            <div v-if="!activity.length" class="text-sm text-muted">{{ t('admin.crm.activity.empty') }}</div>
+            <div v-if="!activity.length" class="text-sm text-muted">{{ t('backend.crm.activity.empty') }}</div>
 
             <ol v-else class="relative border-l border-line ml-3 space-y-6">
                 <li v-for="event in activity" :key="event.id" class="ml-4">
@@ -137,20 +137,20 @@ const actionLabel = (action) => {
         </div>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.edit', { name: contact.fullName }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.contacts.edit', { name: contact.fullName }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.firstName"
-                        :label="t('admin.crm.contacts.firstName')"
-                        :placeholder="t('admin.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.firstName')"
+                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
                         :error="editErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="editForm.lastName"
-                        :label="t('admin.crm.contacts.lastName')"
-                        :placeholder="t('admin.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.lastName')"
+                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
                         :error="editErrors.lastName"
                         required
                     />
@@ -158,13 +158,13 @@ const actionLabel = (action) => {
                 <AppInput
                     v-model="editForm.email"
                     type="email"
-                    :label="t('admin.crm.contacts.email')"
-                    :placeholder="t('admin.crm.contacts.emailPlaceholder')"
+                    :label="t('backend.crm.contacts.email')"
+                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
                     :error="editErrors.email"
                 />
-                <AppInput v-model="editForm.phone" :label="t('admin.crm.contacts.phone')" :placeholder="t('admin.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="editForm.company" :label="t('admin.crm.contacts.company')" :placeholder="t('admin.crm.contacts.companyPlaceholder')" />
-                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('admin.crm.contacts.notesPlaceholder')" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
+                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -173,8 +173,8 @@ const actionLabel = (action) => {
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
-            <p class="text-sm text-primary">{{ t('admin.crm.contacts.deleteConfirm', { name: contact.fullName }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.crm.contacts.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: contact.fullName }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

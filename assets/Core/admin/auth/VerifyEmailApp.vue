@@ -18,17 +18,17 @@ defineProps({
             <div class="w-14 h-14 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-6">
                 <Check class="w-7 h-7 text-emerald-400" :stroke-width="2" />
             </div>
-            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('admin.auth.verify_email.success_heading') }}</h1>
-            <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('admin.auth.verify_email.success_message') }}</p>
-            <AppLink :href="loginPath" class="text-sm">{{ t('admin.auth.login.submit') }}</AppLink>
+            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('backend.auth.verify_email.success_heading') }}</h1>
+            <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('backend.auth.verify_email.success_message') }}</p>
+            <AppLink :href="loginPath" class="text-sm">{{ t('backend.auth.login.submit') }}</AppLink>
         </template>
         <template v-else>
             <div class="w-14 h-14 rounded-full bg-rose-500/15 flex items-center justify-center mx-auto mb-6">
                 <X class="w-7 h-7 text-rose-400" :stroke-width="2" />
             </div>
-            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('admin.auth.verify_email.error_heading') }}</h1>
-            <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('admin.auth.verify_email.error_message') }}</p>
-            <AppLink :href="registerPath" class="text-sm">{{ t('admin.auth.register.submit') }}</AppLink>
+            <h1 class="text-2xl font-bold text-primary mb-3">{{ t('backend.auth.verify_email.error_heading') }}</h1>
+            <p class="text-secondary text-sm leading-relaxed mb-8">{{ t('backend.auth.verify_email.error_message') }}</p>
+            <AppLink :href="registerPath" class="text-sm">{{ t('backend.auth.register.submit') }}</AppLink>
         </template>
     </div>
 </template>

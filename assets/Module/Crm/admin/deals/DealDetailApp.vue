@@ -30,9 +30,9 @@ const props = defineProps({
 });
 
 const STAGES = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
-const stageOptions = STAGES.map(s => ({ value: s, label: t(`admin.crm.deals.stages.${s}`) }));
+const stageOptions = STAGES.map(s => ({ value: s, label: t(`backend.crm.deals.stages.${s}`) }));
 
-const stageLabel = (stage) => t(`admin.crm.deals.stages.${stage}`);
+const stageLabel = (stage) => t(`backend.crm.deals.stages.${stage}`);
 
 const deal = ref({ ...props.deal });
 
@@ -45,7 +45,7 @@ async function updateStage(newStage) {
     if (data?.success) {
         currentStage.value = newStage;
         deal.value.stage = newStage;
-        toast.success(t('admin.crm.deals.updated'));
+        toast.success(t('backend.crm.deals.updated'));
     }
 }
 
@@ -62,14 +62,14 @@ const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setE
 const { loading: editLoading, request: editRequest } = useApiRequest();
 
 async function submitEdit() {
-    if (!validateEdit({ name: () => required(t("admin.crm.deals.errors.name_required"))(editForm.value.name) })) return;
+    if (!validateEdit({ name: () => required(t("backend.crm.deals.errors.name_required"))(editForm.value.name) })) return;
     const data = await editRequest(props.updatePath, editForm.value);
     if (!data) return;
     if (data.success) {
         deal.value = { ...deal.value, ...(data.deal ?? editForm.value) };
         currentStage.value = deal.value.stage;
         showEdit.value = false;
-        toast.success(t('admin.crm.deals.updated'));
+        toast.success(t('backend.crm.deals.updated'));
     } else {
         setEditErrors(translateServerErrors(t, data.errors));
     }
@@ -86,7 +86,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <div class="min-w-0">
                     <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ deal.name }}</h2>
                     <span :class="['inline-flex items-center mt-1 px-2 py-0.5 rounded text-xs font-medium', stageBadge(currentStage)]">
-                        {{ t(`admin.crm.deals.stages.${currentStage}`) }}
+                        {{ t(`backend.crm.deals.stages.${currentStage}`) }}
                     </span>
                 </div>
                 <div class="flex items-center gap-1 sm:gap-2 sm:shrink-0 self-end sm:self-auto">
@@ -97,25 +97,25 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
 
             <dl class="space-y-3">
                 <div v-if="deal.contact || deal.company">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.deals.contact') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.deals.contact') }}</dt>
                     <dd class="text-primary text-sm">{{ deal.contact?.fullName ?? deal.company?.name }}</dd>
                 </div>
                 <div v-if="deal.value">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.deals.value') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.deals.value') }}</dt>
                     <dd class="text-primary text-sm font-medium">{{ Number(deal.value).toLocaleString() }} €</dd>
                 </div>
                 <div v-if="deal.closingDate">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.deals.closingDate') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.deals.closingDate') }}</dt>
                     <dd class="text-secondary text-sm">{{ deal.closingDate }}</dd>
                 </div>
                 <div v-if="deal.notes">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.crm.contacts.notes') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.contacts.notes') }}</dt>
                     <dd class="text-secondary text-sm whitespace-pre-wrap">{{ deal.notes }}</dd>
                 </div>
             </dl>
 
             <div class="mt-6 pt-4 border-t border-line">
-                <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t('admin.crm.deals.stage') }}</p>
+                <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t('backend.crm.deals.stage') }}</p>
                 <AppStagePicker
                     :model-value="currentStage"
                     :stages="STAGES"
@@ -128,20 +128,20 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
         </div>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.edit', { name: deal.name }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.deals.edit', { name: deal.name }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.crm.deals.name')"
-                    :placeholder="t('admin.crm.deals.namePlaceholder')"
+                    :label="t('backend.crm.deals.name')"
+                    :placeholder="t('backend.crm.deals.namePlaceholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppSelect v-model="editForm.stage" :label="t('admin.crm.deals.stage')">
+                <AppSelect v-model="editForm.stage" :label="t('backend.crm.deals.stage')">
                     <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
-                <AppInput v-model="editForm.value" :label="t('admin.crm.deals.value')" :placeholder="t('admin.crm.deals.valuePlaceholder')" />
-                <AppDatePicker v-model="editForm.closingDate" :label="t('admin.crm.deals.closingDate')" />
+                <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
+                <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -150,8 +150,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
-            <p class="text-sm text-primary">{{ t('admin.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.crm.deals.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

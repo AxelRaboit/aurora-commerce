@@ -56,7 +56,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
             ? parameterByKey[parameter.requires]
             : null;
         return parent
-            ? t("admin.settings.cascadeLocked", { parent: parent.label })
+            ? t("backend.settings.cascadeLocked", { parent: parent.label })
             : "";
     }
 
@@ -85,7 +85,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
 
         if (changed.length === 0) {
             savingGroups[groupName] = false;
-            toast.success(t("admin.settings.saved"));
+            toast.success(t("backend.settings.saved"));
             return;
         }
 
@@ -106,7 +106,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
                     if (result.error === SettingErrorCode.CascadeViolation) {
                         const parent = parameterByKey[result.parentKey];
                         toast.error(
-                            t("admin.settings.cascadeLocked", {
+                            t("backend.settings.cascadeLocked", {
                                 parent: parent?.label ?? result.parentKey,
                             }),
                         );
@@ -119,7 +119,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
                 initialValues[parameter.key] = fieldValues[parameter.key];
             }
 
-            toast.success(t("admin.settings.saved"));
+            toast.success(t("backend.settings.saved"));
         } catch {
             toast.error(t("shared.common.error"));
         } finally {

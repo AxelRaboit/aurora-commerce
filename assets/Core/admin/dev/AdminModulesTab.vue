@@ -47,7 +47,7 @@ function isLocked(parameter) {
 
 function lockReason(parameter) {
     const parent = parameter.requires ? parameterByKey[parameter.requires] : null;
-    return parent ? t("admin.settings.cascadeLocked", { parent: parent.label }) : "";
+    return parent ? t("backend.settings.cascadeLocked", { parent: parent.label }) : "";
 }
 
 function onToggle(parameter, enabled) {
@@ -70,7 +70,7 @@ async function save() {
 
     if (!changed.length) {
         saving.value = false;
-        toast.success(t("admin.settings.saved"));
+        toast.success(t("backend.settings.saved"));
         return;
     }
 
@@ -87,7 +87,7 @@ async function save() {
             if (!result.success) {
                 if (result.error === SettingErrorCode.CascadeViolation) {
                     const parent = parameterByKey[result.parentKey];
-                    toast.error(t("admin.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
+                    toast.error(t("backend.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
                 } else {
                     toast.error(t("shared.common.error"));
                 }
@@ -97,7 +97,7 @@ async function save() {
             initialValues[parameter.key] = fieldValues[parameter.key];
         }
 
-        toast.success(t("admin.settings.saved"));
+        toast.success(t("backend.settings.saved"));
     } catch {
         toast.error(t("shared.common.error"));
     } finally {
@@ -138,7 +138,7 @@ async function save() {
                 v-on:click="save"
             >
                 <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t("admin.settings.save") }}
+                {{ t("backend.settings.save") }}
             </AppButton>
         </div>
     </div>

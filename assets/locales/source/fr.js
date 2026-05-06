@@ -1,5 +1,5 @@
 export default {
-    admin: {
+    backend: {
         title: "Administration",
         tabs: {
             overview: "Vue d'ensemble",

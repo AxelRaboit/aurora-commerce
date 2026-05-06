@@ -58,17 +58,17 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="users.searchInput.value"
-                :placeholder="t('admin.users.searchPlaceholder')"
+                :placeholder="t('backend.users.searchPlaceholder')"
                 v-on:search="users.performSearch"
             />
             <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="users.openCreate">
                 <Plus class="w-4 h-4" />
-                {{ t('admin.users.add') }}
+                {{ t('backend.users.add') }}
             </AppButton>
         </div>
 
         <div class="sm:hidden space-y-3">
-            <p v-if="!users.parsedUsers.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.users.empty') }}</p>
+            <p v-if="!users.parsedUsers.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.users.empty') }}</p>
             <div v-for="user in users.parsedUsers.value.items" :key="user.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-start gap-3 min-w-0">
@@ -101,12 +101,12 @@ onMounted(() => {
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.users.role') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.locale') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.created') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.role') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.locale') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
@@ -116,14 +116,14 @@ onMounted(() => {
                                 <AppAvatar :name="user.name" :email="user.email" size="md" />
                                 <p class="font-medium text-primary inline-flex items-center gap-1.5">
                                     {{ user.name }}
-                                    <AppBadge v-if="user.isCurrent" color="accent">{{ t('admin.users.you') }}</AppBadge>
+                                    <AppBadge v-if="user.isCurrent" color="accent">{{ t('backend.users.you') }}</AppBadge>
                                 </p>
                             </div>
                         </td>
                         <td class="px-6 py-3 text-secondary">{{ user.email }}</td>
                         <td class="px-6 py-3 hidden md:table-cell">
                             <AppBadge :color="user.isDevRole ? 'accent' : 'gray'">
-                                {{ user.isDevRole ? t('admin.users.role_dev') : t('admin.users.role_user') }}
+                                {{ user.isDevRole ? t('backend.users.role_dev') : t('backend.users.role_user') }}
                             </AppBadge>
                         </td>
                         <td class="px-6 py-3 hidden lg:table-cell">
@@ -143,14 +143,14 @@ onMounted(() => {
                         </td>
                     </tr>
                     <tr v-if="!users.parsedUsers.value.items?.length">
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.users.empty') }}</td>
+                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.users.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <AppModal :show="!!users.pendingDelete.value" max-width="sm" v-on:close="users.pendingDelete.value = null">
-            <p class="text-sm text-primary">{{ t('admin.users.deleteConfirm', { name: users.pendingDelete.value?.name }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', { name: users.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="users.doDelete">{{ t('shared.common.delete') }}</AppButton>
@@ -158,11 +158,11 @@ onMounted(() => {
         </AppModal>
 
         <AppModal :show="users.showCreateModal.value" max-width="md" v-on:close="users.showCreateModal.value = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.add') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.add') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="users.submitCreate">
                 <AppInput
                     v-model="users.newUser.value.name"
-                    :label="t('admin.users.name')"
+                    :label="t('backend.users.name')"
                     :error="users.createErrors.value.name"
                     autocomplete="name"
                     required
@@ -170,20 +170,20 @@ onMounted(() => {
                 <AppInput
                     v-model="users.newUser.value.email"
                     type="email"
-                    :label="t('admin.users.email')"
+                    :label="t('backend.users.email')"
                     :error="users.createErrors.value.email"
                     autocomplete="email"
                     required
                 />
                 <AppInput
                     v-model="users.newUser.value.password"
-                    :label="t('admin.users.password')"
+                    :label="t('backend.users.password')"
                     :error="users.createErrors.value.password"
                     autocomplete="new-password"
                     toggleable
                     required
                 />
-                <AppSelect v-model="users.newUser.value.locale" :label="t('admin.users.locale')">
+                <AppSelect v-model="users.newUser.value.locale" :label="t('backend.users.locale')">
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -194,11 +194,11 @@ onMounted(() => {
         </AppModal>
 
         <AppModal :show="users.showEditModal.value" max-width="md" v-on:close="users.closeEdit">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', { name: users.editingUser.value?.name ?? '' }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="users.submitEdit">
                 <AppInput
                     v-model="users.editUserForm.value.name"
-                    :label="t('admin.users.name')"
+                    :label="t('backend.users.name')"
                     :error="users.editErrors.value.name"
                     autocomplete="name"
                     required
@@ -206,19 +206,19 @@ onMounted(() => {
                 <AppInput
                     v-model="users.editUserForm.value.email"
                     type="email"
-                    :label="t('admin.users.email')"
+                    :label="t('backend.users.email')"
                     :error="users.editErrors.value.email"
                     autocomplete="email"
                     required
                 />
                 <AppInput
                     v-model="users.editUserForm.value.password"
-                    :label="t('admin.users.password_optional')"
+                    :label="t('backend.users.password_optional')"
                     :error="users.editErrors.value.password"
                     autocomplete="new-password"
                     toggleable
                 />
-                <AppSelect v-model="users.editUserForm.value.locale" :label="t('admin.users.locale')">
+                <AppSelect v-model="users.editUserForm.value.locale" :label="t('backend.users.locale')">
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -231,8 +231,8 @@ onMounted(() => {
         <AppModal :show="!!users.pendingToggleRole.value" max-width="sm" v-on:close="users.pendingToggleRole.value = null">
             <p class="text-sm text-primary">
                 {{ users.pendingToggleRole.value?.isDevRole
-                    ? t('admin.users.revokeDevConfirm', { name: users.pendingToggleRole.value?.name })
-                    : t('admin.users.grantDevConfirm', { name: users.pendingToggleRole.value?.name }) }}
+                    ? t('backend.users.revokeDevConfirm', { name: users.pendingToggleRole.value?.name })
+                    : t('backend.users.grantDevConfirm', { name: users.pendingToggleRole.value?.name }) }}
             </p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="users.pendingToggleRole.value = null">{{ t('shared.common.cancel') }}</AppButton>

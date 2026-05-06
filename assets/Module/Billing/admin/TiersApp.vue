@@ -32,7 +32,7 @@ const props = defineProps({
 const activeType = ref(props.typeFilter);
 
 const TYPE_SELECT = [
-    { value: "", label: t("admin.billing.tiers.allTypes") },
+    { value: "", label: t("backend.billing.tiers.allTypes") },
     ...props.typeOptions.map(o => ({ value: o.value, label: t(o.labelKey) })),
 ];
 
@@ -64,7 +64,7 @@ const TYPE_BADGE = {
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
             <div class="flex-1">
-                <AppSearchInput v-model="search" :placeholder="t('admin.billing.tiers.searchPlaceholder')" v-on:search="onSearch" />
+                <AppSearchInput v-model="search" :placeholder="t('backend.billing.tiers.searchPlaceholder')" v-on:search="onSearch" />
             </div>
             <AppMultiselect
                 v-model="activeType"
@@ -76,22 +76,22 @@ const TYPE_BADGE = {
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!items?.length" :message="t('admin.billing.tiers.empty')" />
+            <AppNoData v-if="!items?.length" :message="t('backend.billing.tiers.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.tiers.type.label') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.suppliers.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.suppliers.country') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.tiers.type.label') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.suppliers.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.country') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-for="tiers in items" :key="tiers.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
-                            <AppBadge :color="TYPE_BADGE[tiers.type] ?? 'slate'">{{ t(`admin.billing.tiers.type.${tiers.type}`) }}</AppBadge>
+                            <AppBadge :color="TYPE_BADGE[tiers.type] ?? 'slate'">{{ t(`backend.billing.tiers.type.${tiers.type}`) }}</AppBadge>
                         </td>
                         <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ tiers.name }}</td>
                         <td class="px-6 py-3 font-mono text-xs text-secondary">{{ tiers.vatNumber ?? '—' }}</td>
@@ -115,8 +115,8 @@ const TYPE_BADGE = {
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.billing.tiers.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.tiers.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

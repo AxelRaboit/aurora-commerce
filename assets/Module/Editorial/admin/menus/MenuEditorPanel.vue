@@ -45,7 +45,7 @@ function onChildReordered({ item, children }) {
         <div v-if="!menu" class="flex items-center justify-center h-full p-12">
             <div class="text-center">
                 <ListTree class="w-12 h-12 text-muted mx-auto mb-3" :stroke-width="1.5" />
-                <p class="text-secondary">{{ t("admin.menus.selectHint") }}</p>
+                <p class="text-secondary">{{ t("backend.menus.selectHint") }}</p>
             </div>
         </div>
 
@@ -57,8 +57,8 @@ function onChildReordered({ item, children }) {
                     <p v-if="menu.description" class="text-xs text-secondary mt-1">{{ menu.description }}</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <AppBadge v-if="menu.protected" color="amber" :title="t('admin.menus.protectedHint')">
-                        {{ t('admin.menus.protected') }}
+                    <AppBadge v-if="menu.protected" color="amber" :title="t('backend.menus.protectedHint')">
+                        {{ t('backend.menus.protected') }}
                     </AppBadge>
                     <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="$emit('edit-menu', menu)">
                         <Pencil class="w-4 h-4" :stroke-width="2" />
@@ -77,15 +77,15 @@ function onChildReordered({ item, children }) {
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <p class="text-sm font-semibold text-secondary uppercase tracking-wide">
-                        {{ t("admin.menus.items") }} ({{ itemCount }})
+                        {{ t("backend.menus.items") }} ({{ itemCount }})
                     </p>
                     <AppButton variant="primary" size="sm" v-on:click="$emit('add-item')">
                         <Plus class="w-4 h-4" :stroke-width="2.5" />
-                        {{ t("admin.menus.addItem") }}
+                        {{ t("backend.menus.addItem") }}
                     </AppButton>
                 </div>
 
-                <AppNoData v-if="!menu.items?.length" :message="t('admin.menus.itemsEmpty')" />
+                <AppNoData v-if="!menu.items?.length" :message="t('backend.menus.itemsEmpty')" />
 
                 <VueDraggable
                     v-else

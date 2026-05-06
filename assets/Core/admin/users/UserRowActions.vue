@@ -21,7 +21,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
     <div class="flex items-center gap-0.5">
         <AppIconButton
             color="accent"
-            :title="t('admin.users.view')"
+            :title="t('backend.users.view')"
             v-on:click="emit('view', user)"
         >
             <Eye class="w-4 h-4" :stroke-width="2" />
@@ -29,7 +29,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
         <AppIconButton
             v-if="user.status === 'invited' && canAct"
             color="amber"
-            :title="t('admin.users.resendInvitation')"
+            :title="t('backend.users.resendInvitation')"
             v-on:click="emit('resend', user)"
         >
             <Mail class="w-4 h-4" :stroke-width="2" />
@@ -37,7 +37,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
         <AppIconButton
             v-if="isDev && canAct"
             color="amber"
-            :title="t('admin.users.impersonate', { name: user.name })"
+            :title="t('backend.users.impersonate', { name: user.name })"
             :href="buildPath(impersonatePath, { email: user.email })"
         >
             <LogIn class="w-4 h-4" :stroke-width="2" />
@@ -53,7 +53,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
         <AppIconButton
             v-if="isDev && canAct && hasPrivileges && !user.isDev"
             color="accent"
-            :title="t('admin.users.privileges.title')"
+            :title="t('backend.users.privileges.title')"
             v-on:click="emit('privileges', user)"
         >
             <ShieldCheck class="w-4 h-4" :stroke-width="2" />
@@ -61,7 +61,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
         <AppIconButton
             v-if="canAct"
             color="amber"
-            :title="user.status === 'disabled' ? t('admin.users.enable') : t('admin.users.disable')"
+            :title="user.status === 'disabled' ? t('backend.users.enable') : t('backend.users.disable')"
             v-on:click="emit('toggle-disabled', user)"
         >
             <Power class="w-4 h-4" :stroke-width="2" />

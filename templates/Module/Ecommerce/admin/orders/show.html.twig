@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ order.number }} - {{ 'admin.nav.orders'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ order.number }} - {{ 'backend.nav.orders'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: order.number,
         crumbs: [
-            {label: 'admin.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
-            {label: 'admin.nav.orders'|trans, href: backPath},
+            {label: 'backend.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
+            {label: 'backend.nav.orders'|trans, href: backPath},
             {label: order.number},
         ],
     }) }}

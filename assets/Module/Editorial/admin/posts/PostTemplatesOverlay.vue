@@ -61,8 +61,8 @@ function apply(template) {
                 <div class="w-full max-w-4xl bg-surface rounded-2xl border border-line shadow-2xl flex flex-col max-h-[85vh]">
                     <div class="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
                         <div>
-                            <h2 class="text-base font-semibold text-primary">{{ t("admin.editor.templates.title") }}</h2>
-                            <p class="text-xs text-muted mt-0.5">{{ t("admin.editor.templates.subtitle") }}</p>
+                            <h2 class="text-base font-semibold text-primary">{{ t("backend.editor.templates.title") }}</h2>
+                            <p class="text-xs text-muted mt-0.5">{{ t("backend.editor.templates.subtitle") }}</p>
                         </div>
                         <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="close">
                             <X class="w-5 h-5" :stroke-width="2" />
@@ -78,7 +78,7 @@ function apply(template) {
                             :class="activeCategory === cat ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                             v-on:click="activeCategory = cat; confirmingTemplate = null"
                         >
-                            {{ t("admin.editor.templates.categories." + cat) }}
+                            {{ t("backend.editor.templates.categories." + cat) }}
                         </button>
                     </div>
 
@@ -104,9 +104,9 @@ function apply(template) {
                                     leave-to-class="opacity-0"
                                 >
                                     <div v-if="confirmingTemplate?.id === template.id" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/95 backdrop-blur-sm rounded-xl p-4">
-                                        <p class="text-sm font-medium text-primary text-center">{{ t("admin.editor.templates.confirmReplace") }}</p>
+                                        <p class="text-sm font-medium text-primary text-center">{{ t("backend.editor.templates.confirmReplace") }}</p>
                                         <div class="flex gap-2">
-                                            <AppButton variant="primary" size="md" v-on:click.stop="apply(template)">{{ t("admin.editor.templates.apply") }}</AppButton>
+                                            <AppButton variant="primary" size="md" v-on:click.stop="apply(template)">{{ t("backend.editor.templates.apply") }}</AppButton>
                                             <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("shared.common.cancel") }}</AppButton>
                                         </div>
                                     </div>
@@ -114,9 +114,9 @@ function apply(template) {
 
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="text-2xl">{{ template.icon }}</span>
-                                    <span class="font-medium text-primary text-sm group-hover:text-accent-400 transition-colors">{{ t("admin.editor.templates." + template.id + ".label") }}</span>
+                                    <span class="font-medium text-primary text-sm group-hover:text-accent-400 transition-colors">{{ t("backend.editor.templates." + template.id + ".label") }}</span>
                                 </div>
-                                <p class="text-xs text-muted">{{ t("admin.editor.templates." + template.id + ".description") }}</p>
+                                <p class="text-xs text-muted">{{ t("backend.editor.templates." + template.id + ".description") }}</p>
                             </button>
                         </div>
 
@@ -134,14 +134,14 @@ function apply(template) {
                                     <div>
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="text-xl">{{ hoveredTemplate.icon }}</span>
-                                            <span class="font-semibold text-sm text-primary">{{ t("admin.editor.templates." + hoveredTemplate.id + ".label") }}</span>
+                                            <span class="font-semibold text-sm text-primary">{{ t("backend.editor.templates." + hoveredTemplate.id + ".label") }}</span>
                                         </div>
                                         <span class="inline-block px-2 py-0.5 rounded-full text-xs bg-surface-3 text-secondary">
-                                            {{ t("admin.editor.templates.categories." + hoveredTemplate.category) }}
+                                            {{ t("backend.editor.templates.categories." + hoveredTemplate.category) }}
                                         </span>
                                     </div>
                                     <div v-if="hoveredTemplate.blocks.length" class="flex flex-col gap-1.5">
-                                        <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("admin.editor.templates.structure") }}</p>
+                                        <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("backend.editor.templates.structure") }}</p>
                                         <template v-for="(block, i) in hoveredTemplate.blocks" :key="i">
                                             <div v-if="block.type === BlockType.Header" class="h-2.5 rounded-sm bg-surface-3 w-3/4" />
                                             <div v-else-if="block.type === BlockType.Paragraph" class="flex flex-col gap-1">
@@ -203,13 +203,13 @@ function apply(template) {
                                             <div v-else class="h-2 rounded-sm bg-surface-3 w-2/3" />
                                         </template>
                                     </div>
-                                    <p v-else class="text-xs text-muted italic">{{ t("admin.editor.templates.emptyContent") }}</p>
+                                    <p v-else class="text-xs text-muted italic">{{ t("backend.editor.templates.emptyContent") }}</p>
                                     <p class="text-xs text-muted mt-auto pt-2 border-t border-line">
                                         {{ hoveredTemplate.blocks.length }}
-                                        {{ hoveredTemplate.blocks.length > 1 ? t("admin.editor.templates.blocks") : t("admin.editor.templates.block") }}
+                                        {{ hoveredTemplate.blocks.length > 1 ? t("backend.editor.templates.blocks") : t("backend.editor.templates.block") }}
                                     </p>
                                 </div>
-                                <p v-else key="empty" class="text-xs text-muted italic">{{ t("admin.editor.templates.subtitle") }}</p>
+                                <p v-else key="empty" class="text-xs text-muted italic">{{ t("backend.editor.templates.subtitle") }}</p>
                             </Transition>
                         </div>
                     </div>

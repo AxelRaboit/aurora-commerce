@@ -80,11 +80,11 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-surface border border-line/60 rounded-xl px-5 py-4">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.suppliers.show.totalInvoiced') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.suppliers.show.totalInvoiced') }}</p>
                     <p class="text-xl font-semibold text-primary tabular-nums mt-1">{{ formatCents(stats.totalInvoiced) ?? '—' }} EUR</p>
                 </div>
                 <div class="bg-surface border border-line/60 rounded-xl px-5 py-4">
-                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.suppliers.show.invoiceCount') }}</p>
+                    <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.suppliers.show.invoiceCount') }}</p>
                     <p class="text-xl font-semibold text-primary tabular-nums mt-1">{{ stats.invoiceCount }}</p>
                 </div>
             </div>
@@ -94,20 +94,20 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
         </div>
 
         <div class="bg-surface border border-line/60 rounded-xl p-6">
-            <h3 class="font-semibold text-primary mb-4">{{ t('admin.billing.suppliers.show.details') }}</h3>
+            <h3 class="font-semibold text-primary mb-4">{{ t('backend.billing.suppliers.show.details') }}</h3>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.name') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.name') }}</dt>
                     <dd class="text-primary font-medium">
                         <InlineField :display-value="tiers.name" :raw-value="tiers.name" type="text" v-on:save="updateField('name', $event)" />
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.vatNumber') }}</dt>
                     <dd><InlineField :display-value="tiers.vatNumber" :raw-value="tiers.vatNumber" type="text" v-on:save="updateField('vatNumber', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.registrationNumber') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.registrationNumber') }}</dt>
                     <dd><InlineField :display-value="tiers.registrationNumber" :raw-value="tiers.registrationNumber" type="text" v-on:save="updateField('registrationNumber', $event)" /></dd>
                 </div>
                 <div v-if="isSupplier">
@@ -119,35 +119,35 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
                     <dd><InlineField :display-value="tiers.bic" :raw-value="tiers.bic" type="text" v-on:save="updateField('bic', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.country') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.country') }}</dt>
                     <dd><InlineField :display-value="tiers.countryCode" :raw-value="tiers.countryCode" type="text" v-on:save="updateField('countryCode', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.email') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.email') }}</dt>
                     <dd><InlineField :display-value="tiers.email" :raw-value="tiers.email" type="text" v-on:save="updateField('email', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.phone') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.phone') }}</dt>
                     <dd><InlineField :display-value="tiers.phone" :raw-value="tiers.phone" type="text" v-on:save="updateField('phone', $event)" /></dd>
                 </div>
                 <div class="sm:col-span-2">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.address') }}</dt>
                     <dd><InlineField :display-value="tiers.address" :raw-value="tiers.address" type="text" v-on:save="updateField('address', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.legalForm') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.legalForm') }}</dt>
                     <dd><InlineField :display-value="tiers.legalForm" :raw-value="tiers.legalForm" type="text" v-on:save="updateField('legalForm', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.website') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.website') }}</dt>
                     <dd><InlineField :display-value="tiers.website" :raw-value="tiers.website" type="text" v-on:save="updateField('website', $event)" /></dd>
                 </div>
                 <div>
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.bankName') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.bankName') }}</dt>
                     <dd><InlineField :display-value="tiers.bankName" :raw-value="tiers.bankName" type="text" v-on:save="updateField('bankName', $event)" /></dd>
                 </div>
                 <div class="sm:col-span-2">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.billing.suppliers.notes') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.billing.suppliers.notes') }}</dt>
                     <dd><InlineField :display-value="tiers.notes" :raw-value="tiers.notes" type="text" v-on:save="updateField('notes', $event)" /></dd>
                 </div>
             </dl>
@@ -155,17 +155,17 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
 
         <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="font-semibold text-primary">{{ t('admin.billing.suppliers.show.invoices') }} ({{ total }})</h3>
+                <h3 class="font-semibold text-primary">{{ t('backend.billing.suppliers.show.invoices') }} ({{ total }})</h3>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="flex-1 max-w-md">
-                    <AppSearchInput v-model="search" :placeholder="t('admin.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
+                    <AppSearchInput v-model="search" :placeholder="t('backend.billing.invoices.searchPlaceholder')" v-on:search="onSearch" />
                 </div>
                 <AppMultiselect
                     v-model="statusFilter"
                     :options="STATUS_SELECT"
-                    :placeholder="t('admin.billing.list.allStatuses')"
+                    :placeholder="t('backend.billing.list.allStatuses')"
                     :allow-empty="true"
                     class="sm:max-w-xs"
                     v-on:update:model-value="onStatusChange"
@@ -173,14 +173,14 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
             </div>
 
             <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-                <AppNoData v-if="!items?.length" :message="t('admin.billing.invoices.empty')" />
+                <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
                 <table v-else class="w-full text-sm">
                     <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
                         <tr>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.number') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('admin.billing.invoices.issuedAt') }}</th>
-                            <th class="text-right px-4 py-3 font-semibold">{{ t('admin.billing.invoices.totalGross') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('admin.billing.invoices.statusLabel') }}</th>
+                            <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.number') }}</th>
+                            <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('backend.billing.invoices.issuedAt') }}</th>
+                            <th class="text-right px-4 py-3 font-semibold">{{ t('backend.billing.invoices.totalGross') }}</th>
+                            <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.statusLabel') }}</th>
                             <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
                         </tr>
                     </thead>
@@ -189,7 +189,7 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
                             <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
                             <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateNumeric(invoice.issuedAt) }}</td>
                             <td class="px-4 py-3 text-primary text-right tabular-nums">{{ formatCents(invoice.totalGrossCents, invoice.currency) ?? '—' }}</td>
-                            <td class="px-4 py-3"><AppBadge :color="invoice.statusColor">{{ invoice.statusLabel ?? t(`admin.billing.invoices.status.${invoice.status}`) }}</AppBadge></td>
+                            <td class="px-4 py-3"><AppBadge :color="invoice.statusColor">{{ invoice.statusLabel ?? t(`backend.billing.invoices.status.${invoice.status}`) }}</AppBadge></td>
                             <td class="px-4 py-3 text-right">
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: invoice.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
@@ -204,8 +204,8 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
         </div>
 
         <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false">
-            <p class="text-sm text-primary">{{ t('admin.billing.tiers.deleteConfirm', { name: tiers.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.tiers.deleteConfirm', { name: tiers.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteTiers">{{ t('shared.common.delete') }}</AppButton>

@@ -56,26 +56,26 @@ const refund = useOrderRefund(props.refundPath, order);
                         <h2 class="text-lg sm:text-xl font-bold text-primary font-mono">{{ order.number }}</h2>
                         <p class="text-sm text-secondary">{{ formatDateTime(order.createdAt) }}</p>
                     </div>
-                    <AppBadge :color="statusBadge(order.status)" class="self-start">{{ t(`admin.ecommerce.orders.status.${order.status}`) }}</AppBadge>
+                    <AppBadge :color="statusBadge(order.status)" class="self-start">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
                 </div>
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm border-t border-line pt-4">
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.ecommerce.orders.customer') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.ecommerce.orders.customer') }}</dt>
                         <dd class="text-primary">{{ order.name }}</dd>
                         <dd class="text-secondary">{{ order.email }}</dd>
                     </div>
                     <div v-if="order.requiresShipping">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.ecommerce.orders.shipping') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.ecommerce.orders.shipping') }}</dt>
                         <dd class="text-secondary">{{ order.addressLine1 }}<span v-if="order.addressLine2">, {{ order.addressLine2 }}</span></dd>
                         <dd class="text-secondary">{{ order.postalCode }} {{ order.city }} ({{ order.country }})</dd>
                     </div>
                     <div v-else>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.ecommerce.orders.fulfillment') }}</dt>
-                        <dd class="text-secondary">{{ t('admin.ecommerce.orders.no_shipping_required') }}</dd>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.ecommerce.orders.fulfillment') }}</dt>
+                        <dd class="text-secondary">{{ t('backend.ecommerce.orders.no_shipping_required') }}</dd>
                     </div>
                     <div v-if="order.notes" class="sm:col-span-2">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('admin.ecommerce.orders.notes') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.ecommerce.orders.notes') }}</dt>
                         <dd class="text-secondary whitespace-pre-wrap">{{ order.notes }}</dd>
                     </div>
                 </dl>
@@ -91,12 +91,12 @@ const refund = useOrderRefund(props.refundPath, order);
                         <span class="text-sm font-semibold text-primary shrink-0">{{ formatLineSubtotal(line) }}</span>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-line/40 text-xs text-secondary">
-                        <span>{{ t('admin.ecommerce.orders.quantity') }}</span>
+                        <span>{{ t('backend.ecommerce.orders.quantity') }}</span>
                         <span>× {{ line.quantity }}</span>
                     </div>
                 </div>
                 <div class="bg-surface-2 border border-line rounded-xl p-4 flex items-center justify-between">
-                    <span class="font-semibold text-primary">{{ t('admin.ecommerce.orders.total') }}</span>
+                    <span class="font-semibold text-primary">{{ t('backend.ecommerce.orders.total') }}</span>
                     <span class="font-bold text-lg text-primary">{{ formattedTotal }}</span>
                 </div>
             </div>
@@ -105,10 +105,10 @@ const refund = useOrderRefund(props.refundPath, order);
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.product') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.ecommerce.orders.reference') }}</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.quantity') }}</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.orders.subtotal') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.product') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.orders.reference') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.quantity') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.subtotal') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
@@ -121,7 +121,7 @@ const refund = useOrderRefund(props.refundPath, order);
                     </tbody>
                     <tfoot class="bg-surface-2 border-t border-line">
                         <tr>
-                            <td colspan="3" class="px-4 py-3 text-right font-semibold text-primary">{{ t('admin.ecommerce.orders.total') }}</td>
+                            <td colspan="3" class="px-4 py-3 text-right font-semibold text-primary">{{ t('backend.ecommerce.orders.total') }}</td>
                             <td class="px-4 py-3 text-right font-bold text-lg text-primary">{{ formattedTotal }}</td>
                         </tr>
                     </tfoot>
@@ -131,7 +131,7 @@ const refund = useOrderRefund(props.refundPath, order);
 
         <div class="space-y-4">
             <div v-if="canManage" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.ecommerce.orders.actions.title') }}</h3>
+                <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.ecommerce.orders.actions.title') }}</h3>
                 <AppButton
                     v-for="transition in availableTransitions"
                     :key="transition.status"
@@ -150,10 +150,10 @@ const refund = useOrderRefund(props.refundPath, order);
                     size="md"
                     class="w-full"
                     :loading="loading"
-                    v-on:click="confirmTransition({ status: OrderStatus.Cancelled, label: t('admin.ecommerce.orders.actions.cancel'), icon: Ban })"
+                    v-on:click="confirmTransition({ status: OrderStatus.Cancelled, label: t('backend.ecommerce.orders.actions.cancel'), icon: Ban })"
                 >
                     <Ban class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.ecommerce.orders.actions.cancel') }}
+                    {{ t('backend.ecommerce.orders.actions.cancel') }}
                 </AppButton>
                 <AppButton
                     v-if="order.isRefundable && refundPath"
@@ -163,15 +163,15 @@ const refund = useOrderRefund(props.refundPath, order);
                     v-on:click="refund.open"
                 >
                     <Undo2 class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.ecommerce.orders.refund.action') }}
+                    {{ t('backend.ecommerce.orders.refund.action') }}
                 </AppButton>
-                <p v-if="!availableTransitions.length && !canCancel && !order.isRefundable" class="text-xs text-muted text-center py-2">{{ t('admin.ecommerce.orders.actions.no_transitions') }}</p>
+                <p v-if="!availableTransitions.length && !canCancel && !order.isRefundable" class="text-xs text-muted text-center py-2">{{ t('backend.ecommerce.orders.actions.no_transitions') }}</p>
             </div>
 
             <div class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <h3 class="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
                     <Clock class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.ecommerce.orders.timeline') }}
+                    {{ t('backend.ecommerce.orders.timeline') }}
                 </h3>
                 <ol v-if="activity.length" class="space-y-3">
                     <li v-for="entry in activity" :key="entry.id" class="flex gap-3">
@@ -182,12 +182,12 @@ const refund = useOrderRefund(props.refundPath, order);
                         </div>
                     </li>
                 </ol>
-                <p v-else class="text-xs text-muted text-center py-2">{{ t('admin.ecommerce.orders.no_activity') }}</p>
+                <p v-else class="text-xs text-muted text-center py-2">{{ t('backend.ecommerce.orders.no_activity') }}</p>
             </div>
         </div>
 
         <AppModal :show="!!pendingTransition" max-width="sm" v-on:close="pendingTransition = null">
-            <p class="text-sm text-primary">{{ t('admin.ecommerce.orders.actions.confirm', { label: pendingTransition?.label }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.ecommerce.orders.actions.confirm', { label: pendingTransition?.label }) }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingTransition = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="pendingTransition?.status === 'cancelled' ? 'danger' : 'primary'" size="md" :loading="loading" v-on:click="applyTransition">{{ t('shared.common.confirm') }}</AppButton>
@@ -195,14 +195,14 @@ const refund = useOrderRefund(props.refundPath, order);
         </AppModal>
 
         <AppModal :show="refund.showModal.value" max-width="sm" v-on:close="refund.close">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.ecommerce.orders.refund.title') }}</h3>
-            <p class="text-sm text-secondary mb-4">{{ t('admin.ecommerce.orders.refund.hint') }}</p>
-            <AppCheckbox v-model="refund.isFullRefund.value" :label="t('admin.ecommerce.orders.refund.full', { total: formattedTotal })" class="mb-3" />
+            <h3 class="text-base font-semibold text-primary mb-3">{{ t('backend.ecommerce.orders.refund.title') }}</h3>
+            <p class="text-sm text-secondary mb-4">{{ t('backend.ecommerce.orders.refund.hint') }}</p>
+            <AppCheckbox v-model="refund.isFullRefund.value" :label="t('backend.ecommerce.orders.refund.full', { total: formattedTotal })" class="mb-3" />
             <AppInput
                 v-if="!refund.isFullRefund.value"
                 v-model="refund.refundAmount.value"
                 type="number"
-                :label="t('admin.ecommerce.orders.refund.amount')"
+                :label="t('backend.ecommerce.orders.refund.amount')"
                 step="0.01"
                 min="0.01"
                 :max="order.total"
@@ -210,7 +210,7 @@ const refund = useOrderRefund(props.refundPath, order);
             />
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="refund.close">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm">{{ t('admin.ecommerce.orders.refund.confirm') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm">{{ t('backend.ecommerce.orders.refund.confirm') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

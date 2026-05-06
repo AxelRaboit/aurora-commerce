@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ deal.name }} - {{ 'admin.nav.deals'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ deal.name }} - {{ 'backend.nav.deals'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: deal.name,
         crumbs: [
-            {label: 'admin.modules.crm'|trans, href: path('backend_crm_contacts')},
-            {label: 'admin.nav.deals'|trans, href: backPath},
+            {label: 'backend.modules.crm'|trans, href: path('backend_crm_contacts')},
+            {label: 'backend.nav.deals'|trans, href: backPath},
             {label: deal.name},
         ],
     }) }}

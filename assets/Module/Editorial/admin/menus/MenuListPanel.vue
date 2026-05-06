@@ -16,9 +16,9 @@ defineEmits(["select"]);
 
 <template>
     <aside class="bg-surface border border-line rounded-xl p-3 space-y-3 self-start">
-        <h2 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t("admin.menus.title") }}</h2>
+        <h2 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t("backend.menus.title") }}</h2>
 
-        <AppNoData v-if="!menus.length" :message="t('admin.menus.empty')" />
+        <AppNoData v-if="!menus.length" :message="t('backend.menus.empty')" />
 
         <ul v-else class="space-y-1">
             <li v-for="menu in menus" :key="menu.id">

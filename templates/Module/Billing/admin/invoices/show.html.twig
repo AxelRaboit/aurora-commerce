@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ invoice.number ?? ('#' ~ invoice.id) }} - {{ 'admin.nav.invoices'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ invoice.number ?? ('#' ~ invoice.id) }} - {{ 'backend.nav.invoices'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: invoice.number ?? ('Facture #' ~ invoice.id),
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.invoices'|trans, href: listPath},
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.invoices'|trans, href: listPath},
             {label: invoice.number ?? ('#' ~ invoice.id)},
         ],
     }) }}

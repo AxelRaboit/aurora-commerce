@@ -40,7 +40,7 @@ export function useUsersPrivileges(props, fetchUsers) {
             });
             const data = await response.json();
             if (data?.success) {
-                toast.success(t("admin.users.privileges.saved"));
+                toast.success(t("backend.users.privileges.saved"));
                 privilegesModal.open = false;
                 fetchUsers();
             }

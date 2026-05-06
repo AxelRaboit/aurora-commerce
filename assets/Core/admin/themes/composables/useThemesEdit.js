@@ -29,49 +29,61 @@ export function useThemesEdit(themeList, updatePath) {
     const CSS_SECTIONS = computed(() => [
         {
             key: "general",
-            label: t("admin.themes.sections.general"),
+            label: t("backend.themes.sections.general"),
             vars: [
-                { key: "--th-accent", label: t("admin.themes.vars.accent") },
+                { key: "--th-accent", label: t("backend.themes.vars.accent") },
                 {
                     key: "--th-accent-hover",
-                    label: t("admin.themes.vars.accentHover"),
+                    label: t("backend.themes.vars.accentHover"),
                 },
-                { key: "--th-bg", label: t("admin.themes.vars.bg") },
-                { key: "--th-surface", label: t("admin.themes.vars.surface") },
+                { key: "--th-bg", label: t("backend.themes.vars.bg") },
+                {
+                    key: "--th-surface",
+                    label: t("backend.themes.vars.surface"),
+                },
                 {
                     key: "--th-surface-2",
-                    label: t("admin.themes.vars.surface2"),
+                    label: t("backend.themes.vars.surface2"),
                 },
-                { key: "--th-primary", label: t("admin.themes.vars.primary") },
+                {
+                    key: "--th-primary",
+                    label: t("backend.themes.vars.primary"),
+                },
                 {
                     key: "--th-secondary",
-                    label: t("admin.themes.vars.secondary"),
+                    label: t("backend.themes.vars.secondary"),
                 },
-                { key: "--th-muted", label: t("admin.themes.vars.muted") },
+                { key: "--th-muted", label: t("backend.themes.vars.muted") },
             ],
         },
         {
             key: "header",
-            label: t("admin.themes.sections.header"),
+            label: t("backend.themes.sections.header"),
             vars: [
-                { key: "--th-header-bg", label: t("admin.themes.vars.bg") },
+                { key: "--th-header-bg", label: t("backend.themes.vars.bg") },
                 {
                     key: "--th-header-border",
-                    label: t("admin.themes.vars.border"),
+                    label: t("backend.themes.vars.border"),
                 },
-                { key: "--th-header-text", label: t("admin.themes.vars.text") },
+                {
+                    key: "--th-header-text",
+                    label: t("backend.themes.vars.text"),
+                },
             ],
         },
         {
             key: "footer",
-            label: t("admin.themes.sections.footer"),
+            label: t("backend.themes.sections.footer"),
             vars: [
-                { key: "--th-footer-bg", label: t("admin.themes.vars.bg") },
+                { key: "--th-footer-bg", label: t("backend.themes.vars.bg") },
                 {
                     key: "--th-footer-border",
-                    label: t("admin.themes.vars.border"),
+                    label: t("backend.themes.vars.border"),
                 },
-                { key: "--th-footer-text", label: t("admin.themes.vars.text") },
+                {
+                    key: "--th-footer-text",
+                    label: t("backend.themes.vars.text"),
+                },
             ],
         },
     ]);
@@ -171,7 +183,7 @@ export function useThemesEdit(themeList, updatePath) {
             );
             if (index !== -1) themeList.value[index] = data.theme;
             editModal.open = false;
-            toast.success(t("admin.themes.updated"));
+            toast.success(t("backend.themes.updated"));
         } catch {
             toast.error(t("shared.common.error"));
         } finally {

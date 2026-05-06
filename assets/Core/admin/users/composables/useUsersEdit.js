@@ -92,7 +92,7 @@ export function useUsersEdit(props, fetchUsers) {
                 return;
             }
             editModal.editing = data.user;
-            toast.success(t("admin.users.photo.uploaded"));
+            toast.success(t("backend.users.photo.uploaded"));
             fetchUsers();
         } catch {
             toast.error(t("shared.common.error"));
@@ -115,7 +115,7 @@ export function useUsersEdit(props, fetchUsers) {
                 return;
             }
             editModal.editing = data.user;
-            toast.success(t("admin.users.photo.removed"));
+            toast.success(t("backend.users.photo.removed"));
             fetchUsers();
         } catch {
             toast.error(t("shared.common.error"));

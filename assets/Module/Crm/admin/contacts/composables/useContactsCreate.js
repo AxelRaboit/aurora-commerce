@@ -44,16 +44,16 @@ export function useContactsCreate(createPath, reset) {
             !validate({
                 firstName: () =>
                     required(
-                        t("admin.crm.contacts.errors.first_name_required"),
+                        t("backend.crm.contacts.errors.first_name_required"),
                     )(newContact.value.firstName),
                 lastName: () =>
-                    required(t("admin.crm.contacts.errors.last_name_required"))(
-                        newContact.value.lastName,
-                    ),
+                    required(
+                        t("backend.crm.contacts.errors.last_name_required"),
+                    )(newContact.value.lastName),
                 email: () =>
                     newContact.value.email
                         ? emailValidator(
-                              t("admin.crm.contacts.errors.email_invalid"),
+                              t("backend.crm.contacts.errors.email_invalid"),
                           )(newContact.value.email)
                         : null,
             })
@@ -63,7 +63,7 @@ export function useContactsCreate(createPath, reset) {
         if (!data) return;
         if (data.success) {
             showCreate.value = false;
-            toast.success(t("admin.crm.contacts.created"));
+            toast.success(t("backend.crm.contacts.created"));
             reset();
         } else setErrors(translateServerErrors(t, data.errors));
     }

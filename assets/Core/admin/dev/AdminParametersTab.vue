@@ -35,13 +35,13 @@ onMounted(() => {
         <div>
             <AppSearchInput
                 v-model="parameters.searchInput.value"
-                :placeholder="t('admin.parameters.searchPlaceholder')"
+                :placeholder="t('backend.parameters.searchPlaceholder')"
                 v-on:search="parameters.performSearch"
             />
         </div>
 
         <div class="sm:hidden space-y-3">
-            <p v-if="!parameters.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</p>
+            <p v-if="!parameters.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.parameters.empty') }}</p>
             <div v-for="parameter in parameters.items.value" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -77,9 +77,9 @@ onMounted(() => {
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/3">{{ t('admin.parameters.key') }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/4">{{ t('admin.parameters.value') }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.parameters.description') }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/3">{{ t('backend.parameters.key') }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted w-1/4">{{ t('backend.parameters.value') }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.parameters.description') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
@@ -105,7 +105,7 @@ onMounted(() => {
                         <td class="px-5 py-3 align-top text-sm text-secondary hidden md:table-cell max-w-md">{{ parameter.description }}</td>
                     </tr>
                     <tr v-if="!parameters.items.value?.length">
-                        <td colspan="3" class="px-5 py-8 text-center text-sm text-muted">{{ t('admin.parameters.empty') }}</td>
+                        <td colspan="3" class="px-5 py-8 text-center text-sm text-muted">{{ t('backend.parameters.empty') }}</td>
                     </tr>
                 </tbody>
             </table>

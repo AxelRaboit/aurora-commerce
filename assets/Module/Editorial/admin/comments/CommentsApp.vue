@@ -62,10 +62,10 @@ const {
 );
 
 const tabs = computed(() => [
-    { key: "", label: t("admin.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
-    { key: CommentStatus.Pending, label: t("admin.comments.pending"), count: localStats.value.pending },
-    { key: CommentStatus.Approved, label: t("admin.comments.approved"), count: localStats.value.approved },
-    { key: CommentStatus.Spam, label: t("admin.comments.spam"), count: localStats.value.spam },
+    { key: "", label: t("backend.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
+    { key: CommentStatus.Pending, label: t("backend.comments.pending"), count: localStats.value.pending },
+    { key: CommentStatus.Approved, label: t("backend.comments.approved"), count: localStats.value.approved },
+    { key: CommentStatus.Spam, label: t("backend.comments.spam"), count: localStats.value.spam },
 ]);
 
 function selectTab(key) {
@@ -103,12 +103,12 @@ function statusBadgeColor(status) {
                 v-on:click="pendingToggleModeration = true"
             >
                 <span class="w-2 h-2 rounded-full" :class="isModerationEnabled ? 'bg-white' : 'bg-muted'" />
-                {{ isModerationEnabled ? t("admin.comments.moderationOn") : t("admin.comments.moderationOff") }}
+                {{ isModerationEnabled ? t("backend.comments.moderationOn") : t("backend.comments.moderationOff") }}
             </AppButton>
         </div>
 
         <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
+            <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
             <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="flex-1 min-w-0">
@@ -124,13 +124,13 @@ function statusBadgeColor(status) {
                 <div class="flex items-center justify-between pt-2 border-t border-line/40">
                     <p class="text-xs text-muted">{{ formatDateShort(comment.createdAt) }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                        <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
                             <Eye class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                        <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
                             <Check class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                        <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
                             <Ban class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                         <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
@@ -142,16 +142,16 @@ function statusBadgeColor(status) {
         </div>
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!loading && !comments.length" :message="t('admin.comments.empty')" />
+            <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.comments.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.comments.post') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.content') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.comments.date') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.comments.status') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.comments.post') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.content') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.date') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.status') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.edit') }}</th>
                     </tr>
                 </thead>
@@ -170,13 +170,13 @@ function statusBadgeColor(status) {
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="accent" :title="t('admin.comments.view')" v-on:click="viewingComment = comment">
+                                <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(comment)">
+                                <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
                                     <Check class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                                <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
                                     <Ban class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
@@ -192,42 +192,42 @@ function statusBadgeColor(status) {
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="!!viewingComment" max-width="md" v-on:close="viewingComment = null">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.comments.view') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.comments.view') }}</h3>
             <div class="space-y-4">
                 <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.name') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.name') }}</label>
                     <p class="text-sm text-primary font-medium">{{ viewingComment?.authorName }}</p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.email') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.email') }}</label>
                     <p class="text-sm text-secondary">{{ viewingComment?.authorEmail }}</p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.post') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.post') }}</label>
                     <p class="text-sm text-secondary">{{ viewingComment?.postTitle }}</p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.date') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.date') }}</label>
                     <p class="text-sm text-muted">{{ viewingComment ? formatDateTime(viewingComment.createdAt) : '' }}</p>
                 </div>
                 <div v-if="viewingComment?.parentId" class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.replyTo') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.replyTo') }}</label>
                     <p class="text-sm text-secondary">{{ viewingComment?.parentAuthorName }}</p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.content') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.content') }}</label>
                     <p class="text-sm text-primary whitespace-pre-wrap bg-surface-2 rounded-lg px-3 py-2.5">{{ viewingComment?.content }}</p>
                 </div>
                 <div v-if="viewingComment?.reactionCount > 0" class="flex flex-col gap-1.5">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('admin.comments.reactions') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.reactions') }}</label>
                     <p class="text-sm text-secondary">{{ viewingComment?.reactionCount }}</p>
                 </div>
             </div>
             <AppModalFooter bordered>
-                <AppIconButton v-if="viewingComment?.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('admin.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
+                <AppIconButton v-if="viewingComment?.status !== 'approved' && can('editorial.comments.manage')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(viewingComment); viewingComment = null">
                     <Check class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton v-if="viewingComment?.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('admin.comments.markSpam')" v-on:click="confirmSpam(viewingComment); viewingComment = null">
+                <AppIconButton v-if="viewingComment?.status !== 'spam' && can('editorial.comments.manage')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(viewingComment); viewingComment = null">
                     <Ban class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
                 <AppIconButton v-if="can('editorial.comments.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(viewingComment); viewingComment = null">
@@ -241,31 +241,31 @@ function statusBadgeColor(status) {
 
         <AppModal :show="pendingToggleModeration" max-width="sm" v-on:close="pendingToggleModeration = false">
             <h3 class="text-base font-semibold text-primary">
-                {{ isModerationEnabled ? t('admin.comments.moderationDisableConfirm') : t('admin.comments.moderationEnableConfirm') }}
+                {{ isModerationEnabled ? t('backend.comments.moderationDisableConfirm') : t('backend.comments.moderationEnableConfirm') }}
             </h3>
             <p class="text-sm text-secondary">
-                {{ isModerationEnabled ? t('admin.comments.moderationDisableConfirmDesc') : t('admin.comments.moderationEnableConfirmDesc') }}
+                {{ isModerationEnabled ? t('backend.comments.moderationDisableConfirmDesc') : t('backend.comments.moderationEnableConfirmDesc') }}
             </p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingToggleModeration = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="isModerationEnabled ? 'danger' : 'primary'" size="md" :loading="toggleModerationLoading" v-on:click="doToggleModeration">
-                    {{ isModerationEnabled ? t('admin.comments.moderationOff') : t('admin.comments.moderationOn') }}
+                    {{ isModerationEnabled ? t('backend.comments.moderationOff') : t('backend.comments.moderationOn') }}
                 </AppButton>
             </AppModalFooter>
         </AppModal>
 
         <AppModal :show="!!pendingSpam" max-width="sm" v-on:close="pendingSpam = null">
-            <h3 class="text-base font-semibold text-primary">{{ t('admin.comments.spamConfirm') }}</h3>
-            <p class="text-sm text-secondary">{{ t('admin.comments.spamConfirmDesc') }}</p>
+            <h3 class="text-base font-semibold text-primary">{{ t('backend.comments.spamConfirm') }}</h3>
+            <p class="text-sm text-secondary">{{ t('backend.comments.spamConfirmDesc') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingSpam = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="spamLoading" v-on:click="doSpam">{{ t('admin.comments.markSpam') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="spamLoading" v-on:click="doSpam">{{ t('backend.comments.markSpam') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.comments.deleteConfirm') }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.comments.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.comments.deleteConfirm') }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.comments.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

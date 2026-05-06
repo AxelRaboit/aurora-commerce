@@ -30,19 +30,19 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
 <template>
     <div class="space-y-4">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-primary">{{ t("admin.agencies.title") }}</h1>
+            <h1 class="text-2xl font-bold text-primary">{{ t("backend.agencies.title") }}</h1>
             <AppButton v-if="isAdmin" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.agencies.new") }}
+                {{ t("backend.agencies.new") }}
             </AppButton>
         </div>
 
         <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <AppNoData v-if="!agencyList.length" :message="t('admin.agencies.empty')" />
+            <AppNoData v-if="!agencyList.length" :message="t('backend.agencies.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.agencies.name") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.agencies.name") }}</th>
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -66,13 +66,13 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
 
         <AppModal :show="editModal.open" max-width="sm" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ editModal.agency ? t("admin.agencies.edit_title", { name: editModal.agency.name }) : t("admin.agencies.new") }}
+                {{ editModal.agency ? t("backend.agencies.edit_title", { name: editModal.agency.name }) : t("backend.agencies.new") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.agencies.name')"
-                    :placeholder="t('admin.agencies.namePlaceholder')"
+                    :label="t('backend.agencies.name')"
+                    :placeholder="t('backend.agencies.namePlaceholder')"
                     :error="editModal.errors.name ?? ''"
                     :required="true"
                 />
@@ -87,7 +87,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
         </AppModal>
 
         <AppModal :show="!!deletingAgency" max-width="sm" v-on:close="deletingAgency = null">
-            <p class="text-sm text-primary">{{ t("admin.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="deletingAgency = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t("shared.common.delete") }}</AppButton>

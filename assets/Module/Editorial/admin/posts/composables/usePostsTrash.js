@@ -20,7 +20,7 @@ export function usePostsTrash(props, removePost, setTrashedFilter) {
             const data = await response.json();
             if (data.success) {
                 toast.success(
-                    t("admin.posts.emptyTrashDone", { count: data.count }),
+                    t("backend.posts.emptyTrashDone", { count: data.count }),
                 );
                 setTrashedFilter(true);
             } else toast.error(t("shared.common.error"));
@@ -42,7 +42,7 @@ export function usePostsTrash(props, removePost, setTrashedFilter) {
             const data = await response.json();
             if (data.success) {
                 removePost(post.id);
-                toast.success(t("admin.posts.restored"));
+                toast.success(t("backend.posts.restored"));
             }
         } catch {
             toast.error(t("shared.common.error"));

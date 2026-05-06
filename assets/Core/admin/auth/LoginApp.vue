@@ -29,10 +29,10 @@ const { errors, submitOnValid } = useAuthForm();
 function handleSubmit(event) {
     submitOnValid(event, {
         email: () => compose(
-            required(t("admin.auth.register.error_email_required")),
-            emailValidator(t("admin.auth.register.error_email_invalid")),
+            required(t("backend.auth.register.error_email_required")),
+            emailValidator(t("backend.auth.register.error_email_invalid")),
         )(email.value),
-        password: () => required(t("admin.auth.invitation.errors.password_required"))(password.value),
+        password: () => required(t("backend.auth.invitation.errors.password_required"))(password.value),
     });
 }
 </script>
@@ -47,8 +47,8 @@ function handleSubmit(event) {
             v-model="email"
             name="email"
             type="email"
-            :label="t('admin.auth.login.email')"
-            :placeholder="t('admin.auth.login.email_placeholder')"
+            :label="t('backend.auth.login.email')"
+            :placeholder="t('backend.auth.login.email_placeholder')"
             :error="errors.email"
             autocomplete="email"
             autofocus
@@ -58,7 +58,7 @@ function handleSubmit(event) {
         <AppInput
             v-model="password"
             name="password"
-            :label="t('admin.auth.login.password')"
+            :label="t('backend.auth.login.password')"
             placeholder="••••••••"
             :error="errors.password"
             autocomplete="current-password"
@@ -69,12 +69,12 @@ function handleSubmit(event) {
         <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="_remember_me" value="1" class="w-4 h-4 rounded border-line bg-surface-2 text-accent-600 focus:ring-accent-500 focus:ring-offset-0">
-                <span class="text-sm text-secondary">{{ t('admin.auth.login.remember') }}</span>
+                <span class="text-sm text-secondary">{{ t('backend.auth.login.remember') }}</span>
             </label>
-            <AppLink :href="forgotPath" class="text-sm">{{ t('admin.auth.login.forgot') }}</AppLink>
+            <AppLink :href="forgotPath" class="text-sm">{{ t('backend.auth.login.forgot') }}</AppLink>
         </div>
 
-        <AppButton type="submit"><LogIn class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.login.submit') }}</AppButton>
+        <AppButton type="submit"><LogIn class="w-4 h-4" :stroke-width="2" /> {{ t('backend.auth.login.submit') }}</AppButton>
     </form>
 
     <div class="mt-6 flex items-center gap-4">
@@ -84,7 +84,7 @@ function handleSubmit(event) {
     </div>
 
     <div class="mt-4 flex flex-col gap-2 text-center text-sm">
-        <AppLink v-if="registrationEnabled" :href="registerPath">{{ t('admin.auth.login.no_account') }}</AppLink>
-        <AppLink v-if="accessRequestEnabled" :href="accessRequestPath">{{ t('admin.auth.login.request_access') }}</AppLink>
+        <AppLink v-if="registrationEnabled" :href="registerPath">{{ t('backend.auth.login.no_account') }}</AppLink>
+        <AppLink v-if="accessRequestEnabled" :href="accessRequestPath">{{ t('backend.auth.login.request_access') }}</AppLink>
     </div>
 </template>

@@ -35,7 +35,7 @@ export function useOrderRefund(refundPath, order) {
 
         if (data?.success) {
             order.value = { ...order.value, ...data.order };
-            toast.success(t("admin.ecommerce.orders.refund.success"));
+            toast.success(t("backend.ecommerce.orders.refund.success"));
             showModal.value = false;
         } else if (data?.error) {
             toast.error(t(data.error) || data.error);

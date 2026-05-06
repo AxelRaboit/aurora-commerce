@@ -58,7 +58,7 @@ async function onPhotoSelected(file) {
             return;
         }
         photoUrl.value = data.profilePhotoUrl ?? "";
-        toast.success(t("admin.users.photo.uploaded"));
+        toast.success(t("backend.users.photo.uploaded"));
     } catch {
         toast.error(t("shared.common.error"));
     } finally {
@@ -76,7 +76,7 @@ async function removePhoto() {
             return;
         }
         photoUrl.value = "";
-        toast.success(t("admin.users.photo.removed"));
+        toast.success(t("backend.users.photo.removed"));
     } catch {
         toast.error(t("shared.common.error"));
     } finally {
@@ -89,11 +89,11 @@ async function removePhoto() {
     <div class="max-w-2xl mx-auto space-y-6">
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.locale.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.locale.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('backend.profile.locale.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.locale.subtitle') }}</p>
             </header>
             <div>
-                <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.profile.locale.field') }}</label>
+                <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.profile.locale.field') }}</label>
                 <select
                     v-model="selectedLocale"
                     :disabled="localeLoading"
@@ -110,8 +110,8 @@ async function removePhoto() {
 
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.photo.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.photo.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('backend.profile.photo.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.photo.subtitle') }}</p>
             </header>
             <div class="flex items-center gap-5">
                 <AppAvatar variant="solid" :name="userName" :photo-url="photoUrl" :size="80" />
@@ -121,7 +121,7 @@ async function removePhoto() {
                             <div class="flex items-center gap-2 flex-wrap">
                                 <AppButton variant="ghost" size="sm" :loading="photoLoading" v-on:click="trigger">
                                     <Upload class="w-3.5 h-3.5" :stroke-width="2" />
-                                    {{ t('admin.users.photo.upload') }}
+                                    {{ t('backend.users.photo.upload') }}
                                 </AppButton>
                                 <AppButton
                                     v-if="photoUrl"
@@ -131,20 +131,20 @@ async function removePhoto() {
                                     v-on:click="removePhoto"
                                 >
                                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                                    {{ t('admin.users.photo.remove') }}
+                                    {{ t('backend.users.photo.remove') }}
                                 </AppButton>
                             </div>
                         </template>
                     </AppFileInput>
-                    <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
+                    <p class="text-xs text-muted">{{ t('backend.users.photo.hint') }}</p>
                 </div>
             </div>
         </div>
 
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.mood.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.mood.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('backend.profile.mood.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.mood.subtitle') }}</p>
             </header>
             <form class="space-y-3" v-on:submit.prevent="saveMood">
                 <div>
@@ -152,11 +152,11 @@ async function removePhoto() {
                         v-model="moodMessage"
                         :rows="2"
                         :maxlength="moodMessageMaxLength"
-                        :placeholder="t('admin.profile.mood.placeholder')"
+                        :placeholder="t('backend.profile.mood.placeholder')"
                         :error="moodError"
                     />
                     <div v-if="!moodError" class="mt-1 flex items-center justify-between">
-                        <span class="text-xs text-muted">{{ t('admin.profile.mood.hint') }}</span>
+                        <span class="text-xs text-muted">{{ t('backend.profile.mood.hint') }}</span>
                         <span class="text-xs text-muted">{{ moodMessage.length }}/{{ moodMessageMaxLength }}</span>
                     </div>
                 </div>
@@ -168,14 +168,14 @@ async function removePhoto() {
 
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.info.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.info.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('backend.profile.info.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.info.subtitle') }}</p>
             </header>
             <form class="space-y-4" v-on:submit.prevent="saveInfo">
                 <AppInput
                     v-model="infoName"
-                    :label="t('admin.profile.info.name')"
-                    :placeholder="t('admin.profile.info.namePlaceholder')"
+                    :label="t('backend.profile.info.name')"
+                    :placeholder="t('backend.profile.info.namePlaceholder')"
                     :error="infoErrors.name"
                     autocomplete="name"
                     required
@@ -183,8 +183,8 @@ async function removePhoto() {
                 <AppInput
                     v-model="infoEmail"
                     type="email"
-                    :label="t('admin.profile.info.email')"
-                    :placeholder="t('admin.profile.info.emailPlaceholder')"
+                    :label="t('backend.profile.info.email')"
+                    :placeholder="t('backend.profile.info.emailPlaceholder')"
                     :error="infoErrors.email"
                     autocomplete="email"
                     required
@@ -197,13 +197,13 @@ async function removePhoto() {
 
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-primary">{{ t('admin.profile.password.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.password.subtitle') }}</p>
+                <h2 class="text-lg font-semibold text-primary">{{ t('backend.profile.password.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.password.subtitle') }}</p>
             </header>
             <form class="space-y-4" v-on:submit.prevent="savePassword">
                 <AppInput
                     v-model="currentPassword"
-                    :label="t('admin.profile.password.current')"
+                    :label="t('backend.profile.password.current')"
                     :error="passwordErrors.current_password"
                     placeholder="••••••••"
                     autocomplete="current-password"
@@ -213,7 +213,7 @@ async function removePhoto() {
                 <div>
                     <AppInput
                         v-model="newPassword"
-                        :label="t('admin.profile.password.new')"
+                        :label="t('backend.profile.password.new')"
                         :error="passwordErrors.password"
                         placeholder="••••••••"
                         autocomplete="new-password"
@@ -224,7 +224,7 @@ async function removePhoto() {
                 </div>
                 <AppInput
                     v-model="confirmPassword"
-                    :label="t('admin.profile.password.confirm')"
+                    :label="t('backend.profile.password.confirm')"
                     :error="passwordErrors.password_confirmation"
                     placeholder="••••••••"
                     autocomplete="new-password"
@@ -239,11 +239,11 @@ async function removePhoto() {
 
         <div class="bg-surface border border-rose-900/40 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
-                <h2 class="text-lg font-semibold text-rose-400">{{ t('admin.profile.danger.title') }}</h2>
-                <p class="mt-1 text-sm text-secondary">{{ t('admin.profile.danger.description') }}</p>
+                <h2 class="text-lg font-semibold text-rose-400">{{ t('backend.profile.danger.title') }}</h2>
+                <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.danger.description') }}</p>
             </header>
             <AppButton variant="danger-subtle" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
-                {{ t('admin.profile.danger.submit') }}
+                {{ t('backend.profile.danger.submit') }}
             </AppButton>
         </div>
     </div>

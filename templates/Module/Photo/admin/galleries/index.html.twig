@@ -1,12 +1,12 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.galleries'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.galleries'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.photo'|trans, href: path('backend_galleries')},
-            {label: 'admin.nav.galleries'|trans},
+            {label: 'backend.modules.photo'|trans, href: path('backend_galleries')},
+            {label: 'backend.nav.galleries'|trans},
         ],
     }) }}
 {% endblock %}

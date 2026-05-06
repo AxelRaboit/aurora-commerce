@@ -60,7 +60,7 @@ const { loading: editLoading, request: editRequest } = useApiRequest();
 
 async function submitEdit() {
     if (!validateEdit({
-        slug: () => required(t("admin.ecommerce.listings.errors.slug_required"))(editForm.value.slug),
+        slug: () => required(t("backend.ecommerce.listings.errors.slug_required"))(editForm.value.slug),
     })) return;
 
     const data = await editRequest(props.updatePath, editForm.value);
@@ -109,11 +109,11 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.price') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.price') }}</dt>
                         <dd class="text-primary font-medium">{{ formatProductPrice(listing.product) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.frontUrl') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.frontUrl') }}</dt>
                         <dd>
                             <AppLink :href="frontUrl" target="_blank" class="text-accent-400 hover:underline inline-flex items-center gap-1 text-sm">
                                 {{ frontUrl }}
@@ -122,11 +122,11 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                         </dd>
                     </div>
                     <div v-if="listing.marketingDescription" class="sm:col-span-2">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.marketingDescription') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.marketingDescription') }}</dt>
                         <dd class="text-secondary text-sm whitespace-pre-wrap break-words">{{ listing.marketingDescription }}</dd>
                     </div>
                     <div v-if="listing.seoTitle || listing.seoDescription" class="sm:col-span-2 pt-3 border-t border-line">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.ecommerce.listings.seo') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.seo') }}</dt>
                         <dd class="space-y-1">
                             <p v-if="listing.seoTitle" class="text-primary text-sm">{{ listing.seoTitle }}</p>
                             <p v-if="listing.seoDescription" class="text-secondary text-sm">{{ listing.seoDescription }}</p>
@@ -141,36 +141,36 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <div class="aspect-square bg-surface-2">
                     <AppImage :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
                 </div>
-                <p v-if="listing.featuredImage" class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('admin.ecommerce.listings.featuredImageHint') }}</p>
-                <p v-else class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('admin.ecommerce.listings.productImageHint') }}</p>
+                <p v-if="listing.featuredImage" class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.featuredImageHint') }}</p>
+                <p v-else class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.productImageHint') }}</p>
             </div>
 
-            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.ecommerce.listings.linkedProduct') }}</h3>
+            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.ecommerce.listings.linkedProduct') }}</h3>
             <div class="bg-surface border border-line/60 rounded-lg p-4 space-y-2">
                 <p class="font-medium text-primary">{{ listing.product.name }}</p>
                 <p class="text-xs font-mono text-muted">{{ listing.product.reference }}</p>
                 <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
                 <AppBadge :color="listing.product.status === ProductStatus.Active ? 'emerald' : listing.product.status === ProductStatus.Draft ? 'amber' : 'slate'">
-                    {{ t(`admin.erp.products.status.${listing.product.status}`) }}
+                    {{ t(`backend.erp.products.status.${listing.product.status}`) }}
                 </AppBadge>
             </div>
         </div>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.ecommerce.listings.edit', { name: listing.displayTitle }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.ecommerce.listings.edit', { name: listing.displayTitle }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <AppInput v-model="editForm.slug" :label="t('admin.ecommerce.listings.slug')" :error="editErrors.slug" required />
-                <AppInput v-model="editForm.marketingTitle" :label="t('admin.ecommerce.listings.marketingTitle')" />
+                <AppInput v-model="editForm.slug" :label="t('backend.ecommerce.listings.slug')" :error="editErrors.slug" required />
+                <AppInput v-model="editForm.marketingTitle" :label="t('backend.ecommerce.listings.marketingTitle')" />
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="featuredImageValue"
-                    :label="t('admin.ecommerce.listings.featuredImage')"
-                    :hint="t('admin.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featuredImage')"
+                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
                 />
-                <AppInput v-model="editForm.seoTitle" :label="t('admin.ecommerce.listings.seoTitle')" />
-                <AppTextarea v-model="editForm.seoDescription" :rows="2" :placeholder="t('admin.ecommerce.listings.seoDescription')" />
+                <AppInput v-model="editForm.seoTitle" :label="t('backend.ecommerce.listings.seoTitle')" />
+                <AppTextarea v-model="editForm.seoDescription" :rows="2" :placeholder="t('backend.ecommerce.listings.seoDescription')" />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('admin.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
                     <AppToggle v-model="editForm.isVisibleOnShop" />
                 </div>
                 <AppModalFooter>
@@ -181,8 +181,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
-            <p class="text-sm text-primary">{{ t('admin.ecommerce.listings.deleteConfirm', { name: listing.displayTitle }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.ecommerce.listings.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: listing.displayTitle }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

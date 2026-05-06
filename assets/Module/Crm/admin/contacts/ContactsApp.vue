@@ -47,7 +47,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('admin.crm.contacts.searchPlaceholder')"
+                :placeholder="t('backend.crm.contacts.searchPlaceholder')"
                 v-on:search="onSearch"
             />
             <AppButton
@@ -58,7 +58,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-on:click="openCreate"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.crm.contacts.add') }}
+                {{ t('backend.crm.contacts.add') }}
             </AppButton>
         </div>
 
@@ -92,10 +92,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.contacts.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.contacts.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.contacts.company') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.crm.contacts.phone') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.email') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.contacts.company') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.contacts.phone') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -126,7 +126,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </tr>
 
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.crm.contacts.empty') }}</td>
+                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.contacts.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -135,20 +135,20 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.create') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.contacts.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
                         v-model="newContact.firstName"
-                        :label="t('admin.crm.contacts.firstName')"
-                        :placeholder="t('admin.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.firstName')"
+                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
                         :error="createErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="newContact.lastName"
-                        :label="t('admin.crm.contacts.lastName')"
-                        :placeholder="t('admin.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.lastName')"
+                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
                         :error="createErrors.lastName"
                         required
                     />
@@ -156,13 +156,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput
                     v-model="newContact.email"
                     type="email"
-                    :label="t('admin.crm.contacts.email')"
-                    :placeholder="t('admin.crm.contacts.emailPlaceholder')"
+                    :label="t('backend.crm.contacts.email')"
+                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
                     :error="createErrors.email"
                 />
-                <AppInput v-model="newContact.phone" :label="t('admin.crm.contacts.phone')" :placeholder="t('admin.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="newContact.company" :label="t('admin.crm.contacts.company')" :placeholder="t('admin.crm.contacts.companyPlaceholder')" />
-                <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('admin.crm.contacts.notesPlaceholder')" />
+                <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
+                <AppInput v-model="newContact.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -171,20 +171,20 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.contacts.edit', { name: editingContact?.fullName ?? '' }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.contacts.edit', { name: editingContact?.fullName ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.firstName"
-                        :label="t('admin.crm.contacts.firstName')"
-                        :placeholder="t('admin.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.firstName')"
+                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
                         :error="editErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="editForm.lastName"
-                        :label="t('admin.crm.contacts.lastName')"
-                        :placeholder="t('admin.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.lastName')"
+                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
                         :error="editErrors.lastName"
                         required
                     />
@@ -192,13 +192,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput
                     v-model="editForm.email"
                     type="email"
-                    :label="t('admin.crm.contacts.email')"
-                    :placeholder="t('admin.crm.contacts.emailPlaceholder')"
+                    :label="t('backend.crm.contacts.email')"
+                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
                     :error="editErrors.email"
                 />
-                <AppInput v-model="editForm.phone" :label="t('admin.crm.contacts.phone')" :placeholder="t('admin.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="editForm.company" :label="t('admin.crm.contacts.company')" :placeholder="t('admin.crm.contacts.companyPlaceholder')" />
-                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('admin.crm.contacts.notesPlaceholder')" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
+                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -207,8 +207,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.crm.contacts.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.crm.contacts.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

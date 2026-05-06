@@ -62,11 +62,11 @@ export function useListingsCreate(createPath, reset, loadProducts) {
             !validate({
                 productId: () =>
                     required(
-                        t("admin.ecommerce.listings.errors.product_required"),
+                        t("backend.ecommerce.listings.errors.product_required"),
                     )(newListing.value.productId),
                 slug: () =>
                     required(
-                        t("admin.ecommerce.listings.errors.slug_required"),
+                        t("backend.ecommerce.listings.errors.slug_required"),
                     )(newListing.value.slug),
             })
         )
@@ -75,7 +75,7 @@ export function useListingsCreate(createPath, reset, loadProducts) {
         if (!data) return;
         if (data.success) {
             showCreate.value = false;
-            toast.success(t("admin.ecommerce.listings.created"));
+            toast.success(t("backend.ecommerce.listings.created"));
             reset();
             loadProducts();
         } else {

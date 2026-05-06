@@ -25,7 +25,7 @@ const KIND_CLASS = {
 };
 
 const isConflict = computed(() => props.entry.kind === MergeKind.Conflict);
-const kindLabel = computed(() => t(`admin.posts.merge.kind.${props.entry.kind}`));
+const kindLabel = computed(() => t(`backend.posts.merge.kind.${props.entry.kind}`));
 const kindClass = computed(() => KIND_CLASS[props.entry.kind] ?? "bg-surface-2 text-muted");
 const blockType = computed(() => (props.entry.local ?? props.entry.remote ?? props.entry.base)?.type ?? "-");
 const shortId = computed(() => props.entry.id.slice(0, 8));
@@ -62,10 +62,10 @@ function renderBlock(block) {
                 v-on:click="emit('resolve', 'local')"
             >
                 <div class="flex items-center justify-between px-3 py-1.5 text-xs font-medium bg-surface-2 border-b border-line">
-                    <span class="text-accent-600 dark:text-accent-400">{{ t("admin.posts.merge.yours") }}</span>
+                    <span class="text-accent-600 dark:text-accent-400">{{ t("backend.posts.merge.yours") }}</span>
                     <Check v-if="entry.resolution === 'local'" class="w-3.5 h-3.5 text-accent-600" :stroke-width="2.5" />
                 </div>
-                <div class="p-3 prose-preview text-sm" v-html="renderBlock(entry.local) || `<em class='text-muted'>${t('admin.posts.merge.deleted')}</em>`" />
+                <div class="p-3 prose-preview text-sm" v-html="renderBlock(entry.local) || `<em class='text-muted'>${t('backend.posts.merge.deleted')}</em>`" />
             </div>
 
             <div
@@ -76,27 +76,27 @@ function renderBlock(block) {
                 v-on:click="emit('resolve', 'remote')"
             >
                 <div class="flex items-center justify-between px-3 py-1.5 text-xs font-medium bg-surface-2 border-b border-line">
-                    <span class="text-sky-600 dark:text-sky-400">{{ t("admin.posts.merge.theirs") }}</span>
+                    <span class="text-sky-600 dark:text-sky-400">{{ t("backend.posts.merge.theirs") }}</span>
                     <Check v-if="entry.resolution === 'remote'" class="w-3.5 h-3.5 text-sky-600" :stroke-width="2.5" />
                 </div>
-                <div class="p-3 prose-preview text-sm" v-html="renderBlock(entry.remote) || `<em class='text-muted'>${t('admin.posts.merge.deleted')}</em>`" />
+                <div class="p-3 prose-preview text-sm" v-html="renderBlock(entry.remote) || `<em class='text-muted'>${t('backend.posts.merge.deleted')}</em>`" />
             </div>
         </div>
 
         <div v-else class="border border-line rounded-lg overflow-hidden">
             <div class="p-3 prose-preview text-sm bg-surface">
                 <div v-if="resolvedBlock" v-html="renderBlock(resolvedBlock)" />
-                <em v-else class="text-muted text-xs">{{ t("admin.posts.merge.deleted") }}</em>
+                <em v-else class="text-muted text-xs">{{ t("backend.posts.merge.deleted") }}</em>
             </div>
             <div v-if="canFlip" class="flex items-center justify-end gap-2 px-3 py-1.5 bg-surface-2 border-t border-line text-xs">
-                <span class="text-muted">{{ t("admin.posts.merge.use") }}</span>
+                <span class="text-muted">{{ t("backend.posts.merge.use") }}</span>
                 <button
                     type="button"
                     class="px-2 py-0.5 rounded font-medium transition-colors"
                     :class="entry.resolution === 'local' ? 'bg-accent-600 text-white' : 'text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-950/50'"
                     v-on:click="emit('resolve', 'local')"
                 >
-                    {{ t("admin.posts.merge.yours") }}
+                    {{ t("backend.posts.merge.yours") }}
                 </button>
                 <button
                     type="button"
@@ -104,7 +104,7 @@ function renderBlock(block) {
                     :class="entry.resolution === 'remote' ? 'bg-sky-600 text-white' : 'text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/50'"
                     v-on:click="emit('resolve', 'remote')"
                 >
-                    {{ t("admin.posts.merge.theirs") }}
+                    {{ t("backend.posts.merge.theirs") }}
                 </button>
             </div>
         </div>

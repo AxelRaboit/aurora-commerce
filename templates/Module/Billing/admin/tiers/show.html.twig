@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ tiers.name }} - {{ 'admin.nav.tiers'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ tiers.name }} - {{ 'backend.nav.tiers'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: tiers.name,
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.tiers'|trans, href: listPath},
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.tiers'|trans, href: listPath},
             {label: tiers.name},
         ],
     }) }}

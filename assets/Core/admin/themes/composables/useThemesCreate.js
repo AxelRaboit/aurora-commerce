@@ -32,7 +32,7 @@ export function useThemesCreate(themeList, createPath) {
             }
             themeList.value.push(data.theme);
             createModal.open = false;
-            toast.success(t("admin.themes.created"));
+            toast.success(t("backend.themes.created"));
         } catch {
             toast.error(t("shared.common.error"));
         } finally {

@@ -117,9 +117,9 @@ function openSearchFromMobile() {
         <div class="px-3 py-2 border-b border-line shrink-0">
             <a :href="frontPath" target="_blank" rel="noopener" class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors group relative">
                 <Globe class="w-5 h-5 shrink-0 text-muted group-hover:text-emerald-400 transition-colors" :stroke-width="2" />
-                <span class="si-label truncate">{{ t("admin.nav.viewSite") }}</span>
+                <span class="si-label truncate">{{ t("backend.nav.viewSite") }}</span>
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("admin.nav.viewSite") }}
+                    {{ t("backend.nav.viewSite") }}
                 </span>
             </a>
         </div>
@@ -132,7 +132,7 @@ function openSearchFromMobile() {
                 v-on:click="openPalette"
             >
                 <Search class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                <span class="flex-1 text-left">{{ t("admin.search.button") }}</span>
+                <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
                 <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
             </button>
             <!-- Palette trigger — collapsed -->
@@ -143,7 +143,7 @@ function openSearchFromMobile() {
             >
                 <Search class="w-5 h-5 shrink-0" :stroke-width="2" />
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("admin.search.button") }}
+                    {{ t("backend.search.button") }}
                 </span>
             </button>
             <!-- Nav filter — expanded only -->
@@ -152,7 +152,7 @@ function openSearchFromMobile() {
                 <input
                     v-model="navFilter"
                     type="text"
-                    :placeholder="t('admin.nav.filterNav')"
+                    :placeholder="t('backend.nav.filterNav')"
                     class="w-full pl-7 pr-6 py-1.5 rounded-md text-xs bg-surface-2/60 border border-line/40 text-primary placeholder:text-muted focus:outline-none focus:border-line focus:bg-surface-2 transition-colors"
                 >
                 <button v-if="navFilter" type="button" class="absolute right-2 text-muted hover:text-primary transition-colors" v-on:click="navFilter = ''">
@@ -163,7 +163,7 @@ function openSearchFromMobile() {
 
         <nav class="sidebar-nav flex-1 py-4 space-y-3">
             <p v-if="navFilter && !displayedSections.length" class="sh-logo-expanded px-3 text-xs text-muted">
-                {{ t("admin.nav.filterNavEmpty") }}
+                {{ t("backend.nav.filterNavEmpty") }}
             </p>
             <div v-for="section in displayedSections" :key="section.id" class="space-y-0.5">
                 <button
@@ -263,9 +263,9 @@ function openSearchFromMobile() {
             >
                 <Moon v-if="theme !== 'dark'" class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <Sun v-else class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                <span class="si-label">{{ theme === "dark" ? t("admin.nav.lightMode") : t("admin.nav.darkMode") }}</span>
+                <span class="si-label">{{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}</span>
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ theme === "dark" ? t("admin.nav.lightMode") : t("admin.nav.darkMode") }}
+                    {{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}
                 </span>
             </button>
 
@@ -275,9 +275,9 @@ function openSearchFromMobile() {
                 :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
             >
                 <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                <span class="si-label truncate">{{ t("admin.nav.profile") }}</span>
+                <span class="si-label truncate">{{ t("backend.nav.profile") }}</span>
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("admin.nav.profile") }}
+                    {{ t("backend.nav.profile") }}
                 </span>
             </a>
 
@@ -288,9 +288,9 @@ function openSearchFromMobile() {
                     class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors w-full group relative"
                 >
                     <LogOut class="w-5 h-5 shrink-0 text-muted group-hover:text-rose-400 transition-colors" :stroke-width="2" />
-                    <span class="si-label">{{ t("admin.nav.logout") }}</span>
+                    <span class="si-label">{{ t("backend.nav.logout") }}</span>
                     <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                        {{ t("admin.nav.logout") }}
+                        {{ t("backend.nav.logout") }}
                     </span>
                 </button>
             </form>
@@ -299,7 +299,7 @@ function openSearchFromMobile() {
         <div
             class="sidebar-resize-handle"
             :class="{ 'is-dragging': sidebarDragging }"
-            :title="t('admin.nav.resizeHint')"
+            :title="t('backend.nav.resizeHint')"
             v-on:pointerdown="startSidebarResize"
             v-on:dblclick="resetSidebarWidth"
         />
@@ -349,11 +349,11 @@ function openSearchFromMobile() {
                     v-on:click="openSearchFromMobile"
                 >
                     <Search class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 text-left">{{ t("admin.search.button") }}</span>
+                    <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
                 </button>
                 <a :href="frontPath" target="_blank" rel="noopener" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
                     <Globe class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                    {{ t("admin.nav.viewSite") }}
+                    {{ t("backend.nav.viewSite") }}
                 </a>
                 <hr class="border-line mt-1">
             </div>
@@ -422,7 +422,7 @@ function openSearchFromMobile() {
                 >
                     <Moon v-if="theme !== 'dark'" class="w-5 h-5 text-muted shrink-0" :stroke-width="2" />
                     <Sun v-else class="w-5 h-5 text-muted shrink-0" :stroke-width="2" />
-                    {{ theme === "dark" ? t("admin.nav.lightMode") : t("admin.nav.darkMode") }}
+                    {{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}
                 </button>
                 <a
                     :href="profilePath"
@@ -430,13 +430,13 @@ function openSearchFromMobile() {
                     :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                    {{ t("admin.nav.profile") }}
+                    {{ t("backend.nav.profile") }}
                 </a>
                 <form :action="logoutPath" method="POST">
                     <input type="hidden" name="_token" :value="logoutCsrf">
                     <button type="submit" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
                         <LogOut class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                        {{ t("admin.nav.logout") }}
+                        {{ t("backend.nav.logout") }}
                     </button>
                 </form>
             </div>
@@ -462,7 +462,7 @@ function openSearchFromMobile() {
                             ref="searchInputRef"
                             v-model="searchQuery"
                             type="text"
-                            :placeholder="t('admin.search.placeholder')"
+                            :placeholder="t('backend.search.placeholder')"
                             class="flex-1 bg-transparent border-0 outline-none text-primary placeholder-muted text-sm"
                         >
                         <Loader2 v-if="searchLoading" class="w-4 h-4 text-muted animate-spin" :stroke-width="2" />
@@ -474,10 +474,10 @@ function openSearchFromMobile() {
                     <div class="flex-1 overflow-y-auto">
                         <!-- Empty state -->
                         <div v-if="!searchQuery.trim() && !sections.length" class="px-4 py-8 text-sm text-muted text-center">
-                            {{ t("admin.search.hint") }}
+                            {{ t("backend.search.hint") }}
                         </div>
                         <div v-else-if="searchQuery.trim() && !searchLoading && !totalResults" class="px-4 py-8 text-sm text-muted text-center">
-                            {{ t("admin.search.empty") }}
+                            {{ t("backend.search.empty") }}
                         </div>
 
                         <!-- Result sections -->
@@ -510,7 +510,7 @@ function openSearchFromMobile() {
                                 <!-- post -->
                                 <template v-else-if="section.kind === 'post'">
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0" :class="statusBadge(item.status)">
-                                        {{ t("admin.stats.postStatus." + item.status) }}
+                                        {{ t("backend.stats.postStatus." + item.status) }}
                                     </span>
                                     <div class="flex-1 min-w-0">
                                         <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />
@@ -539,9 +539,9 @@ function openSearchFromMobile() {
                     </div>
 
                     <div class="px-4 py-2 border-t border-line bg-surface-2/50 text-xs text-muted flex items-center gap-4">
-                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">↑↓</kbd> {{ t("admin.search.keys.navigate") }}</span>
-                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Enter</kbd> {{ t("admin.search.keys.select") }}</span>
-                        <span class="ml-auto"><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Esc</kbd> {{ t("admin.search.keys.close") }}</span>
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">↑↓</kbd> {{ t("backend.search.keys.navigate") }}</span>
+                        <span><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Enter</kbd> {{ t("backend.search.keys.select") }}</span>
+                        <span class="ml-auto"><kbd class="px-1 py-0.5 rounded bg-surface border border-line font-mono text-xs">Esc</kbd> {{ t("backend.search.keys.close") }}</span>
                     </div>
                 </div>
             </div>

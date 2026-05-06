@@ -15,7 +15,7 @@ const emit = defineEmits(["edit", "toggle-role", "delete"]);
 </script>
 
 <template>
-    <AppIconButton color="accent" :title="t('admin.users.edit')" v-on:click="emit('edit', props.user)">
+    <AppIconButton color="accent" :title="t('backend.users.edit')" v-on:click="emit('edit', props.user)">
         <Pencil class="w-4 h-4" :stroke-width="2" />
     </AppIconButton>
 
@@ -23,7 +23,7 @@ const emit = defineEmits(["edit", "toggle-role", "delete"]);
         v-if="!user.isCurrent"
         color="amber"
         :href="buildPath(impersonatePath, { email: user.email })"
-        :title="t('admin.users.impersonate', { name: user.name })"
+        :title="t('backend.users.impersonate', { name: user.name })"
     >
         <LogIn class="w-4 h-4" :stroke-width="2" />
     </AppIconButton>
@@ -31,7 +31,7 @@ const emit = defineEmits(["edit", "toggle-role", "delete"]);
     <AppIconButton
         v-if="!user.isCurrent"
         :color="user.isDevRole ? 'accent' : 'rose'"
-        :title="user.isDevRole ? t('admin.users.revoke_dev') : t('admin.users.grant_dev')"
+        :title="user.isDevRole ? t('backend.users.revoke_dev') : t('backend.users.grant_dev')"
         v-on:click="emit('toggle-role', props.user)"
     >
         <component :is="user.isDevRole ? UserRound : Shield" class="w-4 h-4" :stroke-width="2" />

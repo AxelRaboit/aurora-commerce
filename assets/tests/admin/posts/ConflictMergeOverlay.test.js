@@ -20,7 +20,7 @@ function makeBlock(id, text) {
 }
 
 const mergeMessages = {
-    admin: {
+    backend: {
         posts: {
             merge: {
                 title: "Résoudre",

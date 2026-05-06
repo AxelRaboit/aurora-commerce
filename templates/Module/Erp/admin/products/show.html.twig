@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ product.name }} - {{ 'admin.nav.products'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ product.name }} - {{ 'backend.nav.products'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: product.name,
         crumbs: [
-            {label: 'admin.modules.erp'|trans, href: path('backend_erp_products')},
-            {label: 'admin.nav.products'|trans, href: backPath},
+            {label: 'backend.modules.erp'|trans, href: path('backend_erp_products')},
+            {label: 'backend.nav.products'|trans, href: backPath},
             {label: product.name},
         ],
     }) }}

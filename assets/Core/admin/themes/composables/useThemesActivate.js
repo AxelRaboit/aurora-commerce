@@ -19,7 +19,7 @@ export function useThemesActivate(themeList, activatePath) {
                 ...item,
                 active: item.id === theme.id,
             }));
-            toast.success(t("admin.themes.activated"));
+            toast.success(t("backend.themes.activated"));
         } catch {
             toast.error(t("shared.common.error"));
         }

@@ -1,20 +1,20 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.administration'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.administration'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {% set tabLabels = {
-        overview: 'admin.tabs.overview'|trans,
-        users: 'admin.tabs.users'|trans,
-        parameters: 'admin.tabs.parameters'|trans,
-        access_requests: 'admin.tabs.access_requests'|trans,
-        audit: 'admin.tabs.audit'|trans,
-        permissions: 'admin.tabs.permissions'|trans,
-        modules: 'admin.tabs.modules'|trans,
+        overview: 'backend.tabs.overview'|trans,
+        users: 'backend.tabs.users'|trans,
+        parameters: 'backend.tabs.parameters'|trans,
+        access_requests: 'backend.tabs.access_requests'|trans,
+        audit: 'backend.tabs.audit'|trans,
+        permissions: 'backend.tabs.permissions'|trans,
+        modules: 'backend.tabs.modules'|trans,
     } %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.nav.administration'|trans, href: path('dev_dashboard')},
+            {label: 'backend.nav.administration'|trans, href: path('dev_dashboard')},
             {label: tabLabels[tab] ?? tab},
         ],
     }) }}

@@ -36,9 +36,9 @@ const props = defineProps({
 });
 
 const statusOptions = [
-    { value: "draft", label: t("admin.ged.documents.status_draft") },
-    { value: "published", label: t("admin.ged.documents.status_published") },
-    { value: "archived", label: t("admin.ged.documents.status_archived") },
+    { value: "draft", label: t("backend.ged.documents.status_draft") },
+    { value: "published", label: t("backend.ged.documents.status_published") },
+    { value: "archived", label: t("backend.ged.documents.status_archived") },
 ];
 
 const statusBadgeColor = { draft: "secondary", published: "success", archived: "accent" };
@@ -60,11 +60,11 @@ const { loading: createLoading, request: createRequest } = useApiRequest();
 function openCreate() { newDoc.value = emptyForm(); clearCreate(); showCreate.value = true; }
 function onFilePickedCreate(media) { newDoc.value.fileId = media.id; newDoc.value.fileName = media.fileName; showMediaPickerCreate.value = false; }
 async function submitCreate() {
-    if (!validateCreate({ title: () => required(t("admin.ged.documents.errors.title_required"))(newDoc.value.title) })) return;
+    if (!validateCreate({ title: () => required(t("backend.ged.documents.errors.title_required"))(newDoc.value.title) })) return;
     const payload = { ...newDoc.value };
     const data = await createRequest(props.createPath, payload);
     if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t("admin.ged.documents.created")); reset(); }
+    if (data.success) { showCreate.value = false; toast.success(t("backend.ged.documents.created")); reset(); }
     else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
@@ -82,12 +82,12 @@ function openEdit(doc) {
 }
 function onFilePickedEdit(media) { editForm.value.fileId = media.id; editForm.value.fileName = media.fileName; showMediaPickerEdit.value = false; }
 async function submitEdit() {
-    if (!validateEdit({ title: () => required(t("admin.ged.documents.errors.title_required"))(editForm.value.title) })) return;
+    if (!validateEdit({ title: () => required(t("backend.ged.documents.errors.title_required"))(editForm.value.title) })) return;
     const url = buildPath(props.updatePath, { id: editingDoc.value.id });
     const payload = { ...editForm.value };
     const data = await editRequest(url, payload);
     if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t("admin.ged.documents.updated")); reset(); }
+    if (data.success) { showEdit.value = false; toast.success(t("backend.ged.documents.updated")); reset(); }
     else setEditErrors(translateServerErrors(t, data.errors));
 }
 
@@ -100,7 +100,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 <template>
     <div class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
-            <AppSearchInput v-model="searchInput" :placeholder="t('admin.ged.documents.searchPlaceholder')" v-on:search="onSearch" />
+            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.documents.searchPlaceholder')" v-on:search="onSearch" />
             <AppButton
                 v-if="can('ged.documents.manage')"
                 variant="primary"
@@ -108,7 +108,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 class="w-full sm:w-auto"
                 v-on:click="openCreate"
             >
-                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("admin.ged.documents.add") }}
+                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.documents.add") }}
             </AppButton>
         </div>
 
@@ -116,10 +116,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.ged.documents.title") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.ged.documents.category") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.ged.documents.status") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.ged.documents.file") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.documents.title") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.file") }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -129,7 +129,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <p class="font-medium text-primary">{{ doc.title }}</p>
                             <p v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</p>
                         </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("admin.ged.documents.noCategory") }}</td>
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
                         <td class="px-6 py-3 hidden lg:table-cell">
                             <AppBadge :color="statusBadgeColor[doc.status]">{{ doc.statusLabel }}</AppBadge>
                         </td>
@@ -145,7 +145,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t("admin.ged.documents.empty") }}</td>
+                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t("backend.ged.documents.empty") }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -154,33 +154,33 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <!-- Create modal -->
         <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.documents.create") }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.documents.create") }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newDoc.title"
-                    :label="t('admin.ged.documents.title')"
-                    :placeholder="t('admin.ged.documents.titlePlaceholder')"
+                    :label="t('backend.ged.documents.title')"
+                    :placeholder="t('backend.ged.documents.titlePlaceholder')"
                     :error="createErrors.title"
                     required
                 />
-                <AppInput v-model="newDoc.description" :label="t('admin.ged.documents.description')" :placeholder="t('admin.ged.documents.descriptionPlaceholder')" />
+                <AppInput v-model="newDoc.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.descriptionPlaceholder')" />
                 <AppMultiselect
                     v-model="newDoc.categoryId"
-                    :label="t('admin.ged.documents.category')"
+                    :label="t('backend.ged.documents.category')"
                     :options="categoryOptions"
                     :allow-empty="true"
-                    :placeholder="t('admin.ged.documents.noCategory')"
+                    :placeholder="t('backend.ged.documents.noCategory')"
                 />
                 <AppMultiselect
                     v-model="newDoc.status"
-                    :label="t('admin.ged.documents.status')"
+                    :label="t('backend.ged.documents.status')"
                     :options="statusOptions"
                     :allow-empty="false"
                     :searchable="false"
                 />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerCreate = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.ged.documents.chooseFile") }}
+                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
                     </AppButton>
                     <span v-if="newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.fileName }}</span>
                 </div>
@@ -193,33 +193,33 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <!-- Edit modal -->
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("admin.ged.documents.edit", { title: editingDoc?.title ?? "" }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.documents.edit", { title: editingDoc?.title ?? "" }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.title"
-                    :label="t('admin.ged.documents.title')"
-                    :placeholder="t('admin.ged.documents.titlePlaceholder')"
+                    :label="t('backend.ged.documents.title')"
+                    :placeholder="t('backend.ged.documents.titlePlaceholder')"
                     :error="editErrors.title"
                     required
                 />
-                <AppInput v-model="editForm.description" :label="t('admin.ged.documents.description')" :placeholder="t('admin.ged.documents.descriptionPlaceholder')" />
+                <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.descriptionPlaceholder')" />
                 <AppMultiselect
                     v-model="editForm.categoryId"
-                    :label="t('admin.ged.documents.category')"
+                    :label="t('backend.ged.documents.category')"
                     :options="categoryOptions"
                     :allow-empty="true"
-                    :placeholder="t('admin.ged.documents.noCategory')"
+                    :placeholder="t('backend.ged.documents.noCategory')"
                 />
                 <AppMultiselect
                     v-model="editForm.status"
-                    :label="t('admin.ged.documents.status')"
+                    :label="t('backend.ged.documents.status')"
                     :options="statusOptions"
                     :allow-empty="false"
                     :searchable="false"
                 />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerEdit = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.ged.documents.chooseFile") }}
+                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
                     </AppButton>
                     <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
                 </div>
@@ -232,8 +232,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <!-- Delete modal -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="confirmDelete(null)">
-            <p class="text-sm text-primary">{{ t("admin.ged.documents.deleteConfirm", { title: pendingDelete?.title ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("admin.ged.documents.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.documents.deleteConfirm", { title: pendingDelete?.title ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.documents.deleteWarning") }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t("shared.common.delete") }}</AppButton>

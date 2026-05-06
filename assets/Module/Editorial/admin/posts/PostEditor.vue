@@ -95,7 +95,7 @@ const postTypeOptions = computed(() =>
 );
 
 const statusOptions = computed(() =>
-    POST_STATUS_VALUES.map((value) => ({ value, label: t(`admin.posts.statusOptions.${value}`) })),
+    POST_STATUS_VALUES.map((value) => ({ value, label: t(`backend.posts.statusOptions.${value}`) })),
 );
 
 const form = reactive({
@@ -286,7 +286,7 @@ async function applyTemplate(template) {
 }
 
 function openPreview() {
-    if (isDirty.value) toast.info(t("admin.posts.previewSavedHint"));
+    if (isDirty.value) toast.info(t("backend.posts.previewSavedHint"));
     showPreview.value = true;
 }
 
@@ -308,7 +308,7 @@ const { loading, errors, conflict, save: savePost } = usePostSave(
     props.createPath,
     props.editPath,
     (post) => {
-        toast.success(props.postId ? t("admin.posts.updated") : t("admin.posts.created"));
+        toast.success(props.postId ? t("backend.posts.updated") : t("backend.posts.created"));
         version.value = post.version ?? null;
         snapshotBase(form.translations);
         emit("saved", post, !props.postId);
@@ -358,23 +358,23 @@ function forceSave() {
 
     <div v-else class="space-y-6">
         <AppMessage v-if="trashed" variant="trash">
-            {{ t("admin.posts.trashedBanner") }}
+            {{ t("backend.posts.trashedBanner") }}
         </AppMessage>
 
         <AppMessage v-if="conflict" variant="warning">
-            {{ t("admin.posts.conflict") }}
+            {{ t("backend.posts.conflict") }}
             <template #actions>
                 <AppButton variant="secondary" size="sm" v-on:click="openRemoteVersion">
                     <Eye class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.posts.conflictCompare") }}
+                    {{ t("backend.posts.conflictCompare") }}
                 </AppButton>
                 <AppButton variant="primary" size="sm" :loading="remoteLoading" v-on:click="openMerge">
                     <Merge class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.posts.conflictMerge") }}
+                    {{ t("backend.posts.conflictMerge") }}
                 </AppButton>
                 <AppButton variant="danger" size="sm" :loading="loading" v-on:click="forceSave">
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.posts.conflictForce") }}
+                    {{ t("backend.posts.conflictForce") }}
                 </AppButton>
             </template>
         </AppMessage>
@@ -385,7 +385,7 @@ function forceSave() {
                     <ArrowLeft class="w-5 h-5" :stroke-width="2" />
                 </AppButton>
                 <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
-                    {{ postId ? t("admin.posts.edit") : t("admin.posts.add") }}
+                    {{ postId ? t("backend.posts.edit") : t("backend.posts.add") }}
                 </h1>
             </div>
 
@@ -415,18 +415,18 @@ function forceSave() {
                     v-on:click="showRevisions = true"
                 >
                     <History class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("admin.posts.revisions.title") }}</span>
+                    <span>{{ t("backend.posts.revisions.title") }}</span>
                 </AppButton>
                 <AppButton
                     v-if="postId"
                     variant="secondary"
                     size="md"
                     class="w-full sm:w-auto"
-                    :title="isDirty ? t('admin.posts.previewSavedHint') : null"
+                    :title="isDirty ? t('backend.posts.previewSavedHint') : null"
                     v-on:click="openPreview"
                 >
                     <Eye class="w-4 h-4" :stroke-width="2" />
-                    <span>{{ t("admin.posts.preview") }}</span>
+                    <span>{{ t("backend.posts.preview") }}</span>
                 </AppButton>
                 <AppButton
                     variant="primary"
@@ -449,12 +449,12 @@ function forceSave() {
         <p v-if="postId" class="px-1 text-xs text-muted font-mono">ID : {{ postId }}</p>
 
         <p v-if="publishedAt" class="px-1 text-xs text-muted">
-            {{ t("admin.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
+            {{ t("backend.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
         </p>
 
         <div class="flex flex-col gap-3 px-1">
             <div v-if="postTypes.length" class="flex items-center gap-2 shrink-0">
-                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("admin.posts.postType") }}</span>
+                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("backend.posts.postType") }}</span>
                 <div class="min-w-40">
                     <AppMultiselect
                         v-model="form.postTypeId"
@@ -476,13 +476,13 @@ function forceSave() {
         <div class="px-1">
             <AppToggle
                 :model-value="form.commentsEnabled"
-                :label="t('admin.posts.commentsEnabled')"
+                :label="t('backend.posts.commentsEnabled')"
                 v-on:update:model-value="form.commentsEnabled = $event"
             />
         </div>
 
         <div class="flex flex-col gap-2 px-1">
-            <span class="text-xs text-muted uppercase tracking-wide">{{ t("admin.posts.relatedPosts.title") }}</span>
+            <span class="text-xs text-muted uppercase tracking-wide">{{ t("backend.posts.relatedPosts.title") }}</span>
 
             <div v-if="relatedPosts.length" class="flex flex-col gap-1.5">
                 <div
@@ -491,7 +491,7 @@ function forceSave() {
                     class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface border border-line/60"
                 >
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(related.status)">
-                        {{ t("admin.stats.postStatus." + related.status) }}
+                        {{ t("backend.stats.postStatus." + related.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
                         <div class="text-sm text-primary truncate">{{ related.title ?? "(—)" }}</div>
@@ -506,7 +506,7 @@ function forceSave() {
             <div class="relative">
                 <AppInput
                     v-model="relatedSearchQuery"
-                    :placeholder="t('admin.posts.relatedPosts.searchPlaceholder')"
+                    :placeholder="t('backend.posts.relatedPosts.searchPlaceholder')"
                     v-on:focus="relatedSearchOpen = true; runRelatedSearch()"
                     v-on:blur="setTimeout(() => { relatedSearchOpen = false; }, 150)"
                 />
@@ -523,7 +523,7 @@ function forceSave() {
                         v-on:mousedown.prevent="addRelatedPost(result)"
                     >
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
-                            {{ t("admin.stats.postStatus." + result.status) }}
+                            {{ t("backend.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">
                             <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
@@ -555,15 +555,15 @@ function forceSave() {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <AppInput
                 v-model="form.translations[activeLocale].title"
-                :label="t('admin.posts.title')"
-                :placeholder="t('admin.posts.titlePlaceholder')"
+                :label="t('backend.posts.title')"
+                :placeholder="t('backend.posts.titlePlaceholder')"
             />
             <div class="flex items-end gap-2">
                 <div class="flex-1">
                     <AppInput
                         v-model="form.translations[activeLocale].slug"
-                        :label="t('admin.posts.slug')"
-                        :placeholder="t('admin.posts.slugPlaceholder')"
+                        :label="t('backend.posts.slug')"
+                        :placeholder="t('backend.posts.slugPlaceholder')"
                         :readonly="slugLocked"
                     />
                 </div>
@@ -571,7 +571,7 @@ function forceSave() {
                     variant="secondary"
                     size="none"
                     class="p-2 mb-0.5 shrink-0"
-                    :title="slugLocked ? t('admin.posts.slugUnlock') : t('admin.posts.slugLock')"
+                    :title="slugLocked ? t('backend.posts.slugUnlock') : t('backend.posts.slugLock')"
                     v-on:click="toggleSlugLock"
                 >
                     <Lock v-if="slugLocked" class="w-4 h-4" :stroke-width="2" />
@@ -586,7 +586,7 @@ function forceSave() {
         </div>
 
         <div v-if="customFieldsDefs.length" class="border-t border-line pt-4 space-y-3">
-            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("admin.posts.customFields") }}</p>
+            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.customFields") }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <PostCustomField
                     v-for="field in customFieldsDefs"
@@ -608,7 +608,7 @@ function forceSave() {
 
         <div class="border-t border-line pt-4">
             <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
-                {{ t("admin.posts.blocks") }}
+                {{ t("backend.posts.blocks") }}
             </label>
             <div class="rounded-xl border border-line bg-surface shadow-sm">
                 <EditorBlock

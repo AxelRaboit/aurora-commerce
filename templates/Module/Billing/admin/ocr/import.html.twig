@@ -1,14 +1,14 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.ocr_import'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.ocr_import'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
-        title: 'admin.nav.ocr_import'|trans,
+        title: 'backend.nav.ocr_import'|trans,
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.invoices'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.ocr_import'|trans},
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.invoices'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.ocr_import'|trans},
         ],
     }) }}
 {% endblock %}

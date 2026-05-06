@@ -25,13 +25,13 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
     async function saveInfo() {
         const isValid = validateInfo({
             name: () =>
-                required(t("admin.profile.errors.name_required"))(
+                required(t("backend.profile.errors.name_required"))(
                     infoName.value,
                 ),
             email: () =>
                 compose(
-                    required(t("admin.profile.errors.email_invalid")),
-                    email(t("admin.profile.errors.email_invalid")),
+                    required(t("backend.profile.errors.email_invalid")),
+                    email(t("backend.profile.errors.email_invalid")),
                 )(infoEmail.value),
         });
 
@@ -50,7 +50,7 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
             const data = await response.json();
             if (data.success) {
                 clearInfoErrors();
-                toast.success(t("admin.profile.info.saved"));
+                toast.success(t("backend.profile.info.saved"));
             } else {
                 setInfoErrors(data.errors ?? {});
             }

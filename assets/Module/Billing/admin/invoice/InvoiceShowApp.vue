@@ -54,11 +54,11 @@ const { formatDateNumeric } = useDateFormat();
     <div class="space-y-4">
         <!-- Credit note modal -->
         <AppModal :show="showCreditNoteModal" max-width="sm" v-on:close="showCreditNoteModal = false">
-            <h3 class="text-base font-semibold text-primary mb-1">{{ t('admin.billing.invoices.show.createCreditNote') }}</h3>
-            <p class="text-sm text-secondary mb-4">{{ t('admin.billing.invoices.show.creditNoteHelp') }}</p>
+            <h3 class="text-base font-semibold text-primary mb-1">{{ t('backend.billing.invoices.show.createCreditNote') }}</h3>
+            <p class="text-sm text-secondary mb-4">{{ t('backend.billing.invoices.show.creditNoteHelp') }}</p>
             <textarea
                 v-model="creditNoteReason"
-                :placeholder="t('admin.billing.invoices.show.creditNoteReasonPlaceholder')"
+                :placeholder="t('backend.billing.invoices.show.creditNoteReasonPlaceholder')"
                 rows="3"
                 class="w-full px-3 py-2 rounded-lg border border-line/60 bg-surface text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-500/30 resize-none"
             />
@@ -66,7 +66,7 @@ const { formatDateNumeric } = useDateFormat();
                 <AppButton variant="ghost" size="md" v-on:click="showCreditNoteModal = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="creatingCreditNote" v-on:click="createCreditNote">
                     <FileX class="w-4 h-4" :stroke-width="2" />
-                    {{ t('admin.billing.invoices.show.confirmCreditNote') }}
+                    {{ t('backend.billing.invoices.show.confirmCreditNote') }}
                 </AppButton>
             </AppModalFooter>
         </AppModal>
@@ -75,7 +75,7 @@ const { formatDateNumeric } = useDateFormat();
         <div v-if="isCancelled" class="flex items-center gap-3 bg-violet-500/10 border border-violet-500/30 rounded-lg px-4 py-3 text-sm">
             <FileX class="w-4 h-4 text-violet-400 shrink-0" :stroke-width="2" />
             <span class="text-primary">
-                {{ t('admin.billing.invoices.show.cancelledBy') }}
+                {{ t('backend.billing.invoices.show.cancelledBy') }}
                 <a :href="buildPath(showPath, { id: invoice.creditNote.id })" class="font-medium text-accent-400 hover:text-accent-300 ml-1">
                     {{ invoice.creditNote.number ?? ('#' + invoice.creditNote.id) }}
                     <ExternalLink class="inline w-3 h-3 ml-0.5" :stroke-width="2" />
@@ -86,7 +86,7 @@ const { formatDateNumeric } = useDateFormat();
         <div v-if="isCreditNote && invoice.cancelledInvoice" class="flex items-center gap-3 bg-violet-500/10 border border-violet-500/30 rounded-lg px-4 py-3 text-sm">
             <FileX class="w-4 h-4 text-violet-400 shrink-0" :stroke-width="2" />
             <span class="text-primary">
-                {{ t('admin.billing.invoices.show.cancels') }}
+                {{ t('backend.billing.invoices.show.cancels') }}
                 <a :href="buildPath(showPath, { id: invoice.cancelledInvoice.id })" class="font-medium text-accent-400 hover:text-accent-300 ml-1">
                     {{ invoice.cancelledInvoice.number ?? ('#' + invoice.cancelledInvoice.id) }}
                     <ExternalLink class="inline w-3 h-3 ml-0.5" :stroke-width="2" />
@@ -95,16 +95,16 @@ const { formatDateNumeric } = useDateFormat();
         </div>
 
         <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false">
-            <p class="text-sm text-primary">{{ t('admin.billing.invoices.deleteConfirm', { number: invoice.number ?? ('#' + invoice.id) }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.invoices.deleteConfirm', { number: invoice.number ?? ('#' + invoice.id) }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <div v-if="canDeleteTiers || canDeleteBuyer" class="mt-3 space-y-2">
                 <label v-if="canDeleteTiers" class="flex items-center gap-2 text-sm text-secondary cursor-pointer select-none">
                     <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
-                    {{ t('admin.billing.invoices.deleteTiersToo', { name: invoice.supplier?.name ?? '' }) }}
+                    {{ t('backend.billing.invoices.deleteTiersToo', { name: invoice.supplier?.name ?? '' }) }}
                 </label>
                 <label v-if="canDeleteBuyer" class="flex items-center gap-2 text-sm text-secondary cursor-pointer select-none">
                     <input v-model="deleteBuyerToo" type="checkbox" class="rounded border-line">
-                    {{ t('admin.billing.invoices.deleteBuyerToo', { name: invoice.buyer?.name ?? '' }) }}
+                    {{ t('backend.billing.invoices.deleteBuyerToo', { name: invoice.buyer?.name ?? '' }) }}
                 </label>
             </div>
             <AppModalFooter>
@@ -116,12 +116,12 @@ const { formatDateNumeric } = useDateFormat();
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1 space-y-4">
                 <div v-if="invoice.ocrJob" class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
-                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.ocr') }}</h3>
+                    <h3 class="font-semibold text-primary mb-3">{{ t('backend.billing.invoices.show.ocr') }}</h3>
                     <dl class="space-y-1.5 text-secondary">
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.invoices.show.ocrJob') }}</dt><dd class="text-right">#{{ invoice.ocrJob.id }}</dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.statusLabel') }}</dt><dd class="text-right"><AppBadge :color="invoice.ocrJob.statusColor">{{ invoice.ocrJob.statusLabel }}</AppBadge></dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.model') }}</dt><dd class="text-right text-xs">{{ invoice.ocrJob.modelUsed ?? '—' }}</dd></div>
-                        <div class="flex justify-between gap-2"><dt>{{ t('admin.billing.ocr.confidence') }}</dt><dd class="text-right tabular-nums">{{ invoice.ocrJob.confidence !== null ? Math.round(invoice.ocrJob.confidence * 100) + '%' : '—' }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('backend.billing.invoices.show.ocrJob') }}</dt><dd class="text-right">#{{ invoice.ocrJob.id }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('backend.billing.ocr.statusLabel') }}</dt><dd class="text-right"><AppBadge :color="invoice.ocrJob.statusColor">{{ invoice.ocrJob.statusLabel }}</AppBadge></dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('backend.billing.ocr.model') }}</dt><dd class="text-right text-xs">{{ invoice.ocrJob.modelUsed ?? '—' }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>{{ t('backend.billing.ocr.confidence') }}</dt><dd class="text-right tabular-nums">{{ invoice.ocrJob.confidence !== null ? Math.round(invoice.ocrJob.confidence * 100) + '%' : '—' }}</dd></div>
                     </dl>
                     <ul v-if="ocrAnomalies.length" class="mt-3 space-y-1.5">
                         <li v-for="anomaly in ocrAnomalies" :key="anomaly.text" class="text-xs bg-amber-500/10 rounded-lg px-3 py-2 space-y-1.5">
@@ -141,7 +141,7 @@ const { formatDateNumeric } = useDateFormat();
                 </div>
 
                 <div class="bg-surface border border-line/60 rounded-xl p-6">
-                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.document') }}</h3>
+                    <h3 class="font-semibold text-primary mb-3">{{ t('backend.billing.invoices.show.document') }}</h3>
                     <template v-if="invoice.document">
                         <a
                             v-if="isImageMimeType(invoice.document.mimeType)"
@@ -169,14 +169,14 @@ const { formatDateNumeric } = useDateFormat();
                         </a>
                         <p class="mt-2 text-xs text-muted truncate">{{ invoice.document.originalName }}</p>
                     </template>
-                    <AppNoData v-else :message="t('admin.billing.invoices.show.noDocument')" />
+                    <AppNoData v-else :message="t('backend.billing.invoices.show.noDocument')" />
                 </div>
 
                 <div v-if="invoice.supplierFull" class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
-                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.supplier') }}</h3>
+                    <h3 class="font-semibold text-primary mb-3">{{ t('backend.billing.invoices.show.supplier') }}</h3>
                     <dl class="space-y-2 text-secondary">
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.name') }}</dt>
                             <dd class="text-primary font-medium">
                                 <InlineField
                                     :disabled="isLocked"
@@ -188,7 +188,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</dt>
                             <dd class="font-mono text-xs">
                                 <InlineField
                                     :disabled="isLocked"
@@ -200,7 +200,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.registrationNumber') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.registrationNumber') }}</dt>
                             <dd class="font-mono text-xs">
                                 <InlineField
                                     :disabled="isLocked"
@@ -236,7 +236,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.email') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.email') }}</dt>
                             <dd class="text-primary break-all">
                                 <InlineField
                                     :disabled="isLocked"
@@ -248,7 +248,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.invoices.show.phone') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.invoices.show.phone') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -260,7 +260,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
+                            <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.country') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -272,7 +272,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div class="pt-2 border-t border-line/60">
-                            <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
+                            <dt class="text-xs text-muted mb-1">{{ t('backend.billing.invoices.show.address') }}</dt>
                             <dd class="text-primary text-xs">
                                 <InlineField
                                     :disabled="isLocked"
@@ -287,11 +287,11 @@ const { formatDateNumeric } = useDateFormat();
                 </div>
 
                 <div class="bg-surface border border-line/60 rounded-xl p-6 text-sm">
-                    <h3 class="font-semibold text-primary mb-3">{{ t('admin.billing.invoices.show.buyer') }}</h3>
+                    <h3 class="font-semibold text-primary mb-3">{{ t('backend.billing.invoices.show.buyer') }}</h3>
                     <template v-if="invoice.buyer">
                         <dl class="space-y-2 text-secondary">
                             <div>
-                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.name') }}</dt>
+                                <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.name') }}</dt>
                                 <dd class="text-primary font-medium">
                                     <InlineField
                                         :display-value="invoice.buyer?.name"
@@ -302,7 +302,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.vatNumber') }}</dt>
+                                <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</dt>
                                 <dd class="font-mono text-xs">
                                     <InlineField
                                         :display-value="invoice.buyer?.vatNumber"
@@ -313,7 +313,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.country') }}</dt>
+                                <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.country') }}</dt>
                                 <dd>
                                     <InlineField
                                         :display-value="invoice.buyer?.countryCode"
@@ -324,7 +324,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted">{{ t('admin.billing.suppliers.email') }}</dt>
+                                <dt class="text-xs text-muted">{{ t('backend.billing.suppliers.email') }}</dt>
                                 <dd class="text-primary break-all">
                                     <InlineField
                                         :display-value="invoice.buyer?.email"
@@ -335,7 +335,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted">{{ t('admin.billing.invoices.show.phone') }}</dt>
+                                <dt class="text-xs text-muted">{{ t('backend.billing.invoices.show.phone') }}</dt>
                                 <dd class="text-primary">
                                     <InlineField
                                         :display-value="invoice.buyer?.phone"
@@ -346,7 +346,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div class="pt-2 border-t border-line/60">
-                                <dt class="text-xs text-muted mb-1">{{ t('admin.billing.invoices.show.address') }}</dt>
+                                <dt class="text-xs text-muted mb-1">{{ t('backend.billing.invoices.show.address') }}</dt>
                                 <dd class="text-primary text-xs">
                                     <InlineField
                                         :display-value="invoice.buyer?.address"
@@ -358,7 +358,7 @@ const { formatDateNumeric } = useDateFormat();
                             </div>
                         </dl>
                     </template>
-                    <p v-else class="text-xs text-muted italic">{{ t('admin.billing.invoices.show.noBuyer') }}</p>
+                    <p v-else class="text-xs text-muted italic">{{ t('backend.billing.invoices.show.noBuyer') }}</p>
                 </div>
             </div>
 
@@ -366,7 +366,7 @@ const { formatDateNumeric } = useDateFormat();
                 <div class="bg-surface border border-line/60 rounded-xl p-6">
                     <div class="flex items-start justify-between mb-4 gap-3">
                         <div>
-                            <p class="text-xs text-muted uppercase tracking-wide">{{ t('admin.billing.invoices.statusLabel') }}</p>
+                            <p class="text-xs text-muted uppercase tracking-wide">{{ t('backend.billing.invoices.statusLabel') }}</p>
                             <div class="mt-1">
                                 <AppBadge :color="invoice.statusColor">{{ invoice.statusLabel }}</AppBadge>
                             </div>
@@ -375,7 +375,7 @@ const { formatDateNumeric } = useDateFormat();
                             <AppIconButton
                                 v-if="isNeedsReview"
                                 color="emerald"
-                                :title="t('admin.billing.invoices.show.validate')"
+                                :title="t('backend.billing.invoices.show.validate')"
                                 :disabled="validating"
                                 v-on:click="validateInvoice"
                             >
@@ -384,13 +384,13 @@ const { formatDateNumeric } = useDateFormat();
                             <AppIconButton
                                 v-if="isNeedsReview && ocrRetryPath"
                                 color="sky"
-                                :title="t('admin.billing.invoices.show.rescan')"
+                                :title="t('backend.billing.invoices.show.rescan')"
                                 :loading="rescanLoading"
                                 v-on:click="rescan"
                             >
                                 <ScanLine class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="canHaveCreditNote" color="violet" :title="t('admin.billing.invoices.show.createCreditNote')" v-on:click="showCreditNoteModal = true">
+                            <AppIconButton v-if="canHaveCreditNote" color="violet" :title="t('backend.billing.invoices.show.createCreditNote')" v-on:click="showCreditNoteModal = true">
                                 <FileX class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton v-if="invoice.isDeletable" color="rose" :title="t('shared.common.delete')" v-on:click="showDeleteModal = true">
@@ -401,14 +401,14 @@ const { formatDateNumeric } = useDateFormat();
 
                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.number') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.number') }}</dt>
                             <dd class="text-primary font-medium font-mono text-xs">
                                 <span v-if="invoice.number" class="text-accent-400">{{ invoice.number }}</span>
-                                <span v-else class="text-muted italic text-xs">{{ t('admin.billing.invoices.show.numberPending') }}</span>
+                                <span v-else class="text-muted italic text-xs">{{ t('backend.billing.invoices.show.numberPending') }}</span>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.supplierNumber') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.supplierNumber') }}</dt>
                             <dd class="text-primary font-mono text-xs">
                                 <InlineField
                                     :disabled="isLocked"
@@ -420,7 +420,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.purchaseOrder') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.purchaseOrder') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -432,7 +432,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.issuedAt') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.issuedAt') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -444,7 +444,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.dueAt') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.dueAt') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -456,7 +456,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.paymentMethod') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.paymentMethod') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -468,7 +468,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.paymentTerms') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.paymentTerms') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -480,7 +480,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.reference') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.reference') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -492,7 +492,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.project') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.project') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -504,7 +504,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.deliveryDate') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.deliveryDate') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -516,7 +516,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.incoterms') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.incoterms') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -528,7 +528,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.reverseCharge') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.reverseCharge') }}</dt>
                             <dd class="text-primary text-sm">
                                 <label class="flex items-center gap-2 cursor-pointer select-none mt-1">
                                     <input
@@ -543,7 +543,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div class="col-span-3">
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('admin.billing.invoices.show.fields.bankDetails') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1">{{ t('backend.billing.invoices.show.fields.bankDetails') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -558,7 +558,7 @@ const { formatDateNumeric } = useDateFormat();
 
                     <div class="mt-4 grid grid-cols-3 gap-4 text-sm">
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.subtotal') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.subtotal') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -578,7 +578,7 @@ const { formatDateNumeric } = useDateFormat();
                         <!-- Remise : montant + taux regroupés dans la même colonne -->
                         <div class="space-y-2">
                             <div>
-                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.discount') }}</dt>
+                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.discount') }}</dt>
                                 <dd class="text-primary">
                                     <InlineField
                                         :disabled="isLocked"
@@ -592,7 +592,7 @@ const { formatDateNumeric } = useDateFormat();
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.discountRate') }}</dt>
+                                <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.discountRate') }}</dt>
                                 <dd class="text-primary">
                                     <InlineField
                                         :disabled="isLocked"
@@ -606,7 +606,7 @@ const { formatDateNumeric } = useDateFormat();
                             </div>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.freight') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.freight') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -620,7 +620,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.insurance') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.insurance') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -637,7 +637,7 @@ const { formatDateNumeric } = useDateFormat();
 
                     <div class="mt-4 pt-4 border-t border-line/60 grid grid-cols-3 gap-4 text-sm">
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalNet') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.totalNet') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -651,7 +651,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalVat') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.totalVat') }}</dt>
                             <dd class="text-primary">
                                 <InlineField
                                     :disabled="isLocked"
@@ -665,7 +665,7 @@ const { formatDateNumeric } = useDateFormat();
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('admin.billing.invoices.show.fields.totalGross') }}</dt>
+                            <dt class="text-muted text-xs uppercase tracking-wide mb-1 text-right">{{ t('backend.billing.invoices.show.fields.totalGross') }}</dt>
                             <dd class="text-primary font-semibold">
                                 <InlineField
                                     :disabled="isLocked"
@@ -683,27 +683,27 @@ const { formatDateNumeric } = useDateFormat();
 
                 <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
                     <div class="px-6 py-4 border-b border-line/60 flex items-center justify-between">
-                        <h3 class="font-semibold text-primary">{{ t('admin.billing.invoices.show.lines') }} ({{ invoice.lines.length }})</h3>
+                        <h3 class="font-semibold text-primary">{{ t('backend.billing.invoices.show.lines') }} ({{ invoice.lines.length }})</h3>
                         <AppButton v-if="!isLocked" variant="ghost" size="sm" v-on:click="addLine">
                             <Plus class="w-4 h-4" :stroke-width="2" />
-                            {{ t('admin.billing.invoices.show.addLine') }}
+                            {{ t('backend.billing.invoices.show.addLine') }}
                         </AppButton>
                     </div>
-                    <AppNoData v-if="!invoice.lines.length" :message="t('admin.billing.invoices.show.noLines')" />
+                    <AppNoData v-if="!invoice.lines.length" :message="t('backend.billing.invoices.show.noLines')" />
                     <div v-else class="overflow-x-auto scrollbar-thin">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-surface-2/50 border-b border-line/40">
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.label') }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('admin.billing.invoices.show.lineCols.reference') }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.productCode') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.qty') }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.invoices.show.lineCols.unit') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.unitPrice') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('admin.billing.invoices.show.lineCols.discount') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.vat') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.invoices.show.lineCols.totalNet') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.invoices.show.lineCols.totalGross') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.label') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('backend.billing.invoices.show.lineCols.reference') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.show.lineCols.productCode') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.qty') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.show.lineCols.unit') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.unitPrice') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('backend.billing.invoices.show.lineCols.discount') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.show.lineCols.vat') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.totalNet') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.show.lineCols.totalGross') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                                 </tr>
                             </thead>

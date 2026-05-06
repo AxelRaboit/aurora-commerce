@@ -39,16 +39,16 @@ export function useContactsEdit(updatePath, reset) {
             !validate({
                 firstName: () =>
                     required(
-                        t("admin.crm.contacts.errors.first_name_required"),
+                        t("backend.crm.contacts.errors.first_name_required"),
                     )(editForm.value.firstName),
                 lastName: () =>
-                    required(t("admin.crm.contacts.errors.last_name_required"))(
-                        editForm.value.lastName,
-                    ),
+                    required(
+                        t("backend.crm.contacts.errors.last_name_required"),
+                    )(editForm.value.lastName),
                 email: () =>
                     editForm.value.email
                         ? emailValidator(
-                              t("admin.crm.contacts.errors.email_invalid"),
+                              t("backend.crm.contacts.errors.email_invalid"),
                           )(editForm.value.email)
                         : null,
             })
@@ -59,7 +59,7 @@ export function useContactsEdit(updatePath, reset) {
         if (!data) return;
         if (data.success) {
             showEdit.value = false;
-            toast.success(t("admin.crm.contacts.updated"));
+            toast.success(t("backend.crm.contacts.updated"));
             reset();
         } else setErrors(translateServerErrors(t, data.errors));
     }

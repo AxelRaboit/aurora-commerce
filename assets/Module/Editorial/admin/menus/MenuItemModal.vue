@@ -102,11 +102,11 @@ async function loadFilters() {
     try {
         if (form.targetType === MenuTargetType.Post) {
             const data = await jsonRequest(props.pickerPostTypesPath);
-            if (data.success) postTypeOptions.value = [{ id: 0, label: t("admin.menus.allTypes") }, ...data.items];
+            if (data.success) postTypeOptions.value = [{ id: 0, label: t("backend.menus.allTypes") }, ...data.items];
         }
         if (form.targetType === MenuTargetType.Term && !taxonomyOptions.value.length) {
             const data = await jsonRequest(props.pickerTaxonomiesPath);
-            if (data.success) taxonomyOptions.value = [{ id: 0, label: t("admin.menus.allTaxonomies") }, ...data.items];
+            if (data.success) taxonomyOptions.value = [{ id: 0, label: t("backend.menus.allTaxonomies") }, ...data.items];
         }
         if (form.targetType === MenuTargetType.PostTypeArchive) {
             const data = await jsonRequest(`${props.pickerPostTypesPath}?withArchive=1`);
@@ -208,15 +208,15 @@ const errors = ref({});
 function validate() {
     errors.value = {};
     if (requiresTargetId.value && !form.targetId) {
-        errors.value.target = t("admin.menus.errors.target_required");
+        errors.value.target = t("backend.menus.errors.target_required");
     }
     if (requiresCustomUrl.value && !form.customUrl.trim()) {
-        errors.value.customUrl = t("admin.menus.errors.custom_url_required");
+        errors.value.customUrl = t("backend.menus.errors.custom_url_required");
     }
     if (requiresTranslationOverride.value) {
         const hasAny = Object.values(form.translations).some((v) => v && v.trim());
         if (!hasAny) {
-            errors.value.translations = t("admin.menus.errors.translation_required_for_custom_url");
+            errors.value.translations = t("backend.menus.errors.translation_required_for_custom_url");
         }
     }
     return Object.keys(errors.value).length === 0;
@@ -254,27 +254,27 @@ const targetTypeOptions = computed(() =>
 <template>
     <AppModal :show="show" max-width="lg" v-on:close="close">
         <h3 class="text-lg font-bold text-primary mb-4">
-            {{ editing ? t("admin.menus.editItem") : t("admin.menus.addItem") }}
+            {{ editing ? t("backend.menus.editItem") : t("backend.menus.addItem") }}
         </h3>
 
         <form class="space-y-4" v-on:submit.prevent="save">
             <AppMultiselect
                 v-model="form.targetType"
                 :options="targetTypeOptions"
-                :label="t('admin.menus.targetType')"
+                :label="t('backend.menus.targetType')"
                 :allow-empty="false"
                 :searchable="false"
             />
 
             <div v-if="form.targetType === 'post'" class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
-                    {{ t("admin.menus.target") }}
+                    {{ t("backend.menus.target") }}
                 </label>
                 <AppMultiselect
                     v-if="postTypeOptions.length"
                     v-model="postTypeFilter"
                     :options="postTypeOptions.map((pt) => ({ value: pt.id, label: pt.label }))"
-                    :placeholder="t('admin.menus.allTypes')"
+                    :placeholder="t('backend.menus.allTypes')"
                     track-by="value"
                 />
                 <div v-if="form.targetId && targetLabel" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-2 border border-line text-sm">
@@ -290,7 +290,7 @@ const targetTypeOptions = computed(() =>
                         <input
                             v-model="pickerQuery"
                             type="text"
-                            :placeholder="t('admin.menus.searchPostsPlaceholder')"
+                            :placeholder="t('backend.menus.searchPostsPlaceholder')"
                             class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
@@ -314,13 +314,13 @@ const targetTypeOptions = computed(() =>
 
             <div v-else-if="form.targetType === 'term'" class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
-                    {{ t("admin.menus.target") }}
+                    {{ t("backend.menus.target") }}
                 </label>
                 <AppMultiselect
                     v-if="taxonomyOptions.length"
                     v-model="taxonomyFilter"
                     :options="taxonomyOptions.map((tx) => ({ value: tx.id, label: tx.label }))"
-                    :placeholder="t('admin.menus.allTaxonomies')"
+                    :placeholder="t('backend.menus.allTaxonomies')"
                     track-by="value"
                 />
                 <div v-if="form.targetId && targetLabel" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-2 border border-line text-sm">
@@ -336,7 +336,7 @@ const targetTypeOptions = computed(() =>
                         <input
                             v-model="pickerQuery"
                             type="text"
-                            :placeholder="t('admin.menus.searchTermsPlaceholder')"
+                            :placeholder="t('backend.menus.searchTermsPlaceholder')"
                             class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
@@ -362,7 +362,7 @@ const targetTypeOptions = computed(() =>
                 <AppMultiselect
                     v-model="form.targetId"
                     :options="archiveOptions"
-                    :label="t('admin.menus.target')"
+                    :label="t('backend.menus.target')"
                     :error="errors.target"
                     :allow-empty="false"
                     track-by="value"
@@ -372,7 +372,7 @@ const targetTypeOptions = computed(() =>
             <AppInput
                 v-else-if="form.targetType === 'custom_url'"
                 v-model="form.customUrl"
-                :label="t('admin.menus.customUrl')"
+                :label="t('backend.menus.customUrl')"
                 placeholder="https://… or /path"
                 :error="errors.customUrl"
                 required
@@ -380,9 +380,9 @@ const targetTypeOptions = computed(() =>
 
             <div class="space-y-2">
                 <label class="block text-xs font-semibold text-secondary uppercase tracking-wide">
-                    {{ t("admin.menus.translations") }}
+                    {{ t("backend.menus.translations") }}
                 </label>
-                <p class="text-xs text-muted">{{ t("admin.menus.translationsHint") }}</p>
+                <p class="text-xs text-muted">{{ t("backend.menus.translationsHint") }}</p>
                 <div class="flex gap-1 flex-wrap">
                     <button
                         v-for="locale in locales"
@@ -399,7 +399,7 @@ const targetTypeOptions = computed(() =>
                 <input
                     :value="form.translations[activeLocale] ?? ''"
                     type="text"
-                    :placeholder="t('admin.menus.translationPlaceholder')"
+                    :placeholder="t('backend.menus.translationPlaceholder')"
                     class="w-full px-3 py-2 rounded-md border border-line bg-surface text-sm text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                     v-on:input="setTranslation(activeLocale, $event.target.value)"
                 >
@@ -410,18 +410,18 @@ const targetTypeOptions = computed(() =>
                 <AppMultiselect
                     v-model="form.visibility"
                     :options="visibilityOptions"
-                    :label="t('admin.menus.visibility')"
+                    :label="t('backend.menus.visibility')"
                     :allow-empty="false"
                     :searchable="false"
                 />
                 <AppInput
                     v-model="form.cssClass"
-                    :label="t('admin.menus.cssClass')"
+                    :label="t('backend.menus.cssClass')"
                     placeholder="font-bold text-accent-500"
                 />
             </div>
 
-            <AppCheckbox v-model="form.openInNewTab" :label="t('admin.menus.openInNewTab')" />
+            <AppCheckbox v-model="form.openInNewTab" :label="t('backend.menus.openInNewTab')" />
 
             <div class="flex justify-end gap-2 pt-3 border-t border-line">
                 <AppButton variant="ghost" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>

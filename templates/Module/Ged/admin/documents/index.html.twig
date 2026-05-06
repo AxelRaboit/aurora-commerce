@@ -1,12 +1,12 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.documents'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.documents'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.ged'|trans, href: path('backend_ged_documents')},
-            {label: 'admin.nav.documents'|trans},
+            {label: 'backend.modules.ged'|trans, href: path('backend_ged_documents')},
+            {label: 'backend.nav.documents'|trans},
         ],
     }) }}
 {% endblock %}

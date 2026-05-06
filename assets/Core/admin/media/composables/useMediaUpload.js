@@ -51,7 +51,7 @@ export function useMediaUpload(props, media, currentFolderId) {
                 );
                 if (data.media) media.value.unshift(data.media);
             }
-            toast.success(t("admin.media.uploaded", { count: files.length }));
+            toast.success(t("backend.media.uploaded", { count: files.length }));
         } catch {
             toast.error(t("shared.common.error"));
         } finally {

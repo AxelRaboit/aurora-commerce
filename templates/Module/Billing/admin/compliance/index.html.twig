@@ -1,12 +1,12 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.billing.compliance.title'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.billing.compliance.title'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.billing.compliance.title'|trans},
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.billing.compliance.title'|trans},
         ],
     }) }}
 {% endblock %}

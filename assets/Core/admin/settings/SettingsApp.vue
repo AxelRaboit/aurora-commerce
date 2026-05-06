@@ -29,14 +29,14 @@ const availableGroups = groupOrder.filter((groupName) => props.groups[groupName]
 const activeTab = ref(availableGroups[0] ?? "general");
 
 const tabLabels = {
-    general: () => t("admin.settings.tabs.general"),
-    reading: () => t("admin.settings.tabs.reading"),
-    localization: () => t("admin.settings.tabs.localization"),
-    branding: () => t("admin.settings.tabs.branding"),
-    seo: () => t("admin.settings.tabs.seo"),
-    system: () => t("admin.settings.tabs.system"),
-    email: () => t("admin.settings.tabs.email"),
-    sequences: () => t("admin.settings.tabs.sequences"),
+    general: () => t("backend.settings.tabs.general"),
+    reading: () => t("backend.settings.tabs.reading"),
+    localization: () => t("backend.settings.tabs.localization"),
+    branding: () => t("backend.settings.tabs.branding"),
+    seo: () => t("backend.settings.tabs.seo"),
+    system: () => t("backend.settings.tabs.system"),
+    email: () => t("backend.settings.tabs.email"),
+    sequences: () => t("backend.settings.tabs.sequences"),
 };
 
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
@@ -84,7 +84,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                     <AppSearchInput
                         v-if="groupName === 'sequences'"
                         v-model="sequenceSearch"
-                        :placeholder="t('admin.settings.sequenceSearch')"
+                        :placeholder="t('backend.settings.sequenceSearch')"
                     />
 
                     <div
@@ -120,11 +120,11 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                     {{ t("shared.common.remove") }}
                                 </button>
                             </div>
-                            <div v-else class="text-sm text-muted italic mb-2">{{ t("admin.settings.noPageSelected") }}</div>
+                            <div v-else class="text-sm text-muted italic mb-2">{{ t("backend.settings.noPageSelected") }}</div>
                             <div class="relative">
                                 <AppInput
                                     type="text"
-                                    :placeholder="t('admin.settings.searchPost')"
+                                    :placeholder="t('backend.settings.searchPost')"
                                     :model-value="postPickerSearch[parameter.key] ?? ''"
                                     v-on:update:model-value="postPickerSearch[parameter.key] = $event; searchPosts(parameter.key, $event)"
                                     v-on:blur="onPostPickerBlur(parameter.key)"
@@ -148,7 +148,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                 </div>
                             </div>
                             <div class="mt-2 flex items-center gap-2">
-                                <span class="text-xs text-muted shrink-0">{{ t("admin.settings.orId") }}</span>
+                                <span class="text-xs text-muted shrink-0">{{ t("backend.settings.orId") }}</span>
                                 <div class="w-28">
                                     <AppInput
                                         type="number"
@@ -163,7 +163,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                         <template v-else-if="parameter.type === ParameterType.Media">
                             <AppImagePickerField
                                 :label="parameter.label"
-                                :hint="parameter.description ? parameter.description + ' — ' + t('admin.settings.mediaSquareHint') : t('admin.settings.mediaSquareHint')"
+                                :hint="parameter.description ? parameter.description + ' — ' + t('backend.settings.mediaSquareHint') : t('backend.settings.mediaSquareHint')"
                                 :model-value="mediaState[parameter.key]"
                                 :size="96"
                                 v-on:update:model-value="onMediaChange(parameter, $event)"
@@ -219,7 +219,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                             v-on:click="saveGroup(groupName)"
                         >
                             <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("admin.settings.save") }}
+                            {{ t("backend.settings.save") }}
                         </AppButton>
                     </div>
                 </div>

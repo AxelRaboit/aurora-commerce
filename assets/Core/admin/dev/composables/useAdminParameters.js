@@ -56,7 +56,7 @@ export function useAdminParameters(
             if (response.ok) {
                 param.value = editingValue.value || null;
                 editingKey.value = null;
-                toast.success(t("admin.parameters.saved"));
+                toast.success(t("backend.parameters.saved"));
             } else {
                 toast.error(t("shared.common.error"));
             }

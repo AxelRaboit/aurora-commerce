@@ -84,20 +84,20 @@ export function useAdminUsers(
     async function submitCreate() {
         const isValid = validateCreate({
             name: () =>
-                required(t("admin.profile.errors.name_required"))(
+                required(t("backend.profile.errors.name_required"))(
                     newUser.value.name,
                 ),
             email: () =>
                 compose(
-                    required(t("admin.profile.errors.email_invalid")),
-                    email(t("admin.profile.errors.email_invalid")),
+                    required(t("backend.profile.errors.email_invalid")),
+                    email(t("backend.profile.errors.email_invalid")),
                 )(newUser.value.email),
             password: () => {
                 if (
                     !newUser.value.password ||
                     newUser.value.password.length < 8
                 )
-                    return t("admin.profile.errors.password_too_short");
+                    return t("backend.profile.errors.password_too_short");
                 return null;
             },
         });
@@ -151,20 +151,20 @@ export function useAdminUsers(
 
         const isValid = validateEdit({
             name: () =>
-                required(t("admin.profile.errors.name_required"))(
+                required(t("backend.profile.errors.name_required"))(
                     editUserForm.value.name,
                 ),
             email: () =>
                 compose(
-                    required(t("admin.profile.errors.email_invalid")),
-                    email(t("admin.profile.errors.email_invalid")),
+                    required(t("backend.profile.errors.email_invalid")),
+                    email(t("backend.profile.errors.email_invalid")),
                 )(editUserForm.value.email),
             password: () => {
                 if (
                     editUserForm.value.password &&
                     editUserForm.value.password.length < 8
                 )
-                    return t("admin.profile.errors.password_too_short");
+                    return t("backend.profile.errors.password_too_short");
                 return null;
             },
         });

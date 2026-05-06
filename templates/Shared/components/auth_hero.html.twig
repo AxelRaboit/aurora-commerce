@@ -1,14 +1,14 @@
 {% set features = features ?? [
-    {icon: 'file-text', label: 'admin.auth.hero.feature_1'},
-    {icon: 'sliders', label: 'admin.auth.hero.feature_2'},
-    {icon: 'image', label: 'admin.auth.hero.feature_3'},
-    {icon: 'zap', label: 'admin.auth.hero.feature_4'},
+    {icon: 'file-text', label: 'backend.auth.hero.feature_1'},
+    {icon: 'sliders', label: 'backend.auth.hero.feature_2'},
+    {icon: 'image', label: 'backend.auth.hero.feature_3'},
+    {icon: 'zap', label: 'backend.auth.hero.feature_4'},
 ] %}
 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary leading-tight mb-4">
-    {{ 'admin.auth.hero.heading'|trans }}<br>
-    <span class="text-accent-500">{{ 'admin.auth.hero.heading_accent'|trans({'{siteName}': siteName}) }}</span>
+    {{ 'backend.auth.hero.heading'|trans }}<br>
+    <span class="text-accent-500">{{ 'backend.auth.hero.heading_accent'|trans({'{siteName}': siteName}) }}</span>
 </h1>
-<p class="text-secondary text-base leading-relaxed mb-8">{{ 'admin.auth.hero.description'|trans }}</p>
+<p class="text-secondary text-base leading-relaxed mb-8">{{ 'backend.auth.hero.description'|trans }}</p>
 <ul class="space-y-3">
     {% for feature in features %}
         <li class="flex items-center gap-3 text-secondary text-sm">

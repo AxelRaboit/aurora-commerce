@@ -64,7 +64,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('admin.ecommerce.listings.searchPlaceholder')"
+                :placeholder="t('backend.ecommerce.listings.searchPlaceholder')"
                 v-on:search="onSearch"
             />
             <AppButton
@@ -75,7 +75,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-on:click="openCreate"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.ecommerce.listings.add') }}
+                {{ t('backend.ecommerce.listings.add') }}
             </AppButton>
         </div>
 
@@ -83,10 +83,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.listings.title') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.listings.slug') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.ecommerce.listings.price') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.ecommerce.listings.visibility') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.title') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.slug') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.listings.price') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.visibility') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -120,7 +120,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.ecommerce.listings.empty') }}</td>
+                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -146,44 +146,44 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </div>
                 </div>
             </div>
-            <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.ecommerce.listings.empty') }}</p>
+            <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</p>
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.ecommerce.listings.create') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.ecommerce.listings.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppSelect
                     v-model="newListing.productId"
-                    :label="t('admin.ecommerce.listings.product')"
+                    :label="t('backend.ecommerce.listings.product')"
                     :error="createErrors.productId"
                     required
                     v-on:update:model-value="(v) => onProductChange(availableProducts.find(p => p.id == v), newListing)"
                 >
-                    <option value="" disabled>{{ t('admin.ecommerce.listings.selectProduct') }}</option>
+                    <option value="" disabled>{{ t('backend.ecommerce.listings.selectProduct') }}</option>
                     <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }} ({{ product.reference }})</option>
                 </AppSelect>
                 <AppInput
                     v-model="newListing.slug"
-                    :label="t('admin.ecommerce.listings.slug')"
-                    :placeholder="t('admin.ecommerce.listings.slugPlaceholder')"
+                    :label="t('backend.ecommerce.listings.slug')"
+                    :placeholder="t('backend.ecommerce.listings.slugPlaceholder')"
                     :error="createErrors.slug"
                     required
                 />
                 <AppInput
                     v-model="newListing.marketingTitle"
-                    :label="t('admin.ecommerce.listings.marketingTitle')"
-                    :placeholder="t('admin.ecommerce.listings.marketingTitlePlaceholder')"
+                    :label="t('backend.ecommerce.listings.marketingTitle')"
+                    :placeholder="t('backend.ecommerce.listings.marketingTitlePlaceholder')"
                 />
-                <AppTextarea v-model="newListing.marketingDescription" :rows="4" :placeholder="t('admin.ecommerce.listings.marketingDescriptionPlaceholder')" />
+                <AppTextarea v-model="newListing.marketingDescription" :rows="4" :placeholder="t('backend.ecommerce.listings.marketingDescriptionPlaceholder')" />
                 <AppImagePickerField
                     v-model="newListingImage"
-                    :label="t('admin.ecommerce.listings.featuredImage')"
-                    :hint="t('admin.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featuredImage')"
+                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
                 />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('admin.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
                     <AppToggle v-model="newListing.isVisibleOnShop" />
                 </div>
                 <AppModalFooter>
@@ -194,26 +194,26 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.slug"
-                    :label="t('admin.ecommerce.listings.slug')"
+                    :label="t('backend.ecommerce.listings.slug')"
                     :error="editErrors.slug"
                     required
                 />
                 <AppInput
                     v-model="editForm.marketingTitle"
-                    :label="t('admin.ecommerce.listings.marketingTitle')"
+                    :label="t('backend.ecommerce.listings.marketingTitle')"
                 />
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="editFormImage"
-                    :label="t('admin.ecommerce.listings.featuredImage')"
-                    :hint="t('admin.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featuredImage')"
+                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
                 />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('admin.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
                     <AppToggle v-model="editForm.isVisibleOnShop" />
                 </div>
                 <AppModalFooter>
@@ -224,8 +224,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.ecommerce.listings.deleteConfirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.ecommerce.listings.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

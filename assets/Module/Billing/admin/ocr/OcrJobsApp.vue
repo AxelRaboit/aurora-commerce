@@ -72,27 +72,27 @@ onMounted(startPolling);
             <AppMultiselect
                 v-model="statusFilter"
                 :options="STATUS_SELECT"
-                :placeholder="t('admin.billing.list.allStatuses')"
+                :placeholder="t('backend.billing.list.allStatuses')"
                 :allow-empty="true"
                 v-on:update:model-value="onStatusChange"
             />
             <AppButton variant="primary" size="md" :href="importPath">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.billing.ocr.import') }}
+                {{ t('backend.billing.ocr.import') }}
             </AppButton>
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!items?.length" :message="t('admin.billing.ocr.empty')" />
+            <AppNoData v-if="!items?.length" :message="t('backend.billing.ocr.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">#</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.fileName') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.statusLabel') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.billing.ocr.model') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.ocr.fileName') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.ocr.statusLabel') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.ocr.confidence') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.ocr.model') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.ocr.createdAt') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -113,10 +113,10 @@ onMounted(startPolling);
                                 <AppIconButton v-if="hasInvoice(job)" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="job.status === OcrJobStatus.Failed" color="sky" :title="t('admin.billing.ocr.errorLog')" v-on:click="errorJob = job">
+                                <AppIconButton v-if="job.status === OcrJobStatus.Failed" color="sky" :title="t('backend.billing.ocr.errorLog')" v-on:click="errorJob = job">
                                     <Info class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
+                                <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('backend.billing.ocr.retry')" v-on:click="retryJob(job)">
                                     <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="can('billing.ocr.import')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(job)">
@@ -132,16 +132,16 @@ onMounted(startPolling);
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="!!errorJob" max-width="md" v-on:close="errorJob = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t('admin.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>
-            <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('admin.billing.ocr.noErrorLog') }}</pre>
+            <h3 class="text-base font-semibold text-primary mb-3">{{ t('backend.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>
+            <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('backend.billing.ocr.noErrorLog') }}</pre>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="errorJob = null">{{ t('shared.common.close') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

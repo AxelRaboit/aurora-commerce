@@ -141,14 +141,14 @@ export function useMediaEdit(props, media) {
     async function copyUrl(item) {
         try {
             await navigator.clipboard.writeText(mediaPermalink(item));
-            toast.success(t("admin.media.urlCopied"));
+            toast.success(t("backend.media.urlCopied"));
         } catch {
             toast.error(t("shared.common.error"));
         }
     }
 
     const historyActionLabel = (action) =>
-        t(`admin.media.historyAction.${action}`);
+        t(`backend.media.historyAction.${action}`);
 
     return {
         editingMedia,

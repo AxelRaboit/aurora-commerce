@@ -1,11 +1,11 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.posts'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.posts'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.nav.posts'|trans},
+            {label: 'backend.nav.posts'|trans},
         ],
     }) }}
 {% endblock %}

@@ -65,29 +65,29 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 <template>
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <AppSearchInput v-model="search" :placeholder="t('admin.users.searchPlaceholder')" class="flex-1" />
+            <AppSearchInput v-model="search" :placeholder="t('backend.users.searchPlaceholder')" class="flex-1" />
             <AppMultiselect
                 v-model="roleFilter"
                 :options="roles"
-                :placeholder="t('admin.users.allRoles')"
+                :placeholder="t('backend.users.allRoles')"
                 :allow-empty="true"
                 class="sm:w-48 shrink-0"
             />
             <AppButton variant="primary" size="md" class="shrink-0" v-on:click="openInvite">
                 <UserPlus class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.users.invite') }}
+                {{ t('backend.users.invite') }}
             </AppButton>
         </div>
 
         <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
+            <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
             <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                 <div class="flex items-start gap-3">
                     <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="40" />
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary text-sm">
                             {{ user.name }}
-                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
                         </p>
                         <p class="text-xs text-muted mt-0.5">{{ user.email }}</p>
                     </div>
@@ -120,17 +120,17 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         </div>
 
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <AppNoData v-if="!loading && !users.length" :message="t('admin.users.empty')" />
+            <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.name') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.email') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.users.role') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.detail.type') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.status') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.users.created') }}</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.email') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.role') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.detail.type') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.status') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
@@ -140,7 +140,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                 <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
                                 <span>
                                     {{ user.name }}
-                                    <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('admin.users.you') }}</AppBadge>
+                                    <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
                                 </span>
                             </div>
                         </td>
@@ -183,34 +183,34 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="inviteModal.open" max-width="md" v-on:close="inviteModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.invite') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.invite') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
-                <AppInput v-model="inviteForm.name" :label="t('admin.users.name')" :placeholder="t('admin.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
+                <AppInput v-model="inviteForm.name" :label="t('backend.users.name')" :placeholder="t('backend.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
                 <AppInput
                     v-model="inviteForm.email"
-                    :label="t('admin.users.email')"
+                    :label="t('backend.users.email')"
                     type="email"
-                    :placeholder="t('admin.users.emailPlaceholder')"
+                    :placeholder="t('backend.users.emailPlaceholder')"
                     :error="inviteModal.errors.email ?? ''"
                 />
                 <AppMultiselect
                     v-model="inviteForm.role"
                     :options="roles"
-                    :label="t('admin.users.role')"
+                    :label="t('backend.users.role')"
                     :error="inviteModal.errors.role ?? ''"
                 />
                 <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.inviteMessage') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.users.inviteMessage') }}</label>
                     <textarea
                         v-model="inviteForm.message"
                         rows="3"
                         class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
-                        :placeholder="t('admin.users.inviteMessagePlaceholder')"
+                        :placeholder="t('backend.users.inviteMessagePlaceholder')"
                     />
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving">{{ t('admin.users.sendInvite') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving">{{ t('backend.users.sendInvite') }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -231,13 +231,13 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.status') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.status') }}</dt>
                         <dd class="mt-1">
                             <AppBadge :color="statusBadgeColor(viewingUser.status)">{{ viewingUser.statusLabel }}</AppBadge>
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.role') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.role') }}</dt>
                         <dd class="mt-1 flex items-center gap-1 flex-wrap">
                             <AppBadge v-if="viewingUser.isDev" color="rose">Dev</AppBadge>
                             <AppBadge v-if="viewingUser.roleLabel" color="accent">{{ viewingUser.roleLabel }}</AppBadge>
@@ -245,19 +245,19 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.type') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.type') }}</dt>
                         <dd class="mt-1 text-primary">{{ viewingUser.typeLabel }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.locale') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.locale') }}</dt>
                         <dd class="mt-1 text-primary">{{ t('shared.locales.' + viewingUser.locale) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.createdAt') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.createdAt') }}</dt>
                         <dd class="mt-1 text-primary">{{ formatDate(viewingUser.createdAt) }}</dd>
                     </div>
                     <div v-if="viewingUser.invitedAt">
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.users.detail.invitedAt') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.invitedAt') }}</dt>
                         <dd class="mt-1 text-primary">{{ formatDate(viewingUser.invitedAt) }}</dd>
                     </div>
                 </dl>
@@ -265,22 +265,22 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 <div class="border-t border-line/40 pt-4 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div v-if="viewingUser.agencyName">
-                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('admin.nav.agencies') }}</p>
+                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('backend.nav.agencies') }}</p>
                             <p class="text-sm text-primary">{{ viewingUser.agencyName }}</p>
                         </div>
                         <div v-if="viewingUser.serviceName">
-                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('admin.nav.services') }}</p>
+                            <p class="text-xs text-secondary uppercase tracking-wide mb-1">{{ t('backend.nav.services') }}</p>
                             <p class="text-sm text-primary">{{ viewingUser.serviceName }}</p>
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('admin.users.manager.label') }}</p>
+                        <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.users.manager.label') }}</p>
                         <p v-if="viewingUser.manager" class="text-sm text-primary">{{ viewingUser.manager.name }}</p>
-                        <p v-else class="text-sm text-muted">{{ t('admin.users.manager.none') }}</p>
+                        <p v-else class="text-sm text-muted">{{ t('backend.users.manager.none') }}</p>
                     </div>
                     <div v-if="viewingUser.subordinates && viewingUser.subordinates.length">
                         <p class="text-xs text-secondary uppercase tracking-wide mb-1.5">
-                            {{ t('admin.users.manager.subordinates', { count: viewingUser.subordinatesCount }) }}
+                            {{ t('backend.users.manager.subordinates', { count: viewingUser.subordinatesCount }) }}
                         </p>
                         <div class="flex flex-wrap gap-1.5">
                             <AppBadge v-for="sub in viewingUser.subordinates" :key="sub.id" color="accent">{{ sub.name }}</AppBadge>
@@ -295,7 +295,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         </AppModal>
 
         <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
 
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
                 <AppAvatar variant="solid" :name="editModal.editing?.name ?? ''" :photo-url="editModal.editing?.profilePhotoUrl ?? ''" :size="56" />
@@ -305,7 +305,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                             <div class="flex items-center gap-2 flex-wrap">
                                 <AppButton variant="ghost" size="sm" :loading="editModal.photoUploading" v-on:click="trigger">
                                     <Upload class="w-3.5 h-3.5" :stroke-width="2" />
-                                    {{ t('admin.users.photo.upload') }}
+                                    {{ t('backend.users.photo.upload') }}
                                 </AppButton>
                                 <AppButton
                                     v-if="editModal.editing?.profilePhotoUrl"
@@ -315,30 +315,30 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                     v-on:click="removePhoto"
                                 >
                                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                                    {{ t('admin.users.photo.remove') }}
+                                    {{ t('backend.users.photo.remove') }}
                                 </AppButton>
                             </div>
                         </template>
                     </AppFileInput>
-                    <p class="text-xs text-muted">{{ t('admin.users.photo.hint') }}</p>
+                    <p class="text-xs text-muted">{{ t('backend.users.photo.hint') }}</p>
                 </div>
             </div>
 
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-2 gap-4">
-                    <AppInput v-model="editForm.name" :label="t('admin.users.name')" :error="editModal.errors.name ?? ''" />
-                    <AppInput v-model="editForm.email" :label="t('admin.users.email')" type="email" :error="editModal.errors.email ?? ''" />
+                    <AppInput v-model="editForm.name" :label="t('backend.users.name')" :error="editModal.errors.name ?? ''" />
+                    <AppInput v-model="editForm.email" :label="t('backend.users.email')" type="email" :error="editModal.errors.email ?? ''" />
                     <AppMultiselect
                         v-model="editForm.role"
                         :options="roles"
-                        :label="t('admin.users.role')"
+                        :label="t('backend.users.role')"
                         :allow-empty="false"
                         :error="editModal.errors.role ?? ''"
                     />
                     <AppMultiselect
                         v-model="editForm.managerId"
                         :options="managerOptions"
-                        :label="t('admin.users.manager.label')"
+                        :label="t('backend.users.manager.label')"
                         :allow-empty="true"
                         :error="editModal.errors.managerId ?? ''"
                     />
@@ -346,22 +346,22 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         v-if="agencyOptions.length > 1"
                         v-model="editForm.agencyId"
                         :options="agencyOptions"
-                        :label="t('admin.nav.agencies')"
+                        :label="t('backend.nav.agencies')"
                         :allow-empty="true"
                     />
                     <AppMultiselect
                         v-if="serviceOptions.length > 1"
                         v-model="editForm.serviceId"
                         :options="serviceOptions"
-                        :label="t('admin.nav.services')"
+                        :label="t('backend.nav.services')"
                         :allow-empty="true"
                     />
                 </div>
                 <AppInput
                     v-model="editForm.password"
-                    :label="t('admin.users.newPassword')"
+                    :label="t('backend.users.newPassword')"
                     type="password"
-                    :placeholder="t('admin.users.newPasswordPlaceholder')"
+                    :placeholder="t('backend.users.newPasswordPlaceholder')"
                     :error="editModal.errors.password ?? ''"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
@@ -381,11 +381,11 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     <AppAvatar variant="solid" :name="privilegesModal.user.name" :photo-url="privilegesModal.user.profilePhotoUrl ?? ''" :size="40" />
                     <div>
                         <h3 class="text-base font-semibold text-primary">{{ privilegesModal.user.name }}</h3>
-                        <p class="text-xs text-muted">{{ t('admin.users.privileges.title') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.users.privileges.title') }}</p>
                     </div>
                 </div>
                 <div v-for="group in privilegesByModule" :key="group.module" class="space-y-2">
-                    <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('admin.modules.' + group.module, group.module) }}</p>
+                    <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('backend.modules.' + group.module, group.module) }}</p>
                     <div class="grid grid-cols-2 gap-2">
                         <AppCheckbox
                             v-for="priv in group.privileges"
@@ -393,7 +393,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                             :model-value="pendingPrivileges.includes(priv)"
                             v-on:update:model-value="togglePrivilege(priv)"
                         >
-                            <span class="text-xs">{{ t('admin.permissions.names.' + priv, priv) }}</span>
+                            <span class="text-xs">{{ t('backend.permissions.names.' + priv, priv) }}</span>
                         </AppCheckbox>
                     </div>
                 </div>
@@ -408,7 +408,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         </AppModal>
 
         <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
-            <p class="text-sm text-primary">{{ t('admin.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="deletingUser = null">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t('shared.common.delete') }}</AppButton>

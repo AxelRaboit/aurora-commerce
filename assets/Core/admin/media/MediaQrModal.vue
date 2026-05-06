@@ -37,12 +37,12 @@ watch(
 
 <template>
     <AppModal :show="!!media" max-width="sm" v-on:close="emit('close')">
-        <h3 class="text-sm font-medium text-primary mb-4">{{ t("admin.media.qrCode") }} — {{ media?.originalName }}</h3>
+        <h3 class="text-sm font-medium text-primary mb-4">{{ t("backend.media.qrCode") }} — {{ media?.originalName }}</h3>
         <div class="flex flex-col items-center gap-4">
             <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-48 h-48 rounded-xl border border-line/60">
             <p class="text-xs text-muted text-center break-all">{{ media ? permalink(media) : '' }}</p>
             <a v-if="qrDataUrl" :href="qrDataUrl" download="qrcode.png">
-                <AppButton size="sm" variant="ghost">{{ t("admin.media.downloadQr") }}</AppButton>
+                <AppButton size="sm" variant="ghost">{{ t("backend.media.downloadQr") }}</AppButton>
             </a>
         </div>
     </AppModal>

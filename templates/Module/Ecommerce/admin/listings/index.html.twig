@@ -1,12 +1,12 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ 'admin.nav.listings'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ 'backend.nav.listings'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'admin.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
-            {label: 'admin.nav.listings'|trans},
+            {label: 'backend.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
+            {label: 'backend.nav.listings'|trans},
         ],
     }) }}
 {% endblock %}

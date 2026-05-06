@@ -24,20 +24,20 @@ function handleSubmit(event) {
         password: () => passwordValidator(t)(password.value),
         password_confirmation: () => password.value === passwordConfirmation.value
             ? null
-            : t("admin.auth.register.error_password_mismatch"),
+            : t("backend.auth.register.error_password_mismatch"),
     });
 }
 </script>
 
 <template>
-    <p class="mb-4 text-sm text-secondary">{{ t('admin.auth.reset_password.instructions') }}</p>
+    <p class="mb-4 text-sm text-secondary">{{ t('backend.auth.reset_password.instructions') }}</p>
 
     <form method="POST" :action="submitPath" class="space-y-4" v-on:submit.prevent="handleSubmit">
         <div>
             <AppInput
                 v-model="password"
                 name="password"
-                :label="t('admin.auth.register.password')"
+                :label="t('backend.auth.register.password')"
                 placeholder="••••••••"
                 :error="errors.password"
                 autocomplete="new-password"
@@ -51,7 +51,7 @@ function handleSubmit(event) {
         <AppInput
             v-model="passwordConfirmation"
             name="password_confirmation"
-            :label="t('admin.auth.register.password_confirm')"
+            :label="t('backend.auth.register.password_confirm')"
             placeholder="••••••••"
             :error="errors.password_confirmation"
             autocomplete="new-password"
@@ -60,7 +60,7 @@ function handleSubmit(event) {
         />
 
         <div class="flex justify-end">
-            <AppButton type="submit"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.reset_password.submit') }}</AppButton>
+            <AppButton type="submit"><KeyRound class="w-4 h-4" :stroke-width="2" /> {{ t('backend.auth.reset_password.submit') }}</AppButton>
         </div>
     </form>
 </template>

@@ -24,7 +24,7 @@ export function useThemesDelete(themeList, deletePath) {
                 (item) => item.id !== theme.id,
             );
             deletingTheme.value = null;
-            toast.success(t("admin.themes.deleted"));
+            toast.success(t("backend.themes.deleted"));
         } catch {
             toast.error(t("shared.common.error"));
         }

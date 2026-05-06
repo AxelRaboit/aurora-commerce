@@ -35,7 +35,7 @@ export function useMediaBulkActions(
             );
             clearSelection();
             pendingBulkDelete.value = false;
-            toast.success(t("admin.media.bulkDeleted"));
+            toast.success(t("backend.media.bulkDeleted"));
         } catch {
             toast.error(t("shared.common.error"));
         } finally {
@@ -65,7 +65,7 @@ export function useMediaBulkActions(
             }
             clearSelection();
             bulkMoveTargetId.value = null;
-            toast.success(t("admin.media.bulkMoved"));
+            toast.success(t("backend.media.bulkMoved"));
         } catch {
             toast.error(t("shared.common.error"));
         }

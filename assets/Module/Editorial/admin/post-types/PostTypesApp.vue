@@ -50,10 +50,10 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
-                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.title") }}</h2>
+                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.title") }}</h2>
                 <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreatePostType">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.postTypes.add") }}
+                    {{ t("backend.postTypes.add") }}
                 </AppButton>
             </div>
             <div class="space-y-1">
@@ -69,13 +69,13 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 >
                     <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium truncate">{{ postType.label }}</span>
-                    <Lock v-if="postType.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('admin.postTypes.builtIn')" />
+                    <Lock v-if="postType.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.postTypes.builtIn')" />
                 </button>
             </div>
         </aside>
 
         <main class="flex-1 min-w-0 space-y-4">
-            <AppNoData v-if="!selected" :message="t('admin.postTypes.empty')" />
+            <AppNoData v-if="!selected" :message="t('backend.postTypes.empty')" />
             <div v-else class="space-y-4">
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3 flex-wrap">
@@ -85,9 +85,9 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             <div class="flex items-center gap-2 mt-2 flex-wrap">
                                 <AppBadge v-if="selected.isBuiltIn" color="amber">
                                     <Lock class="w-3 h-3" :stroke-width="2" />
-                                    {{ t("admin.postTypes.builtIn") }}
+                                    {{ t("backend.postTypes.builtIn") }}
                                 </AppBadge>
-                                <AppBadge v-if="selected.hasArchive" color="sky">{{ t("admin.postTypes.hasArchive") }}</AppBadge>
+                                <AppBadge v-if="selected.hasArchive" color="sky">{{ t("backend.postTypes.hasArchive") }}</AppBadge>
                                 <AppBadge v-for="support in selected.supports" :key="support" color="gray">{{ support }}</AppBadge>
                             </div>
                         </div>
@@ -111,16 +111,16 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
 
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.postTypes.fields.title") }}</h4>
+                        <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.fields.title") }}</h4>
                         <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreateField">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("admin.postTypes.fields.add") }}
+                            {{ t("backend.postTypes.fields.add") }}
                         </AppButton>
                     </div>
 
-                    <AppNoData v-if="!orderedFields.length" :message="t('admin.postTypes.fields.empty')" />
+                    <AppNoData v-if="!orderedFields.length" :message="t('backend.postTypes.fields.empty')" />
                     <AppMessage v-else variant="info">
-                        {{ t("admin.postTypes.fields.dndHint") }}
+                        {{ t("backend.postTypes.fields.dndHint") }}
                     </AppMessage>
 
                     <VueDraggable
@@ -145,8 +145,8 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                                 <div class="text-xs text-muted font-mono truncate">{{ field.name }}</div>
                             </div>
                             <AppBadge color="gray">{{ field.type }}</AppBadge>
-                            <AppBadge v-if="field.required" color="rose">{{ t("admin.postTypes.fields.required") }}</AppBadge>
-                            <AppBadge v-if="field.translatable" color="sky">{{ t("admin.postTypes.fields.translatable") }}</AppBadge>
+                            <AppBadge v-if="field.required" color="rose">{{ t("backend.postTypes.fields.required") }}</AppBadge>
+                            <AppBadge v-if="field.translatable" color="sky">{{ t("backend.postTypes.fields.translatable") }}</AppBadge>
                             <div class="flex items-center gap-0.5">
                                 <AppIconButton v-if="can('editorial.post_types.manage')" color="accent" v-on:click="openEditField(field)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
@@ -163,31 +163,31 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
 
         <AppModal :show="postTypeModal.open" max-width="lg" v-on:close="postTypeModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ postTypeModal.editing ? t("admin.postTypes.editPostType") : t("admin.postTypes.add") }}
+                {{ postTypeModal.editing ? t("backend.postTypes.editPostType") : t("backend.postTypes.add") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitPostType">
                 <AppInput
                     v-model="postTypeForm.slug"
-                    :label="t('admin.postTypes.slug')"
+                    :label="t('backend.postTypes.slug')"
                     :error="postTypeModal.errors.slug ?? ''"
                     :disabled="postTypeModal.editing?.isBuiltIn ?? false"
-                    :placeholder="t('admin.postTypes.slugPlaceholder')"
+                    :placeholder="t('backend.postTypes.slugPlaceholder')"
                 />
                 <AppInput
                     v-model="postTypeForm.label"
-                    :label="t('admin.postTypes.label')"
+                    :label="t('backend.postTypes.label')"
                     :error="postTypeModal.errors.label ?? ''"
-                    :placeholder="t('admin.postTypes.labelPlaceholder')"
+                    :placeholder="t('backend.postTypes.labelPlaceholder')"
                 />
                 <AppInput
                     v-model="postTypeForm.icon"
-                    :label="t('admin.postTypes.icon')"
-                    :placeholder="t('admin.postTypes.iconPlaceholder')"
+                    :label="t('backend.postTypes.icon')"
+                    :placeholder="t('backend.postTypes.iconPlaceholder')"
                 />
-                <AppCheckbox v-model="postTypeForm.hasArchive" :label="t('admin.postTypes.hasArchive')" />
+                <AppCheckbox v-model="postTypeForm.hasArchive" :label="t('backend.postTypes.hasArchive')" />
 
                 <div class="space-y-2">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.postTypes.supports") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("backend.postTypes.supports") }}</label>
                     <div class="flex flex-wrap gap-2">
                         <label
                             v-for="support in SUPPORTS"
@@ -209,7 +209,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 </div>
 
                 <div v-if="taxonomies.length" class="space-y-2">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.title") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.title") }}</label>
                     <div class="flex flex-wrap gap-2">
                         <label
                             v-for="taxonomy in taxonomies"
@@ -239,58 +239,58 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
 
         <AppModal :show="fieldModal.open" max-width="lg" v-on:close="fieldModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ fieldModal.editing ? t("admin.postTypes.fields.edit") : t("admin.postTypes.fields.add") }}
+                {{ fieldModal.editing ? t("backend.postTypes.fields.edit") : t("backend.postTypes.fields.add") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitField">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="fieldForm.name"
-                        :label="t('admin.postTypes.fields.name')"
+                        :label="t('backend.postTypes.fields.name')"
                         :error="fieldModal.errors.name ?? ''"
-                        :placeholder="t('admin.postTypes.fields.namePlaceholder')"
+                        :placeholder="t('backend.postTypes.fields.namePlaceholder')"
                     />
                     <AppInput
                         v-model="fieldForm.label"
-                        :label="t('admin.postTypes.fields.label')"
+                        :label="t('backend.postTypes.fields.label')"
                         :error="fieldModal.errors.label ?? ''"
-                        :placeholder="t('admin.postTypes.fields.labelPlaceholder')"
+                        :placeholder="t('backend.postTypes.fields.labelPlaceholder')"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.postTypes.fields.type") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("backend.postTypes.fields.type") }}</label>
                     <AppSelect v-model="fieldForm.type">
                         <option v-for="fieldType in FIELD_TYPES" :key="fieldType" :value="fieldType">{{ fieldType }}</option>
                     </AppSelect>
                 </div>
 
                 <div v-if="fieldForm.type === 'select'">
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("admin.postTypes.fields.selectChoices") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t("backend.postTypes.fields.selectChoices") }}</label>
                     <textarea
                         v-model="fieldForm.choicesText"
                         rows="5"
                         class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
-                        :placeholder="t('admin.postTypes.fields.selectChoicesPlaceholder')"
+                        :placeholder="t('backend.postTypes.fields.selectChoicesPlaceholder')"
                     />
-                    <p class="text-xs text-muted mt-1">{{ t("admin.postTypes.fields.selectChoicesHint") }}</p>
+                    <p class="text-xs text-muted mt-1">{{ t("backend.postTypes.fields.selectChoicesHint") }}</p>
                 </div>
 
                 <div v-if="fieldForm.type === 'reference'" class="space-y-2">
                     <AppMultiselect
                         v-model="fieldForm.referencePostTypeId"
                         :options="postTypes"
-                        :label="t('admin.postTypes.fields.referenceTargetType')"
-                        :placeholder="t('admin.postTypes.fields.referenceAnyType')"
+                        :label="t('backend.postTypes.fields.referenceTargetType')"
+                        :placeholder="t('backend.postTypes.fields.referenceAnyType')"
                         :allow-empty="true"
                         track-by="id"
                         option-label="label"
                     />
-                    <AppCheckbox v-model="fieldForm.referenceMultiple" :label="t('admin.postTypes.fields.referenceMultiple')" />
+                    <AppCheckbox v-model="fieldForm.referenceMultiple" :label="t('backend.postTypes.fields.referenceMultiple')" />
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppCheckbox v-model="fieldForm.required" :label="t('admin.postTypes.fields.required')" />
-                    <AppCheckbox v-model="fieldForm.translatable" :label="t('admin.postTypes.fields.translatable')" />
+                    <AppCheckbox v-model="fieldForm.required" :label="t('backend.postTypes.fields.required')" />
+                    <AppCheckbox v-model="fieldForm.translatable" :label="t('backend.postTypes.fields.translatable')" />
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -301,7 +301,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         </AppModal>
 
         <AppModal :show="!!deletingPostType" max-width="sm" v-on:close="deletingPostType = null">
-            <p class="text-sm text-primary">{{ t("admin.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingPostType = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeletePostType">{{ t("shared.common.delete") }}</AppButton>
@@ -309,7 +309,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         </AppModal>
 
         <AppModal :show="!!deletingField" max-width="sm" v-on:close="deletingField = null">
-            <p class="text-sm text-primary">{{ t("admin.postTypes.fields.deleteConfirm", { label: deletingField?.label }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.postTypes.fields.deleteConfirm", { label: deletingField?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingField = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteField">{{ t("shared.common.delete") }}</AppButton>

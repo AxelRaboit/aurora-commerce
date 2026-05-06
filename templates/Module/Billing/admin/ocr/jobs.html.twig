@@ -6,10 +6,10 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: 'Jobs OCR',
         crumbs: [
-            {label: 'admin.modules.billing'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.invoices'|trans, href: path('backend_billing_invoices')},
-            {label: 'admin.nav.ocr_import'|trans, href: path('backend_billing_ocr_import')},
-            {label: 'admin.billing.ocr.upload.allJobs'|trans},
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.invoices'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.ocr_import'|trans, href: path('backend_billing_ocr_import')},
+            {label: 'backend.billing.ocr.upload.allJobs'|trans},
         ],
     }) }}
 {% endblock %}

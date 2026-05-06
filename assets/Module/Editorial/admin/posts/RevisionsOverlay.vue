@@ -82,7 +82,7 @@ async function restore() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (data.success) {
-            toast.success(t("admin.posts.revisions.restored"));
+            toast.success(t("backend.posts.revisions.restored"));
             emit("restored");
         } else {
             toast.error(t("shared.common.error"));
@@ -148,7 +148,7 @@ const visibleEntries = computed(() =>
                 <div class="flex items-center gap-3 px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
                     <HistoryIcon class="w-4 h-4 text-secondary" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium text-secondary truncate">
-                        {{ t("admin.posts.revisions.title") }}
+                        {{ t("backend.posts.revisions.title") }}
                     </span>
                     <AppIconButton :title="t('shared.common.close')" v-on:click="emit('close')">
                         <X class="w-5 h-5" :stroke-width="2" />
@@ -159,7 +159,7 @@ const visibleEntries = computed(() =>
                     <aside class="w-80 shrink-0 border-r border-line bg-surface overflow-y-auto scrollbar-thin">
                         <div v-if="loadingList" class="p-4 text-sm text-muted">{{ t("shared.common.loading") }}</div>
                         <div v-else-if="revisions.length === 0" class="p-4 text-sm text-muted">
-                            {{ t("admin.posts.revisions.empty") }}
+                            {{ t("backend.posts.revisions.empty") }}
                         </div>
                         <ul v-else class="divide-y divide-line">
                             <li
@@ -171,7 +171,7 @@ const visibleEntries = computed(() =>
                             >
                                 <div class="flex items-center gap-2 text-xs">
                                     <AppBadge :color="statusBadgeColor(revision.status)">
-                                        {{ t("admin.stats.postStatus." + revision.status) }}
+                                        {{ t("backend.stats.postStatus." + revision.status) }}
                                     </AppBadge>
                                     <span class="text-muted font-mono">v{{ revision.postVersion }}</span>
                                 </div>
@@ -185,7 +185,7 @@ const visibleEntries = computed(() =>
 
                     <section class="flex-1 overflow-y-auto scrollbar-thin">
                         <div v-if="!selectedRevision && !loadingSelected" class="p-8 text-sm text-muted text-center">
-                            {{ t("admin.posts.revisions.selectHint") }}
+                            {{ t("backend.posts.revisions.selectHint") }}
                         </div>
                         <div v-else-if="loadingSelected" class="p-8 text-sm text-muted text-center">
                             {{ t("shared.common.loading") }}
@@ -210,22 +210,22 @@ const visibleEntries = computed(() =>
                                     <span class="text-emerald-600 dark:text-emerald-400">+{{ stats.added }}</span>
                                     <span class="text-amber-600 dark:text-amber-400">~{{ stats.modified }}</span>
                                     <span class="text-rose-600 dark:text-rose-400">-{{ stats.removed }}</span>
-                                    <span class="text-muted">· {{ stats.unchanged }} {{ t("admin.posts.revisions.unchanged") }}</span>
+                                    <span class="text-muted">· {{ stats.unchanged }} {{ t("backend.posts.revisions.unchanged") }}</span>
                                 </div>
                                 <AppCheckbox
                                     v-model="showUnchanged"
-                                    :label="t('admin.posts.revisions.showUnchanged')"
+                                    :label="t('backend.posts.revisions.showUnchanged')"
                                     class="text-xs ml-auto"
                                 />
                                 <AppButton variant="primary" size="sm" :loading="restoring" v-on:click="restore">
                                     <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
-                                    {{ t("admin.posts.revisions.restore") }}
+                                    {{ t("backend.posts.revisions.restore") }}
                                 </AppButton>
                             </div>
 
                             <div class="space-y-3">
                                 <div v-if="visibleEntries.length === 0" class="p-4 text-sm text-muted text-center border border-line rounded-lg">
-                                    {{ t("admin.posts.revisions.noChange") }}
+                                    {{ t("backend.posts.revisions.noChange") }}
                                 </div>
                                 <div
                                     v-for="entry in visibleEntries"
@@ -233,17 +233,17 @@ const visibleEntries = computed(() =>
                                     class="border border-line rounded-lg overflow-hidden"
                                 >
                                     <div class="flex items-center gap-2 px-3 py-1.5 text-xs bg-surface-2 border-b border-line">
-                                        <span class="px-2 py-0.5 rounded-md font-medium" :class="KIND_CLASS[entry.kind]">{{ t(`admin.posts.revisions.kind.${entry.kind}`) }}</span>
+                                        <span class="px-2 py-0.5 rounded-md font-medium" :class="KIND_CLASS[entry.kind]">{{ t(`backend.posts.revisions.kind.${entry.kind}`) }}</span>
                                         <span class="text-muted font-mono">#{{ entry.id.slice(0, 8) }}</span>
                                     </div>
 
                                     <div v-if="entry.kind === RevisionDiffKind.Modified" class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-line">
                                         <div class="p-3">
-                                            <div class="text-xs text-rose-600 dark:text-rose-400 mb-1.5">{{ t("admin.posts.revisions.revisionSide") }}</div>
+                                            <div class="text-xs text-rose-600 dark:text-rose-400 mb-1.5">{{ t("backend.posts.revisions.revisionSide") }}</div>
                                             <div class="prose-preview text-sm" v-html="renderBlock(entry.revision)" />
                                         </div>
                                         <div class="p-3">
-                                            <div class="text-xs text-emerald-600 dark:text-emerald-400 mb-1.5">{{ t("admin.posts.revisions.currentSide") }}</div>
+                                            <div class="text-xs text-emerald-600 dark:text-emerald-400 mb-1.5">{{ t("backend.posts.revisions.currentSide") }}</div>
                                             <div class="prose-preview text-sm" v-html="renderBlock(entry.current)" />
                                         </div>
                                     </div>

@@ -35,7 +35,7 @@ export function useProductsCreate(createPath, reset) {
         if (
             !validate({
                 name: () =>
-                    required(t("admin.erp.products.errors.name_required"))(
+                    required(t("backend.erp.products.errors.name_required"))(
                         newProduct.value.name,
                     ),
             })
@@ -48,7 +48,7 @@ export function useProductsCreate(createPath, reset) {
         if (!data) return;
         if (data.success) {
             showCreate.value = false;
-            toast.success(t("admin.erp.products.created"));
+            toast.success(t("backend.erp.products.created"));
             reset();
         } else setErrors(translateServerErrors(t, data.errors));
     }

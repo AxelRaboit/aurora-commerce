@@ -57,13 +57,13 @@
 
         {% if is_granted('IS_IMPERSONATOR') %}
             {% embed '@Shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
-                {% block content %}{{ 'admin.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
+                {% block content %}{{ 'backend.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
                 {% block actions %}
                     {{ include('@Shared/components/app_link.html.twig', {
                         href: path('backend_dashboard', {_switch_user: '_exit'}),
                         variant: 'inherit',
                         extraClass: 'ml-2 font-medium',
-                        label: 'admin.impersonation.leave'|trans,
+                        label: 'backend.impersonation.leave'|trans,
                     }) }}
                 {% endblock %}
             {% endembed %}

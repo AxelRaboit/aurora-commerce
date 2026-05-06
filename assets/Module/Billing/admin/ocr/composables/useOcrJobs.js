@@ -96,7 +96,7 @@ export function useOcrJobs(
         }
         const idx = jobsRef.value.findIndex((j) => j.id === job.id);
         if (idx !== -1) jobsRef.value[idx] = data.job;
-        toast.success(t("admin.billing.ocr.retryQueued"));
+        toast.success(t("backend.billing.ocr.retryQueued"));
         start();
         return true;
     }
@@ -126,7 +126,7 @@ export function useOcrJobs(
                 invoiceStatus: "validated",
             };
         }
-        toast.success(t("admin.billing.invoices.show.validated"));
+        toast.success(t("backend.billing.invoices.show.validated"));
     }
 
     /**

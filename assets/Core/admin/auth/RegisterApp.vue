@@ -29,37 +29,37 @@ const { errors, submitOnValid } = useAuthForm(props.initialErrors);
 
 function handleSubmit(event) {
     submitOnValid(event, {
-        name: () => required(t("admin.auth.register.error_name_required"))(name.value),
+        name: () => required(t("backend.auth.register.error_name_required"))(name.value),
         email: () => compose(
-            required(t("admin.auth.register.error_email_required")),
-            emailValidator(t("admin.auth.register.error_email_invalid")),
+            required(t("backend.auth.register.error_email_required")),
+            emailValidator(t("backend.auth.register.error_email_invalid")),
         )(email.value),
         password: () => passwordValidator(t)(password.value),
         password_confirmation: () => password.value === passwordConfirmation.value
             ? null
-            : t("admin.auth.register.error_password_mismatch"),
+            : t("backend.auth.register.error_password_mismatch"),
     });
 }
 </script>
 
 <template>
     <div v-if="!registrationEnabled" class="space-y-2 text-center py-4">
-        <p class="text-primary font-semibold">{{ t('admin.auth.register.closed_title') }}</p>
-        <p class="text-secondary text-sm">{{ t('admin.auth.register.closed_desc') }}</p>
+        <p class="text-primary font-semibold">{{ t('backend.auth.register.closed_title') }}</p>
+        <p class="text-secondary text-sm">{{ t('backend.auth.register.closed_desc') }}</p>
         <div class="mt-6 flex flex-col gap-2 text-sm">
-            <AppLink :href="loginPath">{{ t('admin.auth.register.login_link') }}</AppLink>
+            <AppLink :href="loginPath">{{ t('backend.auth.register.login_link') }}</AppLink>
         </div>
     </div>
 
     <template v-else>
-        <h2 class="text-lg font-bold text-primary mb-5">{{ t('admin.auth.register.heading') }}</h2>
+        <h2 class="text-lg font-bold text-primary mb-5">{{ t('backend.auth.register.heading') }}</h2>
 
         <form method="POST" :action="registerPath" class="flex flex-col gap-4" v-on:submit.prevent="handleSubmit">
             <AppInput
                 v-model="name"
                 name="name"
-                :label="t('admin.auth.register.name')"
-                :placeholder="t('admin.auth.register.name_placeholder')"
+                :label="t('backend.auth.register.name')"
+                :placeholder="t('backend.auth.register.name_placeholder')"
                 :error="errors.name"
                 autocomplete="name"
                 autofocus
@@ -69,7 +69,7 @@ function handleSubmit(event) {
                 v-model="email"
                 name="email"
                 type="email"
-                :label="t('admin.auth.register.email')"
+                :label="t('backend.auth.register.email')"
                 placeholder="you@example.com"
                 :error="errors.email"
                 autocomplete="email"
@@ -79,7 +79,7 @@ function handleSubmit(event) {
                 <AppInput
                     v-model="password"
                     name="password"
-                    :label="t('admin.auth.register.password')"
+                    :label="t('backend.auth.register.password')"
                     placeholder="••••••••"
                     :error="errors.password"
                     autocomplete="new-password"
@@ -91,14 +91,14 @@ function handleSubmit(event) {
             <AppInput
                 v-model="passwordConfirmation"
                 name="password_confirmation"
-                :label="t('admin.auth.register.password_confirm')"
+                :label="t('backend.auth.register.password_confirm')"
                 placeholder="••••••••"
                 :error="errors.password_confirmation"
                 autocomplete="new-password"
                 toggleable
                 required
             />
-            <AppButton type="submit"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.register.submit') }}</AppButton>
+            <AppButton type="submit"><UserPlus class="w-4 h-4" :stroke-width="2" /> {{ t('backend.auth.register.submit') }}</AppButton>
         </form>
 
         <div class="mt-6 flex items-center gap-4">
@@ -108,8 +108,8 @@ function handleSubmit(event) {
         </div>
 
         <p class="mt-4 text-center text-sm text-secondary">
-            {{ t('admin.auth.register.already_account') }}
-            <AppLink :href="loginPath">{{ t('admin.auth.register.login_link') }}</AppLink>
+            {{ t('backend.auth.register.already_account') }}
+            <AppLink :href="loginPath">{{ t('backend.auth.register.login_link') }}</AppLink>
         </p>
     </template>
 </template>

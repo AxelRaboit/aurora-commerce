@@ -224,7 +224,7 @@ async function uploadMedia(event) {
                     v-on:change="uploadMedia"
                 >
                 <AppButton variant="secondary" size="sm" :loading="uploading" v-on:click="mediaInput?.click()">
-                    {{ t("admin.posts.customField.upload") }}
+                    {{ t("backend.posts.customField.upload") }}
                 </AppButton>
                 <AppButton v-if="modelValue" variant="ghost" size="sm" v-on:click="update(null)">
                     <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -242,7 +242,7 @@ async function uploadMedia(event) {
                     class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface border border-line/60"
                 >
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
-                        {{ t("admin.stats.postStatus." + result.status) }}
+                        {{ t("backend.stats.postStatus." + result.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
                         <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
@@ -257,7 +257,7 @@ async function uploadMedia(event) {
             <div v-if="isMultiple || resolved.length === 0" class="relative">
                 <AppInput
                     v-model="search"
-                    :placeholder="t('admin.posts.relatedPosts.searchPlaceholder')"
+                    :placeholder="t('backend.posts.relatedPosts.searchPlaceholder')"
                     v-on:focus="open = true; runSearch()"
                     v-on:blur="setTimeout(() => { open = false; }, 150)"
                 />
@@ -274,7 +274,7 @@ async function uploadMedia(event) {
                         v-on:mousedown.prevent="addReference(result)"
                     >
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
-                            {{ t("admin.stats.postStatus." + result.status) }}
+                            {{ t("backend.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">
                             <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>

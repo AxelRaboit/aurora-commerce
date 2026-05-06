@@ -41,7 +41,7 @@ export function useDealsEdit(
         if (
             !validate({
                 name: () =>
-                    required(t("admin.crm.deals.errors.name_required"))(
+                    required(t("backend.crm.deals.errors.name_required"))(
                         editForm.value.name,
                     ),
             })
@@ -52,7 +52,7 @@ export function useDealsEdit(
         if (!data) return;
         if (data.success) {
             showEdit.value = false;
-            toast.success(t("admin.crm.deals.updated"));
+            toast.success(t("backend.crm.deals.updated"));
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
         } else {

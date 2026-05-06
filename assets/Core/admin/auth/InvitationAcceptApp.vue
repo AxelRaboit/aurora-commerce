@@ -25,21 +25,21 @@ function handleSubmit(event) {
         password: () => passwordValidator(t)(password.value),
         passwordConfirm: () => password.value === passwordConfirm.value
             ? null
-            : t("admin.auth.invitation.errors.password_mismatch"),
+            : t("backend.auth.invitation.errors.password_mismatch"),
     });
 }
 </script>
 
 <template>
-    <h1 class="text-xl font-bold text-primary mb-2">{{ t('admin.auth.invitation.welcome', { name: userName }) }}</h1>
-    <p class="mb-4 text-sm text-secondary">{{ t('admin.auth.invitation.set_password') }}</p>
+    <h1 class="text-xl font-bold text-primary mb-2">{{ t('backend.auth.invitation.welcome', { name: userName }) }}</h1>
+    <p class="mb-4 text-sm text-secondary">{{ t('backend.auth.invitation.set_password') }}</p>
 
     <form method="POST" :action="submitPath" class="space-y-4" v-on:submit.prevent="handleSubmit">
         <div>
             <AppInput
                 v-model="password"
                 name="password"
-                :label="t('admin.auth.invitation.password')"
+                :label="t('backend.auth.invitation.password')"
                 placeholder="••••••••"
                 :error="errors.password"
                 autocomplete="new-password"
@@ -54,7 +54,7 @@ function handleSubmit(event) {
             v-model="passwordConfirm"
             name="password_confirm"
             type="password"
-            :label="t('admin.auth.invitation.confirm_password')"
+            :label="t('backend.auth.invitation.confirm_password')"
             placeholder="••••••••"
             :error="errors.passwordConfirm"
             autocomplete="new-password"
@@ -62,7 +62,7 @@ function handleSubmit(event) {
         />
 
         <div class="flex justify-end">
-            <AppButton type="submit"><UserCheck class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.invitation.submit') }}</AppButton>
+            <AppButton type="submit"><UserCheck class="w-4 h-4" :stroke-width="2" /> {{ t('backend.auth.invitation.submit') }}</AppButton>
         </div>
     </form>
 </template>

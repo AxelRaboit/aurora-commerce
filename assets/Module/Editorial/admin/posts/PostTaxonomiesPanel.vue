@@ -35,7 +35,7 @@ function termLabel(term) {
         <div class="flex items-center gap-2">
             <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ taxonomyLabel(taxonomy) }}</span>
             <span v-if="taxonomy.hierarchical" class="text-xs px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">
-                {{ t("admin.taxonomies.hierarchical") }}
+                {{ t("backend.taxonomies.hierarchical") }}
             </span>
         </div>
 
@@ -51,11 +51,11 @@ function termLabel(term) {
                 <input type="checkbox" class="sr-only" :checked="selectedTermIds.includes(term.id)" v-on:change="emit('toggle-term', term.id)">
                 {{ termLabel(term) }}
             </label>
-            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
+            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("backend.posts.termsPickerEmpty") }}</p>
         </div>
 
         <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
-            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("admin.posts.termsPickerEmpty") }}</p>
+            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("backend.posts.termsPickerEmpty") }}</p>
             <label
                 v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
                 :key="term.id"

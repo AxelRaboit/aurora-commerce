@@ -22,8 +22,8 @@ const { errors, submitOnValid } = useAuthForm();
 function handleSubmit(event) {
     submitOnValid(event, {
         email: () => compose(
-            required(t("admin.auth.register.error_email_required")),
-            emailValidator(t("admin.auth.register.error_email_invalid")),
+            required(t("backend.auth.register.error_email_required")),
+            emailValidator(t("backend.auth.register.error_email_invalid")),
         )(email.value),
     });
 }
@@ -33,21 +33,21 @@ function handleSubmit(event) {
     <div v-if="status" class="mb-4 text-sm font-medium text-green-500">{{ status }}</div>
 
     <template v-if="!status">
-        <p class="mb-4 text-sm text-secondary">{{ t('admin.auth.forgot_password.instructions') }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ t('backend.auth.forgot_password.instructions') }}</p>
 
         <form method="POST" :action="submitPath" class="space-y-4" v-on:submit.prevent="handleSubmit">
             <AppInput
                 v-model="email"
                 name="email"
                 type="email"
-                :label="t('admin.auth.login.email')"
-                :placeholder="t('admin.auth.login.email_placeholder')"
+                :label="t('backend.auth.login.email')"
+                :placeholder="t('backend.auth.login.email_placeholder')"
                 :error="errors.email"
                 autocomplete="email"
                 autofocus
                 required
             />
-            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('admin.auth.forgot_password.submit') }}</AppButton>
+            <AppButton type="submit" class="w-full"><Mail class="w-4 h-4" :stroke-width="2" /> {{ t('backend.auth.forgot_password.submit') }}</AppButton>
         </form>
     </template>
 
@@ -58,6 +58,6 @@ function handleSubmit(event) {
     </div>
 
     <div class="mt-4 text-center">
-        <AppLink :href="loginPath" class="text-sm">{{ t('admin.auth.forgot_password.back_login') }}</AppLink>
+        <AppLink :href="loginPath" class="text-sm">{{ t('backend.auth.forgot_password.back_login') }}</AppLink>
     </div>
 </template>

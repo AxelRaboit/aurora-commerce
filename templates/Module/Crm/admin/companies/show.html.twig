@@ -1,13 +1,13 @@
 {% extends '@Core/admin/layout.html.twig' %}
 
-{% block title %}{{ company.name }} - {{ 'admin.nav.companies'|trans }} - {{ parent() }}{% endblock %}
+{% block title %}{{ company.name }} - {{ 'backend.nav.companies'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         title: company.name,
         crumbs: [
-            {label: 'admin.modules.crm'|trans, href: path('backend_crm_contacts')},
-            {label: 'admin.nav.companies'|trans, href: backPath},
+            {label: 'backend.modules.crm'|trans, href: path('backend_crm_contacts')},
+            {label: 'backend.nav.companies'|trans, href: backPath},
             {label: company.name},
         ],
     }) }}

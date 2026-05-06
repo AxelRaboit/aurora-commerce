@@ -45,7 +45,7 @@ export function useOcrUpload({
                 return;
             }
             toast.success(
-                t("admin.billing.ocr.upload.success", { id: data.job.id }),
+                t("backend.billing.ocr.upload.success", { id: data.job.id }),
             );
             jobs.value = [data.job, ...jobs.value].slice(0, 10);
             URL.revokeObjectURL(preview.url);

@@ -8,7 +8,7 @@ export function useProfileDelete(deletePath, loginPath, deleteCsrf) {
     const deleteLoading = ref(false);
 
     async function deleteAccount() {
-        if (!confirm(t("admin.profile.danger.confirm"))) return;
+        if (!confirm(t("backend.profile.danger.confirm"))) return;
         deleteLoading.value = true;
         try {
             const response = await fetch(deletePath, {

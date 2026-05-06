@@ -80,7 +80,7 @@ async function save() {
         const data = await res.json();
         if (!data.success) throw new Error();
         emit("cropped", data.media);
-        toast.success(t("admin.media.cropped"));
+        toast.success(t("backend.media.cropped"));
         close();
     } catch {
         toast.error(t("shared.common.error"));
@@ -92,7 +92,7 @@ async function save() {
 
 <template>
     <AppModal :show="!!media" max-width="5xl" v-on:close="close">
-        <h3 class="text-sm font-semibold text-primary mb-3">{{ t("admin.media.cropTitle") }} — {{ media?.originalName }}</h3>
+        <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.cropTitle") }} — {{ media?.originalName }}</h3>
         <div style="height: 65vh; width: 100%; overflow: hidden;">
             <img
                 v-if="media"
@@ -105,7 +105,7 @@ async function save() {
         <div class="flex justify-end gap-2 mt-4">
             <AppButton variant="ghost" size="md" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
             <AppButton variant="primary" size="md" :loading="saving" v-on:click="save">
-                <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("admin.media.applyCrop") }}
+                <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.applyCrop") }}
             </AppButton>
         </div>
     </AppModal>

@@ -62,22 +62,22 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
         <nav v-if="kanbanRoutePath" class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
             <AppTab :active="view === 'list'" v-on:click="setView('list')">
                 <List class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t('admin.crm.deals.listView') }}
+                {{ t('backend.crm.deals.listView') }}
             </AppTab>
             <AppTab :active="view === 'kanban'" v-on:click="setView('kanban')">
                 <Columns2 class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t('admin.crm.deals.kanbanView') }}
+                {{ t('backend.crm.deals.kanbanView') }}
             </AppTab>
         </nav>
 
         <div v-if="kanbanRoutePath" class="flex md:hidden gap-1 flex-wrap w-full">
             <AppTab :active="view === 'list'" size="sm" v-on:click="setView('list')">
                 <List class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.crm.deals.listView') }}
+                {{ t('backend.crm.deals.listView') }}
             </AppTab>
             <AppTab :active="view === 'kanban'" size="sm" v-on:click="setView('kanban')">
                 <Columns2 class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.crm.deals.kanbanView') }}
+                {{ t('backend.crm.deals.kanbanView') }}
             </AppTab>
         </div>
 
@@ -87,7 +87,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
                     <AppSearchInput
                         v-model="searchInput"
-                        :placeholder="t('admin.crm.deals.searchPlaceholder')"
+                        :placeholder="t('backend.crm.deals.searchPlaceholder')"
                         v-on:search="onSearch"
                     />
                     <AppButton
@@ -98,7 +98,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                         v-on:click="openCreate"
                     >
                         <Plus class="w-4 h-4" :stroke-width="2" />
-                        {{ t('admin.crm.deals.add') }}
+                        {{ t('backend.crm.deals.add') }}
                     </AppButton>
                 </div>
                 <div class="sm:hidden space-y-3">
@@ -109,7 +109,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <p v-if="deal.contact || deal.company" class="text-xs text-muted mt-0.5">{{ deal.contact?.fullName ?? deal.company?.name }}</p>
                             </div>
                             <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium shrink-0', stageBadge(deal.stage)]">
-                                {{ t(`admin.crm.deals.stages.${deal.stage}`) }}
+                                {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-line">
@@ -127,10 +127,10 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-surface-2/50 border-b border-line/40">
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.deals.name') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.deals.stage') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.deals.contact') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.crm.deals.value') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.name') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.stage') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.deals.contact') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.deals.value') }}</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                             </tr>
                         </thead>
@@ -139,7 +139,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <td class="px-6 py-3 font-medium text-primary">{{ deal.name }}</td>
                                 <td class="px-6 py-3">
                                     <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', stageBadge(deal.stage)]">
-                                        {{ t(`admin.crm.deals.stages.${deal.stage}`) }}
+                                        {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ deal.contact?.fullName ?? deal.company?.name ?? '—' }}</td>
@@ -154,7 +154,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                             </tr>
 
                             <tr v-if="!items?.length">
-                                <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.crm.deals.empty') }}</td>
+                                <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.deals.empty') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -182,7 +182,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 inactive-class="bg-surface-2 text-muted border-transparent hover:text-primary"
                                 v-on:click="activeStage = stage"
                             >
-                                {{ t(`admin.crm.deals.stages.${stage}`) }}
+                                {{ t(`backend.crm.deals.stages.${stage}`) }}
                                 <span :class="['inline-flex items-center justify-center min-w-4 h-4 rounded-full px-1 text-xs', activeStage === stage ? 'bg-white/20' : 'bg-surface-3 text-muted']">
                                     {{ localColumns[stage]?.length ?? 0 }}
                                 </span>
@@ -191,7 +191,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
 
                         <div class="mt-3 space-y-2">
                             <p v-if="!localColumns[activeStage]?.length" class="py-8 text-center text-sm text-muted">
-                                {{ t('admin.crm.deals.empty') }}
+                                {{ t('backend.crm.deals.empty') }}
                             </p>
                             <div
                                 v-for="deal in localColumns[activeStage]"
@@ -205,7 +205,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                         class="shrink-0"
                                         v-on:update:model-value="updateStageForDeal(deal, $event)"
                                     >
-                                        <option v-for="s in stages" :key="s" :value="s">{{ t(`admin.crm.deals.stages.${s}`) }}</option>
+                                        <option v-for="s in stages" :key="s" :value="s">{{ t(`backend.crm.deals.stages.${s}`) }}</option>
                                     </AppSelect>
                                 </div>
                                 <div class="flex items-center justify-between">
@@ -228,7 +228,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                             class="shrink-0 w-72 flex flex-col gap-2"
                         >
                             <div :class="['flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-semibold uppercase tracking-wide', stageBadgeBordered(stage)]">
-                                <span>{{ t(`admin.crm.deals.stages.${stage}`) }}</span>
+                                <span>{{ t(`backend.crm.deals.stages.${stage}`) }}</span>
                                 <span class="text-xs opacity-70">{{ totalByStage[stage] }}</span>
                             </div>
                             <VueDraggable
@@ -261,20 +261,20 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
             </div>
 
             <AppModal :show="showCreate" v-on:close="showCreate = false">
-                <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.create') }}</h3>
+                <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.deals.create') }}</h3>
                 <form class="space-y-4" v-on:submit.prevent="submitCreate">
                     <AppInput
                         v-model="newDeal.name"
-                        :label="t('admin.crm.deals.name')"
-                        :placeholder="t('admin.crm.deals.namePlaceholder')"
+                        :label="t('backend.crm.deals.name')"
+                        :placeholder="t('backend.crm.deals.namePlaceholder')"
                         :error="createErrors.name"
                         required
                     />
-                    <AppSelect v-model="newDeal.stage" :label="t('admin.crm.deals.stage')">
+                    <AppSelect v-model="newDeal.stage" :label="t('backend.crm.deals.stage')">
                         <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
-                    <AppInput v-model="newDeal.value" :label="t('admin.crm.deals.value')" :placeholder="t('admin.crm.deals.valuePlaceholder')" />
-                    <AppDatePicker v-model="newDeal.closingDate" :label="t('admin.crm.deals.closingDate')" />
+                    <AppInput v-model="newDeal.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
+                    <AppDatePicker v-model="newDeal.closingDate" :label="t('backend.crm.deals.closingDate')" />
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -283,20 +283,20 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
             </AppModal>
 
             <AppModal :show="showEdit" v-on:close="showEdit = false">
-                <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.deals.edit', { name: editingDeal?.name ?? '' }) }}</h3>
+                <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.deals.edit', { name: editingDeal?.name ?? '' }) }}</h3>
                 <form class="space-y-4" v-on:submit.prevent="submitEdit">
                     <AppInput
                         v-model="editForm.name"
-                        :label="t('admin.crm.deals.name')"
-                        :placeholder="t('admin.crm.deals.namePlaceholder')"
+                        :label="t('backend.crm.deals.name')"
+                        :placeholder="t('backend.crm.deals.namePlaceholder')"
                         :error="editErrors.name"
                         required
                     />
-                    <AppSelect v-model="editForm.stage" :label="t('admin.crm.deals.stage')">
+                    <AppSelect v-model="editForm.stage" :label="t('backend.crm.deals.stage')">
                         <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
-                    <AppInput v-model="editForm.value" :label="t('admin.crm.deals.value')" :placeholder="t('admin.crm.deals.valuePlaceholder')" />
-                    <AppDatePicker v-model="editForm.closingDate" :label="t('admin.crm.deals.closingDate')" />
+                    <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
+                    <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -305,8 +305,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
             </AppModal>
 
             <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-                <p class="text-sm text-primary">{{ t('admin.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-                <p class="text-sm text-secondary">{{ t('admin.crm.deals.deleteWarning') }}</p>
+                <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
+                <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

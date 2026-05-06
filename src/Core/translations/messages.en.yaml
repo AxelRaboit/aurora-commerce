@@ -1,4 +1,4 @@
-admin:
+backend:
   modules:
     media: Media
     users: Users
@@ -224,14 +224,11 @@ admin:
       error_message: This verification link is invalid or has expired. Please register again.
   nav:
     administration: Developer access
-    forms: Forms
     dashboard: Dashboard
     galleries: Galleries
     media: Media
-    menus: Menus
     profile: My profile
     settings: Settings
-    sitemap: Sitemap
     themes: Themes
     users: Users
     resizeHint: "Drag to resize — double-click to reset"

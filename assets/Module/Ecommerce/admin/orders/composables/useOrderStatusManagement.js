@@ -38,7 +38,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
             [OrderStatus.Shipped]: [
                 {
                     status: OrderStatus.Delivered,
-                    label: t("admin.ecommerce.orders.actions.markDelivered"),
+                    label: t("backend.ecommerce.orders.actions.markDelivered"),
                     icon: PackageCheck,
                     color: "emerald",
                 },
@@ -74,7 +74,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
         if (data?.success) {
             order.value = { ...order.value, ...data.order };
             toast.success(
-                t("admin.ecommerce.orders.actions.transition_success"),
+                t("backend.ecommerce.orders.actions.transition_success"),
             );
             prependActivity(target.status);
         } else if (data?.error) {
@@ -95,7 +95,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
                 entityId: order.value.id,
                 userId: null,
                 userEmail: null,
-                userName: t("admin.ecommerce.orders.actions.you"),
+                userName: t("backend.ecommerce.orders.actions.you"),
                 data: { number: order.value.number },
                 createdAt: new Date().toISOString(),
             },
@@ -105,11 +105,11 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
 
     function actionLabel(action) {
         const map = {
-            "order.created": t("admin.ecommerce.orders.activity.created"),
-            "order.paid": t("admin.ecommerce.orders.activity.paid"),
-            "order.shipped": t("admin.ecommerce.orders.activity.shipped"),
-            "order.delivered": t("admin.ecommerce.orders.activity.delivered"),
-            "order.cancelled": t("admin.ecommerce.orders.activity.cancelled"),
+            "order.created": t("backend.ecommerce.orders.activity.created"),
+            "order.paid": t("backend.ecommerce.orders.activity.paid"),
+            "order.shipped": t("backend.ecommerce.orders.activity.shipped"),
+            "order.delivered": t("backend.ecommerce.orders.activity.delivered"),
+            "order.cancelled": t("backend.ecommerce.orders.activity.cancelled"),
         };
         return map[action] ?? action;
     }

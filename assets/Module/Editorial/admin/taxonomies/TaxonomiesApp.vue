@@ -134,10 +134,10 @@ const parentOptions = computed(() => {
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
-                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.title") }}</h2>
+                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.title") }}</h2>
                 <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTaxonomy">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("admin.taxonomies.addTaxonomy") }}
+                    {{ t("backend.taxonomies.addTaxonomy") }}
                 </AppButton>
             </div>
             <div class="space-y-1">
@@ -154,13 +154,13 @@ const parentOptions = computed(() => {
                     <FolderTree v-if="taxonomy.hierarchical" class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <Folder v-else class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
-                    <Lock v-if="taxonomy.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('admin.taxonomies.builtIn')" />
+                    <Lock v-if="taxonomy.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.taxonomies.builtIn')" />
                 </button>
             </div>
         </aside>
 
         <main class="flex-1 min-w-0 space-y-4">
-            <AppNoData v-if="!selected" :message="t('admin.taxonomies.empty')" />
+            <AppNoData v-if="!selected" :message="t('backend.taxonomies.empty')" />
             <div v-else class="space-y-4">
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3 flex-wrap">
@@ -170,11 +170,11 @@ const parentOptions = computed(() => {
                             <div class="flex items-center gap-2 mt-2">
                                 <AppBadge v-if="selected.hierarchical" color="sky">
                                     <FolderTree class="w-3 h-3" :stroke-width="2" />
-                                    {{ t("admin.taxonomies.hierarchical") }}
+                                    {{ t("backend.taxonomies.hierarchical") }}
                                 </AppBadge>
                                 <AppBadge v-if="selected.isBuiltIn" color="amber">
                                     <Lock class="w-3 h-3" :stroke-width="2" />
-                                    {{ t("admin.taxonomies.builtIn") }}
+                                    {{ t("backend.taxonomies.builtIn") }}
                                 </AppBadge>
                             </div>
                         </div>
@@ -198,7 +198,7 @@ const parentOptions = computed(() => {
 
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.terms.title") }}</h4>
+                        <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.terms.title") }}</h4>
                         <div class="flex items-center gap-2">
                             <div v-if="locales.length > 1" class="flex gap-1">
                                 <button
@@ -216,16 +216,16 @@ const parentOptions = computed(() => {
                             </div>
                             <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                                {{ t("admin.taxonomies.terms.addTerm") }}
+                                {{ t("backend.taxonomies.terms.addTerm") }}
                             </AppButton>
                         </div>
                     </div>
 
                     <AppMessage v-if="selected.hierarchical" variant="info">
-                        {{ t("admin.taxonomies.terms.dndHint") }}
+                        {{ t("backend.taxonomies.terms.dndHint") }}
                     </AppMessage>
 
-                    <AppNoData v-if="!tree.length" :message="t('admin.taxonomies.terms.empty')" />
+                    <AppNoData v-if="!tree.length" :message="t('backend.taxonomies.terms.empty')" />
 
                     <VueDraggable
                         v-else
@@ -259,25 +259,25 @@ const parentOptions = computed(() => {
 
         <AppModal :show="taxonomyModal.open" max-width="lg" v-on:close="taxonomyModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ taxonomyModal.editing ? t("admin.taxonomies.editTaxonomy") : t("admin.taxonomies.addTaxonomy") }}
+                {{ taxonomyModal.editing ? t("backend.taxonomies.editTaxonomy") : t("backend.taxonomies.addTaxonomy") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitTaxonomy">
                 <AppInput
                     v-model="taxonomyForm.slug"
-                    :label="t('admin.taxonomies.slug')"
+                    :label="t('backend.taxonomies.slug')"
                     :error="taxonomyModal.errors.slug ?? ''"
-                    :placeholder="t('admin.taxonomies.slugPlaceholder')"
+                    :placeholder="t('backend.taxonomies.slugPlaceholder')"
                     :disabled="taxonomyModal.editing?.isBuiltIn ?? false"
                 />
 
                 <AppCheckbox
                     v-model="taxonomyForm.hierarchical"
-                    :label="t('admin.taxonomies.hierarchical')"
+                    :label="t('backend.taxonomies.hierarchical')"
                     :disabled="taxonomyModal.editing?.isBuiltIn ?? false"
                 />
 
                 <div class="space-y-2">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.translations") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.translations") }}</label>
                     <div class="flex gap-1">
                         <button
                             v-for="locale in locales"
@@ -292,19 +292,19 @@ const parentOptions = computed(() => {
                     </div>
                     <AppInput
                         v-model="taxonomyForm.translations[activeLocale].label"
-                        :label="t('admin.taxonomies.label')"
-                        :placeholder="t('admin.taxonomies.labelPlaceholder')"
+                        :label="t('backend.taxonomies.label')"
+                        :placeholder="t('backend.taxonomies.labelPlaceholder')"
                     />
                     <AppTextarea
                         v-model="taxonomyForm.translations[activeLocale].description"
-                        :label="t('admin.taxonomies.description')"
-                        :placeholder="t('admin.taxonomies.descriptionPlaceholder')"
+                        :label="t('backend.taxonomies.description')"
+                        :placeholder="t('backend.taxonomies.descriptionPlaceholder')"
                         :rows="2"
                     />
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.taxonomies.postTypes") }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.postTypes") }}</label>
                     <div class="flex flex-wrap gap-2">
                         <label
                             v-for="pt in postTypes"
@@ -336,15 +336,15 @@ const parentOptions = computed(() => {
 
         <AppModal :show="termModal.open" max-width="md" v-on:close="termModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ termModal.editing ? t("admin.taxonomies.terms.editTerm") : t("admin.taxonomies.terms.addTerm") }}
+                {{ termModal.editing ? t("backend.taxonomies.terms.editTerm") : t("backend.taxonomies.terms.addTerm") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitTerm">
                 <div v-if="selected?.hierarchical">
                     <AppMultiselect
                         v-model="termForm.parentId"
                         :options="parentOptions"
-                        :label="t('admin.taxonomies.terms.parent')"
-                        :placeholder="t('admin.taxonomies.terms.noParent')"
+                        :label="t('backend.taxonomies.terms.parent')"
+                        :placeholder="t('backend.taxonomies.terms.noParent')"
                         :allow-empty="true"
                         track-by="id"
                         option-label="label"
@@ -366,21 +366,21 @@ const parentOptions = computed(() => {
 
                 <AppInput
                     v-model="termForm.translations[activeLocale].name"
-                    :label="t('admin.taxonomies.terms.name')"
+                    :label="t('backend.taxonomies.terms.name')"
                     :error="termModal.errors[`translations[${activeLocale}].name`] ?? ''"
-                    :placeholder="t('admin.taxonomies.terms.namePlaceholder')"
+                    :placeholder="t('backend.taxonomies.terms.namePlaceholder')"
                     v-on:blur="autoSlugTerm(activeLocale)"
                 />
                 <AppInput
                     v-model="termForm.translations[activeLocale].slug"
-                    :label="t('admin.taxonomies.terms.slug')"
+                    :label="t('backend.taxonomies.terms.slug')"
                     :error="termModal.errors[`translations[${activeLocale}].slug`] ?? ''"
-                    :placeholder="t('admin.taxonomies.terms.slugPlaceholder')"
+                    :placeholder="t('backend.taxonomies.terms.slugPlaceholder')"
                 />
                 <AppTextarea
                     v-model="termForm.translations[activeLocale].description"
-                    :label="t('admin.taxonomies.terms.description')"
-                    :placeholder="t('admin.taxonomies.terms.descriptionPlaceholder')"
+                    :label="t('backend.taxonomies.terms.description')"
+                    :placeholder="t('backend.taxonomies.terms.descriptionPlaceholder')"
                     :rows="2"
                 />
 
@@ -392,7 +392,7 @@ const parentOptions = computed(() => {
         </AppModal>
 
         <AppModal :show="!!deletingTaxonomy" max-width="sm" v-on:close="deletingTaxonomy = null">
-            <p class="text-sm text-primary">{{ t("admin.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteTaxonomy">{{ t("shared.common.delete") }}</AppButton>
@@ -400,7 +400,7 @@ const parentOptions = computed(() => {
         </AppModal>
 
         <AppModal :show="!!deletingTerm" max-width="sm" v-on:close="deletingTerm = null">
-            <p class="text-sm text-primary">{{ t("admin.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDeleteTerm">{{ t("shared.common.delete") }}</AppButton>

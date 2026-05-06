@@ -1,4 +1,4 @@
-admin:
+backend:
   modules:
     media: Médias
     users: Utilisateurs
@@ -225,14 +225,11 @@ admin:
       error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
   nav:
     administration: Accès développeur
-    forms: Formulaires
     dashboard: Tableau de bord
     galleries: Galeries
     media: Médias
-    menus: Menus
     profile: Mon profil
     settings: Réglages
-    sitemap: Sitemap
     themes: Thèmes
     users: Utilisateurs
     resizeHint: "Glisser pour redimensionner — double-clic pour réinitialiser"

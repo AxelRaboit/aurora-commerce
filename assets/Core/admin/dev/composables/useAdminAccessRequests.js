@@ -77,7 +77,7 @@ export function useAdminAccessRequests(
             const data = await response.json();
             if (data.success) {
                 toast.success(
-                    data.message ?? t("admin.access_requests.approved_toast"),
+                    data.message ?? t("backend.access_requests.approved_toast"),
                 );
                 pendingApprove.value = null;
                 await reset();
@@ -106,7 +106,7 @@ export function useAdminAccessRequests(
             const data = await response.json();
             if (data.success) {
                 toast.success(
-                    data.message ?? t("admin.access_requests.rejected_toast"),
+                    data.message ?? t("backend.access_requests.rejected_toast"),
                 );
                 pendingReject.value = null;
                 await reset();
@@ -134,7 +134,7 @@ export function useAdminAccessRequests(
             const data = await response.json();
             if (data.success) {
                 toast.success(
-                    data.message ?? t("admin.access_requests.purged_toast"),
+                    data.message ?? t("backend.access_requests.purged_toast"),
                 );
                 confirmPurge.value = false;
                 await reset();

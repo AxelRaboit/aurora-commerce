@@ -46,7 +46,7 @@ export function useDealsCreate(
         if (
             !validate({
                 name: () =>
-                    required(t("admin.crm.deals.errors.name_required"))(
+                    required(t("backend.crm.deals.errors.name_required"))(
                         newDeal.value.name,
                     ),
             })
@@ -56,7 +56,7 @@ export function useDealsCreate(
         if (!data) return;
         if (data.success) {
             showCreate.value = false;
-            toast.success(t("admin.crm.deals.created"));
+            toast.success(t("backend.crm.deals.created"));
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
         } else {

@@ -46,7 +46,7 @@ export function useOcrDelete({ deletePath, jobs, previews, removePreview }) {
         if (linked) removePreview(linked.key);
         pendingDelete.value = null;
         deleteTiersToo.value = false;
-        toast.success(t("admin.billing.ocr.deleted"));
+        toast.success(t("backend.billing.ocr.deleted"));
     }
 
     return {

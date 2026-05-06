@@ -44,7 +44,7 @@ export function useProductsEdit(updatePath, reset) {
         if (
             !validate({
                 name: () =>
-                    required(t("admin.erp.products.errors.name_required"))(
+                    required(t("backend.erp.products.errors.name_required"))(
                         editForm.value.name,
                     ),
             })
@@ -55,7 +55,7 @@ export function useProductsEdit(updatePath, reset) {
         if (!data) return;
         if (data.success) {
             showEdit.value = false;
-            toast.success(t("admin.erp.products.updated"));
+            toast.success(t("backend.erp.products.updated"));
             reset();
         } else setErrors(translateServerErrors(t, data.errors));
     }

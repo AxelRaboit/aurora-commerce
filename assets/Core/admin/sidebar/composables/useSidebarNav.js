@@ -93,7 +93,7 @@ export function useSidebarNav(navSections, activeRoute) {
     const groupedSections = computed(() =>
         navSections.map((section) => ({
             id: section.id,
-            label: t(`admin.nav.sections.${section.id}`),
+            label: t(`backend.nav.sections.${section.id}`),
             items: section.items.map(buildItem),
         })),
     );

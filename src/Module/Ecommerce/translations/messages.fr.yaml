@@ -1,4 +1,4 @@
-admin:
+backend:
   modules:
     ecommerce: E-commerce
   audit:

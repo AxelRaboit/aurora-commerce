@@ -109,22 +109,22 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
             <AppTab :active="!trashed" v-on:click="setTrashedFilter(false)">
                 <FileText class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("admin.posts.tabs.active") }}
+                {{ t("backend.posts.tabs.active") }}
             </AppTab>
             <AppTab :active="trashed" color="rose" v-on:click="setTrashedFilter(true)">
                 <Inbox class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("admin.posts.tabs.trash") }}
+                {{ t("backend.posts.tabs.trash") }}
             </AppTab>
         </nav>
 
         <div class="flex md:hidden gap-1 flex-wrap w-full">
             <AppTab :active="!trashed" size="sm" v-on:click="setTrashedFilter(false)">
                 <FileText class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.posts.tabs.active") }}
+                {{ t("backend.posts.tabs.active") }}
             </AppTab>
             <AppTab :active="trashed" color="rose" size="sm" v-on:click="setTrashedFilter(true)">
                 <Inbox class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.posts.tabs.trash") }}
+                {{ t("backend.posts.tabs.trash") }}
             </AppTab>
         </div>
 
@@ -132,7 +132,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
             <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
                 <AppSearchInput
                     v-model="searchInput"
-                    :placeholder="t('admin.posts.searchPlaceholder')"
+                    :placeholder="t('backend.posts.searchPlaceholder')"
                     v-on:search="onSearch"
                 />
                 <AppButton
@@ -143,7 +143,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     v-on:click="openCreate"
                 >
                     <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t("admin.posts.add") }}
+                    {{ t("backend.posts.add") }}
                 </AppButton>
                 <AppButton
                     v-if="trashed && posts.length"
@@ -154,12 +154,12 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     v-on:click="confirmEmptyTrash = true"
                 >
                     <Trash2 class="w-4 h-4" :stroke-width="2" />
-                    {{ t("admin.posts.emptyTrash") }}
+                    {{ t("backend.posts.emptyTrash") }}
                 </AppButton>
             </div>
 
             <div class="sm:hidden space-y-2">
-                <AppNoData v-if="!posts.length" :message="t('admin.posts.empty')" />
+                <AppNoData v-if="!posts.length" :message="t('backend.posts.empty')" />
                 <div v-for="post in posts" :key="post.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
                     <div class="flex items-start gap-3">
                         <div class="flex-1 min-w-0">
@@ -168,7 +168,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
                         </div>
                         <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
-                            {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
+                            {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
                         </AppBadge>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-line/40">
@@ -196,16 +196,16 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.title") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("admin.posts.postType") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.posts.status") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("admin.tags.createdAt") }}</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.tags.actions") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.title") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.posts.postType") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.status") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.tags.createdAt") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.tags.actions") }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
                         <tr v-if="!posts.length">
-                            <td colspan="6"><AppNoData :message="t('admin.posts.empty')" /></td>
+                            <td colspan="6"><AppNoData :message="t('backend.posts.empty')" /></td>
                         </tr>
                         <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-6 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
@@ -221,7 +221,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <td class="px-6 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
                             <td class="px-6 py-3">
                                 <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)">
-                                    {{ post.trashed ? t("admin.posts.statusTrashed") : t("admin.stats.postStatus." + post.status) }}
+                                    {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
                                 </AppBadge>
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
@@ -264,13 +264,13 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
 
             <AppModal :show="confirmEmptyTrash" max-width="sm" v-on:close="confirmEmptyTrash = false">
                 <div class="space-y-4">
-                    <p class="text-sm text-primary">{{ t("admin.posts.emptyTrashConfirm") }}</p>
+                    <p class="text-sm text-primary">{{ t("backend.posts.emptyTrashConfirm") }}</p>
                     <div class="flex justify-end gap-2">
                         <AppButton variant="secondary" size="md" v-on:click="confirmEmptyTrash = false">
                             {{ t("shared.common.cancel") }}
                         </AppButton>
                         <AppButton variant="danger" size="md" :loading="emptyingTrash" v-on:click="emptyTrash">
-                            {{ t("admin.posts.emptyTrash") }}
+                            {{ t("backend.posts.emptyTrash") }}
                         </AppButton>
                     </div>
                 </div>

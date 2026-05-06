@@ -34,7 +34,7 @@ export function useUsersActions(props, fetchUsers) {
             );
             const data = await response.json();
             if (data.success) {
-                toast.success(t("admin.users.invitationResent"));
+                toast.success(t("backend.users.invitationResent"));
                 fetchUsers();
             } else toast.error(t("shared.common.error"));
         } catch {

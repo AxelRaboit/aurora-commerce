@@ -54,8 +54,8 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
 <template>
     <div class="space-y-6">
         <div class="bg-surface border border-line/60 rounded-xl p-6">
-            <h3 class="text-lg font-semibold text-primary mb-2">{{ t('admin.billing.ocr.upload.title') }}</h3>
-            <p class="text-sm text-secondary mb-4">{{ t('admin.billing.ocr.upload.help') }}</p>
+            <h3 class="text-lg font-semibold text-primary mb-2">{{ t('backend.billing.ocr.upload.title') }}</h3>
+            <p class="text-sm text-secondary mb-4">{{ t('backend.billing.ocr.upload.help') }}</p>
 
             <AppDropZone
                 :accept="OCR_ACCEPTED_MIME_TYPES"
@@ -130,21 +130,21 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
         <div class="flex justify-end">
             <AppButton variant="secondary" size="md" :href="jobsPath">
                 <LayoutList class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.billing.ocr.upload.allJobs') }}
+                {{ t('backend.billing.ocr.upload.allJobs') }}
             </AppButton>
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!jobs.length" :message="t('admin.billing.ocr.empty')" />
+            <AppNoData v-if="!jobs.length" :message="t('backend.billing.ocr.empty')" />
             <div v-else class="overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.fileName') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.billing.ocr.statusLabel') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.confidence') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.billing.ocr.createdAt') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.ocr.fileName') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.ocr.statusLabel') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.ocr.confidence') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.ocr.createdAt') }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                         </tr>
                     </thead>
@@ -159,8 +159,8 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                                             : job.statusColor"
                                     :spinning="ACTIVE_STATUSES.has(job.status)"
                                 >
-                                    {{ job.status === OcrJobStatus.Completed && job.invoiceCanValidate ? t('admin.billing.ocr.status.readyToValidate')
-                                        : job.status === OcrJobStatus.Completed && job.invoiceStatus === 'validated' ? t('admin.billing.invoices.status.validated')
+                                    {{ job.status === OcrJobStatus.Completed && job.invoiceCanValidate ? t('backend.billing.ocr.status.readyToValidate')
+                                        : job.status === OcrJobStatus.Completed && job.invoiceStatus === 'validated' ? t('backend.billing.invoices.status.validated')
                                             : job.statusLabel }}
                                 </AppBadge>
                             </td>
@@ -173,13 +173,13 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                                     <AppIconButton v-if="hasInvoice(job) && job.isTerminal" color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: job.invoiceId })">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="job.invoiceCanValidate && job.status === OcrJobStatus.Completed" color="emerald" :title="t('admin.billing.invoices.show.validate')" v-on:click="pendingValidate = job">
+                                    <AppIconButton v-if="job.invoiceCanValidate && job.status === OcrJobStatus.Completed" color="emerald" :title="t('backend.billing.invoices.show.validate')" v-on:click="pendingValidate = job">
                                         <CircleCheck class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="!job.isTerminal || (job.logs && job.logs.length) || job.error" color="slate" :title="t('admin.billing.ocr.viewLogs')" v-on:click="logsJob = job">
+                                    <AppIconButton v-if="!job.isTerminal || (job.logs && job.logs.length) || job.error" color="slate" :title="t('backend.billing.ocr.viewLogs')" v-on:click="logsJob = job">
                                         <ScrollText class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
+                                    <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('backend.billing.ocr.retry')" v-on:click="retryJob(job)">
                                         <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="pendingDelete = job">
@@ -195,21 +195,21 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
 
         <AppModal :show="!!logsJob" max-width="lg" v-on:close="logsJob = null">
             <h3 class="text-base font-semibold text-primary mb-3">
-                {{ t('admin.billing.ocr.logsTitle') }} — #{{ logsJob?.id }}
+                {{ t('backend.billing.ocr.logsTitle') }} — #{{ logsJob?.id }}
                 <AppBadge :color="logsJob?.statusColor" :spinning="logsJob && !logsJob.isTerminal" class="ml-2">{{ logsJob?.statusLabel }}</AppBadge>
             </h3>
             <div ref="logsContainer" class="bg-surface-2 rounded-lg p-3 h-72 overflow-y-auto scrollbar-thin font-mono text-xs space-y-1">
                 <template v-if="!logsJob?.logs?.length">
                     <div v-if="logsJob?.status === OcrJobStatus.Queued" class="flex flex-col items-center gap-2 text-muted text-center py-8">
                         <span class="w-5 h-5 rounded-full border-2 border-muted border-t-transparent animate-spin" />
-                        <span>{{ t('admin.billing.ocr.logsWaitingWorker') }}</span>
+                        <span>{{ t('backend.billing.ocr.logsWaitingWorker') }}</span>
                     </div>
                     <div v-else-if="!logsJob?.isTerminal" class="flex flex-col items-center gap-2 text-muted text-center py-8">
                         <span class="w-5 h-5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
-                        <span>{{ t('admin.billing.ocr.logsStarting') }}</span>
+                        <span>{{ t('backend.billing.ocr.logsStarting') }}</span>
                     </div>
                     <pre v-else-if="logsJob?.error" class="text-rose-400 text-xs whitespace-pre-wrap break-all">{{ logsJob.error }}</pre>
-                    <div v-else class="text-muted italic text-center py-8">{{ t('admin.billing.ocr.logsEmpty') }}</div>
+                    <div v-else class="text-muted italic text-center py-8">{{ t('backend.billing.ocr.logsEmpty') }}</div>
                 </template>
                 <div
                     v-for="(entry, i) in logsJob?.logs"
@@ -227,7 +227,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 </div>
                 <div v-if="logsJob && !logsJob.isTerminal" class="flex items-center gap-1.5 text-muted animate-pulse pt-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
-                    <span>{{ t('admin.billing.ocr.logsRunning') }}</span>
+                    <span>{{ t('backend.billing.ocr.logsRunning') }}</span>
                 </div>
             </div>
             <AppModalFooter>
@@ -236,20 +236,20 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
         </AppModal>
 
         <AppModal :show="!!pendingValidate" max-width="sm" v-on:close="pendingValidate = null">
-            <p class="text-sm text-primary">{{ t('admin.billing.ocr.validateConfirm', { id: pendingValidate?.id ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.ocr.validateHelp') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.ocr.validateConfirm', { id: pendingValidate?.id ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.ocr.validateHelp') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingValidate = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate">{{ t('admin.billing.invoices.show.validate') }}</AppButton>
+                <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate">{{ t('backend.billing.invoices.show.validate') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null; deleteTiersToo = false">
-            <p class="text-sm text-primary">{{ t('admin.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <label v-if="canDeleteTiers" class="flex items-center gap-2 mt-3 text-sm text-secondary cursor-pointer select-none">
                 <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
-                {{ t('admin.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
+                {{ t('backend.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
             </label>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false">{{ t('shared.common.cancel') }}</AppButton>

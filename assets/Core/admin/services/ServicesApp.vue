@@ -30,19 +30,19 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
 <template>
     <div class="space-y-4">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-primary">{{ t("admin.services.title") }}</h1>
+            <h1 class="text-2xl font-bold text-primary">{{ t("backend.services.title") }}</h1>
             <AppButton v-if="isAdmin" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.services.new") }}
+                {{ t("backend.services.new") }}
             </AppButton>
         </div>
 
         <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <AppNoData v-if="!serviceList.length" :message="t('admin.services.empty')" />
+            <AppNoData v-if="!serviceList.length" :message="t('backend.services.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("admin.services.name") }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.services.name") }}</th>
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -66,13 +66,13 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
 
         <AppModal :show="editModal.open" max-width="sm" v-on:close="editModal.open = false">
             <h3 class="text-lg font-semibold text-primary">
-                {{ editModal.service ? t("admin.services.edit_title", { name: editModal.service.name }) : t("admin.services.new") }}
+                {{ editModal.service ? t("backend.services.edit_title", { name: editModal.service.name }) : t("backend.services.new") }}
             </h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.services.name')"
-                    :placeholder="t('admin.services.namePlaceholder')"
+                    :label="t('backend.services.name')"
+                    :placeholder="t('backend.services.namePlaceholder')"
                     :error="editModal.errors.name ?? ''"
                     :required="true"
                 />
@@ -87,7 +87,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
         </AppModal>
 
         <AppModal :show="!!deletingService" max-width="sm" v-on:close="deletingService = null">
-            <p class="text-sm text-primary">{{ t("admin.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="deletingService = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t("shared.common.delete") }}</AppButton>

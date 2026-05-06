@@ -23,7 +23,7 @@ export function useProfilePassword(passwordPath) {
     async function savePassword() {
         const isValid = validatePassword({
             current_password: () =>
-                required(t("admin.profile.errors.current_password_invalid"))(
+                required(t("backend.profile.errors.current_password_invalid"))(
                     currentPassword.value,
                 ),
             password: () => passwordValidator(t)(newPassword.value),
@@ -32,7 +32,7 @@ export function useProfilePassword(passwordPath) {
                     newPassword.value &&
                     newPassword.value !== confirmPassword.value
                 )
-                    return t("admin.profile.errors.password_mismatch");
+                    return t("backend.profile.errors.password_mismatch");
                 return null;
             },
         });
@@ -53,7 +53,7 @@ export function useProfilePassword(passwordPath) {
             const data = await response.json();
             if (data.success) {
                 clearPasswordErrors();
-                toast.success(t("admin.profile.password.saved"));
+                toast.success(t("backend.profile.password.saved"));
                 currentPassword.value = "";
                 newPassword.value = "";
                 confirmPassword.value = "";

@@ -29,7 +29,7 @@ defineEmits(["close"]);
         >
             <div v-if="show" class="fixed inset-0 z-50 flex flex-col bg-bg overflow-y-auto scrollbar-thin">
                 <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-3 border-b border-line bg-surface/90 backdrop-blur-sm shrink-0">
-                    <span class="text-sm font-medium text-secondary">{{ label ?? t("admin.posts.preview") }}</span>
+                    <span class="text-sm font-medium text-secondary">{{ label ?? t("backend.posts.preview") }}</span>
                     <AppButton variant="ghost" size="none" class="p-1.5" v-on:click="$emit('close')">
                         <X class="w-5 h-5" :stroke-width="2" />
                     </AppButton>
@@ -46,7 +46,7 @@ defineEmits(["close"]);
                     />
                     <h1 v-if="title" class="text-3xl font-bold text-primary mb-8">{{ title }}</h1>
                     <div v-if="html" class="prose-preview" v-html="html" />
-                    <p v-else class="text-muted text-sm italic">{{ t("admin.posts.previewEmpty") }}</p>
+                    <p v-else class="text-muted text-sm italic">{{ t("backend.posts.previewEmpty") }}</p>
                 </div>
             </div>
         </Transition>

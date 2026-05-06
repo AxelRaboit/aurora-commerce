@@ -36,17 +36,17 @@ const props = defineProps({
 });
 
 const STATUS_OPTIONS = [
-    { value: "draft", label: () => t("admin.erp.products.status.draft") },
-    { value: "active", label: () => t("admin.erp.products.status.active") },
-    { value: "archived", label: () => t("admin.erp.products.status.archived") },
+    { value: "draft", label: () => t("backend.erp.products.status.draft") },
+    { value: "active", label: () => t("backend.erp.products.status.active") },
+    { value: "archived", label: () => t("backend.erp.products.status.archived") },
 ];
 
 const STATUS_TONE = { draft: "amber", active: "emerald", archived: "slate" };
 
 const TYPE_OPTIONS = [
-    { value: "physical", label: () => t("admin.erp.products.types.physical") },
-    { value: "digital", label: () => t("admin.erp.products.types.digital") },
-    { value: "service", label: () => t("admin.erp.products.types.service") },
+    { value: "physical", label: () => t("backend.erp.products.types.physical") },
+    { value: "digital", label: () => t("backend.erp.products.types.digital") },
+    { value: "service", label: () => t("backend.erp.products.types.service") },
 ];
 
 const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
@@ -69,7 +69,7 @@ const { loading: editLoading, request: editRequest } = useApiRequest();
 
 async function submitEdit() {
     if (!validateEdit({
-        name: () => required(t("admin.erp.products.errors.name_required"))(editForm.value.name),
+        name: () => required(t("backend.erp.products.errors.name_required"))(editForm.value.name),
     })) return;
 
     const data = await editRequest(props.updatePath, {
@@ -100,9 +100,9 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
 
 const actionLabel = (action) => {
     const map = {
-        "product.created": t("admin.erp.activity.created"),
-        "product.updated": t("admin.erp.activity.updated"),
-        "product.deleted": t("admin.erp.activity.deleted"),
+        "product.created": t("backend.erp.activity.created"),
+        "product.updated": t("backend.erp.activity.updated"),
+        "product.deleted": t("backend.erp.activity.deleted"),
     };
     return map[action] ?? action;
 };
@@ -127,7 +127,7 @@ const actionLabel = (action) => {
                     </div>
                     <div class="flex items-center justify-between sm:justify-end gap-2 sm:shrink-0">
                         <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">
-                            {{ t(`admin.erp.products.status.${product.status}`) }}
+                            {{ t(`backend.erp.products.status.${product.status}`) }}
                         </AppBadge>
                         <div class="flex items-center gap-1">
                             <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -138,15 +138,15 @@ const actionLabel = (action) => {
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.erp.products.price') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.erp.products.price') }}</dt>
                         <dd class="text-primary font-medium">{{ formatProductPrice(product) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.erp.products.currency') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.erp.products.currency') }}</dt>
                         <dd class="text-primary">{{ product.currency }} <span class="text-muted">({{ product.currencySymbol }})</span></dd>
                     </div>
                     <div v-if="product.description" class="sm:col-span-2">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('admin.erp.products.description') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.erp.products.description') }}</dt>
                         <dd class="text-secondary text-sm whitespace-pre-wrap break-words">{{ product.description }}</dd>
                     </div>
                 </dl>
@@ -154,9 +154,9 @@ const actionLabel = (action) => {
         </div>
 
         <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('admin.erp.activity.title') }}</h3>
+            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.erp.activity.title') }}</h3>
 
-            <div v-if="!activityItems.length" class="text-sm text-muted">{{ t('admin.erp.activity.empty') }}</div>
+            <div v-if="!activityItems.length" class="text-sm text-muted">{{ t('backend.erp.activity.empty') }}</div>
 
             <template v-else>
                 <ol class="relative border-l border-line ml-3 space-y-6">
@@ -181,27 +181,27 @@ const actionLabel = (action) => {
         </div>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.erp.products.edit', { name: product.name }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.erp.products.edit', { name: product.name }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.erp.products.name')"
-                    :placeholder="t('admin.erp.products.namePlaceholder')"
+                    :label="t('backend.erp.products.name')"
+                    :placeholder="t('backend.erp.products.namePlaceholder')"
                     :error="editErrors.name"
                     required
                 />
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.reference"
-                        :label="t('admin.erp.products.reference')"
-                        :placeholder="t('admin.erp.products.referenceAutoPlaceholder')"
+                        :label="t('backend.erp.products.reference')"
+                        :placeholder="t('backend.erp.products.referenceAutoPlaceholder')"
                         :error="editErrors.reference"
                     />
-                    <AppSelect v-model="editForm.status" :label="t('admin.erp.products.statusLabel')">
+                    <AppSelect v-model="editForm.status" :label="t('backend.erp.products.statusLabel')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label() }}</option>
                     </AppSelect>
                 </div>
-                <AppSelect v-model="editForm.type" :label="t('admin.erp.products.typeLabel')">
+                <AppSelect v-model="editForm.type" :label="t('backend.erp.products.typeLabel')">
                     <option v-for="opt in TYPE_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label() }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-[1fr_8rem] gap-3">
@@ -210,15 +210,15 @@ const actionLabel = (action) => {
                         type="number"
                         min="0"
                         step="0.01"
-                        :label="`${t('admin.erp.products.price')} (${symbolFor(editForm.currency)})`"
-                        :placeholder="t('admin.erp.products.pricePlaceholder')"
+                        :label="`${t('backend.erp.products.price')} (${symbolFor(editForm.currency)})`"
+                        :placeholder="t('backend.erp.products.pricePlaceholder')"
                         :error="editErrors.price ?? editErrors.priceCents"
                     />
-                    <AppSelect v-model="editForm.currency" :label="t('admin.erp.products.currency')">
+                    <AppSelect v-model="editForm.currency" :label="t('backend.erp.products.currency')">
                         <option v-for="opt in CURRENCY_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.value }} — {{ opt.symbol }}</option>
                     </AppSelect>
                 </div>
-                <AppTextarea v-model="editForm.description" :rows="3" :placeholder="t('admin.erp.products.descriptionPlaceholder')" />
+                <AppTextarea v-model="editForm.description" :rows="3" :placeholder="t('backend.erp.products.descriptionPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -227,8 +227,8 @@ const actionLabel = (action) => {
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
-            <p class="text-sm text-primary">{{ t('admin.erp.products.deleteConfirm', { name: product.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.erp.products.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.erp.products.deleteConfirm', { name: product.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.erp.products.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

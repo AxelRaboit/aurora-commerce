@@ -50,12 +50,12 @@ const { loading: createLoading, request: createRequest } = useApiRequest();
 function openCreate() { newCompany.value = emptyForm(); clearCreate(); showCreate.value = true; }
 async function submitCreate() {
     if (!validateCreate({
-        name: () => required(t("admin.crm.companies.errors.name_required"))(newCompany.value.name),
-        website: () => url(t("admin.crm.companies.errors.website_invalid"))(newCompany.value.website),
+        name: () => required(t("backend.crm.companies.errors.name_required"))(newCompany.value.name),
+        website: () => url(t("backend.crm.companies.errors.website_invalid"))(newCompany.value.website),
     })) return;
     const data = await createRequest(props.createPath, newCompany.value);
     if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t('admin.crm.companies.created')); reset(); }
+    if (data.success) { showCreate.value = false; toast.success(t('backend.crm.companies.created')); reset(); }
     else setCreateErrors(translateServerErrors(t, data.errors));
 }
 
@@ -72,13 +72,13 @@ function openEdit(company) {
 }
 async function submitEdit() {
     if (!validateEdit({
-        name: () => required(t("admin.crm.companies.errors.name_required"))(editForm.value.name),
-        website: () => url(t("admin.crm.companies.errors.website_invalid"))(editForm.value.website),
+        name: () => required(t("backend.crm.companies.errors.name_required"))(editForm.value.name),
+        website: () => url(t("backend.crm.companies.errors.website_invalid"))(editForm.value.website),
     })) return;
     const updateUrl = buildPath(props.updatePath, { id: editingCompany.value.id });
     const data = await editRequest(updateUrl, editForm.value);
     if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t('admin.crm.companies.updated')); reset(); }
+    if (data.success) { showEdit.value = false; toast.success(t('backend.crm.companies.updated')); reset(); }
     else setEditErrors(translateServerErrors(t, data.errors));
 }
 
@@ -93,7 +93,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('admin.crm.companies.searchPlaceholder')"
+                :placeholder="t('backend.crm.companies.searchPlaceholder')"
                 v-on:search="onSearch"
             />
             <AppButton
@@ -104,7 +104,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-on:click="openCreate"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('admin.crm.companies.add') }}
+                {{ t('backend.crm.companies.add') }}
             </AppButton>
         </div>
         <div class="sm:hidden space-y-3">
@@ -131,9 +131,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.companies.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.crm.companies.industry') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.crm.companies.website') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.industry') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.companies.website') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -165,7 +165,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </tr>
 
                     <tr v-if="!items?.length">
-                        <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.crm.companies.empty') }}</td>
+                        <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.companies.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -174,19 +174,19 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.companies.create') }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.companies.create') }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newCompany.name"
-                    :label="t('admin.crm.companies.name')"
-                    :placeholder="t('admin.crm.companies.namePlaceholder')"
+                    :label="t('backend.crm.companies.name')"
+                    :placeholder="t('backend.crm.companies.namePlaceholder')"
                     :error="createErrors.name"
                     required
                 />
-                <AppInput v-model="newCompany.industry" :label="t('admin.crm.companies.industry')" :placeholder="t('admin.crm.companies.industryPlaceholder')" />
-                <AppInput v-model="newCompany.website" :label="t('admin.crm.companies.website')" :placeholder="t('admin.crm.companies.websitePlaceholder')" :error="createErrors.website" />
-                <AppInput v-model="newCompany.phone" :label="t('admin.crm.companies.phone')" :placeholder="t('admin.crm.companies.phonePlaceholder')" />
-                <AppInput v-model="newCompany.address" :label="t('admin.crm.companies.address')" :placeholder="t('admin.crm.companies.addressPlaceholder')" />
+                <AppInput v-model="newCompany.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industryPlaceholder')" />
+                <AppInput v-model="newCompany.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="createErrors.website" />
+                <AppInput v-model="newCompany.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
+                <AppInput v-model="newCompany.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -195,19 +195,19 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('admin.crm.companies.edit', { name: editingCompany?.name ?? '' }) }}</h3>
+            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.companies.edit', { name: editingCompany?.name ?? '' }) }}</h3>
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
-                    :label="t('admin.crm.companies.name')"
-                    :placeholder="t('admin.crm.companies.namePlaceholder')"
+                    :label="t('backend.crm.companies.name')"
+                    :placeholder="t('backend.crm.companies.namePlaceholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppInput v-model="editForm.industry" :label="t('admin.crm.companies.industry')" :placeholder="t('admin.crm.companies.industryPlaceholder')" />
-                <AppInput v-model="editForm.website" :label="t('admin.crm.companies.website')" :placeholder="t('admin.crm.companies.websitePlaceholder')" :error="editErrors.website" />
-                <AppInput v-model="editForm.phone" :label="t('admin.crm.companies.phone')" :placeholder="t('admin.crm.companies.phonePlaceholder')" />
-                <AppInput v-model="editForm.address" :label="t('admin.crm.companies.address')" :placeholder="t('admin.crm.companies.addressPlaceholder')" />
+                <AppInput v-model="editForm.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industryPlaceholder')" />
+                <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="editErrors.website" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
+                <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -216,8 +216,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
-            <p class="text-sm text-primary">{{ t('admin.crm.companies.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('admin.crm.companies.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>

@@ -13,7 +13,7 @@ export function useProfileMood(moodPath, initialMessage, maxLength) {
     async function saveMood() {
         const trimmed = moodMessage.value.trim();
         if (trimmed.length > maxLength) {
-            moodError.value = t("admin.profile.mood.errors.too_long");
+            moodError.value = t("backend.profile.mood.errors.too_long");
             return;
         }
 
@@ -28,7 +28,7 @@ export function useProfileMood(moodPath, initialMessage, maxLength) {
             const data = await response.json();
             if (data.success) {
                 moodMessage.value = data.moodMessage ?? "";
-                toast.success(t("admin.profile.mood.saved"));
+                toast.success(t("backend.profile.mood.saved"));
             } else {
                 moodError.value =
                     data.errors?.moodMessage ?? t("shared.common.error");

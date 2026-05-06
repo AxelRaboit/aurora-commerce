@@ -125,7 +125,7 @@ export function useMediaDragDrop(
                 const idx = media.value.findIndex((m) => m.id === mediaId);
                 if (idx !== -1) media.value[idx] = data.media;
             }
-            toast.success(t("admin.media.moved"));
+            toast.success(t("backend.media.moved"));
         } catch {
             toast.error(t("shared.common.error"));
         }
@@ -154,7 +154,7 @@ export function useMediaDragDrop(
             }
             const idx = folders.value.findIndex((f) => f.id === folderId);
             if (idx !== -1) folders.value[idx] = data.folder;
-            toast.success(t("admin.media.moved"));
+            toast.success(t("backend.media.moved"));
         } catch {
             toast.error(t("shared.common.error"));
         }

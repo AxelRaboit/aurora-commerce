@@ -8,7 +8,7 @@ export function useDealsListPage(props) {
     const stageOptions = computed(() =>
         props.stages.map((s) => ({
             value: s,
-            label: t(`admin.crm.deals.stages.${s}`),
+            label: t(`backend.crm.deals.stages.${s}`),
         })),
     );
 

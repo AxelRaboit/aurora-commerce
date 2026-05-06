@@ -39,7 +39,7 @@ function formatBytes(bytes) {
 const postTypeChart = computed(() => ({
     labels: stats.value.byPostType.map((row) => row.label),
     datasets: [{
-        label: t("admin.sitemap.charts.urls"),
+        label: t("backend.sitemap.charts.urls"),
         data: stats.value.byPostType.map((row) => row.count),
         backgroundColor: stats.value.byPostType.map((_, i) => palette[i % palette.length]),
         borderRadius: 6,
@@ -78,7 +78,7 @@ async function regenerate() {
         const result = await response.json();
         if (result.success) {
             stats.value = result.stats;
-            toast.success(t("admin.sitemap.regenerated"));
+            toast.success(t("backend.sitemap.regenerated"));
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -95,12 +95,12 @@ async function regenerate() {
         <div class="bg-surface border border-line rounded-xl p-6">
             <div class="flex items-start justify-between gap-4 flex-wrap">
                 <div>
-                    <p class="text-sm text-muted">{{ t("admin.sitemap.totalUrls") }}</p>
+                    <p class="text-sm text-muted">{{ t("backend.sitemap.totalUrls") }}</p>
                     <p class="text-3xl font-bold text-primary mt-1">{{ stats.total }}</p>
                     <div class="text-xs text-muted mt-2 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
-                        <span>{{ t("admin.sitemap.size") }} : <span class="text-primary font-medium">{{ formatBytes(stats.sizeBytes) }}</span></span>
+                        <span>{{ t("backend.sitemap.size") }} : <span class="text-primary font-medium">{{ formatBytes(stats.sizeBytes) }}</span></span>
                         <span class="hidden sm:inline mx-2 text-line">·</span>
-                        <span>{{ t("admin.sitemap.generatedAt") }} : <span class="text-primary font-medium">{{ formatDateTime(stats.generatedAt) }}</span></span>
+                        <span>{{ t("backend.sitemap.generatedAt") }} : <span class="text-primary font-medium">{{ formatDateTime(stats.generatedAt) }}</span></span>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -113,7 +113,7 @@ async function regenerate() {
                         class="w-full sm:w-auto"
                     >
                         <ExternalLink class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.sitemap.viewXml") }}
+                        {{ t("backend.sitemap.viewXml") }}
                     </AppButton>
                     <AppButton
                         type="button"
@@ -124,7 +124,7 @@ async function regenerate() {
                         v-on:click="regenerate"
                     >
                         <RefreshCw class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.sitemap.regenerate") }}
+                        {{ t("backend.sitemap.regenerate") }}
                     </AppButton>
                 </div>
             </div>
@@ -140,7 +140,7 @@ async function regenerate() {
                     <component :is="section.icon" class="w-5 h-5" :stroke-width="2" />
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs text-muted">{{ t(`admin.sitemap.sections.${section.key}`) }}</p>
+                    <p class="text-xs text-muted">{{ t(`backend.sitemap.sections.${section.key}`) }}</p>
                     <p class="text-xl font-semibold text-primary">{{ stats.counts[section.key] ?? 0 }}</p>
                 </div>
             </div>
@@ -148,10 +148,10 @@ async function regenerate() {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="bg-surface border border-line rounded-xl p-5 lg:col-span-2">
-                <p class="text-sm font-medium text-primary">{{ t("admin.sitemap.charts.byPostType") }}</p>
-                <p class="text-xs text-muted mb-4">{{ t("admin.sitemap.charts.byPostTypeHint") }}</p>
+                <p class="text-sm font-medium text-primary">{{ t("backend.sitemap.charts.byPostType") }}</p>
+                <p class="text-xs text-muted mb-4">{{ t("backend.sitemap.charts.byPostTypeHint") }}</p>
                 <div v-if="stats.byPostType.length === 0" class="h-48 flex items-center justify-center text-sm text-muted italic">
-                    {{ t("admin.sitemap.charts.empty") }}
+                    {{ t("backend.sitemap.charts.empty") }}
                 </div>
                 <div v-else class="h-64">
                     <AppChart type="bar" :data="postTypeChart" :options="postTypeOptions" />
@@ -159,10 +159,10 @@ async function regenerate() {
             </div>
 
             <div class="bg-surface border border-line rounded-xl p-5">
-                <p class="text-sm font-medium text-primary">{{ t("admin.sitemap.charts.byLocale") }}</p>
-                <p class="text-xs text-muted mb-4">{{ t("admin.sitemap.charts.byLocaleHint") }}</p>
+                <p class="text-sm font-medium text-primary">{{ t("backend.sitemap.charts.byLocale") }}</p>
+                <p class="text-xs text-muted mb-4">{{ t("backend.sitemap.charts.byLocaleHint") }}</p>
                 <div v-if="stats.byLocale.length === 0" class="h-48 flex items-center justify-center text-sm text-muted italic">
-                    {{ t("admin.sitemap.charts.empty") }}
+                    {{ t("backend.sitemap.charts.empty") }}
                 </div>
                 <div v-else class="h-64">
                     <AppChart type="doughnut" :data="localeChart" :options="localeOptions" />
@@ -175,14 +175,14 @@ async function regenerate() {
                 <EyeOff class="w-5 h-5" :stroke-width="2" />
             </div>
             <div class="min-w-0 flex-1">
-                <p class="text-xs text-muted">{{ t("admin.sitemap.noindex.label") }}</p>
+                <p class="text-xs text-muted">{{ t("backend.sitemap.noindex.label") }}</p>
                 <p class="text-xl font-semibold text-primary">{{ stats.noindex }}</p>
             </div>
-            <p class="text-xs text-muted hidden sm:block max-w-md text-right">{{ t("admin.sitemap.noindex.hint") }}</p>
+            <p class="text-xs text-muted hidden sm:block max-w-md text-right">{{ t("backend.sitemap.noindex.hint") }}</p>
         </div>
 
         <div class="bg-surface border border-line rounded-xl p-4 text-xs text-muted leading-relaxed">
-            {{ t("admin.sitemap.cacheHint") }}
+            {{ t("backend.sitemap.cacheHint") }}
         </div>
     </div>
 </template>

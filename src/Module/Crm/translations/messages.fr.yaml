@@ -1,4 +1,4 @@
-admin:
+backend:
   modules:
     crm: CRM
   nav:

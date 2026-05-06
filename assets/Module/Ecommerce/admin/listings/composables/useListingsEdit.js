@@ -39,7 +39,7 @@ export function useListingsEdit(updatePath, reset) {
             !validate({
                 slug: () =>
                     required(
-                        t("admin.ecommerce.listings.errors.slug_required"),
+                        t("backend.ecommerce.listings.errors.slug_required"),
                     )(editForm.value.slug),
             })
         )
@@ -49,7 +49,7 @@ export function useListingsEdit(updatePath, reset) {
         if (!data) return;
         if (data.success) {
             showEdit.value = false;
-            toast.success(t("admin.ecommerce.listings.updated"));
+            toast.success(t("backend.ecommerce.listings.updated"));
             reset();
         } else {
             if (data.errors?._global) toast.error(data.errors._global);

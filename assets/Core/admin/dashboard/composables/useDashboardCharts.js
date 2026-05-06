@@ -37,7 +37,7 @@ export function useDashboardCharts(stats) {
             labels: series.map((s) => s.month),
             datasets: [
                 {
-                    label: t("admin.stats.posts"),
+                    label: t("backend.stats.posts"),
                     data: series.map((s) => s.count),
                     borderColor: "#818cf8",
                     backgroundColor: "rgba(129, 140, 248, 0.15)",
@@ -51,7 +51,7 @@ export function useDashboardCharts(stats) {
     const dealsByStageData = computed(() => {
         const series = stats.value.crm?.dealsByStage ?? [];
         return {
-            labels: series.map((s) => t(`admin.crm.deals.stages.${s.stage}`)),
+            labels: series.map((s) => t(`backend.crm.deals.stages.${s.stage}`)),
             datasets: [
                 {
                     data: series.map((s) => s.count),
@@ -72,9 +72,9 @@ export function useDashboardCharts(stats) {
         const erp = stats.value.erp ?? {};
         return {
             labels: [
-                t("admin.erp.products.status.draft"),
-                t("admin.erp.products.status.active"),
-                t("admin.erp.products.status.archived"),
+                t("backend.erp.products.status.draft"),
+                t("backend.erp.products.status.active"),
+                t("backend.erp.products.status.archived"),
             ],
             datasets: [
                 {
@@ -94,7 +94,7 @@ export function useDashboardCharts(stats) {
         ).filter(([, v]) => v > 0);
         return {
             labels: entries.map(([k]) =>
-                t(`admin.billing.invoices.status.${k}`, k),
+                t(`backend.billing.invoices.status.${k}`, k),
             ),
             datasets: [
                 {
@@ -118,7 +118,7 @@ export function useDashboardCharts(stats) {
         ).filter(([, v]) => v > 0);
         return {
             labels: entries.map(([k]) =>
-                t(`admin.ecommerce.orders.status.${k}`, k),
+                t(`backend.ecommerce.orders.status.${k}`, k),
             ),
             datasets: [
                 {

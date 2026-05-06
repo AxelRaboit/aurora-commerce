@@ -94,7 +94,7 @@ const visibleEntries = computed(() => {
 
 function apply() {
     if (totalUnresolved.value > 0) {
-        toast.error(t("admin.posts.merge.unresolvedError"));
+        toast.error(t("backend.posts.merge.unresolvedError"));
         return;
     }
     const resolved = {};
@@ -119,11 +119,11 @@ function apply() {
                 <div class="flex items-center gap-3 px-6 py-3 border-b border-line bg-surface shrink-0">
                     <Merge class="w-5 h-5 text-amber-600" :stroke-width="2" />
                     <div class="flex-1">
-                        <h2 class="text-sm font-semibold text-primary">{{ t("admin.posts.merge.title") }}</h2>
-                        <p class="text-xs text-muted">{{ t("admin.posts.merge.subtitle") }}</p>
+                        <h2 class="text-sm font-semibold text-primary">{{ t("backend.posts.merge.title") }}</h2>
+                        <p class="text-xs text-muted">{{ t("backend.posts.merge.subtitle") }}</p>
                     </div>
                     <span v-if="totalUnresolved" class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">
-                        {{ t("admin.posts.merge.unresolvedCount", { count: totalUnresolved }) }}
+                        {{ t("backend.posts.merge.unresolvedCount", { count: totalUnresolved }) }}
                     </span>
                     <AppButton variant="ghost" size="md" v-on:click="$emit('close')">
                         <X class="w-4 h-4" :stroke-width="2" />
@@ -131,7 +131,7 @@ function apply() {
                     </AppButton>
                     <AppButton variant="primary" size="md" :disabled="totalUnresolved > 0" v-on:click="apply">
                         <Save class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.posts.merge.apply") }}
+                        {{ t("backend.posts.merge.apply") }}
                     </AppButton>
                 </div>
 
@@ -157,7 +157,7 @@ function apply() {
 
                 <div class="flex flex-wrap items-center gap-3 px-6 py-2 border-b border-line bg-surface shrink-0 text-xs">
                     <span class="text-muted">
-                        {{ t("admin.posts.merge.summary", {
+                        {{ t("backend.posts.merge.summary", {
                             unchanged: summaryFor(activeLocale).unchanged,
                             auto: summaryFor(activeLocale).autoResolved,
                             conflicts: summaryFor(activeLocale).conflicts,
@@ -165,7 +165,7 @@ function apply() {
                     </span>
                     <div class="flex-1" />
                     <button type="button" class="text-accent-600 hover:underline font-medium" v-on:click="showUnchanged = !showUnchanged">
-                        {{ showUnchanged ? t("admin.posts.merge.hideUnchanged") : t("admin.posts.merge.showUnchanged") }}
+                        {{ showUnchanged ? t("backend.posts.merge.hideUnchanged") : t("backend.posts.merge.showUnchanged") }}
                     </button>
                     <button
                         type="button"
@@ -173,7 +173,7 @@ function apply() {
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'local')"
                     >
-                        {{ t("admin.posts.merge.acceptAllMine") }}
+                        {{ t("backend.posts.merge.acceptAllMine") }}
                     </button>
                     <button
                         type="button"
@@ -181,13 +181,13 @@ function apply() {
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'remote')"
                     >
-                        {{ t("admin.posts.merge.acceptAllTheirs") }}
+                        {{ t("backend.posts.merge.acceptAllTheirs") }}
                     </button>
                 </div>
 
                 <div class="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">
                     <div v-if="visibleEntries.length === 0" class="text-center py-12 text-muted text-sm">
-                        {{ t("admin.posts.merge.nothingToShow") }}
+                        {{ t("backend.posts.merge.nothingToShow") }}
                     </div>
 
                     <MergeBlockEntry

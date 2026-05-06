@@ -57,15 +57,15 @@ export function useProductsOptions() {
     const { t } = useI18n();
 
     const STATUS_OPTIONS = computed(() => [
-        { value: "draft", label: t("admin.erp.products.status.draft") },
-        { value: "active", label: t("admin.erp.products.status.active") },
-        { value: "archived", label: t("admin.erp.products.status.archived") },
+        { value: "draft", label: t("backend.erp.products.status.draft") },
+        { value: "active", label: t("backend.erp.products.status.active") },
+        { value: "archived", label: t("backend.erp.products.status.archived") },
     ]);
 
     const TYPE_OPTIONS = computed(() => [
-        { value: "physical", label: t("admin.erp.products.types.physical") },
-        { value: "digital", label: t("admin.erp.products.types.digital") },
-        { value: "service", label: t("admin.erp.products.types.service") },
+        { value: "physical", label: t("backend.erp.products.types.physical") },
+        { value: "digital", label: t("backend.erp.products.types.digital") },
+        { value: "service", label: t("backend.erp.products.types.service") },
     ]);
 
     return { STATUS_OPTIONS, STATUS_TONE, TYPE_OPTIONS, TYPE_TONE };

@@ -55,11 +55,11 @@ const { selectedForm, editingForm, formErrors, saving, activeTab, activeLocale, 
     useFormEditor(props, fetchForms);
 
 const tabs = computed(() => {
-    if (isCreating.value) return [{ key: "settings", label: t("admin.forms.tabs.settings"), icon: Settings }];
+    if (isCreating.value) return [{ key: "settings", label: t("backend.forms.tabs.settings"), icon: Settings }];
     return [
-        { key: "settings", label: t("admin.forms.tabs.settings"), icon: Settings },
-        { key: "fields",   label: t("admin.forms.tabs.fields"),   icon: Layers },
-        { key: "submissions", label: t("admin.forms.tabs.submissions"), icon: Inbox },
+        { key: "settings", label: t("backend.forms.tabs.settings"), icon: Settings },
+        { key: "fields",   label: t("backend.forms.tabs.fields"),   icon: Layers },
+        { key: "submissions", label: t("backend.forms.tabs.submissions"), icon: Inbox },
     ];
 });
 
@@ -83,11 +83,11 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 v-on:click="startCreate"
             >
                 <Plus class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("admin.forms.create") }}
+                {{ t("backend.forms.create") }}
             </AppButton>
 
             <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-                <AppNoData v-if="!loading && !forms.length" :message="t('admin.forms.empty')" />
+                <AppNoData v-if="!loading && !forms.length" :message="t('backend.forms.empty')" />
                 <ul v-else class="divide-y divide-line/60">
                     <li
                         v-for="form in forms"
@@ -99,9 +99,9 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                         <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
                         <div class="min-w-0 flex-1">
                             <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
-                            <p class="text-xs text-muted">{{ form.submissionCount }} {{ t("admin.forms.submissions_count") }}</p>
+                            <p class="text-xs text-muted">{{ form.submissionCount }} {{ t("backend.forms.submissions_count") }}</p>
                         </div>
-                        <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("admin.forms.inactive") }}</AppBadge>
+                        <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("backend.forms.inactive") }}</AppBadge>
                     </li>
                 </ul>
             </div>
@@ -114,7 +114,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 <div class="flex items-center gap-2 min-w-0">
                     <ClipboardList class="w-5 h-5 shrink-0 text-accent-400" :stroke-width="2" />
                     <h2 class="text-base font-semibold text-primary truncate">
-                        {{ isCreating ? t("admin.forms.newForm") : (formTitle(selectedForm) || "—") }}
+                        {{ isCreating ? t("backend.forms.newForm") : (formTitle(selectedForm) || "—") }}
                     </h2>
                 </div>
                 <div class="flex items-center gap-2">
@@ -169,34 +169,34 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                             <span
                                 class="inline-block w-1.5 h-1.5 rounded-full"
                                 :class="isLocaleFilled(locale) ? 'bg-emerald-400' : 'bg-muted/40'"
-                                :title="isLocaleFilled(locale) ? t('admin.forms.localeFilled') : t('admin.forms.localeEmpty')"
+                                :title="isLocaleFilled(locale) ? t('backend.forms.localeFilled') : t('backend.forms.localeEmpty')"
                             />
                         </button>
                     </div>
-                    <p class="text-xs text-muted">{{ t("admin.forms.localesOptional") }}</p>
+                    <p class="text-xs text-muted">{{ t("backend.forms.localesOptional") }}</p>
                 </div>
 
                 <div :class="sharedSlug ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-4'">
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.title") }}</label>
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.title") }}</label>
                         <input
                             v-model="editingForm.translations[activeLocale].title"
                             type="text"
                             class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
                             :class="localeFieldError(formErrors, activeLocale, 'title') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('admin.forms.titlePlaceholder')"
+                            :placeholder="t('backend.forms.titlePlaceholder')"
                             v-on:input="onTitleInput"
                         >
                         <p v-if="localeFieldError(formErrors, activeLocale, 'title')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'title') }}</p>
                     </div>
                     <div v-if="!sharedSlug" class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.slug") }}</label>
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.slug") }}</label>
                         <input
                             v-model="editingForm.translations[activeLocale].slug"
                             type="text"
                             class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
                             :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('admin.forms.slugPlaceholder')"
+                            :placeholder="t('backend.forms.slugPlaceholder')"
                             v-on:input="onSlugInput"
                         >
                         <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
@@ -204,12 +204,12 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.description") }}</label>
+                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.description") }}</label>
                     <textarea
                         v-model="editingForm.translations[activeLocale].description"
                         rows="3"
                         class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
-                        :placeholder="t('admin.forms.descriptionPlaceholder')"
+                        :placeholder="t('backend.forms.descriptionPlaceholder')"
                     />
                 </div>
 
@@ -224,17 +224,17 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                             class="rounded border-line text-accent-600 focus:ring-accent-500"
                             v-on:change="onSharedSlugToggle"
                         >
-                        <label for="shared-slug" class="text-sm text-primary cursor-pointer">{{ t("admin.forms.sharedSlug") }}</label>
+                        <label for="shared-slug" class="text-sm text-primary cursor-pointer">{{ t("backend.forms.sharedSlug") }}</label>
                     </div>
 
                     <div v-if="sharedSlug" class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.slug") }}</label>
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.slug") }}</label>
                         <input
                             v-model="editingForm.translations[activeLocale].slug"
                             type="text"
                             class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
                             :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('admin.forms.slugPlaceholder')"
+                            :placeholder="t('backend.forms.slugPlaceholder')"
                             v-on:input="onSlugInput"
                         >
                         <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
@@ -244,14 +244,14 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 <hr class="border-line/40">
 
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.notifyEmail") }}</label>
+                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.notifyEmail") }}</label>
                     <input
                         v-model="editingForm.notifyEmail"
                         type="email"
                         class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
-                        :placeholder="t('admin.forms.notifyEmailPlaceholder')"
+                        :placeholder="t('backend.forms.notifyEmailPlaceholder')"
                     >
-                    <p class="text-xs text-muted">{{ t("admin.forms.notifyEmailHint") }}</p>
+                    <p class="text-xs text-muted">{{ t("backend.forms.notifyEmailHint") }}</p>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -263,21 +263,21 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                     >
                         <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.active ? 'translate-x-4' : 'translate-x-0.5'" />
                     </button>
-                    <label class="text-sm text-primary cursor-pointer" v-on:click="editingForm.active = !editingForm.active">{{ t("admin.forms.active") }}</label>
+                    <label class="text-sm text-primary cursor-pointer" v-on:click="editingForm.active = !editingForm.active">{{ t("backend.forms.active") }}</label>
                 </div>
             </div>
 
             <div v-if="activeTab === 'fields'" class="p-5 flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between">
-                    <p class="text-sm text-secondary">{{ t("admin.forms.fieldsHint") }}</p>
+                    <p class="text-sm text-secondary">{{ t("backend.forms.fieldsHint") }}</p>
                     <AppButton v-if="can('editorial.forms.manage')" variant="secondary" size="md" v-on:click="openAddField">
                         <Plus class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.forms.addField") }}
+                        {{ t("backend.forms.addField") }}
                     </AppButton>
                 </div>
 
                 <div v-if="editingForm.fields.length === 0" class="py-10 text-center text-sm text-muted">
-                    {{ t("admin.forms.fieldsEmpty") }}
+                    {{ t("backend.forms.fieldsEmpty") }}
                 </div>
 
                 <VueDraggable
@@ -297,7 +297,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-sm font-medium text-primary">{{ fieldLabel(field) || "—" }}</span>
-                                <AppBadge v-if="field.required" color="amber">{{ t("admin.forms.required") }}</AppBadge>
+                                <AppBadge v-if="field.required" color="amber">{{ t("backend.forms.required") }}</AppBadge>
                                 <AppBadge color="accent">{{ fieldTypeLabel(field.type) }}</AppBadge>
                             </div>
                         </div>
@@ -313,21 +313,21 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
 
             <div v-if="activeTab === 'submissions'" class="flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between px-5 pt-5">
-                    <p class="text-sm text-secondary">{{ submissionsTotal }} {{ t("admin.forms.submissionsCount") }}</p>
+                    <p class="text-sm text-secondary">{{ submissionsTotal }} {{ t("backend.forms.submissionsCount") }}</p>
                     <AppButton variant="secondary" size="md" :disabled="!submissions.length" v-on:click="exportCsv">
                         <Download class="w-4 h-4" :stroke-width="2" />
-                        {{ t("admin.forms.exportCsv") }}
+                        {{ t("backend.forms.exportCsv") }}
                     </AppButton>
                 </div>
 
                 <div class="bg-surface border-t border-line/60 overflow-hidden">
-                    <AppNoData v-if="!submissionsLoading && !submissions.length" :message="t('admin.forms.submissionsEmpty')" />
+                    <AppNoData v-if="!submissionsLoading && !submissions.length" :message="t('backend.forms.submissionsEmpty')" />
                     <div v-else class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-surface-2/50 border-b border-line/40">
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.submittedAt") }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("admin.forms.locale") }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("backend.forms.submittedAt") }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap">{{ t("backend.forms.locale") }}</th>
                                     <th v-for="field in submissionFields" :key="field.id" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted whitespace-nowrap max-w-xs">{{ fieldLabel(field) }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.edit") }}</th>
                                 </tr>
@@ -340,7 +340,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                                         {{ submissionValue(submission, field) }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <AppIconButton color="accent" :title="t('admin.forms.viewSubmission')" v-on:click="viewingSubmission = submission">
+                                        <AppIconButton color="accent" :title="t('backend.forms.viewSubmission')" v-on:click="viewingSubmission = submission">
                                             <Pencil class="w-4 h-4" :stroke-width="2" />
                                         </AppIconButton>
                                     </td>
@@ -357,17 +357,17 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </div>
 
         <div v-else class="flex-1 flex items-center justify-center text-sm text-muted bg-surface border border-line/60 rounded-xl">
-            {{ t("admin.forms.selectOrCreate") }}
+            {{ t("backend.forms.selectOrCreate") }}
         </div>
     </div>
 
     <AppModal :show="showFieldModal" max-width="sm" v-on:close="showFieldModal = false">
         <h3 class="text-base font-semibold text-primary">
-            {{ editingFieldId !== null ? t("admin.forms.editField") : t("admin.forms.addFieldTitle") }}
+            {{ editingFieldId !== null ? t("backend.forms.editField") : t("backend.forms.addFieldTitle") }}
         </h3>
         <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldType") }}</label>
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldType") }}</label>
                 <select
                     v-model="editingField.type"
                     class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -378,7 +378,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
 
             <div class="flex items-center gap-2">
                 <input id="field-required" v-model="editingField.required" type="checkbox" class="rounded border-line text-accent-600 focus:ring-accent-500">
-                <label for="field-required" class="text-sm text-primary">{{ t("admin.forms.fieldRequired") }}</label>
+                <label for="field-required" class="text-sm text-primary">{{ t("backend.forms.fieldRequired") }}</label>
             </div>
 
             <hr class="border-line/40">
@@ -401,36 +401,36 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldLabel") }}</label>
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldLabel") }}</label>
                 <input
                     v-model="editingField.translations[fieldActiveLocale].label"
                     type="text"
                     class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
                     :class="localeFieldError(fieldErrors, fieldActiveLocale, 'label') ? 'border-rose-500' : 'border-line/60'"
-                    :placeholder="t('admin.forms.fieldLabelPlaceholder')"
+                    :placeholder="t('backend.forms.fieldLabelPlaceholder')"
                 >
                 <p v-if="localeFieldError(fieldErrors, fieldActiveLocale, 'label')" class="text-xs text-rose-400">{{ localeFieldError(fieldErrors, fieldActiveLocale, 'label') }}</p>
             </div>
 
             <div v-if="!fieldHasOptions" class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldPlaceholder") }}</label>
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldPlaceholder") }}</label>
                 <input
                     v-model="editingField.translations[fieldActiveLocale].placeholder"
                     type="text"
                     class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
-                    :placeholder="t('admin.forms.fieldPlaceholderPlaceholder')"
+                    :placeholder="t('backend.forms.fieldPlaceholderPlaceholder')"
                 >
             </div>
 
             <div v-if="fieldHasOptions" class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.forms.fieldOptions") }}</label>
+                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldOptions") }}</label>
                 <textarea
                     v-model="fieldOptionsText[fieldActiveLocale]"
                     rows="4"
                     class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary font-mono focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
-                    :placeholder="t('admin.forms.fieldOptionsPlaceholder')"
+                    :placeholder="t('backend.forms.fieldOptionsPlaceholder')"
                 />
-                <p class="text-xs text-muted">{{ t("admin.forms.fieldOptionsHint") }}</p>
+                <p class="text-xs text-muted">{{ t("backend.forms.fieldOptionsHint") }}</p>
             </div>
         </div>
 
@@ -441,8 +441,8 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
     </AppModal>
 
     <AppModal :show="showDeleteConfirm" max-width="sm" v-on:close="showDeleteConfirm = false">
-        <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.deleteConfirmTitle") }}</h3>
-        <p class="text-sm text-secondary">{{ t("admin.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
+        <h3 class="text-base font-semibold text-primary">{{ t("backend.forms.deleteConfirmTitle") }}</h3>
+        <p class="text-sm text-secondary">{{ t("backend.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
         <AppModalFooter bordered>
             <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false">{{ t("shared.common.cancel") }}</AppButton>
             <AppButton variant="danger" size="md" :disabled="deleting" v-on:click="confirmDelete">
@@ -452,14 +452,14 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
     </AppModal>
 
     <AppModal :show="!!viewingSubmission" max-width="md" v-on:close="viewingSubmission = null">
-        <h3 class="text-base font-semibold text-primary">{{ t("admin.forms.viewSubmission") }}</h3>
+        <h3 class="text-base font-semibold text-primary">{{ t("backend.forms.viewSubmission") }}</h3>
         <div class="space-y-3">
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("admin.forms.submittedAt") }}</label>
+                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("backend.forms.submittedAt") }}</label>
                 <p class="text-sm text-muted">{{ viewingSubmission ? formatDateTime(viewingSubmission.submittedAt) : "" }}</p>
             </div>
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("admin.forms.locale") }}</label>
+                <label class="text-xs text-secondary uppercase tracking-wide">{{ t("backend.forms.locale") }}</label>
                 <p class="text-sm text-muted uppercase">{{ viewingSubmission?.locale }}</p>
             </div>
             <div v-for="field in submissionFields" :key="field.id" class="flex flex-col gap-1">
@@ -475,7 +475,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
     </AppModal>
 
     <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
-        <p class="text-sm text-primary">{{ t('admin.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
+        <p class="text-sm text-primary">{{ t('backend.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
         <div class="flex justify-end gap-2 pt-3 border-t border-line">
             <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null">{{ t('shared.common.cancel') }}</AppButton>
             <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField">{{ t('shared.common.delete') }}</AppButton>

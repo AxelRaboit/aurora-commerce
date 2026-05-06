@@ -63,13 +63,13 @@ const ROUTE_BY_TAB = {
 };
 
 const tabs = [
-    { key: "overview", label: () => t("admin.tabs.overview"), icon: LayoutDashboard },
-    { key: "parameters", label: () => t("admin.tabs.parameters"), icon: Sliders },
-    { key: "users", label: () => t("admin.tabs.users"), icon: Users },
-    { key: "access_requests", label: () => t("admin.tabs.access_requests"), icon: KeyRound },
-    { key: "audit", label: () => t("admin.tabs.audit"), icon: ScrollText },
-    { key: "permissions", label: () => t("admin.tabs.permissions"), icon: ShieldCheck },
-    { key: "modules", label: () => t("admin.tabs.modules"), icon: Puzzle },
+    { key: "overview", label: () => t("backend.tabs.overview"), icon: LayoutDashboard },
+    { key: "parameters", label: () => t("backend.tabs.parameters"), icon: Sliders },
+    { key: "users", label: () => t("backend.tabs.users"), icon: Users },
+    { key: "access_requests", label: () => t("backend.tabs.access_requests"), icon: KeyRound },
+    { key: "audit", label: () => t("backend.tabs.audit"), icon: ScrollText },
+    { key: "permissions", label: () => t("backend.tabs.permissions"), icon: ShieldCheck },
+    { key: "modules", label: () => t("backend.tabs.modules"), icon: Puzzle },
 ];
 
 const { state: tab, set: setTab } = useUrlSyncedState({

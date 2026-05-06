@@ -35,10 +35,10 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
 <template>
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-primary">{{ t("admin.themes.title") }}</h1>
+            <h1 class="text-2xl font-bold text-primary">{{ t("backend.themes.title") }}</h1>
             <AppButton v-if="can('core.themes.manage')" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("admin.themes.new") }}
+                {{ t("backend.themes.new") }}
             </AppButton>
         </div>
 
@@ -60,7 +60,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     <div class="flex items-center gap-1 shrink-0">
                         <AppBadge v-if="theme.active" color="emerald">
                             <Check class="w-3 h-3" :stroke-width="2.5" />
-                            {{ t("admin.themes.active") }}
+                            {{ t("backend.themes.active") }}
                         </AppBadge>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     />
                     <div class="flex items-center gap-1 text-xs text-muted">
                         <Palette class="w-3.5 h-3.5" :stroke-width="2" />
-                        <span>{{ t("admin.themes.templateCount", { count: theme.templateCount }) }}</span>
+                        <span>{{ t("backend.themes.templateCount", { count: theme.templateCount }) }}</span>
                     </div>
                 </div>
 
@@ -87,11 +87,11 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                         v-on:click="activateTheme(theme)"
                     >
                         <Check class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.themes.activate") }}
+                        {{ t("backend.themes.activate") }}
                     </AppButton>
                     <AppButton v-if="can('core.themes.manage')" size="sm" variant="ghost" v-on:click="openEdit(theme)">
                         <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("admin.themes.edit") }}
+                        {{ t("backend.themes.edit") }}
                     </AppButton>
                     <AppButton
                         v-if="can('core.themes.manage')"
@@ -109,7 +109,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
 
         <AppModal :show="createModal.open" max-width="md" v-on:close="createModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.new") }}</h2>
+                <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.new") }}</h2>
                 <AppInput
                     v-model="createForm.name"
                     :label="t('shared.common.name')"
@@ -118,7 +118,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                 />
                 <AppInput
                     v-model="createForm.slug"
-                    :label="t('admin.themes.slugLabel')"
+                    :label="t('backend.themes.slugLabel')"
                     :error="createModal.errors.slug ?? ''"
                     :required="true"
                 />
@@ -136,7 +136,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
 
         <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
             <form class="space-y-5" v-on:submit.prevent="submitEdit">
-                <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.edit") }}</h2>
+                <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.edit") }}</h2>
 
                 <AppInput
                     v-model="editForm.name"
@@ -151,7 +151,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                 />
 
                 <div class="space-y-1.5 pt-6 border-t border-line/60">
-                    <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ t('admin.themes.primaryColor') }}</span>
+                    <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ t('backend.themes.primaryColor') }}</span>
                     <div class="flex items-center gap-3 bg-surface-2 rounded-lg px-3 py-2">
                         <input
                             type="color"
@@ -160,11 +160,11 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                             v-on:input="primaryColor = $event.target.value"
                         >
                         <div class="flex flex-col min-w-0 flex-1">
-                            <span class="text-xs font-medium text-primary">{{ t('admin.themes.primaryColorLabel') }}</span>
-                            <span class="text-xs text-muted">{{ t('admin.themes.primaryColorHint') }}</span>
+                            <span class="text-xs font-medium text-primary">{{ t('backend.themes.primaryColorLabel') }}</span>
+                            <span class="text-xs text-muted">{{ t('backend.themes.primaryColorHint') }}</span>
                         </div>
                         <span class="text-xs font-mono text-muted">{{ primaryColor }}</span>
-                        <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('admin.themes.resetColor')" v-on:click="resetPrimaryColor">↺</button>
+                        <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('backend.themes.resetColor')" v-on:click="resetPrimaryColor">↺</button>
                     </div>
                 </div>
 
@@ -182,15 +182,15 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                                 <span class="text-xs font-medium text-primary">{{ cssVar.label }}</span>
                                 <span class="text-xs font-mono text-muted truncate">{{ cssVar.key }}</span>
                             </div>
-                            <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('admin.themes.resetColor')" v-on:click="colorFields[cssVar.key] = DEFAULTS[cssVar.key]">↺</button>
+                            <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('backend.themes.resetColor')" v-on:click="colorFields[cssVar.key] = DEFAULTS[cssVar.key]">↺</button>
                         </div>
                     </div>
                     <template v-if="section.key === 'header'">
                         <div class="space-y-2">
-                            <span class="text-xs text-secondary uppercase tracking-wide">{{ t('admin.themes.headerContent') }}</span>
+                            <span class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.themes.headerContent') }}</span>
                             <div class="flex gap-2">
                                 <button
-                                    v-for="mode in [{k:'default',l:t('admin.themes.headerModeDefault')},{k:'text',l:t('admin.themes.headerModeText')},{k:'image',l:t('admin.themes.headerModeImage')}]"
+                                    v-for="mode in [{k:'default',l:t('backend.themes.headerModeDefault')},{k:'text',l:t('backend.themes.headerModeText')},{k:'image',l:t('backend.themes.headerModeImage')}]"
                                     :key="mode.k"
                                     type="button"
                                     class="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
@@ -200,15 +200,15 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                                     {{ mode.l }}
                                 </button>
                             </div>
-                            <AppInput v-if="headerMode === 'text'" v-model="headerCustomText" :label="t('admin.themes.headerCustomText')" :placeholder="t('admin.themes.headerTextPlaceholder')" />
-                            <AppInput v-if="headerMode === 'image'" v-model="headerLogoMediaId" :label="t('admin.themes.headerLogoMediaId')" placeholder="42" />
-                            <p v-if="headerMode === 'image'" class="text-xs text-muted">{{ t('admin.themes.headerMediaHint') }}</p>
+                            <AppInput v-if="headerMode === 'text'" v-model="headerCustomText" :label="t('backend.themes.headerCustomText')" :placeholder="t('backend.themes.headerTextPlaceholder')" />
+                            <AppInput v-if="headerMode === 'image'" v-model="headerLogoMediaId" :label="t('backend.themes.headerLogoMediaId')" placeholder="42" />
+                            <p v-if="headerMode === 'image'" class="text-xs text-muted">{{ t('backend.themes.headerMediaHint') }}</p>
                         </div>
                     </template>
                     <AppInput
                         v-if="section.key === 'footer'"
                         v-model="footerText"
-                        :label="t('admin.themes.footerText')"
+                        :label="t('backend.themes.footerText')"
                         placeholder="© {year} {siteName}"
                     />
                 </div>
@@ -221,7 +221,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
         </AppModal>
 
         <AppModal :show="!!deletingTheme" max-width="sm" v-on:close="deletingTheme = null">
-            <h2 class="text-lg font-semibold text-primary">{{ t("admin.themes.deleteConfirm", { name: deletingTheme?.name ?? "" }) }}</h2>
+            <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.deleteConfirm", { name: deletingTheme?.name ?? "" }) }}</h2>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null">{{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t("shared.common.delete") }}</AppButton>

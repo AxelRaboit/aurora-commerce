@@ -15,10 +15,10 @@ const emit = defineEmits(["approve", "reject"]);
 
 <template>
     <template v-if="accessRequest.status === AccessRequestStatus.Pending">
-        <AppIconButton color="emerald" :title="t('admin.access_requests.approve')" v-on:click="emit('approve', props.accessRequest)">
+        <AppIconButton color="emerald" :title="t('backend.access_requests.approve')" v-on:click="emit('approve', props.accessRequest)">
             <Check class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>
-        <AppIconButton color="rose" :title="t('admin.access_requests.reject')" v-on:click="emit('reject', props.accessRequest)">
+        <AppIconButton color="rose" :title="t('backend.access_requests.reject')" v-on:click="emit('reject', props.accessRequest)">
             <X class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>
     </template>

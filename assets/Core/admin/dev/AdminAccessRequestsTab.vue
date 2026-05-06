@@ -44,17 +44,17 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="accessRequests.searchInput.value"
-                :placeholder="t('admin.access_requests.searchPlaceholder')"
+                :placeholder="t('backend.access_requests.searchPlaceholder')"
                 v-on:search="accessRequests.performSearch"
             />
             <AppButton variant="danger" size="md" class="w-full sm:w-auto" v-on:click="accessRequests.confirmPurge.value = true">
                 <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t('admin.access_requests.purge') }}
+                {{ t('backend.access_requests.purge') }}
             </AppButton>
         </div>
 
         <div class="sm:hidden space-y-3">
-            <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</p>
+            <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</p>
             <div v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -85,12 +85,12 @@ onMounted(() => {
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.access_requests.requester') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('admin.access_requests.message') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.access_requests.status') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.access_requests.date') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('admin.access_requests.expires') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('admin.users.actions') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.requester') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.access_requests.message') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.status') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.date') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.expires') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
@@ -121,7 +121,7 @@ onMounted(() => {
                         </td>
                     </tr>
                     <tr v-if="!accessRequests.items.value?.length">
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('admin.access_requests.empty') }}</td>
+                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -135,26 +135,26 @@ onMounted(() => {
         />
 
         <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" v-on:close="accessRequests.pendingApprove.value = null">
-            <p class="text-sm text-primary">{{ t('admin.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="accessRequests.doApproveRequest">{{ t('admin.access_requests.approve') }}</AppButton>
+                <AppButton variant="primary" size="md" v-on:click="accessRequests.doApproveRequest">{{ t('backend.access_requests.approve') }}</AppButton>
             </div>
         </AppModal>
 
         <AppModal :show="!!accessRequests.pendingReject.value" max-width="sm" v-on:close="accessRequests.pendingReject.value = null">
-            <p class="text-sm text-primary">{{ t('admin.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="accessRequests.doRejectRequest">{{ t('admin.access_requests.reject') }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="accessRequests.doRejectRequest">{{ t('backend.access_requests.reject') }}</AppButton>
             </div>
         </AppModal>
 
         <AppModal :show="accessRequests.confirmPurge.value" max-width="sm" v-on:close="accessRequests.confirmPurge.value = false">
-            <p class="text-sm text-primary">{{ t('admin.access_requests.purgeConfirm') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.purgeConfirm') }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="accessRequests.doPurge">{{ t('admin.access_requests.purge') }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="accessRequests.doPurge">{{ t('backend.access_requests.purge') }}</AppButton>
             </div>
         </AppModal>
     </div>
