@@ -15,7 +15,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
-#[ORM\Table(name: 'backend_ecommerce_orders')]
+#[ORM\Table(name: 'ecommerce_orders')]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_order_number', columns: ['number'])]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_order_token', columns: ['token'])]
 #[ORM\HasLifecycleCallbacks]

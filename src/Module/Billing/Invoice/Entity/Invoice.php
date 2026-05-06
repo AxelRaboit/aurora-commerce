@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]
-#[ORM\Table(name: 'backend_billing_invoices')]
+#[ORM\Table(name: 'billing_invoices')]
 #[ORM\Index(name: 'idx_billing_invoice_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_billing_invoice_issued_at', columns: ['issued_at'])]
 #[ORM\HasLifecycleCallbacks]

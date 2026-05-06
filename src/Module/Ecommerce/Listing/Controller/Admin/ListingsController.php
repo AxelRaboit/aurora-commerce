@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/ecommerce/listings', name: 'backend_ecommerce_listings')]
+#[Route('/backend/ecommerce/listings', name: 'ecommerce_listings')]
 #[IsGranted('ecommerce.listings.view')]
 final class ListingsController extends AbstractController
 {

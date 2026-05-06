@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/billing/compliance', name: 'backend_billing_compliance')]
+#[Route('/backend/billing/compliance', name: 'billing_compliance')]
 #[IsGranted('billing.invoices.view')]
 final class ComplianceController extends AbstractController
 {

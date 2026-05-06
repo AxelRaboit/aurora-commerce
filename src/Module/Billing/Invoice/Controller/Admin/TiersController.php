@@ -23,7 +23,7 @@ use Throwable;
 
 use function is_array;
 
-#[Route('/backend/billing/tiers', name: 'backend_billing_tiers')]
+#[Route('/backend/billing/tiers', name: 'billing_tiers')]
 #[IsGranted('billing.tiers.view')]
 final class TiersController extends AbstractController
 {

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/crm/contacts/{id}', name: 'backend_crm_contacts_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
+#[Route('/backend/crm/contacts/{id}', name: 'crm_contacts_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
 #[IsGranted('crm.contacts.view')]
 final class ContactDetailController extends AbstractController
 {

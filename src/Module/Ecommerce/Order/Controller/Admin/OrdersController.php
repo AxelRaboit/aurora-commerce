@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/ecommerce/orders', name: 'backend_ecommerce_orders')]
+#[Route('/backend/ecommerce/orders', name: 'ecommerce_orders')]
 #[IsGranted('ecommerce.orders.view')]
 final class OrdersController extends AbstractController
 {

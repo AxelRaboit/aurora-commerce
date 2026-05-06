@@ -15,7 +15,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OcrJobRepository::class)]
-#[ORM\Table(name: 'backend_billing_ocr_jobs')]
+#[ORM\Table(name: 'billing_ocr_jobs')]
 #[ORM\Index(name: 'idx_billing_ocr_status', columns: ['status'])]
 #[ORM\HasLifecycleCallbacks]
 class OcrJob

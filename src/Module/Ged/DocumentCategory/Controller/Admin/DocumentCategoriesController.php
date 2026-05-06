@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/ged/categories', name: 'backend_ged_categories')]
+#[Route('/backend/ged/categories', name: 'ged_categories')]
 #[IsGranted('ged.documents.manage')]
 final class DocumentCategoriesController extends AbstractController
 {
