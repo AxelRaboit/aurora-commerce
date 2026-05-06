@@ -73,7 +73,7 @@ class AuthController extends AbstractController
         $request->setLocale($locale);
 
         if ($this->getUser() instanceof UserInterface) {
-            return $this->redirectToRoute('frontend_home', ['locale' => $locale]);
+            return $this->redirectToRoute('frontend_root');
         }
 
         $registrationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::FrontRegistrationEnabled->value);
@@ -241,7 +241,7 @@ class AuthController extends AbstractController
     {
         $security->logout(validateCsrfToken: false);
 
-        return $this->redirectToRoute('frontend_home', ['locale' => $locale]);
+        return $this->redirectToRoute('frontend_root');
     }
 
     private function assertActiveLocale(string $locale): void

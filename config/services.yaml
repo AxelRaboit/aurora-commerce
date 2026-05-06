@@ -23,13 +23,20 @@ services:
         resource: '../src/'
 
     # Auto-tag every MediaUsageProvider so the aggregator service collects them.
+    # Auto-tag every registered front so the FrontRegistry collects them.
     _instanceof:
         Aurora\Core\Media\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
+        Aurora\Core\Frontend\Contract\FrontInterface:
+            tags: [aurora.front]
 
     Aurora\Core\Media\Service\MediaUsageService:
         arguments:
             $providers: !tagged_iterator aurora.media_usage_provider
+
+    Aurora\Core\Frontend\Service\FrontRegistry:
+        arguments:
+            $fronts: !tagged_iterator aurora.front
 
     Aurora\Core\Auth\Manager\AccessRequestManager:
         arguments:
@@ -77,6 +84,9 @@ services:
 
     Aurora\Module\Editorial\EditorialModule:
         tags: [aurora.module]
+
+    Aurora\Module\Editorial\EditorialFront:
+        tags: [aurora.front]
 
     Aurora\Module\Crm\CrmModule:
         tags: [aurora.module]

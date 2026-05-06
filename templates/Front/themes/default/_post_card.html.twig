@@ -2,7 +2,7 @@
 {% if translation and translation.slug %}
     {% set featured = post.featuredMedia %}
     <article class="bg-surface border border-line/60 rounded-xl overflow-hidden hover:border-accent transition-colors">
-        <a href="{{ path('frontend_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}) }}" class="block">
+        <a href="{{ path('editorial_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}) }}" class="block">
             {% if featured %}
                 <div class="aspect-video bg-surface-2 overflow-hidden">
                     <img

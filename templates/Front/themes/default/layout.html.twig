@@ -18,14 +18,14 @@
             code: loc.code,
             name: localeNames[loc.code] ?? loc.code|upper,
             flagCode: localeFlagCodes[loc.code] ?? loc.code,
-            url: alternatesByLocale[loc.code] ?? path('frontend_home', {locale: loc.code}),
+            url: alternatesByLocale[loc.code] ?? path('editorial_home', {locale: loc.code}),
         }]) %}
     {% endfor %}
 
     <div {{ vue_component('core/front/FrontHeaderApp', {
         locale: locale,
         siteName: context.siteName,
-        homePath: path('frontend_home', {locale: locale}),
+        homePath: path('editorial_home', {locale: locale}),
         cartPath: is_ecommerce_front_enabled() ? path('frontend_cart', {locale: locale}) : '',
         accountOrdersPath: is_ecommerce_front_enabled() ? path('frontend_account_orders', {locale: locale}) : '',
         cartCount: is_ecommerce_front_enabled() ? cart_count() : 0,

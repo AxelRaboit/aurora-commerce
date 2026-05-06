@@ -4,7 +4,7 @@
 
 {% block body %}
     <div {{ vue_component('editorial/front/FormRenderApp', {
-        submitPath: path('frontend_form_submit', {locale: locale, slug: translation.slug}),
+        submitPath: path('editorial_form_submit', {locale: locale, slug: translation.slug}),
         formTitle: translation.title,
         formDescription: translation.description,
         fields: fields,

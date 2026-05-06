@@ -4,7 +4,7 @@
 {% set pageDescription = translation.metaDescription ?? context.siteDescription ?? '' %}
 {% set featuredMedia = post.featuredMedia %}
 {% set ogMedia = translation.ogImage ?? featuredMedia %}
-{% set canonicalUrl = translation.canonicalUrl ?: (translation.slug ? (context.siteUrl ~ path('frontend_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug})) : null) %}
+{% set canonicalUrl = translation.canonicalUrl ?: (translation.slug ? (context.siteUrl ~ path('editorial_post', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug})) : null) %}
 
 {% block title %}{{ pageTitle }} — {{ context.siteName }}{% endblock %}
 
@@ -61,9 +61,9 @@
 
     {% if translation.slug %}
         <div {{ vue_component('editorial/front/PostCommentsApp', {
-            listPath: path('frontend_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
-            submitPath: path('frontend_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
-            reactPathTemplate: path('frontend_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),
+            listPath: path('editorial_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+            submitPath: path('editorial_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
+            reactPathTemplate: path('editorial_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),
             commentsEnabled: commentsEnabled,
         }) }}></div>
     {% endif %}

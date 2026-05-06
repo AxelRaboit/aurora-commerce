@@ -27,6 +27,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';
     case HomepagePostId = 'homepage_post_id';
+    case DefaultFront = 'default_front';
     case LogoMediaId = 'logo_media_id';
     case FaviconMediaId = 'favicon_media_id';
     case SeoTitleTemplate = 'seo_title_template';
@@ -102,6 +103,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => 'Nombre de révisions gardées par article',
             self::TrashAutoPurgeDays => 'Purge auto de la corbeille (jours)',
             self::HomepagePostId => "Page d'accueil (ID du post)",
+            self::DefaultFront => 'Front par défaut',
             self::LogoMediaId => 'Logo du site',
             self::FaviconMediaId => 'Favicon',
             self::SeoTitleTemplate => 'Template de titre SEO',
@@ -174,6 +176,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)',
             self::TrashAutoPurgeDays => 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)',
             self::HomepagePostId => 'ID d\'un post affiché sur la page d\'accueil. Vide = liste des derniers articles.',
+            self::DefaultFront => 'Slug du front affiché par défaut sur "/". Ex: editorial, tracking.',
             self::LogoMediaId => 'ID du média utilisé comme logo',
             self::FaviconMediaId => 'ID du média utilisé comme favicon',
             self::SeoTitleTemplate => 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex: {title} — {siteName}',
@@ -246,6 +249,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostRevisionsLimit => '20',
             self::TrashAutoPurgeDays => '30',
             self::HomepagePostId => '',
+            self::DefaultFront => 'editorial',
             self::LogoMediaId => '',
             self::FaviconMediaId => '',
             self::SeoTitleTemplate => '{title} — {siteName}',
@@ -301,6 +305,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
+            self::DefaultFront => 'string',
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
@@ -378,7 +383,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
-            self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId => 'reading',
+            self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId, self::DefaultFront => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',

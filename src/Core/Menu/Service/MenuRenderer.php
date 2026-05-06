@@ -136,7 +136,7 @@ final class MenuRenderer
     private function resolveUrl(MenuItem $item, string $locale): ?string
     {
         return match ($item->getTargetType()) {
-            MenuItemTargetTypeEnum::Home => $this->urlGenerator->generate('frontend_home', ['locale' => $locale]),
+            MenuItemTargetTypeEnum::Home => $this->urlGenerator->generate('editorial_home', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontLogin => $this->urlGenerator->generate('frontend_login', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontRegister => $this->urlGenerator->generate('frontend_register', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontAccount => $this->urlGenerator->generate('frontend_account', ['locale' => $locale]),
@@ -163,7 +163,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('frontend_post', [
+        return $this->urlGenerator->generate('editorial_post', [
             'locale' => $locale,
             'postTypeSlug' => $post->getPostType()->getSlug(),
             'slug' => $translation->getSlug(),
@@ -182,7 +182,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('frontend_term', [
+        return $this->urlGenerator->generate('editorial_term', [
             'locale' => $locale,
             'taxonomySlug' => $term->getTaxonomy()->getSlug(),
             'termSlug' => $translation->getSlug(),
@@ -196,7 +196,7 @@ final class MenuRenderer
             return null;
         }
 
-        return $this->urlGenerator->generate('frontend_archive', [
+        return $this->urlGenerator->generate('editorial_archive', [
             'locale' => $locale,
             'postTypeSlug' => $postType->getSlug(),
         ]);

@@ -13,7 +13,7 @@
                     {{ include('Front/themes/default/_post_card.html.twig', {post: post, locale: locale}) }}
                 {% endfor %}
             </div>
-            {{ include('Front/themes/default/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'frontend_archive', params: {locale: locale, postTypeSlug: postType.slug}}) }}
+            {{ include('Front/themes/default/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'editorial_archive', params: {locale: locale, postTypeSlug: postType.slug}}) }}
         {% endif %}
     </section>
 {% endblock %}

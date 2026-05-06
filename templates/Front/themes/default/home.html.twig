@@ -14,7 +14,7 @@
                 {% endfor %}
             </div>
             {% if posts.totalPages > 1 %}
-                {{ include('Front/themes/default/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'frontend_home', params: {locale: locale}}) }}
+                {{ include('Front/themes/default/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'editorial_home', params: {locale: locale}}) }}
             {% endif %}
         {% endif %}
     </section>
