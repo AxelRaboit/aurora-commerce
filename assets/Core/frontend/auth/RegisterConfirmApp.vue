@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { Mail, LogIn } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AuthCard from "@/front/components/AuthCard.vue";
+import AuthCard from "@/frontend/components/AuthCard.vue";
 
 const { t } = useI18n();
 
