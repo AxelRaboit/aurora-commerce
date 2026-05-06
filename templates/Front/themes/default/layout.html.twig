@@ -22,7 +22,7 @@
         }]) %}
     {% endfor %}
 
-    <div {{ vue_component('core/front/FrontHeaderApp', {
+    <div {{ vue_component('editorial/front/EditorialHeaderApp', {
         locale: locale,
         siteName: context.siteName,
         homePath: path('editorial_home', {locale: locale}),
@@ -46,7 +46,7 @@
         {% block body %}{% endblock %}
     </main>
 
-    <div {{ vue_component('core/front/FrontFooterApp', {
+    <div {{ vue_component('editorial/front/EditorialFooterApp', {
         footerText: themeContext.footerText(context.siteName),
         footerMenuItems: showFrontMenus|default(false) ? menu_items('footer', locale) : [],
     }) }}></div>
