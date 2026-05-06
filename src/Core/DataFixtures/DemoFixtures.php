@@ -1270,6 +1270,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ?? new Menu()->setName('Menu pied de page')->setLocation('footer');
         $em->persist($footer);
 
+        $account = $em->getRepository(Menu::class)->findOneBy(['location' => 'account'])
+            ?? new Menu()->setName('Menu compte')->setLocation('account');
+        $em->persist($account);
+
         // ── Retrieve real entities to link ────────────────────────────────────
         $pageType = $em->getRepository(PostType::class)->findOneBy(['slug' => 'page']);
         $articleType = $em->getRepository(PostType::class)->findOneBy(['slug' => 'article']);
