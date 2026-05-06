@@ -24,18 +24,35 @@ const props = defineProps({
 });
 
 const logoUrl = computed(() => props.headerLogoUrl || props.siteLogoUrl);
-// Local mutable copy — initial value comes from the server-side prop, then
-// kept in sync with cart mutations dispatched from CartApp / ShopProductApp.
 const cartCount = ref(props.cartCount);
 const showAccountMenu = computed(() => props.accountMenuItems.length > 0 || cartCount.value > 0 || props.currentUser);
+
+const accountOpen = ref(false);
+const accountRef = ref(null);
+
+function toggleAccount() {
+    accountOpen.value = !accountOpen.value;
+}
+
+function onClickOutside(event) {
+    if (accountRef.value && !accountRef.value.contains(event.target)) {
+        accountOpen.value = false;
+    }
+}
 
 function onCartChanged(event) {
     const next = Number(event.detail?.count);
     if (Number.isFinite(next)) cartCount.value = next;
 }
 
-onMounted(() => document.addEventListener("cart:changed", onCartChanged));
-onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged));
+onMounted(() => {
+    document.addEventListener("cart:changed", onCartChanged);
+    document.addEventListener("click", onClickOutside);
+});
+onBeforeUnmount(() => {
+    document.removeEventListener("cart:changed", onCartChanged);
+    document.removeEventListener("click", onClickOutside);
+});
 </script>
 
 <template>
@@ -129,11 +146,12 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
             </details>
 
             <div class="ml-auto flex items-center gap-4 text-sm">
-                <div v-if="showAccountMenu" class="relative group">
+                <div v-if="showAccountMenu" ref="accountRef" class="relative">
                     <button
                         type="button"
                         class="inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80 relative"
                         style="color: var(--th-header-text, var(--th-primary));"
+                        v-on:click.stop="toggleAccount"
                     >
                         <User class="w-4 h-4" :stroke-width="2" />
                         <span class="hidden sm:inline">{{ currentUser ? currentUser.name : t('frontend.menu.account') }}</span>
@@ -144,7 +162,7 @@ onBeforeUnmount(() => document.removeEventListener("cart:changed", onCartChanged
                         <ChevronDown class="w-3.5 h-3.5" :stroke-width="2.5" />
                     </button>
 
-                    <div class="absolute right-0 top-full pt-1 min-w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50">
+                    <div v-if="accountOpen" class="absolute right-0 top-full mt-1 min-w-56 z-50">
                         <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
                             <template v-if="ecommerceEnabled">
                                 <a
