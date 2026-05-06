@@ -81,7 +81,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testListReturnsOk(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_comments_list'));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_comments_list'));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -93,7 +93,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testListFilterByStatus(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_comments_list', ['status' => 'pending']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_comments_list', ['status' => 'pending']));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -109,7 +109,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testApproveComment(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_approve', ['id' => $this->comment->getId()]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_comments_approve', ['id' => $this->comment->getId()]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -121,7 +121,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testSpamComment(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_spam', ['id' => $this->comment->getId()]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_comments_spam', ['id' => $this->comment->getId()]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -134,7 +134,7 @@ final class CommentsControllerTest extends IntegrationTestCase
     public function testDeleteComment(): void
     {
         $commentId = $this->comment->getId();
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_delete', ['id' => $commentId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_comments_delete', ['id' => $commentId]));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());
@@ -145,7 +145,7 @@ final class CommentsControllerTest extends IntegrationTestCase
 
     public function testToggleModeration(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_comments_toggle_moderation'));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_comments_toggle_moderation'));
         $response = $this->client->getResponse();
 
         self::assertSame(200, $response->getStatusCode());

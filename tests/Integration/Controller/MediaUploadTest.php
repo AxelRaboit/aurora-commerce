@@ -58,7 +58,7 @@ final class MediaUploadTest extends IntegrationTestCase
     {
         $upload = $this->prepareUploadedFile('hero.png', 'image/png', 600, 400);
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_upload'), [], ['image' => $upload]);
 
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
@@ -91,7 +91,7 @@ final class MediaUploadTest extends IntegrationTestCase
 
         $upload = new UploadedFile($tmp, 'note.txt', 'text/plain', null, true);
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_upload'), [], ['image' => $upload]);
 
         self::assertSame(422, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -100,7 +100,7 @@ final class MediaUploadTest extends IntegrationTestCase
 
     public function testUploadWithoutFileReturnsBadRequest(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_upload'));
 
         self::assertSame(400, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -114,7 +114,7 @@ final class MediaUploadTest extends IntegrationTestCase
         $upload = $this->prepareUploadedFile('banner.png', 'image/png', 300, 200);
         $this->client->request(
             HttpMethodEnum::Post->value,
-            $this->urlGenerator->generate('admin_media_upload'),
+            $this->urlGenerator->generate('backend_media_upload'),
             ['folderId' => (string) $folder->getId()],
             ['image' => $upload],
         );
@@ -135,7 +135,7 @@ final class MediaUploadTest extends IntegrationTestCase
     public function testDeleteMediaRemovesFileVariantsAndEntity(): void
     {
         $upload = $this->prepareUploadedFile('to-delete.png', 'image/png', 800, 600);
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_upload'), [], ['image' => $upload]);
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $mediaId = $body['media']['id'];
 
@@ -147,7 +147,7 @@ final class MediaUploadTest extends IntegrationTestCase
         $variantAbsolutes = array_map(fn (string $relativePath): string => Path::join($this->uploadDir, $relativePath), $media->getVariants());
         self::assertFileExists($absoluteFile);
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_delete', ['id' => $mediaId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_delete', ['id' => $mediaId]));
 
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         self::assertNull($repository->find($mediaId));
@@ -174,7 +174,7 @@ final class MediaUploadTest extends IntegrationTestCase
     {
         $this->client->request(
             HttpMethodEnum::Post->value,
-            $this->urlGenerator->generate('admin_media_folder_create'),
+            $this->urlGenerator->generate('backend_media_folder_create'),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

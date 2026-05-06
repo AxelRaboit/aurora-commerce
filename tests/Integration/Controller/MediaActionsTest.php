@@ -61,7 +61,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('alt.png', 200, 150);
 
-        [$status, $body] = $this->postJson('admin_media_edit', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_edit', ['id' => $media->getId()], [
             'alt' => 'A scenic banner',
             'caption' => 'Hero of the homepage',
             'focalX' => 0.4,
@@ -80,11 +80,11 @@ final class MediaActionsTest extends IntegrationTestCase
         $folder = $this->createFolder('Marketing');
         $media = $this->uploadAndPersist('to-move.png', 200, 150);
 
-        [, $body] = $this->postJson('admin_media_move', ['id' => $media->getId()], ['folderId' => $folder->getId()]);
+        [, $body] = $this->postJson('backend_media_move', ['id' => $media->getId()], ['folderId' => $folder->getId()]);
         self::assertTrue($body['success']);
         self::assertSame($folder->getId(), $body['media']['folderId']);
 
-        [, $rootBody] = $this->postJson('admin_media_move', ['id' => $media->getId()], ['folderId' => 0]);
+        [, $rootBody] = $this->postJson('backend_media_move', ['id' => $media->getId()], ['folderId' => 0]);
         self::assertTrue($rootBody['success']);
         self::assertNull($rootBody['media']['folderId']);
     }
@@ -95,7 +95,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $second = $this->uploadAndPersist('second.png', 100, 100);
         $third = $this->uploadAndPersist('third.png', 100, 100);
 
-        [$status, $body] = $this->postJson('admin_media_reorder', [], [
+        [$status, $body] = $this->postJson('backend_media_reorder', [], [
             'ids' => [$third->getId(), $first->getId(), $second->getId()],
         ]);
 
@@ -115,7 +115,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('crop.png', 800, 600);
 
-        [$status, $body] = $this->postJson('admin_media_crop', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_crop', ['id' => $media->getId()], [
             'x' => 100,
             'y' => 50,
             'width' => 400,
@@ -137,7 +137,7 @@ final class MediaActionsTest extends IntegrationTestCase
         self::assertFileExists($aFile);
         self::assertFileExists($bFile);
 
-        [$status, $body] = $this->postJson('admin_media_bulk_delete', [], ['ids' => [$a->getId(), $b->getId()]]);
+        [$status, $body] = $this->postJson('backend_media_bulk_delete', [], ['ids' => [$a->getId(), $b->getId()]]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -155,7 +155,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $a = $this->uploadAndPersist('move-a.png', 100, 100);
         $b = $this->uploadAndPersist('move-b.png', 100, 100);
 
-        [$status, $body] = $this->postJson('admin_media_bulk_move', [], [
+        [$status, $body] = $this->postJson('backend_media_bulk_move', [], [
             'ids' => [$a->getId(), $b->getId()],
             'folderId' => $folder->getId(),
         ]);
@@ -175,7 +175,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $parent = $this->createFolder('Top');
         $child = $this->createFolder('Old name');
 
-        [$status, $body] = $this->postJson('admin_media_folder_edit', ['id' => $child->getId()], [
+        [$status, $body] = $this->postJson('backend_media_folder_edit', ['id' => $child->getId()], [
             'name' => 'New name',
             'parentId' => $parent->getId(),
         ]);
@@ -217,7 +217,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $user = $this->createTestUser('plain-user', role: UserRoleEnum::User);
         $this->client->loginUser($user, 'admin');
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_media_list'));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_media_list'));
 
         self::assertSame(403, $this->client->getResponse()->getStatusCode());
     }
@@ -231,7 +231,7 @@ final class MediaActionsTest extends IntegrationTestCase
         $uploadEntries = $auditRepository->findBy(['module' => 'media', 'action' => 'uploaded', 'entityId' => $mediaId]);
         self::assertCount(1, $uploadEntries);
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_delete', ['id' => $mediaId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_delete', ['id' => $mediaId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $deleteEntries = $auditRepository->findBy(['module' => 'media', 'action' => 'deleted', 'entityId' => $mediaId]);
@@ -249,7 +249,7 @@ final class MediaActionsTest extends IntegrationTestCase
     private function uploadAndPersist(string $name, int $width, int $height): Media
     {
         $upload = $this->prepareUploadedFile($name, 'image/png', $width, $height);
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_media_upload'), [], ['image' => $upload]);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_upload'), [], ['image' => $upload]);
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertSame(1, $body['success']);
@@ -280,7 +280,7 @@ final class MediaActionsTest extends IntegrationTestCase
 
     private function createFolder(string $name): MediaFolder
     {
-        [$status, $body] = $this->postJson('admin_media_folder_create', [], ['name' => $name, 'parentId' => null]);
+        [$status, $body] = $this->postJson('backend_media_folder_create', [], ['name' => $name, 'parentId' => null]);
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         $folder = static::getContainer()->get(MediaFolderRepository::class)->find($body['folder']['id']);

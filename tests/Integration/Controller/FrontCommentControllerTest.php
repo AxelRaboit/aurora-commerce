@@ -73,7 +73,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
 
     public function testPostCommentCreatesComment(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_post_comment', [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('editorial_post_comment', [
             'locale' => 'fr',
             'postTypeSlug' => $this->postTypeSlug,
             'slug' => $this->postSlug,
@@ -90,7 +90,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
 
     public function testPostCommentWithInvalidDataReturnsErrors(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_post_comment', [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('editorial_post_comment', [
             'locale' => 'fr',
             'postTypeSlug' => $this->postTypeSlug,
             'slug' => $this->postSlug,
@@ -115,7 +115,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
 
         $this->client->request(
             HttpMethodEnum::Post->value,
-            $this->urlGenerator->generate('front_comment_react', [
+            $this->urlGenerator->generate('editorial_comment_react', [
                 'locale' => 'fr',
                 'postTypeSlug' => $this->postTypeSlug,
                 'slug' => $this->postSlug,

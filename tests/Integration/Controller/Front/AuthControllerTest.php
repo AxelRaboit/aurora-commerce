@@ -31,13 +31,13 @@ final class AuthControllerTest extends IntegrationTestCase
 
     public function testLoginPageRenders(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_login', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_login', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
     }
 
     public function testRegisterPageRendersWhenDisabled(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_register', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_register', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
     }
 
@@ -45,7 +45,7 @@ final class AuthControllerTest extends IntegrationTestCase
     {
         $this->setRegistrationEnabled(true);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_register', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_register', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
     }
 
@@ -53,7 +53,7 @@ final class AuthControllerTest extends IntegrationTestCase
     {
         $this->setRegistrationEnabled(true);
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_register', ['locale' => 'fr']), [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('frontend_register', ['locale' => 'fr']), [
             'name' => 'Test User',
             'email' => 'not-an-email',
             'password' => 'verysecure123',
@@ -68,13 +68,13 @@ final class AuthControllerTest extends IntegrationTestCase
         $this->setRegistrationEnabled(true);
 
         $email = 'newfront-'.uniqid().'@aurora.test';
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_register', ['locale' => 'fr']), [
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('frontend_register', ['locale' => 'fr']), [
             'name' => 'New Front User',
             'email' => $email,
             'password' => 'verysecure123',
         ]);
 
-        self::assertResponseRedirects($this->urlGenerator->generate('front_register_confirm', ['locale' => 'fr']));
+        self::assertResponseRedirects($this->urlGenerator->generate('frontend_register_confirm', ['locale' => 'fr']));
 
         $userRepository = static::getContainer()->get(UserRepository::class);
         $created = $userRepository->findOneBy(['email' => $email, 'type' => UserTypeEnum::FrontUser]);
@@ -84,37 +84,37 @@ final class AuthControllerTest extends IntegrationTestCase
 
     public function testRegisterConfirmPage(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_register_confirm', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_register_confirm', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
     }
 
     public function testForgotPasswordPage(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_forgot_password', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_forgot_password', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
     }
 
     public function testForgotPasswordSubmitNeverRevealsAccountExistence(): void
     {
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_forgot_password', ['locale' => 'fr']), ['email' => 'unknown@aurora.test']);
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('frontend_forgot_password', ['locale' => 'fr']), ['email' => 'unknown@aurora.test']);
         self::assertResponseIsSuccessful();
     }
 
     public function testResetPasswordPageWithInvalidToken(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_reset_password', ['locale' => 'fr', 'selector' => 'invalid-selector', 'token' => 'invalid-token']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_reset_password', ['locale' => 'fr', 'selector' => 'invalid-selector', 'token' => 'invalid-token']));
         self::assertResponseIsSuccessful();
     }
 
     public function testVerifyEmailWithInvalidToken(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_verify_email', ['locale' => 'fr', 'token' => 'totally-bogus-token']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_verify_email', ['locale' => 'fr', 'token' => 'totally-bogus-token']));
         self::assertResponseIsSuccessful();
     }
 
     public function testAccountRedirectsWhenAnonymous(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_account', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_account', ['locale' => 'fr']));
         self::assertResponseRedirects();
     }
 
@@ -123,7 +123,7 @@ final class AuthControllerTest extends IntegrationTestCase
         $user = $this->createFrontUser();
         $this->client->loginUser($user, 'front');
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('front_account', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('frontend_account', ['locale' => 'fr']));
         self::assertResponseIsSuccessful();
         self::assertStringContainsString($user->getName(), (string) $this->client->getResponse()->getContent());
     }
@@ -133,14 +133,14 @@ final class AuthControllerTest extends IntegrationTestCase
         $user = $this->createFrontUser();
         $this->client->loginUser($user, 'front');
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('front_logout', ['locale' => 'fr']));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('frontend_logout', ['locale' => 'fr']));
         self::assertResponseRedirects();
     }
 
     private function setRegistrationEnabled(bool $enabled): void
     {
         $settings = static::getContainer()->get(SettingRepository::class);
-        $settings->set('front_registration_enabled', $enabled ? '1' : '0');
+        $settings->set('frontend_registration_enabled', $enabled ? '1' : '0');
         static::getContainer()->get(EntityManagerInterface::class)->flush();
     }
 

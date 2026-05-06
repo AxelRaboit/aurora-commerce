@@ -54,7 +54,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
 
     public function testCreateCustomPostType(): void
     {
-        [$status, $body] = $this->postJson('admin_post_types_create', [], [
+        [$status, $body] = $this->postJson('backend_post_types_create', [], [
             'slug' => 'recipe',
             'label' => 'Recipes',
             'icon' => 'utensils',
@@ -72,7 +72,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
     public function testCannotDeleteBuiltInPostType(): void
     {
         $id = $this->articlePostTypeId();
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('admin_post_types_delete', ['id' => $id]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_post_types_delete', ['id' => $id]));
         self::assertSame(409, $this->client->getResponse()->getStatusCode());
     }
 
@@ -80,14 +80,14 @@ final class PostTypesControllerTest extends IntegrationTestCase
     {
         $postTypeId = $this->articlePostTypeId();
 
-        [, $body1] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
+        [, $body1] = $this->postJson('backend_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'reading_time',
             'label' => 'Reading time',
             'type' => 'number',
         ]);
         self::assertTrue($body1['success']);
 
-        [, $body2] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
+        [, $body2] = $this->postJson('backend_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'priority',
             'label' => 'Priority',
             'type' => 'select',
@@ -100,7 +100,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
         $readingTimeField = array_values(array_filter($fields, static fn ($f) => 'reading_time' === $f['name']))[0];
         $priorityField = array_values(array_filter($fields, static fn ($f) => 'priority' === $f['name']))[0];
 
-        [, $reordered] = $this->postJson('admin_post_types_field_reorder', ['id' => $postTypeId], [
+        [, $reordered] = $this->postJson('backend_post_types_field_reorder', ['id' => $postTypeId], [
             'orderedIds' => [$priorityField['id'], $readingTimeField['id']],
         ]);
         self::assertTrue($reordered['success']);
@@ -115,13 +115,13 @@ final class PostTypesControllerTest extends IntegrationTestCase
     {
         $postTypeId = $this->articlePostTypeId();
 
-        $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
+        $this->postJson('backend_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'unique_name',
             'label' => 'First',
             'type' => 'text',
         ]);
 
-        [$status, $body] = $this->postJson('admin_post_types_field_create', ['id' => $postTypeId], [
+        [$status, $body] = $this->postJson('backend_post_types_field_create', ['id' => $postTypeId], [
             'name' => 'unique_name',
             'label' => 'Duplicate',
             'type' => 'text',

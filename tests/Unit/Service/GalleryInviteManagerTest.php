@@ -146,7 +146,7 @@ final class GalleryInviteManagerTest extends TestCase
         $expectedUrl = 'https://example.test/g/wedding-2026/invite/tok-abc';
         $url->expects(self::once())
             ->method('generate')
-            ->with('front_gallery_invite_redeem', ['slug' => 'wedding-2026', 'token' => 'tok-abc'], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->with('frontend_gallery_invite_redeem', ['slug' => 'wedding-2026', 'token' => 'tok-abc'], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($expectedUrl);
 
         $captured = null;

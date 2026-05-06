@@ -32,7 +32,7 @@ final class ProfileMoodTest extends IntegrationTestCase
 
     public function testSavingValidMessagePersistsAndReturnsIt(): void
     {
-        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => 'Shipping things ✨']);
+        [$status, $body] = $this->postJson('backend_profile_mood', [], ['moodMessage' => 'Shipping things ✨']);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -42,10 +42,10 @@ final class ProfileMoodTest extends IntegrationTestCase
 
     public function testEmptyStringClearsTheMoodMessage(): void
     {
-        $this->postJson('profile_mood', [], ['moodMessage' => 'set']);
+        $this->postJson('backend_profile_mood', [], ['moodMessage' => 'set']);
         self::assertSame('set', $this->reloadAdmin()->getMoodMessage());
 
-        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => '   ']);
+        [$status, $body] = $this->postJson('backend_profile_mood', [], ['moodMessage' => '   ']);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -57,7 +57,7 @@ final class ProfileMoodTest extends IntegrationTestCase
     {
         $tooLong = str_repeat('a', User::MOOD_MESSAGE_MAX_LENGTH + 1);
 
-        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => $tooLong]);
+        [$status, $body] = $this->postJson('backend_profile_mood', [], ['moodMessage' => $tooLong]);
 
         self::assertSame(200, $status);
         self::assertFalse($body['success']);
@@ -69,7 +69,7 @@ final class ProfileMoodTest extends IntegrationTestCase
     {
         $exact = str_repeat('a', User::MOOD_MESSAGE_MAX_LENGTH);
 
-        [$status, $body] = $this->postJson('profile_mood', [], ['moodMessage' => $exact]);
+        [$status, $body] = $this->postJson('backend_profile_mood', [], ['moodMessage' => $exact]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);

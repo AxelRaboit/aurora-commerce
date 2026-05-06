@@ -74,17 +74,17 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // List
-        [$status, $body] = $this->getJson('admin_menus_list');
+        [$status, $body] = $this->getJson('backend_menus_list');
         self::assertSame(200, $status);
         self::assertCount(1, $body['menus']);
 
         // Show
-        [$status, $body] = $this->getJson('admin_menus_show', ['id' => $menuId]);
+        [$status, $body] = $this->getJson('backend_menus_show', ['id' => $menuId]);
         self::assertSame(200, $status);
         self::assertSame([], $body['menu']['items']);
 
         // Update name + description (location stays the same)
-        [$status, $body] = $this->postJson('admin_menus_update', ['id' => $menuId], [
+        [$status, $body] = $this->postJson('backend_menus_update', ['id' => $menuId], [
             'name' => 'Renamed',
             'location' => 'custom-test',
             'description' => 'Updated',
@@ -96,7 +96,7 @@ final class MenusControllerTest extends IntegrationTestCase
 
     public function testCreateEndpointIsDisabled(): void
     {
-        [$status, $body] = $this->postJson('admin_menus_create', [], [
+        [$status, $body] = $this->postJson('backend_menus_create', [], [
             'name' => 'Header',
             'location' => 'whatever',
         ]);
@@ -108,7 +108,7 @@ final class MenusControllerTest extends IntegrationTestCase
     {
         $menuId = $this->seedMenu('primary');
 
-        [$status, $body] = $this->postJson('admin_menus_delete', ['id' => $menuId]);
+        [$status, $body] = $this->postJson('backend_menus_delete', ['id' => $menuId]);
         self::assertSame(400, $status);
         self::assertFalse($body['success']);
     }
@@ -118,7 +118,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // Create Home item
-        [$status, $body] = $this->postJson('admin_menus_items_create', ['id' => $menuId], [
+        [$status, $body] = $this->postJson('backend_menus_items_create', ['id' => $menuId], [
             'targetType' => 'home',
         ]);
         self::assertSame(200, $status);
@@ -126,7 +126,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $homeId = $body['menu']['items'][0]['id'];
 
         // Create CustomUrl item
-        [$status, $body] = $this->postJson('admin_menus_items_create', ['id' => $menuId], [
+        [$status, $body] = $this->postJson('backend_menus_items_create', ['id' => $menuId], [
             'targetType' => 'custom_url',
             'customUrl' => 'https://example.com',
             'openInNewTab' => true,
@@ -136,7 +136,7 @@ final class MenusControllerTest extends IntegrationTestCase
         $urlId = $body['menu']['items'][1]['id'];
 
         // Update item with translation
-        [$status, $body] = $this->postJson('admin_menus_items_update', ['id' => $urlId], [
+        [$status, $body] = $this->postJson('backend_menus_items_update', ['id' => $urlId], [
             'targetType' => 'custom_url',
             'customUrl' => 'https://example.org',
             'openInNewTab' => false,
@@ -150,7 +150,7 @@ final class MenusControllerTest extends IntegrationTestCase
         self::assertSame('Example', $updated['translations']['en']);
 
         // Reorder
-        [$status, $body] = $this->postJson('admin_menus_items_reorder', ['id' => $menuId], [
+        [$status, $body] = $this->postJson('backend_menus_items_reorder', ['id' => $menuId], [
             'items' => [
                 ['id' => $urlId, 'parentId' => null, 'position' => 0],
                 ['id' => $homeId, 'parentId' => null, 'position' => 1],
@@ -161,7 +161,7 @@ final class MenusControllerTest extends IntegrationTestCase
         self::assertSame($homeId, $body['menu']['items'][1]['id']);
 
         // Delete
-        [$status, $body] = $this->postJson('admin_menus_items_delete', ['id' => $homeId]);
+        [$status, $body] = $this->postJson('backend_menus_items_delete', ['id' => $homeId]);
         self::assertSame(200, $status);
         self::assertCount(1, $body['menu']['items']);
     }
@@ -171,37 +171,37 @@ final class MenusControllerTest extends IntegrationTestCase
         $menuId = $this->seedMenu('custom-test');
 
         // Invalid target type
-        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'unknown']);
+        [$status] = $this->postJson('backend_menus_items_create', ['id' => $menuId], ['targetType' => 'unknown']);
         self::assertSame(400, $status);
 
         // CustomUrl without URL
-        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'custom_url']);
+        [$status] = $this->postJson('backend_menus_items_create', ['id' => $menuId], ['targetType' => 'custom_url']);
         self::assertSame(400, $status);
 
         // Post without targetId
-        [$status] = $this->postJson('admin_menus_items_create', ['id' => $menuId], ['targetType' => 'post']);
+        [$status] = $this->postJson('backend_menus_items_create', ['id' => $menuId], ['targetType' => 'post']);
         self::assertSame(400, $status);
     }
 
     public function testPickers(): void
     {
-        [$status, $body] = $this->getJson('admin_menus_picker_post_types');
+        [$status, $body] = $this->getJson('backend_menus_picker_post_types');
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
-        [$status, $body] = $this->getJson('admin_menus_picker_taxonomies');
+        [$status, $body] = $this->getJson('backend_menus_picker_taxonomies');
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus_picker_posts').'?q=test');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_menus_picker_posts').'?q=test');
         $status = $this->client->getResponse()->getStatusCode();
         $body = json_decode((string) $this->client->getResponse()->getContent(), true) ?? [];
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         self::assertIsArray($body['items']);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus_picker_terms').'?q=test');
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_menus_picker_terms').'?q=test');
         $status = $this->client->getResponse()->getStatusCode();
         $body = json_decode((string) $this->client->getResponse()->getContent(), true) ?? [];
         self::assertSame(200, $status);
@@ -210,7 +210,7 @@ final class MenusControllerTest extends IntegrationTestCase
 
     public function testIndexPageRendersWhenLogged(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_menus'));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_menus'));
         self::assertTrue($this->client->getResponse()->isOk());
     }
 }

@@ -49,7 +49,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
     {
         $this->client->request(
             HttpMethodEnum::Get->value,
-            $this->urlGenerator->generate('ecommerce_orders_list'),
+            $this->urlGenerator->generate('backend_ecommerce_orders_list'),
             [],
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
@@ -66,7 +66,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
 
     public function testFilterByStatusOnlyReturnsMatchingOrders(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('ecommerce_orders_list', ['status' => 'cancelled']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_ecommerce_orders_list', ['status' => 'cancelled']));
         $payload = json_decode($this->client->getResponse()->getContent(), true);
         self::assertTrue($payload['success']);
         // Order is "paid" by default after checkout — cancelled bucket should be empty
@@ -75,7 +75,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
 
     public function testShowRendersOrderDetail(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('ecommerce_orders_show', ['id' => $this->order->getId()]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_ecommerce_orders_show', ['id' => $this->order->getId()]));
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
         self::assertStringContainsString($this->order->getNumber(), $response->getContent());
@@ -85,7 +85,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
     {
         $this->client->request(
             HttpMethodEnum::Patch->value,
-            $this->urlGenerator->generate('ecommerce_orders_status', ['id' => $this->order->getId()]),
+            $this->urlGenerator->generate('backend_ecommerce_orders_status', ['id' => $this->order->getId()]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -106,7 +106,7 @@ final class AdminOrdersControllerTest extends IntegrationTestCase
         // paid → pending is forbidden (cannot revert).
         $this->client->request(
             HttpMethodEnum::Patch->value,
-            $this->urlGenerator->generate('ecommerce_orders_status', ['id' => $this->order->getId()]),
+            $this->urlGenerator->generate('backend_ecommerce_orders_status', ['id' => $this->order->getId()]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

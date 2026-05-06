@@ -68,7 +68,7 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testListReturnsOk(): void
     {
-        [$status, $body] = $this->jsonRequest('GET', '/admin/forms/list');
+        [$status, $body] = $this->jsonRequest('GET', '/backend/forms/list');
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -77,7 +77,7 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateForm(): void
     {
-        [$status, $body] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [$status, $body] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
 
         self::assertSame(201, $status);
         self::assertTrue($body['success']);
@@ -90,10 +90,10 @@ final class FormsControllerTest extends IntegrationTestCase
     public function testCreateFormWithDuplicateSlugFails(): void
     {
         $suffix = uniqid();
-        [, $first] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload($suffix));
+        [, $first] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload($suffix));
         self::assertTrue($first['success']);
 
-        [$status, $second] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload($suffix));
+        [$status, $second] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload($suffix));
         self::assertSame(422, $status);
         self::assertFalse($second['success']);
         self::assertNotEmpty($second['errors']);
@@ -109,7 +109,7 @@ final class FormsControllerTest extends IntegrationTestCase
             'translations' => ['fr' => ['title' => '', 'slug' => '', 'description' => null]],
         ];
 
-        [$status, $body] = $this->jsonRequest('POST', '/admin/forms', $payload);
+        [$status, $body] = $this->jsonRequest('POST', '/backend/forms', $payload);
 
         self::assertSame(422, $status);
         self::assertFalse($body['success']);
@@ -117,10 +117,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testGetForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('GET', "/admin/forms/{$id}");
+        [$status, $body] = $this->jsonRequest('GET', "/backend/forms/{$id}");
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -132,14 +132,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testUpdateForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $id = $created['form']['id'];
 
         $suffix = uniqid();
         $updated = $this->createFormPayload($suffix);
         $updated['translations']['fr']['title'] = 'Formulaire Modifié';
 
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/edit", $updated);
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/edit", $updated);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -150,10 +150,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/fields", $this->createFieldPayload());
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/fields", $this->createFieldPayload());
 
         self::assertSame(201, $status);
         self::assertTrue($body['success']);
@@ -167,11 +167,11 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateFieldWithoutLabelFails(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $id = $created['form']['id'];
 
         $payload = ['type' => 'text', 'required' => false, 'translations' => []];
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/fields", $payload);
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/fields", $payload);
 
         self::assertSame(422, $status);
         self::assertFalse($body['success']);
@@ -181,14 +181,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testUpdateField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $fieldCreated] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields", $this->createFieldPayload());
+        [, $fieldCreated] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload());
         $fieldId = $fieldCreated['field']['id'];
 
         $updated = $this->createFieldPayload('Prénom');
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/{$fieldId}/edit", $updated);
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/{$fieldId}/edit", $updated);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -199,18 +199,18 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testDeleteField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $fieldCreated] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields", $this->createFieldPayload());
+        [, $fieldCreated] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload());
         $fieldId = $fieldCreated['field']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/{$fieldId}/delete");
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/{$fieldId}/delete");
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
 
-        [, $formBody] = $this->jsonRequest('GET', "/admin/forms/{$formId}");
+        [, $formBody] = $this->jsonRequest('GET', "/backend/forms/{$formId}");
         self::assertCount(0, $formBody['form']['fields']);
 
         $this->cleanupForm($formId);
@@ -218,14 +218,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testReorderFields(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $f1] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields", $this->createFieldPayload('Champ 1'));
-        [, $f2] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields", $this->createFieldPayload('Champ 2'));
+        [, $f1] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload('Champ 1'));
+        [, $f2] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload('Champ 2'));
 
         $orderedIds = [$f2['field']['id'], $f1['field']['id']];
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$formId}/fields/reorder", ['orderedIds' => $orderedIds]);
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/reorder", ['orderedIds' => $orderedIds]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -235,10 +235,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testDeleteForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/admin/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/admin/forms/{$id}/delete");
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/delete");
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);

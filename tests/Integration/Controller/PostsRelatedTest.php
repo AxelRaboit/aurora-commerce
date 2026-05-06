@@ -90,7 +90,7 @@ final class PostsRelatedTest extends IntegrationTestCase
         $first = $this->createPost('Apple article');
         $this->createPost('Banana post');
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_search', ['q' => 'apple', 'excludeId' => $first->getId()]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_posts_search', ['q' => 'apple', 'excludeId' => $first->getId()]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 
@@ -106,7 +106,7 @@ final class PostsRelatedTest extends IntegrationTestCase
         $second = $this->createPost('Beta');
         $third = $this->createPost('Gamma');
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('admin_posts_search', ['ids' => sprintf('%d,%d', $first->getId(), $third->getId())]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_posts_search', ['ids' => sprintf('%d,%d', $first->getId(), $third->getId())]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 
