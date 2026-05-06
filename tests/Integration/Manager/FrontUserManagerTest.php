@@ -41,7 +41,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
         $user = $this->manager->register($input);
 
         self::assertNotNull($user->getId());
-        self::assertSame(UserTypeEnum::FrontUser, $user->getType());
+        self::assertSame(UserTypeEnum::Frontend, $user->getType());
         self::assertSame(UserStatusEnum::PendingVerification, $user->getStatus());
         self::assertNotEmpty($user->getEmailVerificationToken());
         self::assertNotNull($user->getEmailVerificationExpiresAt());
@@ -124,7 +124,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
         $user = new User();
         $user->setName('Active');
         $user->setEmail('active-'.uniqid().'@aurora.test');
-        $user->setType(UserTypeEnum::FrontUser);
+        $user->setType(UserTypeEnum::Frontend);
         $user->setStatus(UserStatusEnum::Active);
         $user->setPassword($hasher->hashPassword($user, 'verysecure123'));
 

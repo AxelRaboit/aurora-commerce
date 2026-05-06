@@ -49,7 +49,7 @@ final readonly class UserManager implements UserManagerInterface
         $user = new User();
         $user->setName($name);
         $user->setEmail($email);
-        $user->setType(UserTypeEnum::Admin);
+        $user->setType(UserTypeEnum::Backend);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
         $user->setRoles($isAdmin ? [UserRoleEnum::Admin->value] : []);
 
@@ -67,7 +67,7 @@ final readonly class UserManager implements UserManagerInterface
         $user = new User();
         $user->setName($name);
         $user->setEmail($email);
-        $user->setType(UserTypeEnum::Admin);
+        $user->setType(UserTypeEnum::Backend);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
         $user->setRoles([UserRoleEnum::Admin->value]);
         $user->setStatus(UserStatusEnum::PendingVerification);
@@ -96,7 +96,7 @@ final readonly class UserManager implements UserManagerInterface
 
     public function verifyEmail(string $token): ?User
     {
-        $user = $this->userRepository->findOneBy(['emailVerificationToken' => $token, 'type' => UserTypeEnum::Admin]);
+        $user = $this->userRepository->findOneBy(['emailVerificationToken' => $token, 'type' => UserTypeEnum::Backend]);
         if (null === $user) {
             return null;
         }
@@ -119,7 +119,7 @@ final readonly class UserManager implements UserManagerInterface
     {
         $user = $this->userRepository->findOneBy([
             'email' => $email,
-            'type' => UserTypeEnum::Admin,
+            'type' => UserTypeEnum::Backend,
         ]);
 
         if (!$user instanceof User || UserStatusEnum::PendingVerification !== $user->getStatus()) {
@@ -249,7 +249,7 @@ final readonly class UserManager implements UserManagerInterface
         $user = new User();
         $user->setName($name);
         $user->setEmail($email);
-        $user->setType(UserTypeEnum::Admin);
+        $user->setType(UserTypeEnum::Backend);
         $user->setRoles([$role]);
         $user->setStatus(UserStatusEnum::Invited);
         $user->setLocale(LocaleEnum::French);

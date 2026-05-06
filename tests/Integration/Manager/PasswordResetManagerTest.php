@@ -28,7 +28,7 @@ final class PasswordResetManagerTest extends IntegrationTestCase
 
     public function testCreateRequestForUserReturnsTokenAndExpiry(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
 
         $result = $this->manager->createRequestForUser($user);
 
@@ -41,10 +41,10 @@ final class PasswordResetManagerTest extends IntegrationTestCase
 
     public function testValidateTokenAcceptsValidToken(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
         $request = $this->manager->createRequestForUser($user);
 
-        $resolved = $this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::FrontUser);
+        $resolved = $this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::Frontend);
 
         self::assertInstanceOf(ResetPasswordRequest::class, $resolved);
         self::assertSame($user->getId(), $resolved->getUser()->getId());
@@ -52,7 +52,7 @@ final class PasswordResetManagerTest extends IntegrationTestCase
 
     public function testValidateTokenRejectsWrongToken(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
         $request = $this->manager->createRequestForUser($user);
 
         self::assertNull($this->manager->validateToken($request['selector'], 'wrong-token'));
@@ -60,34 +60,34 @@ final class PasswordResetManagerTest extends IntegrationTestCase
 
     public function testValidateTokenRejectsWrongUserType(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
         $request = $this->manager->createRequestForUser($user);
 
-        self::assertNull($this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::Admin));
+        self::assertNull($this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::Backend));
     }
 
     public function testResetPasswordUpdatesHashAndConsumesRequest(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
         $oldHash = $user->getPassword();
         $request = $this->manager->createRequestForUser($user);
-        $resetRequest = $this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::FrontUser);
+        $resetRequest = $this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::Frontend);
         self::assertNotNull($resetRequest);
 
         $this->manager->resetPassword($resetRequest, 'brandnewpassword');
 
         self::assertNotSame($oldHash, $user->getPassword());
-        self::assertNull($this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::FrontUser));
+        self::assertNull($this->manager->validateToken($request['selector'], $request['plainToken'], UserTypeEnum::Frontend));
     }
 
     public function testCreateRequestReplacesPreviousOne(): void
     {
-        $user = $this->createUser(UserTypeEnum::FrontUser);
+        $user = $this->createUser(UserTypeEnum::Frontend);
         $first = $this->manager->createRequestForUser($user);
         $second = $this->manager->createRequestForUser($user);
 
-        self::assertNull($this->manager->validateToken($first['selector'], $first['plainToken'], UserTypeEnum::FrontUser));
-        self::assertInstanceOf(ResetPasswordRequest::class, $this->manager->validateToken($second['selector'], $second['plainToken'], UserTypeEnum::FrontUser));
+        self::assertNull($this->manager->validateToken($first['selector'], $first['plainToken'], UserTypeEnum::Frontend));
+        self::assertInstanceOf(ResetPasswordRequest::class, $this->manager->validateToken($second['selector'], $second['plainToken'], UserTypeEnum::Frontend));
     }
 
     private function createUser(UserTypeEnum $type): User

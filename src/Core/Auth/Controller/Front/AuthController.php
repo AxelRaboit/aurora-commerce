@@ -91,7 +91,7 @@ class AuthController extends AbstractController
         $input = FrontRegisterInput::fromArray($request->request->all(), $locale);
         $errors = $this->payloadValidator->errors($input);
 
-        if ([] === $errors && $this->userRepository->findOneBy(['email' => $input->email, 'type' => UserTypeEnum::FrontUser])) {
+        if ([] === $errors && $this->userRepository->findOneBy(['email' => $input->email, 'type' => UserTypeEnum::Frontend])) {
             $errors['email'] = 'front.errors.email_taken';
         }
 

@@ -49,7 +49,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         $user = new User();
         $user->setName($input->name);
         $user->setEmail($input->email);
-        $user->setType(UserTypeEnum::FrontUser);
+        $user->setType(UserTypeEnum::Frontend);
         $user->setRoles([UserRoleEnum::User->value]);
         $user->setStatus(UserStatusEnum::PendingVerification);
         $user->setPassword($this->passwordHasher->hashPassword($user, $input->password));
@@ -126,7 +126,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
     {
         $user = $this->userRepository->findOneBy([
             'email' => $email,
-            'type' => UserTypeEnum::FrontUser,
+            'type' => UserTypeEnum::Frontend,
         ]);
 
         if (!$user instanceof User || UserStatusEnum::PendingVerification !== $user->getStatus()) {
@@ -140,7 +140,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
     {
         $user = $this->userRepository->findOneBy([
             'email' => $email,
-            'type' => UserTypeEnum::FrontUser,
+            'type' => UserTypeEnum::Frontend,
         ]);
 
         if (!$user instanceof User) {
@@ -160,7 +160,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
 
     public function validateResetToken(string $selector, string $token): ?ResetPasswordRequest
     {
-        return $this->passwordResetManager->validateToken($selector, $token, UserTypeEnum::FrontUser);
+        return $this->passwordResetManager->validateToken($selector, $token, UserTypeEnum::Frontend);
     }
 
     public function resetPassword(ResetPasswordRequest $resetRequest, string $newPassword): void

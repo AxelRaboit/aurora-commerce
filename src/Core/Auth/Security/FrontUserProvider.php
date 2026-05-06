@@ -22,7 +22,7 @@ final readonly class FrontUserProvider implements UserProviderInterface
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $user = $this->userRepository->findOneBy(['email' => $identifier, 'type' => UserTypeEnum::FrontUser]);
+        $user = $this->userRepository->findOneBy(['email' => $identifier, 'type' => UserTypeEnum::Frontend]);
         if (null === $user) {
             throw new UserNotFoundException(sprintf('Front user "%s" not found.', $identifier));
         }

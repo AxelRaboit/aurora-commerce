@@ -77,9 +77,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private UserStatusEnum $status = UserStatusEnum::Active;
 
-    #[ORM\Column(length: 20, enumType: UserTypeEnum::class, options: ['default' => 'admin'])]
+    #[ORM\Column(length: 20, enumType: UserTypeEnum::class, options: ['default' => 'backend'])]
     #[Groups(['user:read'])]
-    private UserTypeEnum $type = UserTypeEnum::Admin;
+    private UserTypeEnum $type = UserTypeEnum::Backend;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read'])]
@@ -322,12 +322,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isAdmin(): bool
     {
-        return UserTypeEnum::Admin === $this->type;
+        return UserTypeEnum::Backend === $this->type;
     }
 
     public function isFrontUser(): bool
     {
-        return UserTypeEnum::FrontUser === $this->type;
+        return UserTypeEnum::Frontend === $this->type;
     }
 
     public function getProfilePhotoPath(): ?string

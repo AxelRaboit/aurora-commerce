@@ -241,7 +241,7 @@ final class MediaActionsTest extends IntegrationTestCase
     private function loginAsAdmin(): void
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $admin = $userRepository->findOneBy(['email' => 'dev@aurora.app', 'type' => 'admin']);
+        $admin = $userRepository->findOneBy(['email' => 'dev@aurora.app', 'type' => 'backend']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
     }

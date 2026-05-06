@@ -47,7 +47,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
      */
     public function sendResetLink(string $email): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $email, 'type' => UserTypeEnum::Admin]);
+        $user = $this->userRepository->findOneBy(['email' => $email, 'type' => UserTypeEnum::Backend]);
 
         if (!$user instanceof User) {
             return;
@@ -106,7 +106,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
             ->html($body));
     }
 
-    public function validateToken(string $selector, string $token, ?UserTypeEnum $expectedType = UserTypeEnum::Admin): ?ResetPasswordRequest
+    public function validateToken(string $selector, string $token, ?UserTypeEnum $expectedType = UserTypeEnum::Backend): ?ResetPasswordRequest
     {
         $resetRequest = $this->resetRepo->findBySelector($selector);
 

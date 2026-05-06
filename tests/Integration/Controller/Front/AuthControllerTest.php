@@ -77,7 +77,7 @@ final class AuthControllerTest extends IntegrationTestCase
         self::assertResponseRedirects($this->urlGenerator->generate('frontend_register_confirm', ['locale' => 'fr']));
 
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $created = $userRepository->findOneBy(['email' => $email, 'type' => UserTypeEnum::FrontUser]);
+        $created = $userRepository->findOneBy(['email' => $email, 'type' => UserTypeEnum::Frontend]);
         self::assertInstanceOf(User::class, $created);
         self::assertSame(UserStatusEnum::PendingVerification, $created->getStatus());
     }
@@ -152,7 +152,7 @@ final class AuthControllerTest extends IntegrationTestCase
         $user = new User();
         $user->setName('Front Tester');
         $user->setEmail('front-tester-'.uniqid().'@aurora.test');
-        $user->setType(UserTypeEnum::FrontUser);
+        $user->setType(UserTypeEnum::Frontend);
         $user->setStatus(UserStatusEnum::Active);
         $user->setRoles([UserRoleEnum::User->value]);
         $user->setPassword($hasher->hashPassword($user, 'password'));

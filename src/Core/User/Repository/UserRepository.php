@@ -92,7 +92,7 @@ class UserRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.type = :type')
-            ->setParameter('type', UserTypeEnum::Admin->value)
+            ->setParameter('type', UserTypeEnum::Backend->value)
             ->orderBy('u.name', Order::Ascending->value)
             ->getQuery()
             ->getResult();

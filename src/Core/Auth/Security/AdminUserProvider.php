@@ -22,7 +22,7 @@ final readonly class AdminUserProvider implements UserProviderInterface
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $user = $this->userRepository->findOneBy(['email' => $identifier, 'type' => UserTypeEnum::Admin]);
+        $user = $this->userRepository->findOneBy(['email' => $identifier, 'type' => UserTypeEnum::Backend]);
         if (null === $user) {
             throw new UserNotFoundException(sprintf('Admin user "%s" not found.', $identifier));
         }
