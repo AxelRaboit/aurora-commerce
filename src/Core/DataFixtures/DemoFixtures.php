@@ -116,14 +116,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $manager->flush();
 
-        // Assign logo and favicon after flush so IDs are available.
-        // Use the hero image (media[0]) as logo and the landscape (media[1]) as favicon.
-        if (isset($media[0]) && null !== $media[0]->getId()) {
-            $this->settingsManager->set(ApplicationParameterEnum::LogoMediaId->value, (string) $media[0]->getId());
-        }
-
+        // Assign favicon after flush so IDs are available.
+        // Use the landscape image (media[1]) as both favicon and logo.
         if (isset($media[1]) && null !== $media[1]->getId()) {
-            $this->settingsManager->set(ApplicationParameterEnum::FaviconMediaId->value, (string) $media[1]->getId());
+            $faviconId = (string) $media[1]->getId();
+            $this->settingsManager->set(ApplicationParameterEnum::FaviconMediaId->value, $faviconId);
+            $this->settingsManager->set(ApplicationParameterEnum::LogoMediaId->value, $faviconId);
         }
     }
 

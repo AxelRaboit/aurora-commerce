@@ -230,7 +230,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getDefaultValue(): string
     {
         return match ($this) {
-            self::SiteName => 'Mon site Aurora',
+            self::SiteName => 'Aurora',
             self::SiteDescription => 'Propulsé par Aurora',
             self::SiteUrl => 'http://localhost',
             self::AdminEmail => 'admin@aurora.app',
