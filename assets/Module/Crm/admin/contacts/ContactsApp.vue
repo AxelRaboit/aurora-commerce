@@ -119,8 +119,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>
                     </tr>

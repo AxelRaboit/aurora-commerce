@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
@@ -19,6 +20,7 @@ import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
@@ -134,7 +136,7 @@ async function submitContact() {
                     {{ t('admin.nav.contacts') }} ({{ contacts.length }})
                 </h3>
                 <AppButton
-                    v-if="createContactPath"
+                    v-if="createContactPath && can('crm.contacts.create')"
                     variant="primary"
                     size="md"
                     class="w-full sm:w-auto"

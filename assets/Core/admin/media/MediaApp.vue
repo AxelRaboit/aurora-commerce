@@ -162,14 +162,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
                 <div class="flex items-center gap-1.5">
                     <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("admin.media.folders") }}</h2>
-                    <button
-                        type="button"
-                        class="p-0.5 text-muted hover:text-primary hover:bg-surface-2 rounded transition-colors"
+                    <AppIconButton
+                        v-if="can('core.media.manage')"
                         :title="t('admin.media.newFolder')"
                         v-on:click="openCreateFolder"
                     >
                         <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                    </button>
+                    </AppIconButton>
                 </div>
                 <div class="space-y-0.5">
                     <button
@@ -247,10 +246,10 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             >
                                 <Star class="w-3.5 h-3.5" :stroke-width="2" :fill="favouriteFolderIds.has(folder.id) ? 'currentColor' : 'none'" />
                             </button>
-                            <AppIconButton color="accent" v-on:click="openEditFolder(folder)">
+                            <AppIconButton v-if="can('core.media.manage')" color="accent" v-on:click="openEditFolder(folder)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton color="rose" v-on:click="deletingFolder = folder">
+                            <AppIconButton v-if="can('core.media.manage')" color="rose" v-on:click="deletingFolder = folder">
                                 <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
                         </div>

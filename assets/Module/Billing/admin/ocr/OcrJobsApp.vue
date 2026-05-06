@@ -16,8 +16,10 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Plus, Eye, Trash2, RotateCcw, Info } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 
 const props = defineProps({
     jobs: { type: Object, default: () => ({}) },
@@ -117,7 +119,7 @@ onMounted(startPolling);
                                 <AppIconButton v-if="RETRYABLE_STATUSES.has(job.status)" color="amber" :title="t('admin.billing.ocr.retry')" v-on:click="retryJob(job)">
                                     <RotateCcw class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(job)">
+                                <AppIconButton v-if="can('billing.ocr.import')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(job)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

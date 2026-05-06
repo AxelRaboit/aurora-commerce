@@ -7,6 +7,7 @@ import { usePostsEditor } from "@editorial/admin/posts/composables/usePostsEdito
 import { usePostsPreview } from "@editorial/admin/posts/composables/usePostsPreview.js";
 import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.js";
 import { useI18n } from "vue-i18n";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { toast } from "vue-sonner";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -28,6 +29,7 @@ import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js"
 import { PostStatus } from "@editorial/utils/enums/postStatus.js";
 
 const { t } = useI18n();
+const { can } = usePrivileges();
 const { formatDateShort } = useDateFormat();
 
 const props = defineProps({
@@ -134,7 +136,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     v-on:search="onSearch"
                 />
                 <AppButton
-                    v-if="!trashed"
+                    v-if="!trashed && can('editorial.posts.manage')"
                     variant="primary"
                     size="md"
                     class="w-full sm:w-auto"
@@ -175,7 +177,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <AppIconButton color="sky" v-on:click="openPreview(post)">
                                 <Eye class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="!trashed" color="accent" v-on:click="openEdit(post)">
+                            <AppIconButton v-if="!trashed && can('editorial.posts.manage')" color="accent" v-on:click="openEdit(post)">
                                 <Pencil class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
@@ -228,7 +230,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                                     <AppIconButton color="sky" v-on:click="openPreview(post)">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="!trashed" color="accent" v-on:click="openEdit(post)">
+                                    <AppIconButton v-if="!trashed && can('editorial.posts.manage')" color="accent" v-on:click="openEdit(post)">
                                         <Pencil class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
                                     <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
