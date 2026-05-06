@@ -35,6 +35,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case EcommerceAdminEnabled = 'backend_ecommerce_admin_enabled';
     case EcommerceFrontEnabled = 'backend_ecommerce_front_enabled';
     case EcommerceLowStockThreshold = 'backend_ecommerce_low_stock_threshold';
+    case EditorialAdminEnabled = 'backend_editorial_admin_enabled';
     case CrmAdminEnabled = 'backend_crm_admin_enabled';
     case ErpAdminEnabled = 'backend_erp_admin_enabled';
     case PhotoAdminEnabled = 'photo_admin_enabled';
@@ -111,6 +112,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceAdminEnabled => 'Administration e-commerce activée',
             self::EcommerceFrontEnabled => 'Boutique e-commerce activée (front)',
             self::EcommerceLowStockThreshold => 'Seuil de stock bas (e-commerce)',
+            self::EditorialAdminEnabled => 'Administration Editorial activée',
             self::CrmAdminEnabled => 'Administration CRM activée',
             self::ErpAdminEnabled => 'Administration ERP activée',
             self::PhotoAdminEnabled => 'Administration Photo activée',
@@ -184,6 +186,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceAdminEnabled => "Active la section E-commerce dans l'administration (gestion des listings, commandes). Décocher cache la sidebar admin et 404 les routes /admin/ecommerce/*.",
             self::EcommerceFrontEnabled => 'Active la boutique côté site public (catalogue, fiche produit, panier, checkout, page commande client). Décocher 404 toutes les routes /shop, /cart, /checkout, /order/*.',
             self::EcommerceLowStockThreshold => "Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.",
+            self::EditorialAdminEnabled => "Active la section Editorial dans l'administration (articles, menus, formulaires, sitemap). Décocher cache la sidebar et 404 les routes backend_editorial_*.",
             self::CrmAdminEnabled => "Active la section CRM dans l'administration (contacts, entreprises, affaires, kanban). Décocher cache la sidebar et 404 les routes /admin/crm/*.",
             self::ErpAdminEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
             self::PhotoAdminEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
@@ -257,6 +260,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceAdminEnabled => '1',
             self::EcommerceFrontEnabled => '1',
             self::EcommerceLowStockThreshold => '5',
+            self::EditorialAdminEnabled => '1',
             self::CrmAdminEnabled => '1',
             self::ErpAdminEnabled => '1',
             self::PhotoAdminEnabled => '1',
@@ -306,7 +310,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EditorialAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
@@ -368,6 +372,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getModuleId(): ?string
     {
         return match ($this) {
+            self::EditorialAdminEnabled => 'editorial',
             self::CrmAdminEnabled => 'crm',
             self::ErpAdminEnabled => 'erp',
             self::EcommerceAdminEnabled => 'ecommerce',
@@ -388,7 +393,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'modules',
+            self::EditorialAdminEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled => 'modules',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',

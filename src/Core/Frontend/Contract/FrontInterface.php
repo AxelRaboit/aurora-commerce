@@ -13,4 +13,7 @@ interface FrontInterface
     public function getHomeRoute(): string;
 
     public function getPriority(): int;
+
+    /** Returns the ApplicationParameterEnum key that enables/disables this front, or null if always available. */
+    public function getModuleSettingKey(): ?string;
 }

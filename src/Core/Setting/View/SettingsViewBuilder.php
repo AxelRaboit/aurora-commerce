@@ -73,10 +73,14 @@ final readonly class SettingsViewBuilder
     private function resolveSelectOptions(ApplicationParameterEnum $parameter): ?array
     {
         if (ApplicationParameterEnum::DefaultFront === $parameter) {
-            return array_map(
+            return array_values(array_map(
                 static fn ($front): array => ['value' => $front->getSlug(), 'label' => $front->getLabel()],
-                $this->frontRegistry->all(),
-            );
+                array_filter(
+                    $this->frontRegistry->all(),
+                    fn ($front): bool => null === $front->getModuleSettingKey()
+                        || $this->settingRepository->getBoolean($front->getModuleSettingKey(), true),
+                ),
+            ));
         }
 
         return null;
