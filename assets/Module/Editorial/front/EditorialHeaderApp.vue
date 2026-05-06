@@ -90,19 +90,19 @@ onBeforeUnmount(() => {
                     >
                         <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
                             <component
-                                :is="child.targetType === 'front_logout' ? 'form' : 'a'"
+                                :is="child.targetType === 'frontend_logout' ? 'form' : 'a'"
                                 v-for="child in item.children"
                                 :key="child.id"
-                                :method="child.targetType === 'front_logout' ? 'POST' : null"
-                                :action="child.targetType === 'front_logout' ? child.url : null"
-                                :href="child.targetType === 'front_logout' ? null : child.url"
+                                :method="child.targetType === 'frontend_logout' ? 'POST' : null"
+                                :action="child.targetType === 'frontend_logout' ? child.url : null"
+                                :href="child.targetType === 'frontend_logout' ? null : child.url"
                                 :target="child.openInNewTab ? '_blank' : null"
                                 :rel="child.openInNewTab ? 'noopener' : null"
                                 class="block px-4 py-2 text-sm transition-colors hover:bg-surface-2"
                                 :class="child.cssClass"
                                 style="color: var(--th-primary);"
                             >
-                                <button v-if="child.targetType === 'front_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ child.label }}</button>
+                                <button v-if="child.targetType === 'frontend_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ child.label }}</button>
                                 <template v-else>{{ child.label }}</template>
                             </component>
                         </div>
@@ -191,19 +191,19 @@ onBeforeUnmount(() => {
                             </template>
                             <div v-if="ecommerceEnabled && accountMenuItems.length" class="border-t" style="border-color: var(--color-border);" />
                             <component
-                                :is="item.targetType === 'front_logout' ? 'form' : 'a'"
+                                :is="item.targetType === 'frontend_logout' ? 'form' : 'a'"
                                 v-for="item in accountMenuItems"
                                 :key="item.id"
-                                :method="item.targetType === 'front_logout' ? 'POST' : null"
-                                :action="item.targetType === 'front_logout' ? item.url : null"
-                                :href="item.targetType === 'front_logout' ? null : item.url"
+                                :method="item.targetType === 'frontend_logout' ? 'POST' : null"
+                                :action="item.targetType === 'frontend_logout' ? item.url : null"
+                                :href="item.targetType === 'frontend_logout' ? null : item.url"
                                 :target="item.openInNewTab ? '_blank' : null"
                                 :rel="item.openInNewTab ? 'noopener' : null"
                                 class="block px-4 py-2 text-sm transition-colors hover:bg-surface-2"
                                 :class="item.cssClass"
                                 style="color: var(--th-primary);"
                             >
-                                <button v-if="item.targetType === 'front_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ item.label }}</button>
+                                <button v-if="item.targetType === 'frontend_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ item.label }}</button>
                                 <template v-else>{{ item.label }}</template>
                             </component>
                         </div>
