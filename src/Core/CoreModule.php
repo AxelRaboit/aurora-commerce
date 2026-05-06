@@ -34,18 +34,18 @@ final class CoreModule implements ModuleInterface
     {
         return [
             new NavSection('core', [
-                new NavItem('backend_dashboard', 'admin.nav.dashboard', 'layout-dashboard'),
+                new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard'),
             ], priority: 10),
             new NavSection('platform', [
-                new NavItem('backend_media', 'admin.nav.media', 'image'),
-                new NavItem('backend_users', 'admin.nav.users', 'users'),
-                new NavItem('backend_agencies', 'admin.nav.agencies', 'building-2'),
-                new NavItem('backend_services', 'admin.nav.services', 'briefcase'),
-                new NavItem('backend_settings', 'admin.nav.settings', 'settings'),
-                new NavItem('backend_themes', 'admin.nav.themes', 'palette'),
+                new NavItem('backend_media', 'backend.nav.media', 'image'),
+                new NavItem('backend_users', 'backend.nav.users', 'users'),
+                new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2'),
+                new NavItem('backend_services', 'backend.nav.services', 'briefcase'),
+                new NavItem('backend_settings', 'backend.nav.settings', 'settings'),
+                new NavItem('backend_themes', 'backend.nav.themes', 'palette'),
             ], priority: 20),
             new NavSection('dev', [
-                new NavItem('dev_dashboard', 'admin.nav.administration', 'shield', 'ROLE_DEV', 'rose', 'dev_'),
+                new NavItem('dev_dashboard', 'backend.nav.administration', 'shield', 'ROLE_DEV', 'rose', 'dev_'),
             ], priority: 1000),
         ];
     }

@@ -39,8 +39,8 @@ final readonly class EcommerceModule implements ModuleInterface
 
         return [
             new NavSection('ecommerce', [
-                new NavItem('backend_ecommerce_listings', 'admin.nav.listings', 'shopping-bag'),
-                new NavItem('backend_ecommerce_orders', 'admin.nav.orders', 'receipt'),
+                new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag'),
+                new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt'),
             ], priority: 60),
         ];
     }

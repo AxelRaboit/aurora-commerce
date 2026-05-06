@@ -42,18 +42,18 @@ final readonly class BillingModule implements ModuleInterface
             new NavSection('billing', [
                 new NavItem(
                     'backend_billing_invoices',
-                    'admin.nav.invoices',
+                    'backend.nav.invoices',
                     'receipt',
                     children: [
                         new NavItem(
                             'backend_billing_ocr_import',
-                            'admin.nav.ocr_import',
+                            'backend.nav.ocr_import',
                             'scan-line',
                             activeRoutePrefix: 'backend_billing_ocr_',
                         ),
                     ],
                 ),
-                new NavItem('backend_billing_tiers', 'admin.nav.tiers', 'users'),
+                new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users'),
                 new NavItem('backend_billing_compliance', 'admin.billing.compliance.title', 'shield-check'),
             ], priority: 55),
         ];

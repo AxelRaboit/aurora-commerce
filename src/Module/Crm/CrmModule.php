@@ -39,9 +39,9 @@ final readonly class CrmModule implements ModuleInterface
 
         return [
             new NavSection('crm', [
-                new NavItem('backend_crm_contacts', 'admin.nav.contacts', 'users'),
-                new NavItem('backend_crm_companies', 'admin.nav.companies', 'building-2'),
-                new NavItem('backend_crm_deals', 'admin.nav.deals', 'trending-up'),
+                new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users'),
+                new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2'),
+                new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up'),
             ], priority: 40),
         ];
     }
