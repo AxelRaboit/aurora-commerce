@@ -12,8 +12,8 @@ enum UserTypeEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::Backend => 'Utilisateur Backend',
-            self::Frontend => 'Utilisateur Frontend',
+            self::Backend => 'Backend',
+            self::Frontend => 'Frontend',
         };
     }
 }
