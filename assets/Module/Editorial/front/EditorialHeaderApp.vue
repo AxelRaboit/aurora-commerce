@@ -67,8 +67,7 @@ onBeforeUnmount(() => {
                 style="color: var(--th-header-text, var(--th-primary));"
             >
                 <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-8 w-8 object-cover rounded-xl shrink-0">
-                <template v-else-if="headerCustomText">{{ headerCustomText }}</template>
-                <template v-else>{{ siteName }}</template>
+                <span>{{ headerCustomText || siteName }}</span>
             </a>
 
             <nav v-if="primaryMenuItems.length" class="hidden md:flex items-center gap-1">
