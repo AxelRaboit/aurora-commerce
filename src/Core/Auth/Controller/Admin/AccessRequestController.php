@@ -28,7 +28,7 @@ final class AccessRequestController extends AbstractController
         private readonly AccessRequestViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/access-request', name: 'backend_access_request')]
+    #[Route('/backend/access-request', name: 'backend_access_request')]
     public function __invoke(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {

@@ -24,7 +24,7 @@ security:
         # ── Admin / CMS backend ───────────────────────────────────────────────
         admin:
             context: admin
-            pattern: ^/(backend|dev|login|logout|forgot-password|reset-password|invitation|access-request|register|verify-email|resend-verification)
+            pattern: ^/(backend|dev)
             provider: admin_user_provider
             user_checker: Aurora\Core\Auth\Security\AdminUserChecker
             form_login:
@@ -63,16 +63,16 @@ security:
 
     access_control:
         - { path: ^/stripe/webhook, roles: PUBLIC_ACCESS }
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
-        - { path: ^/reset-password, roles: PUBLIC_ACCESS }
-        - { path: ^/access-request, roles: PUBLIC_ACCESS }
-        - { path: ^/invitation, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/login, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/register, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/forgot-password, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/access-request, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/invitation, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/verify-email, roles: PUBLIC_ACCESS }
+        - { path: ^/backend/resend-verification, roles: PUBLIC_ACCESS }
         - { path: ^/front-login-check, roles: PUBLIC_ACCESS }
-        - { path: ^/verify-email, roles: PUBLIC_ACCESS }
-        - { path: ^/resend-verification, roles: PUBLIC_ACCESS }
-        - { path: ^/register/confirm, roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/forgot-password', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/reset-password', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }

@@ -16,7 +16,7 @@ final class LoginController extends AbstractController
 {
     public function __construct(private readonly LoginViewBuilder $viewBuilder) {}
 
-    #[Route('/login', name: 'backend_login')]
+    #[Route('/backend/login', name: 'backend_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -29,7 +29,7 @@ final class LoginController extends AbstractController
         ));
     }
 
-    #[Route('/logout', name: 'backend_logout')]
+    #[Route('/backend/logout', name: 'backend_logout')]
     public function logout(): never
     {
         throw new LogicException('This method can be blank — it will be intercepted by the logout key on your firewall.');

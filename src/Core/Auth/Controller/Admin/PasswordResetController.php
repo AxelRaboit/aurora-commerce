@@ -26,7 +26,7 @@ final class PasswordResetController extends AbstractController
         private readonly PasswordResetViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/forgot-password', name: 'backend_forgot_password')]
+    #[Route('/backend/forgot-password', name: 'backend_forgot_password')]
     public function forgot(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -44,7 +44,7 @@ final class PasswordResetController extends AbstractController
         return $this->render('@Core/admin/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
     }
 
-    #[Route('/reset-password/{selector}/{token}', name: 'backend_reset_password')]
+    #[Route('/backend/reset-password/{selector}/{token}', name: 'backend_reset_password')]
     public function reset(string $selector, string $token, Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {

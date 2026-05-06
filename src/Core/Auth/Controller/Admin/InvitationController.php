@@ -28,7 +28,7 @@ final class InvitationController extends AbstractController
         private readonly InvitationViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/invitation/{selector}/{token}', name: 'backend_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
+    #[Route('/backend/invitation/{selector}/{token}', name: 'backend_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
     public function accept(Request $request, string $selector, string $token): Response
     {
         $user = $this->userManager->findValidInvitation($selector, $token);
