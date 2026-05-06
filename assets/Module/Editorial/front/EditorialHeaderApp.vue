@@ -145,7 +145,7 @@ onBeforeUnmount(() => {
                 </ul>
             </details>
 
-            <div class="ml-auto flex items-center gap-4 text-sm">
+            <div class="ml-auto flex items-center gap-2 text-sm">
                 <div v-if="showAccountMenu" ref="accountRef" class="relative">
                     <button
                         type="button"
