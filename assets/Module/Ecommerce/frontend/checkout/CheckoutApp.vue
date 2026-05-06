@@ -5,8 +5,8 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import { useStripeCard } from "@ecommerce/front/checkout/composables/useStripeCard.js";
-import { useCheckoutSubmit } from "@ecommerce/front/checkout/composables/useCheckoutSubmit.js";
+import { useStripeCard } from "@ecommerce/frontend/checkout/composables/useStripeCard.js";
+import { useCheckoutSubmit } from "@ecommerce/frontend/checkout/composables/useCheckoutSubmit.js";
 import { formatMoney } from "@ecommerce/utils/formatMoney.js";
 
 const { t } = useI18n();

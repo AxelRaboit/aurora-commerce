@@ -4,7 +4,7 @@
 {% block pageDescription %}{{ listing.seoDescription ?? listing.marketingDescription ?? '' }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/ShopProductApp', {
+<div {{ vue_component('ecommerce/frontend/ShopProductApp', {
     listing: listing,
     locale: locale,
     cartAddPath: path('frontend_cart_add', {locale: locale}),

@@ -23,7 +23,7 @@ registerControllers(
 
 const coreModules = import.meta.glob([
     "./Core/admin/**/*.vue",
-    "./Core/front/**/*.vue",
+    "./Core/frontend/**/*.vue",
 ]);
 const editorialModules = import.meta.glob([
     "./Module/Editorial/admin/**/*.vue",
@@ -33,11 +33,11 @@ const crmModules = import.meta.glob("./Module/Crm/admin/**/*.vue");
 const erpModules = import.meta.glob("./Module/Erp/admin/**/*.vue");
 const ecommerceModules = import.meta.glob([
     "./Module/Ecommerce/admin/**/*.vue",
-    "./Module/Ecommerce/front/**/*.vue",
+    "./Module/Ecommerce/frontend/**/*.vue",
 ]);
 const photoModules = import.meta.glob([
     "./Module/Photo/admin/**/*.vue",
-    "./Module/Photo/front/**/*.vue",
+    "./Module/Photo/frontend/**/*.vue",
 ]);
 const billingModules = import.meta.glob("./Module/Billing/admin/**/*.vue");
 const gedModules = import.meta.glob("./Module/Ged/admin/**/*.vue");

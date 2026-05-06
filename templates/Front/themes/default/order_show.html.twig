@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.order.title'|trans }} {{ order.number }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/OrderShowApp', {
+<div {{ vue_component('ecommerce/frontend/OrderShowApp', {
     order: order,
     locale: locale,
     shopPath: path('frontend_shop_index', {locale: locale}),

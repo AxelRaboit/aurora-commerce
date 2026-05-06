@@ -6,7 +6,7 @@ vi.mock("vue-sonner", () => ({
     toast: { error: vi.fn(), success: vi.fn() },
 }));
 
-import GalleryUnlockApp from "@photo/front/GalleryUnlockApp.vue";
+import GalleryUnlockApp from "@photo/frontend/GalleryUnlockApp.vue";
 
 const messages = {
     photo: {

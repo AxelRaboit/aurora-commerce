@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.login.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-    <div {{ vue_component('core/front/auth/LoginApp', {
+    <div {{ vue_component('core/frontend/auth/LoginApp', {
         checkPath: checkPath,
         csrfToken: csrf_token('frontend_authenticate'),
         locale: locale,

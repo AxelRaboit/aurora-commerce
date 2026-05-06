@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.cart.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/CartApp', {
+<div {{ vue_component('ecommerce/frontend/CartApp', {
     initialCart: cart,
     locale: locale,
     updatePath: path('frontend_cart_update', {locale: locale}),

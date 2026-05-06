@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.account.orders'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/AccountOrdersApp', {
+<div {{ vue_component('ecommerce/frontend/AccountOrdersApp', {
     orders: orders,
     locale: locale,
     accountPath: path('frontend_account', {locale: locale}),

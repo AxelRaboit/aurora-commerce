@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.shop.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('ecommerce/front/ShopIndexApp', {
+<div {{ vue_component('ecommerce/frontend/ShopIndexApp', {
     listings: listings,
     pagination: pagination,
     locale: locale,

@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.register.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('core/front/auth/RegisterApp', {
+<div {{ vue_component('core/frontend/auth/RegisterApp', {
     registerPath: path('frontend_register', {locale: locale}),
     loginPath: path('frontend_login', {locale: locale}),
     registrationEnabled: registrationEnabled,

@@ -3,7 +3,7 @@
 {% block title %}{{ 'frontend.verify_email.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('core/front/auth/VerifyEmailApp', {
+<div {{ vue_component('core/frontend/auth/VerifyEmailApp', {
     success: success,
     loginPath: path('frontend_login', {locale: locale}),
     registerPath: path('frontend_register', {locale: locale}),
