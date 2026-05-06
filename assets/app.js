@@ -27,7 +27,7 @@ const coreModules = import.meta.glob([
 ]);
 const editorialModules = import.meta.glob([
     "./Module/Editorial/admin/**/*.vue",
-    "./Module/Editorial/front/**/*.vue",
+    "./Module/Editorial/frontend/**/*.vue",
 ]);
 const crmModules = import.meta.glob("./Module/Crm/admin/**/*.vue");
 const erpModules = import.meta.glob("./Module/Erp/admin/**/*.vue");

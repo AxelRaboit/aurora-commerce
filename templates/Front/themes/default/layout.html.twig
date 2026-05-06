@@ -23,7 +23,7 @@
     {% endfor %}
 
     {% block frontend_header %}
-    <div {{ vue_component('editorial/front/EditorialHeaderApp', {
+    <div {{ vue_component('editorial/frontend/EditorialHeaderApp', {
         locale: locale,
         siteName: context.siteName,
         homePath: path('editorial_home', {locale: locale}),
@@ -49,7 +49,7 @@
     </main>
 
     {% block frontend_footer %}
-    <div {{ vue_component('editorial/front/EditorialFooterApp', {
+    <div {{ vue_component('editorial/frontend/EditorialFooterApp', {
         footerText: themeContext.footerText(context.siteName),
         footerMenuItems: showFrontMenus|default(false) ? menu_items('footer', locale) : [],
     }) }}></div>

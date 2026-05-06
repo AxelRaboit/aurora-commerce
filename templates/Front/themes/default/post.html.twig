@@ -60,7 +60,7 @@
     </article>
 
     {% if translation.slug %}
-        <div {{ vue_component('editorial/front/PostCommentsApp', {
+        <div {{ vue_component('editorial/frontend/PostCommentsApp', {
             listPath: path('editorial_post_comments_list', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
             submitPath: path('editorial_post_comment', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug}),
             reactPathTemplate: path('editorial_comment_react', {locale: locale, postTypeSlug: post.postType.slug, slug: translation.slug, commentId: '__commentId__'}),

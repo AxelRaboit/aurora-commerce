@@ -3,7 +3,7 @@
 {% block title %}{{ translation.title }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
-    <div {{ vue_component('editorial/front/FormRenderApp', {
+    <div {{ vue_component('editorial/frontend/FormRenderApp', {
         submitPath: path('editorial_form_submit', {locale: locale, slug: translation.slug}),
         formTitle: translation.title,
         formDescription: translation.description,
