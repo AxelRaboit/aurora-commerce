@@ -23,8 +23,92 @@ backend:
           deleted: Affaire supprimée
           stage_changed: Étape modifiée
   crm:
+    activity:
+      title: Activité récente
+      empty: Aucune activité récente.
+      created: 'a créé {name}'
+      updated: 'a mis à jour {name}'
+      deleted: 'a supprimé {name}'
+    companies:
+      add: Nouvelle entreprise
+      create: Créer l'entreprise
+      edit: Modifier l'entreprise
+      empty: Aucune entreprise.
+      created: Entreprise créée.
+      updated: Entreprise mise à jour.
+      searchPlaceholder: Rechercher une entreprise…
+      name: Nom
+      namePlaceholder: Nom de l'entreprise
+      industry: Secteur
+      industryPlaceholder: Ex. Logiciel, Conseil…
+      website: Site web
+      websitePlaceholder: https://exemple.com
+      phone: Téléphone
+      phonePlaceholder: +33 1 23 45 67 89
+      address: Adresse
+      addressPlaceholder: Adresse complète
+      contactLinked: Contact rattaché
+      noContacts: Aucun contact rattaché.
+      deleteConfirm: 'Supprimer l''entreprise « {name} » ?'
+      deleteWarning: Cette action est irréversible.
+      errors:
+        name_required: Le nom est requis.
+        website_invalid: Site web invalide.
+    contacts:
+      add: Nouveau contact
+      create: Créer le contact
+      edit: Modifier le contact
+      empty: Aucun contact.
+      created: Contact créé.
+      deleted: Contact supprimé.
+      searchPlaceholder: Rechercher un contact…
+      name: Nom
+      firstName: Prénom
+      firstNamePlaceholder: Prénom
+      lastName: Nom
+      lastNamePlaceholder: Nom de famille
+      email: Email
+      emailPlaceholder: contact@exemple.com
+      phone: Téléphone
+      phonePlaceholder: +33 1 23 45 67 89
+      company: Entreprise
+      companyPlaceholder: Sélectionner une entreprise
+      notes: Notes
+      notesPlaceholder: Notes internes…
+      deleteConfirm: 'Supprimer le contact « {name} » ?'
+      deleteWarning: Cette action est irréversible.
+      errors:
+        first_name_required: Le prénom est requis.
+        last_name_required: Le nom est requis.
+        email_invalid: Email invalide.
     deals:
+      add: Nouvelle affaire
+      create: Créer l'affaire
+      edit: Modifier l'affaire
+      empty: Aucune affaire.
+      updated: Affaire mise à jour.
       kanban: Pipeline Kanban
+      kanbanView: Vue Kanban
+      listView: Vue liste
+      searchPlaceholder: Rechercher une affaire…
+      name: Nom
+      namePlaceholder: Nom de l'affaire
+      value: Valeur
+      valuePlaceholder: Montant en €
+      stage: Étape
+      contact: Contact
+      closingDate: Date de clôture
+      deleteConfirm: 'Supprimer l''affaire « {name} » ?'
+      deleteWarning: Cette action est irréversible.
+      errors:
+        name_required: Le nom est requis.
+      stages:
+        lead: Prospect
+        qualified: Qualifié
+        proposal: Proposition
+        negotiation: Négociation
+        won: Gagné
+        lost: Perdu
 crm:
   mail:
     subject_contact_new: Nouveau contact créé

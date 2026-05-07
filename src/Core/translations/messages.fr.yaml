@@ -17,6 +17,9 @@ backend:
     approved: Demande de {name} approuvée.
     purged: Demandes traitées supprimées.
     rejected: Demande de {name} rejetée.
+    status_pending: En attente
+    status_approved: Approuvée
+    status_rejected: Rejetée
   forms:
     errors:
       slug_format: Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.
@@ -108,6 +111,18 @@ backend:
     permissions: Permissions
     users: Utilisateurs
   users:
+    role:
+      user: Utilisateur
+      admin: Administrateur
+      dev: Développeur
+    type:
+      backend: Backend
+      frontend: Frontend
+    status:
+      active: Actif
+      invited: Invité
+      disabled: Désactivé
+      pending_verification: En attente de vérification
     cannot_delete_self: Vous ne pouvez pas supprimer votre propre compte.
     cannot_modify_higher_role: Vous ne pouvez pas modifier un utilisateur avec un rôle supérieur au vôtre.
     cannot_modify_self: Vous ne pouvez pas modifier votre propre rôle.

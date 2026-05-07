@@ -1,0 +1,159 @@
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { required } from "@/shared/utils/validation/validators.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+
+/**
+ * CRUD + reorder for the project's Kanban columns.
+ *
+ * `paths` carries the four route templates (create/update/delete/reorder).
+ * The composable manages the create modal, the rename modal, and the delete confirm modal.
+ */
+export function useColumnsManage(paths, activeProject, reloadDetail) {
+    const { t } = useI18n();
+
+    // ── Create new column ────────────────────────────────────────────────────
+    const showCreateColumn = ref(false);
+    const newColumn = ref({ label: "" });
+    const {
+        errors: createColumnErrors,
+        validate: validateCreate,
+        clearErrors: clearCreateErrors,
+        setErrors: setCreateErrors,
+    } = useForm();
+    const { loading: createColumnLoading, request: createRequest } =
+        useApiRequest();
+
+    function openCreateColumn() {
+        newColumn.value = { label: "" };
+        clearCreateErrors();
+        showCreateColumn.value = true;
+    }
+
+    async function submitCreateColumn() {
+        if (!activeProject.value) return;
+        if (
+            !validateCreate({
+                label: () =>
+                    required(
+                        t("backend.projects.errors.column_label_required"),
+                    )(newColumn.value.label),
+            })
+        )
+            return;
+        const url = buildPath(paths.create, { id: activeProject.value.id });
+        const data = await createRequest(url, newColumn.value);
+        if (!data) return;
+        if (data.success) {
+            showCreateColumn.value = false;
+            await reloadDetail();
+        } else {
+            setCreateErrors(translateServerErrors(t, data.errors));
+        }
+    }
+
+    // ── Rename column ────────────────────────────────────────────────────────
+    const showRenameColumn = ref(false);
+    const editingColumn = ref(null);
+    const renameForm = ref({ label: "" });
+    const {
+        errors: renameErrors,
+        validate: validateRename,
+        clearErrors: clearRenameErrors,
+        setErrors: setRenameErrors,
+    } = useForm();
+    const { loading: renameLoading, request: renameRequest } = useApiRequest();
+
+    function openRenameColumn(column) {
+        editingColumn.value = column;
+        renameForm.value = { label: column.label };
+        clearRenameErrors();
+        showRenameColumn.value = true;
+    }
+
+    async function submitRenameColumn() {
+        if (!editingColumn.value) return;
+        if (
+            !validateRename({
+                label: () =>
+                    required(
+                        t("backend.projects.errors.column_label_required"),
+                    )(renameForm.value.label),
+            })
+        )
+            return;
+        const url = buildPath(paths.update, {
+            columnId: editingColumn.value.id,
+        });
+        const data = await renameRequest(url, renameForm.value);
+        if (!data) return;
+        if (data.success) {
+            showRenameColumn.value = false;
+            await reloadDetail();
+        } else {
+            setRenameErrors(translateServerErrors(t, data.errors));
+        }
+    }
+
+    // ── Delete column ────────────────────────────────────────────────────────
+    const pendingDeleteColumn = ref(null);
+    const deleteColumnLoading = ref(false);
+
+    function confirmDeleteColumn(column) {
+        pendingDeleteColumn.value = column;
+    }
+
+    async function doDeleteColumn() {
+        if (!pendingDeleteColumn.value) return;
+        deleteColumnLoading.value = true;
+        try {
+            const url = buildPath(paths.delete, {
+                columnId: pendingDeleteColumn.value.id,
+            });
+            const response = await fetch(url, {
+                method: HttpMethod.Post,
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await response.json();
+            if (data.success) {
+                pendingDeleteColumn.value = null;
+                await reloadDetail();
+            } else if (data.errors?._global) {
+                toast.error(t(data.errors._global));
+            } else {
+                toast.error(t("shared.common.error"));
+            }
+        } catch {
+            toast.error(t("shared.common.error"));
+        } finally {
+            deleteColumnLoading.value = false;
+        }
+    }
+
+    return {
+        showCreateColumn,
+        newColumn,
+        createColumnErrors,
+        createColumnLoading,
+        openCreateColumn,
+        submitCreateColumn,
+
+        showRenameColumn,
+        editingColumn,
+        renameForm,
+        renameErrors,
+        renameLoading,
+        openRenameColumn,
+        submitRenameColumn,
+
+        pendingDeleteColumn,
+        deleteColumnLoading,
+        confirmDeleteColumn,
+        doDeleteColumn,
+    };
+}

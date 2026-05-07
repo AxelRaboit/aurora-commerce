@@ -12,5 +12,9 @@ backend:
     products: Products
   erp:
     products:
+      status:
+        draft: Draft
+        active: Active
+        archived: Archived
       errors:
         reference_taken: This reference is already used.

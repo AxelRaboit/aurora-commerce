@@ -33,4 +33,13 @@ class CompanyRepository extends ServiceEntityRepository
 
         return $this->paginate($qb, $countQb, $page, $limit);
     }
+
+    /** @return list<Company> */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.name', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -9,4 +9,9 @@ enum AccessRequestStatusEnum: string
     case Pending = 'pending';
     case Approved = 'approved';
     case Rejected = 'rejected';
+
+    public function getLabelKey(): string
+    {
+        return 'backend.access_requests.status_'.$this->value;
+    }
 }

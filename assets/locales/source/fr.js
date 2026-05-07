@@ -1005,6 +1005,7 @@ export default {
                 erp: "ERP",
                 ecommerce: "E-commerce",
                 photo: "Photographie",
+                project: "Projets",
                 dev: "Système",
             },
         },

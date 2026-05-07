@@ -13,6 +13,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class UsersViewBuilder
 {
@@ -24,6 +25,7 @@ final readonly class UsersViewBuilder
         private SettingRepository $settingRepository,
         private AgencyRepository $agencyRepository,
         private ServiceRepository $serviceRepository,
+        private TranslatorInterface $translator,
     ) {
         $toggles = [];
         foreach (ApplicationParameterEnum::cases() as $case) {
@@ -45,8 +47,9 @@ final readonly class UsersViewBuilder
             ? [UserRoleEnum::Dev, ...UserRoleEnum::selectableForAdmin()]
             : UserRoleEnum::selectableForAdmin();
 
+        $translator = $this->translator;
         $roles = array_map(
-            static fn (UserRoleEnum $role): array => ['value' => $role->value, 'label' => $role->label()],
+            static fn (UserRoleEnum $role): array => ['value' => $role->value, 'label' => $translator->trans($role->getLabelKey())],
             $selectableRoles,
         );
 

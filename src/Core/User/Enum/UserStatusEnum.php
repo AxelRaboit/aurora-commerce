@@ -11,13 +11,8 @@ enum UserStatusEnum: string
     case Disabled = 'disabled';
     case PendingVerification = 'pending_verification';
 
-    public function label(): string
+    public function getLabelKey(): string
     {
-        return match ($this) {
-            self::Active => 'Actif',
-            self::Invited => 'Invité',
-            self::Disabled => 'Désactivé',
-            self::PendingVerification => 'En attente de vérification',
-        };
+        return 'backend.users.status.'.$this->value;
     }
 }

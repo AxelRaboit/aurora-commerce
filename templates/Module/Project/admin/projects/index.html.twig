@@ -1,0 +1,30 @@
+{% extends '@Core/admin/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.projects'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {crumbs: [{label: 'backend.nav.projects'|trans}]}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('project/admin/ProjectsApp', {
+    listPath: path('backend_projects_list'),
+    createPath: path('backend_projects_create'),
+    showPath: path('backend_projects_show', {id: '__id__'}),
+    updatePath: path('backend_projects_update', {id: '__id__'}),
+    deletePath: path('backend_projects_delete', {id: '__id__'}),
+    taskCreatePath: path('backend_projects_task_create', {id: '__id__'}),
+    taskUpdatePath: path('backend_projects_task_update', {taskId: '__taskId__'}),
+    taskDeletePath: path('backend_projects_task_delete', {taskId: '__taskId__'}),
+    taskReorderPath: path('backend_projects_tasks_reorder', {id: '__id__'}),
+    columnCreatePath: path('backend_projects_column_create', {id: '__id__'}),
+    columnUpdatePath: path('backend_projects_column_update', {columnId: '__columnId__'}),
+    columnDeletePath: path('backend_projects_column_delete', {columnId: '__columnId__'}),
+    columnReorderPath: path('backend_projects_columns_reorder', {id: '__id__'}),
+    statusOptions: statusOptions,
+    priorityOptions: priorityOptions,
+    users: users,
+    crmContacts: crmContacts,
+    crmCompanies: crmCompanies,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

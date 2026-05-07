@@ -9,12 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 final class CommentStatusEnumTest extends TestCase
 {
-    public function testAllCasesHaveLabels(): void
+    public function testAllCasesHaveLabelKeys(): void
     {
         $expectedCases = [CommentStatusEnum::Pending, CommentStatusEnum::Approved, CommentStatusEnum::Spam];
 
         foreach ($expectedCases as $case) {
-            self::assertNotEmpty($case->label(), sprintf('Label for %s must not be empty', $case->name));
+            self::assertNotEmpty($case->getLabelKey(), sprintf('Label key for %s must not be empty', $case->name));
         }
     }
 }

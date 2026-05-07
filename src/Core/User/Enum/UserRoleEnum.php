@@ -19,12 +19,12 @@ enum UserRoleEnum: string
         };
     }
 
-    public function label(): string
+    public function getLabelKey(): string
     {
         return match ($this) {
-            self::User => 'Utilisateur',
-            self::Admin => 'Administrateur',
-            self::Dev => 'Développeur',
+            self::User => 'backend.users.role.user',
+            self::Admin => 'backend.users.role.admin',
+            self::Dev => 'backend.users.role.dev',
         };
     }
 

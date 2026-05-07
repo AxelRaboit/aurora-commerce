@@ -1,0 +1,107 @@
+backend:
+  nav:
+    projects: Projets
+  audit:
+    actions:
+      project:
+        project:
+          created: Projet créé
+          updated: Projet mis à jour
+          deleted: Projet supprimé
+        task:
+          created: Tâche créée
+          updated: Tâche mise à jour
+          deleted: Tâche supprimée
+          reordered: Tâches réorganisées
+        column:
+          created: Colonne créée
+          updated: Colonne mise à jour
+          deleted: Colonne supprimée
+          reordered: Colonnes réorganisées
+  projects:
+    add: Nouveau projet
+    empty: Aucun projet trouvé.
+    searchPlaceholder: Rechercher un projet…
+    tasks: Tâches
+    deleteConfirm: 'Supprimer le projet « {name} » ?'
+    deleteWarning: Cette action est irréversible.
+    fields:
+      title: Titre
+      description: Description
+      status: Statut
+      startDate: Date de début
+      endDate: Date de fin
+      responsible: Responsable
+      contact: Contact
+      contacts: Contacts
+      company: Société
+      start: "Début :"
+      end: "Fin :"
+      contactLabel: "Contact :"
+      contactsLabel: "Contacts :"
+      companyLabel: "Société :"
+      responsibleLabel: "Responsable :"
+    placeholders:
+      title: Ex. Refonte du site
+      description: Décrivez l'objectif du projet…
+      responsible: Sélectionner un responsable
+      contact: Sélectionner un contact
+      contacts: Sélectionner un ou plusieurs contacts
+      company: Sélectionner une société
+      taskTitle: Ex. Maquettes homepage
+      taskDescription: Décrivez la tâche…
+      assignee: Sélectionner un utilisateur
+    status_draft: Brouillon
+    status_active: En cours
+    status_completed: Terminé
+    status_cancelled: Annulé
+    statusFilter:
+      all: Tous
+    task:
+      add: Nouvelle tâche
+      empty: Aucune tâche
+      deleteConfirm: 'Supprimer la tâche « {name} » ?'
+      deleteWarning: Cette action est irréversible.
+      fields:
+        title: Titre
+        description: Description
+        column: Colonne
+        status: Statut
+        priority: Priorité
+        assignee: Assigné à
+        dueDate: Échéance
+      status_todo: À faire
+      status_in_progress: En cours
+      status_done: Terminé
+      status_cancelled: Annulé
+      priority_low: Basse
+      priority_medium: Moyenne
+      priority_high: Haute
+      priority_urgent: Urgent
+    toast:
+      created: Projet créé.
+      updated: Projet mis à jour.
+      deleted: Projet supprimé.
+      taskCreated: Tâche créée.
+      taskUpdated: Tâche mise à jour.
+      taskDeleted: Tâche supprimée.
+    columns:
+      add: Ajouter une colonne
+      addPlaceholder: Nom de la colonne
+      rename: Renommer la colonne
+      delete: Supprimer la colonne
+      deleteConfirm: 'Supprimer la colonne « {label} » ?'
+      deleteWarning: Les tâches de cette colonne seront déplacées vers la première colonne.
+      defaults:
+        todo: À faire
+        in_progress: En cours
+        done: Terminé
+    errors:
+      title_required: Le titre est requis.
+      status_required: Le statut est requis.
+      status_invalid: Statut invalide.
+      priority_required: La priorité est requise.
+      priority_invalid: Priorité invalide.
+      column_label_required: Le nom de la colonne est requis.
+      column_label_too_long: Le nom de la colonne ne doit pas dépasser 100 caractères.
+      column_last_one: Impossible de supprimer la dernière colonne.

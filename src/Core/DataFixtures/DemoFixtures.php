@@ -55,6 +55,11 @@ use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItemComment;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
+use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Project\Entity\ProjectColumn;
+use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Enum\ProjectStatusEnum;
+use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -112,6 +117,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
+        $this->createProjects($manager, $users, $companies, $contacts);
         $this->createMenuItems($manager, $media);
 
         $manager->flush();
@@ -1252,6 +1258,209 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
             $em->persist($d);
         }
+    }
+
+    // ── Projects ──────────────────────────────────────────────────────────────
+
+    /**
+     * @param User[]    $users
+     * @param Company[] $companies
+     * @param Contact[] $contacts
+     */
+    private function createProjects(EntityManagerInterface $em, array $users, array $companies, array $contacts): void
+    {
+        $projectDefs = [
+            [
+                'ref' => 'PRJ-000001',
+                'title' => 'Refonte CRM Tech Innovation',
+                'description' => 'Migration de l\'ancien CRM vers Aurora avec import des données existantes et formation de l\'équipe commerciale.',
+                'status' => ProjectStatusEnum::Active,
+                'startDate' => '-2 months',
+                'endDate' => '+3 months',
+                'responsible' => 1,
+                'company' => 0,
+                'contacts' => [0, 3, 14],
+            ],
+            [
+                'ref' => 'PRJ-000002',
+                'title' => 'Site web BioMed France',
+                'description' => 'Refonte complète du site institutionnel avec section produits dynamique et espace pro.',
+                'status' => ProjectStatusEnum::Active,
+                'startDate' => '-3 weeks',
+                'endDate' => '+2 months',
+                'responsible' => 2,
+                'company' => 1,
+                'contacts' => [1],
+            ],
+            [
+                'ref' => 'PRJ-000003',
+                'title' => 'Solution e-commerce Retail Connect',
+                'description' => 'Boutique en ligne B2B avec gestion des grilles tarifaires par client et intégration ERP.',
+                'status' => ProjectStatusEnum::Draft,
+                'startDate' => '+2 weeks',
+                'endDate' => '+5 months',
+                'responsible' => 1,
+                'company' => 2,
+                'contacts' => [2],
+            ],
+            [
+                'ref' => 'PRJ-000004',
+                'title' => 'Audit infrastructure Nexus Digital',
+                'description' => 'Audit complet de l\'infrastructure cloud et recommandations d\'optimisation des coûts.',
+                'status' => ProjectStatusEnum::Completed,
+                'startDate' => '-4 months',
+                'endDate' => '-1 month',
+                'responsible' => 3,
+                'company' => 3,
+                'contacts' => [5],
+            ],
+            [
+                'ref' => 'PRJ-000005',
+                'title' => 'Déploiement GED Groupe Leclerc Nord',
+                'description' => 'Mise en place de la GED Aurora avec catégorisation des documents et workflow d\'approbation.',
+                'status' => ProjectStatusEnum::Active,
+                'startDate' => '-1 month',
+                'endDate' => '+6 weeks',
+                'responsible' => 2,
+                'company' => 4,
+                'contacts' => [6],
+            ],
+            [
+                'ref' => 'PRJ-000006',
+                'title' => 'Migration Cloud BioMed (annulé)',
+                'description' => 'Projet abandonné suite au changement de stratégie IT du client. Conservé pour historique.',
+                'status' => ProjectStatusEnum::Cancelled,
+                'startDate' => '-5 months',
+                'endDate' => '-2 months',
+                'responsible' => 1,
+                'company' => 1,
+                'contacts' => [1],
+            ],
+        ];
+
+        $createdProjects = [];
+        // Per-project columns indexed by status slug for easy lookup when seeding tasks.
+        // Slugs: 'todo' / 'in_progress' / 'done' / 'cancelled' (last one only on the cancelled project for demo).
+        $projectColumns = [];
+        foreach ($projectDefs as $projectIndex => $def) {
+            $project = new Project();
+            $project->setReference($def['ref'])
+                ->setTitle($def['title'])
+                ->setDescription($def['description'])
+                ->setStatus($def['status'])
+                ->setStartDate(new DateTimeImmutable($def['startDate']))
+                ->setEndDate(new DateTimeImmutable($def['endDate']))
+                ->setResponsibleUser($users[$def['responsible']])
+                ->setCrmCompany($companies[$def['company']]);
+            foreach ($def['contacts'] as $contactIndex) {
+                if (isset($contacts[$contactIndex])) {
+                    $project->addCrmContact($contacts[$contactIndex]);
+                }
+            }
+
+            $em->persist($project);
+            $createdProjects[] = $project;
+
+            $columnLabels = ['todo' => 'À faire', 'in_progress' => 'En cours', 'done' => 'Terminé'];
+            // Add a custom 4th column on the cancelled project to showcase the feature.
+            if (ProjectStatusEnum::Cancelled === $def['status']) {
+                $columnLabels['cancelled'] = 'Annulé';
+            }
+
+            $columns = [];
+            $position = 0;
+            foreach ($columnLabels as $slug => $label) {
+                $column = new ProjectColumn();
+                $column->setProject($project)
+                    ->setLabel($label)
+                    ->setPosition($position++)
+                    ->setReference(sprintf('PRJC-%06d', ($projectIndex * 10) + $position));
+                $em->persist($column);
+                $columns[$slug] = $column;
+            }
+
+            $projectColumns[$projectIndex] = $columns;
+        }
+
+        // Tasks per project: index → list of task definitions.
+        $taskDefs = [
+            // PRJ-000001 — Refonte CRM (Active, en pleine progression)
+            0 => [
+                ['title' => 'Cadrage des besoins métier',           'column' => 'done',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 1, 'due' => '-6 weeks'],
+                ['title' => 'Maquettes interfaces principales',     'column' => 'done',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 2, 'due' => '-4 weeks'],
+                ['title' => 'Import données ancien CRM',            'column' => 'in_progress', 'priority' => ProjectTaskPriorityEnum::Urgent, 'assignee' => 1, 'due' => '+1 week'],
+                ['title' => 'Mapping champs personnalisés',         'column' => 'in_progress', 'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 2, 'due' => '+10 days'],
+                ['title' => 'Formation utilisateurs clés',          'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 3, 'due' => '+1 month'],
+                ['title' => 'Recette finale + go-live',             'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 1, 'due' => '+2 months'],
+            ],
+            // PRJ-000002 — Site BioMed (démarrage)
+            1 => [
+                ['title' => 'Recueil charte graphique client',      'column' => 'done',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 2, 'due' => '-2 weeks'],
+                ['title' => 'Wireframes pages clés',                'column' => 'in_progress', 'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 2, 'due' => '+5 days'],
+                ['title' => 'Intégration HTML/CSS homepage',        'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 3, 'due' => '+3 weeks'],
+                ['title' => 'Section catalogue produits',           'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 3, 'due' => '+5 weeks'],
+                ['title' => 'Mise en ligne staging',                'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Low,    'assignee' => 1, 'due' => '+7 weeks'],
+            ],
+            // PRJ-000003 — E-commerce Retail Connect (kickoff)
+            2 => [
+                ['title' => 'Atelier de cadrage avec le client',    'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Urgent, 'assignee' => 1, 'due' => '+2 weeks'],
+                ['title' => 'Spécifications fonctionnelles',        'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 2, 'due' => '+1 month'],
+                ['title' => 'Devis détaillé',                       'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 1, 'due' => '+3 weeks'],
+            ],
+            // PRJ-000004 — Audit Nexus (terminé)
+            3 => [
+                ['title' => 'Inventaire ressources cloud',          'column' => 'done',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 3, 'due' => '-3 months'],
+                ['title' => 'Analyse de la facturation 12 mois',    'column' => 'done',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 3, 'due' => '-2 months'],
+                ['title' => 'Rapport final + recommandations',      'column' => 'done',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 1, 'due' => '-6 weeks'],
+                ['title' => 'Restitution au COMEX',                 'column' => 'done',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 1, 'due' => '-1 month'],
+            ],
+            // PRJ-000005 — GED Leclerc (en cours)
+            4 => [
+                ['title' => 'Définition de l\'arborescence',        'column' => 'done',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 2, 'due' => '-2 weeks'],
+                ['title' => 'Configuration des catégories',         'column' => 'in_progress', 'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 2, 'due' => '+5 days'],
+                ['title' => 'Import documents existants',           'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 3, 'due' => '+2 weeks'],
+                ['title' => 'Workflow approbation',                 'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 1, 'due' => '+4 weeks'],
+                ['title' => 'Formation équipe achats',              'column' => 'todo',             'priority' => ProjectTaskPriorityEnum::Low,    'assignee' => 2, 'due' => '+5 weeks'],
+            ],
+            // PRJ-000006 — Migration Cloud BioMed (annulé)
+            5 => [
+                ['title' => 'Étude technique préliminaire',         'column' => 'done',             'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 3, 'due' => '-4 months'],
+                ['title' => 'Devis migration AWS',                  'column' => 'cancelled',   'priority' => ProjectTaskPriorityEnum::Medium, 'assignee' => 1, 'due' => '-3 months'],
+                ['title' => 'Plan de bascule',                      'column' => 'cancelled',   'priority' => ProjectTaskPriorityEnum::High,   'assignee' => 3, 'due' => '-2 months'],
+            ],
+        ];
+
+        foreach ($taskDefs as $projectIndex => $tasks) {
+            $project = $createdProjects[$projectIndex];
+            $columnsBySlug = $projectColumns[$projectIndex];
+            foreach ($tasks as $position => $taskDef) {
+                // If a task references a slug not present on this project (e.g. cancelled task on a non-cancelled project), drop it in Done.
+                $column = $columnsBySlug[$taskDef['column']] ?? $columnsBySlug['done'];
+
+                $task = new ProjectTask();
+                $task->setProject($project)
+                    ->setColumn($column)
+                    ->setReference(sprintf('TSK-%06d', ($projectIndex * 100) + $position + 1))
+                    ->setTitle($taskDef['title'])
+                    ->setPriority($taskDef['priority'])
+                    ->setPosition($position)
+                    ->setAssignee($users[$taskDef['assignee']])
+                    ->setDueDate(new DateTimeImmutable($taskDef['due']));
+                $em->persist($task);
+            }
+        }
+
+        // Align runtime sequences with the explicit references injected above so that
+        // the next UI-driven create (next(SequencePrefixEnum::Project) etc.) doesn't
+        // collide with PRJ-000001 / TSK-000001 / PRJC-000001.
+        $em->flush();
+        $connection = $em->getConnection();
+        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_prj START 1 INCREMENT 1 NO CYCLE');
+        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_tsk START 1 INCREMENT 1 NO CYCLE');
+        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_prjc START 1 INCREMENT 1 NO CYCLE');
+        $connection->executeStatement("SELECT setval('seq_prj', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 5)::int), 0) FROM core_projects WHERE reference IS NOT NULL), 1))");
+        $connection->executeStatement("SELECT setval('seq_tsk', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 5)::int), 0) FROM core_project_tasks WHERE reference IS NOT NULL), 1))");
+        $connection->executeStatement("SELECT setval('seq_prjc', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 6)::int), 0) FROM core_project_columns WHERE reference IS NOT NULL), 1))");
     }
 
     // ── Menus ─────────────────────────────────────────────────────────────────

@@ -6,9 +6,14 @@ namespace Aurora\Module\Ged\Document\Serializer;
 
 use Aurora\Module\Ged\Document\Entity\Document;
 use DateTimeInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class DocumentSerializer
 {
+    public function __construct(
+        private TranslatorInterface $translator,
+    ) {}
+
     public function serialize(Document $document): array
     {
         $file = $document->getFile();
@@ -20,7 +25,7 @@ final readonly class DocumentSerializer
             'title' => $document->getTitle(),
             'description' => $document->getDescription(),
             'status' => $document->getStatus()->value,
-            'statusLabel' => $document->getStatus()->label(),
+            'statusLabel' => $this->translator->trans($document->getStatus()->getLabelKey()),
             'categoryId' => $category?->getId(),
             'categoryName' => $category?->getName(),
             'fileId' => $file?->getId(),

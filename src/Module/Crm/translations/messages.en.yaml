@@ -23,8 +23,92 @@ backend:
           deleted: Deal deleted
           stage_changed: Stage changed
   crm:
+    activity:
+      title: Recent activity
+      empty: No recent activity.
+      created: 'created {name}'
+      updated: 'updated {name}'
+      deleted: 'deleted {name}'
+    companies:
+      add: New company
+      create: Create company
+      edit: Edit company
+      empty: No companies.
+      created: Company created.
+      updated: Company updated.
+      searchPlaceholder: Search a company…
+      name: Name
+      namePlaceholder: Company name
+      industry: Industry
+      industryPlaceholder: e.g. Software, Consulting…
+      website: Website
+      websitePlaceholder: https://example.com
+      phone: Phone
+      phonePlaceholder: +1 555 123 4567
+      address: Address
+      addressPlaceholder: Full address
+      contactLinked: Linked contact
+      noContacts: No linked contacts.
+      deleteConfirm: 'Delete company "{name}"?'
+      deleteWarning: This action cannot be undone.
+      errors:
+        name_required: Name is required.
+        website_invalid: Invalid website.
+    contacts:
+      add: New contact
+      create: Create contact
+      edit: Edit contact
+      empty: No contacts.
+      created: Contact created.
+      deleted: Contact deleted.
+      searchPlaceholder: Search a contact…
+      name: Name
+      firstName: First name
+      firstNamePlaceholder: First name
+      lastName: Last name
+      lastNamePlaceholder: Last name
+      email: Email
+      emailPlaceholder: contact@example.com
+      phone: Phone
+      phonePlaceholder: +1 555 123 4567
+      company: Company
+      companyPlaceholder: Select a company
+      notes: Notes
+      notesPlaceholder: Internal notes…
+      deleteConfirm: 'Delete contact "{name}"?'
+      deleteWarning: This action cannot be undone.
+      errors:
+        first_name_required: First name is required.
+        last_name_required: Last name is required.
+        email_invalid: Invalid email.
     deals:
+      add: New deal
+      create: Create deal
+      edit: Edit deal
+      empty: No deals.
+      updated: Deal updated.
       kanban: Kanban pipeline
+      kanbanView: Kanban view
+      listView: List view
+      searchPlaceholder: Search a deal…
+      name: Name
+      namePlaceholder: Deal name
+      value: Value
+      valuePlaceholder: Amount
+      stage: Stage
+      contact: Contact
+      closingDate: Closing date
+      deleteConfirm: 'Delete deal "{name}"?'
+      deleteWarning: This action cannot be undone.
+      errors:
+        name_required: Name is required.
+      stages:
+        lead: Lead
+        qualified: Qualified
+        proposal: Proposal
+        negotiation: Negotiation
+        won: Won
+        lost: Lost
 crm:
   mail:
     subject_contact_new: New contact created

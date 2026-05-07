@@ -31,10 +31,10 @@ final class UserRoleEnumTest extends TestCase
         self::assertContains(UserRoleEnum::Dev->value, $assignable);
     }
 
-    public function testLabel(): void
+    public function testLabelKey(): void
     {
         foreach (UserRoleEnum::cases() as $case) {
-            self::assertNotEmpty($case->label(), sprintf('Label for %s must not be empty', $case->name));
+            self::assertNotEmpty($case->getLabelKey(), sprintf('Label key for %s must not be empty', $case->name));
         }
     }
 

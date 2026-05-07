@@ -6,11 +6,16 @@ namespace Aurora\Core\User\Serializer;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use const DATE_ATOM;
 
 final readonly class UserSerializer
 {
+    public function __construct(
+        private TranslatorInterface $translator,
+    ) {}
+
     /**
      * Lightweight payload used in paginated lists. Does NOT load the
      * subordinates collection — use {@see serializeWithSubordinates()} for
@@ -38,13 +43,13 @@ final readonly class UserSerializer
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'role' => $primaryRole?->value,
-            'roleLabel' => $primaryRole?->label(),
+            'roleLabel' => null === $primaryRole ? null : $this->translator->trans($primaryRole->getLabelKey()),
             'rolePriority' => $effectivePriority,
             'isDev' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
             'type' => $user->getType()->value,
-            'typeLabel' => $user->getType()->label(),
+            'typeLabel' => $this->translator->trans($user->getType()->getLabelKey()),
             'status' => $user->getStatus()->value,
-            'statusLabel' => $user->getStatus()->label(),
+            'statusLabel' => $this->translator->trans($user->getStatus()->getLabelKey()),
             'locale' => $user->getLocale()->value,
             'profilePhotoUrl' => $user->getProfilePhotoUrl(),
             'moodMessage' => $user->getMoodMessage(),

@@ -47,4 +47,14 @@ class ContactRepository extends ServiceEntityRepository
 
         return $this->paginate($qb, $countQb, $page, $limit);
     }
+
+    /** @return list<Contact> */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.lastName', Order::Ascending->value)
+            ->addOrderBy('c.firstName', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
 }

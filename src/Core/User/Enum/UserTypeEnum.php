@@ -9,11 +9,8 @@ enum UserTypeEnum: string
     case Backend = 'backend';
     case Frontend = 'frontend';
 
-    public function label(): string
+    public function getLabelKey(): string
     {
-        return match ($this) {
-            self::Backend => 'Backend',
-            self::Frontend => 'Frontend',
-        };
+        return 'backend.users.type.'.$this->value;
     }
 }

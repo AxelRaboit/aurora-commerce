@@ -12,5 +12,9 @@ backend:
     products: Produits
   erp:
     products:
+      status:
+        draft: Brouillon
+        active: Actif
+        archived: Archivé
       errors:
         reference_taken: Cette référence est déjà utilisée.

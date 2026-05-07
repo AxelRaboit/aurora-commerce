@@ -10,6 +10,7 @@ use Aurora\Core\User\Serializer\UserSerializer;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class UserSerializerTest extends TestCase
 {
@@ -17,7 +18,9 @@ final class UserSerializerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->serializer = new UserSerializer();
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+        $this->serializer = new UserSerializer($translator);
     }
 
     public function testRolePriorityReflectsDevRoleEvenThoughBadgeHidesIt(): void

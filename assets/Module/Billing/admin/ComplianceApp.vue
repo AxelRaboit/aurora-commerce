@@ -166,7 +166,7 @@ onMounted(load);
                                 <tr v-for="inv in report.checks.archive.invoices" :key="inv.id" class="hover:bg-surface-2/40 transition-colors">
                                     <td class="px-6 py-3 font-mono text-xs text-primary">{{ inv.number ?? '#' + inv.id }}</td>
                                     <td class="px-6 py-3 text-secondary text-xs">{{ inv.issuedAt }}</td>
-                                    <td class="px-6 py-3"><AppBadge color="amber">{{ inv.status }}</AppBadge></td>
+                                    <td class="px-6 py-3"><AppBadge color="amber">{{ t(`backend.billing.invoices.status.${inv.status}`) }}</AppBadge></td>
                                     <td class="px-6 py-3 text-right">
                                         <a :href="buildPath(showPath, { id: inv.id })" class="inline-flex items-center gap-1 text-xs text-accent-400 hover:text-accent-300">
                                             {{ t('shared.common.view') }} <ExternalLink class="w-3 h-3" :stroke-width="2" />
