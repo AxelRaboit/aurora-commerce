@@ -1,4 +1,4 @@
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch, nextTick, isRef } from "vue";
 import {
     buildFolderTree,
     flattenFolders,
@@ -130,7 +130,7 @@ export function useMediaPickerData({
     watch(currentFolderId, load);
 
     watch(
-        () => show,
+        isRef(show) ? show : () => show,
         async (visible) => {
             if (visible) {
                 await load();

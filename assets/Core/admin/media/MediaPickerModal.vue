@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMediaPickerData }      from "@core/admin/media/composables/useMediaPickerData.js";
 import { useMediaPickerSelection } from "@core/admin/media/composables/useMediaPickerSelection.js";
@@ -63,7 +63,7 @@ const foldersOpenMobile = ref(false);
 const selected = ref(null);
 
 const { items, folders, loading, search, currentFolderId, allMediaView, typeFilter, FILTERS, folderTree, collapsed, flatFolders, visibleItems, childFolders, currentFolderName, load, selectFolder, selectAllMedia, selectRoot, toggleCollapse } =
-    useMediaPickerData({ listPath: props.listPath, show: props.show, imagesOnly: props.imagesOnly, searchInputRef, selected });
+    useMediaPickerData({ listPath: props.listPath, show: toRef(props, 'show'), imagesOnly: props.imagesOnly, searchInputRef, selected });
 
 const { multiSelected, isSelected, pick, confirm, close, pickFolderMobile } =
     useMediaPickerSelection({ show: props.show, multiple: props.multiple, emit, selectFolder, foldersOpenMobile, selected });
