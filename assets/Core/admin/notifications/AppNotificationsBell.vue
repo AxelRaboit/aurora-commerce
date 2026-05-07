@@ -1,0 +1,88 @@
+<script setup>
+import { Bell, Check } from "lucide-vue-next";
+import { useI18n } from "vue-i18n";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import { useNotifications } from "./composables/useNotifications.js";
+
+const props = defineProps({
+    listPath: { type: String, required: true },
+    markReadPath: { type: String, required: true },
+    markAllReadPath: { type: String, required: true },
+});
+
+const { t } = useI18n();
+const {
+    entries,
+    unreadCount,
+    open,
+    toggle,
+    markRead,
+    markAllRead,
+} = useNotifications({
+    list: props.listPath,
+    markRead: props.markReadPath,
+    markAllRead: props.markAllReadPath,
+});
+
+function formatDate(iso) {
+    const date = new Date(iso);
+    const diffSeconds = Math.round((Date.now() - date.getTime()) / 1000);
+    if (diffSeconds < 60) return t("backend.notifications.justNow");
+    if (diffSeconds < 3600) return t("backend.notifications.minutesAgo", { n: Math.floor(diffSeconds / 60) });
+    if (diffSeconds < 86400) return t("backend.notifications.hoursAgo", { n: Math.floor(diffSeconds / 3600) });
+    return date.toLocaleDateString();
+}
+
+function onItemClick(entry) {
+    if (!entry.readAt) markRead(entry);
+    if (entry.url) window.location.href = entry.url;
+}
+</script>
+
+<template>
+    <div class="relative">
+        <button
+            type="button"
+            class="relative p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+            :title="t('backend.notifications.title')"
+            v-on:click="toggle"
+        >
+            <Bell class="w-5 h-5" :stroke-width="2" />
+            <span
+                v-if="unreadCount > 0"
+                class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold"
+            >
+                {{ unreadCount > 9 ? "9+" : unreadCount }}
+            </span>
+        </button>
+
+        <div
+            v-if="open"
+            class="absolute right-0 mt-2 w-80 max-h-[28rem] bg-surface border border-line rounded-xl shadow-2xl z-50 flex flex-col"
+        >
+            <div class="flex items-center justify-between px-3 py-2 border-b border-line">
+                <span class="text-sm font-semibold text-primary">{{ t('backend.notifications.title') }}</span>
+                <AppIconButton v-if="unreadCount > 0" :title="t('backend.notifications.markAllRead')" v-on:click="markAllRead">
+                    <Check class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+            </div>
+            <div class="overflow-y-auto scrollbar-thin flex-1">
+                <p v-if="!entries.length" class="px-3 py-4 text-xs text-muted text-center">
+                    {{ t('backend.notifications.empty') }}
+                </p>
+                <button
+                    v-for="entry in entries"
+                    :key="entry.id"
+                    type="button"
+                    class="w-full text-left px-3 py-2 border-b border-line/40 last:border-b-0 transition-colors"
+                    :class="entry.readAt ? 'hover:bg-surface-2' : 'bg-accent-600/5 hover:bg-accent-600/10'"
+                    v-on:click="onItemClick(entry)"
+                >
+                    <p class="text-sm font-medium text-primary truncate">{{ entry.title }}</p>
+                    <p v-if="entry.body" class="text-xs text-secondary line-clamp-2 mt-0.5">{{ entry.body }}</p>
+                    <p class="text-xs text-muted mt-1">{{ formatDate(entry.createdAt) }}</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>

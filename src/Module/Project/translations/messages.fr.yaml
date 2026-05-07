@@ -19,6 +19,10 @@ backend:
           updated: Colonne mise à jour
           deleted: Colonne supprimée
           reordered: Colonnes réorganisées
+        label:
+          created: Étiquette créée
+          updated: Étiquette mise à jour
+          deleted: Étiquette supprimée
   projects:
     add: Nouveau projet
     empty: Aucun projet trouvé.
@@ -36,11 +40,13 @@ backend:
       contact: Contact
       contacts: Contacts
       company: Société
+      deal: Affaire CRM
       start: "Début :"
       end: "Fin :"
       contactLabel: "Contact :"
       contactsLabel: "Contacts :"
       companyLabel: "Société :"
+      dealLabel: "Affaire :"
       responsibleLabel: "Responsable :"
     placeholders:
       title: Ex. Refonte du site
@@ -49,9 +55,11 @@ backend:
       contact: Sélectionner un contact
       contacts: Sélectionner un ou plusieurs contacts
       company: Sélectionner une société
+      deal: Lier à une affaire
       taskTitle: Ex. Maquettes homepage
       taskDescription: Décrivez la tâche…
       assignee: Sélectionner un utilisateur
+      estimateMinutes: Durée estimée en minutes
     status_draft: Brouillon
     status_active: En cours
     status_completed: Terminé
@@ -63,6 +71,8 @@ backend:
       empty: Aucune tâche
       deleteConfirm: 'Supprimer la tâche « {name} » ?'
       deleteWarning: Cette action est irréversible.
+      commentPlaceholder: Écrire un commentaire…
+      attachmentsHint: Glissez-déposez des fichiers depuis le module Médias.
       fields:
         title: Titre
         description: Description
@@ -71,6 +81,17 @@ backend:
         priority: Priorité
         assignee: Assigné à
         dueDate: Échéance
+        labels: Étiquettes
+        storyPoints: Story points
+        storyPointsShort: pts
+        estimateMinutes: Estimation (min)
+        loggedMinutes: Temps passé (min)
+        items: Sous-tâches
+        addItem: Ajouter une sous-tâche
+        comments: Commentaires
+        attachments: Pièces jointes
+        sprint: Sprint
+        watchers: Observateurs
       status_todo: À faire
       status_in_progress: En cours
       status_done: Terminé
@@ -86,6 +107,32 @@ backend:
       taskCreated: Tâche créée.
       taskUpdated: Tâche mise à jour.
       taskDeleted: Tâche supprimée.
+    activity:
+      title: Activité du projet
+      empty: Aucune activité enregistrée pour ce projet.
+      system: Système
+      justNow: à l'instant
+      minutesAgo: 'il y a {n} min'
+      hoursAgo: 'il y a {n} h'
+    confirmGenerateInvoice: Créer une facture brouillon depuis ce projet ?
+    generateInvoice: Générer une facture
+    labels:
+      manage: Gérer les étiquettes
+      add: Nouvelle étiquette
+      edit: Modifier l'étiquette
+      nameField: Nom
+      colorField: Couleur
+    sprints:
+      manage: Gérer les sprints
+      add: Nouveau sprint
+      edit: Modifier le sprint
+      active: Actif
+      activeField: Sprint en cours
+      nameField: Nom
+    savedViews:
+      save: Enregistrer la vue
+      nameField: Nom de la vue
+      namePlaceholder: Ex. Mes tâches en retard
     columns:
       add: Ajouter une colonne
       addPlaceholder: Nom de la colonne

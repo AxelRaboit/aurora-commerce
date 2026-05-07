@@ -10,6 +10,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Project\DTO\ProjectInput;
 use Aurora\Module\Project\Entity\Project;
 use DateTimeImmutable;
@@ -22,6 +23,7 @@ final readonly class ProjectManager
         private UserRepository $userRepository,
         private ContactRepository $contactRepository,
         private CompanyRepository $companyRepository,
+        private DealRepository $dealRepository,
         private AuditLogger $auditLogger,
         private SequenceGenerator $sequenceGenerator,
         private ProjectColumnManager $columnManager,
@@ -86,6 +88,7 @@ final readonly class ProjectManager
             'endDate' => $project->getEndDate()?->format('Y-m-d'),
             'responsibleUserId' => $project->getResponsibleUser()?->getId(),
             'crmCompanyId' => $project->getCrmCompany()?->getId(),
+            'crmDealId' => $project->getCrmDeal()?->getId(),
             'crmContactIds' => $contactIds,
         ];
     }
@@ -99,17 +102,17 @@ final readonly class ProjectManager
         $project->setEndDate($input->endDate ? new DateTimeImmutable($input->endDate) : null);
         $project->setResponsibleUser($input->responsibleUserId ? $this->userRepository->find($input->responsibleUserId) : null);
         $project->setCrmCompany($input->crmCompanyId ? $this->companyRepository->find($input->crmCompanyId) : null);
+        $project->setCrmDeal($input->crmDealId ? $this->dealRepository->find($input->crmDealId) : null);
 
-        $existingContacts = $project->getCrmContacts()->toArray();
+        // Sync crm contacts (many-to-many) in a single batch query.
         $desiredContacts = [];
-        foreach ($input->crmContactIds as $contactId) {
-            $contact = $this->contactRepository->find($contactId);
-            if (null !== $contact) {
+        if ([] !== $input->crmContactIds) {
+            foreach ($this->contactRepository->findBy(['id' => $input->crmContactIds]) as $contact) {
                 $desiredContacts[(int) $contact->getId()] = $contact;
             }
         }
 
-        foreach ($existingContacts as $existing) {
+        foreach ($project->getCrmContacts()->toArray() as $existing) {
             if (!isset($desiredContacts[(int) $existing->getId()])) {
                 $project->removeCrmContact($existing);
             }

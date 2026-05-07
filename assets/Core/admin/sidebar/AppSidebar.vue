@@ -14,6 +14,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import AppNavButton from "@/shared/components/nav/AppNavButton.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
+import AppNotificationsBell from "@core/admin/notifications/AppNotificationsBell.vue";
 import "@/css/sidebar.css";
 import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
@@ -40,6 +41,9 @@ const props = defineProps({
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
     searchPath: { type: String, default: "/backend/search" },
+    notificationsListPath: { type: String, default: "" },
+    notificationsMarkReadPath: { type: String, default: "" },
+    notificationsMarkAllReadPath: { type: String, default: "" },
 });
 
 const { t } = useI18n();
@@ -130,15 +134,23 @@ function openSearchFromMobile() {
 
         <div class="sh-search-section px-3 py-2 border-b border-line shrink-0 space-y-1.5">
             <!-- Palette trigger — expanded -->
-            <button
-                type="button"
-                class="sh-logo-expanded w-full items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted hover:text-primary hover:bg-surface-2 transition-colors"
-                v-on:click="openPalette"
-            >
-                <Search class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
-                <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
-            </button>
+            <div class="sh-logo-expanded items-center gap-2 w-full">
+                <button
+                    type="button"
+                    class="flex-1 flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+                    v-on:click="openPalette"
+                >
+                    <Search class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
+                    <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
+                    <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
+                </button>
+                <AppNotificationsBell
+                    v-if="notificationsListPath"
+                    :list-path="notificationsListPath"
+                    :mark-read-path="notificationsMarkReadPath"
+                    :mark-all-read-path="notificationsMarkAllReadPath"
+                />
+            </div>
             <!-- Palette trigger — collapsed -->
             <AppNavButton
                 class="sh-logo-collapsed"
@@ -147,6 +159,14 @@ function openSearchFromMobile() {
             >
                 <Search class="w-5 h-5 shrink-0" :stroke-width="2" />
             </AppNavButton>
+            <!-- Notifications bell — collapsed -->
+            <div v-if="notificationsListPath" class="sh-logo-collapsed justify-center">
+                <AppNotificationsBell
+                    :list-path="notificationsListPath"
+                    :mark-read-path="notificationsMarkReadPath"
+                    :mark-all-read-path="notificationsMarkAllReadPath"
+                />
+            </div>
             <!-- Nav filter — expanded only -->
             <div class="sh-logo-expanded relative flex items-center">
                 <Filter class="absolute left-2.5 w-3 h-3 text-muted pointer-events-none" :stroke-width="2" />

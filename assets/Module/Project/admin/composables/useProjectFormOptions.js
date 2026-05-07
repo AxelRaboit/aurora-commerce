@@ -19,6 +19,12 @@ export function useProjectFormOptions(props) {
             label: company.name,
         })),
     );
+    const dealOptions = computed(() =>
+        (props.crmDeals ?? []).map((deal) => ({
+            value: deal.id,
+            label: deal.name,
+        })),
+    );
 
-    return { userOptions, contactOptions, companyOptions };
+    return { userOptions, contactOptions, companyOptions, dealOptions };
 }

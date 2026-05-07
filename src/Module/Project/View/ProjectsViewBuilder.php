@@ -8,6 +8,7 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Aurora\Module\Project\Repository\ProjectRepository;
@@ -21,6 +22,7 @@ final readonly class ProjectsViewBuilder
         private UserRepository $userRepository,
         private ContactRepository $contactRepository,
         private CompanyRepository $companyRepository,
+        private DealRepository $dealRepository,
         private ProjectRepository $projectRepository,
         private ProjectSerializer $projectSerializer,
         private TranslatorInterface $translator,
@@ -89,12 +91,18 @@ final readonly class ProjectsViewBuilder
             $this->companyRepository->findAllOrderedByName(),
         );
 
+        $crmDeals = array_map(
+            static fn ($deal): array => ['id' => $deal->getId(), 'name' => $deal->getName()],
+            $this->dealRepository->findAllOrderedByName(),
+        );
+
         return [
             'statusOptions' => $statusOptions,
             'priorityOptions' => $priorityOptions,
             'users' => $users,
             'crmContacts' => $crmContacts,
             'crmCompanies' => $crmCompanies,
+            'crmDeals' => $crmDeals,
         ];
     }
 }

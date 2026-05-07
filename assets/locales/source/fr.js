@@ -1744,6 +1744,7 @@ export default {
             remove: "Retirer",
             all: "Tous",
             loadMore: "Charger plus",
+            send: "Envoyer",
         },
         media: {
             choose: "Choisir une image",

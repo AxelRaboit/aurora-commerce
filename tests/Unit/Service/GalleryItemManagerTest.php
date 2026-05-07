@@ -72,6 +72,13 @@ final class GalleryItemManagerTest extends TestCase
         return $media;
     }
 
+    private function itemWithId(GalleryItem $item, int $id): GalleryItem
+    {
+        (new ReflectionProperty(GalleryItem::class, 'id'))->setValue($item, $id);
+
+        return $item;
+    }
+
     public function testAddItemsReturnsZeroOnEmptyList(): void
     {
         $this->em->expects(self::never())->method('persist');
@@ -91,8 +98,8 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery(42);
         $this->itemRepository->method('nextPositionForGallery')->willReturn(5);
-        $this->mediaRepository->method('find')->willReturnCallback(
-            fn (int $id): Media => $this->makeMedia($id),
+        $this->mediaRepository->method('findBy')->willReturnCallback(
+            fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
         );
 
         $persisted = [];
@@ -118,7 +125,9 @@ final class GalleryItemManagerTest extends TestCase
         $gallery->getItems()->add($existing);
 
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
-        $this->mediaRepository->method('find')->willReturnCallback(fn (int $id): Media => $this->makeMedia($id));
+        $this->mediaRepository->method('findBy')->willReturnCallback(
+            fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
+        );
 
         $added = $this->manager->addItems($gallery, [10, 20]);
 
@@ -129,7 +138,7 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery();
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
-        $this->mediaRepository->method('find')->willReturn(null);
+        $this->mediaRepository->method('findBy')->willReturn([]);
 
         self::assertSame(0, $this->manager->addItems($gallery, [99]));
     }
@@ -137,14 +146,10 @@ final class GalleryItemManagerTest extends TestCase
     public function testReorderUpdatesPositionsForOwnedItems(): void
     {
         $gallery = $this->makeGallery(7);
-        $itemA = (new GalleryItem())->setGallery($gallery)->setPosition(0);
-        $itemB = (new GalleryItem())->setGallery($gallery)->setPosition(1);
+        $itemA = $this->itemWithId((new GalleryItem())->setGallery($gallery)->setPosition(0), 100);
+        $itemB = $this->itemWithId((new GalleryItem())->setGallery($gallery)->setPosition(1), 200);
 
-        $this->itemRepository->method('find')->willReturnCallback(static fn (int $id): ?GalleryItem => match ($id) {
-            100 => $itemA,
-            200 => $itemB,
-            default => null,
-        });
+        $this->itemRepository->method('findBy')->willReturn([$itemA, $itemB]);
         $this->em->expects(self::once())->method('flush');
 
         $this->manager->reorder($gallery, [200, 100]);
@@ -157,9 +162,9 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery(1);
         $otherGallery = $this->makeGallery(2);
-        $alien = (new GalleryItem())->setGallery($otherGallery)->setPosition(99);
+        $alien = $this->itemWithId((new GalleryItem())->setGallery($otherGallery)->setPosition(99), 50);
 
-        $this->itemRepository->method('find')->willReturn($alien);
+        $this->itemRepository->method('findBy')->willReturn([$alien]);
 
         $this->manager->reorder($gallery, [50]);
 
@@ -201,14 +206,10 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery(1);
         $other = $this->makeGallery(99);
-        $own = (new GalleryItem())->setGallery($gallery);
-        $alien = (new GalleryItem())->setGallery($other);
+        $own = $this->itemWithId((new GalleryItem())->setGallery($gallery), 10);
+        $alien = $this->itemWithId((new GalleryItem())->setGallery($other), 20);
 
-        $this->itemRepository->method('find')->willReturnCallback(static fn (int $id): ?GalleryItem => match ($id) {
-            10 => $own,
-            20 => $alien,
-            default => null,
-        });
+        $this->itemRepository->method('findBy')->willReturn([$own, $alien]);
 
         $this->em->expects(self::once())->method('remove')->with($own);
 
@@ -249,7 +250,7 @@ final class GalleryItemManagerTest extends TestCase
         // Media path resolves under fixtures/exif.jpg (relative to upload dir).
         $media = (new Media())->setOriginalName('exif.jpg')->setPath('exif.jpg');
         (new ReflectionProperty(Media::class, 'id'))->setValue($media, 42);
-        $this->mediaRepository->method('find')->willReturn($media);
+        $this->mediaRepository->method('findBy')->willReturn([$media]);
 
         $manager->addItems($gallery, [42]);
 
@@ -265,8 +266,8 @@ final class GalleryItemManagerTest extends TestCase
         $gallery = $this->makeGallery(8);
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
         $this->itemRepository->method('nextNumberForGallery')->willReturn(10);
-        $this->mediaRepository->method('find')->willReturnCallback(
-            fn (int $id): Media => $this->makeMedia($id),
+        $this->mediaRepository->method('findBy')->willReturnCallback(
+            fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
         );
 
         $this->manager->addItems($gallery, [1, 2, 3]);

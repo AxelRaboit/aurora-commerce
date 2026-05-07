@@ -20,6 +20,7 @@ const variants = {
     'danger-subtle': 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-900/40',
     accent: 'bg-accent hover:bg-accent-hover text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-accent',
     ghost: 'bg-transparent hover:bg-surface-2 text-secondary hover:text-primary',
+    dashed: 'bg-transparent border-2 border-dashed border-line text-secondary hover:bg-surface-2 hover:text-primary',
     link: 'bg-transparent text-muted hover:text-secondary underline p-0 text-sm',
     'link-accent': 'bg-transparent text-accent hover:underline p-0 text-sm',
     icon: 'bg-transparent p-0',

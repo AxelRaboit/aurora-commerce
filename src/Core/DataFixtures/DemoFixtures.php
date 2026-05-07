@@ -1004,6 +1004,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $inv = new Invoice();
         $inv->setTiers($tiers[0])
             ->setStatus(InvoiceStatusEnum::Validated)
+            ->setNumber('FAC-2026-0004')
             ->setIssuedAt(new DateTimeImmutable('-15 days'))
             ->setDueAt(new DateTimeImmutable('+15 days'))
             ->setSubtotalCents(64900)
@@ -1054,16 +1055,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
               ->setTotalGrossCents(10788);
         $em->persist($line2);
 
-        // Additional invoices for variety
+        // Additional invoices for variety — numbers assigned in chronological order (art. 242 nonies A CGI)
         $extraInvoices = [
-            ['ti' => 5, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Hébergement OVHcloud — Serveur dédié 3 mois', 'net' => 44700,  'gross' => 53640, 'project' => 'Infrastructure Prod',   'ago' => '-2 months', 'terms' => '30 jours net'],
-            ['ti' => 6, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Google Workspace Business Plus — 10 licences', 'net' => 13200,  'gross' => 15840, 'project' => 'Outils bureautique',    'ago' => '-45 days',  'terms' => 'Mensuel'],
-            ['ti' => 7, 'status' => InvoiceStatusEnum::Validated,  'label' => 'AWS EC2 + RDS — Octobre 2025',                 'net' => 28600,  'gross' => 34320, 'project' => 'Cloud Aurora Tech',     'ago' => '-10 days',  'terms' => 'À réception'],
-            ['ti' => 8, 'status' => InvoiceStatusEnum::NeedsReview, 'label' => 'Prestation design UI — Refonte charte Q4',      'net' => 18000,  'gross' => 21600, 'project' => 'Refonte Marque 2025',   'ago' => '-5 days',   'terms' => '30 jours fin de mois'],
-            ['ti' => 9, 'status' => InvoiceStatusEnum::Draft,      'label' => 'Dev front-end Aurora — Sprint 8',               'net' => 9600,   'gross' => 11520, 'project' => 'Aurora v2.1',            'ago' => '-2 days',   'terms' => '15 jours'],
-            ['ti' => 10, 'status' => InvoiceStatusEnum::Paid,       'label' => 'Stripe — Commission transactions Octobre 2025', 'net' => 4200,   'gross' => 5040,  'project' => 'E-commerce',             'ago' => '-30 days',  'terms' => 'Mensuel'],
-            ['ti' => 11, 'status' => InvoiceStatusEnum::Validated,  'label' => 'Adobe CC — 5 licences annuelles',               'net' => 31500,  'gross' => 37800, 'project' => 'Studio créatif',         'ago' => '-7 days',   'terms' => 'Annuel'],
-            ['ti' => 12, 'status' => InvoiceStatusEnum::Draft,      'label' => 'Analyse données — Dashboard Q3 2025',           'net' => 7200,   'gross' => 8640,  'project' => 'BI & Analytics',         'ago' => '-1 day',    'terms' => '30 jours net'],
+            ['ti' => 5,  'number' => 'FAC-2026-0001', 'status' => InvoiceStatusEnum::Paid,        'label' => 'Hébergement OVHcloud — Serveur dédié 3 mois', 'net' => 44700,  'gross' => 53640, 'project' => 'Infrastructure Prod',   'ago' => '-2 months', 'terms' => '30 jours net'],
+            ['ti' => 6,  'number' => 'FAC-2026-0002', 'status' => InvoiceStatusEnum::Paid,        'label' => 'Google Workspace Business Plus — 10 licences', 'net' => 13200,  'gross' => 15840, 'project' => 'Outils bureautique',    'ago' => '-45 days',  'terms' => 'Mensuel'],
+            ['ti' => 10, 'number' => 'FAC-2026-0003', 'status' => InvoiceStatusEnum::Paid,        'label' => 'Stripe — Commission transactions Octobre 2025', 'net' => 4200,   'gross' => 5040,  'project' => 'E-commerce',             'ago' => '-30 days',  'terms' => 'Mensuel'],
+            ['ti' => 7,  'number' => 'FAC-2026-0005', 'status' => InvoiceStatusEnum::Validated,   'label' => 'AWS EC2 + RDS — Octobre 2025',                 'net' => 28600,  'gross' => 34320, 'project' => 'Cloud Aurora Tech',     'ago' => '-10 days',  'terms' => 'À réception'],
+            ['ti' => 11, 'number' => 'FAC-2026-0006', 'status' => InvoiceStatusEnum::Validated,   'label' => 'Adobe CC — 5 licences annuelles',               'net' => 31500,  'gross' => 37800, 'project' => 'Studio créatif',         'ago' => '-7 days',   'terms' => 'Annuel'],
+            ['ti' => 8,  'number' => 'FAC-2026-0007', 'status' => InvoiceStatusEnum::NeedsReview, 'label' => 'Prestation design UI — Refonte charte Q4',      'net' => 18000,  'gross' => 21600, 'project' => 'Refonte Marque 2025',   'ago' => '-5 days',   'terms' => '30 jours fin de mois'],
+            ['ti' => 9,  'number' => null,             'status' => InvoiceStatusEnum::Draft,       'label' => 'Dev front-end Aurora — Sprint 8',               'net' => 9600,   'gross' => 11520, 'project' => 'Aurora v2.1',            'ago' => '-2 days',   'terms' => '15 jours'],
+            ['ti' => 12, 'number' => null,             'status' => InvoiceStatusEnum::Draft,       'label' => 'Analyse données — Dashboard Q3 2025',           'net' => 7200,   'gross' => 8640,  'project' => 'BI & Analytics',         'ago' => '-1 day',    'terms' => '30 jours net'],
         ];
         foreach ($extraInvoices as $ei) {
             $inv = new Invoice();
@@ -1078,6 +1079,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 ->setCurrency(CurrencyEnum::EUR)
                 ->setProject($ei['project'])
                 ->setPaymentTerms($ei['terms']);
+            if (null !== $ei['number']) {
+                $inv->setNumber($ei['number']);
+            }
+
             $em->persist($inv);
 
             $line = new InvoiceLine();

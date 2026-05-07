@@ -16,6 +16,10 @@ export function emptyTaskForm(columnId = null) {
         assigneeId: "",
         dueDate: "",
         position: 0,
+        labelIds: [],
+        storyPoints: "",
+        estimateMinutes: "",
+        items: [],
     };
 }
 

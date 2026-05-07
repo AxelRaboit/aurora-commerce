@@ -16,6 +16,7 @@ export function emptyProjectForm() {
         responsibleUserId: "",
         crmContactIds: [],
         crmCompanyId: "",
+        crmDealId: "",
     };
 }
 

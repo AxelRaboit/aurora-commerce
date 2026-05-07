@@ -19,6 +19,10 @@ backend:
           updated: Column updated
           deleted: Column deleted
           reordered: Columns reordered
+        label:
+          created: Label created
+          updated: Label updated
+          deleted: Label deleted
   projects:
     add: New project
     empty: No projects found.
@@ -36,11 +40,13 @@ backend:
       contact: Contact
       contacts: Contacts
       company: Company
+      deal: CRM deal
       start: "Start:"
       end: "End:"
       contactLabel: "Contact:"
       contactsLabel: "Contacts:"
       companyLabel: "Company:"
+      dealLabel: "Deal:"
       responsibleLabel: "Responsible:"
     placeholders:
       title: e.g. Website redesign
@@ -49,9 +55,11 @@ backend:
       contact: Select a contact
       contacts: Select one or more contacts
       company: Select a company
+      deal: Link to a deal
       taskTitle: e.g. Homepage mockups
       taskDescription: Describe the task…
       assignee: Select a user
+      estimateMinutes: Estimated duration in minutes
     status_draft: Draft
     status_active: Active
     status_completed: Completed
@@ -63,6 +71,8 @@ backend:
       empty: No tasks
       deleteConfirm: 'Delete task "{name}"?'
       deleteWarning: This action cannot be undone.
+      commentPlaceholder: Write a comment…
+      attachmentsHint: Drag and drop files from the Media module.
       fields:
         title: Title
         description: Description
@@ -71,6 +81,17 @@ backend:
         priority: Priority
         assignee: Assignee
         dueDate: Due date
+        labels: Labels
+        storyPoints: Story points
+        storyPointsShort: pts
+        estimateMinutes: Estimate (min)
+        loggedMinutes: Logged time (min)
+        items: Subtasks
+        addItem: Add a subtask
+        comments: Comments
+        attachments: Attachments
+        sprint: Sprint
+        watchers: Watchers
       status_todo: To do
       status_in_progress: In progress
       status_done: Done
@@ -86,6 +107,32 @@ backend:
       taskCreated: Task created.
       taskUpdated: Task updated.
       taskDeleted: Task deleted.
+    activity:
+      title: Project activity
+      empty: No activity recorded for this project yet.
+      system: System
+      justNow: just now
+      minutesAgo: '{n} min ago'
+      hoursAgo: '{n} h ago'
+    confirmGenerateInvoice: Create a draft invoice from this project?
+    generateInvoice: Generate invoice
+    labels:
+      manage: Manage labels
+      add: New label
+      edit: Edit label
+      nameField: Name
+      colorField: Color
+    sprints:
+      manage: Manage sprints
+      add: New sprint
+      edit: Edit sprint
+      active: Active
+      activeField: Current sprint
+      nameField: Name
+    savedViews:
+      save: Save view
+      nameField: View name
+      namePlaceholder: e.g. My overdue tasks
     columns:
       add: Add a column
       addPlaceholder: Column name

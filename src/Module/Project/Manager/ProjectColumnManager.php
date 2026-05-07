@@ -50,6 +50,9 @@ final readonly class ProjectColumnManager
                 ->setPosition($position)
                 ->setReference($this->sequenceGenerator->next(SequencePrefixEnum::ProjectColumn->value));
             $this->entityManager->persist($column);
+            // Keep the in-memory collection in sync so callers can use
+            // $project->getColumns() right after create() without re-fetching.
+            $project->addColumn($column);
             $columns[] = $column;
         }
 

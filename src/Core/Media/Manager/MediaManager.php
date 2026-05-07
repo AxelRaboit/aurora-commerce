@@ -196,9 +196,19 @@ final readonly class MediaManager implements MediaManagerInterface
 
     public function reorder(array $orderedIds): void
     {
+        if ([] === $orderedIds) {
+            return;
+        }
+
+        $mediaById = [];
+        foreach ($this->mediaRepository->findBy(['id' => $orderedIds]) as $media) {
+            $mediaById[(int) $media->getId()] = $media;
+        }
+
         foreach ($orderedIds as $position => $id) {
-            $media = $this->mediaRepository->find($id);
-            $media?->setPosition($position);
+            if (isset($mediaById[$id])) {
+                $mediaById[$id]->setPosition($position);
+            }
         }
 
         $this->entityManager->flush();
@@ -206,12 +216,11 @@ final readonly class MediaManager implements MediaManagerInterface
 
     public function bulkDelete(array $ids): void
     {
-        foreach ($ids as $id) {
-            $media = $this->mediaRepository->find($id);
-            if (null === $media) {
-                continue;
-            }
+        if ([] === $ids) {
+            return;
+        }
 
+        foreach ($this->mediaRepository->findBy(['id' => $ids]) as $media) {
             $filePath = Path::join($this->uploadDir, $media->getPath());
             $this->filesystem->remove($filePath);
 
@@ -224,9 +233,12 @@ final readonly class MediaManager implements MediaManagerInterface
 
     public function bulkMove(array $ids, ?MediaFolder $folder): void
     {
-        foreach ($ids as $id) {
-            $media = $this->mediaRepository->find($id);
-            $media?->setFolder($folder);
+        if ([] === $ids) {
+            return;
+        }
+
+        foreach ($this->mediaRepository->findBy(['id' => $ids]) as $media) {
+            $media->setFolder($folder);
         }
 
         $this->entityManager->flush();

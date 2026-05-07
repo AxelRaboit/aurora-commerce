@@ -32,6 +32,10 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
             assigneeId: task.assignee?.id ?? "",
             dueDate: task.dueDate ?? "",
             position: task.position,
+            labelIds: [...(task.labelIds ?? [])],
+            storyPoints: task.storyPoints ?? "",
+            estimateMinutes: task.estimateMinutes ?? "",
+            items: (task.items ?? []).map((item) => ({ ...item })),
         };
         clearErrors();
         showEditTask.value = true;

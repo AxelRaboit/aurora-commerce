@@ -27,6 +27,8 @@ final readonly class ProjectInput
         public array $crmContactIds = [],
         #[Assert\Positive]
         public ?int $crmCompanyId = null,
+        #[Assert\Positive]
+        public ?int $crmDealId = null,
     ) {}
 
     public function statusEnum(): ProjectStatusEnum
@@ -75,6 +77,7 @@ final readonly class ProjectInput
             responsibleUserId: isset($data['responsibleUserId']) && '' !== (string) $data['responsibleUserId'] ? (int) $data['responsibleUserId'] : null,
             crmContactIds: self::normalizeIdList($data['crmContactIds'] ?? []),
             crmCompanyId: isset($data['crmCompanyId']) && '' !== (string) $data['crmCompanyId'] ? (int) $data['crmCompanyId'] : null,
+            crmDealId: isset($data['crmDealId']) && '' !== (string) $data['crmDealId'] ? (int) $data['crmDealId'] : null,
         );
     }
 }

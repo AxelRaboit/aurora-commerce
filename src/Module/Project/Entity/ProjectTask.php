@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
+use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -54,6 +57,62 @@ class ProjectTask
 
     #[ORM\Column(options: ['default' => 0])]
     private int $position = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $storyPoints = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $estimateMinutes = null;
+
+    /** @var Collection<int, ProjectLabel> */
+    #[ORM\ManyToMany(targetEntity: ProjectLabel::class)]
+    #[ORM\JoinTable(name: 'core_project_task_labels')]
+    #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'label_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $labels;
+
+    /** @var Collection<int, ProjectTaskItem> */
+    #[ORM\OneToMany(targetEntity: ProjectTaskItem::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $items;
+
+    /** @var Collection<int, ProjectTaskTimeEntry> */
+    #[ORM\OneToMany(targetEntity: ProjectTaskTimeEntry::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['loggedAt' => 'DESC'])]
+    private Collection $timeEntries;
+
+    /** @var Collection<int, ProjectTaskComment> */
+    #[ORM\OneToMany(targetEntity: ProjectTaskComment::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    private Collection $comments;
+
+    /** @var Collection<int, Media> */
+    #[ORM\ManyToMany(targetEntity: Media::class)]
+    #[ORM\JoinTable(name: 'core_project_task_attachments')]
+    #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $attachments;
+
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'core_project_task_watchers')]
+    #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $watchers;
+
+    #[ORM\ManyToOne(targetEntity: ProjectSprint::class, inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?ProjectSprint $sprint = null;
+
+    public function __construct()
+    {
+        $this->labels = new ArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->timeEntries = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
+        $this->watchers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -164,6 +223,126 @@ class ProjectTask
     public function setPosition(int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getStoryPoints(): ?int
+    {
+        return $this->storyPoints;
+    }
+
+    public function setStoryPoints(?int $storyPoints): static
+    {
+        $this->storyPoints = $storyPoints;
+
+        return $this;
+    }
+
+    public function getEstimateMinutes(): ?int
+    {
+        return $this->estimateMinutes;
+    }
+
+    public function setEstimateMinutes(?int $estimateMinutes): static
+    {
+        $this->estimateMinutes = $estimateMinutes;
+
+        return $this;
+    }
+
+    /** @return Collection<int, ProjectLabel> */
+    public function getLabels(): Collection
+    {
+        return $this->labels;
+    }
+
+    public function addLabel(ProjectLabel $label): static
+    {
+        if (!$this->labels->contains($label)) {
+            $this->labels->add($label);
+        }
+
+        return $this;
+    }
+
+    public function removeLabel(ProjectLabel $label): static
+    {
+        $this->labels->removeElement($label);
+
+        return $this;
+    }
+
+    /** @return Collection<int, ProjectTaskItem> */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    /** @return Collection<int, ProjectTaskTimeEntry> */
+    public function getTimeEntries(): Collection
+    {
+        return $this->timeEntries;
+    }
+
+    /** @return Collection<int, ProjectTaskComment> */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    /** @return Collection<int, Media> */
+    public function getAttachments(): Collection
+    {
+        return $this->attachments;
+    }
+
+    public function addAttachment(Media $media): static
+    {
+        if (!$this->attachments->contains($media)) {
+            $this->attachments->add($media);
+        }
+
+        return $this;
+    }
+
+    public function removeAttachment(Media $media): static
+    {
+        $this->attachments->removeElement($media);
+
+        return $this;
+    }
+
+    /** @return Collection<int, User> */
+    public function getWatchers(): Collection
+    {
+        return $this->watchers;
+    }
+
+    public function addWatcher(User $user): static
+    {
+        if (!$this->watchers->contains($user)) {
+            $this->watchers->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeWatcher(User $user): static
+    {
+        $this->watchers->removeElement($user);
+
+        return $this;
+    }
+
+    public function getSprint(): ?ProjectSprint
+    {
+        return $this->sprint;
+    }
+
+    public function setSprint(?ProjectSprint $sprint): static
+    {
+        $this->sprint = $sprint;
 
         return $this;
     }

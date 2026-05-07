@@ -26,6 +26,18 @@ final readonly class ProjectTaskInput
         public int $position = 0,
         #[Assert\Positive]
         public ?int $projectId = null,
+        #[Assert\PositiveOrZero]
+        public ?int $storyPoints = null,
+        #[Assert\PositiveOrZero]
+        public ?int $estimateMinutes = null,
+        /** @var list<int> */
+        #[Assert\All([new Assert\Positive()])]
+        public array $labelIds = [],
+        /** @var list<int> */
+        #[Assert\All([new Assert\Positive()])]
+        public array $watcherIds = [],
+        #[Assert\Positive]
+        public ?int $sprintId = null,
     ) {}
 
     public function priorityEnum(): ProjectTaskPriorityEnum
@@ -49,6 +61,39 @@ final readonly class ProjectTaskInput
             dueDate: Str::trimOrNullFromArray($data, 'dueDate'),
             position: isset($data['position']) ? (int) $data['position'] : 0,
             projectId: isset($data['projectId']) && '' !== (string) $data['projectId'] ? (int) $data['projectId'] : null,
+            storyPoints: isset($data['storyPoints']) && '' !== (string) $data['storyPoints'] ? (int) $data['storyPoints'] : null,
+            estimateMinutes: isset($data['estimateMinutes']) && '' !== (string) $data['estimateMinutes'] ? (int) $data['estimateMinutes'] : null,
+            labelIds: self::normalizeIdList($data['labelIds'] ?? []),
+            watcherIds: self::normalizeIdList($data['watcherIds'] ?? []),
+            sprintId: isset($data['sprintId']) && '' !== (string) $data['sprintId'] ? (int) $data['sprintId'] : null,
         );
+    }
+
+    /**
+     * @return list<int>
+     */
+    private static function normalizeIdList(mixed $raw): array
+    {
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($raw as $value) {
+            if (null === $value) {
+                continue;
+            }
+
+            if ('' === $value) {
+                continue;
+            }
+
+            $id = (int) $value;
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+
+        return array_values(array_unique($ids));
     }
 }

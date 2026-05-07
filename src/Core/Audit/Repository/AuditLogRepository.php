@@ -79,6 +79,39 @@ class AuditLogRepository extends ServiceEntityRepository
         ], $rows);
     }
 
+    /**
+     * Project-specific timeline: every audit row that targets the project itself,
+     * one of its tasks, or one of its columns.
+     *
+     * @param int[] $taskIds
+     * @param int[] $columnIds
+     *
+     * @return list<AuditLog>
+     */
+    public function findForProject(int $projectId, array $taskIds, array $columnIds, int $limit = 50): array
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->andWhere(
+                '(a.entityType = :projectType AND a.entityId = :projectId)'
+                .([] !== $taskIds ? ' OR (a.entityType = :taskType AND a.entityId IN (:taskIds))' : '')
+                .([] !== $columnIds ? ' OR (a.entityType = :columnType AND a.entityId IN (:columnIds))' : ''),
+            )
+            ->setParameter('projectType', 'Project')
+            ->setParameter('projectId', $projectId)
+            ->orderBy('a.createdAt', Order::Descending->value)
+            ->setMaxResults($limit);
+
+        if ([] !== $taskIds) {
+            $qb->setParameter('taskType', 'ProjectTask')->setParameter('taskIds', $taskIds);
+        }
+
+        if ([] !== $columnIds) {
+            $qb->setParameter('columnType', 'ProjectColumn')->setParameter('columnIds', $columnIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     /** @return array<int, string> */
     public function findDistinctModules(): array
     {

@@ -1,4 +1,11 @@
 backend:
+  notifications:
+    title: Notifications
+    empty: No notifications.
+    markAllRead: Mark all as read
+    justNow: just now
+    minutesAgo: '{n} min ago'
+    hoursAgo: '{n} h ago'
   modules:
     media: Media
     users: Users

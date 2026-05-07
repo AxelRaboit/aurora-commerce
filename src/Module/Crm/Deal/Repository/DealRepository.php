@@ -71,4 +71,13 @@ class DealRepository extends ServiceEntityRepository
 
         return (float) $qb->getQuery()->getSingleScalarResult();
     }
+
+    /** @return list<Deal> */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->orderBy('d.name', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
 }

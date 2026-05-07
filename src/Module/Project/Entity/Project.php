@@ -8,6 +8,7 @@ use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Company\Entity\Company as CrmCompany;
 use Aurora\Module\Crm\Contact\Entity\Contact as CrmContact;
+use Aurora\Module\Crm\Deal\Entity\Deal as CrmDeal;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Repository\ProjectRepository;
 use DateTimeImmutable;
@@ -61,6 +62,10 @@ class Project
     #[ORM\ManyToOne(targetEntity: CrmCompany::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?CrmCompany $crmCompany = null;
+
+    #[ORM\ManyToOne(targetEntity: CrmDeal::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?CrmDeal $crmDeal = null;
 
     /** @var Collection<int, ProjectTask> */
     #[ORM\OneToMany(targetEntity: ProjectTask::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -198,6 +203,18 @@ class Project
     public function setCrmCompany(?CrmCompany $crmCompany): static
     {
         $this->crmCompany = $crmCompany;
+
+        return $this;
+    }
+
+    public function getCrmDeal(): ?CrmDeal
+    {
+        return $this->crmDeal;
+    }
+
+    public function setCrmDeal(?CrmDeal $crmDeal): static
+    {
+        $this->crmDeal = $crmDeal;
 
         return $this;
     }

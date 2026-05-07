@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -135,6 +135,35 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         }
     }
 
+    // ── Reorder columns (drag&drop on the columns themselves) ────────────────
+    // Local mutable copy of the project's column list — bound as v-model to the
+    // outer VueDraggable so the user can drop columns into a new order.
+    const orderedColumns = ref([]);
+
+    watch(
+        () => activeProject.value?.columns,
+        (next) => {
+            orderedColumns.value = [...(next ?? [])];
+        },
+        { immediate: true, deep: true },
+    );
+
+    async function persistColumnsOrder() {
+        if (!activeProject.value) return;
+        const orderedIds = orderedColumns.value.map((column) => column.id);
+        const url = buildPath(paths.reorder, { id: activeProject.value.id });
+        try {
+            const response = await fetch(url, {
+                method: HttpMethod.Post,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderedIds }),
+            });
+            if (!response.ok) throw new Error();
+        } catch {
+            toast.error(t("shared.common.error"));
+        }
+    }
+
     return {
         showCreateColumn,
         newColumn,
@@ -155,5 +184,8 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         deleteColumnLoading,
         confirmDeleteColumn,
         doDeleteColumn,
+
+        orderedColumns,
+        persistColumnsOrder,
     };
 }

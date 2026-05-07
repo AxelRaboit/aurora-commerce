@@ -26,8 +26,11 @@ export function useProjectsEdit(updatePath, reset, activeProject) {
             startDate: project.startDate ?? "",
             endDate: project.endDate ?? "",
             responsibleUserId: project.responsibleUser?.id ?? "",
-            crmContactIds: (project.crmContacts ?? []).map((c) => c.id),
+            crmContactIds: (project.crmContacts ?? []).map(
+                (contact) => contact.id,
+            ),
             crmCompanyId: project.crmCompany?.id ?? "",
+            crmDealId: project.crmDeal?.id ?? "",
         };
         clearErrors();
         showEdit.value = true;

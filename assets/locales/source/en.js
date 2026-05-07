@@ -1665,6 +1665,7 @@ export default {
             remove: "Remove",
             all: "All",
             loadMore: "Load more",
+            send: "Send",
         },
         media: {
             choose: "Choose an image",
