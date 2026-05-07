@@ -56,12 +56,12 @@ class MediaRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
 
         $directCount = (int) $connection->fetchOne(
-            'SELECT COUNT(*) FROM posts WHERE featured_media_id = :id',
+            'SELECT COUNT(*) FROM core_posts WHERE featured_media_id = :id',
             ['id' => $mediaId],
         );
 
         $contentCount = (int) $connection->fetchOne(
-            'SELECT COUNT(DISTINCT post_id) FROM post_translations WHERE blocks::text LIKE :pattern',
+            'SELECT COUNT(DISTINCT post_id) FROM core_post_translations WHERE blocks::text LIKE :pattern',
             ['pattern' => '%"mediaId":'.$mediaId.'%'],
         );
 

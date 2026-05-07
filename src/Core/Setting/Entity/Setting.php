@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SettingRepository::class)]
-#[ORM\Table(name: 'settings')]
+#[ORM\Table(name: 'core_settings')]
 class Setting
 {
     public function __construct(

@@ -9,7 +9,7 @@ use Aurora\Core\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
-#[ORM\Table(name: 'services')]
+#[ORM\Table(name: 'core_services')]
 #[ORM\HasLifecycleCallbacks]
 class Service
 {

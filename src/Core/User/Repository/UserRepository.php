@@ -74,7 +74,7 @@ class UserRepository extends ServiceEntityRepository
      */
     private function findIdsWithRole(string $role): array
     {
-        $sql = 'SELECT id FROM users WHERE roles::text LIKE :role';
+        $sql = 'SELECT id FROM core_users WHERE roles::text LIKE :role';
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative($sql, [
             'role' => '%"'.$role.'"%',
         ]);

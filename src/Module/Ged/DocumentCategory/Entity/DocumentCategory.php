@@ -10,7 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DocumentCategoryRepository::class)]
-#[ORM\Table(name: 'ged_document_categories')]
+#[ORM\Table(name: 'core_ged_document_categories')]
 #[ORM\HasLifecycleCallbacks]
 class DocumentCategory
 {

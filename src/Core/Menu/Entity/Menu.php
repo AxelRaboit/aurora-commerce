@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuRepository::class)]
-#[ORM\Table(name: 'menus')]
+#[ORM\Table(name: 'core_menus')]
 #[ORM\HasLifecycleCallbacks]
 class Menu
 {

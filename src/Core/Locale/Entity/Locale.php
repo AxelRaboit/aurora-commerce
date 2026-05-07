@@ -8,7 +8,7 @@ use Aurora\Core\Locale\Repository\LocaleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LocaleRepository::class)]
-#[ORM\Table(name: 'locales')]
+#[ORM\Table(name: 'core_locales')]
 class Locale
 {
     #[ORM\Id]

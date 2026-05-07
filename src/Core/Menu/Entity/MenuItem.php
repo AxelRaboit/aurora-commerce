@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuItemRepository::class)]
-#[ORM\Table(name: 'menu_items')]
+#[ORM\Table(name: 'core_menu_items')]
 #[ORM\HasLifecycleCallbacks]
 class MenuItem
 {

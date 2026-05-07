@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AccessRequestRepository::class)]
-#[ORM\Table(name: 'access_requests')]
+#[ORM\Table(name: 'core_access_requests')]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'IDX_access_request_token', columns: ['token'])]
 #[ORM\Index(name: 'IDX_access_request_status', columns: ['status'])]

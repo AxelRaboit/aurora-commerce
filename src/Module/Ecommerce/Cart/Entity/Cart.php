@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
-#[ORM\Table(name: 'ecommerce_carts')]
+#[ORM\Table(name: 'core_ecommerce_carts')]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_cart_session', columns: ['session_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_cart_user', columns: ['user_id'])]
 #[ORM\HasLifecycleCallbacks]

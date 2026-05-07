@@ -12,7 +12,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ListingRepository::class)]
-#[ORM\Table(name: 'ecommerce_listings')]
+#[ORM\Table(name: 'core_ecommerce_listings')]
 #[ORM\UniqueConstraint(name: 'uniq_ecommerce_listing_slug', columns: ['slug'])]
 #[ORM\HasLifecycleCallbacks]
 class Listing

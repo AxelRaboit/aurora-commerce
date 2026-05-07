@@ -11,7 +11,7 @@ use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
-#[ORM\Table(name: 'media')]
+#[ORM\Table(name: 'core_media')]
 class Media implements TimestampableInterface
 {
     use TimestampableTrait;

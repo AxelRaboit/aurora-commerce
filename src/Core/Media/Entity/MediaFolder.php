@@ -12,7 +12,7 @@ use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: MediaFolderRepository::class)]
-#[ORM\Table(name: 'media_folders')]
+#[ORM\Table(name: 'core_media_folders')]
 #[ORM\Index(name: 'IDX_media_folders_parent', columns: ['parent_id'])]
 class MediaFolder implements TimestampableInterface
 {

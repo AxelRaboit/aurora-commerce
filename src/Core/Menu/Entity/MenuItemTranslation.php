@@ -8,7 +8,7 @@ use Aurora\Core\Menu\Repository\MenuItemTranslationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuItemTranslationRepository::class)]
-#[ORM\Table(name: 'menu_item_translations')]
+#[ORM\Table(name: 'core_menu_item_translations')]
 #[ORM\UniqueConstraint(name: 'uniq_menu_item_locale', columns: ['menu_item_id', 'locale'])]
 class MenuItemTranslation
 {

@@ -205,7 +205,7 @@ class InvoiceRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $rows = $conn->executeQuery(
             'SELECT number, EXTRACT(YEAR FROM issued_at) AS year
-             FROM billing_invoices
+             FROM core_billing_invoices
              WHERE number IS NOT NULL
                AND issued_at IS NOT NULL
                AND status NOT IN (:drafts)

@@ -10,7 +10,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResetPasswordRequestRepository::class)]
-#[ORM\Table(name: 'reset_password_requests')]
+#[ORM\Table(name: 'core_reset_password_requests')]
 class ResetPasswordRequest
 {
     #[ORM\Id]

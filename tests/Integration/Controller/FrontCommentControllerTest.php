@@ -32,7 +32,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         // Enable comments via DBAL to ensure it's committed and visible across EM instances
         $conn = static::getContainer()->get(Connection::class);
         $conn->executeStatement(
-            "INSERT INTO settings (setting_key, value, setting_type) VALUES ('comments_enabled', '1', 'string')
+            "INSERT INTO core_settings (setting_key, value, setting_type) VALUES ('comments_enabled', '1', 'string')
              ON CONFLICT (setting_key) DO UPDATE SET value = '1'",
         );
 
@@ -42,7 +42,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
             ->getId();
 
         $postId = (int) $conn->fetchOne(
-            "INSERT INTO posts (id, post_type_id, status) VALUES (NEXTVAL('seq_post_id'), ?, 'published') RETURNING id",
+            "INSERT INTO core_posts (id, post_type_id, status) VALUES (NEXTVAL('seq_post_id'), ?, 'published') RETURNING id",
             [$postTypeId],
         );
 
@@ -50,7 +50,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         $this->postTypeSlug = 'article';
 
         $conn->executeStatement(
-            "INSERT INTO post_translations (id, post_id, locale, title, slug, blocks, noindex, custom_fields) VALUES (NEXTVAL('seq_post_translation_id'), ?, 'fr', 'Front Comment Test', ?, '[]', false, '{}')",
+            "INSERT INTO core_post_translations (id, post_id, locale, title, slug, blocks, noindex, custom_fields) VALUES (NEXTVAL('seq_post_translation_id'), ?, 'fr', 'Front Comment Test', ?, '[]', false, '{}')",
             [$postId, $this->postSlug],
         );
 
@@ -66,7 +66,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
     protected function tearDown(): void
     {
         $conn = static::getContainer()->get(Connection::class);
-        $conn->executeStatement('DELETE FROM posts WHERE id = ?', [$this->post->getId()]);
+        $conn->executeStatement('DELETE FROM core_posts WHERE id = ?', [$this->post->getId()]);
 
         parent::tearDown();
     }
@@ -108,7 +108,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
     {
         $conn = static::getContainer()->get(Connection::class);
         $commentId = (int) $conn->fetchOne(
-            "INSERT INTO comments (id, post_id, author_name, author_email, content, status, created_at)
+            "INSERT INTO core_comments (id, post_id, author_name, author_email, content, status, created_at)
              VALUES (NEXTVAL('seq_comment_id'), ?, 'Reactor', 'reactor@example.com', 'React to me', 'approved', NOW()) RETURNING id",
             [$this->post->getId()],
         );

@@ -10,7 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
-#[ORM\Table(name: 'crm_companies')]
+#[ORM\Table(name: 'core_crm_companies')]
 #[ORM\HasLifecycleCallbacks]
 class Company
 {
