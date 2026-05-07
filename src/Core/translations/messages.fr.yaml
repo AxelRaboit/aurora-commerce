@@ -225,10 +225,12 @@ backend:
       error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
   nav:
     administration: Accès développeur
+    agencies: Agences
     dashboard: Tableau de bord
     galleries: Galeries
     media: Médias
     profile: Mon profil
+    services: Services
     settings: Réglages
     themes: Thèmes
     users: Utilisateurs

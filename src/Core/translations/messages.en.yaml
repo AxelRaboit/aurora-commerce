@@ -224,10 +224,12 @@ backend:
       error_message: This verification link is invalid or has expired. Please register again.
   nav:
     administration: Developer access
+    agencies: Agencies
     dashboard: Dashboard
     galleries: Galleries
     media: Media
     profile: My profile
+    services: Services
     settings: Settings
     themes: Themes
     users: Users
