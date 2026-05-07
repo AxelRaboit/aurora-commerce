@@ -99,7 +99,7 @@ const onCoverChange = onGalleryCoverChange;
                         <AppBadge v-if="g.hasPassword" variant="warning" size="sm">
                             <Lock class="w-3 h-3" :stroke-width="2.5" />
                         </AppBadge>
-                        <AppBadge v-if="g.finalizedAt" variant="success" size="sm">
+                        <AppBadge v-if="g.finalizedAt" color="emerald" size="sm">
                             <CheckCircle class="w-3 h-3" :stroke-width="2.5" />
                         </AppBadge>
                     </div>

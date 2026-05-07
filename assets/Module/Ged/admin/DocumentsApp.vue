@@ -41,7 +41,7 @@ const statusOptions = [
     { value: "archived", label: t("backend.ged.documents.status_archived") },
 ];
 
-const statusBadgeColor = { draft: "secondary", published: "success", archived: "accent" };
+const statusBadgeColor = { draft: "gray", published: "emerald", archived: "accent" };
 
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
 
