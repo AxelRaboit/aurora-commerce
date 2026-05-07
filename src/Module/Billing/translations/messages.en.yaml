@@ -3,9 +3,12 @@ backend:
     billing: Billing
   nav:
     invoices: Invoices
+    invoices_description: Customer and supplier invoices (creation, payment, archive)
     suppliers: Suppliers
     tiers: Third parties
+    tiers_description: Directory of customers, suppliers and other billable parties
     ocr_import: OCR import
+    ocr_import_description: Import a supplier invoice from a PDF or scanned image
     sections:
       billing: Billing
   billing:
@@ -155,6 +158,7 @@ backend:
         other: Other
     compliance:
       title: Compliance
+      description: Tax and anti-fraud VAT compliance checks
       status:
         ok: Compliant
         warning: Warning

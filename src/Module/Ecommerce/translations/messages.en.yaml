@@ -17,7 +17,9 @@ backend:
           refunded: Order refunded
   nav:
     listings: Shop
+    listings_description: Items listed in the online shop and their stock
     orders: Orders
+    orders_description: Customer orders, statuses and payments
   ecommerce:
     orders:
       refund:

@@ -239,15 +239,23 @@ backend:
       error_message: This verification link is invalid or has expired. Please register again.
   nav:
     administration: Developer access
+    administration_description: Technical tools, audit log, access requests and advanced configuration
     agencies: Agencies
+    agencies_description: Manage agencies and their internal services
     dashboard: Dashboard
+    dashboard_description: Overview of activity and key metrics
     galleries: Galleries
     media: Media
+    media_description: Centralized library of images, videos and files
     profile: My profile
     services: Services
+    services_description: Define the services offered by your agencies
     settings: Settings
+    settings_description: Global application parameters and preferences
     themes: Themes
+    themes_description: Visual customization (colors, logo, favicon)
     users: Users
+    users_description: Manage user accounts, roles and privileges
     resizeHint: "Drag to resize — double-click to reset"
     filterNav: Filter menu…
     filterNavEmpty: No items found

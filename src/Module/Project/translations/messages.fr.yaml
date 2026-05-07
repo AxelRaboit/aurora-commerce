@@ -1,6 +1,7 @@
 backend:
   nav:
     projects: Projets
+    projects_description: Suivi des projets, tâches et tableaux Kanban
   audit:
     actions:
       project:

@@ -1,4 +1,4 @@
-:root { --sidebar-width: 15rem; }
+:root { --sidebar-width: 14rem; }
 
 #sidebar { width: var(--sidebar-width); transition: width 200ms ease; }
 .sidebar-collapsed #sidebar { width: 4rem; }
@@ -49,16 +49,17 @@
 .sidebar-collapsed .sh-expand-btn { display: flex; }
 
 .sidebar-nav {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.74rem;
+    padding-right: 0.74rem;
     overflow-y: auto;
+    overflow-x: hidden;
 }
-.sidebar-collapsed .sidebar-nav { padding-left: 0.5rem; padding-right: 0.5rem; overflow-y: visible; }
-.sidebar-bottom { padding-left: 0.75rem; padding-right: 0.75rem; }
-.sidebar-collapsed .sidebar-bottom { padding-left: 0.5rem; padding-right: 0.5rem; }
+.sidebar-collapsed .sidebar-nav { padding-left: 0.4rem; padding-right: 0.4rem; }
+.sidebar-bottom { padding-left: 0.74rem; padding-right: 0.74rem; }
+.sidebar-collapsed .sidebar-bottom { padding-left: 0.4rem; padding-right: 0.4rem; }
 
-.si { gap: 0.75rem; padding: 0.625rem 0.75rem; }
-.sidebar-collapsed .si { justify-content: center; padding: 0.625rem 0; gap: 0; }
+.si { gap: 0.74rem; padding: 0.624rem 0.74rem; }
+.sidebar-collapsed .si { justify-content: center; padding: 0.624rem 0; gap: 0; }
 
 .si-label { display: block; min-width: 0; }
 .sidebar-collapsed .si-label { display: none; }
@@ -66,10 +67,10 @@
 .si-tooltip { display: none; }
 .sidebar-collapsed .si:hover .si-tooltip { display: block; }
 
-.sidebar-collapsed .sh-search-section { padding-left: 0.5rem; padding-right: 0.5rem; }
+.sidebar-collapsed .sh-search-section { padding-left: 0.4rem; padding-right: 0.4rem; }
 
 /* Section headers (collapsible groups) — hidden when sidebar is collapsed */
-.si-section-header { padding: 0.375rem 0.75rem; }
+.si-section-header { padding: 0.374rem 0.74rem; }
 .sidebar-collapsed .si-section-header { display: none; }
 /* In collapsed (icon-only) mode, force all items visible regardless of section toggle state */
 .sidebar-collapsed .sidebar-nav .si { display: flex !important; }

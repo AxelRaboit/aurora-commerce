@@ -17,7 +17,9 @@ backend:
           refunded: Commande remboursée
   nav:
     listings: Boutique
+    listings_description: Articles publiés sur la boutique en ligne et leur stock
     orders: Commandes
+    orders_description: Commandes des clients, statuts et paiements
   ecommerce:
     orders:
       refund:

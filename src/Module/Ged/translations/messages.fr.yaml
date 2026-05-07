@@ -5,7 +5,9 @@ backend:
     sections:
       ged: GED
     documents: Documents
+    documents_description: Bibliothèque de documents (contrats, RH, finance, marketing…)
     ged_categories: Catégories
+    ged_categories_description: Organiser les documents par catégorie
   ged:
     documents:
       reference: Référence

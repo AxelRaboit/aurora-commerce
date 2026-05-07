@@ -84,6 +84,7 @@ export function useSidebarNav(navSections, activeRoute) {
             route: item.route,
             path: item.path,
             label: t(item.labelKey),
+            description: item.descriptionKey ? t(item.descriptionKey) : "",
             icon: ICON_MAP[item.icon] ?? FileText,
             activeColor: item.activeColor ?? "accent",
             children: (item.children ?? []).map(buildItem),

@@ -36,8 +36,8 @@ final readonly class GedModule implements ModuleInterface
 
         return [
             new NavSection('ged', [
-                new NavItem('backend_ged_documents', 'backend.nav.documents', 'folder-open'),
-                new NavItem('backend_ged_categories', 'backend.nav.ged_categories', 'folder'),
+                new NavItem('backend_ged_documents', 'backend.nav.documents', 'folder-open', descriptionKey: 'backend.nav.documents_description'),
+                new NavItem('backend_ged_categories', 'backend.nav.ged_categories', 'folder', descriptionKey: 'backend.nav.ged_categories_description'),
             ], priority: 35),
         ];
     }

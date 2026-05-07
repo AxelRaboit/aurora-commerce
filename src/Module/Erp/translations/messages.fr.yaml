@@ -10,6 +10,7 @@ backend:
           deleted: Produit supprimé
   nav:
     products: Produits
+    products_description: Catalogue des produits, références et tarifs
   erp:
     products:
       status:

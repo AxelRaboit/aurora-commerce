@@ -3,9 +3,12 @@ backend:
     billing: Facturation
   nav:
     invoices: Factures
+    invoices_description: Factures clients et fournisseurs (création, paiement, archivage)
     suppliers: Fournisseurs
     tiers: Tiers
+    tiers_description: Annuaire des clients, fournisseurs et autres tiers facturables
     ocr_import: Import OCR
+    ocr_import_description: Importer une facture fournisseur depuis un PDF ou une image scannée
     sections:
       billing: Facturation
   billing:
@@ -155,6 +158,7 @@ backend:
         other: Autre
     compliance:
       title: Conformité
+      description: Vérifications de conformité fiscale et anti-fraude TVA
       status:
         ok: Conforme
         warning: Attention

@@ -50,11 +50,13 @@ final readonly class BillingModule implements ModuleInterface
                             'backend.nav.ocr_import',
                             'scan-line',
                             activeRoutePrefix: 'backend_billing_ocr_',
+                            descriptionKey: 'backend.nav.ocr_import_description',
                         ),
                     ],
+                    descriptionKey: 'backend.nav.invoices_description',
                 ),
-                new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users'),
-                new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check'),
+                new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', descriptionKey: 'backend.nav.tiers_description'),
+                new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', descriptionKey: 'backend.billing.compliance.description'),
             ], priority: 55),
         ];
     }

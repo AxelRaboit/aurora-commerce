@@ -1,27 +1,60 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
+
+const props = defineProps({
     href: { type: String, required: true },
     active: { type: Boolean, default: false },
+    /** Color used for the active highlight bg + text. */
     activeColor: { type: String, default: "accent" },
+    /** Color used for the hover state — defaults to "primary" (neutral). Use "emerald", "amber", "rose", "accent" for branded actions. */
+    hoverColor: { type: String, default: "primary" },
     target: { type: String, default: null },
     sidebarActive: { type: Boolean, default: false },
+    /** Tooltip title shown on hover (typically the item label, useful when collapsed). */
+    tooltipTitle: { type: String, default: "" },
+    /** Optional secondary line for the tooltip — short helper sentence. */
+    tooltipDescription: { type: String, default: "" },
+    /** Tooltip placement around the trigger. Default `right` matches the left-anchored sidebar. */
+    tooltipPlacement: {
+        type: String,
+        default: "right",
+        validator: (value) => ["right", "left", "top", "bottom"].includes(value),
+    },
+});
+
+const ACTIVE_CLASSES = {
+    accent: "bg-accent-600/15 text-accent-400",
+    rose: "bg-rose-600/15 text-rose-400",
+};
+
+const HOVER_CLASSES = {
+    primary: "text-secondary hover:text-primary hover:bg-surface-2",
+    emerald: "text-secondary hover:text-emerald-400 hover:bg-emerald-500/10",
+    amber: "text-secondary hover:text-amber-400 hover:bg-amber-500/10",
+    rose: "text-secondary hover:text-rose-400 hover:bg-rose-600/10",
+    accent: "text-secondary hover:text-accent-400 hover:bg-accent-600/10",
+};
+
+const linkClasses = computed(() => {
+    if (props.active) {
+        return ACTIVE_CLASSES[props.activeColor] ?? ACTIVE_CLASSES.accent;
+    }
+    return HOVER_CLASSES[props.hoverColor] ?? HOVER_CLASSES.primary;
 });
 </script>
 
 <template>
-    <a
-        :href="href"
-        :target="target"
-        :rel="target === '_blank' ? 'noopener' : undefined"
-        :data-sidebar-active="sidebarActive ? 'true' : null"
-        class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-        :class="active
-            ? (activeColor === 'rose' ? 'bg-rose-600/15 text-rose-400' : 'bg-accent-600/15 text-accent-400')
-            : (activeColor === 'rose' ? 'text-secondary hover:text-rose-400 hover:bg-rose-600/10' : 'text-secondary hover:text-primary hover:bg-surface-2')"
-    >
-        <slot />
-        <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-            <slot name="tooltip" />
-        </span>
-    </a>
+    <AppTooltip :title="tooltipTitle" :description="tooltipDescription" :placement="tooltipPlacement">
+        <a
+            :href="href"
+            :target="target"
+            :rel="target === '_blank' ? 'noopener' : undefined"
+            :data-sidebar-active="sidebarActive ? 'true' : null"
+            class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+            :class="linkClasses"
+        >
+            <slot />
+        </a>
+    </AppTooltip>
 </template>

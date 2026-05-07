@@ -3,8 +3,11 @@ backend:
     crm: CRM
   nav:
     contacts: Contacts
+    contacts_description: Carnet d'adresses des personnes liées à votre activité
     companies: Entreprises
+    companies_description: Fiches des entreprises clientes, prospects et partenaires
     deals: Affaires
+    deals_description: Pipeline commercial et suivi des opportunités
     deals_kanban: Pipeline Kanban
   audit:
     actions:

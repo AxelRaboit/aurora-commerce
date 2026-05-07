@@ -75,6 +75,7 @@ final readonly class ModuleRegistry
             'route' => $item->activeRoutePrefix ?? $item->route,
             'path' => $this->urlGenerator->generate($item->route),
             'labelKey' => $item->labelKey,
+            'descriptionKey' => $item->descriptionKey,
             'icon' => $item->icon,
             'activeColor' => $item->activeColor,
             'children' => $children,

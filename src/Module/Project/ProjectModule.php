@@ -38,7 +38,7 @@ final readonly class ProjectModule implements ModuleInterface
 
         return [
             new NavSection('project', [
-                new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban'),
+                new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', descriptionKey: 'backend.nav.projects_description'),
             ], priority: 35),
         ];
     }

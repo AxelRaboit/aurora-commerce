@@ -5,7 +5,9 @@ backend:
     sections:
       ged: DMS
     documents: Documents
+    documents_description: Document library (contracts, HR, finance, marketing…)
     ged_categories: Categories
+    ged_categories_description: Organize documents by category
   ged:
     documents:
       reference: Reference

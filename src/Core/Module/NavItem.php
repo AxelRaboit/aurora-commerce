@@ -17,5 +17,6 @@ final readonly class NavItem
         public string $activeColor = 'accent',
         public ?string $activeRoutePrefix = null,
         public array $children = [],
+        public ?string $descriptionKey = null,
     ) {}
 }

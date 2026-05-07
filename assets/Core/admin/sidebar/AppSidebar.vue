@@ -12,6 +12,8 @@ import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
+import AppNavButton from "@/shared/components/nav/AppNavButton.vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import "@/css/sidebar.css";
 import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
@@ -115,13 +117,15 @@ function openSearchFromMobile() {
         </div>
 
         <div class="px-3 py-2 border-b border-line shrink-0">
-            <a :href="frontPath" target="_blank" rel="noopener" class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors group relative">
+            <AppNavLink
+                :href="frontPath"
+                target="_blank"
+                hover-color="emerald"
+                :tooltip-title="t('backend.nav.viewSite')"
+            >
                 <Globe class="w-5 h-5 shrink-0 text-muted group-hover:text-emerald-400 transition-colors" :stroke-width="2" />
                 <span class="si-label truncate">{{ t("backend.nav.viewSite") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("backend.nav.viewSite") }}
-                </span>
-            </a>
+            </AppNavLink>
         </div>
 
         <div class="sh-search-section px-3 py-2 border-b border-line shrink-0 space-y-1.5">
@@ -136,16 +140,13 @@ function openSearchFromMobile() {
                 <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
             </button>
             <!-- Palette trigger — collapsed -->
-            <button
-                type="button"
-                class="sh-logo-collapsed si items-center rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
+            <AppNavButton
+                class="sh-logo-collapsed"
+                :tooltip-title="t('backend.search.button')"
                 v-on:click="openPalette"
             >
                 <Search class="w-5 h-5 shrink-0" :stroke-width="2" />
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("backend.search.button") }}
-                </span>
-            </button>
+            </AppNavButton>
             <!-- Nav filter — expanded only -->
             <div class="sh-logo-expanded relative flex items-center">
                 <Filter class="absolute left-2.5 w-3 h-3 text-muted pointer-events-none" :stroke-width="2" />
@@ -161,7 +162,7 @@ function openSearchFromMobile() {
             </div>
         </div>
 
-        <nav class="sidebar-nav flex-1 py-4 space-y-3">
+        <nav class="sidebar-nav flex-1 min-h-0 overflow-y-auto scrollbar-thin py-4 space-y-3">
             <p v-if="navFilter && !displayedSections.length" class="sh-logo-expanded px-3 text-xs text-muted">
                 {{ t("backend.nav.filterNavEmpty") }}
             </p>
@@ -180,29 +181,28 @@ function openSearchFromMobile() {
                     <template v-if="navFilter || isSectionExpanded(section)">
                         <!-- Group parent: split link + chevron toggle (only when not filtering) -->
                         <template v-if="!navFilter && item.children?.length">
-                            <div
-                                class="flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                                :class="itemClasses(item)"
-                            >
-                                <a
-                                    :href="item.path"
-                                    :data-sidebar-active="itemIsActive(item) ? 'true' : null"
-                                    class="flex items-center flex-1 min-w-0 gap-3 py-[0.625rem] pl-3"
+                            <AppTooltip :title="item.label" :description="item.description" placement="right">
+                                <div
+                                    class="flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                                    :class="itemClasses(item)"
                                 >
-                                    <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
-                                    <span class="si-label flex-1 truncate">{{ item.label }}</span>
-                                </a>
-                                <AppIconButton
-                                    :title="item.label"
-                                    class="si-group-chevron si-label mr-1 opacity-50 hover:opacity-100 hover:!bg-transparent"
-                                    v-on:click.stop="toggleGroup(item.route)"
-                                >
-                                    <ChevronDown class="w-3.5 h-3.5 transition-transform" :class="{ '-rotate-90': !isGroupExpanded(item.route) }" :stroke-width="2.5" />
-                                </AppIconButton>
-                                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                                    {{ item.label }}
-                                </span>
-                            </div>
+                                    <a
+                                        :href="item.path"
+                                        :data-sidebar-active="itemIsActive(item) ? 'true' : null"
+                                        class="flex items-center flex-1 min-w-0 gap-3 py-[0.625rem] pl-3"
+                                    >
+                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                        <span class="si-label flex-1 truncate">{{ item.label }}</span>
+                                    </a>
+                                    <AppIconButton
+                                        :title="item.label"
+                                        class="si-group-chevron si-label mr-1 opacity-50 hover:opacity-100 hover:!bg-transparent"
+                                        v-on:click.stop="toggleGroup(item.route)"
+                                    >
+                                        <ChevronDown class="w-3.5 h-3.5 transition-transform" :class="{ '-rotate-90': !isGroupExpanded(item.route) }" :stroke-width="2.5" />
+                                    </AppIconButton>
+                                </div>
+                            </AppTooltip>
                             <div v-show="isGroupExpanded(item.route)" class="si-children space-y-0.5">
                                 <AppNavLink
                                     v-for="child in item.children"
@@ -211,10 +211,11 @@ function openSearchFromMobile() {
                                     :active="isActive(child.route)"
                                     :active-color="child.activeColor"
                                     :sidebar-active="isActive(child.route)"
+                                    :tooltip-title="child.label"
+                                    :tooltip-description="child.description"
                                 >
                                     <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child)" :stroke-width="2" />
                                     <span class="si-label truncate">{{ child.label }}</span>
-                                    <template #tooltip>{{ child.label }}</template>
                                 </AppNavLink>
                             </div>
                         </template>
@@ -225,10 +226,11 @@ function openSearchFromMobile() {
                             :active="itemIsActive(item)"
                             :active-color="item.activeColor"
                             :sidebar-active="itemIsActive(item)"
+                            :tooltip-title="item.label"
+                            :tooltip-description="item.description"
                         >
                             <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
                             <span class="si-label truncate">{{ item.label }}</span>
-                            <template #tooltip>{{ item.label }}</template>
                         </AppNavLink>
                     </template>
                 </template>
@@ -243,56 +245,45 @@ function openSearchFromMobile() {
                 <ChevronsRight class="w-4 h-4" />
             </button>
 
-            <a
+            <AppNavLink
                 v-if="mailpitUrl"
                 :href="mailpitUrl"
                 target="_blank"
-                rel="noopener"
-                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-amber-400 hover:bg-amber-500/10 transition-colors group relative"
+                hover-color="amber"
+                tooltip-title="Mailpit"
             >
                 <Mail class="w-5 h-5 shrink-0 text-muted group-hover:text-amber-400 transition-colors" :stroke-width="2" />
                 <span class="si-label">Mailpit</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    Mailpit
-                </span>
-            </a>
+            </AppNavLink>
 
-            <button
-                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
+            <AppNavButton
+                :tooltip-title="theme === 'dark' ? t('backend.nav.lightMode') : t('backend.nav.darkMode')"
                 v-on:click="toggleTheme"
             >
                 <Moon v-if="theme !== 'dark'" class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <Sun v-else class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="si-label">{{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}
-                </span>
-            </button>
+            </AppNavButton>
 
-            <a
+            <AppNavLink
                 :href="profilePath"
-                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                :active="isActive('profile')"
+                :tooltip-title="t('backend.nav.profile')"
             >
                 <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="si-label truncate">{{ t("backend.nav.profile") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("backend.nav.profile") }}
-                </span>
-            </a>
+            </AppNavLink>
 
             <form :action="logoutPath" method="POST">
                 <input type="hidden" name="_token" :value="logoutCsrf">
-                <button
+                <AppNavButton
                     type="submit"
-                    class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors w-full group relative"
+                    hover-color="rose"
+                    :tooltip-title="t('backend.nav.logout')"
                 >
                     <LogOut class="w-5 h-5 shrink-0 text-muted group-hover:text-rose-400 transition-colors" :stroke-width="2" />
                     <span class="si-label">{{ t("backend.nav.logout") }}</span>
-                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                        {{ t("backend.nav.logout") }}
-                    </span>
-                </button>
+                </AppNavButton>
             </form>
         </div>
 

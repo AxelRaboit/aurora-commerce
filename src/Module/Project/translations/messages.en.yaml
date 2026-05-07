@@ -1,6 +1,7 @@
 backend:
   nav:
     projects: Projects
+    projects_description: Track projects, tasks and Kanban boards
   audit:
     actions:
       project:
