@@ -14,6 +14,7 @@ import {
     ChevronDown,
     Image as ImageIcon,
     Film,
+    Play,
     FileText,
     Files,
     X,
@@ -298,6 +299,20 @@ function dimensions(item) {
                                         object-fit="cover"
                                         class="w-full h-full"
                                     />
+                                    <template v-else-if="item.isVideo">
+                                        <video
+                                            :src="item.url"
+                                            class="w-full h-full object-cover"
+                                            preload="metadata"
+                                            muted
+                                            playsinline
+                                        />
+                                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <div class="bg-black/50 rounded-full p-2">
+                                                <Play class="w-5 h-5 text-white fill-white" :stroke-width="0" />
+                                            </div>
+                                        </div>
+                                    </template>
                                     <div v-else class="w-full h-full flex flex-col items-center justify-center text-muted gap-2 p-2">
                                         <component :is="typeIcon(item)" class="w-8 h-8" :stroke-width="1.5" />
                                         <span class="text-[10px] font-mono uppercase tracking-wide">{{ item.mimeType?.split("/")?.[1] ?? "" }}</span>
@@ -333,6 +348,13 @@ function dimensions(item) {
                                 :alt="selected.alt ?? selected.originalName ?? ''"
                                 object-fit="contain"
                                 class="w-full h-full"
+                            />
+                            <video
+                                v-else-if="selected.isVideo"
+                                :src="selected.url"
+                                controls
+                                class="w-full h-full object-contain"
+                                preload="metadata"
                             />
                             <component :is="typeIcon(selected)" v-else class="w-12 h-12 text-muted" :stroke-width="1.5" />
                         </div>
