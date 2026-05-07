@@ -10,7 +10,7 @@ set -euo pipefail
 #
 # Examples:
 #   bin/make-frontend Billing
-#   bin/make-frontend Hr --assets-dir assets/client --templates-dir templates/Custom
+#   bin/make-frontend Hr --assets-dir assets/client --templates-dir templates/Module
 # ---------------------------------------------------------------------------
 
 RED='\033[0;31m'
@@ -23,7 +23,7 @@ RESET='\033[0m'
 # ── Argument parsing ────────────────────────────────────────────────────────
 MODULE_NAME=""
 ASSETS_DIR="assets/client"
-TEMPLATES_DIR="templates/Custom"
+TEMPLATES_DIR="templates/Module"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
