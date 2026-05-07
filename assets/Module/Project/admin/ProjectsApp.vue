@@ -387,7 +387,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Create Project modal -->
     <AppModal :show="showProjectModal" v-on:close="showProjectModal = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('backend.projects.add') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="newProject.title"
                 :label="t('backend.projects.fields.title')"
@@ -442,7 +442,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Edit Project modal -->
     <AppModal :show="showEditProjectModal" v-on:close="showEditProjectModal = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('shared.common.edit') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="editProjectForm.title"
                 :label="t('backend.projects.fields.title')"
@@ -492,7 +492,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Create Task modal -->
     <AppModal :show="showCreateTask" v-on:close="showCreateTask = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('backend.projects.task.add') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="newTask.title"
                 :label="t('backend.projects.task.fields.title')"
@@ -534,7 +534,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Edit Task modal -->
     <AppModal :show="showEditTask" v-on:close="showEditTask = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('shared.common.edit') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="editTaskForm.title"
                 :label="t('backend.projects.task.fields.title')"
@@ -593,7 +593,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Create column modal -->
     <AppModal :show="showCreateColumn" max-width="sm" v-on:close="showCreateColumn = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('backend.projects.columns.add') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="newColumn.label"
                 :label="t('backend.projects.task.fields.column')"
@@ -611,7 +611,7 @@ const { userOptions, contactOptions, companyOptions } = useProjectFormOptions(pr
     <!-- Rename column modal -->
     <AppModal :show="showRenameColumn" max-width="sm" v-on:close="showRenameColumn = false">
         <h3 class="text-lg font-semibold text-primary">{{ t('backend.projects.columns.rename') }}</h3>
-        <div class="space-y-4 p-4">
+        <div class="space-y-4">
             <AppInput
                 v-model="renameForm.label"
                 :label="t('backend.projects.task.fields.column')"
