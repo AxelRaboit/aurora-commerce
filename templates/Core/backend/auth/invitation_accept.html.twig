@@ -1,0 +1,18 @@
+{% extends '@Core/backend/base_guest.html.twig' %}
+
+{% block title %}{{ 'backend.auth.invitation.accept_title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block hero %}
+    {{ include('@Shared/components/auth_hero.html.twig') }}
+{% endblock %}
+
+{% block form_icon %}user-plus{% endblock %}
+{% block form_title %}{{ 'backend.auth.invitation.accept_title'|trans }}{% endblock %}
+
+{% block content %}
+    <div {{ vue_component('core/backend/auth/InvitationAcceptApp', {
+        submitPath: path('backend_invitation_accept', {selector: selector, token: token}),
+        userName: user.name,
+        initialErrors: errors,
+    }) }}></div>
+{% endblock %}

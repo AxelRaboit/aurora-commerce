@@ -1,0 +1,85 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Ged\DocumentCategory\Controller\Backend;
+
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Ged\DocumentCategory\Contract\DocumentCategoryManagerInterface;
+use Aurora\Module\Ged\DocumentCategory\DTO\DocumentCategoryInput;
+use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
+use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
+use Aurora\Module\Ged\DocumentCategory\View\DocumentCategoriesViewBuilder;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[Route('/backend/ged/categories', name: 'backend_ged_categories')]
+#[IsGranted('ged.documents.manage')]
+final class DocumentCategoriesController extends AbstractController
+{
+    use JsonRequestTrait;
+    use JsonResponseTrait;
+
+    public function __construct(
+        private readonly DocumentCategorySerializer $serializer,
+        private readonly DocumentCategoryManagerInterface $manager,
+        private readonly PayloadValidator $payloadValidator,
+        private readonly DocumentCategoriesViewBuilder $viewBuilder,
+    ) {}
+
+    #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
+    public function index(PaginationRequest $pagination): Response
+    {
+        return $this->render('@Ged/backend/categories/index.html.twig', $this->viewBuilder->indexView($pagination));
+    }
+
+    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(PaginationRequest $pagination): JsonResponse
+    {
+        return $this->json($this->viewBuilder->buildListPayload($pagination));
+    }
+
+    #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    public function create(Request $request): JsonResponse
+    {
+        $input = DocumentCategoryInput::fromArray($this->decodeJson($request));
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+        }
+
+        $category = $this->manager->create($input);
+
+        return $this->jsonSuccess(['category' => $this->serializer->serialize($category)]);
+    }
+
+    #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    public function update(DocumentCategory $category, Request $request): JsonResponse
+    {
+        $input = DocumentCategoryInput::fromArray($this->decodeJson($request));
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+        }
+
+        $this->manager->update($category, $input);
+
+        return $this->jsonSuccess(['category' => $this->serializer->serialize($category)]);
+    }
+
+    #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    public function delete(DocumentCategory $category): JsonResponse
+    {
+        $this->manager->delete($category);
+
+        return $this->jsonSuccess();
+    }
+}

@@ -1,0 +1,24 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.contacts'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.modules.crm'|trans, href: path('backend_crm_contacts')},
+            {label: 'backend.nav.contacts'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/backend/contacts/ContactsApp', {
+    contacts: contacts,
+    search: search,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    listPath: path('backend_crm_contacts_list'),
+    showPath: path('backend_crm_contacts_show', {id: '__id__'}),
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

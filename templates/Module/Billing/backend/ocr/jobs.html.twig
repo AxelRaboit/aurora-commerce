@@ -1,0 +1,27 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}Jobs OCR - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        title: 'Jobs OCR',
+        crumbs: [
+            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.invoices'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.ocr_import'|trans, href: path('backend_billing_ocr_import')},
+            {label: 'backend.billing.ocr.upload.allJobs'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('billing/backend/ocr/OcrJobsApp', {
+    jobs: jobs,
+    listPath: listPath,
+    statusUrlTemplate: statusUrlTemplate,
+    invoicesPath: invoicesPath,
+    invoiceShowPath: invoiceShowPath,
+    importPath: importPath,
+    statusOptions: statusOptions,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

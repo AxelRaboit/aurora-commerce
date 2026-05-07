@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ siteName }}{% endblock %}</title>
+    {% if siteFaviconUrl %}
+        <link rel="icon" href="{{ siteFaviconUrl }}">
+    {% else %}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    {% endif %}
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap">
+    {{ include('@Shared/components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
+    {% block stylesheets %}
+        {{ vite_entry_link_tags('app') }}
+        {{ vite_entry_link_tags('flash') }}
+    {% endblock %}
+    {# Inject after Vite stylesheets so the runtime --th-accent-* override wins over the defaults baked into app.css. #}
+    {{ include('@Shared/components/primary_color_style.html.twig') }}
+    <script>
+        window.__flash__ = {{ app.flashes|json_encode|raw }};
+        window.__privileges__ = {{ app.user.privileges|json_encode|raw }};
+        window.__isDev__ = {{ is_granted('ROLE_DEV') ? 'true' : 'false' }};
+        window.__isAdmin__ = {{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }};
+    </script>
+    {% block javascripts %}
+        {{ vite_entry_script_tags('app') }}
+        {{ vite_entry_script_tags('flash') }}
+    {% endblock %}
+</head>
+<body class="transition-colors duration-200">
+
+<div class="min-h-screen bg-bg">
+
+    <div {{ vue_component('core/backend/sidebar/AppSidebar', {
+        navSections: sidebar_nav_sections(),
+        userName: app.user.name,
+        userEmail: app.user.email,
+        userPhotoUrl: app.user.profilePhotoUrl ?? '',
+        activeRoute: app.request.attributes.get('_route'),
+        logoutCsrf: csrf_token('logout'),
+        frontPath: path('frontend_root'),
+        profilePath: path('backend_profile'),
+        logoutPath: path('backend_logout'),
+        locale: app.request.locale,
+        mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',
+        siteName: siteName ?? '',
+        siteLogoUrl: siteLogoUrl ?? '',
+        appVersion: appVersion is defined ? appVersion : '',
+        searchPath: path('backend_search'),
+        notificationsListPath: path('backend_notifications_list'),
+        notificationsMarkReadPath: path('backend_notifications_mark_read', {id: '__id__'}),
+        notificationsMarkAllReadPath: path('backend_notifications_mark_all_read'),
+    }) }}></div>
+
+    <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
+
+        {% block page_header_slot %}{% endblock %}
+
+        {% if is_granted('IS_IMPERSONATOR') %}
+            {% embed '@Shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
+                {% block content %}{{ 'backend.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}
+                {% block actions %}
+                    {{ include('@Shared/components/app_link.html.twig', {
+                        href: path('backend_dashboard', {_switch_user: '_exit'}),
+                        variant: 'inherit',
+                        extraClass: 'ml-2 font-medium',
+                        label: 'backend.impersonation.leave'|trans,
+                    }) }}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
+        <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+            {% block body %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

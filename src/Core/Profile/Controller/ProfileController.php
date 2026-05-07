@@ -45,7 +45,7 @@ final class ProfileController extends AbstractController
     #[Route('', name: '')]
     public function index(): Response
     {
-        return $this->render('@Core/admin/profile/index.html.twig', $this->viewBuilder->indexView());
+        return $this->render('@Core/backend/profile/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]

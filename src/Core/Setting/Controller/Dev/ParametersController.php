@@ -39,7 +39,7 @@ final class ParametersController extends AbstractController
             return $this->json($payload);
         }
 
-        return $this->render('@Core/admin/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('/{key}', name: '_update', methods: [HttpMethodEnum::Patch->value])]

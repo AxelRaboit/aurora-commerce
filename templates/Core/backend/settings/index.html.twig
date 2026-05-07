@@ -1,0 +1,20 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.settings'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.settings'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/backend/settings/SettingsApp', {
+    groups: groups,
+    updatePath: path('backend_settings_update'),
+    mediaPickerPath: mediaPickerPath,
+    postSearchPath: postSearchPath,
+}) }}></div>
+{% endblock %}

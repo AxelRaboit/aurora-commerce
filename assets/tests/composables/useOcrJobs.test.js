@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useOcrJobs } from "@billing/admin/ocr/composables/useOcrJobs.js";
+import { useOcrJobs } from "@billing/backend/ocr/composables/useOcrJobs.js";
 
 const STATUS_URL = "/backend/billing/ocr/jobs/__id__/status";
 const RETRY_URL = "/backend/billing/ocr/jobs/__id__/retry";

@@ -11,7 +11,7 @@ vi.mock("vue-sonner", () => ({
 }));
 
 import { toast } from "vue-sonner";
-import { useOrderRefund } from "@ecommerce/admin/orders/composables/useOrderRefund.js";
+import { useOrderRefund } from "@ecommerce/backend/orders/composables/useOrderRefund.js";
 
 const toastMock = toast;
 

@@ -22,31 +22,31 @@ registerControllers(
 );
 
 const coreModules = import.meta.glob([
-    "./Core/admin/**/*.vue",
+    "./Core/backend/**/*.vue",
     "./Core/frontend/**/*.vue",
 ]);
 const editorialModules = import.meta.glob([
-    "./Module/Editorial/admin/**/*.vue",
+    "./Module/Editorial/backend/**/*.vue",
     "./Module/Editorial/frontend/**/*.vue",
 ]);
-const crmModules = import.meta.glob("./Module/Crm/admin/**/*.vue");
-const erpModules = import.meta.glob("./Module/Erp/admin/**/*.vue");
+const crmModules = import.meta.glob("./Module/Crm/backend/**/*.vue");
+const erpModules = import.meta.glob("./Module/Erp/backend/**/*.vue");
 const ecommerceModules = import.meta.glob([
-    "./Module/Ecommerce/admin/**/*.vue",
+    "./Module/Ecommerce/backend/**/*.vue",
     "./Module/Ecommerce/frontend/**/*.vue",
 ]);
 const photoModules = import.meta.glob([
-    "./Module/Photo/admin/**/*.vue",
+    "./Module/Photo/backend/**/*.vue",
     "./Module/Photo/frontend/**/*.vue",
 ]);
-const billingModules = import.meta.glob("./Module/Billing/admin/**/*.vue");
-const gedModules = import.meta.glob("./Module/Ged/admin/**/*.vue");
-const projectModules = import.meta.glob("./Module/Project/admin/**/*.vue");
+const billingModules = import.meta.glob("./Module/Billing/backend/**/*.vue");
+const gedModules = import.meta.glob("./Module/Ged/backend/**/*.vue");
+const projectModules = import.meta.glob("./Module/Project/backend/**/*.vue");
 
 // Optional client extension modules. Resolves via the @client alias which
 // points to AURORA_CLIENT_DIR (or an empty fallback when unset). Components
-// at @client/Module/<Name>/admin/Foo.vue are exposed as ./<name>/admin/Foo.vue
-// so the client can use vue_component('<name>/admin/Foo') in Twig — same
+// at @client/Module/<Name>/backend/Foo.vue are exposed as ./<name>/backend/Foo.vue
+// so the client can use vue_component('<name>/backend/Foo') in Twig — same
 // convention as aurora's first-party modules.
 const clientModules = import.meta.glob("@client/Module/**/*.vue");
 

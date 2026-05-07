@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useTaskExtras } from "@/Module/Project/admin/composables/useTaskExtras.js";
+import { useTaskExtras } from "@/Module/Project/backend/composables/useTaskExtras.js";
 
 const PATHS = {
     commentCreate: "/backend/projects/tasks/__taskId__/comments",
