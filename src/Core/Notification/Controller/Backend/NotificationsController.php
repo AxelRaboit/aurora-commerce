@@ -6,7 +6,7 @@ namespace Aurora\Core\Notification\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Notification\Entity\Notification;
+use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Notification\Manager\NotificationManager;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Notification\Serializer\NotificationSerializer;
@@ -43,7 +43,7 @@ final class NotificationsController extends AbstractController
     }
 
     #[Route('/{id}/read', name: '_mark_read', methods: [HttpMethodEnum::Post->value])]
-    public function markRead(#[MapEntity(id: 'id')] Notification $notification): JsonResponse
+    public function markRead(#[MapEntity(id: 'id')] NotificationInterface $notification): JsonResponse
     {
         $user = $this->requireUser();
         if ($notification->getRecipient()->getId() !== $user->getId()) {
@@ -65,7 +65,7 @@ final class NotificationsController extends AbstractController
     }
 
     #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
-    public function delete(#[MapEntity(id: 'id')] Notification $notification): JsonResponse
+    public function delete(#[MapEntity(id: 'id')] NotificationInterface $notification): JsonResponse
     {
         $user = $this->requireUser();
         if ($notification->getRecipient()->getId() !== $user->getId()) {

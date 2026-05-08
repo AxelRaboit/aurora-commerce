@@ -6,6 +6,7 @@ namespace Aurora\Core\Setting\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Setting\Entity\Setting;
+use Aurora\Core\Setting\Entity\SettingInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
@@ -64,7 +65,7 @@ class SettingRepository extends ServiceEntityRepository
         foreach ($entries as [$key, $value]) {
             $setting = $this->find($key);
 
-            if (!$setting instanceof Setting) {
+            if (!$setting instanceof SettingInterface) {
                 $setting = new Setting($key, $value);
                 $this->getEntityManager()->persist($setting);
             } else {

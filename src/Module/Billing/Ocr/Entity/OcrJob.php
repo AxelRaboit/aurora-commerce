@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
@@ -31,9 +31,9 @@ class OcrJob
     #[ORM\Column(length: 32, unique: true, nullable: true)]
     private ?string $reference = null;
 
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Media $media;
+    private MediaInterface $media;
 
     #[ORM\Column(length: 32, enumType: OcrJobStatusEnum::class, options: ['default' => 'queued'])]
     private OcrJobStatusEnum $status = OcrJobStatusEnum::Queued;
@@ -88,12 +88,12 @@ class OcrJob
         return $this;
     }
 
-    public function getMedia(): Media
+    public function getMedia(): MediaInterface
     {
         return $this->media;
     }
 
-    public function setMedia(Media $media): self
+    public function setMedia(MediaInterface $media): self
     {
         $this->media = $media;
 

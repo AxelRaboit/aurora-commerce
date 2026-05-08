@@ -194,6 +194,76 @@ php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
 ```
 
+### 6.bis Substituer une entité Core (ResolveTargetEntity)
+
+Pour ajouter des propriétés à une entité Core (ex: `Deal`), Aurora utilise le
+pattern **ResolveTargetEntity** de Doctrine. Chaque entité Core extensible
+expose :
+
+- `Aurora\Module\.../Entity/<Name>Interface` — le contrat public (getters/setters)
+- `Aurora\Module\.../Entity/Abstract<Name>` — `MappedSuperclass` Doctrine avec le mapping
+- `Aurora\Module\.../Entity/<Name>` — l'entité concrète, non-final
+
+Pour étendre `Deal` côté client, deux approches au choix :
+
+**A. Hériter de la classe concrète** (pattern le plus simple)
+
+```php
+// src/Custom/Entity/Deal.php
+namespace App\Custom\Entity;
+
+use Aurora\Module\Crm\Deal\Entity\Deal as AuroraDeal;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+class Deal extends AuroraDeal
+{
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $customField = null;
+
+    public function getCustomField(): ?string { return $this->customField; }
+    public function setCustomField(?string $value): static { $this->customField = $value; return $this; }
+}
+```
+
+**B. Implémenter directement le contrat** (pattern Sylius — table dédiée client)
+
+```php
+// src/Custom/Entity/Deal.php
+namespace App\Custom\Entity;
+
+use Aurora\Module\Crm\Deal\Entity\AbstractDeal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'client_deals')]
+class Deal extends AbstractDeal implements DealInterface
+{
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    protected ?int $id = null;
+    // + propriétés client
+}
+```
+
+**Substitution** — déclarer dans `config/packages-custom.yaml` :
+
+```yaml
+doctrine:
+    orm:
+        resolve_target_entities:
+            Aurora\Module\Crm\Deal\Entity\DealInterface: App\Custom\Entity\Deal
+```
+
+À partir de là, toutes les associations Aurora qui pointent `DealInterface`
+(ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Custom\Entity\Deal`.
+Les controllers, Manager, Serializer, ViewBuilder Aurora type-hint
+`DealInterface` et fonctionnent sans modification avec votre entité.
+
+**Manager / création** — `DealManager::create()` instancie `new Deal()`
+(la classe Aurora). Pour qu'il instancie votre `App\Custom\Entity\Deal`,
+décorez `DealManagerInterface` (cf. section 2).
+
 ### 7. Bundle configuration
 
 Any Symfony bundle configuration (Twig globals, rate limiter rules…) goes in

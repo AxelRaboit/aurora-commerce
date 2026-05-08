@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
@@ -48,9 +48,9 @@ class Product
     #[ORM\Column(length: 16, enumType: ProductTypeEnum::class, options: ['default' => 'physical'])]
     private ProductTypeEnum $type = ProductTypeEnum::Physical;
 
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Media $image = null;
+    private ?MediaInterface $image = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $stockQuantity = null;
@@ -60,12 +60,12 @@ class Product
         return $this->id;
     }
 
-    public function getImage(): ?Media
+    public function getImage(): ?MediaInterface
     {
         return $this->image;
     }
 
-    public function setImage(?Media $image): static
+    public function setImage(?MediaInterface $image): static
     {
         $this->image = $image;
 

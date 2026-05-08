@@ -11,7 +11,7 @@ use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
 use Aurora\Module\Crm\Deal\DTO\DealInput;
-use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
 use Aurora\Module\Crm\Deal\View\DealsViewBuilder;
@@ -70,7 +70,7 @@ final class DealsController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    public function update(Deal $deal, Request $request): JsonResponse
+    public function update(DealInterface $deal, Request $request): JsonResponse
     {
         $input = DealInput::fromArray($this->decodeJson($request));
 
@@ -85,7 +85,7 @@ final class DealsController extends AbstractController
     }
 
     #[Route('/{id}/stage', name: '_stage', methods: [HttpMethodEnum::Patch->value])]
-    public function updateStage(Deal $deal, Request $request): JsonResponse
+    public function updateStage(DealInterface $deal, Request $request): JsonResponse
     {
         $stage = DealStageEnum::tryFrom($this->decodeJson($request)['stage'] ?? '');
         if (null === $stage) {
@@ -98,7 +98,7 @@ final class DealsController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    public function delete(Deal $deal): JsonResponse
+    public function delete(DealInterface $deal): JsonResponse
     {
         $this->dealManager->delete($deal);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Erp\Product\Entity\Product;
@@ -41,9 +41,9 @@ class Listing
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $marketingDescription = null;
 
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Media $featuredImage = null;
+    private ?MediaInterface $featuredImage = null;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $isVisibleOnShop = true;
@@ -112,12 +112,12 @@ class Listing
         return $this;
     }
 
-    public function getFeaturedImage(): ?Media
+    public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
     }
 
-    public function setFeaturedImage(?Media $featuredImage): static
+    public function setFeaturedImage(?MediaInterface $featuredImage): static
     {
         $this->featuredImage = $featuredImage;
 

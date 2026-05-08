@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\View;
 
-use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -22,7 +22,7 @@ final readonly class DealDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Deal $deal): array
+    public function showView(DealInterface $deal): array
     {
         return [
             'deal' => $this->dealSerializer->serialize($deal),

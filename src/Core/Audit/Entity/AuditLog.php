@@ -5,106 +5,20 @@ declare(strict_types=1);
 namespace Aurora\Core\Audit\Entity;
 
 use Aurora\Core\Audit\Repository\AuditLogRepository;
-use DateTimeImmutable;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 #[ORM\Table(name: 'core_audit_logs')]
-class AuditLog
+class AuditLog extends AbstractAuditLog
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\SequenceGenerator(sequenceName: 'seq_audit_log_id', allocationSize: 1)]
     #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 32, unique: true, nullable: true)]
-    private ?string $reference = null;
-
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $createdAt;
-
-    public function __construct(
-        #[ORM\Column(length: 30)]
-        private string $module,
-        #[ORM\Column(length: 100)]
-        private string $action,
-        #[ORM\Column(length: 100, nullable: true)]
-        private ?string $entityType = null,
-        #[ORM\Column(nullable: true)]
-        private ?int $entityId = null,
-        #[ORM\Column(nullable: true)]
-        private ?int $userId = null,
-        #[ORM\Column(length: 180, nullable: true)]
-        private ?string $userEmail = null,
-        #[ORM\Column(length: 180, nullable: true)]
-        private ?string $userName = null,
-        #[ORM\Column(type: Types::JSON, nullable: true)]
-        private ?array $data = null,
-    ) {
-        $this->createdAt = new DateTimeImmutable();
-    }
+    protected ?int $id = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getReference(): ?string
-    {
-        return $this->reference;
-    }
-
-    public function setReference(?string $reference): static
-    {
-        $this->reference = $reference;
-
-        return $this;
-    }
-
-    public function getModule(): string
-    {
-        return $this->module;
-    }
-
-    public function getAction(): string
-    {
-        return $this->action;
-    }
-
-    public function getEntityType(): ?string
-    {
-        return $this->entityType;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function getUserEmail(): ?string
-    {
-        return $this->userEmail;
-    }
-
-    public function getUserName(): ?string
-    {
-        return $this->userName;
-    }
-
-    public function getData(): ?array
-    {
-        return $this->data;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 }

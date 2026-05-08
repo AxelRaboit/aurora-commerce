@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
@@ -87,7 +87,7 @@ class ProjectTask
     private Collection $comments;
 
     /** @var Collection<int, Media> */
-    #[ORM\ManyToMany(targetEntity: Media::class)]
+    #[ORM\ManyToMany(targetEntity: MediaInterface::class)]
     #[ORM\JoinTable(name: 'core_project_task_attachments')]
     #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -297,7 +297,7 @@ class ProjectTask
         return $this->attachments;
     }
 
-    public function addAttachment(Media $media): static
+    public function addAttachment(MediaInterface $media): static
     {
         if (!$this->attachments->contains($media)) {
             $this->attachments->add($media);
@@ -306,7 +306,7 @@ class ProjectTask
         return $this;
     }
 
-    public function removeAttachment(Media $media): static
+    public function removeAttachment(MediaInterface $media): static
     {
         $this->attachments->removeElement($media);
 

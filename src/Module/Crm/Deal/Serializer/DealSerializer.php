@@ -6,12 +6,12 @@ namespace Aurora\Module\Crm\Deal\Serializer;
 
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use DateTimeInterface;
 
 final readonly class DealSerializer
 {
-    public function serialize(Deal $deal): array
+    public function serialize(DealInterface $deal): array
     {
         return [
             'id' => $deal->getId(),

@@ -14,6 +14,7 @@ use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
 use Aurora\Module\Crm\Deal\DTO\DealInput;
 use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use DateTimeImmutable;
@@ -33,7 +34,7 @@ final readonly class DealManager implements DealManagerInterface
         private SettingRepository $settingRepository,
     ) {}
 
-    public function create(DealInput $input): Deal
+    public function create(DealInput $input): DealInterface
     {
         $deal = new Deal();
         $this->applyInput($deal, $input);
@@ -47,7 +48,7 @@ final readonly class DealManager implements DealManagerInterface
         return $deal;
     }
 
-    public function update(Deal $deal, DealInput $input): void
+    public function update(DealInterface $deal, DealInput $input): void
     {
         $this->applyInput($deal, $input);
         $this->entityManager->flush();
@@ -55,7 +56,7 @@ final readonly class DealManager implements DealManagerInterface
         $this->auditLogger->log('crm', 'deal.updated', 'Deal', $deal->getId(), ['name' => $deal->getName()]);
     }
 
-    public function changeStage(Deal $deal, DealStageEnum $stage): void
+    public function changeStage(DealInterface $deal, DealStageEnum $stage): void
     {
         $oldStage = $deal->getStage()->value;
         $deal->setStage($stage);
@@ -70,7 +71,7 @@ final readonly class DealManager implements DealManagerInterface
         $this->notificationService->notifyDealStageChanged($deal, $stage);
     }
 
-    public function delete(Deal $deal): void
+    public function delete(DealInterface $deal): void
     {
         $name = $deal->getName();
         $id = $deal->getId();
@@ -81,7 +82,7 @@ final readonly class DealManager implements DealManagerInterface
         $this->auditLogger->log('crm', 'deal.deleted', 'Deal', $id, ['name' => $name]);
     }
 
-    private function applyInput(Deal $deal, DealInput $input): void
+    private function applyInput(DealInterface $deal, DealInput $input): void
     {
         $deal->setName($input->name);
         $deal->setStage($input->stage);

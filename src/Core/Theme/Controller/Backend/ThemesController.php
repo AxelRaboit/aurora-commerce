@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Theme\DTO\ThemeInput;
-use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Manager\ThemeManager;
 use Aurora\Core\Theme\Serializer\ThemeSerializer;
 use Aurora\Core\Theme\View\ThemesViewBuilder;
@@ -63,7 +63,7 @@ final class ThemesController extends AbstractController
     }
 
     #[Route('/{id}/activate', name: '_activate', methods: [HttpMethodEnum::Post->value])]
-    public function activate(Theme $theme): JsonResponse
+    public function activate(ThemeInterface $theme): JsonResponse
     {
         $this->themeManager->activate($theme);
 
@@ -71,7 +71,7 @@ final class ThemesController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    public function update(Theme $theme, Request $request): JsonResponse
+    public function update(ThemeInterface $theme, Request $request): JsonResponse
     {
         $input = ThemeInput::fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
         $errors = $this->payloadValidator->errors($input);
@@ -85,7 +85,7 @@ final class ThemesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    public function delete(Theme $theme): JsonResponse
+    public function delete(ThemeInterface $theme): JsonResponse
     {
         try {
             $this->themeManager->delete($theme);

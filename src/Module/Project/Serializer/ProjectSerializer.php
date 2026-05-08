@@ -6,7 +6,7 @@ namespace Aurora\Module\Project\Serializer;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectLabel;
 use Aurora\Module\Project\Repository\ProjectLabelRepository;
@@ -53,7 +53,7 @@ final readonly class ProjectSerializer
                 'id' => $project->getCrmCompany()->getId(),
                 'name' => $project->getCrmCompany()->getName(),
             ] : null,
-            'crmDeal' => $project->getCrmDeal() instanceof Deal ? [
+            'crmDeal' => $project->getCrmDeal() instanceof DealInterface ? [
                 'id' => $project->getCrmDeal()->getId(),
                 'name' => $project->getCrmDeal()->getName(),
             ] : null,

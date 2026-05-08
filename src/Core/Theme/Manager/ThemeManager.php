@@ -7,6 +7,7 @@ namespace Aurora\Core\Theme\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Theme\DTO\ThemeInput;
 use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -24,9 +25,9 @@ final readonly class ThemeManager
         private AuditLogger $auditLogger,
     ) {}
 
-    public function create(ThemeInput $input): Theme
+    public function create(ThemeInput $input): ThemeInterface
     {
-        if ($this->themeRepository->findBySlug($input->slug) instanceof Theme) {
+        if ($this->themeRepository->findBySlug($input->slug) instanceof ThemeInterface) {
             throw new InvalidArgumentException(sprintf('slug|%s', 'themes.errors.slug_taken'));
         }
 
@@ -45,7 +46,7 @@ final readonly class ThemeManager
         return $theme;
     }
 
-    public function update(Theme $theme, ThemeInput $input): void
+    public function update(ThemeInterface $theme, ThemeInput $input): void
     {
         $theme->setName($input->name);
         $theme->setDescription($input->description);
@@ -56,7 +57,7 @@ final readonly class ThemeManager
         $this->auditLogger->log('core', 'theme.updated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
     }
 
-    public function activate(Theme $theme): void
+    public function activate(ThemeInterface $theme): void
     {
         $this->entityManager->createQuery('UPDATE '.Theme::class.' t SET t.active = false')->execute();
         $theme->setActive(true);
@@ -65,7 +66,7 @@ final readonly class ThemeManager
         $this->auditLogger->log('core', 'theme.activated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
     }
 
-    public function delete(Theme $theme): void
+    public function delete(ThemeInterface $theme): void
     {
         if ('default' === $theme->getSlug()) {
             throw new RuntimeException('themes.errors.cannot_delete_default');

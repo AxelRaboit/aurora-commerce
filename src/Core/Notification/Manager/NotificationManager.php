@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Notification\Manager;
 
 use Aurora\Core\Notification\Entity\Notification;
+use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
@@ -31,7 +32,7 @@ final readonly class NotificationManager
         ?string $body = null,
         ?string $url = null,
         array $data = [],
-    ): Notification {
+    ): NotificationInterface {
         $notification = new Notification();
         $notification->setRecipient($recipient)
             ->setType($type)
@@ -45,7 +46,7 @@ final readonly class NotificationManager
         return $notification;
     }
 
-    public function markRead(Notification $notification): void
+    public function markRead(NotificationInterface $notification): void
     {
         if (!$notification->getReadAt() instanceof DateTimeImmutable) {
             $notification->markAsRead();
@@ -58,7 +59,7 @@ final readonly class NotificationManager
         return $this->notificationRepository->markAllReadForUser($user);
     }
 
-    public function delete(Notification $notification): void
+    public function delete(NotificationInterface $notification): void
     {
         $this->entityManager->remove($notification);
         $this->entityManager->flush();

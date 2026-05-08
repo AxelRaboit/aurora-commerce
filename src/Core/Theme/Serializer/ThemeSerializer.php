@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Serializer;
 
-use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Manager\ThemeManager;
 
 final readonly class ThemeSerializer
@@ -12,7 +12,7 @@ final readonly class ThemeSerializer
     public function __construct(private ThemeManager $themeManager) {}
 
     /** @return array<string, mixed> */
-    public function serialize(Theme $theme): array
+    public function serialize(ThemeInterface $theme): array
     {
         return [
             'id' => $theme->getId(),

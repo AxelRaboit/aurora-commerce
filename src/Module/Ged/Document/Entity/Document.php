@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
@@ -42,9 +42,9 @@ class Document
     private ?DocumentCategory $category = null;
 
     /** Physical file stored via Core/Media. */
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Media $file = null;
+    private ?MediaInterface $file = null;
 
     public function getId(): ?int
     {
@@ -111,12 +111,12 @@ class Document
         return $this;
     }
 
-    public function getFile(): ?Media
+    public function getFile(): ?MediaInterface
     {
         return $this->file;
     }
 
-    public function setFile(?Media $file): static
+    public function setFile(?MediaInterface $file): static
     {
         $this->file = $file;
 

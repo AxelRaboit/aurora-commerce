@@ -6,6 +6,7 @@ namespace Aurora\Core\Agency\Manager;
 
 use Aurora\Core\Agency\DTO\AgencyInput;
 use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,7 +17,7 @@ final readonly class AgencyManager
         private AuditLogger $auditLogger,
     ) {}
 
-    public function create(AgencyInput $input): Agency
+    public function create(AgencyInput $input): AgencyInterface
     {
         $agency = new Agency()->setName($input->name);
 
@@ -28,7 +29,7 @@ final readonly class AgencyManager
         return $agency;
     }
 
-    public function update(Agency $agency, AgencyInput $input): void
+    public function update(AgencyInterface $agency, AgencyInput $input): void
     {
         $agency->setName($input->name);
         $this->entityManager->flush();
@@ -36,7 +37,7 @@ final readonly class AgencyManager
         $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
     }
 
-    public function delete(Agency $agency): void
+    public function delete(AgencyInterface $agency): void
     {
         $this->auditLogger->log('core', 'agency.deleted', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
 

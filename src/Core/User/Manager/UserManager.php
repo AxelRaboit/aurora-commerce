@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Manager;
 
-use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\InvitationManager;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -205,8 +205,8 @@ final readonly class UserManager implements UserManagerInterface
         $agency = null !== $agencyId ? $this->agencyRepository->find($agencyId) : null;
         $service = null !== $serviceId ? $this->serviceRepository->find($serviceId) : null;
 
-        $user->setAgency($agency instanceof Agency ? $agency : null);
-        $user->setService($service instanceof Service ? $service : null);
+        $user->setAgency($agency instanceof AgencyInterface ? $agency : null);
+        $user->setService($service instanceof ServiceInterface ? $service : null);
 
         $this->entityManager->flush();
     }

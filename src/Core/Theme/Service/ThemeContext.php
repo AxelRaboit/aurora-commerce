@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Theme\Service;
 
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Repository\ThemeRepository;
 
 final class ThemeContext
@@ -13,7 +13,7 @@ final class ThemeContext
     /** Default primary colour seed when the active theme has none configured. */
     public const string DEFAULT_PRIMARY_COLOR = '#6366f1';
 
-    private ?Theme $cachedTheme = null;
+    private ?ThemeInterface $cachedTheme = null;
 
     private bool $resolved = false;
 
@@ -23,7 +23,7 @@ final class ThemeContext
         private readonly PrimaryColorPalette $primaryColorPalette,
     ) {}
 
-    public function activeTheme(): ?Theme
+    public function activeTheme(): ?ThemeInterface
     {
         if (!$this->resolved) {
             $this->cachedTheme = $this->themeRepository->findActive();

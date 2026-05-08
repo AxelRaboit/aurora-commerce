@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Service\DTO\ServiceInput;
-use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Manager\ServiceManager;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Service\Serializer\ServiceSerializer;
@@ -46,7 +46,7 @@ final class ServicesController extends AbstractController
     public function selectable(): JsonResponse
     {
         $items = array_map(
-            static fn (Service $service): array => ['value' => (string) $service->getId(), 'label' => $service->getName()],
+            static fn (ServiceInterface $service): array => ['value' => (string) $service->getId(), 'label' => $service->getName()],
             $this->serviceRepository->findAllAlphabetical(),
         );
 
@@ -68,7 +68,7 @@ final class ServicesController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    public function update(Service $service, Request $request): JsonResponse
+    public function update(ServiceInterface $service, Request $request): JsonResponse
     {
         $input = ServiceInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
@@ -82,7 +82,7 @@ final class ServicesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    public function delete(Service $service): JsonResponse
+    public function delete(ServiceInterface $service): JsonResponse
     {
         $this->serviceManager->delete($service);
 

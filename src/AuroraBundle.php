@@ -28,6 +28,23 @@ class AuroraBundle extends AbstractBundle
                     PostgreSQLPlatform::class => 'identity',
                 ],
                 'auto_mapping' => false,
+                'resolve_target_entities' => [
+                    'Aurora\Core\Agency\Entity\AgencyInterface' => 'Aurora\Core\Agency\Entity\Agency',
+                    'Aurora\Core\Audit\Entity\AuditLogInterface' => 'Aurora\Core\Audit\Entity\AuditLog',
+                    'Aurora\Core\Auth\Entity\AccessRequestInterface' => 'Aurora\Core\Auth\Entity\AccessRequest',
+                    'Aurora\Core\Auth\Entity\ResetPasswordRequestInterface' => 'Aurora\Core\Auth\Entity\ResetPasswordRequest',
+                    'Aurora\Core\Locale\Entity\LocaleInterface' => 'Aurora\Core\Locale\Entity\Locale',
+                    'Aurora\Core\Media\Entity\MediaInterface' => 'Aurora\Core\Media\Entity\Media',
+                    'Aurora\Core\Media\Entity\MediaFolderInterface' => 'Aurora\Core\Media\Entity\MediaFolder',
+                    'Aurora\Core\Menu\Entity\MenuInterface' => 'Aurora\Core\Menu\Entity\Menu',
+                    'Aurora\Core\Menu\Entity\MenuItemInterface' => 'Aurora\Core\Menu\Entity\MenuItem',
+                    'Aurora\Core\Menu\Entity\MenuItemTranslationInterface' => 'Aurora\Core\Menu\Entity\MenuItemTranslation',
+                    'Aurora\Core\Notification\Entity\NotificationInterface' => 'Aurora\Core\Notification\Entity\Notification',
+                    'Aurora\Core\Service\Entity\ServiceInterface' => 'Aurora\Core\Service\Entity\Service',
+                    'Aurora\Core\Setting\Entity\SettingInterface' => 'Aurora\Core\Setting\Entity\Setting',
+                    'Aurora\Core\Theme\Entity\ThemeInterface' => 'Aurora\Core\Theme\Entity\Theme',
+                    'Aurora\Module\Crm\Deal\Entity\DealInterface' => 'Aurora\Module\Crm\Deal\Entity\Deal',
+                ],
                 'mappings' => [
                     'AuroraCore' => [
                         'type' => 'attribute',

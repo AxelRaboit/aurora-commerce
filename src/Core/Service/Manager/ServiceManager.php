@@ -7,6 +7,7 @@ namespace Aurora\Core\Service\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Service\DTO\ServiceInput;
 use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Entity\ServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class ServiceManager
@@ -16,7 +17,7 @@ final readonly class ServiceManager
         private AuditLogger $auditLogger,
     ) {}
 
-    public function create(ServiceInput $input): Service
+    public function create(ServiceInput $input): ServiceInterface
     {
         $service = new Service()->setName($input->name);
 
@@ -28,7 +29,7 @@ final readonly class ServiceManager
         return $service;
     }
 
-    public function update(Service $service, ServiceInput $input): void
+    public function update(ServiceInterface $service, ServiceInput $input): void
     {
         $service->setName($input->name);
         $this->entityManager->flush();
@@ -36,7 +37,7 @@ final readonly class ServiceManager
         $this->auditLogger->log('core', 'service.updated', 'Service', $service->getId(), ['name' => $service->getName()]);
     }
 
-    public function delete(Service $service): void
+    public function delete(ServiceInterface $service): void
     {
         $this->auditLogger->log('core', 'service.deleted', 'Service', $service->getId(), ['name' => $service->getName()]);
 

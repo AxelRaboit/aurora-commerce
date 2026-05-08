@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Entity;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
@@ -126,9 +126,9 @@ class Invoice
     private ?self $cancelledInvoice = null;
 
     /** Original document (PDF/image) — owned by Core/Media. */
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Media $document = null;
+    private ?MediaInterface $document = null;
 
     /** Traceability link to the OCR job that produced this draft. */
     #[ORM\ManyToOne(targetEntity: OcrJob::class)]
@@ -502,12 +502,12 @@ class Invoice
         return $this;
     }
 
-    public function getDocument(): ?Media
+    public function getDocument(): ?MediaInterface
     {
         return $this->document;
     }
 
-    public function setDocument(?Media $document): self
+    public function setDocument(?MediaInterface $document): self
     {
         $this->document = $document;
 

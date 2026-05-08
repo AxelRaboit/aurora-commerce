@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Service;
 
-use Aurora\Core\Locale\Entity\Locale;
+use Aurora\Core\Locale\Entity\LocaleInterface;
 use Aurora\Core\Locale\Repository\LocaleRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -15,17 +15,17 @@ use Doctrine\Common\Collections\Order;
  */
 final class FrontContext
 {
-    /** @var list<Locale>|null */
+    /** @var list<LocaleInterface>|null */
     private ?array $cachedLocales = null;
 
-    private ?Locale $cachedDefault = null;
+    private ?LocaleInterface $cachedDefault = null;
 
     public function __construct(
         private readonly LocaleRepository $localeRepository,
         private readonly SettingRepository $settingRepository,
     ) {}
 
-    /** @return list<Locale> */
+    /** @return list<LocaleInterface> */
     public function activeLocales(): array
     {
         if (null === $this->cachedLocales) {
@@ -41,12 +41,12 @@ final class FrontContext
     /** @return list<string> */
     public function activeLocaleCodes(): array
     {
-        return array_map(static fn (Locale $locale): string => $locale->getCode(), $this->activeLocales());
+        return array_map(static fn (LocaleInterface $locale): string => $locale->getCode(), $this->activeLocales());
     }
 
     public function defaultLocale(): string
     {
-        if (!$this->cachedDefault instanceof Locale) {
+        if (!$this->cachedDefault instanceof LocaleInterface) {
             foreach ($this->activeLocales() as $locale) {
                 if ($locale->isDefault()) {
                     $this->cachedDefault = $locale;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Agency\Controller\Backend;
 
 use Aurora\Core\Agency\DTO\AgencyInput;
-use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Manager\AgencyManager;
 use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Agency\Serializer\AgencySerializer;
@@ -46,7 +46,7 @@ final class AgenciesController extends AbstractController
     public function selectable(): JsonResponse
     {
         $items = array_map(
-            static fn (Agency $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
+            static fn (AgencyInterface $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
             $this->agencyRepository->findAllAlphabetical(),
         );
 
@@ -68,7 +68,7 @@ final class AgenciesController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    public function update(Agency $agency, Request $request): JsonResponse
+    public function update(AgencyInterface $agency, Request $request): JsonResponse
     {
         $input = AgencyInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
@@ -82,7 +82,7 @@ final class AgenciesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    public function delete(Agency $agency): JsonResponse
+    public function delete(AgencyInterface $agency): JsonResponse
     {
         $this->agencyManager->delete($agency);
 

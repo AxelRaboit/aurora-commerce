@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Notification\Serializer;
 
-use Aurora\Core\Notification\Entity\Notification;
+use Aurora\Core\Notification\Entity\NotificationInterface;
 use DateTimeInterface;
 
 final readonly class NotificationSerializer
 {
     /** @return array<string, mixed> */
-    public function serialize(Notification $notification): array
+    public function serialize(NotificationInterface $notification): array
     {
         return [
             'id' => $notification->getId(),

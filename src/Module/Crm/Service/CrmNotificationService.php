@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Service;
 
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 
 final readonly class CrmNotificationService
@@ -22,7 +22,7 @@ final readonly class CrmNotificationService
         );
     }
 
-    public function notifyDealStageChanged(Deal $deal, DealStageEnum $newStage): void
+    public function notifyDealStageChanged(DealInterface $deal, DealStageEnum $newStage): void
     {
         if (DealStageEnum::Won !== $newStage && DealStageEnum::Lost !== $newStage) {
             return;

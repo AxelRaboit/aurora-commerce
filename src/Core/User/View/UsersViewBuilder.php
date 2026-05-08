@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\View;
 
-use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Module\PermissionRegistry;
-use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -76,12 +76,12 @@ final readonly class UsersViewBuilder
         }
 
         $agencies = array_map(
-            static fn (Agency $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
+            static fn (AgencyInterface $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
             $this->agencyRepository->findAllAlphabetical(),
         );
 
         $services = array_map(
-            static fn (Service $service): array => ['value' => (string) $service->getId(), 'label' => $service->getName()],
+            static fn (ServiceInterface $service): array => ['value' => (string) $service->getId(), 'label' => $service->getName()],
             $this->serviceRepository->findAllAlphabetical(),
         );
 
