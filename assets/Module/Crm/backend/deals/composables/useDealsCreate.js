@@ -6,7 +6,17 @@ import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
-export function emptyDealForm() {
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial value (used by openCreate / emptyDealForm).
+ * @property {(deal: object) => *} [fromDeal] - Reads the field from an existing deal (used by openEdit).
+ */
+
+/**
+ * @param {Record<string, ExtraField>} extraFields
+ * @returns {Object} Empty form initialised with Aurora defaults + extra defaults.
+ */
+export function emptyDealForm(extraFields = {}) {
     return {
         name: "",
         stage: "lead",
@@ -15,6 +25,9 @@ export function emptyDealForm() {
         companyId: "",
         closingDate: "",
         notes: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
     };
 }
 
@@ -23,11 +36,13 @@ export function useDealsCreate(
     reset,
     kanbanColumnsLoaded,
     ensureKanbanColumns,
+    options = {},
 ) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
 
     const showCreate = ref(false);
-    const newDeal = ref(emptyDealForm());
+    const newDeal = ref(emptyDealForm(extraFields));
     const {
         errors: createErrors,
         validate,
@@ -37,7 +52,7 @@ export function useDealsCreate(
     const { loading: createLoading, request } = useApiRequest();
 
     function openCreate() {
-        newDeal.value = emptyDealForm();
+        newDeal.value = emptyDealForm(extraFields);
         clearErrors();
         showCreate.value = true;
     }

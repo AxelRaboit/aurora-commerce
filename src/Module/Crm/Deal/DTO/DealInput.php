@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\DTO;
 
-use Aurora\Core\Support\Str;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class DealInput
+readonly class DealInput implements DealInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'crm.deals.errors.name_required')]
@@ -25,21 +24,38 @@ final readonly class DealInput
         public ?string $notes = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getName(): string
     {
-        $stage = DealStageEnum::Lead;
-        if (isset($data['stage']) && '' !== $data['stage']) {
-            $stage = DealStageEnum::tryFrom($data['stage']) ?? DealStageEnum::Lead;
-        }
+        return $this->name;
+    }
 
-        return new self(
-            name: Str::trimFromArray($data, 'name'),
-            stage: $stage,
-            value: Str::trimOrNullFromArray($data, 'value'),
-            contactId: isset($data['contactId']) && '' !== (string) $data['contactId'] ? (int) $data['contactId'] : null,
-            companyId: isset($data['companyId']) && '' !== (string) $data['companyId'] ? (int) $data['companyId'] : null,
-            closingDate: Str::trimOrNullFromArray($data, 'closingDate'),
-            notes: Str::trimOrNullFromArray($data, 'notes'),
-        );
+    public function getStage(): DealStageEnum
+    {
+        return $this->stage;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function getContactId(): ?int
+    {
+        return $this->contactId;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->companyId;
+    }
+
+    public function getClosingDate(): ?string
+    {
+        return $this->closingDate;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
     }
 }

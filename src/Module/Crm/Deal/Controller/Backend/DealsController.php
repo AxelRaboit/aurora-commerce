@@ -9,11 +9,11 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
-use Aurora\Module\Crm\Deal\DTO\DealInput;
+use Aurora\Module\Crm\Deal\DTO\DealInputFactoryInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
-use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Module\Crm\Deal\Manager\DealManagerInterface;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializerInterface;
 use Aurora\Module\Crm\Deal\View\DealsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,16 +24,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/crm/deals', name: 'backend_crm_deals')]
 #[IsGranted('crm.deals.manage')]
-final class DealsController extends AbstractController
+class DealsController extends AbstractController
 {
     use JsonRequestTrait;
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly DealSerializer $dealSerializer,
-        private readonly DealManagerInterface $dealManager,
-        private readonly PayloadValidator $payloadValidator,
-        private readonly DealsViewBuilder $viewBuilder,
+        protected readonly DealSerializerInterface $dealSerializer,
+        protected readonly DealManagerInterface $dealManager,
+        protected readonly DealInputFactoryInterface $dealInputFactory,
+        protected readonly PayloadValidator $payloadValidator,
+        protected readonly DealsViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -57,7 +58,7 @@ final class DealsController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = DealInput::fromArray($this->decodeJson($request));
+        $input = $this->dealInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -72,7 +73,7 @@ final class DealsController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(DealInterface $deal, Request $request): JsonResponse
     {
-        $input = DealInput::fromArray($this->decodeJson($request));
+        $input = $this->dealInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

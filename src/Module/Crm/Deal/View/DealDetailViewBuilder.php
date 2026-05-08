@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Deal\View;
 
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
-use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Builds the Twig payload for the admin deal detail view. Centralises URL
  * generation + serialisation for the show screen.
  */
-final readonly class DealDetailViewBuilder
+class DealDetailViewBuilder
 {
     public function __construct(
-        private DealSerializer $dealSerializer,
-        private UrlGeneratorInterface $urlGenerator,
+        protected readonly DealSerializerInterface $dealSerializer,
+        protected readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     /**

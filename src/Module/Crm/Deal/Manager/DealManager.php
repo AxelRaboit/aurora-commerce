@@ -11,8 +11,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Deal\Contract\DealManagerInterface;
-use Aurora\Module\Crm\Deal\DTO\DealInput;
+use Aurora\Module\Crm\Deal\DTO\DealInputInterface;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
@@ -22,21 +21,21 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(DealManagerInterface::class)]
-final readonly class DealManager implements DealManagerInterface
+class DealManager implements DealManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ContactRepository $contactRepository,
-        private CompanyRepository $companyRepository,
-        private AuditLogger $auditLogger,
-        private CrmNotificationService $notificationService,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly ContactRepository $contactRepository,
+        protected readonly CompanyRepository $companyRepository,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly CrmNotificationService $notificationService,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
     ) {}
 
-    public function create(DealInput $input): DealInterface
+    public function create(DealInputInterface $input): DealInterface
     {
-        $deal = new Deal();
+        $deal = $this->createDeal();
         $this->applyInput($deal, $input);
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmDealPrefix->value, SequencePrefixEnum::Deal->value) ?? SequencePrefixEnum::Deal->value;
         $deal->setReference($this->sequenceGenerator->next($prefix));
@@ -48,7 +47,7 @@ final readonly class DealManager implements DealManagerInterface
         return $deal;
     }
 
-    public function update(DealInterface $deal, DealInput $input): void
+    public function update(DealInterface $deal, DealInputInterface $input): void
     {
         $this->applyInput($deal, $input);
         $this->entityManager->flush();
@@ -82,14 +81,19 @@ final readonly class DealManager implements DealManagerInterface
         $this->auditLogger->log('crm', 'deal.deleted', 'Deal', $id, ['name' => $name]);
     }
 
-    private function applyInput(DealInterface $deal, DealInput $input): void
+    protected function createDeal(): DealInterface
     {
-        $deal->setName($input->name);
-        $deal->setStage($input->stage);
-        $deal->setValue($input->value);
-        $deal->setNotes($input->notes);
-        $deal->setContact($input->contactId ? $this->contactRepository->find($input->contactId) : null);
-        $deal->setCompany($input->companyId ? $this->companyRepository->find($input->companyId) : null);
-        $deal->setClosingDate($input->closingDate ? new DateTimeImmutable($input->closingDate) : null);
+        return new Deal();
+    }
+
+    protected function applyInput(DealInterface $deal, DealInputInterface $input): void
+    {
+        $deal->setName($input->getName());
+        $deal->setStage($input->getStage());
+        $deal->setValue($input->getValue());
+        $deal->setNotes($input->getNotes());
+        $deal->setContact($input->getContactId() ? $this->contactRepository->find($input->getContactId()) : null);
+        $deal->setCompany($input->getCompanyId() ? $this->companyRepository->find($input->getCompanyId()) : null);
+        $deal->setClosingDate($input->getClosingDate() ? new DateTimeImmutable($input->getClosingDate()) : null);
     }
 }

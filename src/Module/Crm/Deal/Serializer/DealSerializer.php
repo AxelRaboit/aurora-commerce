@@ -8,8 +8,10 @@ use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class DealSerializer
+#[AsAlias(DealSerializerInterface::class)]
+class DealSerializer implements DealSerializerInterface
 {
     public function serialize(DealInterface $deal): array
     {

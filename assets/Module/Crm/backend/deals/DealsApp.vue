@@ -42,6 +42,12 @@ const props = defineProps({
     contactsListPath: { type: String, required: true },
     companiesListPath: { type: String, required: true },
     showPath: { type: String, default: "" },
+    /**
+     * Extra fields to register on the create + edit forms. Lets clients extend
+     * the modals + table without forking this component.
+     * Example: { code: { default: '', fromDeal: (d) => d.code ?? '' } }
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { localColumns, kanbanColumnsLoaded, kanbanLoading, activeStage, totalByStage, ensureKanbanColumns, updateStageForDeal, onDrop } =
@@ -52,8 +58,8 @@ const { view, setView } = useDealsViewToggle(props, ensureKanbanColumns);
 const { stageOptions, items, page, totalPages, searchInput, onSearch, goToPage, reset } =
     useDealsListPage(props);
 
-const { showCreate, newDeal, createErrors, createLoading, openCreate, submitCreate } = useDealsCreate(props.createPath, reset, kanbanColumnsLoaded, ensureKanbanColumns);
-const { showEdit, editingDeal, editForm, editErrors, editLoading, openEdit, submitEdit } = useDealsEdit(props.updatePath, reset, kanbanColumnsLoaded, ensureKanbanColumns);
+const { showCreate, newDeal, createErrors, createLoading, openCreate, submitCreate } = useDealsCreate(props.createPath, reset, kanbanColumnsLoaded, ensureKanbanColumns, { extraFields: props.extraFields });
+const { showEdit, editingDeal, editForm, editErrors, editLoading, openEdit, submitEdit } = useDealsEdit(props.updatePath, reset, kanbanColumnsLoaded, ensureKanbanColumns, { extraFields: props.extraFields });
 const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete(props.deletePath, reset, kanbanColumnsLoaded, ensureKanbanColumns);
 </script>
 
@@ -131,6 +137,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.stage') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.deals.contact') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.deals.value') }}</th>
+                                <slot name="extra-headers" />
                                 <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                             </tr>
                         </thead>
@@ -144,6 +151,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 </td>
                                 <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ deal.contact?.fullName ?? deal.company?.name ?? '—' }}</td>
                                 <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</td>
+                                <slot name="extra-cells" :deal="deal" />
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
                                         <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -274,6 +282,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     </AppSelect>
                     <AppInput v-model="newDeal.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
                     <AppDatePicker v-model="newDeal.closingDate" :label="t('backend.crm.deals.closingDate')" />
+                    <slot name="extra-create-form-fields" :form="newDeal" :errors="createErrors" />
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
@@ -295,6 +304,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     </AppSelect>
                     <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
                     <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
+                    <slot name="extra-edit-form-fields" :form="editForm" :errors="editErrors" />
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>

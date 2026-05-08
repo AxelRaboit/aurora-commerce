@@ -7,7 +7,7 @@ namespace Aurora\Module\Crm\Deal\View;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;
-use Aurora\Module\Crm\Deal\Serializer\DealSerializer;
+use Aurora\Module\Crm\Deal\Serializer\DealSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * URL generation, serialisation and stage column assembly so the controller
  * stays focused on HTTP flow.
  */
-final readonly class DealsViewBuilder
+class DealsViewBuilder
 {
     public function __construct(
-        private DealRepository $dealRepository,
-        private DealSerializer $dealSerializer,
-        private UrlGeneratorInterface $urlGenerator,
+        protected readonly DealRepository $dealRepository,
+        protected readonly DealSerializerInterface $dealSerializer,
+        protected readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     /**

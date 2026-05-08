@@ -13,17 +13,25 @@ export function useDealsEdit(
     reset,
     kanbanColumnsLoaded,
     ensureKanbanColumns,
+    options = {},
 ) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
 
     const showEdit = ref(false);
     const editingDeal = ref(null);
-    const editForm = ref(emptyDealForm());
+    const editForm = ref(emptyDealForm(extraFields));
     const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
     const { loading: editLoading, request } = useApiRequest();
 
     function openEdit(deal) {
         editingDeal.value = deal;
+        const extraValues = Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [
+                key,
+                def.fromDeal ? def.fromDeal(deal) : (deal[key] ?? def.default),
+            ]),
+        );
         editForm.value = {
             name: deal.name,
             stage: deal.stage,
@@ -32,6 +40,7 @@ export function useDealsEdit(
             companyId: deal.company?.id ?? "",
             closingDate: deal.closingDate ?? "",
             notes: deal.notes ?? "",
+            ...extraValues,
         };
         clearErrors();
         showEdit.value = true;
