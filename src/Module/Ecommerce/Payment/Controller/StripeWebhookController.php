@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Payment\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
@@ -18,7 +19,6 @@ use Stripe\PaymentIntent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StripeWebhookController extends AbstractController
@@ -41,7 +41,7 @@ final class StripeWebhookController extends AbstractController
         try {
             $event = $this->stripeService->constructWebhookEvent($payload, $signature);
         } catch (SignatureVerificationException) {
-            return $this->jsonFailure('invalid_signature', Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure('invalid_signature', HttpStatusEnum::BadRequest->value);
         }
 
         $object = $event->data->object;

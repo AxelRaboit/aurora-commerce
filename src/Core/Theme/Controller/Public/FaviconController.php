@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Theme\Controller\Public;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,7 +48,7 @@ final readonly class FaviconController
             $hex,
         );
 
-        $response = new Response($svg, Response::HTTP_OK, [
+        $response = new Response($svg, HttpStatusEnum::Ok->value, [
             'Content-Type' => 'image/svg+xml',
             // Public + ETag — the browser re-fetches only when the colour changes.
             'Cache-Control' => 'public, max-age=300, must-revalidate',

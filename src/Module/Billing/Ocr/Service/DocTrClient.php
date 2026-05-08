@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -57,7 +57,7 @@ final readonly class DocTrClient implements DocTrClientInterface
             ]);
 
             $statusCode = $response->getStatusCode();
-            if ($statusCode >= Response::HTTP_BAD_REQUEST) {
+            if ($statusCode >= HttpStatusEnum::BadRequest->value) {
                 throw new RuntimeException(sprintf('docTR render HTTP %d: %s', $statusCode, $response->getContent(false)));
             }
 
@@ -99,7 +99,7 @@ final readonly class DocTrClient implements DocTrClientInterface
             ]);
 
             $statusCode = $response->getStatusCode();
-            if ($statusCode >= Response::HTTP_BAD_REQUEST) {
+            if ($statusCode >= HttpStatusEnum::BadRequest->value) {
                 throw new RuntimeException(sprintf('docTR HTTP %d: %s', $statusCode, $response->getContent(false)));
             }
 

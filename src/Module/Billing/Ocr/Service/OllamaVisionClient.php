@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpClient\Exception\TransportException;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function is_array;
@@ -90,7 +90,7 @@ final readonly class OllamaVisionClient implements OllamaVisionClientInterface
             ]);
 
             $statusCode = $response->getStatusCode();
-            if ($statusCode >= Response::HTTP_BAD_REQUEST) {
+            if ($statusCode >= HttpStatusEnum::BadRequest->value) {
                 throw new RuntimeException(sprintf('Ollama HTTP %d: %s', $statusCode, $response->getContent(false)));
             }
 

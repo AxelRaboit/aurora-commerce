@@ -7,6 +7,7 @@ namespace Aurora\Core\Media\Controller\Backend;
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Media\Contract\MediaManagerInterface;
@@ -128,11 +129,11 @@ class MediaController extends AbstractController
     {
         $file = $request->files->get('image');
         if (!$file) {
-            return $this->json(['success' => 0, 'message' => 'No file provided.'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['success' => 0, 'message' => 'No file provided.'], HttpStatusEnum::BadRequest->value);
         }
 
         if (null === MimeTypeEnum::tryFrom($file->getMimeType() ?? '')) {
-            return $this->json(['success' => 0, 'message' => 'Invalid file type.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json(['success' => 0, 'message' => 'Invalid file type.'], HttpStatusEnum::UnprocessableEntity->value);
         }
 
         $folder = null;

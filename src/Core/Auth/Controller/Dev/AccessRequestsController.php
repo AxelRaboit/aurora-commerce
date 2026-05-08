@@ -9,6 +9,7 @@ use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Repository\AccessRequestRepository;
 use Aurora\Core\Auth\View\DevAccessRequestsViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Contract\UserManagerInterface;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -51,7 +52,7 @@ final class AccessRequestsController extends AbstractController
     public function approve(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['success' => false], Response::HTTP_CONFLICT);
+            return $this->json(['success' => false], HttpStatusEnum::Conflict->value);
         }
 
         $generatedPassword = null;
@@ -75,7 +76,7 @@ final class AccessRequestsController extends AbstractController
     public function reject(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['success' => false], Response::HTTP_CONFLICT);
+            return $this->json(['success' => false], HttpStatusEnum::Conflict->value);
         }
 
         $this->accessRequestManager->reject($accessRequest);

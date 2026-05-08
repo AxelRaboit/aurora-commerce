@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\Controller\Dev;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
@@ -59,7 +60,7 @@ final class ModulesController extends AbstractController
         } catch (CascadeViolationException $cascadeViolationException) {
             return $this->jsonFailure(
                 SettingErrorCodeEnum::CascadeViolation->value,
-                Response::HTTP_CONFLICT,
+                HttpStatusEnum::Conflict->value,
                 ['parentKey' => $cascadeViolationException->parentKey],
             );
         }

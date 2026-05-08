@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
@@ -61,9 +62,9 @@ final class OrderDetailController extends AbstractController
                 OrderStatusEnum::Refunded => throw new InvalidArgumentException('Cannot transition order via this endpoint'),
             };
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonFailure($invalidArgumentException->getMessage(), HttpStatusEnum::UnprocessableEntity->value);
         } catch (RuntimeException $runtimeException) {
-            return $this->jsonFailure($runtimeException->getMessage(), Response::HTTP_BAD_GATEWAY);
+            return $this->jsonFailure($runtimeException->getMessage(), HttpStatusEnum::BadGateway->value);
         }
 
         return $this->jsonSuccess(['order' => $this->orderSerializer->serialize($order)]);
@@ -74,20 +75,20 @@ final class OrderDetailController extends AbstractController
     public function refund(Order $order, Request $request): JsonResponse
     {
         if (!$order->isRefundable()) {
-            return $this->jsonFailure('order.not_refundable', Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonFailure('order.not_refundable', HttpStatusEnum::UnprocessableEntity->value);
         }
 
         $payload = $this->decodeJson($request);
         $amountCents = isset($payload['amountCents']) ? (int) $payload['amountCents'] : null;
 
         if (null !== $amountCents && ($amountCents <= 0 || $amountCents > $order->getTotalCents())) {
-            return $this->jsonFailure('order.invalid_refund_amount', Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonFailure('order.invalid_refund_amount', HttpStatusEnum::UnprocessableEntity->value);
         }
 
         try {
             $this->refundService->refund($order, $amountCents);
         } catch (RuntimeException $runtimeException) {
-            return $this->jsonFailure($runtimeException->getMessage(), Response::HTTP_BAD_GATEWAY);
+            return $this->jsonFailure($runtimeException->getMessage(), HttpStatusEnum::BadGateway->value);
         }
 
         return $this->jsonSuccess(['order' => $this->orderSerializer->serialize($order)]);

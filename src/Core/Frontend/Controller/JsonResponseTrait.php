@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Controller;
 
+use Aurora\Core\Enum\HttpStatusEnum;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Standardised JSON envelope helpers for controller actions.
@@ -25,7 +25,7 @@ trait JsonResponseTrait
     /**
      * @param array<string, mixed> $data
      */
-    private function jsonSuccess(array $data = [], int $status = Response::HTTP_OK): JsonResponse
+    private function jsonSuccess(array $data = [], int $status = HttpStatusEnum::Ok->value): JsonResponse
     {
         return $this->json(['success' => true, ...$data], $status);
     }
@@ -33,7 +33,7 @@ trait JsonResponseTrait
     /**
      * @param array<string, mixed> $extra
      */
-    private function jsonFailure(string|JsonErrorCode $code, int $status = Response::HTTP_BAD_REQUEST, array $extra = []): JsonResponse
+    private function jsonFailure(string|JsonErrorCode $code, int $status = HttpStatusEnum::BadRequest->value, array $extra = []): JsonResponse
     {
         return $this->json([
             'success' => false,
@@ -45,18 +45,18 @@ trait JsonResponseTrait
     /**
      * @param array<string, mixed> $errors field => translation key (or message)
      */
-    private function jsonInvalidInput(array $errors, int $status = Response::HTTP_UNPROCESSABLE_ENTITY): JsonResponse
+    private function jsonInvalidInput(array $errors, int $status = HttpStatusEnum::UnprocessableEntity->value): JsonResponse
     {
         return $this->json(['success' => false, 'errors' => $errors], $status);
     }
 
     private function jsonNotFound(): JsonResponse
     {
-        return $this->jsonFailure(JsonErrorCode::NotFound, Response::HTTP_NOT_FOUND);
+        return $this->jsonFailure(JsonErrorCode::NotFound, HttpStatusEnum::NotFound->value);
     }
 
     private function jsonForbidden(): JsonResponse
     {
-        return $this->jsonFailure(JsonErrorCode::Forbidden, Response::HTTP_FORBIDDEN);
+        return $this->jsonFailure(JsonErrorCode::Forbidden, HttpStatusEnum::Forbidden->value);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Media\Entity\Media;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,7 +22,7 @@ class MediaViewController extends AbstractController
     {
         return $this->redirect(
             $media->getPublicUrl().'?v='.($media->getUpdatedAt()?->getTimestamp() ?? 0),
-            RedirectResponse::HTTP_FOUND,
+            HttpStatusEnum::Found->value,
         );
     }
 }

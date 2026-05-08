@@ -6,6 +6,7 @@ namespace Aurora\Core\Profile\Controller;
 
 use Aurora\Core\Auth\DTO\ChangePasswordInput;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
@@ -98,7 +99,7 @@ final class ProfileController extends AbstractController
         $data = json_decode($request->getContent(), true) ?? [];
 
         if (!$this->isCsrfTokenValid('profile_delete', $data['_token'] ?? '')) {
-            return $this->jsonFailure($this->translator->trans('backend.profile.errors.invalid_csrf'), Response::HTTP_FORBIDDEN);
+            return $this->jsonFailure($this->translator->trans('backend.profile.errors.invalid_csrf'), HttpStatusEnum::Forbidden->value);
         }
 
         $tokenStorage->setToken(null);
