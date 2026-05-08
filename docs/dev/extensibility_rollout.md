@@ -11,8 +11,8 @@ de la convention. Stratégie : module par module, commits atomiques.
 
 | État | Entités |
 |---|---|
-| ✅ Fait | 13 / 24 |
-| 🔜 Reste | 11 / 24 |
+| ✅ Fait | 15 / 24 |
+| 🔜 Reste | 9 / 24 |
 
 Tests : tout doit rester vert (`php bin/phpunit`) après chaque commit.
 
@@ -58,11 +58,11 @@ Pilotes (instrumentés avant la convention finale, commits antérieurs) :
 
 ### Erp (1)
 
-- [ ] `Product`
+- [x] `Product` — `baffbfb`
 
 ### Ecommerce (1)
 
-- [ ] `Listing`
+- [x] `Listing` — `baffbfb`
 
 ### Photo (1)
 

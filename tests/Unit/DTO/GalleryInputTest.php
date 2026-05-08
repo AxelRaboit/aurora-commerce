@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Dto;
 
 use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryInputFactory;
+use Aurora\Module\Photo\Gallery\Dto\GalleryInputInterface;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
@@ -13,17 +15,25 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class GalleryInputTest extends TestCase
 {
     private ValidatorInterface $validator;
+    private GalleryInputFactory $factory;
 
     protected function setUp(): void
     {
         $this->validator = Validation::createValidatorBuilder()
             ->enableAttributeMapping()
             ->getValidator();
+        $this->factory = new GalleryInputFactory();
+    }
+
+    /** @param array<string, mixed> $data */
+    private function fromArray(array $data): GalleryInputInterface
+    {
+        return $this->factory->fromArray($data);
     }
 
     public function testFromArrayTrimsTitleAndSlug(): void
     {
-        $input = GalleryInput::fromArray([
+        $input = $this->fromArray([
             'title' => '  Wedding 2026  ',
             'slug' => '  wedding-2026  ',
         ]);
@@ -34,7 +44,7 @@ final class GalleryInputTest extends TestCase
 
     public function testFromArrayParsesExpiresAt(): void
     {
-        $input = GalleryInput::fromArray([
+        $input = $this->fromArray([
             'title' => 't',
             'slug' => 's',
             'expiresAt' => '2026-12-31T23:59:00+00:00',
@@ -46,7 +56,7 @@ final class GalleryInputTest extends TestCase
 
     public function testFromArrayInvalidExpiresAtBecomesNull(): void
     {
-        $input = GalleryInput::fromArray([
+        $input = $this->fromArray([
             'title' => 't',
             'slug' => 's',
             'expiresAt' => 'not-a-date',
@@ -57,7 +67,7 @@ final class GalleryInputTest extends TestCase
 
     public function testFromArrayCoercesIds(): void
     {
-        $input = GalleryInput::fromArray([
+        $input = $this->fromArray([
             'title' => 't',
             'slug' => 's',
             'coverMediaId' => '12',
@@ -70,7 +80,7 @@ final class GalleryInputTest extends TestCase
 
     public function testFromArrayEmptyIdStringBecomesNull(): void
     {
-        $input = GalleryInput::fromArray([
+        $input = $this->fromArray([
             'title' => 't',
             'slug' => 's',
             'coverMediaId' => '',
@@ -83,7 +93,7 @@ final class GalleryInputTest extends TestCase
 
     public function testFromArrayDefaultFlags(): void
     {
-        $input = GalleryInput::fromArray(['title' => 't', 'slug' => 's']);
+        $input = $this->fromArray(['title' => 't', 'slug' => 's']);
 
         self::assertTrue($input->allowOriginals);
         self::assertTrue($input->allowZipDownload);
