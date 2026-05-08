@@ -174,21 +174,73 @@ persist + audit log.
 - Avoir des propriétés `protected readonly` (pas `private`) pour que les
   sous-classes y accèdent
 - Avoir `#[AsAlias(<Name>ManagerInterface::class)]`
-- Exposer un hook `protected create<X>(): <X>Interface` **pour chaque
-  classe d'entité instanciée par le Manager** (par défaut `new <X>()`).
-  Cas typique : `createAgency()` seul. Cas cascade (Order) : `createOrder()`
-  + `createOrderLine()` car le Manager instancie aussi des `OrderLine`.
-- Exposer un hook `protected applyInput(<Name>Interface $entity,
-  <Name>InputInterface $input): void` **quand le Manager a un flow simple
-  create+update via DTO unique**. Si le Manager expose plutôt N méthodes
-  spécialisées (cas User : `changePassword`, `consumeInvitation`, …),
-  ne pas forcer un `applyInput()` artificiel — exposer uniquement les
-  hooks `create<X>()` et laisser les méthodes métier publiques telles
-  quelles, customisables une par une.
-- `create()` et `update()` (quand ils existent) appellent ces hooks puis
-  font le persist + flush + audit log
 
-Squelette :
+**Trois familles de hooks `protected`**, chacune répondant à un point
+d'extension distinct :
+
+#### 3.1 Hooks d'instanciation — `create<X>()`
+
+**Règle dure, sans exception** : exposer un hook
+`protected create<X>(): <X>Interface` **pour chaque classe d'entité que le
+Manager instancie**, qu'elle ait ou non sa propre page admin. C'est le seul
+moyen pour un client de substituer sa classe enfant.
+
+Exemples : `AgencyManager` → `createAgency()` seul. `OrderManager` →
+`createOrder()` + `createOrderLine()`. `FormManager` → `createForm()` +
+`createFormField()`. `ProjectManager` → `createProject()` +
+`createProjectColumn()` + `createProjectLabel()` + `createProjectSprint()`.
+
+> La liste d'exclusion 2.2 ne dispense **que** des couches DTO racine /
+> Manager racine / Serializer / Vue. Les sous-entités instanciées doivent
+> toujours avoir leur Couche 1 (Interface + Abstract + concrete) et un
+> hook `create<X>()` dans le Manager parent.
+
+#### 3.2 Hook d'hydratation — `applyInput()`
+
+**Requis par défaut**. Signature : `protected applyInput(<Name>Interface
+$entity, <Name>InputInterface $input): void`. Appelé par `create()` et
+`update()` pour copier les champs du DTO vers l'entité.
+
+**Exception (variante "Manager à hooks multiples")** : ne pas exposer
+`applyInput()` **uniquement si les 3 critères ci-dessous sont réunis** :
+1. Le Manager a ≥ 6 méthodes publiques métier distinctes
+2. Aucun flow create+update simple via DTO unique n'existe
+3. Les opérations métier ont des règles de validation/sécurité distinctes
+   (transitions de statut, autorisations, contextes différents)
+
+À ce jour, seul `User` qualifie. Pour Order, Project, Invoice, etc.,
+`applyInput()` reste obligatoire même s'ils exposent quelques méthodes
+spécialisées en plus du flow standard.
+
+#### 3.3 Hooks d'audit log — `auditCreated/Updated/Deleted` + `auditPayload`
+
+**Requis** dès qu'un Manager fait du logging via `AuditLogger`. Évite que
+le client copie tout le flow `persist + flush + log` pour ajouter un champ
+au payload :
+
+```php
+protected function auditCreated(<Name>Interface $entity): void
+{
+    $this->auditLogger->log('core', '<entity>.created', '<Name>', $entity->getId(), $this->auditPayload($entity));
+}
+protected function auditUpdated(<Name>Interface $entity): void { /* idem */ }
+protected function auditDeleted(<Name>Interface $entity): void { /* idem */ }
+
+protected function auditPayload(<Name>Interface $entity): array
+{
+    return ['name' => $entity->getName()];
+}
+```
+
+Le client qui ajoute `code` override **uniquement** `auditPayload()` :
+```php
+protected function auditPayload(AgencyInterface $agency): array
+{
+    return [...parent::auditPayload($agency), 'code' => $agency->getCode()];
+}
+```
+
+#### 3.4 Squelette de référence
 
 ```php
 class AgencyManager implements AgencyManagerInterface
@@ -204,7 +256,7 @@ class AgencyManager implements AgencyManagerInterface
         $this->applyInput($agency, $input);
         $this->entityManager->persist($agency);
         $this->entityManager->flush();
-        $this->auditLogger->log('core', 'agency.created', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
+        $this->auditCreated($agency);
         return $agency;
     }
 
@@ -212,10 +264,15 @@ class AgencyManager implements AgencyManagerInterface
     {
         $this->applyInput($agency, $input);
         $this->entityManager->flush();
-        $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
+        $this->auditUpdated($agency);
     }
 
-    public function delete(AgencyInterface $agency): void { /* … */ }
+    public function delete(AgencyInterface $agency): void
+    {
+        $this->entityManager->remove($agency);
+        $this->entityManager->flush();
+        $this->auditDeleted($agency);
+    }
 
     protected function createAgency(): AgencyInterface
     {
@@ -225,6 +282,26 @@ class AgencyManager implements AgencyManagerInterface
     protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
     {
         $agency->setName($input->getName());
+    }
+
+    protected function auditCreated(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.created', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    protected function auditUpdated(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    protected function auditDeleted(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.deleted', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    protected function auditPayload(AgencyInterface $agency): array
+    {
+        return ['name' => $agency->getName()];
     }
 }
 ```
@@ -357,6 +434,46 @@ Sans ça, le constructor du `ServiceEntityRepository` hardcode la classe
 concrete Aurora → le repo continue de query la table Aurora même quand le
 client a substitué l'entité. **Tous les repos Aurora ont déjà été migrés.**
 
+#### Étendre une finder method côté client
+
+**Limite assumée** : Aurora **n'expose pas** de `<Name>RepositoryInterface`.
+Les controllers et Managers Aurora type-hint la classe concrète
+`<Name>Repository`, pas une interface. Coût/bénéfice non justifié — les
+finders custom client n'ont pas vocation à être appelés depuis
+aurora-core.
+
+**Pattern client** quand un client veut ajouter ou override un finder :
+
+```php
+// 1. Le client étend le repo Aurora
+namespace App\Repository;
+
+use Aurora\Core\Agency\Repository\AgencyRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+class AppAgencyRepository extends AgencyRepository
+{
+    public function findActiveExcludingArchived(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.archivedAt IS NULL')
+            ->getQuery()->getResult();
+    }
+}
+
+// 2. Et le déclare dans son entité concrète
+#[ORM\Entity(repositoryClass: AppAgencyRepository::class)]
+class Agency extends \Aurora\Core\Agency\Entity\AbstractAgency implements AgencyInterface
+{
+    // …
+}
+```
+
+`ResolveTargetEntityRepository` route déjà la query via metadata, donc
+les finders Aurora **et** custom client cohabitent sans conflit. Le client
+type-hint `AppAgencyRepository` dans son propre code ; Aurora continue de
+type-hint `AgencyRepository`.
+
 ---
 
 ## 4. Conventions de nommage
@@ -381,7 +498,9 @@ Pour `<Name> = Agency` :
 | Repository | `AgencyRepository` |
 | Vue main app | `AgenciesApp.vue` |
 | Composable form | `useAgenciesForm.js` (unifié create+edit, option `extraFields`) |
-| Hooks Manager | `createAgency()` + `applyInput()` (`protected`) |
+| Hooks Manager — instanciation | `createAgency()` (1 par classe instanciée, sans exception) |
+| Hook Manager — hydratation | `applyInput()` (sauf variante User) |
+| Hooks Manager — audit | `auditCreated()` + `auditUpdated()` + `auditDeleted()` + `auditPayload()` |
 | Vue slots | `extra-headers`, `extra-cells`, `extra-form-fields` |
 
 **Exception** : pour `User`, l'interface s'appelle `CoreUserInterface` (et
@@ -403,14 +522,22 @@ réellement un écart au pattern de référence :
 
 ### 4.bis.1 Manager à hooks multiples (sans `applyInput()`)
 
-**Cas** : `User`.
+**Cas** : `User` — et seulement les entités qui matchent **les 3 critères**
+de la sous-section 3.2 :
+1. ≥ 6 méthodes publiques métier distinctes
+2. Aucun flow create+update simple via DTO unique n'existe
+3. Règles de validation/sécurité distinctes par opération
 
-Quand un Manager expose ~20 méthodes spécialisées
-(`changePassword`, `consumeInvitation`, `toggleDevRole`, …) au lieu d'un
-flow simple create+update, on n'expose **pas** de `applyInput()` (cf
-Couche 3). Le client customise les méthodes publiques individuellement. À
-documenter par un commentaire au-dessus du hook `create<X>()` : *"single
-hook : the rest is overridden via individual public methods"*.
+`User` qualifie : `changePassword`, `consumeInvitation`, `toggleDevRole`,
+`updateProfile`, `updateAgencyAndService`, `requestPasswordReset`, … chacune
+avec son contexte de sécurité. On n'expose **pas** de `applyInput()` ; les
+méthodes publiques sont customisables une par une. Les hooks d'instanciation
+(`create<X>()`) et d'audit (`audit*` + `auditPayload()`) restent
+obligatoires comme partout.
+
+À documenter par un commentaire au-dessus du hook `create<X>()` : *"single
+instantiation hook : business operations are overridden via individual
+public methods"*.
 
 Côté frontend, ce Manager s'accompagne souvent de **deux composables
 distincts** (`useUsersInvite` + `useUsersForm`) car invitation et édition

@@ -27,7 +27,7 @@ class AgencyManager implements AgencyManagerInterface
         $this->entityManager->persist($agency);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'agency.created', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
+        $this->auditCreated($agency);
 
         return $agency;
     }
@@ -37,12 +37,12 @@ class AgencyManager implements AgencyManagerInterface
         $this->applyInput($agency, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
+        $this->auditUpdated($agency);
     }
 
     public function delete(AgencyInterface $agency): void
     {
-        $this->auditLogger->log('core', 'agency.deleted', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
+        $this->auditDeleted($agency);
 
         $this->entityManager->remove($agency);
         $this->entityManager->flush();
@@ -66,5 +66,29 @@ class AgencyManager implements AgencyManagerInterface
     protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
     {
         $agency->setName($input->getName());
+    }
+
+    protected function auditCreated(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.created', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    protected function auditUpdated(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    protected function auditDeleted(AgencyInterface $agency): void
+    {
+        $this->auditLogger->log('core', 'agency.deleted', 'Agency', $agency->getId(), $this->auditPayload($agency));
+    }
+
+    /**
+     * Returns the structured payload logged by every audit entry. Override in
+     * a subclass to add extra fields: `[...parent::auditPayload($agency), 'code' => $agency->getCode()]`.
+     */
+    protected function auditPayload(AgencyInterface $agency): array
+    {
+        return ['name' => $agency->getName()];
     }
 }
