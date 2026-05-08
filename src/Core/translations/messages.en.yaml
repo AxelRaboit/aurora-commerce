@@ -2,6 +2,7 @@ backend:
   notifications:
     title: Notifications
     empty: No notifications.
+    close: Close
     markAllRead: Mark all as read
     justNow: just now
     minutesAgo: '{n} min ago'

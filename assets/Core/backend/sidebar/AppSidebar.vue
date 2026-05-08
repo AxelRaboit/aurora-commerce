@@ -92,7 +92,7 @@ function openSearchFromMobile() {
 <template>
     <aside id="sidebar" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
         <div class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200">
-            <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
+            <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0 flex-1">
                 <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-8 shrink-0 object-cover rounded-xl">
                 <AppLogo v-else :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
@@ -105,7 +105,7 @@ function openSearchFromMobile() {
                 <AppLogo v-else :size="32" />
             </a>
             <button
-                class="sh-collapse-btn ml-2 p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
+                class="sh-collapse-btn p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
                 v-on:click="collapse"
             >
                 <ChevronsLeft class="w-4 h-4" />
@@ -133,16 +133,15 @@ function openSearchFromMobile() {
         </div>
 
         <div class="sh-search-section px-3 py-2 border-b border-line shrink-0 space-y-1.5">
-            <!-- Palette trigger — expanded -->
-            <div class="sh-logo-expanded items-center gap-2 w-full">
+            <!-- Icons row — expanded -->
+            <div class="sh-logo-expanded items-center gap-1 w-full">
                 <button
                     type="button"
-                    class="flex-1 flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+                    class="p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+                    :title="t('backend.search.button')"
                     v-on:click="openPalette"
                 >
-                    <Search class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
-                    <kbd class="px-1 py-0.5 rounded bg-surface-2 border border-line font-mono text-xs shrink-0">{{ modKeyLabel }}+K</kbd>
+                    <Search class="w-5 h-5" :stroke-width="2" />
                 </button>
                 <AppNotificationsBell
                     v-if="notificationsListPath"
