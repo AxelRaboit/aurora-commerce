@@ -28,14 +28,21 @@ as a submodule, and runs `composer install`.
 
 ```
 client-app/
-├── vendor/aurora/              # Aurora core (git submodule, read-only)
-├── src/Custom/                 # App\Custom\* — client PHP code
-├── templates/Custom/           # Client Twig templates
+├── vendor/aurora/              # Aurora core (read-only — never edited directly)
+├── src/
+│   ├── Custom/                 # App\Custom\* — client controllers, modules, services
+│   ├── Entity/                 # App\Entity\*  — client entity overrides (extending AbstractAurora* + AgencyInterface, etc.)
+│   ├── Dto/                    # App\Dto\*     — client DTO overrides (extending Aurora DTOs)
+│   ├── Manager/                # App\Manager\* — client Manager overrides / decorators (#[AsAlias] on Aurora's interface)
+│   └── Serializer/             # App\Serializer\* — client Serializer overrides / decorators
+├── templates/
+│   ├── Custom/                 # Client-only Twig templates
+│   └── Core/                   # Overrides for @Core/... templates (auto-resolved before Aurora's)
+├── assets/client/Module/       # Client Vue components (registered as @client by Aurora's vite config)
 ├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
-│   ├── packages-custom.yaml    # Bundle config (Doctrine, Twig, Mailer…)
-│   ├── services-custom.yaml    # Service definitions / decorators
-│   └── routes-custom.yaml      # Custom routes
+│   ├── packages/               # doctrine.yaml, twig.yaml, etc. — client overrides
+│   └── services.yaml           # Service registration / decorators
 ├── bin/console                 # Entry point — delegates to Aurora's Kernel
 ├── public/index.php            # Web entry point
 └── .env                        # Client env overrides
@@ -196,73 +203,85 @@ php bin/console doctrine:migrations:migrate
 
 ### 6.bis Substituer une entité Core (ResolveTargetEntity)
 
-Pour ajouter des propriétés à une entité Core (ex: `Deal`), Aurora utilise le
-pattern **ResolveTargetEntity** de Doctrine. Chaque entité Core extensible
-expose :
+Aurora utilise le pattern **ResolveTargetEntity** de Doctrine. Chaque entité
+Core extensible expose :
 
-- `Aurora\Module\.../Entity/<Name>Interface` — le contrat public (getters/setters)
-- `Aurora\Module\.../Entity/Abstract<Name>` — `MappedSuperclass` Doctrine avec le mapping
-- `Aurora\Module\.../Entity/<Name>` — l'entité concrète, non-final
+- `Aurora\...\Entity\<Name>Interface` — le contrat public (getters/setters)
+- `Aurora\...\Entity\Abstract<Name>` — `MappedSuperclass` Doctrine avec le mapping (sans `id`)
+- `Aurora\...\Entity\<Name>` — l'entité concrète, non-`final`, avec `id` + sequence
 
-Pour étendre `Deal` côté client, deux approches au choix :
-
-**A. Hériter de la classe concrète** (pattern le plus simple)
+Pour étendre une entité côté client, **étendez le `MappedSuperclass`** (pattern
+Sylius) et déclarez votre propre table — c'est le seul pattern qui marche
+proprement avec Doctrine (étendre la classe concrète exigerait un type
+d'héritage et un discriminator).
 
 ```php
-// src/Custom/Entity/Deal.php
-namespace App\Custom\Entity;
+// src/Entity/Deal.php
+namespace App\Entity;
 
-use Aurora\Module\Crm\Deal\Entity\Deal as AuroraDeal;
+use Aurora\Module\Crm\Deal\Entity\AbstractDeal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-class Deal extends AuroraDeal
+#[ORM\Entity(repositoryClass: DealRepository::class)]
+#[ORM\Table(name: 'client_deals')]
+class Deal extends AbstractDeal implements DealInterface
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_client_deal_id', allocationSize: 1)]
+    #[ORM\Column]
+    private ?int $id = null;
+
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $customField = null;
 
+    public function getId(): ?int { return $this->id; }
     public function getCustomField(): ?string { return $this->customField; }
     public function setCustomField(?string $value): static { $this->customField = $value; return $this; }
 }
 ```
 
-**B. Implémenter directement le contrat** (pattern Sylius — table dédiée client)
-
-```php
-// src/Custom/Entity/Deal.php
-namespace App\Custom\Entity;
-
-use Aurora\Module\Crm\Deal\Entity\AbstractDeal;
-use Aurora\Module\Crm\Deal\Entity\DealInterface;
-use Doctrine\ORM\Mapping as ORM;
-
-#[ORM\Entity]
-#[ORM\Table(name: 'client_deals')]
-class Deal extends AbstractDeal implements DealInterface
-{
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    protected ?int $id = null;
-    // + propriétés client
-}
-```
-
-**Substitution** — déclarer dans `config/packages-custom.yaml` :
+**Substitution** — dans `config/packages/doctrine.yaml` :
 
 ```yaml
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Module\Crm\Deal\Entity\DealInterface: App\Custom\Entity\Deal
+            Aurora\Module\Crm\Deal\Entity\DealInterface: App\Entity\Deal
 ```
 
 À partir de là, toutes les associations Aurora qui pointent `DealInterface`
-(ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Custom\Entity\Deal`.
-Les controllers, Manager, Serializer, ViewBuilder Aurora type-hint
-`DealInterface` et fonctionnent sans modification avec votre entité.
+(ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Entity\Deal`.
+
+**Migration de données** — si la table Aurora `core_deals` contient déjà des
+lignes (fixtures, données de prod) et que les FK Aurora pointent vers son `id`,
+ajoutez à la migration générée un `INSERT INTO client_deals … SELECT … FROM
+core_deals` avant de basculer la contrainte FK. Cf. la migration pilote
+`Version20260508123924` côté aurora-client pour un exemple complet.
 
 **Manager / création** — `DealManager::create()` instancie `new Deal()`
-(la classe Aurora). Pour qu'il instancie votre `App\Custom\Entity\Deal`,
-décorez `DealManagerInterface` (cf. section 2).
+(la classe Aurora) par défaut. Pour qu'il instancie votre `App\Entity\Deal`,
+étendez `DealManager` ou décorez `DealManagerInterface` (cf. section 2).
+
+### 6.ter Étendre toute la pile (DTO + Manager + Serializer + Vue)
+
+Pour ajouter un champ visible/éditable depuis le backoffice (formulaire +
+tableau), il faut intervenir sur 5 couches : Entity, DTO, Manager, Serializer
+et le composant Vue. Aurora expose des points d'extension pour chacune.
+
+Le module **Agency** sert de pilote complet — voir
+[`extending_agency_pilot.md`](./extending_agency_pilot.md) pour la recette
+end-to-end : factory `AgencyInputFactoryInterface` (`#[AsAlias]`),
+`AgencyManagerInterface` / `AgencySerializerInterface` (décoration),
+slots Vue (`extra-headers` / `extra-cells` / `extra-form-fields`) et
+override Twig.
+
+Tous les autres modules ne sont pas (encore) extensibles à ce niveau — seul
+Agency a été instrumenté en pilote. Les autres entités sont substituables côté
+DB via `resolve_target_entities` (section 6.bis), mais leurs DTO, Manager,
+Serializer et templates restent à ouvrir un par un selon le besoin.
 
 ### 7. Bundle configuration
 

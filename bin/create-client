@@ -59,9 +59,14 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,src/{Custom,},templates/Custom,config/packages,config/routes,migrations,assets/client/Module}
+mkdir -p "$DEST"/{bin,public,src/{Custom,Entity,Dto,Manager,Serializer},templates/{Custom,Core},config/packages,config/routes,migrations,assets/client/Module}
 touch "$DEST/src/Custom/.gitkeep"
+touch "$DEST/src/Entity/.gitkeep"
+touch "$DEST/src/Dto/.gitkeep"
+touch "$DEST/src/Manager/.gitkeep"
+touch "$DEST/src/Serializer/.gitkeep"
 touch "$DEST/templates/Custom/.gitkeep"
+touch "$DEST/templates/Core/.gitkeep"
 touch "$DEST/migrations/.gitkeep"
 touch "$DEST/assets/client/Module/.gitkeep"
 
@@ -273,12 +278,28 @@ done
 # security.yaml — full copy (references Aurora\ classes which are available via the bundle)
 cp "$AURORA_DIR/config/packages/security.yaml" "$DEST/config/packages/security.yaml"
 
-# doctrine.yaml — DBAL only (ORM mappings are registered by AuroraBundle::prependExtension)
+# doctrine.yaml — DBAL + ORM mapping for App\Entity
+# Aurora's own ORM mappings (App\Module\..., src/Module) are registered by
+# AuroraBundle::prependExtension. This file only declares the client-specific
+# App\Entity namespace and a placeholder for resolve_target_entities.
 cat > "$DEST/config/packages/doctrine.yaml" <<EOF
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         profiling_collect_backtrace: '%kernel.debug%'
+    orm:
+        # Map Aurora Core entity interfaces to your concrete subclasses.
+        # Uncomment and adapt as you start extending entities under src/Entity/.
+        # Example:
+        # resolve_target_entities:
+        #     Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+        mappings:
+            AppEntity:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: AppEntity
 
 when@test:
     doctrine:
@@ -375,6 +396,19 @@ services:
 
     App\Custom\:
         resource: '../src/Custom/'
+
+    # Sylius-style extension layers — used to override Aurora Core DTOs,
+    # managers, serializers and entities without touching vendor/. Each class
+    # placed under these dirs is auto-registered. Use #[AsAlias(<Interface>)]
+    # to replace Aurora's default service, or #[AsDecorator] to wrap it.
+    App\Dto\:
+        resource: '../src/Dto/'
+
+    App\Manager\:
+        resource: '../src/Manager/'
+
+    App\Serializer\:
+        resource: '../src/Serializer/'
 
     # Aurora's translation dumper writes JSON files to vendor/aurora/assets/locales/
     # so vue-i18n (running from aurora's app.js) can import them. Add each client
