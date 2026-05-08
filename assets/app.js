@@ -50,6 +50,13 @@ const projectModules = import.meta.glob("./Module/Project/backend/**/*.vue");
 // convention as aurora's first-party modules.
 const clientModules = import.meta.glob("@client/Module/**/*.vue");
 
+// Client overrides: wrappers around Aurora's own Vue components, kept apart
+// from feature modules so the prefix doesn't carry a misleading domain
+// meaning. A file at @client/Overrides/backend/agencies/AgenciesApp.vue
+// is exposed as ./backend/agencies/AgenciesApp.vue and accessible via
+// vue_component('backend/agencies/AgenciesApp') in Twig — no module prefix.
+const clientOverrides = import.meta.glob("@client/Overrides/**/*.vue");
+
 const vueContext = {
     ...Object.fromEntries(
         Object.entries(coreModules).map(([key, loader]) => [
@@ -114,6 +121,16 @@ const vueContext = {
             if (!match) return [key, loader];
             const [, moduleName, rest] = match;
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];
+        }),
+    ),
+    // Client overrides: extract "<rest>.vue" after "Overrides/" and expose
+    // as "./<rest>.vue" with no module prefix.
+    ...Object.fromEntries(
+        Object.entries(clientOverrides).map(([key, loader]) => {
+            const match = key.match(/Overrides\/(.*)$/);
+            if (!match) return [key, loader];
+            const [, rest] = match;
+            return [`./${rest}`, loader];
         }),
     ),
 };

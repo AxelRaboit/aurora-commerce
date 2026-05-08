@@ -59,13 +59,14 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,src/{Custom,Entity,Dto,Manager,Serializer},templates/{Custom,Core},config/packages,config/routes,migrations,assets/client/Module}
-touch "$DEST/src/Custom/.gitkeep"
+mkdir -p "$DEST"/{bin,public,src/{Controller,Entity,Dto,Manager,Serializer,Service,EventListener},templates/Core,config/packages,config/routes,migrations,assets/client/Module}
+touch "$DEST/src/Controller/.gitkeep"
 touch "$DEST/src/Entity/.gitkeep"
 touch "$DEST/src/Dto/.gitkeep"
 touch "$DEST/src/Manager/.gitkeep"
 touch "$DEST/src/Serializer/.gitkeep"
-touch "$DEST/templates/Custom/.gitkeep"
+touch "$DEST/src/Service/.gitkeep"
+touch "$DEST/src/EventListener/.gitkeep"
 touch "$DEST/templates/Core/.gitkeep"
 touch "$DEST/migrations/.gitkeep"
 touch "$DEST/assets/client/Module/.gitkeep"
@@ -373,9 +374,9 @@ aurora:
     resource: '../${AURORA_VENDOR_PATH}/src/'
     type: attribute
 
-# Client custom controllers
-custom:
-    resource: '../src/Custom/Controller/'
+# Client controllers
+client:
+    resource: '../src/Controller/'
     type: attribute
 EOF
 
@@ -394,13 +395,18 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Custom\:
-        resource: '../src/Custom/'
+    # Responsibility-based PSR-4 prefixes (Sylius / Symfony convention).
+    # Modules with their own bundle-like structure live under App\Module\<Name>.
+    # Aurora extension layers (Entity / Dto / Manager / Serializer) sit flat
+    # under src/. Use #[AsAlias(<Interface>)] to replace an Aurora default
+    # service, or #[AsDecorator] to wrap it.
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
 
-    # Sylius-style extension layers — used to override Aurora Core DTOs,
-    # managers, serializers and entities without touching vendor/. Each class
-    # placed under these dirs is auto-registered. Use #[AsAlias(<Interface>)]
-    # to replace Aurora's default service, or #[AsDecorator] to wrap it.
+    App\Entity\:
+        resource: '../src/Entity/'
+
     App\Dto\:
         resource: '../src/Dto/'
 
@@ -410,10 +416,16 @@ services:
     App\Serializer\:
         resource: '../src/Serializer/'
 
+    App\Service\:
+        resource: '../src/Service/'
+
+    App\EventListener\:
+        resource: '../src/EventListener/'
+
     # Aurora's translation dumper writes JSON files to vendor/aurora/assets/locales/
     # so vue-i18n (running from aurora's app.js) can import them. Add each client
     # module's translations dir to \$extraSourceDirs as you create them, e.g.:
-    #     - '%kernel.project_dir%/src/Custom/MyModule/translations'
+    #     - '%kernel.project_dir%/src/Module/MyModule/translations'
     Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
         arguments:
             \$auroraDir: '%kernel.project_dir%/${AURORA_VENDOR_PATH}'
@@ -542,13 +554,24 @@ make install
 
 \`\`\`
 ${PROJECT_NAME}/
-├── src/Custom/                 # Client PHP code — namespace App\Custom\*
-├── templates/Custom/           # Client Twig templates
+├── src/                        # Flat, responsibility-based folders (Sylius/Symfony convention)
+│   ├── Controller/             # App\Controller\* — client routes
+│   ├── Entity/                 # App\Entity\*     — entity overrides (extends Aurora's AbstractX)
+│   ├── Dto/                    # App\Dto\*        — DTO overrides
+│   ├── Manager/                # App\Manager\*    — manager overrides / decorators
+│   ├── Serializer/             # App\Serializer\* — serializer overrides / decorators
+│   ├── Service/                # App\Service\*    — domain services
+│   ├── EventListener/          # App\EventListener\*
+│   └── Module/<Name>/          # App\Module\<Name>\* — feature modules (optional)
+├── templates/
+│   ├── Core/                   # Override @Core/... templates (auto-resolved before Aurora's)
+│   └── Module/<Name>/          # Module-specific templates
+├── assets/client/Module/<Name>/ # Client Vue components — registered as @client by Aurora vite
 ├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
 │   ├── packages/               # Symfony + Aurora config overrides
-│   ├── routes.yaml             # Imports Aurora routes + custom routes
-│   └── services.yaml           # Custom service definitions
+│   ├── routes.yaml             # Imports Aurora routes + client routes
+│   └── services.yaml           # Service registration
 ├── bin/console
 └── public/index.php
 \`\`\`
@@ -565,11 +588,13 @@ make aurora-update
 
 | What | Where | How |
 |------|-------|-----|
-| New service | \`src/Custom/Service/\` | \`services.yaml\` |
-| Override Aurora service | \`src/Custom/Service/\` | \`#[AsDecorator]\` |
-| New page | \`src/Custom/Controller/\` | \`routes.yaml\` |
-| Override template | \`templates/Custom/\` | mirror Aurora path |
-| Custom entity | \`src/Custom/Entity/\` | \`config/packages/doctrine.yaml\` |
+| New page | \`src/Controller/\` | \`routes.yaml\` |
+| New service | \`src/Service/\` | autowired |
+| Override Aurora service | \`src/Manager/\`, \`src/Serializer/\`, … | \`#[AsAlias]\` or \`#[AsDecorator]\` |
+| Override Aurora template | \`templates/Core/<mirrored-path>\` | auto-resolved (Aurora prepends client paths) |
+| Extend an Aurora entity | \`src/Entity/\` | \`extends AbstractAurora<Name>\` + \`resolve_target_entities\` |
+| Custom DTO | \`src/Dto/\` | \`extends AuroraInput\` |
+| Feature module | \`src/Module/<Name>/\` | \`assets/client/Module/<Name>\` for Vue, register module class in \`services.yaml\` |
 | Custom migration | \`migrations/\` | \`make migration\` |
 EOF
 

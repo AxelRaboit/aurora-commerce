@@ -18,7 +18,7 @@ autres entités au fur et à mesure des besoins.
 | DTO d'entrée | `src/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
 | Manager | `src/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
 | Serializer | `src/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
-| Vue + Twig | `assets/client/Module/Custom/backend/agencies/AgenciesApp.vue` + `templates/Core/backend/agencies/index.html.twig` | slots scoped + override Twig |
+| Vue + Twig | `assets/client/Module/<YourModule>/backend/agencies/AgenciesApp.vue` + `templates/Core/backend/agencies/index.html.twig` | slots scoped + override Twig |
 
 ---
 
@@ -230,8 +230,12 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Custom\:
-        resource: '../src/Custom/'
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Entity\:
+        resource: '../src/Entity/'
 
     App\Dto\:
         resource: '../src/Dto/'
@@ -331,12 +335,16 @@ class AgencySerializer extends AuroraAgencySerializer
 ### 5.1 Composant client — chemin et alias
 
 Aurora's `app.js` scanne `@client/Module/<ModuleName>/**/*.vue` et expose les
-composants comme `<modulename>/<rest>`. Pour notre cas, on crée le wrapper sous
-`assets/client/Module/Custom/backend/agencies/` ; il sera accessible via
-`vue_component('custom/backend/agencies/AgenciesApp')`.
+composants comme `<modulename>/<rest>`. Pour notre exemple, on place le wrapper
+sous le module `Tracking` du client (le seul module métier de l'app pilote),
+mais vous pouvez choisir n'importe quel nom de module métier — `<modulename>`
+sera le préfixe utilisé par `vue_component()`. **Évitez** un nom générique
+comme `Custom` : il y a déjà la convention "responsibility-based" côté PHP
+(`src/Entity`, `src/Manager`, …) et un module Vue nommé `Custom` aurait une
+sémantique floue.
 
 ```vue
-<!-- aurora-client : assets/client/Module/Custom/backend/agencies/AgenciesApp.vue -->
+<!-- aurora-client : assets/client/Module/Tracking/backend/agencies/AgenciesApp.vue -->
 <script setup>
 import AuroraAgenciesApp from "@core/backend/agencies/AgenciesApp.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -416,7 +424,7 @@ pas de config Twig supplémentaire.
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('custom/backend/agencies/AgenciesApp', {
+<div {{ vue_component('tracking/backend/agencies/AgenciesApp', {
     agencies: agencies,
     createPath: path('backend_agencies_create'),
     updatePath: path('backend_agencies_update', {id: '__id__'}),
@@ -427,7 +435,8 @@ pas de config Twig supplémentaire.
 
 La seule ligne qui change vs le template Aurora :
 `vue_component('core/backend/agencies/AgenciesApp', …)` →
-`vue_component('custom/backend/agencies/AgenciesApp', …)`.
+`vue_component('<yourmodule>/backend/agencies/AgenciesApp', …)` (ici
+`tracking/...` puisque c'est le module qui héberge le wrapper).
 
 Vérifier que l'override est bien pris :
 

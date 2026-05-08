@@ -26,19 +26,28 @@ as a submodule, and runs `composer install`.
 
 ## Project structure
 
+Aurora client projects follow the Sylius / Symfony convention: PSR-4 prefixes
+are flat under `src/` and named after responsibility (Entity, Controller,
+Manager, …) — no `Custom/` umbrella bucket. Feature modules with their own
+controllers, templates and translations live under `src/Module/<Name>/` and
+mirror Aurora's own module layout.
+
 ```
 client-app/
 ├── vendor/aurora/              # Aurora core (read-only — never edited directly)
 ├── src/
-│   ├── Custom/                 # App\Custom\* — client controllers, modules, services
-│   ├── Entity/                 # App\Entity\*  — client entity overrides (extending AbstractAurora* + AgencyInterface, etc.)
-│   ├── Dto/                    # App\Dto\*     — client DTO overrides (extending Aurora DTOs)
-│   ├── Manager/                # App\Manager\* — client Manager overrides / decorators (#[AsAlias] on Aurora's interface)
-│   └── Serializer/             # App\Serializer\* — client Serializer overrides / decorators
+│   ├── Controller/             # App\Controller\*   — client routes
+│   ├── Entity/                 # App\Entity\*       — entity overrides (extends AbstractAurora<Name>)
+│   ├── Dto/                    # App\Dto\*          — DTO overrides
+│   ├── Manager/                # App\Manager\*      — manager overrides / decorators
+│   ├── Serializer/             # App\Serializer\*   — serializer overrides / decorators
+│   ├── Service/                # App\Service\*      — domain services
+│   ├── EventListener/          # App\EventListener\*
+│   └── Module/<Name>/          # App\Module\<Name>\* — feature module (optional, mirrors Aurora's layout)
 ├── templates/
-│   ├── Custom/                 # Client-only Twig templates
-│   └── Core/                   # Overrides for @Core/... templates (auto-resolved before Aurora's)
-├── assets/client/Module/       # Client Vue components (registered as @client by Aurora's vite config)
+│   ├── Core/                   # Overrides for @Core/... templates (auto-resolved before Aurora's)
+│   └── Module/<Name>/          # Module-specific templates
+├── assets/client/Module/<Name>/ # Client Vue components (registered as @client by Aurora's vite config)
 ├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
 │   ├── packages/               # doctrine.yaml, twig.yaml, etc. — client overrides
@@ -49,8 +58,10 @@ client-app/
 ```
 
 Rule of thumb: **the client never edits files under `vendor/aurora/`.** All
-customisation happens through the extension points below. Updating Aurora is
-then a one-liner (`git submodule update --remote vendor/aurora`).
+customisation happens through the extension points below — overrides live
+under the matching responsibility folder, never under a generic `Custom/`
+bucket. Updating Aurora is then a one-liner
+(`composer update axelraboit/aurora`).
 
 ## How Aurora loads client files
 
@@ -71,7 +82,9 @@ No manual wiring required — the three config files are the entire contract.
 
 ### 1. Services
 
-Add classes under `src/Custom/`. Declare the namespace in `config/services-custom.yaml`:
+The scaffold registers responsibility-based PSR-4 prefixes in
+`config/services.yaml`. Drop a class under the matching folder and it's
+auto-wired:
 
 ```yaml
 services:
@@ -79,8 +92,15 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Custom\:
-        resource: '../src/Custom/'
+    App\Service\:
+        resource: '../src/Service/'
+
+    App\Manager\:
+        resource: '../src/Manager/'
+
+    App\EventListener\:
+        resource: '../src/EventListener/'
+    # … and so on for Controller, Entity, Dto, Serializer
 ```
 
 ### 2. Decorating an Aurora service
@@ -88,9 +108,9 @@ services:
 Use Symfony's `#[AsDecorator]` to swap behaviour without touching core code:
 
 ```php
-namespace App\Custom\Service;
+namespace App\Service;
 
-use App\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 
 #[AsDecorator(decorates: ThemeContext::class)]
@@ -108,9 +128,9 @@ final class CustomThemeContext extends ThemeContext
 Hook into Aurora's flow via `#[AsEventListener]`:
 
 ```php
-namespace App\Custom\EventSubscriber;
+namespace App\EventListener;
 
-use App\Module\Ecommerce\Event\OrderCreatedEvent;
+use Aurora\Module\Ecommerce\Event\OrderCreatedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener(event: OrderCreatedEvent::class)]
@@ -127,16 +147,17 @@ See `src/*/Event/` in aurora for the full catalog of domain events.
 
 ### 4. Routes & controllers
 
-Place controllers under `src/Custom/Controller/` and declare them in
-`config/routes-custom.yaml`:
+Place controllers under `src/Controller/`. The scaffold writes a route
+loader for them in `config/routes.yaml`:
 
 ```yaml
-custom_controllers:
-    resource:
-        path: ../src/Custom/Controller/
-        namespace: App\Custom\Controller
+client:
+    resource: '../src/Controller/'
     type: attribute
 ```
+
+Routes declared via `#[Route]` attributes on the controller methods are
+discovered automatically.
 
 ### 5. Twig templates
 
@@ -151,48 +172,35 @@ vendor/aurora/templates/Core/admin/layout.html.twig
 templates/Core/admin/layout.html.twig
 ```
 
-To add new templates (not overrides), place them anywhere under `templates/`:
+To add new templates (not overrides), place them under `templates/Module/<Name>/`
+(if they belong to a feature module) or directly under `templates/`:
 
 ```twig
-{# templates/Custom/invoice.html.twig #}
-{% extends 'Core/admin/layout.html.twig' %}
+{# templates/Module/Contracts/invoice.html.twig #}
+{% extends '@Core/backend/layout.html.twig' %}
 ```
 
 ### 6. Custom entities & migrations
 
-Declare the Doctrine mapping and a separate migrations path in
-`config/packages-custom.yaml`:
-
-```yaml
-doctrine:
-    orm:
-        mappings:
-            AppCustom:
-                type: attribute
-                is_bundle: false
-                dir: '%aurora.client_dir%/src/Custom'
-                prefix: 'App\Custom'
-                alias: AppCustom
-
-doctrine_migrations:
-    migrations_paths:
-        'ClientMigrations': '%aurora.client_dir%/migrations'
-```
-
-Create the entity in `src/Custom/Entity/`:
+The scaffold registers the `App\Entity` Doctrine mapping and the client
+migrations path. Drop your entity under `src/Entity/`:
 
 ```php
-namespace App\Custom\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
+#[ORM\Table(name: 'client_contracts')]
 class Contract
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    private int $id;
+    private ?int $id = null;
 }
 ```
+
+(For overriding/extending an Aurora entity rather than creating a fresh one,
+see section 6.bis below.)
 
 Then generate and run the migration:
 
@@ -324,10 +332,10 @@ ses propres préfixes — **sans jamais utiliser un préfixe déjà pris par le 
 #### Déclarer des préfixes clients
 
 ```php
-// src/Custom/Sequence/ClientSequencePrefixProvider.php
-namespace App\Custom\Sequence;
+// src/Sequence/ClientSequencePrefixProvider.php
+namespace App\Sequence;
 
-use App\Custom\Enum\ClientPrefixEnum;
+use App\Enum\ClientPrefixEnum;
 use Aurora\Core\Sequence\SequencePrefixProviderInterface;
 
 final class ClientSequencePrefixProvider implements SequencePrefixProviderInterface
@@ -342,8 +350,8 @@ final class ClientSequencePrefixProvider implements SequencePrefixProviderInterf
 ```
 
 ```php
-// src/Custom/Enum/ClientPrefixEnum.php
-namespace App\Custom\Enum;
+// src/Enum/ClientPrefixEnum.php
+namespace App\Enum;
 
 enum ClientPrefixEnum: string
 {
@@ -351,6 +359,11 @@ enum ClientPrefixEnum: string
     case Intervention = 'INTX';
 }
 ```
+
+(Add `App\Sequence\:` and `App\Enum\:` PSR-4 prefixes to `services.yaml` if
+you create those folders — the scaffold ships with the most common ones
+(Controller, Entity, Dto, Manager, Serializer, Service, EventListener) and
+you extend the list as needed.)
 
 La classe est auto-taggée via `_instanceof` dès qu'elle implémente `SequencePrefixProviderInterface`.
 Aucune configuration supplémentaire.
