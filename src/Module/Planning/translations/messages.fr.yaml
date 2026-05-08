@@ -33,8 +33,8 @@ backend:
     sidebar:
       users: Utilisateurs
       agencies: Agences
-      showAll: Tout afficher
-      filterActive: Filtre actif
+      selectAll: Tout sélectionner
+      deselectAll: Tout désélectionner
       clear: Réinitialiser
       noUsers: Aucun utilisateur
       noAgencies: Aucune agence

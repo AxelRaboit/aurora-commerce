@@ -90,9 +90,39 @@ export function usePeopleSidebar(usersSelectablePath, agenciesSelectablePath, pl
         else selectedAgencyIds.value = new Set();
     }
 
+    /** Selects every item currently visible (i.e. matching the search). */
+    function selectAllVisible() {
+        if (mode.value === "users") {
+            selectedUserIds.value = new Set(
+                filteredUsers.value.map((user) => Number(user.id)),
+            );
+        } else {
+            selectedAgencyIds.value = new Set(
+                filteredAgencies.value.map((agency) => Number(agency.value)),
+            );
+        }
+    }
+
     const hasFilter = computed(() => {
         if (mode.value === "users") return selectedUserIds.value.size > 0;
         return selectedAgencyIds.value.size > 0;
+    });
+
+    /** True when every visible entry is already selected — used to flip
+     *  the "Tout sélectionner" toggle into a "Tout désélectionner". */
+    const allVisibleSelected = computed(() => {
+        if (mode.value === "users") {
+            const list = filteredUsers.value;
+            if (0 === list.length) return false;
+            return list.every((user) =>
+                selectedUserIds.value.has(Number(user.id)),
+            );
+        }
+        const list = filteredAgencies.value;
+        if (0 === list.length) return false;
+        return list.every((agency) =>
+            selectedAgencyIds.value.has(Number(agency.value)),
+        );
     });
 
     // Reusable AppMultiselect-shape options — same source of truth as
@@ -147,9 +177,11 @@ export function usePeopleSidebar(usersSelectablePath, agenciesSelectablePath, pl
         selectedUserIds,
         selectedAgencyIds,
         hasFilter,
+        allVisibleSelected,
         toggleUser,
         toggleAgency,
         clearSelection,
+        selectAllVisible,
         buildEventMatcher,
     };
 }

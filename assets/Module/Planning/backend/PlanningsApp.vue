@@ -3,7 +3,7 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import FullCalendar from "@fullcalendar/vue3";
-import { Plus, Pencil, Trash2, Save, X, CalendarDays, Users, Building2, LayoutGrid, Rows3 } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, CalendarDays, Users, Building2, LayoutGrid, Rows3, CheckSquare, Square } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -173,18 +173,37 @@ onMounted(() => {
                             : t('backend.plannings.sidebar.searchAgenciesPlaceholder')"
                     />
 
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-secondary">
-                            {{ peopleSidebar.hasFilter.value
-                                ? t("backend.plannings.sidebar.filterActive")
-                                : t("backend.plannings.sidebar.showAll") }}
-                        </span>
+                    <div class="flex flex-col gap-1.5">
+                        <AppButton
+                            variant="ghost"
+                            size="sm"
+                            class="w-full justify-center"
+                            v-on:click="peopleSidebar.allVisibleSelected.value
+                                ? peopleSidebar.clearSelection()
+                                : peopleSidebar.selectAllVisible()"
+                        >
+                            <CheckSquare
+                                v-if="!peopleSidebar.allVisibleSelected.value"
+                                class="w-3.5 h-3.5"
+                                :stroke-width="2"
+                            />
+                            <Square
+                                v-else
+                                class="w-3.5 h-3.5"
+                                :stroke-width="2"
+                            />
+                            {{ peopleSidebar.allVisibleSelected.value
+                                ? t("backend.plannings.sidebar.deselectAll")
+                                : t("backend.plannings.sidebar.selectAll") }}
+                        </AppButton>
                         <AppButton
                             v-if="peopleSidebar.hasFilter.value"
                             variant="ghost"
-                            size="xs"
+                            size="sm"
+                            class="w-full justify-center"
                             v-on:click="peopleSidebar.clearSelection()"
                         >
+                            <X class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("backend.plannings.sidebar.clear") }}
                         </AppButton>
                     </div>
