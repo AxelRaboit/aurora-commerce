@@ -224,6 +224,117 @@ regenerates the full accent palette (50 → 950) from that single seed.
 For deeper branding (logo, footer, header text), use the theme config fields
 surfaced by `ThemeContext`.
 
+### 10. Sequences de références métier
+
+Aurora génère des références numérotées pour toutes ses entités (`FAC-000001`, `ORD-000001`, etc.)
+via `SequenceGenerator`, qui crée une séquence PostgreSQL par préfixe.
+
+Si une entité cliente doit elle aussi avoir des références numérotées, elle doit déclarer
+ses propres préfixes — **sans jamais utiliser un préfixe déjà pris par le Core.**
+
+#### Déclarer des préfixes clients
+
+```php
+// src/Custom/Sequence/ClientSequencePrefixProvider.php
+namespace App\Custom\Sequence;
+
+use App\Custom\Enum\ClientPrefixEnum;
+use Aurora\Core\Sequence\SequencePrefixProviderInterface;
+
+final class ClientSequencePrefixProvider implements SequencePrefixProviderInterface
+{
+    public function values(): array
+    {
+        return array_column(ClientPrefixEnum::cases(), 'value');
+    }
+
+    public function name(): string { return 'My Client App'; }
+}
+```
+
+```php
+// src/Custom/Enum/ClientPrefixEnum.php
+namespace App\Custom\Enum;
+
+enum ClientPrefixEnum: string
+{
+    case Contract = 'CTRX';
+    case Intervention = 'INTX';
+}
+```
+
+La classe est auto-taggée via `_instanceof` dès qu'elle implémente `SequencePrefixProviderInterface`.
+Aucune configuration supplémentaire.
+
+#### Conflit détecté automatiquement
+
+Si un préfixe client entre en collision avec un préfixe Core (dans les deux sens),
+Aurora lève une `LogicException` à la première requête :
+
+```
+[Aurora] Sequence prefix conflict: "OFC" is declared by both "Aurora Core"
+and "My Client App". Each prefix must be globally unique — rename one of them.
+```
+
+Cela se déclenche au boot après un `aurora-update` si le Core a introduit une valeur
+déjà utilisée côté client — l'erreur est visible immédiatement, avant la mise en prod.
+
+**Renommer un préfixe déjà en production implique une migration de données** (update de
+toutes les colonnes `reference` concernées + renommage de la séquence PostgreSQL). La
+prévention vaut mieux que la correction.
+
+#### Préfixes réservés — Aurora Core
+
+Ces valeurs sont définies dans `SequencePrefixEnum` et **ne doivent jamais être utilisées
+côté client.** La liste est mise à jour à chaque ajout dans le Core.
+
+| Préfixe | Entité |
+|---|---|
+| `FAC` | Invoice |
+| `AV` | CreditNote |
+| `ORD` | Order |
+| `PROD` | Product |
+| `DEAL` | Deal |
+| `CTT` | Contact |
+| `CPY` | Company |
+| `LST` | Listing |
+| `GAL` | Gallery |
+| `ART` | Post |
+| `FRM` | Form |
+| `TRS` | Tiers |
+| `USR` | User |
+| `MED` | Media |
+| `ACR` | AccessRequest |
+| `SUB` | FormSubmission |
+| `PHO` | GalleryItem |
+| `GIV` | GalleryInvite |
+| `CMT` | Comment |
+| `LOG` | AuditLog |
+| `RPR` | ResetPasswordRequest |
+| `MFD` | MediaFolder |
+| `MNI` | MenuItem |
+| `OCR` | OcrJob |
+| `CRT` | Cart |
+| `CRI` | CartItem |
+| `ORL` | OrderLine |
+| `FLD` | FormField |
+| `TRM` | TaxonomyTerm |
+| `GFN` | GalleryFinalization |
+| `GIC` | GalleryItemComment |
+| `GPK` | GalleryPick |
+| `DOC` | GedDocument |
+| `PRJ` | Project |
+| `TSK` | ProjectTask |
+| `PRJC` | ProjectColumn |
+
+#### Convention de nommage
+
+Pour éviter les conflits futurs, les préfixes clients doivent :
+
+- Être distincts de tous les préfixes Core listés ci-dessus
+- Inclure un suffixe ou préfixe propre au projet pour réduire le risque de collision lors d'une mise à jour Core future — ex. : `ACME_CTR` plutôt que `CTR`
+- Avoir une longueur ≥ 4 caractères (les préfixes Core courts de 2-3 chars sont dans la zone de danger)
+
 ---
 
 ## Updating Aurora in a client
