@@ -16,37 +16,37 @@ bundle composer + assets npm. Sert d'**exemple canonique** de comment
 
 ---
 
-## 📚 Base de mémoire (lue depuis aurora-core via composer)
+## 📚 Base de mémoire (synchronisée localement via `make aurora-update`)
 
-La mémoire projet vit côté **aurora-core** et est distribuée via composer.
-**Pas de duplication** : une mise à jour de la convention met
-automatiquement à jour les patterns côté client.
+La mémoire projet vit côté **aurora-core** et est synchronisée vers
+`.claude/memory/aurora/` à chaque `make aurora-update`. **Ne pas éditer
+ces fichiers à la main** — ils sont écrasés au prochain sync.
 
-**Index principal** :
+**Index principal aurora-core** :
 [`vendor/axelraboit/aurora/.claude/memory/MEMORY.md`](vendor/axelraboit/aurora/.claude/memory/MEMORY.md)
 (conventions générales aurora-core qu'il est utile de connaître côté client).
 
-**Patterns d'extension** :
-[`vendor/axelraboit/aurora/.claude/memory/client/MEMORY.md`](vendor/axelraboit/aurora/.claude/memory/client/MEMORY.md)
+**Patterns d'extension client** (synchronisés localement) :
+[`.claude/memory/aurora/MEMORY.md`](.claude/memory/aurora/MEMORY.md)
 — c'est ici qu'on trouve tout pour étendre une entité, un DTO, un Manager,
 un Serializer, la Vue ou un template Twig.
 
 **Checklist d'extension complète** :
-[`vendor/axelraboit/aurora/.claude/memory/client/checklist_extend_full_entity.md`](vendor/axelraboit/aurora/.claude/memory/client/checklist_extend_full_entity.md)
+[`.claude/memory/aurora/checklist_extend_full_entity.md`](.claude/memory/aurora/checklist_extend_full_entity.md)
 — pas-à-pas pour étendre une entité de bout en bout.
 
 **Pattern par couche** (5 couches Sylius) :
-- [Entité](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_entity.md)
-- [DTO](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_dto.md)
-- [Manager](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_manager.md)
-- [Serializer](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_serializer.md)
-- [Vue](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_vue.md)
-- [Twig override](vendor/axelraboit/aurora/.claude/memory/client/pattern_override_twig.md)
-- [Repository](vendor/axelraboit/aurora/.claude/memory/client/pattern_extend_repository.md)
+- [Entité](.claude/memory/aurora/pattern_extend_entity.md)
+- [DTO](.claude/memory/aurora/pattern_extend_dto.md)
+- [Manager](.claude/memory/aurora/pattern_extend_manager.md)
+- [Serializer](.claude/memory/aurora/pattern_extend_serializer.md)
+- [Vue](.claude/memory/aurora/pattern_extend_vue.md)
+- [Twig override](.claude/memory/aurora/pattern_override_twig.md)
+- [Repository](.claude/memory/aurora/pattern_extend_repository.md)
 
 **Pièges à connaître** :
-- [Toujours override `create<X>()` quand on étend une entité](vendor/axelraboit/aurora/.claude/memory/client/pitfall_create_hook_required.md)
-- [Toujours `parent::applyInput()` AVANT d'ajouter ses setters](vendor/axelraboit/aurora/.claude/memory/client/pitfall_call_parent_apply_input.md)
+- [Toujours override `create<X>()` quand on étend une entité](.claude/memory/aurora/pitfall_create_hook_required.md)
+- [Toujours `parent::applyInput()` AVANT d'ajouter ses setters](.claude/memory/aurora/pitfall_call_parent_apply_input.md)
 
 ---
 
@@ -61,9 +61,9 @@ Si pendant une session tu rencontres :
 → Trois options selon le scope :
 
 1. **Pattern d'extension Aurora utilisable par tous les clients** : ajouter
-   à `vendor/axelraboit/aurora/.claude/memory/client/` + commit côté
-   aurora-core. Sera distribué automatiquement à tous les clients via
-   `composer update`.
+   à `aurora-core/.claude/memory/client/` + commit + push côté aurora-core.
+   Sera synchronisé chez tous les clients au prochain `make aurora-update`
+   (vers `.claude/memory/aurora/`).
 
 2. **Convention/pattern interne au projet client** (pas réutilisable) :
    créer une mémoire **locale** ici dans `aurora-client/.claude/memory/`
