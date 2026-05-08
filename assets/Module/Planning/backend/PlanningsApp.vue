@@ -1,27 +1,36 @@
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import FullCalendar from "@fullcalendar/vue3";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { usePlanningForm } from "./composables/usePlanningForm.js";
-import { useEventForm } from "./composables/useEventForm.js";
+import { Plus, Pencil, Trash2, Save, X, CalendarDays, Users, Building2, LayoutGrid, Rows3 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
+import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Plus, Pencil, Trash2, Save, X } from "lucide-vue-next";
+import { usePlanningContext } from "./composables/usePlanningContext.js";
+import { usePlanningForm } from "./composables/usePlanningForm.js";
+import { usePlanningDelete } from "./composables/usePlanningDelete.js";
+import { useEventForm } from "./composables/useEventForm.js";
+import { useEventDelete } from "./composables/useEventDelete.js";
+import { useEventFilters } from "./composables/useEventFilters.js";
+import { useCalendar } from "./composables/useCalendar.js";
+import { usePlanningFormOptions } from "./composables/usePlanningFormOptions.js";
+import { usePeopleSidebar } from "./composables/usePeopleSidebar.js";
+import { useResourceMode } from "./composables/useResourceMode.js";
+import ResourceGridView from "./ResourceGridView.vue";
 
 const props = defineProps({
-    plannings: { type: Array, required: true },
+    plannings: { type: Array, default: () => [] },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -29,208 +38,292 @@ const props = defineProps({
     eventCreatePath: { type: String, required: true },
     eventUpdatePath: { type: String, required: true },
     eventDeletePath: { type: String, required: true },
+    usersSelectablePath: { type: String, required: true },
 });
 
 const { t } = useI18n();
-const { request } = useApiRequest();
+const { can } = usePrivileges();
+const canManagePlannings = computed(() => can("planning.plannings.manage"));
+const canManageEvents = computed(() => can("planning.events.manage"));
 
-const plannings = ref([...props.plannings]);
-const selectedPlanningId = ref(plannings.value[0]?.id ?? null);
-const events = ref([]);
-
-const selectedPlanning = computed(
-    () => plannings.value.find((planning) => Number(planning.id) === Number(selectedPlanningId.value)) ?? null,
-);
-
-const planningOptions = computed(() =>
-    plannings.value.map((planning) => ({
-        value: planning.id,
-        label: planning.name,
-    })),
-);
-
-const planningForm = usePlanningForm(plannings, props.createPath, props.updatePath);
-const eventForm = useEventForm(
+// --- Domain state -----------------------------------------------------
+const {
+    plannings,
+    selectedPlanningId,
+    selectedPlanning,
+    planningOptions,
     events,
-    props.eventCreatePath,
-    props.eventUpdatePath,
+    loadEvents,
+    setRange,
+} = usePlanningContext(props.plannings, props.eventsListPath);
+
+
+// --- CRUD composables -------------------------------------------------
+const planningForm = usePlanningForm(plannings, props.createPath, props.updatePath);
+const { deletingPlanning, confirmDelete: confirmDeletePlanning } = usePlanningDelete(
+    plannings,
+    selectedPlanningId,
+    props.deletePath,
+);
+
+const eventForm = useEventForm(events, props.eventCreatePath, props.eventUpdatePath);
+const { deletingEvent, confirmDelete: confirmDeleteEvent } = useEventDelete(
+    events,
     props.eventDeletePath,
-);
-
-const calendarEvents = computed(() =>
-    events.value.map((event) => ({
-        id: String(event.id),
-        title: event.title,
-        start: event.startAt,
-        end: event.endAt,
-        allDay: event.allDay,
-        backgroundColor: selectedPlanning.value?.color ?? "#3b82f6",
-        borderColor: selectedPlanning.value?.color ?? "#3b82f6",
-        editable: event.editable,
-        extendedProps: { raw: event },
-    })),
-);
-
-const calendarOptions = computed(() => ({
-    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-    initialView: "dayGridMonth",
-    headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
+    {
+        onDeleted: () => {
+            eventForm.editModal.open = false;
+        },
     },
-    locale: document.documentElement.lang || "fr",
-    height: "auto",
-    selectable: true,
-    editable: true,
-    events: calendarEvents.value,
-    select: onSlotSelect,
-    eventClick: onEventClick,
-    eventDrop: onEventDrop,
-    eventResize: onEventDrop,
-    datesSet: onDatesChange,
-}));
+);
 
-let currentRange = { from: null, to: null };
+// --- People filter (sidebar) ------------------------------------------
+const peopleSidebar = usePeopleSidebar(props.usersSelectablePath, plannings);
+const eventMatcher = computed(() => peopleSidebar.buildEventMatcher(plannings));
 
-async function loadEvents() {
-    if (!selectedPlanningId.value || !currentRange.from) return;
-    const url =
-        buildPath(props.eventsListPath, { id: selectedPlanningId.value }) +
-        `?from=${encodeURIComponent(currentRange.from)}&to=${encodeURIComponent(currentRange.to)}`;
-    const data = await request(url, null, HttpMethod.Get);
-    if (data?.success) events.value = data.items;
-}
+// --- Display + calendar -----------------------------------------------
+const baseColor = computed(() => selectedPlanning.value?.color ?? null);
+const { STATUS_TONES, visibleStatuses, filteredEvents, calendarEvents, toggleStatus } =
+    useEventFilters(events, baseColor, { extraMatcher: eventMatcher });
 
-function onDatesChange(info) {
-    currentRange = {
-        from: info.startStr,
-        to: info.endStr,
-    };
-    loadEvents();
-}
+const { options: calendarOptions } = useCalendar({
+    selectedPlanningId,
+    events,
+    calendarEvents,
+    eventForm,
+    eventUpdatePath: props.eventUpdatePath,
+    canManageEvents,
+    onRangeChange: (from, to) => {
+        if (setRange(from, to)) loadEvents();
+    },
+});
 
-function onSlotSelect(slot) {
-    if (!selectedPlanningId.value) return;
-    eventForm.openCreate(slot);
-}
+const { visibilityOptions, statusOptions, timezoneOptions } = usePlanningFormOptions();
 
-function onEventClick(info) {
-    const raw = info.event.extendedProps.raw;
-    if (raw) eventForm.openEdit(raw);
-}
-
-async function onEventDrop(info) {
-    const raw = info.event.extendedProps.raw;
-    if (!raw || !raw.editable) {
-        info.revert();
-        return;
-    }
-    const url = buildPath(props.eventUpdatePath, { eventId: raw.id });
-    const data = await request(url, {
-        title: raw.title,
-        description: raw.description,
-        location: raw.location,
-        startAt: info.event.startStr,
-        endAt: info.event.endStr || info.event.startStr,
-        allDay: info.event.allDay,
-        status: raw.status,
-        attendeeIds: raw.attendees.map((attendee) => attendee.id),
-    });
-    if (!data?.success) {
-        info.revert();
-        toast.error(t("shared.common.error"));
-        return;
-    }
-    const index = events.value.findIndex((event) => event.id === raw.id);
-    if (index !== -1) events.value[index] = data.event;
-}
-
-async function deletePlanning(planning) {
-    if (!confirm(t("backend.plannings.delete_confirm"))) return;
-    const url = buildPath(props.deletePath, { id: planning.id });
-    const data = await request(url, {});
-    if (!data?.success) {
-        toast.error(t("shared.common.error"));
-        return;
-    }
-    plannings.value = plannings.value.filter((entry) => entry.id !== planning.id);
-    if (selectedPlanningId.value === planning.id) {
-        selectedPlanningId.value = plannings.value[0]?.id ?? null;
-    }
-    toast.success(t("shared.common.deleted"));
-}
-
-watch(selectedPlanningId, () => {
-    loadEvents();
+const resourceMode = useResourceMode({
+    setRange,
+    loadEvents,
+    peopleSidebar,
+    eventForm,
+    canManageEvents,
 });
 
 onMounted(() => {
     if (selectedPlanningId.value) loadEvents();
 });
-
-const visibilityOptions = [
-    { value: "private", label: t("backend.plannings.visibility.private") },
-    { value: "agency", label: t("backend.plannings.visibility.agency") },
-    { value: "public", label: t("backend.plannings.visibility.public") },
-];
-
-const statusOptions = [
-    { value: "tentative", label: t("backend.planning_events.status.tentative") },
-    { value: "confirmed", label: t("backend.planning_events.status.confirmed") },
-    { value: "cancelled", label: t("backend.planning_events.status.cancelled") },
-];
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
-        <div class="flex flex-wrap items-center gap-3">
-            <div class="min-w-[220px]">
-                <AppSelect
-                    v-if="plannings.length"
-                    v-model="selectedPlanningId"
-                    :options="planningOptions"
-                />
-            </div>
-            <span
-                v-if="selectedPlanning"
-                class="inline-block h-3 w-3 rounded-full"
-                :style="{ backgroundColor: selectedPlanning.color }"
-            />
-            <AppIconButton
-                v-if="selectedPlanning"
-                :title="t('backend.plannings.edit')"
-                v-on:click="planningForm.openEdit(selectedPlanning)"
-            >
-                <Pencil class="h-4 w-4" />
-            </AppIconButton>
-            <AppIconButton
-                v-if="selectedPlanning"
-                :title="t('backend.plannings.delete')"
-                v-on:click="deletePlanning(selectedPlanning)"
-            >
-                <Trash2 class="h-4 w-4" />
-            </AppIconButton>
-            <div class="ml-auto">
-                <AppButton variant="primary" size="md" v-on:click="planningForm.openCreate()">
-                    <Plus class="h-4 w-4" :stroke-width="2" />
-                    {{ t("backend.plannings.new") }}
-                </AppButton>
-            </div>
-        </div>
-
-        <div v-if="!selectedPlanning" class="rounded border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700">
-            <p>{{ t("backend.plannings.title") }}</p>
-            <AppButton class="mt-3" v-on:click="planningForm.openCreate()">
-                <Plus class="h-4 w-4" />
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-primary">{{ t("backend.plannings.title") }}</h1>
+            <AppButton v-if="canManagePlannings" variant="primary" size="md" v-on:click="planningForm.openCreate()">
+                <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t("backend.plannings.new") }}
             </AppButton>
         </div>
 
-        <div v-else class="rounded border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
-            <FullCalendar :options="calendarOptions" />
+        <div
+            v-if="!plannings.length"
+            class="bg-surface border border-line/60 rounded-xl p-12 text-center"
+        >
+            <CalendarDays class="mx-auto mb-3 h-10 w-10 text-muted opacity-40" :stroke-width="1.5" />
+            <p class="mb-4 text-secondary text-sm">{{ t("backend.plannings.empty") }}</p>
+            <AppButton v-if="canManagePlannings" variant="primary" size="md" v-on:click="planningForm.openCreate()">
+                <Plus class="w-4 h-4" :stroke-width="2" />
+                {{ t("backend.plannings.new") }}
+            </AppButton>
         </div>
 
+        <template v-else>
+            <div class="grid gap-4 lg:grid-cols-[240px_1fr]">
+                <aside class="bg-surface border border-line/60 rounded-xl p-3 space-y-3 self-start lg:sticky lg:top-4">
+                    <div class="grid grid-cols-2 gap-1 rounded-lg bg-surface-2/60 p-1">
+                        <AppTab
+                            size="xs"
+                            shape-class="rounded-md"
+                            align="center"
+                            :active="peopleSidebar.mode.value === 'users'"
+                            v-on:click="peopleSidebar.mode.value = 'users'"
+                        >
+                            <Users class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("backend.plannings.sidebar.users") }}
+                        </AppTab>
+                        <AppTab
+                            size="xs"
+                            shape-class="rounded-md"
+                            align="center"
+                            :active="peopleSidebar.mode.value === 'agencies'"
+                            v-on:click="peopleSidebar.mode.value = 'agencies'"
+                        >
+                            <Building2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("backend.plannings.sidebar.agencies") }}
+                        </AppTab>
+                    </div>
+
+                    <AppSearchInput
+                        v-model="peopleSidebar.searchQuery.value"
+                        :placeholder="peopleSidebar.mode.value === 'users'
+                            ? t('backend.plannings.sidebar.searchUsersPlaceholder')
+                            : t('backend.plannings.sidebar.searchAgenciesPlaceholder')"
+                    />
+
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-secondary">
+                            {{ peopleSidebar.hasFilter.value
+                                ? t("backend.plannings.sidebar.filterActive")
+                                : t("backend.plannings.sidebar.showAll") }}
+                        </span>
+                        <AppButton
+                            v-if="peopleSidebar.hasFilter.value"
+                            variant="ghost"
+                            size="xs"
+                            v-on:click="peopleSidebar.clearSelection()"
+                        >
+                            {{ t("backend.plannings.sidebar.clear") }}
+                        </AppButton>
+                    </div>
+
+                    <div v-if="peopleSidebar.mode.value === 'users'" class="space-y-1 max-h-[60vh] overflow-y-auto">
+                        <p
+                            v-if="!peopleSidebar.filteredUsers.value.length"
+                            class="text-xs text-muted py-3 text-center"
+                        >
+                            {{ peopleSidebar.searchQuery.value
+                                ? t("backend.plannings.sidebar.noResults")
+                                : t("backend.plannings.sidebar.noUsers") }}
+                        </p>
+                        <label
+                            v-for="user in peopleSidebar.filteredUsers.value"
+                            :key="user.id"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2/60 cursor-pointer text-sm"
+                        >
+                            <AppCheckbox
+                                :model-value="peopleSidebar.selectedUserIds.value.has(Number(user.id))"
+                                v-on:update:model-value="peopleSidebar.toggleUser(Number(user.id))"
+                            />
+                            <span class="truncate text-primary">{{ user.name }}</span>
+                        </label>
+                    </div>
+
+                    <div v-else class="space-y-1 max-h-[60vh] overflow-y-auto">
+                        <p
+                            v-if="!peopleSidebar.filteredAgencies.value.length"
+                            class="text-xs text-muted py-3 text-center"
+                        >
+                            {{ peopleSidebar.searchQuery.value
+                                ? t("backend.plannings.sidebar.noResults")
+                                : t("backend.plannings.sidebar.noAgencies") }}
+                        </p>
+                        <label
+                            v-for="agency in peopleSidebar.filteredAgencies.value"
+                            :key="agency.value"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2/60 cursor-pointer text-sm"
+                        >
+                            <AppCheckbox
+                                :model-value="peopleSidebar.selectedAgencyIds.value.has(Number(agency.value))"
+                                v-on:update:model-value="peopleSidebar.toggleAgency(Number(agency.value))"
+                            />
+                            <span class="truncate text-primary">{{ agency.label }}</span>
+                        </label>
+                    </div>
+                </aside>
+
+                <div class="space-y-4 min-w-0">
+                    <div class="bg-surface border border-line/60 rounded-xl p-3">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="min-w-[240px] flex-1 max-w-sm">
+                                <AppSelect v-model="selectedPlanningId" :options="planningOptions" />
+                            </div>
+                            <span
+                                v-if="selectedPlanning"
+                                class="inline-block h-3 w-3 rounded-full ring-2 ring-line/40"
+                                :style="{ backgroundColor: selectedPlanning.color }"
+                            />
+                            <div v-if="selectedPlanning && canManagePlannings" class="flex items-center gap-1">
+                                <AppIconButton
+                                    color="accent"
+                                    :title="t('backend.plannings.edit')"
+                                    v-on:click="planningForm.openEdit(selectedPlanning)"
+                                >
+                                    <Pencil class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton
+                                    color="rose"
+                                    :title="t('backend.plannings.delete')"
+                                    v-on:click="deletingPlanning = selectedPlanning"
+                                >
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
+                            <div class="ml-auto flex items-center gap-2 flex-wrap">
+                                <div class="flex items-center gap-1 rounded-lg bg-surface-2/60 p-1">
+                                    <AppTab
+                                        size="xs"
+                                        shape-class="rounded-md"
+                                        :active="resourceMode.viewMode.value === 'calendar'"
+                                        v-on:click="resourceMode.viewMode.value = 'calendar'"
+                                    >
+                                        <LayoutGrid class="w-3.5 h-3.5" :stroke-width="2" />
+                                        {{ t("backend.plannings.viewMode.calendar") }}
+                                    </AppTab>
+                                    <AppTab
+                                        size="xs"
+                                        shape-class="rounded-md"
+                                        :active="resourceMode.viewMode.value === 'resource'"
+                                        v-on:click="resourceMode.viewMode.value = 'resource'"
+                                    >
+                                        <Rows3 class="w-3.5 h-3.5" :stroke-width="2" />
+                                        {{ t("backend.plannings.viewMode.resource") }}
+                                    </AppTab>
+                                </div>
+                                <span class="text-xs text-secondary hidden sm:inline">
+                                    {{ t("backend.planning_events.legend") }} :
+                                </span>
+                                <AppTab
+                                    v-for="(tone, status) in STATUS_TONES"
+                                    :key="status"
+                                    size="xs"
+                                    shape-class="rounded-full"
+                                    :active="visibleStatuses.has(status)"
+                                    v-on:click="toggleStatus(status)"
+                                >
+                                    <span
+                                        class="h-2 w-2 rounded-full"
+                                        :style="{ backgroundColor: tone.bg ?? selectedPlanning.color, opacity: tone.opacity }"
+                                    />
+                                    {{ t(`backend.planning_events.status.${status}`) }}
+                                </AppTab>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="resourceMode.viewMode.value === 'calendar'" class="bg-surface border border-line/60 rounded-xl p-3">
+                        <FullCalendar :options="calendarOptions" />
+                    </div>
+
+                    <ResourceGridView
+                        v-else
+                        :week-days="resourceMode.week.weekDays.value"
+                        :week-label="resourceMode.week.weekLabel.value"
+                        :users="resourceMode.visibleUsers.value"
+                        :events="filteredEvents"
+                        :base-color="selectedPlanning?.color ?? '#3b82f6'"
+                        v-on:previous-week="resourceMode.week.previousWeek()"
+                        v-on:next-week="resourceMode.week.nextWeek()"
+                        v-on:today="resourceMode.week.goToToday()"
+                        v-on:create-event="resourceMode.onCreateEvent"
+                        v-on:select-event="resourceMode.onSelectEvent"
+                    />
+
+                    <p class="text-xs text-muted text-right">
+                        {{ t("backend.planning_events.count", { n: filteredEvents.length }) }}
+                    </p>
+                </div>
+            </div>
+        </template>
+
+        <!-- Edit / Create planning -->
         <AppModal
             :show="planningForm.editModal.open"
             max-width="md"
@@ -241,33 +334,36 @@ const statusOptions = [
                 <AppInput
                     v-model="planningForm.editForm.name"
                     :label="t('backend.plannings.fields.name')"
-                    :error="planningForm.editModal.errors.name"
-                    required
+                    :placeholder="t('backend.plannings.fields.namePlaceholder')"
+                    :error="planningForm.editModal.errors.name ?? ''"
+                    :required="true"
                 />
                 <AppTextarea
                     v-model="planningForm.editForm.description"
                     :label="t('backend.plannings.fields.description')"
+                    :placeholder="t('backend.plannings.fields.descriptionPlaceholder')"
                 />
                 <div class="grid grid-cols-2 gap-3">
                     <AppInput
                         v-model="planningForm.editForm.color"
                         :label="t('backend.plannings.fields.color')"
                         type="color"
-                        :error="planningForm.editModal.errors.color"
+                        :error="planningForm.editModal.errors.color ?? ''"
                     />
-                    <AppInput
+                    <AppSelect
                         v-model="planningForm.editForm.timezone"
                         :label="t('backend.plannings.fields.timezone')"
-                        :error="planningForm.editModal.errors.timezone"
+                        :options="timezoneOptions"
+                        :error="planningForm.editModal.errors.timezone ?? ''"
                     />
                 </div>
                 <AppSelect
                     v-model="planningForm.editForm.visibility"
                     :label="t('backend.plannings.fields.visibility')"
                     :options="visibilityOptions"
-                    :error="planningForm.editModal.errors.visibility"
+                    :error="planningForm.editModal.errors.visibility ?? ''"
                 />
-                <slot name="extra-form-fields" :form="planningForm.editForm" :errors="planningForm.editModal.errors" />
+                <slot name="extra-form-fields" :edit-form="planningForm.editForm" :errors="planningForm.editModal.errors" />
                 <AppModalFooter :bordered="true">
                     <AppButton variant="ghost" size="md" v-on:click="planningForm.editModal.open = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -281,72 +377,103 @@ const statusOptions = [
             </form>
         </AppModal>
 
+        <!-- Delete planning confirm -->
+        <AppModal :show="!!deletingPlanning" max-width="sm" v-on:close="deletingPlanning = null">
+            <p class="text-sm text-primary">
+                {{ t("backend.plannings.delete_confirm", { name: deletingPlanning?.name ?? "" }) }}
+            </p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="deletingPlanning = null">
+                    <X class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("shared.common.cancel") }}
+                </AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDeletePlanning">
+                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("shared.common.delete") }}
+                </AppButton>
+            </AppModalFooter>
+        </AppModal>
+
+        <!-- Edit / Create event -->
         <AppModal
             :show="eventForm.editModal.open"
             max-width="md"
+            :scrollable="false"
             :title="eventForm.editModal.event ? t('backend.planning_events.edit') : t('backend.planning_events.new')"
             v-on:close="eventForm.editModal.open = false"
         >
             <form class="space-y-4" v-on:submit.prevent="eventForm.submit(selectedPlanningId)">
                 <p
                     v-if="eventForm.editModal.readOnly"
-                    class="rounded bg-amber-50 p-2 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+                    class="rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs text-amber-700 dark:text-amber-300"
                 >
                     {{ t("backend.planning_events.errors.source_locked") }}
                 </p>
                 <AppInput
                     v-model="eventForm.editForm.title"
                     :label="t('backend.planning_events.fields.title')"
-                    :error="eventForm.editModal.errors.title"
+                    :placeholder="t('backend.planning_events.fields.titlePlaceholder')"
+                    :error="eventForm.editModal.errors.title ?? ''"
                     :disabled="eventForm.editModal.readOnly"
-                    required
+                    :required="true"
                 />
                 <AppTextarea
                     v-model="eventForm.editForm.description"
                     :label="t('backend.planning_events.fields.description')"
+                    :placeholder="t('backend.planning_events.fields.descriptionPlaceholder')"
                     :disabled="eventForm.editModal.readOnly"
                 />
                 <AppInput
                     v-model="eventForm.editForm.location"
                     :label="t('backend.planning_events.fields.location')"
+                    :placeholder="t('backend.planning_events.fields.locationPlaceholder')"
                     :disabled="eventForm.editModal.readOnly"
                 />
                 <div class="grid grid-cols-2 gap-3">
-                    <AppInput
+                    <AppDatePicker
                         v-model="eventForm.editForm.startAt"
                         :label="t('backend.planning_events.fields.startAt')"
-                        type="datetime-local"
-                        :error="eventForm.editModal.errors.startAt"
-                        :disabled="eventForm.editModal.readOnly"
+                        :placeholder="t('backend.planning_events.fields.startAtPlaceholder')"
+                        :error="eventForm.editModal.errors.startAt ?? ''"
+                        :enable-time="!eventForm.editForm.allDay"
                     />
-                    <AppInput
+                    <AppDatePicker
                         v-model="eventForm.editForm.endAt"
                         :label="t('backend.planning_events.fields.endAt')"
-                        type="datetime-local"
-                        :error="eventForm.editModal.errors.endAt"
+                        :placeholder="t('backend.planning_events.fields.endAtPlaceholder')"
+                        :error="eventForm.editModal.errors.endAt ?? ''"
+                        :enable-time="!eventForm.editForm.allDay"
+                    />
+                </div>
+                <div>
+                    <AppFieldLabel :label="t('backend.planning_events.fields.allDay')" />
+                    <AppCheckbox
+                        v-model="eventForm.editForm.allDay"
                         :disabled="eventForm.editModal.readOnly"
                     />
                 </div>
-                <label class="flex items-center gap-2 text-sm">
-                    <input
-                        v-model="eventForm.editForm.allDay"
-                        type="checkbox"
-                        :disabled="eventForm.editModal.readOnly"
-                    >
-                    {{ t("backend.planning_events.fields.allDay") }}
-                </label>
                 <AppSelect
                     v-model="eventForm.editForm.status"
                     :label="t('backend.planning_events.fields.status')"
                     :options="statusOptions"
                     :disabled="eventForm.editModal.readOnly"
                 />
+                <AppMultiselect
+                    v-model="eventForm.editForm.attendeeIds"
+                    :label="t('backend.planning_events.fields.attendees')"
+                    :placeholder="t('backend.planning_events.fields.attendeesPlaceholder')"
+                    :options="peopleSidebar.userOptions.value"
+                    :multiple="true"
+                    :allow-empty="true"
+                    :disabled="eventForm.editModal.readOnly"
+                    open-direction="top"
+                />
                 <AppModalFooter :bordered="true">
                     <AppButton
-                        v-if="eventForm.editModal.event && !eventForm.editModal.readOnly"
-                        variant="danger"
+                        v-if="eventForm.editModal.event && !eventForm.editModal.readOnly && canManageEvents"
+                        variant="danger-subtle"
                         size="md"
-                        v-on:click="eventForm.remove()"
+                        v-on:click="deletingEvent = eventForm.editModal.event"
                     >
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
@@ -357,7 +484,7 @@ const statusOptions = [
                         {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton
-                        v-if="!eventForm.editModal.readOnly"
+                        v-if="!eventForm.editModal.readOnly && canManageEvents"
                         type="submit"
                         variant="primary"
                         size="md"
@@ -369,5 +496,60 @@ const statusOptions = [
                 </AppModalFooter>
             </form>
         </AppModal>
+
+        <!-- Delete event confirm -->
+        <AppModal :show="!!deletingEvent" max-width="sm" v-on:close="deletingEvent = null">
+            <p class="text-sm text-primary">
+                {{ t("backend.planning_events.delete_confirm", { title: deletingEvent?.title ?? "" }) }}
+            </p>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="deletingEvent = null">
+                    <X class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("shared.common.cancel") }}
+                </AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDeleteEvent">
+                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("shared.common.delete") }}
+                </AppButton>
+            </AppModalFooter>
+        </AppModal>
     </div>
 </template>
+
+<style>
+.fc-event-cancelled {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+.fc-event-tentative {
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.18) 0,
+        rgba(255, 255, 255, 0.18) 4px,
+        transparent 4px,
+        transparent 8px
+    );
+    opacity: 0.85;
+}
+.fc-day-today {
+    background-color: rgba(59, 130, 246, 0.06) !important;
+}
+.fc-business-hours {
+    background-color: transparent !important;
+}
+.fc .fc-toolbar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.fc .fc-button {
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+}
+.fc-event {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 1px 4px;
+}
+</style>

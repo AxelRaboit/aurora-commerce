@@ -15,7 +15,7 @@ const DEFAULT_FORM = {
     attendeeIds: [],
 };
 
-export function useEventForm(events, createPath, updatePath, deletePath) {
+export function useEventForm(events, createPath, updatePath) {
     const { t } = useI18n();
     const { request } = useApiRequest();
 
@@ -41,6 +41,9 @@ export function useEventForm(events, createPath, updatePath, deletePath) {
             editForm.startAt = slot.startStr ?? slot.start;
             editForm.endAt = slot.endStr ?? slot.end;
             editForm.allDay = !!slot.allDay;
+            if (Array.isArray(slot.attendeeIds)) {
+                editForm.attendeeIds = [...slot.attendeeIds];
+            }
         }
         editModal.open = true;
     }
@@ -91,26 +94,5 @@ export function useEventForm(events, createPath, updatePath, deletePath) {
         }
     }
 
-    async function remove() {
-        if (editModal.readOnly || null === editModal.event) return;
-        if (!confirm(t("backend.planning_events.delete_confirm"))) return;
-        editModal.saving = true;
-        try {
-            const url = buildPath(deletePath, { eventId: editModal.event.id });
-            const data = await request(url, {});
-            if (!data?.success) {
-                toast.error(data?.errors?._global ?? t("shared.common.error"));
-                return;
-            }
-            events.value = events.value.filter(
-                (event) => event.id !== editModal.event.id,
-            );
-            toast.success(t("shared.common.deleted"));
-            editModal.open = false;
-        } finally {
-            editModal.saving = false;
-        }
-    }
-
-    return { editModal, editForm, openCreate, openEdit, submit, remove };
+    return { editModal, editForm, openCreate, openEdit, submit };
 }

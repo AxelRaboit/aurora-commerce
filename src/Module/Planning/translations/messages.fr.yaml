@@ -1,4 +1,12 @@
 backend:
+  permissions:
+    names:
+      planning:
+        plannings:
+          view: Voir les plannings
+          manage: Gérer les plannings (création, édition, suppression)
+        events:
+          manage: Gérer les événements du planning
   nav:
     plannings: Plannings
     plannings_description: Calendriers et événements liés aux entités du système
@@ -20,12 +28,38 @@ backend:
     new: Nouveau planning
     edit: Modifier le planning
     delete: Supprimer le planning
-    delete_confirm: Êtes-vous sûr de vouloir supprimer ce planning ? Tous ses événements seront aussi supprimés.
+    delete_confirm: 'Supprimer le planning « {name} » ? Tous ses événements seront aussi supprimés. Cette action est irréversible.'
+    empty: Aucun planning. Crée le premier pour commencer à organiser tes événements.
+    sidebar:
+      users: Utilisateurs
+      agencies: Agences
+      showAll: Tout afficher
+      filterActive: Filtre actif
+      clear: Réinitialiser
+      noUsers: Aucun utilisateur
+      noAgencies: Aucune agence
+      noResults: Aucun résultat
+      searchUsersPlaceholder: Rechercher un utilisateur…
+      searchAgenciesPlaceholder: Rechercher une agence…
+    viewMode:
+      calendar: Calendrier
+      resource: Ressources
+    resourceView:
+      user: Utilisateur
+      userCount: '{n} utilisateur(s)'
+      noUsers: Aucun utilisateur sélectionné. Coche un utilisateur dans la sidebar à gauche.
+      unassigned: Sans participant
+      previous: Semaine précédente
+      next: Semaine suivante
+      today: Aujourd'hui
     fields:
       name: Nom
+      namePlaceholder: ex. Planning équipe support
       description: Description
+      descriptionPlaceholder: Notes ou objectif du planning (optionnel)
       color: Couleur
       timezone: Fuseau horaire
+      timezonePlaceholder: Europe/Paris
       visibility: Visibilité
       owner: Propriétaire
       agency: Agence
@@ -45,16 +79,24 @@ backend:
     new: Nouvel événement
     edit: Modifier l'événement
     delete: Supprimer l'événement
-    delete_confirm: Êtes-vous sûr de vouloir supprimer cet événement ?
+    delete_confirm: 'Supprimer l''événement « {title} » ? Cette action est irréversible.'
+    legend: Statuts
+    count: '{n} événement(s)'
     fields:
       title: Titre
+      titlePlaceholder: ex. Réunion équipe, RDV client…
       description: Description
+      descriptionPlaceholder: Détails de l'événement (optionnel)
       location: Lieu
+      locationPlaceholder: Salle, adresse ou lien visio
       startAt: Début
+      startAtPlaceholder: Choisir la date et l'heure
       endAt: Fin
+      endAtPlaceholder: Choisir la date et l'heure
       allDay: Toute la journée
       status: Statut
       attendees: Participants
+      attendeesPlaceholder: Choisir un ou plusieurs participants
     status:
       tentative: Provisoire
       confirmed: Confirmé

@@ -26,6 +26,13 @@ de désynchronisation possible. Aurora-client charge ces mémoires depuis
 - [convention_audit_payload.md](convention_audit_payload.md) — règle d'extensibilité des audit logs
 - [convention_doctrine_order_enum.md](convention_doctrine_order_enum.md) — utiliser `Order::Ascending->value` / `Order::Descending->value`, pas `'ASC'`/`'DESC'`
 - [convention_interface_over_concrete.md](convention_interface_over_concrete.md) — type-hint l'Interface (jamais la Concrete) dans repos/managers/serializers/setters/collections/array_map
+- [convention_modal_and_confirmation.md](convention_modal_and_confirmation.md) — `AppModal` API (`:show + @close`, jamais `v-model:open`) + confirmation suppression toujours via modale + composable `useXxxDelete.js`, jamais `confirm()` natif
+- [convention_form_components.md](convention_form_components.md) — toujours `App*` au lieu de `<button>`/`<input>`/`<select>` brut, placeholders obligatoires sur tous les inputs, `AppDatePicker` (jamais `type="date"` natif), select pour les énumérations
+- [convention_vue_directives.md](convention_vue_directives.md) — toujours `v-on:click` (jamais `@click`), `:` shorthand OK pour `v-bind`
+- [convention_js_privacy.md](convention_js_privacy.md) — privacy JS : `#field` dans les classes (jamais `_field`), variable module-level non exportée pour les composables (pas de `_` préfixe)
+- [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` (format nested) en FR + EN dans le YAML du module
+- [convention_privilege_gating.md](convention_privilege_gating.md) — gate les actions à 2 endroits : `#[IsGranted]` côté serveur (autorité) **et** `v-if="can(...)"` côté Vue (UX). Jamais l'un sans l'autre
+- [convention_i18n_source_files.md](convention_i18n_source_files.md) — éditer les **YAML sources** (`src/.../translations/`), jamais le JSON généré dans `assets/locales/generated/`. `make i18n` régénère, `npm run build` consomme
 
 ### Structure du projet (où va quoi)
 - [structure_module_layout.md](structure_module_layout.md) — arborescence d'un dossier `src/Core/<Feature>/` ou `src/Module/<Module>/<Feature>/`
