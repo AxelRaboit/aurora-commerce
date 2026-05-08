@@ -9,10 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Dto\PaginationRequest;
-use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
+use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
-use Aurora\Module\Billing\Ocr\Serializer\OcrJobSerializer;
+use Aurora\Module\Billing\Ocr\Serializer\OcrJobSerializerInterface;
 use Aurora\Module\Billing\Ocr\View\OcrJobsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -41,7 +41,7 @@ final class OcrImportController extends AbstractController
     public function __construct(
         private readonly OcrJobManagerInterface $jobManager,
         private readonly OcrJobRepository $jobs,
-        private readonly OcrJobSerializer $jobSerializer,
+        private readonly OcrJobSerializerInterface $jobSerializer,
         private readonly OcrJobsViewBuilder $jobsViewBuilder,
     ) {}
 

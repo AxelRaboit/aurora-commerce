@@ -7,7 +7,7 @@ namespace Aurora\Module\Billing\Invoice\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
-use Aurora\Module\Billing\Invoice\Contract\TiersManagerInterface;
+use Aurora\Module\Billing\Invoice\Manager\TiersManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Serializer\TiersSerializer;

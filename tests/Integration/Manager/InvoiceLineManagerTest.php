@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Module\Billing\Invoice\Contract\InvoiceLineManagerInterface;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Tests\Integration\IntegrationTestCase;

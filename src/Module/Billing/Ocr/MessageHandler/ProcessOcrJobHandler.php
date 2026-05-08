@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\MessageHandler;
 
-use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
+use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
 use Aurora\Module\Billing\Ocr\Service\OcrPipeline;

@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
+use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Billing\Invoice\Contract\TiersManagerInterface;
-use Aurora\Module\Billing\Invoice\Entity\Invoice;
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
+use Aurora\Module\Billing\Invoice\Manager\TiersManagerInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
-use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
 use DateTimeImmutable;
@@ -28,24 +28,24 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsAlias(OcrJobManagerInterface::class)]
-final readonly class OcrJobManager implements OcrJobManagerInterface
+class OcrJobManager implements OcrJobManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MediaManagerInterface $mediaManager,
-        private MessageBusInterface $bus,
-        private AuditLogger $auditLogger,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
-        private InvoiceRepository $invoiceRepository,
-        private TiersManagerInterface $tiersManager,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MediaManagerInterface $mediaManager,
+        protected readonly MessageBusInterface $bus,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly InvoiceRepository $invoiceRepository,
+        protected readonly TiersManagerInterface $tiersManager,
     ) {}
 
-    public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJob
+    public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJobInterface
     {
         $media = $this->mediaManager->upload($file, null, StorageAreaEnum::Ocr);
 
-        $job = new OcrJob();
+        $job = $this->createOcrJob();
         $job->setMedia($media);
         $job->setStatus(OcrJobStatusEnum::Queued);
         $job->setCreatedBy($createdBy);
@@ -60,6 +60,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->bus->dispatch(new ProcessOcrJobMessage($job->getId()));
 
         $this->auditLogger->log('billing', 'ocr.job.created', 'OcrJob', $job->getId(), [
+            ...$this->auditPayload($job),
             'mediaId' => $media->getId(),
             'fileName' => $media->getOriginalName(),
         ]);
@@ -67,7 +68,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         return $job;
     }
 
-    public function retry(OcrJob $job): void
+    public function retry(OcrJobInterface $job): void
     {
         $job->setStatus(OcrJobStatusEnum::Queued);
         $job->setError(null);
@@ -78,19 +79,20 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
 
         $this->bus->dispatch(new ProcessOcrJobMessage($job->getId()));
 
-        $this->auditLogger->log('billing', 'ocr.job.retried', 'OcrJob', $job->getId());
+        $this->auditLogger->log('billing', 'ocr.job.retried', 'OcrJob', $job->getId(), $this->auditPayload($job));
     }
 
-    public function delete(OcrJob $job, bool $deleteTiers = false): void
+    public function delete(OcrJobInterface $job, bool $deleteTiers = false): void
     {
         $id = $job->getId();
+        $payload = $this->auditPayload($job);
         $media = $job->getMedia();
         $tiers = null;
         $invoiceId = null;
         $invoiceNumber = null;
 
         $invoice = $this->invoiceRepository->findOneBy(['ocrJob' => $job]);
-        if ($invoice instanceof Invoice && $invoice->getStatus()->isDeletable()) {
+        if ($invoice instanceof InvoiceInterface && $invoice->getStatus()->isDeletable()) {
             $tiers = $deleteTiers ? $invoice->getTiers() : null;
             $invoiceId = $invoice->getId();
             $invoiceNumber = $invoice->getNumber();
@@ -98,7 +100,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
             $this->entityManager->flush();
         }
 
-        if ($tiers instanceof Tiers) {
+        if ($tiers instanceof TiersInterface) {
             $this->tiersManager->delete($tiers);
         }
 
@@ -113,14 +115,14 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         if (null !== $invoiceId) {
             $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $invoiceId, [
                 'number' => $invoiceNumber,
-                'tiersDeleted' => $tiers instanceof Tiers,
+                'tiersDeleted' => $tiers instanceof TiersInterface,
             ]);
         }
 
-        $this->auditLogger->log('billing', 'ocr.job.deleted', 'OcrJob', $id);
+        $this->auditLogger->log('billing', 'ocr.job.deleted', 'OcrJob', $id, $payload);
     }
 
-    public function markExtracting(OcrJob $job): void
+    public function markExtracting(OcrJobInterface $job): void
     {
         $job->setStartedAt(new DateTimeImmutable());
         $job->setStatus(OcrJobStatusEnum::Extracting);
@@ -128,7 +130,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->flush();
     }
 
-    public function recordDoctrResult(OcrJob $job, array $rawDoctr): void
+    public function recordDoctrResult(OcrJobInterface $job, array $rawDoctr): void
     {
         $job->setRawDoctr($rawDoctr);
         $job->setStatus(OcrJobStatusEnum::Parsing);
@@ -136,7 +138,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->flush();
     }
 
-    public function recordVlmResult(OcrJob $job, InvoiceDraft $draft, string $modelUsed): void
+    public function recordVlmResult(OcrJobInterface $job, InvoiceDraft $draft, string $modelUsed): void
     {
         $payload = $draft->toArray();
         $job->setRawVlm($payload);
@@ -147,7 +149,7 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->flush();
     }
 
-    public function markFinished(OcrJob $job, OcrJobStatusEnum $status): void
+    public function markFinished(OcrJobInterface $job, OcrJobStatusEnum $status): void
     {
         $job->setStatus($status);
         $job->setFinishedAt(new DateTimeImmutable());
@@ -155,12 +157,13 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('billing', 'ocr.job.finished', 'OcrJob', $job->getId(), [
+            ...$this->auditPayload($job),
             'status' => $status->value,
             'confidence' => $job->getConfidence(),
         ]);
     }
 
-    public function markFailed(OcrJob $job, string $error): void
+    public function markFailed(OcrJobInterface $job, string $error): void
     {
         $job->setStatus(OcrJobStatusEnum::Failed);
         $job->setError($error);
@@ -169,7 +172,25 @@ final readonly class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('billing', 'ocr.job.failed', 'OcrJob', $job->getId(), [
+            ...$this->auditPayload($job),
             'error' => mb_substr($error, 0, 200),
         ]);
+    }
+
+    protected function createOcrJob(): OcrJobInterface
+    {
+        return new OcrJob();
+    }
+
+    /**
+     * Base payload for every OcrJob audit entry. Override to add custom fields.
+     *
+     * Note: OcrJob's lifecycle is exclusively domain events (created,
+     * retried, deleted, finished:status, failed:error). The standard
+     * `auditCreated/Updated/Deleted` triplet does not apply.
+     */
+    protected function auditPayload(OcrJobInterface $job): array
+    {
+        return ['reference' => $job->getReference()];
     }
 }

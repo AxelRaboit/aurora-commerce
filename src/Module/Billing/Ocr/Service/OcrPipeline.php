@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Service;
 
 use Aurora\Core\Media\Service\MediaPathResolver;
-use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
-use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
+use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;

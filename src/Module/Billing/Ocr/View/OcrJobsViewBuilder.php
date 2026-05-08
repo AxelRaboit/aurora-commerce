@@ -7,7 +7,7 @@ namespace Aurora\Module\Billing\Ocr\View;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
-use Aurora\Module\Billing\Ocr\Serializer\OcrJobSerializer;
+use Aurora\Module\Billing\Ocr\Serializer\OcrJobSerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -18,7 +18,7 @@ final readonly class OcrJobsViewBuilder
 {
     public function __construct(
         private OcrJobRepository $jobRepository,
-        private OcrJobSerializer $jobSerializer,
+        private OcrJobSerializerInterface $jobSerializer,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
     ) {}

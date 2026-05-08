@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Serializer;
 
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
-use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class OcrJobSerializer
+#[AsAlias(OcrJobSerializerInterface::class)]
+class OcrJobSerializer implements OcrJobSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private InvoiceRepository $invoiceRepository,
+        protected readonly TranslatorInterface $translator,
+        protected readonly InvoiceRepository $invoiceRepository,
     ) {}
 
-    public function serialize(OcrJob $job): array
+    public function serialize(OcrJobInterface $job): array
     {
         $status = $job->getStatus();
 
@@ -38,7 +40,7 @@ final readonly class OcrJobSerializer
             'invoiceStatus' => $invoice?->getStatus()->value,
             'invoiceCanValidate' => $invoice?->getStatus()->isEditable() ?? false,
             'invoiceCanDeleteTiers' => $invoice?->getStatus()->isDeletable()
-                && $invoice->getTiers() instanceof Tiers
+                && $invoice->getTiers() instanceof TiersInterface
                 && 1 === $this->invoiceRepository->countForTiers($invoice->getTiers()->getId()),
             'invoiceSupplierName' => $invoice?->getTiers()?->getName(),
             'logs' => $job->getLogs(),
