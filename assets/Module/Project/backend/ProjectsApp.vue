@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -101,6 +101,12 @@ const {
     closeDetail,
     reloadProject,
 } = useProjectDetail(props.showPath);
+
+watch(projects, (list) => {
+    if (list.length > 0 && !activeProject.value) {
+        openProject(list[0]);
+    }
+});
 
 const {
     showCreate: showProjectModal,
