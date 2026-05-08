@@ -1,6 +1,8 @@
 import { ref, watch } from "vue";
 import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { required } from "@/shared/utils/validation/validators.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
@@ -15,6 +17,7 @@ export function useSavedViews(paths, activeProject) {
     const selectedViewId = ref(null);
     const showSaveModal = ref(false);
     const newViewName = ref("");
+    const { errors: viewErrors, validate, clearErrors } = useForm();
 
     async function load() {
         if (!activeProject.value) {
@@ -41,11 +44,16 @@ export function useSavedViews(paths, activeProject) {
 
     async function saveView(filters) {
         if (!activeProject.value) return;
-        const name = newViewName.value.trim();
-        if (!name) {
-            toast.error(t("backend.projects.errors.saved_view_name_required"));
+        if (
+            !validate({
+                name: () =>
+                    required(
+                        t("backend.projects.errors.saved_view_name_required"),
+                    )(newViewName.value),
+            })
+        )
             return;
-        }
+        const name = newViewName.value.trim();
         const url = buildPath(paths.create, { id: activeProject.value.id });
         try {
             const response = await fetch(url, {
@@ -58,6 +66,7 @@ export function useSavedViews(paths, activeProject) {
             if (!data.success) throw new Error();
             showSaveModal.value = false;
             newViewName.value = "";
+            clearErrors();
             await load();
         } catch {
             toast.error(t("shared.common.error"));
@@ -89,6 +98,7 @@ export function useSavedViews(paths, activeProject) {
         selectedViewId,
         showSaveModal,
         newViewName,
+        viewErrors,
         load,
         saveView,
         deleteView,

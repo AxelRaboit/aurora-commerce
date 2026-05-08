@@ -1,4 +1,7 @@
 backend:
+  notifications:
+    taskAssigned: Vous avez été assigné à une tâche.
+    taskCommented: '%name% a commenté : %content%'
   nav:
     projects: Projets
     projects_description: Suivi des projets, tâches et tableaux Kanban
@@ -14,6 +17,17 @@ backend:
           updated: Tâche mise à jour
           deleted: Tâche supprimée
           reordered: Tâches réorganisées
+          comment:
+            created: Commentaire ajouté
+            deleted: Commentaire supprimé
+          time:
+            logged: Temps enregistré
+            deleted: Temps supprimé
+          items:
+            replaced: Sous-tâches mises à jour
+          attachment:
+            added: Pièce jointe ajoutée
+            removed: Pièce jointe supprimée
         column:
           created: Colonne créée
           updated: Colonne mise à jour
@@ -25,8 +39,10 @@ backend:
           deleted: Étiquette supprimée
   projects:
     add: Nouveau projet
+    backToList: Retour aux projets
     empty: Aucun projet trouvé.
     searchPlaceholder: Rechercher un projet…
+    columnWidth: 'Largeur :'
     tasks: Tâches
     deleteConfirm: 'Supprimer le projet « {name} » ?'
     deleteWarning: Cette action est irréversible.
@@ -60,6 +76,7 @@ backend:
       taskDescription: Décrivez la tâche…
       assignee: Sélectionner un utilisateur
       estimateMinutes: Durée estimée en minutes
+      storyPoints: Ex. 3
     status_draft: Brouillon
     status_active: En cours
     status_completed: Terminé
@@ -72,6 +89,7 @@ backend:
       deleteConfirm: 'Supprimer la tâche « {name} » ?'
       deleteWarning: Cette action est irréversible.
       commentPlaceholder: Écrire un commentaire…
+      timeEntryNote: Note…
       attachmentsHint: Glissez-déposez des fichiers depuis le module Médias.
       fields:
         title: Titre
@@ -121,6 +139,7 @@ backend:
       add: Nouvelle étiquette
       edit: Modifier l'étiquette
       nameField: Nom
+      namePlaceholder: Ex. Urgent
       colorField: Couleur
     sprints:
       manage: Gérer les sprints
@@ -129,6 +148,7 @@ backend:
       active: Actif
       activeField: Sprint en cours
       nameField: Nom
+      namePlaceholder: Ex. Sprint 1
     savedViews:
       save: Enregistrer la vue
       nameField: Nom de la vue
@@ -153,3 +173,11 @@ backend:
       column_label_required: Le nom de la colonne est requis.
       column_label_too_long: Le nom de la colonne ne doit pas dépasser 100 caractères.
       column_last_one: Impossible de supprimer la dernière colonne.
+      comment_required: Le commentaire ne peut pas être vide.
+      time_minutes_invalid: La durée doit être un nombre de minutes valide.
+      label_name_required: Le nom de l'étiquette est requis.
+      sprint_name_required: Le nom du sprint est requis.
+      label_delete_confirm: 'Supprimer l''étiquette « {name} » ?'
+      sprint_delete_confirm: 'Supprimer le sprint « {name} » ?'
+      saved_view_name_required: Le nom de la vue est requis.
+      item_label_required: Le libellé de la sous-tâche est requis.

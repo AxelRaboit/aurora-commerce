@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { Menu as MenuIcon } from "lucide-vue-next";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 
 const { t } = useI18n();
 

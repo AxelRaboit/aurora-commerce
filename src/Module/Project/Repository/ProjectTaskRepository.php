@@ -20,6 +20,20 @@ class ProjectTaskRepository extends ServiceEntityRepository
     }
 
     /** @return list<ProjectTask> */
+    public function searchByTitle(string $query, int $limit = 8): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.project', 'p')
+            ->addSelect('p')
+            ->andWhere('LOWER(t.title) LIKE :q')
+            ->setParameter('q', '%'.mb_strtolower($query).'%')
+            ->orderBy('t.createdAt', Order::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /** @return list<ProjectTask> */
     public function findByProject(Project $project): array
     {
         return $this->createQueryBuilder('t')

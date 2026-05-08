@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { ImagePlus, X } from "lucide-vue-next";
+import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { useImageUpload } from "@/shared/composables/api/useImageUpload.js";
 import { openMediaPicker } from "@shared/utils/mediaPicker.js";
 import { toast } from "vue-sonner";
@@ -60,13 +62,13 @@ async function selectFromLibrary() {
                 :alt="t('backend.posts.featuredImage')"
                 v-on:click="previewOpen = true"
             >
-            <button
-                type="button"
-                class="absolute top-2 right-2 p-1 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            <AppOverlayIconButton
+                size="xs"
+                class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
                 v-on:click="clear"
             >
                 <X class="w-4 h-4" :stroke-width="2.5" />
-            </button>
+            </AppOverlayIconButton>
         </div>
         <label
             v-else
@@ -83,13 +85,9 @@ async function selectFromLibrary() {
                 v-on:change="uploadFromEvent"
             >
         </label>
-        <button
-            type="button"
-            class="mt-1 w-full text-xs text-accent-400 hover:underline text-center"
-            v-on:click="selectFromLibrary"
-        >
+        <AppTextLinkButton size="xs" class="mt-1 w-full justify-center" v-on:click="selectFromLibrary">
             {{ t("backend.posts.selectFromLibrary") }}
-        </button>
+        </AppTextLinkButton>
 
         <Teleport to="body">
             <Transition

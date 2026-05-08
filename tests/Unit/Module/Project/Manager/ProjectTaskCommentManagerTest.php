@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 final class ProjectTaskCommentManagerTest extends TestCase
@@ -46,7 +47,12 @@ final class ProjectTaskCommentManagerTest extends TestCase
 
         $notifier = new NotificationManager($this->em, $this->createStub(NotificationRepository::class));
 
-        $this->manager = new ProjectTaskCommentManager($this->em, $auditLogger, $notifier);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            static fn (string $id, array $params = [], ?string $domain = null, ?string $locale = null): string => str_replace(array_keys($params), array_values($params), '%name% commented: %content%')
+        );
+
+        $this->manager = new ProjectTaskCommentManager($this->em, $auditLogger, $notifier, $translator);
     }
 
     private function makeUser(int $id, string $name = 'User'): User

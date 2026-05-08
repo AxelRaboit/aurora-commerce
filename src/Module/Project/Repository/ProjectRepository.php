@@ -47,6 +47,18 @@ class ProjectRepository extends ServiceEntityRepository
     }
 
     /** @return list<Project> */
+    public function searchByTitle(string $query, int $limit = 8): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('LOWER(p.title) LIKE :q')
+            ->setParameter('q', '%'.mb_strtolower($query).'%')
+            ->orderBy('p.createdAt', Order::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /** @return list<Project> */
     public function findByStatus(ProjectStatusEnum $status): array
     {
         return $this->createQueryBuilder('p')

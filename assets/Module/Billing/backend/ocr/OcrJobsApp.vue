@@ -14,7 +14,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Plus, Eye, Trash2, RotateCcw, Info } from "lucide-vue-next";
+import { Plus, Eye, Trash2, RotateCcw, Info, X } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -131,11 +131,10 @@ onMounted(startPolling);
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="!!errorJob" max-width="md" v-on:close="errorJob = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t('backend.billing.ocr.errorLog') }} — #{{ errorJob?.id }}</h3>
+        <AppModal :show="!!errorJob" max-width="md" :title="`${t('backend.billing.ocr.errorLog')} — #${errorJob?.id}`" v-on:close="errorJob = null">
             <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('backend.billing.ocr.noErrorLog') }}</pre>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="errorJob = null">{{ t('shared.common.close') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="errorJob = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -143,8 +142,8 @@ onMounted(startPolling);
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

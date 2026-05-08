@@ -6,6 +6,7 @@ import { toast } from "vue-sonner";
 import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, Merge, History } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
@@ -515,11 +516,9 @@ function forceSave() {
                     class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto scrollbar-thin rounded-md border border-line bg-surface shadow-lg"
                 >
                     <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
-                    <button
+                    <AppListItemButton
                         v-for="result in relatedSearchResults"
                         :key="result.id"
-                        type="button"
-                        class="w-full text-left px-3 py-2 hover:bg-surface-2 transition-colors flex items-center gap-2"
                         v-on:mousedown.prevent="addRelatedPost(result)"
                     >
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
@@ -529,7 +528,7 @@ function forceSave() {
                             <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
                             <div class="text-xs text-muted truncate">{{ result.postType }}</div>
                         </div>
-                    </button>
+                    </AppListItemButton>
                 </div>
             </div>
         </div>

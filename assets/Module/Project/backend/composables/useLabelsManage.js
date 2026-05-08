@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -23,6 +23,7 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
 
     const showLabelsModal = ref(false);
     const editingLabel = ref(null);
+    const pendingDeleteLabel = ref(null);
     const labelForm = ref({ name: "", color: "accent" });
 
     const { errors: labelErrors, validate, clearErrors, setErrors } = useForm();
@@ -72,15 +73,14 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
         }
     }
 
-    async function deleteLabel(label) {
-        if (
-            !confirm(
-                t("backend.projects.errors.label_delete_confirm", {
-                    name: label.name,
-                }),
-            )
-        )
-            return;
+    function confirmDeleteLabel(label) {
+        pendingDeleteLabel.value = label;
+    }
+
+    async function deleteLabel() {
+        const label = pendingDeleteLabel.value;
+        if (!label) return;
+        pendingDeleteLabel.value = null;
         const url = buildPath(paths.delete, { labelId: label.id });
         try {
             const response = await fetch(url, {
@@ -94,16 +94,34 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
         }
     }
 
+    const labelOptions = computed(() =>
+        (activeProject.value?.labels ?? []).map((label) => ({
+            value: label.id,
+            label: label.name,
+        })),
+    );
+
+    const labelsById = computed(() => {
+        const map = {};
+        for (const label of activeProject.value?.labels ?? [])
+            map[label.id] = label;
+        return map;
+    });
+
     return {
         showLabelsModal,
         editingLabel,
+        pendingDeleteLabel,
         labelForm,
         labelErrors,
+        labelOptions,
+        labelsById,
         loading,
         openLabelsModal,
         startEdit,
         cancelEdit,
         submitLabel,
+        confirmDeleteLabel,
         deleteLabel,
     };
 }

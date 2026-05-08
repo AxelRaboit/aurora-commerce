@@ -48,7 +48,13 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     const searchHighlightedIndex = ref(0);
     const searchInputRef = ref(null);
 
-    const apiResults = ref({ posts: [], terms: [], media: [] });
+    const apiResults = ref({
+        posts: [],
+        terms: [],
+        media: [],
+        projects: [],
+        tasks: [],
+    });
 
     // ── Local results ─────────────────────────────────────────────────────────
 
@@ -80,6 +86,8 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
         }
         return [
             { kind: "nav", items: navResults.value },
+            { kind: "project", items: apiResults.value.projects },
+            { kind: "task", items: apiResults.value.tasks },
             { kind: "post", items: apiResults.value.posts },
             { kind: "term", items: apiResults.value.terms },
             { kind: "media", items: apiResults.value.media },
@@ -99,7 +107,13 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
     async function runSearch() {
         const trimmed = searchQuery.value.trim();
         if (!trimmed) {
-            apiResults.value = { posts: [], terms: [], media: [] };
+            apiResults.value = {
+                posts: [],
+                terms: [],
+                media: [],
+                projects: [],
+                tasks: [],
+            };
             return;
         }
         searchLoading.value = true;
@@ -113,10 +127,18 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
                 posts: data.posts ?? [],
                 terms: data.terms ?? [],
                 media: data.media ?? [],
+                projects: data.projects ?? [],
+                tasks: data.tasks ?? [],
             };
             searchHighlightedIndex.value = 0;
         } catch {
-            apiResults.value = { posts: [], terms: [], media: [] };
+            apiResults.value = {
+                posts: [],
+                terms: [],
+                media: [],
+                projects: [],
+                tasks: [],
+            };
         } finally {
             searchLoading.value = false;
         }
@@ -171,6 +193,12 @@ export function useAdminSearch({ searchPath, navItems, currentRoute }) {
             if (path) window.location.href = path;
         } else if (kind === "media") {
             const path = findNavPath("admin_media");
+            if (path) window.location.href = path;
+        } else if (kind === "project") {
+            const path = findNavPath("backend_projects");
+            if (path) window.location.href = path;
+        } else if (kind === "task") {
+            const path = findNavPath("backend_projects");
             if (path) window.location.href = path;
         }
     }

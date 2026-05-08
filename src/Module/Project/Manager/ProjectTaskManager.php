@@ -20,6 +20,7 @@ use Aurora\Module\Project\Repository\ProjectSprintRepository;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class ProjectTaskManager
 {
@@ -33,6 +34,7 @@ final readonly class ProjectTaskManager
         private ProjectLabelRepository $labelRepository,
         private ProjectSprintRepository $sprintRepository,
         private NotificationManager $notifier,
+        private TranslatorInterface $translator,
     ) {}
 
     public function create(Project $project, ProjectTaskInput $input): ProjectTask
@@ -52,11 +54,12 @@ final readonly class ProjectTaskManager
 
         // Notify newly assigned user.
         if ($task->getAssignee() instanceof User) {
+            $assignee = $task->getAssignee();
             $this->notifier->notify(
-                $task->getAssignee(),
+                $assignee,
                 'project.task.assigned',
                 $task->getTitle(),
-                'You have been assigned to a task.',
+                $this->translator->trans('backend.notifications.taskAssigned', [], null, $assignee->getLocale()->value),
                 null,
                 ['projectId' => $project->getId(), 'taskId' => $task->getId()],
             );
@@ -83,7 +86,7 @@ final readonly class ProjectTaskManager
                 $newAssignee,
                 'project.task.assigned',
                 $task->getTitle(),
-                'You have been assigned to a task.',
+                $this->translator->trans('backend.notifications.taskAssigned', [], null, $newAssignee->getLocale()->value),
                 null,
                 ['projectId' => $task->getProject()->getId(), 'taskId' => $task->getId()],
             );

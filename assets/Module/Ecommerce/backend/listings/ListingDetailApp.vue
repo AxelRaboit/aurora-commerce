@@ -16,7 +16,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, } from "lucide-vue-next";
+import { Pencil, Trash2, ShoppingBag, ExternalLink, Save, X } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
@@ -156,8 +156,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </div>
         </div>
 
-        <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.ecommerce.listings.edit', { name: listing.displayTitle }) }}</h3>
+        <AppModal :show="showEdit" :title="t('backend.ecommerce.listings.edit', { name: listing.displayTitle })" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.slug" :label="t('backend.ecommerce.listings.slug')" :error="editErrors.slug" required />
                 <AppInput v-model="editForm.marketingTitle" :label="t('backend.ecommerce.listings.marketingTitle')" />
@@ -174,7 +173,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                     <AppToggle v-model="editForm.isVisibleOnShop" />
                 </div>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -184,8 +183,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: listing.displayTitle }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

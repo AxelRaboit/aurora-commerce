@@ -2,7 +2,7 @@
 /* eslint-disable vue/no-mutating-props -- translation is owned by parent (PostEditor form) and mutated in-place via shared reactive reference */
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { ImagePlus, X } from "lucide-vue-next";
+import { ImagePlus, X, Upload, Sparkles } from "lucide-vue-next";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
@@ -195,10 +195,10 @@ async function selectOgFromLibrary() {
                                 class="flex-1 sm:flex-none"
                                 v-on:click="ogInputRef?.click()"
                             >
-                                {{ t("backend.posts.seo.ogImageUpload") }}
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.seo.ogImageUpload") }}
                             </AppButton>
                             <AppButton variant="ghost" size="sm" class="flex-1 sm:flex-none" v-on:click="selectOgFromLibrary">
-                                {{ t("backend.posts.selectFromLibrary") }}
+                                <ImagePlus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.selectFromLibrary") }}
                             </AppButton>
                             <AppButton
                                 v-if="translation.ogImageUrl"
@@ -244,7 +244,7 @@ async function selectOgFromLibrary() {
                     {{ t("backend.posts.seo.jsonLd") }}
                 </label>
                 <AppButton variant="secondary" size="sm" v-on:click="generateArticleJsonLd">
-                    {{ t("backend.posts.seo.generateArticle") }}
+                    <Sparkles class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.seo.generateArticle") }}
                 </AppButton>
             </div>
             <AppTextarea

@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Save, Pencil, Trash2 } from "lucide-vue-next";
+import { Plus, Save, Pencil, Trash2, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -64,10 +64,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             </table>
         </div>
 
-        <AppModal :show="editModal.open" max-width="sm" v-on:close="editModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">
-                {{ editModal.service ? t("backend.services.edit_title", { name: editModal.service.name }) : t("backend.services.new") }}
-            </h3>
+        <AppModal :show="editModal.open" max-width="sm" :title="editModal.service ? t('backend.services.edit_title', { name: editModal.service.name }) : t('backend.services.new')" v-on:close="editModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -77,7 +74,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                     :required="true"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
-                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
@@ -89,8 +86,8 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
         <AppModal :show="!!deletingService" max-width="sm" v-on:close="deletingService = null">
             <p class="text-sm text-primary">{{ t("backend.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingService = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="deletingService = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

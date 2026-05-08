@@ -14,7 +14,7 @@ import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Pencil, Trash2, Plus, Save, } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Save, X } from "lucide-vue-next";
 import { required, url, email as emailValidator } from "@/shared/utils/validation/validators.js";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -204,8 +204,7 @@ async function submitContact() {
             </template>
         </div>
 
-        <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.companies.edit', { name: company.name }) }}</h3>
+        <AppModal :show="showEdit" :title="t('backend.crm.companies.edit', { name: company.name })" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -219,7 +218,7 @@ async function submitContact() {
                 <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
                 <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -229,13 +228,12 @@ async function submitContact() {
             <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: company.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>
-    <AppModal :show="showCreateContact" v-on:close="showCreateContact = false">
-        <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.contacts.create') }}</h3>
+    <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" v-on:close="showCreateContact = false">
         <form class="space-y-4" v-on:submit.prevent="submitContact">
             <div class="grid grid-cols-2 gap-3">
                 <AppInput
@@ -264,7 +262,7 @@ async function submitContact() {
             <AppTextarea v-model="newContact.notes" :rows="2" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
             <p class="text-xs text-muted">{{ t('backend.crm.companies.contactLinked', { name: company.name }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" type="button" v-on:click="showCreateContact = false">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" type="button" v-on:click="showCreateContact = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="primary" size="md" type="submit" :loading="contactLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
             </AppModalFooter>
         </form>

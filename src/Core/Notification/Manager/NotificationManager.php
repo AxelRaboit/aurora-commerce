@@ -57,4 +57,15 @@ final readonly class NotificationManager
     {
         return $this->notificationRepository->markAllReadForUser($user);
     }
+
+    public function delete(Notification $notification): void
+    {
+        $this->entityManager->remove($notification);
+        $this->entityManager->flush();
+    }
+
+    public function deleteAllForUser(User $user): int
+    {
+        return $this->notificationRepository->deleteAllForUser($user);
+    }
 }

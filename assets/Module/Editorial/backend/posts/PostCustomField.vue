@@ -4,7 +4,7 @@ import { computed, ref, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { X, ImagePlus } from "lucide-vue-next";
+import { X, ImagePlus, Upload } from "lucide-vue-next";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
@@ -12,6 +12,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
 
@@ -224,7 +225,7 @@ async function uploadMedia(event) {
                     v-on:change="uploadMedia"
                 >
                 <AppButton variant="secondary" size="sm" :loading="uploading" v-on:click="mediaInput?.click()">
-                    {{ t("backend.posts.customField.upload") }}
+                    <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.customField.upload") }}
                 </AppButton>
                 <AppButton v-if="modelValue" variant="ghost" size="sm" v-on:click="update(null)">
                     <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -266,11 +267,9 @@ async function uploadMedia(event) {
                     class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-line bg-surface shadow-lg"
                 >
                     <div v-if="loading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
-                    <button
+                    <AppListItemButton
                         v-for="result in results"
                         :key="result.id"
-                        type="button"
-                        class="w-full text-left px-3 py-2 hover:bg-surface-2 transition-colors flex items-center gap-2"
                         v-on:mousedown.prevent="addReference(result)"
                     >
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
@@ -280,7 +279,7 @@ async function uploadMedia(event) {
                             <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
                             <div class="text-xs text-muted truncate">{{ result.postType }}</div>
                         </div>
-                    </button>
+                    </AppListItemButton>
                 </div>
             </div>
         </div>

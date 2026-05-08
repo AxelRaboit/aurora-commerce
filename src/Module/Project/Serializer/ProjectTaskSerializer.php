@@ -67,6 +67,7 @@ final readonly class ProjectTaskSerializer
             ], $task->getAttachments()->toArray()),
             'watcherIds' => array_map(static fn ($watcher): int => (int) $watcher->getId(), $task->getWatchers()->toArray()),
             'sprintId' => $task->getSprint()?->getId(),
+            'sprintName' => $task->getSprint()?->getName(),
             'createdAt' => $task->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $task->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

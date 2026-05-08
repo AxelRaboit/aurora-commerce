@@ -6,6 +6,7 @@ import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import AppChart from "@/shared/components/display/AppChart.vue";
 import { FileText, Image as ImageIcon, Menu as MenuIcon, Users, Building2, TrendingUp, Package, Receipt, ShoppingCart, Camera, Store, ScanText } from "lucide-vue-next";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import { useDashboardModule } from "@core/backend/dashboard/composables/useDashboardModule.js";
 import { useDashboardCharts } from "@core/backend/dashboard/composables/useDashboardCharts.js";
 
@@ -35,19 +36,19 @@ const MODULES = [
 <template>
     <div class="space-y-6">
         <div class="inline-flex p-1 bg-surface-2 border border-line rounded-lg gap-1 max-w-full overflow-x-auto scrollbar-thin">
-            <button
+            <AppTab
                 v-for="module in MODULES"
                 :key="module.id"
-                type="button"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
-                :class="activeModule === module.id
-                    ? 'bg-surface text-primary shadow-sm'
-                    : 'text-secondary hover:text-primary'"
+                size="sm"
+                :active="activeModule === module.id"
+                active-class="bg-surface text-primary shadow-sm"
+                inactive-class="text-secondary hover:text-primary"
+                class="whitespace-nowrap"
                 v-on:click="selectModule(module.id)"
             >
                 <component :is="module.icon" class="w-4 h-4" :stroke-width="2" />
                 {{ module.label() }}
-            </button>
+            </AppTab>
         </div>
 
         <section v-show="activeModule === 'editorial'" class="space-y-4">

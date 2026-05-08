@@ -91,7 +91,6 @@ function dimensions(item) {
         :show="show"
         max-width="6xl"
         no-padding
-        scrollable
         v-on:close="close"
     >
         <div class="flex flex-col h-dvh sm:h-[80vh] sm:max-h-[80vh]">
@@ -424,7 +423,7 @@ function dimensions(item) {
 
             <footer class="flex items-center justify-end gap-2 px-4 sm:px-5 py-3 border-t border-line shrink-0">
                 <span v-if="multiple" class="text-xs text-muted mr-auto">{{ multiSelected.length }} {{ t("shared.media.picker.selectedCount") }}</span>
-                <AppButton variant="ghost" size="md" class="flex-1 sm:flex-none" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="ghost" size="md" class="flex-1 sm:flex-none" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton
                     variant="primary"
                     size="md"

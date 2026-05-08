@@ -20,7 +20,7 @@ import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
     ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
     Search, Loader2, ChevronDown, Filter,
-    Clock, Layers, FileText, Tags as TagsIcon, Image,
+    Clock, Layers, FileText, Tags as TagsIcon, Image, FolderKanban, CheckSquare,
 } from "lucide-vue-next";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { highlightMatch } from "@/shared/utils/format/highlightMatch.js";
@@ -44,6 +44,8 @@ const props = defineProps({
     notificationsListPath: { type: String, default: "" },
     notificationsMarkReadPath: { type: String, default: "" },
     notificationsMarkAllReadPath: { type: String, default: "" },
+    notificationsDeletePath: { type: String, default: "" },
+    notificationsDeleteAllPath: { type: String, default: "" },
 });
 
 const { t } = useI18n();
@@ -69,11 +71,13 @@ const {
 } = useSidebarNav(props.navSections, props.activeRoute);
 
 const SECTION_CONFIG = {
-    recent: { icon: Clock,    labelKey: "backend.search.sections.recent" },
-    nav:    { icon: Layers,   labelKey: "backend.search.sections.nav"    },
-    post:   { icon: FileText, labelKey: "backend.search.sections.posts"  },
-    term:   { icon: TagsIcon, labelKey: "backend.search.sections.terms"  },
-    media:  { icon: Image,    labelKey: "backend.search.sections.media"  },
+    recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },
+    nav:     { icon: Layers,        labelKey: "backend.search.sections.nav"      },
+    project: { icon: FolderKanban,  labelKey: "backend.search.sections.projects" },
+    task:    { icon: CheckSquare,   labelKey: "backend.search.sections.tasks"    },
+    post:    { icon: FileText,      labelKey: "backend.search.sections.posts"    },
+    term:    { icon: TagsIcon,      labelKey: "backend.search.sections.terms"    },
+    media:   { icon: Image,         labelKey: "backend.search.sections.media"    },
 };
 
 const {
@@ -148,6 +152,8 @@ function openSearchFromMobile() {
                     :list-path="notificationsListPath"
                     :mark-read-path="notificationsMarkReadPath"
                     :mark-all-read-path="notificationsMarkAllReadPath"
+                    :delete-path="notificationsDeletePath"
+                    :delete-all-path="notificationsDeleteAllPath"
                 />
             </div>
             <!-- Palette trigger — collapsed -->
@@ -164,6 +170,8 @@ function openSearchFromMobile() {
                     :list-path="notificationsListPath"
                     :mark-read-path="notificationsMarkReadPath"
                     :mark-all-read-path="notificationsMarkAllReadPath"
+                    :delete-path="notificationsDeletePath"
+                    :delete-all-path="notificationsDeleteAllPath"
                 />
             </div>
             <!-- Nav filter — expanded only -->
@@ -526,6 +534,22 @@ function openSearchFromMobile() {
                                         <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />
                                         <div v-if="item.snippet" class="text-xs text-muted line-clamp-2" v-html="highlightMatch(item.snippet, searchQuery)" />
                                         <div class="text-xs text-muted mt-0.5">{{ item.postType }}</div>
+                                    </div>
+                                </template>
+
+                                <!-- project -->
+                                <template v-else-if="section.kind === 'project'">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />
+                                        <div class="text-xs text-muted">{{ item.reference }} · {{ item.status }}</div>
+                                    </div>
+                                </template>
+
+                                <!-- task -->
+                                <template v-else-if="section.kind === 'task'">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />
+                                        <div class="text-xs text-muted">{{ item.reference }} · {{ item.projectTitle }}</div>
                                     </div>
                                 </template>
 

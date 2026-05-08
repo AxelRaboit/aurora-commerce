@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import PostCommentsForm from "./PostCommentsForm.vue";
 import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const props = defineProps({
@@ -155,9 +156,9 @@ function formatDate(iso) {
 
                             <PostCommentsReactionBar :comment="reply" :reaction-emojis="reactionEmojis" v-on:react="react" />
 
-                            <button type="button" class="mt-2 text-xs text-muted hover:text-primary transition-colors" v-on:click="openReply(reply.id)">
+                            <AppTextLinkButton color="muted" size="xs" class="mt-2" v-on:click="openReply(reply.id)">
                                 ↩ {{ t("shared.comment.reply") }}
-                            </button>
+                            </AppTextLinkButton>
                             <div v-if="replyOpenFor === reply.id" class="mt-3">
                                 <PostCommentsForm
                                     :parent-id="reply.id"
@@ -176,9 +177,9 @@ function formatDate(iso) {
                         </div>
                     </div>
 
-                    <button type="button" class="mt-3 text-xs text-muted hover:text-primary transition-colors" v-on:click="openReply(rootComment.id)">
+                    <AppTextLinkButton color="muted" size="xs" class="mt-3" v-on:click="openReply(rootComment.id)">
                         ↩ {{ t("shared.comment.reply") }}
-                    </button>
+                    </AppTextLinkButton>
                     <div v-if="replyOpenFor === rootComment.id" class="mt-3">
                         <PostCommentsForm
                             :parent-id="rootComment.id"

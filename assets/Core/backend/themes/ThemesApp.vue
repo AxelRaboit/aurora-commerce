@@ -1,7 +1,8 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Palette, Check, Pencil, Trash2, Plus, Save } from "lucide-vue-next";
+import { Palette, Check, Pencil, Trash2, Plus, Save, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -107,9 +108,8 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             </div>
         </div>
 
-        <AppModal :show="createModal.open" max-width="md" v-on:close="createModal.open = false">
+        <AppModal :show="createModal.open" max-width="md" :title="t('backend.themes.new')" v-on:close="createModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.new") }}</h2>
                 <AppInput
                     v-model="createForm.name"
                     :label="t('shared.common.name')"
@@ -128,16 +128,14 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     :rows="2"
                 />
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="createModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving">{{ t("shared.common.create") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="createModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving"><Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.create") }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
 
-        <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
+        <AppModal :show="editModal.open" max-width="lg" :title="t('backend.themes.edit')" v-on:close="editModal.open = false">
             <form class="space-y-5" v-on:submit.prevent="submitEdit">
-                <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.edit") }}</h2>
-
                 <AppInput
                     v-model="editForm.name"
                     :label="t('shared.common.name')"
@@ -164,7 +162,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                             <span class="text-xs text-muted">{{ t('backend.themes.primaryColorHint') }}</span>
                         </div>
                         <span class="text-xs font-mono text-muted">{{ primaryColor }}</span>
-                        <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('backend.themes.resetColor')" v-on:click="resetPrimaryColor">↺</button>
+                        <AppTextLinkButton color="muted" size="xs" :title="t('backend.themes.resetColor')" v-on:click="resetPrimaryColor">↺</AppTextLinkButton>
                     </div>
                 </div>
 
@@ -182,7 +180,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                                 <span class="text-xs font-medium text-primary">{{ cssVar.label }}</span>
                                 <span class="text-xs font-mono text-muted truncate">{{ cssVar.key }}</span>
                             </div>
-                            <button type="button" class="text-xs text-muted hover:text-primary transition-colors" :title="t('backend.themes.resetColor')" v-on:click="colorFields[cssVar.key] = DEFAULTS[cssVar.key]">↺</button>
+                            <AppTextLinkButton color="muted" size="xs" :title="t('backend.themes.resetColor')" v-on:click="colorFields[cssVar.key] = DEFAULTS[cssVar.key]">↺</AppTextLinkButton>
                         </div>
                     </div>
                     <template v-if="section.key === 'header'">
@@ -214,17 +212,16 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                 </div>
 
                 <AppModalFooter bordered>
-                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingTheme" max-width="sm" v-on:close="deletingTheme = null">
-            <h2 class="text-lg font-semibold text-primary">{{ t("backend.themes.deleteConfirm", { name: deletingTheme?.name ?? "" }) }}</h2>
+        <AppModal :show="!!deletingTheme" max-width="sm" :title="t('backend.themes.deleteConfirm', { name: deletingTheme?.name ?? '' })" v-on:close="deletingTheme = null">
             <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </div>
         </AppModal>
     </div>

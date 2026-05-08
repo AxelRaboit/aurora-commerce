@@ -300,15 +300,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
             <ul class="space-y-2">
                 <li v-for="finalization in paginatedFinalizations" :key="finalization.id" class="bg-surface border border-line rounded-lg overflow-hidden">
                     <div class="p-3 flex items-center gap-3">
-                        <button
-                            type="button"
-                            class="text-muted hover:text-primary transition-colors shrink-0"
+                        <AppIconButton
+                            class="shrink-0"
                             :aria-label="expandedFinalizations.has(finalization.id) ? t('shared.common.collapse') : t('shared.common.expand')"
                             v-on:click="toggleFinalization(finalization.id)"
                         >
                             <ChevronDown v-if="expandedFinalizations.has(finalization.id)" class="w-4 h-4" :stroke-width="2" />
                             <ChevronRight v-else class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppIconButton>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm text-primary">
                                 <span v-if="finalization.visitorName" class="font-medium">{{ finalization.visitorName }}</span>
@@ -408,11 +407,10 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </section>
 
         <!-- Reopen confirmation -->
-        <AppModal :show="showReopenModal" max-width="sm" v-on:close="showReopenModal = false">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t("photo.galleries.admin.reopen") }}</h3>
+        <AppModal :show="showReopenModal" max-width="sm" :title="t('photo.galleries.admin.reopen')" v-on:close="showReopenModal = false">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.reopenConfirm") }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showReopenModal = false">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showReopenModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="primary" size="md" :loading="reopenLoading" v-on:click="confirmReopen">
                     <Unlock class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.admin.reopen") }}
@@ -421,21 +419,19 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Invite delete confirmation -->
-        <AppModal :show="!!pendingInviteDelete" max-width="sm" v-on:close="pendingInviteDelete = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t("photo.galleries.admin.invites.deleteConfirmTitle") }}</h3>
+        <AppModal :show="!!pendingInviteDelete" max-width="sm" :title="t('photo.galleries.admin.invites.deleteConfirmTitle')" v-on:close="pendingInviteDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.invites.deleteConfirm", { name: pendingInviteDelete?.name }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingInviteDelete = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="inviteDeleting" v-on:click="confirmDeleteInvite">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingInviteDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="inviteDeleting" v-on:click="confirmDeleteInvite"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
         <!-- Finalization reopen confirmation -->
-        <AppModal :show="!!pendingFinalizationDelete" max-width="sm" v-on:close="pendingFinalizationDelete = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t("photo.galleries.admin.finalizations.reopen") }}</h3>
+        <AppModal :show="!!pendingFinalizationDelete" max-width="sm" :title="t('photo.galleries.admin.finalizations.reopen')" v-on:close="pendingFinalizationDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.finalizations.reopenConfirm") }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingFinalizationDelete = null">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingFinalizationDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="primary" size="md" :loading="finalizationDeleteLoading" v-on:click="confirmDeleteFinalization">
                     <Unlock class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.admin.finalizations.reopen") }}
@@ -444,12 +440,11 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Comment delete confirmation -->
-        <AppModal :show="!!pendingCommentDelete" max-width="sm" v-on:close="pendingCommentDelete = null">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t("photo.galleries.admin.comments.delete") }}</h3>
+        <AppModal :show="!!pendingCommentDelete" max-width="sm" :title="t('photo.galleries.admin.comments.delete')" v-on:close="pendingCommentDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.comments.deleteConfirm") }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingCommentDelete = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="commentDeleteLoading" v-on:click="confirmDeleteComment">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingCommentDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="commentDeleteLoading" v-on:click="confirmDeleteComment"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -457,8 +452,8 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         <AppModal :show="!!pendingDeleteItem" max-width="sm" v-on:close="pendingDeleteItem = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemDeleteConfirm") }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDeleteItem = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteOneLoading" v-on:click="confirmDeleteOne">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteOneLoading" v-on:click="confirmDeleteOne"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -466,8 +461,8 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         <AppModal :show="pendingBulkDelete" max-width="sm" v-on:close="pendingBulkDelete = false">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemsBulkDeleteConfirm", { count: selected.size }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="confirmBulkDelete">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="confirmBulkDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

@@ -64,6 +64,28 @@ final class NotificationsController extends AbstractController
         return $this->jsonSuccess(['count' => $count]);
     }
 
+    #[Route('/{id}', name: '_delete', methods: [HttpMethodEnum::Delete->value])]
+    public function delete(#[MapEntity(id: 'id')] Notification $notification): JsonResponse
+    {
+        $user = $this->requireUser();
+        if ($notification->getRecipient()->getId() !== $user->getId()) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $this->notificationManager->delete($notification);
+
+        return $this->jsonSuccess();
+    }
+
+    #[Route('', name: '_delete_all', methods: [HttpMethodEnum::Delete->value])]
+    public function deleteAll(): JsonResponse
+    {
+        $user = $this->requireUser();
+        $this->notificationManager->deleteAllForUser($user);
+
+        return $this->jsonSuccess();
+    }
+
     private function requireUser(): User
     {
         $user = $this->getUser();

@@ -11,6 +11,7 @@ use Aurora\Module\Project\DTO\ProjectTaskCommentInput;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class ProjectTaskCommentManager
 {
@@ -18,6 +19,7 @@ final readonly class ProjectTaskCommentManager
         private EntityManagerInterface $entityManager,
         private AuditLogger $auditLogger,
         private NotificationManager $notifier,
+        private TranslatorInterface $translator,
     ) {}
 
     public function create(ProjectTask $task, User $author, ProjectTaskCommentInput $input): ProjectTaskComment
@@ -49,7 +51,10 @@ final readonly class ProjectTaskCommentManager
                 $recipient,
                 'project.task.commented',
                 $task->getTitle(),
-                sprintf('%s commented: %s', $author->getName(), mb_substr($input->content, 0, 200)),
+                $this->translator->trans('backend.notifications.taskCommented', [
+                    '%name%' => $author->getName(),
+                    '%content%' => mb_substr($input->content, 0, 200),
+                ], null, $recipient->getLocale()->value),
                 null,
                 ['projectId' => $task->getProject()->getId(), 'taskId' => $task->getId(), 'commentId' => $comment->getId()],
             );

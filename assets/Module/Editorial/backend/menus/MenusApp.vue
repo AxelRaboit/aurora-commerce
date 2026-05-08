@@ -11,7 +11,7 @@ import { useMenuEditor } from "@editorial/backend/menus/composables/useMenuEdito
 import { useMenuEditModal } from "@editorial/backend/menus/composables/useMenuEditModal.js";
 import { useMenuDeleteConfirms } from "@editorial/backend/menus/composables/useMenuDeleteConfirms.js";
 import { useMenuItemModal } from "@editorial/backend/menus/composables/useMenuItemModal.js";
-import { Save } from "lucide-vue-next";
+import { Save, X, Trash2 } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -76,8 +76,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             v-on:reorder-children="reorderItems"
         />
 
-        <AppModal :show="menuModal.open" max-width="md" v-on:close="menuModal.open = false">
-            <h3 class="text-lg font-bold text-primary mb-4">{{ t("backend.menus.editMenu") }}</h3>
+        <AppModal :show="menuModal.open" max-width="md" :title="t('backend.menus.editMenu')" v-on:close="menuModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitMenu">
                 <AppInput v-model="menuForm.name" :label="t('backend.menus.name')" required />
                 <AppInput
@@ -90,7 +89,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
                 <p v-if="menuModal.editing?.protected" class="text-xs text-amber-500 -mt-2">{{ t('backend.menus.locationLockedHint') }}</p>
                 <AppInput v-model="menuForm.description" :label="t('backend.menus.description')" />
                 <AppModalFooter>
-                    <AppButton variant="ghost" v-on:click="menuModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" v-on:click="menuModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" :loading="menuModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -99,16 +98,16 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
         <AppModal :show="!!confirmDeleteMenu" max-width="sm" v-on:close="confirmDeleteMenu = null">
             <p class="text-sm text-primary">{{ t("backend.menus.deleteConfirm", { name: confirmDeleteMenu?.name ?? "" }) }}</p>
             <div class="flex justify-end gap-2 pt-3">
-                <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" v-on:click="submitDeleteMenu">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" v-on:click="submitDeleteMenu"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </div>
         </AppModal>
 
         <AppModal :show="!!confirmDeleteItem" max-width="sm" v-on:close="confirmDeleteItem = null">
             <p class="text-sm text-primary">{{ t("backend.menus.deleteItemConfirm") }}</p>
             <div class="flex justify-end gap-2 pt-3">
-                <AppButton variant="ghost" v-on:click="confirmDeleteItem = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" v-on:click="submitDeleteItem">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" v-on:click="confirmDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" v-on:click="submitDeleteItem"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </div>
         </AppModal>
 

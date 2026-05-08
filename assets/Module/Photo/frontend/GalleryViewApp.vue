@@ -437,14 +437,13 @@ function downloadOne(itemId) {
         </div>
 
         <!-- Identity modal -->
-        <AppModal :show="showIdentityModal" v-on:close="showIdentityModal = false">
-            <h3 class="text-lg font-semibold text-primary mb-4">{{ t('photo.frontend.identity.title') }}</h3>
+        <AppModal :show="showIdentityModal" :title="t('photo.frontend.identity.title')" v-on:close="showIdentityModal = false">
             <form class="space-y-4" v-on:submit.prevent="submitIdentity">
                 <p class="text-sm text-muted">{{ t("photo.frontend.identity.intro") }}</p>
                 <AppInput v-model="visitorName" :label="t('photo.frontend.identity.name')" required />
                 <AppInput v-model="visitorEmail" type="email" :label="t('photo.frontend.identity.email')" required />
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showIdentityModal = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" type="button" v-on:click="showIdentityModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit">{{ t("photo.frontend.identity.submit") }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -483,7 +482,7 @@ function downloadOne(itemId) {
                 />
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showCommentBox = false">
-                        {{ t("photo.frontend.comments.cancel") }}
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("photo.frontend.comments.cancel") }}
                     </AppButton>
                     <AppButton variant="primary" type="submit" :loading="commentSending">
                         <Send class="w-4 h-4" :stroke-width="2" />
@@ -494,8 +493,7 @@ function downloadOne(itemId) {
         </AppModal>
 
         <!-- Share my selection modal -->
-        <AppModal :show="showShareModal" v-on:close="showShareModal = false">
-            <h3 class="text-lg font-semibold text-primary mb-2">{{ t('photo.frontend.share.title') }}</h3>
+        <AppModal :show="showShareModal" :title="t('photo.frontend.share.title')" v-on:close="showShareModal = false">
             <p class="text-sm text-muted mb-4">{{ t("photo.frontend.share.intro", { count: favoriteTotal }) }}</p>
             <div class="flex items-center gap-2 p-2 rounded-lg bg-surface-2 border border-line">
                 <input
@@ -511,13 +509,12 @@ function downloadOne(itemId) {
                 </AppButton>
             </div>
             <AppModalFooter>
-                <AppButton variant="ghost" type="button" v-on:click="showShareModal = false">{{ t("shared.common.close") }}</AppButton>
+                <AppButton variant="ghost" type="button" v-on:click="showShareModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
         <!-- Finalize modal -->
-        <AppModal :show="showFinalizeModal" v-on:close="showFinalizeModal = false">
-            <h3 class="text-lg font-semibold text-primary mb-4">{{ t('photo.frontend.finalize') }}</h3>
+        <AppModal :show="showFinalizeModal" :title="t('photo.frontend.finalize')" v-on:close="showFinalizeModal = false">
             <form class="space-y-4" v-on:submit.prevent="submitFinalize">
                 <p class="text-sm text-muted">{{ t("photo.frontend.finalizeIntro", { count: favoriteTotal }) }}</p>
                 <AppInput
@@ -536,7 +533,7 @@ function downloadOne(itemId) {
                     required
                 />
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showFinalizeModal = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" type="button" v-on:click="showFinalizeModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="finalizing">
                         <Send class="w-4 h-4" :stroke-width="2" />
                         {{ t("photo.frontend.finalize") }}

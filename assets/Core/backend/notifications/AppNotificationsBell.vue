@@ -1,5 +1,5 @@
 <script setup>
-import { Bell, Check, X } from "lucide-vue-next";
+import { Bell, Check, X, Trash2 } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { useNotifications } from "./composables/useNotifications.js";
@@ -8,6 +8,8 @@ const props = defineProps({
     listPath: { type: String, required: true },
     markReadPath: { type: String, required: true },
     markAllReadPath: { type: String, required: true },
+    deletePath: { type: String, default: "" },
+    deleteAllPath: { type: String, default: "" },
 });
 
 const { t } = useI18n();
@@ -18,10 +20,14 @@ const {
     toggle,
     markRead,
     markAllRead,
+    deleteOne,
+    deleteAll,
 } = useNotifications({
     list: props.listPath,
     markRead: props.markReadPath,
     markAllRead: props.markAllReadPath,
+    deletePath: props.deletePath,
+    deleteAllPath: props.deleteAllPath,
 });
 
 function formatDate(iso) {
@@ -41,9 +47,8 @@ function onItemClick(entry) {
 
 <template>
     <div class="relative">
-        <button
-            type="button"
-            class="relative p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+        <AppIconButton
+            class="relative"
             :title="t('backend.notifications.title')"
             v-on:click="toggle"
         >
@@ -54,7 +59,7 @@ function onItemClick(entry) {
             >
                 {{ unreadCount > 9 ? "9+" : unreadCount }}
             </span>
-        </button>
+        </AppIconButton>
 
         <Teleport to="body">
             <div
@@ -69,6 +74,9 @@ function onItemClick(entry) {
                             <AppIconButton v-if="unreadCount > 0" :title="t('backend.notifications.markAllRead')" v-on:click="markAllRead">
                                 <Check class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
+                            <AppIconButton v-if="deletePath && entries.length" :title="t('backend.notifications.deleteAll')" v-on:click="deleteAll">
+                                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
                             <AppIconButton :title="t('backend.notifications.close')" v-on:click="toggle">
                                 <X class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
@@ -78,18 +86,31 @@ function onItemClick(entry) {
                         <p v-if="!entries.length" class="px-4 py-6 text-xs text-muted text-center">
                             {{ t('backend.notifications.empty') }}
                         </p>
-                        <button
+                        <div
                             v-for="entry in entries"
                             :key="entry.id"
-                            type="button"
-                            class="w-full text-left px-4 py-3 border-b border-line/40 last:border-b-0 transition-colors"
+                            class="group flex items-start border-b border-line/40 last:border-b-0 transition-colors"
                             :class="entry.readAt ? 'hover:bg-surface-2' : 'bg-accent-600/5 hover:bg-accent-600/10'"
-                            v-on:click="onItemClick(entry)"
                         >
-                            <p class="text-sm font-medium text-primary truncate">{{ entry.title }}</p>
-                            <p v-if="entry.body" class="text-xs text-secondary line-clamp-2 mt-0.5">{{ entry.body }}</p>
-                            <p class="text-xs text-muted mt-1">{{ formatDate(entry.createdAt) }}</p>
-                        </button>
+                            <button
+                                type="button"
+                                class="flex-1 text-left px-4 py-3"
+                                v-on:click="onItemClick(entry)"
+                            >
+                                <p class="text-sm font-medium text-primary truncate">{{ entry.title }}</p>
+                                <p v-if="entry.body" class="text-xs text-secondary line-clamp-2 mt-0.5">{{ entry.body }}</p>
+                                <p class="text-xs text-muted mt-1">{{ formatDate(entry.createdAt) }}</p>
+                            </button>
+                            <button
+                                v-if="deletePath"
+                                type="button"
+                                class="opacity-0 group-hover:opacity-100 shrink-0 p-3 text-muted hover:text-rose-500 transition-all"
+                                :title="t('backend.notifications.delete')"
+                                v-on:click.stop="deleteOne(entry)"
+                            >
+                                <X class="w-3.5 h-3.5" :stroke-width="2" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

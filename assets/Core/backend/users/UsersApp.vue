@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { UserPlus, Save, Upload, Trash2 } from "lucide-vue-next";
+import { UserPlus, Save, Upload, Trash2, X, Send } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -185,8 +185,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="inviteModal.open" max-width="md" v-on:close="inviteModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.invite') }}</h3>
+        <AppModal :show="inviteModal.open" max-width="md" :title="t('backend.users.invite')" v-on:close="inviteModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
                 <AppInput v-model="inviteForm.name" :label="t('backend.users.name')" :placeholder="t('backend.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
                 <AppInput
@@ -212,8 +211,8 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     />
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving">{{ t('backend.users.sendInvite') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving"><Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.users.sendInvite') }}</AppButton>
                 </div>
             </form>
         </AppModal>
@@ -292,14 +291,12 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 </div>
 
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="viewingUser = null">{{ t('shared.common.close') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="viewingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
                 </AppModalFooter>
             </div>
         </AppModal>
 
-        <AppModal :show="editModal.open" max-width="lg" :scrollable="true" v-on:close="editModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.edit_title', {name: editModal.editing?.name ?? ''}) }}</h3>
-
+        <AppModal :show="editModal.open" max-width="lg" :title="t('backend.users.edit_title', { name: editModal.editing?.name ?? '' })" v-on:close="editModal.open = false">
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
                 <AppAvatar variant="solid" :name="editModal.editing?.name ?? ''" :photo-url="editModal.editing?.profilePhotoUrl ?? ''" :size="56" />
                 <div class="flex flex-col gap-1.5">
@@ -368,7 +365,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     :error="editModal.errors.password ?? ''"
                 />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
-                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
@@ -378,7 +375,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         </AppModal>
 
         <!-- Privileges modal — dedicated, Dev only -->
-        <AppModal :show="privilegesModal.open" max-width="2xl" :scrollable="true" v-on:close="privilegesModal.open = false">
+        <AppModal :show="privilegesModal.open" max-width="2xl" v-on:close="privilegesModal.open = false">
             <div v-if="privilegesModal.user" class="space-y-4">
                 <div class="flex items-center gap-3">
                     <AppAvatar variant="solid" :name="privilegesModal.user.name" :photo-url="privilegesModal.user.profilePhotoUrl ?? ''" :size="40" />
@@ -401,7 +398,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
-                    <AppButton variant="ghost" size="md" v-on:click="privilegesModal.open = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="privilegesModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" :loading="privilegesModal.saving" v-on:click="savePrivileges">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
@@ -413,8 +410,8 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
             <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingUser = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="deletingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -423,7 +420,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
             </p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="togglingUser = null">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="togglingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="togglingUser?.status === UserStatus.Disabled ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
                     {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enable' : 'admin.users.disable') }}
                 </AppButton>

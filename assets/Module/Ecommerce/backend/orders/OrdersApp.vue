@@ -10,6 +10,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import { Eye } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -70,19 +71,18 @@ function formatTotal(order) {
 <template>
     <div class="space-y-4">
         <div class="flex gap-1 flex-wrap">
-            <button
+            <AppTab
                 v-for="tab in tabs"
                 :key="tab.key"
-                type="button"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-                :class="statusFilter === tab.key ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                size="sm"
+                :active="statusFilter === tab.key"
                 v-on:click="selectTab(tab.key)"
             >
                 {{ tab.label }}
                 <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-accent-600/25' : 'bg-surface-3'">
                     {{ tab.count }}
                 </span>
-            </button>
+            </AppTab>
         </div>
 
         <AppSearchInput

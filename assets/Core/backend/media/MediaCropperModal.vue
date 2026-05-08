@@ -2,7 +2,7 @@
 import { nextTick, ref, watch } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
-import { Save } from "lucide-vue-next";
+import { Save, X } from "lucide-vue-next";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { toast } from "vue-sonner";
@@ -103,7 +103,7 @@ async function save() {
             >
         </div>
         <div class="flex justify-end gap-2 mt-4">
-            <AppButton variant="ghost" size="md" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="ghost" size="md" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
             <AppButton variant="primary" size="md" :loading="saving" v-on:click="save">
                 <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.applyCrop") }}
             </AppButton>

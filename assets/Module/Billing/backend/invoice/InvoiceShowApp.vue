@@ -12,7 +12,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import InlineField from "@billing/components/InlineField.vue";
-import { Check, Trash2, Plus, FileX, ExternalLink, ScanLine } from "lucide-vue-next";
+import { Check, Trash2, Plus, FileX, ExternalLink, ScanLine, X } from "lucide-vue-next";
 import { formatCents, formatBpAsPercent } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isImageMimeType, isPdfMimeType } from "@core/utils/enums/media/mimeType.js";
@@ -53,8 +53,7 @@ const { formatDateNumeric } = useDateFormat();
 <template>
     <div class="space-y-4">
         <!-- Credit note modal -->
-        <AppModal :show="showCreditNoteModal" max-width="sm" v-on:close="showCreditNoteModal = false">
-            <h3 class="text-base font-semibold text-primary mb-1">{{ t('backend.billing.invoices.show.createCreditNote') }}</h3>
+        <AppModal :show="showCreditNoteModal" max-width="sm" :title="t('backend.billing.invoices.show.createCreditNote')" v-on:close="showCreditNoteModal = false">
             <p class="text-sm text-secondary mb-4">{{ t('backend.billing.invoices.show.creditNoteHelp') }}</p>
             <textarea
                 v-model="creditNoteReason"
@@ -63,7 +62,7 @@ const { formatDateNumeric } = useDateFormat();
                 class="w-full px-3 py-2 rounded-lg border border-line/60 bg-surface text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-500/30 resize-none"
             />
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showCreditNoteModal = false">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showCreditNoteModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="creatingCreditNote" v-on:click="createCreditNote">
                     <FileX class="w-4 h-4" :stroke-width="2" />
                     {{ t('backend.billing.invoices.show.confirmCreditNote') }}
@@ -108,8 +107,8 @@ const { formatDateNumeric } = useDateFormat();
                 </label>
             </div>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteInvoice">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteInvoice"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 

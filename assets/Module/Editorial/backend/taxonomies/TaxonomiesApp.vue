@@ -8,9 +8,10 @@ import { useTaxonomySelect } from "@editorial/backend/taxonomies/composables/use
 import { useTaxonomyTree } from "@editorial/backend/taxonomies/composables/useTaxonomyTree.js";
 import { useTaxonomyDelete } from "@editorial/backend/taxonomies/composables/useTaxonomyDelete.js";
 import { useTermDelete } from "@editorial/backend/taxonomies/composables/useTermDelete.js";
-import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
@@ -201,18 +202,16 @@ const parentOptions = computed(() => {
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.terms.title") }}</h4>
                         <div class="flex items-center gap-2">
                             <div v-if="locales.length > 1" class="flex gap-1">
-                                <button
+                                <AppTab
                                     v-for="locale in locales"
                                     :key="locale"
-                                    type="button"
-                                    class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                                    :class="activeLocale === locale
-                                        ? 'bg-accent-600 text-white'
-                                        : 'text-secondary hover:bg-surface-2'"
+                                    size="xs"
+                                    :active="activeLocale === locale"
+                                    active-class="bg-accent-600 text-white"
                                     v-on:click="activeLocale = locale"
                                 >
                                     {{ locale.toUpperCase() }}
-                                </button>
+                                </AppTab>
                             </div>
                             <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
@@ -257,10 +256,7 @@ const parentOptions = computed(() => {
             </div>
         </main>
 
-        <AppModal :show="taxonomyModal.open" max-width="lg" v-on:close="taxonomyModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">
-                {{ taxonomyModal.editing ? t("backend.taxonomies.editTaxonomy") : t("backend.taxonomies.addTaxonomy") }}
-            </h3>
+        <AppModal :show="taxonomyModal.open" max-width="lg" :title="taxonomyModal.editing ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')" v-on:close="taxonomyModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitTaxonomy">
                 <AppInput
                     v-model="taxonomyForm.slug"
@@ -279,16 +275,17 @@ const parentOptions = computed(() => {
                 <div class="space-y-2">
                     <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.translations") }}</label>
                     <div class="flex gap-1">
-                        <button
+                        <AppTab
                             v-for="locale in locales"
                             :key="locale"
-                            type="button"
-                            class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                            :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            size="xs"
+                            :active="activeLocale === locale"
+                            active-class="bg-accent-600 text-white"
+                            inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                             v-on:click="activeLocale = locale"
                         >
                             {{ locale.toUpperCase() }}
-                        </button>
+                        </AppTab>
                     </div>
                     <AppInput
                         v-model="taxonomyForm.translations[activeLocale].label"
@@ -328,16 +325,13 @@ const parentOptions = computed(() => {
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="taxonomyModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
         </AppModal>
 
-        <AppModal :show="termModal.open" max-width="md" v-on:close="termModal.open = false">
-            <h3 class="text-lg font-semibold text-primary">
-                {{ termModal.editing ? t("backend.taxonomies.terms.editTerm") : t("backend.taxonomies.terms.addTerm") }}
-            </h3>
+        <AppModal :show="termModal.open" max-width="md" :title="termModal.editing ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')" v-on:close="termModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitTerm">
                 <div v-if="selected?.hierarchical">
                     <AppMultiselect
@@ -352,16 +346,17 @@ const parentOptions = computed(() => {
                 </div>
 
                 <div class="flex gap-1">
-                    <button
+                    <AppTab
                         v-for="locale in locales"
                         :key="locale"
-                        type="button"
-                        class="px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                        :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                        size="xs"
+                        :active="activeLocale === locale"
+                        active-class="bg-accent-600 text-white"
+                        inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                         v-on:click="activeLocale = locale"
                     >
                         {{ locale.toUpperCase() }}
-                    </button>
+                    </AppTab>
                 </div>
 
                 <AppInput
@@ -385,7 +380,7 @@ const parentOptions = computed(() => {
                 />
 
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="termModal.open = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="termModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="termModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </div>
             </form>
@@ -394,16 +389,16 @@ const parentOptions = computed(() => {
         <AppModal :show="!!deletingTaxonomy" max-width="sm" v-on:close="deletingTaxonomy = null">
             <p class="text-sm text-primary">{{ t("backend.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTaxonomy">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTaxonomy"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </div>
         </AppModal>
 
         <AppModal :show="!!deletingTerm" max-width="sm" v-on:close="deletingTerm = null">
             <p class="text-sm text-primary">{{ t("backend.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTerm">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTerm"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </div>
         </AppModal>
     </div>

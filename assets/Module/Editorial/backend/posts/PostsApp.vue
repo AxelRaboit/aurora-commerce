@@ -17,7 +17,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { usePostList } from "@editorial/backend/posts/composables/usePostList.js";
 import { usePostDelete } from "@editorial/backend/posts/composables/usePostDelete.js";
-import { Pencil, Trash2, Plus, FileText, Eye, Inbox, RotateCcw } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, FileText, Eye, Inbox, RotateCcw, X } from "lucide-vue-next";
 import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -254,10 +254,10 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                 </p>
                 <div class="flex justify-end gap-2 mt-2">
                     <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
-                        {{ t("shared.common.cancel") }}
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
-                        {{ t(trashed ? "backend.posts.forceDelete" : "common.delete") }}
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t(trashed ? "backend.posts.forceDelete" : "common.delete") }}
                     </AppButton>
                 </div>
             </AppModal>
@@ -267,10 +267,10 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     <p class="text-sm text-primary">{{ t("backend.posts.emptyTrashConfirm") }}</p>
                     <div class="flex justify-end gap-2">
                         <AppButton variant="secondary" size="md" v-on:click="confirmEmptyTrash = false">
-                            {{ t("shared.common.cancel") }}
+                            <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
                         </AppButton>
                         <AppButton variant="danger" size="md" :loading="emptyingTrash" v-on:click="emptyTrash">
-                            {{ t("backend.posts.emptyTrash") }}
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.emptyTrash") }}
                         </AppButton>
                     </div>
                 </div>

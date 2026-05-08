@@ -9,7 +9,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Save } from "lucide-vue-next";
+import { Plus, Save, X, Trash2, Check } from "lucide-vue-next";
 import { useAdminUsers } from "@core/backend/dev/composables/useAdminUsers.js";
 import AdminUserBadges from "@core/backend/dev/AdminUserBadges.vue";
 import AdminUserActions from "@core/backend/dev/AdminUserActions.vue";
@@ -152,13 +152,12 @@ onMounted(() => {
         <AppModal :show="!!users.pendingDelete.value" max-width="sm" v-on:close="users.pendingDelete.value = null">
             <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', { name: users.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="users.doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" v-on:click="users.doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </div>
         </AppModal>
 
-        <AppModal :show="users.showCreateModal.value" max-width="md" v-on:close="users.showCreateModal.value = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.add') }}</h3>
+        <AppModal :show="users.showCreateModal.value" max-width="md" :title="t('backend.users.add')" v-on:close="users.showCreateModal.value = false">
             <form class="space-y-4" v-on:submit.prevent="users.submitCreate">
                 <AppInput
                     v-model="users.newUser.value.name"
@@ -187,14 +186,13 @@ onMounted(() => {
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="users.showCreateModal.value = false">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="users.createLoading.value">{{ t('shared.common.create') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="users.showCreateModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="users.createLoading.value"><Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.create') }}</AppButton>
                 </div>
             </form>
         </AppModal>
 
-        <AppModal :show="users.showEditModal.value" max-width="md" v-on:close="users.closeEdit">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' }) }}</h3>
+        <AppModal :show="users.showEditModal.value" max-width="md" :title="t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' })" v-on:close="users.closeEdit">
             <form class="space-y-4" v-on:submit.prevent="users.submitEdit">
                 <AppInput
                     v-model="users.editUserForm.value.name"
@@ -222,7 +220,7 @@ onMounted(() => {
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="users.closeEdit">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="users.closeEdit"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="users.editLoading.value"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </div>
             </form>
@@ -235,8 +233,8 @@ onMounted(() => {
                     : t('backend.users.grantDevConfirm', { name: users.pendingToggleRole.value?.name }) }}
             </p>
             <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="users.pendingToggleRole.value = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="users.doToggleRole">{{ t('shared.common.confirm') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="users.pendingToggleRole.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="primary" size="md" v-on:click="users.doToggleRole"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.confirm') }}</AppButton>
             </div>
         </AppModal>
     </div>

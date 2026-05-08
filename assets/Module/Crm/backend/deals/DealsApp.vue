@@ -18,7 +18,7 @@ import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import { List, Columns2, Pencil, Trash2, Eye, Plus, Save } from "lucide-vue-next";
+import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, X } from "lucide-vue-next";
 import { stageBadge, stageBadgeBordered } from "@crm/utils/deals/stageStyles.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -260,8 +260,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 </div>
             </div>
 
-            <AppModal :show="showCreate" v-on:close="showCreate = false">
-                <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.deals.create') }}</h3>
+            <AppModal :show="showCreate" :title="t('backend.crm.deals.create')" v-on:close="showCreate = false">
                 <form class="space-y-4" v-on:submit.prevent="submitCreate">
                     <AppInput
                         v-model="newDeal.name"
@@ -276,14 +275,13 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     <AppInput v-model="newDeal.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
                     <AppDatePicker v-model="newDeal.closingDate" :label="t('backend.crm.deals.closingDate')" />
                     <AppModalFooter>
-                        <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t('shared.common.cancel') }}</AppButton>
+                        <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </AppModalFooter>
                 </form>
             </AppModal>
 
-            <AppModal :show="showEdit" v-on:close="showEdit = false">
-                <h3 class="text-lg font-semibold text-primary">{{ t('backend.crm.deals.edit', { name: editingDeal?.name ?? '' }) }}</h3>
+            <AppModal :show="showEdit" :title="t('backend.crm.deals.edit', { name: editingDeal?.name ?? '' })" v-on:close="showEdit = false">
                 <form class="space-y-4" v-on:submit.prevent="submitEdit">
                     <AppInput
                         v-model="editForm.name"
@@ -298,7 +296,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
                     <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
                     <AppModalFooter>
-                        <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
+                        <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </AppModalFooter>
                 </form>
@@ -308,8 +306,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
                 <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
                 </AppModalFooter>
             </AppModal>
         </div>

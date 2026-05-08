@@ -13,7 +13,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Eye, Trash2, RotateCcw, FileText, ScrollText, LayoutList, CircleCheck } from "lucide-vue-next";
+import { Eye, Trash2, RotateCcw, FileText, ScrollText, LayoutList, CircleCheck, X, Check } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isPdfMimeType, isImageMimeType } from "@core/utils/enums/media/mimeType.js";
 import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
@@ -231,7 +231,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 </div>
             </div>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="logsJob = null">{{ t('shared.common.close') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="logsJob = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -239,8 +239,8 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.validateConfirm', { id: pendingValidate?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.ocr.validateHelp') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingValidate = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate">{{ t('backend.billing.invoices.show.validate') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingValidate = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.billing.invoices.show.validate') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -252,8 +252,8 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 {{ t('backend.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
             </label>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

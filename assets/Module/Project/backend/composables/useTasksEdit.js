@@ -12,6 +12,7 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
     const { t } = useI18n();
 
     const showEditTask = ref(false);
+    const showViewTask = ref(false);
     const editingTask = ref(null);
     const editTaskForm = ref(emptyTaskForm());
     const {
@@ -21,6 +22,12 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
         setErrors,
     } = useForm();
     const { loading: editTaskLoading, request } = useApiRequest();
+
+    function openViewTask(task) {
+        editingTask.value = task;
+        clearErrors();
+        showViewTask.value = true;
+    }
 
     function openEditTask(task) {
         editingTask.value = task;
@@ -67,10 +74,12 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
 
     return {
         showEditTask,
+        showViewTask,
         editingTask,
         editTaskForm,
         editTaskErrors,
         editTaskLoading,
+        openViewTask,
         openEditTask,
         submitEditTask,
     };

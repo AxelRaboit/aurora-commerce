@@ -128,8 +128,7 @@ const onCoverChange = onGalleryCoverChange;
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary mb-4">{{ t('photo.galleries.create') }}</h3>
+        <AppModal :show="showCreate" :title="t('photo.galleries.create')" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"
@@ -241,7 +240,7 @@ const onCoverChange = onGalleryCoverChange;
                     </div>
                 </div>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showCreate = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="createLoading">
                         <Save class="w-4 h-4" :stroke-width="2" />
                         {{ t("shared.common.create") }}
@@ -251,8 +250,7 @@ const onCoverChange = onGalleryCoverChange;
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary mb-4">{{ t('photo.galleries.edit') }}</h3>
+        <AppModal :show="showEdit" :title="t('photo.galleries.edit')" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"
@@ -365,7 +363,7 @@ const onCoverChange = onGalleryCoverChange;
                     </div>
                 </div>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showEdit = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="editLoading">
                         <Save class="w-4 h-4" :stroke-width="2" />
                         {{ t("shared.common.save") }}
@@ -377,8 +375,8 @@ const onCoverChange = onGalleryCoverChange;
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.deleteConfirm", { title: pendingDelete?.title ?? '' }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

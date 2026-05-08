@@ -12,6 +12,10 @@ use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Repository\ProjectRepository;
+use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +31,8 @@ class SearchController extends AbstractController
         private readonly TaxonomyTermRepository $termRepository,
         private readonly MediaRepository $mediaRepository,
         private readonly SearchSnippetBuilder $snippetBuilder,
+        private readonly ProjectRepository $projectRepository,
+        private readonly ProjectTaskRepository $taskRepository,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -34,7 +40,7 @@ class SearchController extends AbstractController
     {
         $query = mb_trim((string) $request->query->get('q', ''));
         if ('' === $query) {
-            return $this->json(['success' => true, 'posts' => [], 'terms' => [], 'media' => []]);
+            return $this->json(['success' => true, 'posts' => [], 'terms' => [], 'media' => [], 'projects' => [], 'tasks' => []]);
         }
 
         $defaultLocaleEnum = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
@@ -83,11 +89,36 @@ class SearchController extends AbstractController
             $this->mediaRepository->searchByName($query, 10),
         );
 
+        // ── Projects ────────────────────────────────────────────────────────
+        $projectsSerialized = array_map(
+            static fn (Project $project): array => [
+                'id' => $project->getId(),
+                'title' => $project->getTitle(),
+                'status' => $project->getStatus()->value,
+                'reference' => $project->getReference(),
+            ],
+            $this->projectRepository->searchByTitle($query),
+        );
+
+        // ── Tasks ────────────────────────────────────────────────────────────
+        $tasksSerialized = array_map(
+            static fn (ProjectTask $task): array => [
+                'id' => $task->getId(),
+                'title' => $task->getTitle(),
+                'reference' => $task->getReference(),
+                'projectId' => $task->getProject()->getId(),
+                'projectTitle' => $task->getProject()->getTitle(),
+            ],
+            $this->taskRepository->searchByTitle($query),
+        );
+
         return $this->json([
             'success' => true,
             'posts' => $postsSerialized,
             'terms' => $termsSerialized,
             'media' => $mediaSerialized,
+            'projects' => $projectsSerialized,
+            'tasks' => $tasksSerialized,
         ]);
     }
 }

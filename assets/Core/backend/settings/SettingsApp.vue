@@ -9,6 +9,8 @@ import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { Search, FileText, Lock, Save } from "lucide-vue-next";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
@@ -116,9 +118,9 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                 <FileText class="w-4 h-4 shrink-0 text-accent" :stroke-width="2" />
                                 <span class="flex-1 text-sm font-medium text-primary truncate">{{ postPickerLabels[parameter.key].title }}</span>
                                 <span class="text-xs text-muted shrink-0">#{{ postPickerLabels[parameter.key].id }}</span>
-                                <button type="button" class="text-xs text-muted hover:text-danger transition-colors shrink-0" v-on:click="clearPost(parameter.key)">
+                                <AppTextLinkButton color="danger" size="xs" class="shrink-0" v-on:click="clearPost(parameter.key)">
                                     {{ t("shared.common.remove") }}
-                                </button>
+                                </AppTextLinkButton>
                             </div>
                             <div v-else class="text-sm text-muted italic mb-2">{{ t("backend.settings.noPageSelected") }}</div>
                             <div class="relative">
@@ -135,16 +137,15 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                     </template>
                                 </AppInput>
                                 <div v-if="postPickerOpen[parameter.key] && postPickerResults[parameter.key]?.length" class="absolute z-20 left-0 right-0 mt-1 border border-line rounded-lg bg-surface shadow-lg overflow-hidden">
-                                    <button
+                                    <AppListItemButton
                                         v-for="post in postPickerResults[parameter.key]"
                                         :key="post.id"
-                                        type="button"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2 text-sm text-left hover:bg-surface-2 transition-colors border-b border-line last:border-0"
+                                        class="justify-between border-b border-line last:border-0"
                                         v-on:click="selectPost(parameter.key, post)"
                                     >
                                         <span class="font-medium text-primary truncate">{{ post.title ?? "—" }}</span>
                                         <span class="text-xs text-muted shrink-0">{{ post.postType }}</span>
-                                    </button>
+                                    </AppListItemButton>
                                 </div>
                             </div>
                             <div class="mt-2 flex items-center gap-2">

@@ -18,6 +18,7 @@ const props = defineProps({
     allowEmpty: { type: Boolean, default: false },
     trackBy: { type: String, default: "value" },
     optionLabel: { type: String, default: "label" },
+    openDirection: { type: String, default: "bottom" },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -50,6 +51,7 @@ function onSelect(value) {
             :multiple="multiple"
             :searchable="searchable"
             :allow-empty="allowEmpty"
+            :open-direction="openDirection"
             :placeholder="placeholder || t('shared.common.select_placeholder')"
             select-label=""
             selected-label=""

@@ -8,6 +8,7 @@ import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } fr
 import { statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { toast } from "vue-sonner";
@@ -193,18 +194,16 @@ const visibleEntries = computed(() =>
                         <div v-else class="p-6 space-y-4">
                             <div class="flex flex-wrap items-center gap-3">
                                 <div v-if="locales.length > 1" class="flex gap-1">
-                                    <button
+                                    <AppTab
                                         v-for="locale in locales"
                                         :key="locale"
-                                        type="button"
-                                        class="px-2.5 py-1 text-xs font-medium rounded transition-colors"
-                                        :class="activeLocale === locale
-                                            ? 'bg-accent-600 text-white'
-                                            : 'text-secondary hover:bg-surface-2'"
+                                        size="xs"
+                                        :active="activeLocale === locale"
+                                        active-class="bg-accent-600 text-white"
                                         v-on:click="activeLocale = locale"
                                     >
                                         {{ locale.toUpperCase() }}
-                                    </button>
+                                    </AppTab>
                                 </div>
                                 <div class="flex items-center gap-2 text-xs">
                                     <span class="text-emerald-600 dark:text-emerald-400">+{{ stats.added }}</span>

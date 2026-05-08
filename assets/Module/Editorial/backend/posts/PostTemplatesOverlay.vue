@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { X } from "lucide-vue-next";
+import { X, Check } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import { TEMPLATES } from "@editorial/utils/editorjs/templates.js";
 import { TEMPLATE_CATEGORIES } from "@editorial/utils/editorjs/blockTypes.js";
@@ -106,8 +106,8 @@ function apply(template) {
                                     <div v-if="confirmingTemplate?.id === template.id" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/95 backdrop-blur-sm rounded-xl p-4">
                                         <p class="text-sm font-medium text-primary text-center">{{ t("backend.editor.templates.confirmReplace") }}</p>
                                         <div class="flex gap-2">
-                                            <AppButton variant="primary" size="md" v-on:click.stop="apply(template)">{{ t("backend.editor.templates.apply") }}</AppButton>
-                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null">{{ t("shared.common.cancel") }}</AppButton>
+                                            <AppButton variant="primary" size="md" v-on:click.stop="apply(template)"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.editor.templates.apply") }}</AppButton>
+                                            <AppButton variant="ghost" size="md" v-on:click.stop="confirmingTemplate = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                                         </div>
                                     </div>
                                 </Transition>

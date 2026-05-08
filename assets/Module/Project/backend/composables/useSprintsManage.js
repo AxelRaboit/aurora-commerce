@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -13,6 +13,7 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
 
     const showSprintsModal = ref(false);
     const editingSprint = ref(null);
+    const pendingDeleteSprint = ref(null);
     const sprintForm = ref({
         name: "",
         startDate: "",
@@ -87,15 +88,14 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
         }
     }
 
-    async function deleteSprint(sprint) {
-        if (
-            !confirm(
-                t("backend.projects.errors.sprint_delete_confirm", {
-                    name: sprint.name,
-                }),
-            )
-        )
-            return;
+    function confirmDeleteSprint(sprint) {
+        pendingDeleteSprint.value = sprint;
+    }
+
+    async function deleteSprint() {
+        const sprint = pendingDeleteSprint.value;
+        if (!sprint) return;
+        pendingDeleteSprint.value = null;
         const url = buildPath(paths.delete, { sprintId: sprint.id });
         try {
             const response = await fetch(url, {
@@ -109,16 +109,26 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
         }
     }
 
+    const sprintOptions = computed(() =>
+        (activeProject.value?.sprints ?? []).map((sprint) => ({
+            value: sprint.id,
+            label: sprint.name,
+        })),
+    );
+
     return {
         showSprintsModal,
         editingSprint,
+        pendingDeleteSprint,
         sprintForm,
         sprintErrors,
+        sprintOptions,
         loading,
         openSprintsModal,
         startEdit,
         cancelEdit,
         submitSprint,
+        confirmDeleteSprint,
         deleteSprint,
     };
 }

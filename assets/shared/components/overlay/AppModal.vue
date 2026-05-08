@@ -1,15 +1,21 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { X } from "lucide-vue-next";
+import { useI18n } from "vue-i18n";
 import { useBackButtonClose } from "@/shared/composables/overlay/useBackButtonClose.js";
 
 const props = defineProps({
     show: { type: Boolean, default: false },
     maxWidth: { type: String, default: "md" },
     closeable: { type: Boolean, default: true },
+    // When provided, renders a flex header row (title + X close button).
+    // Leave empty to manage the header yourself inside the slot.
+    title: { type: String, default: null },
     noPadding: { type: Boolean, default: false },
-    scrollable: { type: Boolean, default: false },
+    scrollable: { type: Boolean, default: true },
 });
 
+const { t } = useI18n();
 const emit = defineEmits(["close"]);
 const showSlot = ref(props.show);
 
@@ -98,6 +104,18 @@ const panelClass = computed(() => [
                     class="relative z-10 w-full bg-surface border border-line rounded-xl shadow-xl"
                     :class="panelClass"
                 >
+                    <div v-if="title" class="flex items-center justify-between gap-4">
+                        <h2 class="text-lg font-semibold text-primary">{{ title }}</h2>
+                        <button
+                            v-if="closeable"
+                            type="button"
+                            class="shrink-0 p-1.5 text-muted hover:text-primary hover:bg-surface-2 rounded-lg transition-colors"
+                            :aria-label="t('shared.common.close')"
+                            v-on:click="close"
+                        >
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
                     <slot />
                 </div>
             </Transition>

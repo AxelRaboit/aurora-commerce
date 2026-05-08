@@ -12,6 +12,7 @@ import {
     MergeKind,
 } from "@/shared/utils/data/mergeBlocks.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import MergeBlockEntry from "./MergeBlockEntry.vue";
 
 const { t } = useI18n();
@@ -164,25 +165,23 @@ function apply() {
                         }) }}
                     </span>
                     <div class="flex-1" />
-                    <button type="button" class="text-accent-600 hover:underline font-medium" v-on:click="showUnchanged = !showUnchanged">
+                    <AppTextLinkButton class="font-medium" v-on:click="showUnchanged = !showUnchanged">
                         {{ showUnchanged ? t("backend.posts.merge.hideUnchanged") : t("backend.posts.merge.showUnchanged") }}
-                    </button>
-                    <button
-                        type="button"
-                        class="text-accent-600 hover:underline font-medium"
+                    </AppTextLinkButton>
+                    <AppTextLinkButton
+                        class="font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'local')"
                     >
                         {{ t("backend.posts.merge.acceptAllMine") }}
-                    </button>
-                    <button
-                        type="button"
-                        class="text-accent-600 hover:underline font-medium"
+                    </AppTextLinkButton>
+                    <AppTextLinkButton
+                        class="font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         :disabled="summaryFor(activeLocale).conflicts === 0"
                         v-on:click="acceptAll(activeLocale, 'remote')"
                     >
                         {{ t("backend.posts.merge.acceptAllTheirs") }}
-                    </button>
+                    </AppTextLinkButton>
                 </div>
 
                 <div class="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">

@@ -16,7 +16,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppLoadMore from "@/shared/components/nav/AppLoadMore.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, Package, Save, } from "lucide-vue-next";
+import { Pencil, Trash2, Package, Save, X } from "lucide-vue-next";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
@@ -180,8 +180,7 @@ const actionLabel = (action) => {
             </template>
         </div>
 
-        <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.erp.products.edit', { name: product.name }) }}</h3>
+        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: product.name })" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -220,7 +219,7 @@ const actionLabel = (action) => {
                 </div>
                 <AppTextarea v-model="editForm.description" :rows="3" :placeholder="t('backend.erp.products.descriptionPlaceholder')" />
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -230,8 +229,8 @@ const actionLabel = (action) => {
             <p class="text-sm text-primary">{{ t('backend.erp.products.deleteConfirm', { name: product.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.erp.products.deleteWarning') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDelete = false">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

@@ -1,4 +1,7 @@
 backend:
+  notifications:
+    taskAssigned: You have been assigned to a task.
+    taskCommented: '%name% commented: %content%'
   nav:
     projects: Projects
     projects_description: Track projects, tasks and Kanban boards
@@ -14,6 +17,17 @@ backend:
           updated: Task updated
           deleted: Task deleted
           reordered: Tasks reordered
+          comment:
+            created: Comment added
+            deleted: Comment deleted
+          time:
+            logged: Time logged
+            deleted: Time entry deleted
+          items:
+            replaced: Subtasks updated
+          attachment:
+            added: Attachment added
+            removed: Attachment removed
         column:
           created: Column created
           updated: Column updated
@@ -25,8 +39,10 @@ backend:
           deleted: Label deleted
   projects:
     add: New project
+    backToList: Back to projects
     empty: No projects found.
     searchPlaceholder: Search a project…
+    columnWidth: 'Width:'
     tasks: Tasks
     deleteConfirm: 'Delete project "{name}"?'
     deleteWarning: This action cannot be undone.
@@ -60,6 +76,7 @@ backend:
       taskDescription: Describe the task…
       assignee: Select a user
       estimateMinutes: Estimated duration in minutes
+      storyPoints: e.g. 3
     status_draft: Draft
     status_active: Active
     status_completed: Completed
@@ -72,6 +89,7 @@ backend:
       deleteConfirm: 'Delete task "{name}"?'
       deleteWarning: This action cannot be undone.
       commentPlaceholder: Write a comment…
+      timeEntryNote: Note…
       attachmentsHint: Drag and drop files from the Media module.
       fields:
         title: Title
@@ -121,6 +139,7 @@ backend:
       add: New label
       edit: Edit label
       nameField: Name
+      namePlaceholder: e.g. Urgent
       colorField: Color
     sprints:
       manage: Manage sprints
@@ -129,6 +148,7 @@ backend:
       active: Active
       activeField: Current sprint
       nameField: Name
+      namePlaceholder: e.g. Sprint 1
     savedViews:
       save: Save view
       nameField: View name
@@ -153,3 +173,11 @@ backend:
       column_label_required: Column name is required.
       column_label_too_long: Column name must not exceed 100 characters.
       column_last_one: Cannot delete the last column.
+      comment_required: Comment cannot be empty.
+      time_minutes_invalid: Duration must be a valid number of minutes.
+      label_name_required: Label name is required.
+      sprint_name_required: Sprint name is required.
+      label_delete_confirm: 'Delete label "{name}"?'
+      sprint_delete_confirm: 'Delete sprint "{name}"?'
+      saved_view_name_required: View name is required.
+      item_label_required: Subtask label is required.

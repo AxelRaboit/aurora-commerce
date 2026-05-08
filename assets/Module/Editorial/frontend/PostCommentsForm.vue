@@ -1,5 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import { Send, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 
@@ -60,7 +61,7 @@ const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 te
         </div>
         <div class="flex items-center gap-2">
             <AppButton type="submit" variant="primary" size="md" :loading="submitting">
-                {{ t("shared.comment.submit") }}
+                <Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.comment.submit") }}
             </AppButton>
             <AppButton
                 v-if="parentId !== null"
@@ -69,7 +70,7 @@ const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 te
                 size="md"
                 v-on:click="$emit('cancel')"
             >
-                {{ t("shared.common.cancel") }}
+                <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
             </AppButton>
         </div>
     </form>

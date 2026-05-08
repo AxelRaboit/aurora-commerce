@@ -19,6 +19,7 @@ export function emptyTaskForm(columnId = null) {
         labelIds: [],
         storyPoints: "",
         estimateMinutes: "",
+        sprintId: "",
         items: [],
     };
 }

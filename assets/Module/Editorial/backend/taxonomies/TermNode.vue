@@ -44,15 +44,14 @@ const hasChildren = computed(() => localChildren.value.length > 0);
                 <GripVertical class="w-4 h-4" :stroke-width="2" />
             </button>
 
-            <button
+            <AppIconButton
                 v-if="hierarchical && hasChildren"
-                type="button"
-                class="text-muted hover:text-primary p-0.5"
+                class="p-0.5"
                 v-on:click="emit('toggle-collapse', node.id)"
             >
                 <ChevronDown v-if="!isCollapsed" class="w-4 h-4" :stroke-width="2" />
                 <ChevronRight v-else class="w-4 h-4" :stroke-width="2" />
-            </button>
+            </AppIconButton>
             <span v-else-if="hierarchical" class="w-5" />
 
             <span class="flex-1 min-w-0 text-sm font-medium text-primary truncate">{{ name }}</span>

@@ -55,6 +55,25 @@ export function useNotifications(paths) {
         }
     }
 
+    async function deleteOne(notification) {
+        const url = buildPath(paths.deletePath, { id: notification.id });
+        try {
+            await fetch(url, { method: HttpMethod.Delete });
+            await load();
+        } catch {
+            toast.error(t("shared.common.error"));
+        }
+    }
+
+    async function deleteAll() {
+        try {
+            await fetch(paths.deleteAllPath, { method: HttpMethod.Delete });
+            await load();
+        } catch {
+            toast.error(t("shared.common.error"));
+        }
+    }
+
     function toggle() {
         open.value = !open.value;
         if (open.value) load();
@@ -77,5 +96,7 @@ export function useNotifications(paths) {
         load,
         markRead,
         markAllRead,
+        deleteOne,
+        deleteAll,
     };
 }

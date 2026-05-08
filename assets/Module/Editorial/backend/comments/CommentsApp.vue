@@ -4,10 +4,11 @@ import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js
 import { useI18n } from "vue-i18n";
 import { useCommentModeration } from "@/Module/Editorial/backend/comments/composables/useCommentModeration.js";
 import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
-import { MessageSquare, Check, Ban, Trash2, Eye } from "lucide-vue-next";
+import { MessageSquare, Check, Ban, Trash2, Eye, X } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -84,18 +85,18 @@ function statusBadgeColor(status) {
     <div class="space-y-4">
         <div class="flex items-center justify-between gap-3 flex-wrap">
             <div class="flex gap-1 flex-wrap">
-                <button
+                <AppTab
                     v-for="tab in tabs"
                     :key="tab.key"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-                    :class="statusFilter === tab.key ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    size="sm"
+                    :active="statusFilter === tab.key"
                     v-on:click="selectTab(tab.key)"
                 >
                     {{ tab.label }}
                     <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs" :class="statusFilter === tab.key ? 'bg-accent-600/25' : 'bg-surface-3'">
                         {{ tab.count }}
                     </span>
-                </button>
+                </AppTab>
             </div>
             <AppButton
                 :variant="isModerationEnabled ? 'primary' : 'secondary'"
@@ -191,8 +192,7 @@ function statusBadgeColor(status) {
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="!!viewingComment" max-width="md" v-on:close="viewingComment = null">
-            <h3 class="text-lg font-semibold text-primary">{{ t('backend.comments.view') }}</h3>
+        <AppModal :show="!!viewingComment" max-width="md" :title="t('backend.comments.view')" v-on:close="viewingComment = null">
             <div class="space-y-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.name') }}</label>
@@ -239,27 +239,23 @@ function statusBadgeColor(status) {
             </AppModalFooter>
         </AppModal>
 
-        <AppModal :show="pendingToggleModeration" max-width="sm" v-on:close="pendingToggleModeration = false">
-            <h3 class="text-base font-semibold text-primary">
-                {{ isModerationEnabled ? t('backend.comments.moderationDisableConfirm') : t('backend.comments.moderationEnableConfirm') }}
-            </h3>
+        <AppModal :show="pendingToggleModeration" max-width="sm" :title="isModerationEnabled ? t('backend.comments.moderationDisableConfirm') : t('backend.comments.moderationEnableConfirm')" v-on:close="pendingToggleModeration = false">
             <p class="text-sm text-secondary">
                 {{ isModerationEnabled ? t('backend.comments.moderationDisableConfirmDesc') : t('backend.comments.moderationEnableConfirmDesc') }}
             </p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingToggleModeration = false">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingToggleModeration = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="isModerationEnabled ? 'danger' : 'primary'" size="md" :loading="toggleModerationLoading" v-on:click="doToggleModeration">
                     {{ isModerationEnabled ? t('backend.comments.moderationOff') : t('backend.comments.moderationOn') }}
                 </AppButton>
             </AppModalFooter>
         </AppModal>
 
-        <AppModal :show="!!pendingSpam" max-width="sm" v-on:close="pendingSpam = null">
-            <h3 class="text-base font-semibold text-primary">{{ t('backend.comments.spamConfirm') }}</h3>
+        <AppModal :show="!!pendingSpam" max-width="sm" :title="t('backend.comments.spamConfirm')" v-on:close="pendingSpam = null">
             <p class="text-sm text-secondary">{{ t('backend.comments.spamConfirmDesc') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingSpam = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="spamLoading" v-on:click="doSpam">{{ t('backend.comments.markSpam') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingSpam = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="spamLoading" v-on:click="doSpam"><Ban class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.comments.markSpam') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
@@ -267,8 +263,8 @@ function statusBadgeColor(status) {
             <p class="text-sm text-primary">{{ t('backend.comments.deleteConfirm') }}</p>
             <p class="text-sm text-secondary">{{ t('backend.comments.deleteWarning') }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t('shared.common.delete') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
             </AppModalFooter>
         </AppModal>
     </div>

@@ -16,7 +16,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
-import { Plus, Pencil, Trash2, Save, FileText, Paperclip } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -153,8 +153,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <!-- Create modal -->
-        <AppModal :show="showCreate" v-on:close="showCreate = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.documents.create") }}</h3>
+        <AppModal :show="showCreate" :title="t('backend.ged.documents.create')" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newDoc.title"
@@ -185,15 +184,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <span v-if="newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.fileName }}</span>
                 </div>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" v-on:close="showEdit = false">
-            <h3 class="text-lg font-semibold text-primary">{{ t("backend.ged.documents.edit", { title: editingDoc?.title ?? "" }) }}</h3>
+        <AppModal :show="showEdit" :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.title"
@@ -224,7 +222,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
                 </div>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">{{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </form>
@@ -235,8 +233,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             <p class="text-sm text-primary">{{ t("backend.ged.documents.deleteConfirm", { title: pendingDelete?.title ?? "" }) }}</p>
             <p class="text-sm text-secondary">{{ t("backend.ged.documents.deleteWarning") }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)">{{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">{{ t("shared.common.delete") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
             </AppModalFooter>
         </AppModal>
 

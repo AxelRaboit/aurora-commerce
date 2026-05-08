@@ -12,7 +12,7 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Ban, Clock, Undo2 } from "lucide-vue-next";
+import { Ban, Clock, Undo2, X, Check } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -189,13 +189,12 @@ const refund = useOrderRefund(props.refundPath, order);
         <AppModal :show="!!pendingTransition" max-width="sm" v-on:close="pendingTransition = null">
             <p class="text-sm text-primary">{{ t('backend.ecommerce.orders.actions.confirm', { label: pendingTransition?.label }) }}</p>
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingTransition = null">{{ t('shared.common.cancel') }}</AppButton>
-                <AppButton :variant="pendingTransition?.status === 'cancelled' ? 'danger' : 'primary'" size="md" :loading="loading" v-on:click="applyTransition">{{ t('shared.common.confirm') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="pendingTransition = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton :variant="pendingTransition?.status === 'cancelled' ? 'danger' : 'primary'" size="md" :loading="loading" v-on:click="applyTransition"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.confirm') }}</AppButton>
             </AppModalFooter>
         </AppModal>
 
-        <AppModal :show="refund.showModal.value" max-width="sm" v-on:close="refund.close">
-            <h3 class="text-base font-semibold text-primary mb-3">{{ t('backend.ecommerce.orders.refund.title') }}</h3>
+        <AppModal :show="refund.showModal.value" max-width="sm" :title="t('backend.ecommerce.orders.refund.title')" v-on:close="refund.close">
             <p class="text-sm text-secondary mb-4">{{ t('backend.ecommerce.orders.refund.hint') }}</p>
             <AppCheckbox v-model="refund.isFullRefund.value" :label="t('backend.ecommerce.orders.refund.full', { total: formattedTotal })" class="mb-3" />
             <AppInput
@@ -209,7 +208,7 @@ const refund = useOrderRefund(props.refundPath, order);
                 :placeholder="String(order.total)"
             />
             <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="refund.close">{{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="refund.close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm">{{ t('backend.ecommerce.orders.refund.confirm') }}</AppButton>
             </AppModalFooter>
         </AppModal>

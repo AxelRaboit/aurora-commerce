@@ -3,6 +3,8 @@ import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useForm } from "@/shared/composables/form/useForm.js";
+import { required } from "@/shared/utils/validation/validators.js";
 
 /**
  * Bundle of inline task-edit sub-features (comments, checklist, time entries,
@@ -12,16 +14,43 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 export function useTaskExtras(paths, editingTask, reloadDetail) {
     const { t } = useI18n();
 
+    const {
+        errors: commentErrors,
+        validate: validateComment,
+        clearErrors: clearCommentErrors,
+    } = useForm();
+    const {
+        errors: itemErrors,
+        validate: validateItem,
+        clearErrors: clearItemErrors,
+    } = useForm();
+    const {
+        errors: timeErrors,
+        validate: validateTime,
+        clearErrors: clearTimeErrors,
+    } = useForm();
+
     // ── Comments ─────────────────────────────────────────────────────────────
     const newCommentContent = ref("");
+    const commentLoading = ref(false);
+    const timeLoading = ref(false);
 
     async function submitComment() {
         if (!editingTask.value) return;
+        if (
+            !validateComment({
+                content: () =>
+                    required(t("backend.projects.errors.comment_required"))(
+                        newCommentContent.value,
+                    ),
+            })
+        )
+            return;
         const content = newCommentContent.value.trim();
-        if (!content) return;
         const url = buildPath(paths.commentCreate, {
             taskId: editingTask.value.id,
         });
+        commentLoading.value = true;
         try {
             const response = await fetch(url, {
                 method: HttpMethod.Post,
@@ -32,9 +61,12 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
             const data = await response.json();
             if (!data.success) throw new Error();
             newCommentContent.value = "";
+            clearCommentErrors();
             await reloadDetail();
         } catch {
             toast.error(t("shared.common.error"));
+        } finally {
+            commentLoading.value = false;
         }
     }
 
@@ -89,8 +121,16 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
     }
 
     function addItem() {
+        if (
+            !validateItem({
+                label: () =>
+                    required(t("backend.projects.errors.item_label_required"))(
+                        newItemLabel.value,
+                    ),
+            })
+        )
+            return;
         const label = newItemLabel.value.trim();
-        if (!label) return;
         localItems.value.push({
             id: null,
             label,
@@ -98,6 +138,7 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
             position: localItems.value.length,
         });
         newItemLabel.value = "";
+        clearItemErrors();
         persistItems();
     }
 
@@ -120,14 +161,21 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
 
     async function logTime() {
         if (!editingTask.value) return;
-        const minutes = Number(newTimeEntry.value.minutes);
-        if (!minutes || minutes <= 0) {
-            toast.error(t("backend.projects.errors.time_minutes_invalid"));
+        if (
+            !validateTime({
+                minutes: () => {
+                    const minutes = Number(newTimeEntry.value.minutes);
+                    return !minutes || minutes <= 0
+                        ? t("backend.projects.errors.time_minutes_invalid")
+                        : null;
+                },
+            })
+        )
             return;
-        }
         const url = buildPath(paths.timeEntryCreate, {
             taskId: editingTask.value.id,
         });
+        timeLoading.value = true;
         try {
             const response = await fetch(url, {
                 method: HttpMethod.Post,
@@ -146,9 +194,12 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
                 note: "",
                 loggedAt: new Date().toISOString().slice(0, 10),
             };
+            clearTimeErrors();
             await reloadDetail();
         } catch {
             toast.error(t("shared.common.error"));
+        } finally {
+            timeLoading.value = false;
         }
     }
 
@@ -206,16 +257,21 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
 
     return {
         newCommentContent,
+        commentErrors,
+        commentLoading,
         submitComment,
         deleteComment,
 
         localItems,
         newItemLabel,
+        itemErrors,
         addItem,
         toggleItem,
         removeItem,
 
         newTimeEntry,
+        timeErrors,
+        timeLoading,
         logTime,
         deleteTimeEntry,
 

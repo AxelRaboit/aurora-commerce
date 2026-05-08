@@ -17,7 +17,8 @@ import {
     Settings,
     Layers,
     Inbox,
-    Save, } from "lucide-vue-next";
+    Save,
+    X, } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -157,12 +158,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             <div v-if="activeTab === 'settings'" class="p-5 space-y-4 overflow-y-auto flex-1">
                 <div v-if="locales.length > 1" class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                     <div class="flex gap-1">
-                        <button
+                        <AppTab
                             v-for="locale in locales"
                             :key="locale"
-                            type="button"
-                            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                            :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                            size="xs"
+                            :active="activeLocale === locale"
+                            active-class="bg-accent-600 text-white"
+                            inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                             v-on:click="activeLocale = locale"
                         >
                             {{ locale.toUpperCase() }}
@@ -171,7 +173,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                                 :class="isLocaleFilled(locale) ? 'bg-emerald-400' : 'bg-muted/40'"
                                 :title="isLocaleFilled(locale) ? t('backend.forms.localeFilled') : t('backend.forms.localeEmpty')"
                             />
-                        </button>
+                        </AppTab>
                     </div>
                     <p class="text-xs text-muted">{{ t("backend.forms.localesOptional") }}</p>
                 </div>
@@ -361,10 +363,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </div>
     </div>
 
-    <AppModal :show="showFieldModal" max-width="sm" v-on:close="showFieldModal = false">
-        <h3 class="text-base font-semibold text-primary">
-            {{ editingFieldId !== null ? t("backend.forms.editField") : t("backend.forms.addFieldTitle") }}
-        </h3>
+    <AppModal :show="showFieldModal" max-width="sm" :title="editingFieldId !== null ? t('backend.forms.editField') : t('backend.forms.addFieldTitle')" v-on:close="showFieldModal = false">
         <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldType") }}</label>
@@ -384,12 +383,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             <hr class="border-line/40">
 
             <div v-if="locales.length > 1" class="flex gap-1">
-                <button
+                <AppTab
                     v-for="locale in locales"
                     :key="locale"
-                    type="button"
-                    class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded transition-colors"
-                    :class="fieldActiveLocale === locale ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    size="xs"
+                    :active="fieldActiveLocale === locale"
+                    active-class="bg-accent-600 text-white"
+                    inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                     v-on:click="fieldActiveLocale = locale"
                 >
                     {{ locale.toUpperCase() }}
@@ -397,7 +397,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                         class="inline-block w-1.5 h-1.5 rounded-full"
                         :class="editingField.translations[locale]?.label?.trim() ? 'bg-emerald-400' : 'bg-muted/40'"
                     />
-                </button>
+                </AppTab>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -435,24 +435,22 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </div>
 
         <AppModalFooter bordered>
-            <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
             <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
         </AppModalFooter>
     </AppModal>
 
-    <AppModal :show="showDeleteConfirm" max-width="sm" v-on:close="showDeleteConfirm = false">
-        <h3 class="text-base font-semibold text-primary">{{ t("backend.forms.deleteConfirmTitle") }}</h3>
+    <AppModal :show="showDeleteConfirm" max-width="sm" :title="t('backend.forms.deleteConfirmTitle')" v-on:close="showDeleteConfirm = false">
         <p class="text-sm text-secondary">{{ t("backend.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
         <AppModalFooter bordered>
-            <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
             <AppButton variant="danger" size="md" :disabled="deleting" v-on:click="confirmDelete">
-                {{ t("shared.common.delete") }}
+                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
             </AppButton>
         </AppModalFooter>
     </AppModal>
 
-    <AppModal :show="!!viewingSubmission" max-width="md" v-on:close="viewingSubmission = null">
-        <h3 class="text-base font-semibold text-primary">{{ t("backend.forms.viewSubmission") }}</h3>
+    <AppModal :show="!!viewingSubmission" max-width="md" :title="t('backend.forms.viewSubmission')" v-on:close="viewingSubmission = null">
         <div class="space-y-3">
             <div class="flex flex-col gap-1">
                 <label class="text-xs text-secondary uppercase tracking-wide">{{ t("backend.forms.submittedAt") }}</label>
@@ -470,15 +468,15 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             </div>
         </div>
         <div class="flex justify-end pt-2 border-t border-line">
-            <AppButton variant="ghost" size="md" v-on:click="viewingSubmission = null">{{ t("shared.common.cancel") }}</AppButton>
+            <AppButton variant="ghost" size="md" v-on:click="viewingSubmission = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
         </div>
     </AppModal>
 
     <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
         <p class="text-sm text-primary">{{ t('backend.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
         <div class="flex justify-end gap-2 pt-3 border-t border-line">
-            <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null">{{ t('shared.common.cancel') }}</AppButton>
-            <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField">{{ t('shared.common.delete') }}</AppButton>
+            <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+            <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
         </div>
     </AppModal>
 </template>

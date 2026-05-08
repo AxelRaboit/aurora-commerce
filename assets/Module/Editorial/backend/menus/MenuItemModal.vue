@@ -10,6 +10,8 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 
 const { t } = useI18n();
 
@@ -252,11 +254,7 @@ const targetTypeOptions = computed(() =>
 </script>
 
 <template>
-    <AppModal :show="show" max-width="lg" v-on:close="close">
-        <h3 class="text-lg font-bold text-primary mb-4">
-            {{ editing ? t("backend.menus.editItem") : t("backend.menus.addItem") }}
-        </h3>
-
+    <AppModal :show="show" max-width="lg" :title="editing ? t('backend.menus.editItem') : t('backend.menus.addItem')" v-on:close="close">
         <form class="space-y-4" v-on:submit.prevent="save">
             <AppMultiselect
                 v-model="form.targetType"
@@ -280,9 +278,9 @@ const targetTypeOptions = computed(() =>
                 <div v-if="form.targetId && targetLabel" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-2 border border-line text-sm">
                     <Check class="w-4 h-4 text-emerald-400 shrink-0" :stroke-width="2" />
                     <span class="text-primary flex-1 truncate">{{ targetLabel }}</span>
-                    <button type="button" class="text-muted hover:text-primary" v-on:click="clearTarget">
+                    <AppIconButton v-on:click="clearTarget">
                         <X class="w-4 h-4" :stroke-width="2" />
-                    </button>
+                    </AppIconButton>
                 </div>
                 <div v-else class="relative">
                     <div class="relative">
@@ -297,16 +295,14 @@ const targetTypeOptions = computed(() =>
                         >
                     </div>
                     <div v-if="pickerOpen && pickerResults.length" class="absolute left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface border border-line rounded-md shadow-lg z-10">
-                        <button
+                        <AppListItemButton
                             v-for="result in pickerResults"
                             :key="result.id"
-                            type="button"
-                            class="w-full px-3 py-2 text-left text-sm hover:bg-surface-2 transition-colors"
                             v-on:click="pickResult(result)"
                         >
                             <p class="text-primary truncate">{{ result.label }}</p>
                             <p v-if="result.hint" class="text-xs text-muted truncate">{{ result.hint }}</p>
-                        </button>
+                        </AppListItemButton>
                     </div>
                 </div>
                 <p v-if="errors.target" class="text-xs text-rose-400">{{ errors.target }}</p>
@@ -326,9 +322,9 @@ const targetTypeOptions = computed(() =>
                 <div v-if="form.targetId && targetLabel" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-2 border border-line text-sm">
                     <Check class="w-4 h-4 text-emerald-400 shrink-0" :stroke-width="2" />
                     <span class="text-primary flex-1 truncate">{{ targetLabel }}</span>
-                    <button type="button" class="text-muted hover:text-primary" v-on:click="clearTarget">
+                    <AppIconButton v-on:click="clearTarget">
                         <X class="w-4 h-4" :stroke-width="2" />
-                    </button>
+                    </AppIconButton>
                 </div>
                 <div v-else class="relative">
                     <div class="relative">
@@ -343,16 +339,14 @@ const targetTypeOptions = computed(() =>
                         >
                     </div>
                     <div v-if="pickerOpen && pickerResults.length" class="absolute left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface border border-line rounded-md shadow-lg z-10">
-                        <button
+                        <AppListItemButton
                             v-for="result in pickerResults"
                             :key="result.id"
-                            type="button"
-                            class="w-full px-3 py-2 text-left text-sm hover:bg-surface-2 transition-colors"
                             v-on:click="pickResult(result)"
                         >
                             <p class="text-primary truncate">{{ result.label }}</p>
                             <p v-if="result.hint" class="text-xs text-muted truncate">{{ result.hint }}</p>
-                        </button>
+                        </AppListItemButton>
                     </div>
                 </div>
                 <p v-if="errors.target" class="text-xs text-rose-400">{{ errors.target }}</p>
@@ -424,7 +418,7 @@ const targetTypeOptions = computed(() =>
             <AppCheckbox v-model="form.openInNewTab" :label="t('backend.menus.openInNewTab')" />
 
             <div class="flex justify-end gap-2 pt-3 border-t border-line">
-                <AppButton variant="ghost" v-on:click="close">{{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="ghost" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton type="submit" variant="primary" :loading="saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
             </div>
         </form>
