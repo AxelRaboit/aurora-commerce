@@ -50,11 +50,11 @@ avec un tableau ET un formulaire de création/édition dédié ?*
   admin) → seul le niveau 1 (entité substituable via `resolve_target_entities`)
   est requis
 
-### 2.1 Entités à instrumenter (30)
+### 2.1 Entités à instrumenter (~26)
 
 | Module | Entités |
 |---|---|
-| Core | `Agency`, `Locale`, `Media`, `MediaFolder`, `Menu`, `Notification`, `Service`, `Setting`, `Theme`, `User` |
+| Core | `Agency`, `Media`, `MediaFolder`, `Menu`, `Service`, `Theme`, `User` |
 | Editorial | `Comment`, `Form`, `Post`, `PostType`, `Taxonomy` |
 | Crm | `Company`, `Contact`, `Deal` |
 | Erp | `Product` |
@@ -63,6 +63,14 @@ avec un tableau ET un formulaire de création/édition dédié ?*
 | Billing | `Invoice`, `Tiers`, `OcrJob` |
 | Ged | `Document`, `DocumentCategory` |
 | Project | `Project`, `ProjectTask` |
+
+**Exclues du Core** (CRUD admin absent ou hors-scope) :
+- `Locale` : pas de page admin, géré via fixtures + `LocaleEnum`
+- `Notification` : pas de form admin, généré uniquement par `NotificationManager::notify()` depuis le code
+- `Setting` : éditeur clé-valeur sans CRUD (les clés sont définies par
+  `ApplicationParameterEnum`, seule la valeur change via le panel)
+
+Pour ces 3 entités, **seule la couche 1 est requise** — déjà en place.
 
 ### 2.2 Entités à exclure (≈ 30)
 

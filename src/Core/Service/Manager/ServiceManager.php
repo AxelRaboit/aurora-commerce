@@ -5,43 +5,76 @@ declare(strict_types=1);
 namespace Aurora\Core\Service\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Service\Dto\ServiceInput;
+use Aurora\Core\Service\Dto\ServiceInputInterface;
 use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ServiceManager
+#[AsAlias(ServiceManagerInterface::class)]
+class ServiceManager implements ServiceManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(ServiceInput $input): ServiceInterface
+    public function create(ServiceInputInterface $input): ServiceInterface
     {
-        $service = new Service()->setName($input->name);
+        $service = $this->createService();
+        $this->applyInput($service, $input);
 
         $this->entityManager->persist($service);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'service.created', 'Service', $service->getId(), ['name' => $service->getName()]);
+        $this->auditCreated($service);
 
         return $service;
     }
 
-    public function update(ServiceInterface $service, ServiceInput $input): void
+    public function update(ServiceInterface $service, ServiceInputInterface $input): void
     {
-        $service->setName($input->name);
+        $this->applyInput($service, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'service.updated', 'Service', $service->getId(), ['name' => $service->getName()]);
+        $this->auditUpdated($service);
     }
 
     public function delete(ServiceInterface $service): void
     {
-        $this->auditLogger->log('core', 'service.deleted', 'Service', $service->getId(), ['name' => $service->getName()]);
+        $this->auditDeleted($service);
 
         $this->entityManager->remove($service);
         $this->entityManager->flush();
+    }
+
+    protected function createService(): ServiceInterface
+    {
+        return new Service();
+    }
+
+    protected function applyInput(ServiceInterface $service, ServiceInputInterface $input): void
+    {
+        $service->setName($input->getName());
+    }
+
+    protected function auditCreated(ServiceInterface $service): void
+    {
+        $this->auditLogger->log('core', 'service.created', 'Service', $service->getId(), $this->auditPayload($service));
+    }
+
+    protected function auditUpdated(ServiceInterface $service): void
+    {
+        $this->auditLogger->log('core', 'service.updated', 'Service', $service->getId(), $this->auditPayload($service));
+    }
+
+    protected function auditDeleted(ServiceInterface $service): void
+    {
+        $this->auditLogger->log('core', 'service.deleted', 'Service', $service->getId(), $this->auditPayload($service));
+    }
+
+    protected function auditPayload(ServiceInterface $service): array
+    {
+        return ['name' => $service->getName()];
     }
 }

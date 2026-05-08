@@ -4,9 +4,17 @@ import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 
-export function useServicesEdit(serviceList, createPath, updatePath) {
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial/reset value for this field.
+ * @property {(service: object) => *} fromEntity - Reads the field value from an existing service when opening edit.
+ */
+
+export function useServicesForm(serviceList, createPath, updatePath, options = {}) {
     const { t } = useI18n();
     const { request } = useApiRequest();
+
+    const extraFields = options.extraFields ?? {};
 
     const editModal = reactive({
         open: false,
@@ -14,12 +22,30 @@ export function useServicesEdit(serviceList, createPath, updatePath) {
         errors: {},
         saving: false,
     });
-    const editForm = reactive({ name: "" });
+    const editForm = reactive({
+        name: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
+    });
+
+    function resetExtras() {
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.default;
+        }
+    }
+
+    function loadExtrasFrom(service) {
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.fromEntity(service);
+        }
+    }
 
     function openCreate() {
         editModal.service = null;
         editModal.errors = {};
         editForm.name = "";
+        resetExtras();
         editModal.open = true;
     }
 
@@ -27,6 +53,7 @@ export function useServicesEdit(serviceList, createPath, updatePath) {
         editModal.service = service;
         editModal.errors = {};
         editForm.name = service.name;
+        loadExtrasFrom(service);
         editModal.open = true;
     }
 
@@ -38,7 +65,7 @@ export function useServicesEdit(serviceList, createPath, updatePath) {
             const url = isCreate
                 ? createPath
                 : buildPath(updatePath, { id: editModal.service.id });
-            const data = await request(url, { name: editForm.name });
+            const data = await request(url, { ...editForm });
             if (!data?.success) {
                 editModal.errors = data?.errors ?? {};
                 return;

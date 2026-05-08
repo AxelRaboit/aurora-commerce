@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Service\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ServiceInput
+class ServiceInput implements ServiceInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.services.errors.name_required')]
         #[Assert\Length(max: 150, maxMessage: 'backend.services.errors.name_too_long')]
-        public string $name,
+        public readonly string $name,
     ) {}
 
-    /** @param array<string, mixed> $data */
-    public static function fromArray(array $data): self
+    public function getName(): string
     {
-        return new self(name: Str::trimFromArray($data, 'name'));
+        return $this->name;
     }
 }

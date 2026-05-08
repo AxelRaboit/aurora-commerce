@@ -7,11 +7,11 @@ namespace Aurora\Core\Service\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Service\Dto\ServiceInput;
+use Aurora\Core\Service\Dto\ServiceInputFactoryInterface;
 use Aurora\Core\Service\Entity\ServiceInterface;
-use Aurora\Core\Service\Manager\ServiceManager;
+use Aurora\Core\Service\Manager\ServiceManagerInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
-use Aurora\Core\Service\Serializer\ServiceSerializer;
+use Aurora\Core\Service\Serializer\ServiceSerializerInterface;
 use Aurora\Core\Service\View\ServicesViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,10 +30,11 @@ final class ServicesController extends AbstractController
 
     public function __construct(
         private readonly ServiceRepository $serviceRepository,
-        private readonly ServiceSerializer $serviceSerializer,
+        private readonly ServiceSerializerInterface $serviceSerializer,
         private readonly ServicesViewBuilder $viewBuilder,
-        private readonly ServiceManager $serviceManager,
+        private readonly ServiceManagerInterface $serviceManager,
         private readonly PayloadValidator $payloadValidator,
+        private readonly ServiceInputFactoryInterface $serviceInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -56,7 +57,7 @@ final class ServicesController extends AbstractController
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = ServiceInput::fromArray($this->decodeJson($request));
+        $input = $this->serviceInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -70,7 +71,7 @@ final class ServicesController extends AbstractController
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(ServiceInterface $service, Request $request): JsonResponse
     {
-        $input = ServiceInput::fromArray($this->decodeJson($request));
+        $input = $this->serviceInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);

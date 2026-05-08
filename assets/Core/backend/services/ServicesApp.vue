@@ -8,7 +8,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useServicesList } from "@core/backend/services/composables/useServicesList.js";
-import { useServicesEdit } from "@core/backend/services/composables/useServicesEdit.js";
+import { useServicesForm } from "@core/backend/services/composables/useServicesForm.js";
 import { useServicesDelete } from "@core/backend/services/composables/useServicesDelete.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -20,10 +20,16 @@ const props = defineProps({
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    /**
+     * Extra fields to register on the create + edit form. Lets clients extend
+     * the modal + table without forking this component.
+     * Example: { code: { default: '', fromEntity: (s) => s.code ?? '' } }
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { serviceList } = useServicesList(props.services);
-const { editModal, editForm, openCreate, openEdit, submitEdit } = useServicesEdit(serviceList, props.createPath, props.updatePath);
+const { editModal, editForm, openCreate, openEdit, submitEdit } = useServicesForm(serviceList, props.createPath, props.updatePath, { extraFields: props.extraFields });
 const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.deletePath);
 </script>
 
@@ -43,12 +49,14 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.services.name") }}</th>
+                        <slot name="extra-headers" />
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-for="service in serviceList" :key="service.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-3 font-medium text-primary">{{ service.name }}</td>
+                        <slot name="extra-cells" :service="service" />
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="isAdmin" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(service)">
@@ -73,6 +81,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                     :error="editModal.errors.name ?? ''"
                     :required="true"
                 />
+                <slot name="extra-form-fields" :form="editForm" :errors="editModal.errors" :service="editModal.service" />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
