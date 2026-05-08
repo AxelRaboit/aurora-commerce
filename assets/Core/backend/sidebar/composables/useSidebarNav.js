@@ -27,6 +27,11 @@ import {
     Camera,
     ShoppingCart,
     Gauge,
+    FolderKanban,
+    FolderOpen,
+    Folder,
+    CalendarDays,
+    KanbanSquare,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -55,6 +60,11 @@ const ICON_MAP = {
     camera: Camera,
     "shopping-cart": ShoppingCart,
     gauge: Gauge,
+    "folder-kanban": FolderKanban,
+    "folder-open": FolderOpen,
+    folder: Folder,
+    "calendar-days": CalendarDays,
+    "kanban-square": KanbanSquare,
 };
 
 export function useSidebarNav(navSections, activeRoute) {
