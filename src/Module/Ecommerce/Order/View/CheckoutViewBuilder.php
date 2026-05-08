@@ -10,7 +10,7 @@ use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 
 /**
  * Builds the Twig payloads for the front checkout flow.
@@ -19,7 +19,7 @@ final readonly class CheckoutViewBuilder
 {
     public function __construct(
         private CartSerializer $cartSerializer,
-        private OrderSerializer $orderSerializer,
+        private OrderSerializerInterface $orderSerializer,
         private FrontContext $frontContext,
         private ThemeContext $themeContext,
     ) {}

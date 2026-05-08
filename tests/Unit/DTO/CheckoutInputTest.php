@@ -6,6 +6,7 @@ namespace Aurora\Tests\Unit\Dto;
 
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -23,7 +24,7 @@ final class CheckoutInputTest extends TestCase
 
     public function testFromArrayTrimsAndUppercasesCountry(): void
     {
-        $input = CheckoutInput::fromArray([
+        $input = (new CheckoutInputFactory())->fromArray([
             'email' => '  buyer@example.com  ',
             'name' => '  Alice  ',
             'addressLine1' => '  1 rue Test  ',

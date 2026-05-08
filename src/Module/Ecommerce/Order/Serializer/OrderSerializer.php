@@ -6,9 +6,11 @@ namespace Aurora\Module\Ecommerce\Order\Serializer;
 
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use DateTimeInterface;
 
-final readonly class OrderSerializer
+#[AsAlias(OrderSerializerInterface::class)]
+class OrderSerializer implements OrderSerializerInterface
 {
     /** Compact projection for admin list rows — no lines, no addresses. */
     public function serializeForList(Order $order): array

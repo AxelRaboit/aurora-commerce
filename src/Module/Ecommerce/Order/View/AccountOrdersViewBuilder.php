@@ -8,7 +8,7 @@ use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 
 /**
  * Builds the Twig payload for the customer account orders view.
@@ -17,7 +17,7 @@ final readonly class AccountOrdersViewBuilder
 {
     public function __construct(
         private OrderRepository $orderRepository,
-        private OrderSerializer $orderSerializer,
+        private OrderSerializerInterface $orderSerializer,
         private FrontContext $frontContext,
         private ThemeContext $themeContext,
     ) {}

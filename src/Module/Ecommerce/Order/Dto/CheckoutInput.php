@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Dto;
 
 use Aurora\Core\Locale\Enum\CountryEnum;
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class CheckoutInput
+readonly class CheckoutInput implements CheckoutInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'frontend.checkout.errors.email_required')]
@@ -29,29 +28,46 @@ final readonly class CheckoutInput
         public ?string $notes = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getEmail(): string
     {
-        $country = Str::trimOrNullFromArray($data, 'country');
-
-        return new self(
-            email: Str::trimFromArray($data, 'email'),
-            name: Str::trimFromArray($data, 'name'),
-            addressLine1: Str::trimOrNullFromArray($data, 'addressLine1'),
-            addressLine2: Str::trimOrNullFromArray($data, 'addressLine2'),
-            city: Str::trimOrNullFromArray($data, 'city'),
-            postalCode: Str::trimOrNullFromArray($data, 'postalCode'),
-            country: null === $country ? null : mb_strtoupper($country),
-            notes: Str::trimOrNullFromArray($data, 'notes'),
-        );
+        return $this->email;
     }
 
-    /**
-     * Returns a list of field => message for shipping fields that are required when the order
-     * contains a physical product. Used by the checkout controller to add conditional errors
-     * on top of the always-on Symfony constraints above.
-     *
-     * @return array<string, string>
-     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getAddressLine1(): ?string
+    {
+        return $this->addressLine1;
+    }
+
+    public function getAddressLine2(): ?string
+    {
+        return $this->addressLine2;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
     public function shippingErrors(): array
     {
         $errors = [];

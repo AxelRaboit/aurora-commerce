@@ -7,7 +7,7 @@ namespace Aurora\Module\Ecommerce\Payment\Controller;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;

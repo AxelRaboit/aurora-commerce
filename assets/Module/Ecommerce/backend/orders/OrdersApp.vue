@@ -23,6 +23,12 @@ const props = defineProps({
     stats: { type: Object, default: () => ({}) },
     showPath: { type: String, required: true },
     listPath: { type: String, required: true },
+    /**
+     * Extra fields config — kept for symmetry with the convention. The orders
+     * list has no create/edit form (orders are created via the public checkout
+     * flow), so the only meaningful slots here are extra-headers/extra-cells.
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"];
@@ -123,6 +129,7 @@ function formatTotal(order) {
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.orders.date') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.status_col') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.total') }}</th>
+                        <slot name="extra-headers" />
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                     </tr>
                 </thead>
@@ -138,6 +145,7 @@ function formatTotal(order) {
                             <AppBadge :color="statusBadge(order.status)">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
                         </td>
                         <td class="px-6 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
+                        <slot name="extra-cells" :order="order" />
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">

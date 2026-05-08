@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 use Aurora\Module\Ecommerce\Order\View\OrdersViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +23,7 @@ final class OrdersController extends AbstractController
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly OrderSerializer $orderSerializer,
+        private readonly OrderSerializerInterface $orderSerializer,
         private readonly OrdersViewBuilder $viewBuilder,
     ) {}
 

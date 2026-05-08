@@ -8,10 +8,10 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializer;
+use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Ecommerce\Order\View\OrderDetailViewBuilder;
 use InvalidArgumentException;
@@ -31,7 +31,7 @@ final class OrderDetailController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly OrderSerializer $orderSerializer,
+        private readonly OrderSerializerInterface $orderSerializer,
         private readonly OrderManagerInterface $orderManager,
         private readonly OrderDetailViewBuilder $viewBuilder,
         private readonly OrderRefundService $refundService,

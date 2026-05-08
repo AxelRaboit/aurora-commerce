@@ -12,8 +12,9 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
+use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
@@ -27,20 +28,20 @@ use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(OrderManagerInterface::class)]
-final readonly class OrderManager implements OrderManagerInterface
+class OrderManager implements OrderManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private OrderRepository $orderRepository,
-        private CartManagerInterface $cartManager,
-        private AuditLogger $auditLogger,
-        private OrderNotificationService $notificationService,
-        private OrderRefundService $refundService,
-        private SettingRepository $settingRepository,
-        private SequenceGenerator $sequenceGenerator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly OrderRepository $orderRepository,
+        protected readonly CartManagerInterface $cartManager,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly OrderNotificationService $notificationService,
+        protected readonly OrderRefundService $refundService,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly SequenceGenerator $sequenceGenerator,
     ) {}
 
-    public function createFromCart(Cart $cart, CheckoutInput $input, ?User $customer, string $locale = 'fr'): Order
+    public function createFromCart(Cart $cart, CheckoutInputInterface $input, ?User $customer, string $locale = 'fr'): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -53,27 +54,27 @@ final readonly class OrderManager implements OrderManagerInterface
             }
         }
 
-        $order = new Order();
+        $order = $this->createOrder();
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceOrderPrefix->value, SequencePrefixEnum::Order->value);
         $order->setNumber($this->orderRepository->getNextOrderNumber($prefix ?? SequencePrefixEnum::Order->value));
         $order->setToken(bin2hex(random_bytes(16)));
         $order->setCustomer($customer);
         $order->setStatus(OrderStatusEnum::Pending);
-        $order->setEmail($input->email);
-        $order->setName($input->name);
-        $order->setAddressLine1($input->addressLine1);
-        $order->setAddressLine2($input->addressLine2);
-        $order->setCity($input->city);
-        $order->setPostalCode($input->postalCode);
-        $order->setCountryEnum($input->country);
-        $order->setNotes($input->notes);
+        $order->setEmail($input->getEmail());
+        $order->setName($input->getName());
+        $order->setAddressLine1($input->getAddressLine1());
+        $order->setAddressLine2($input->getAddressLine2());
+        $order->setCity($input->getCity());
+        $order->setPostalCode($input->getPostalCode());
+        $order->setCountryEnum($input->getCountry());
+        $order->setNotes($input->getNotes());
         $order->setLocale($locale);
 
         $totalCents = 0;
         $currency = null;
         foreach ($cart->getItems() as $cartItem) {
             $listing = $cartItem->getListing();
-            $line = new OrderLine()
+            $line = $this->createOrderLine()
                 ->setListing($listing)
                 ->setTitleSnapshot($listing->getDisplayTitle())
                 ->setReferenceSnapshot($listing->getProduct()->getReference())
@@ -247,7 +248,7 @@ final readonly class OrderManager implements OrderManagerInterface
      * and oversold stock. The 2nd transaction blocks until the 1st commits, then re-reads the
      * decremented value and fails cleanly with InvalidArgumentException.
      */
-    public function checkout(Cart $cart, CheckoutInput $input, ?User $customer): Order
+    public function checkout(Cart $cart, CheckoutInputInterface $input, ?User $customer): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -311,5 +312,26 @@ final readonly class OrderManager implements OrderManagerInterface
         ksort($quantitiesByProductId);
 
         return $quantitiesByProductId;
+    }
+
+    /**
+     * Instantiates the concrete Order entity. Override in a subclass to
+     * return `App\Entity\Order` (or any class implementing `OrderInterface`)
+     * — `resolve_target_entities` only affects Doctrine relations, not
+     * direct `new`.
+     */
+    protected function createOrder(): Order
+    {
+        return new Order();
+    }
+
+    /**
+     * Instantiates the concrete OrderLine entity. Override in a subclass to
+     * return `App\Entity\OrderLine`. Called once per cart item from
+     * `createFromCart()` — the cascade extension hook for line items.
+     */
+    protected function createOrderLine(): OrderLine
+    {
+        return new OrderLine();
     }
 }

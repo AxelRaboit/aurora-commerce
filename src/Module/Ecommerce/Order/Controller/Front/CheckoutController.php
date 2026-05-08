@@ -14,8 +14,8 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Order\Contract\OrderManagerInterface;
-use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputFactoryInterface;
+use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
@@ -48,6 +48,7 @@ class CheckoutController extends AbstractController
         private readonly StripeService $stripeService,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
+        private readonly CheckoutInputFactoryInterface $checkoutInputFactory,
     ) {}
 
     #[Route('/{locale}/checkout', name: 'frontend_checkout', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value], priority: 8)]
@@ -79,7 +80,7 @@ class CheckoutController extends AbstractController
     private function handlePost(string $locale, Request $request, Cart $cart, bool $cartRequiresShipping): Response
     {
         $formData = $request->request->all();
-        $input = CheckoutInput::fromArray($formData);
+        $input = $this->checkoutInputFactory->fromArray($formData);
         $errors = $this->payloadValidator->errors($input);
         if ($cartRequiresShipping) {
             $errors = array_merge($errors, $input->shippingErrors());
