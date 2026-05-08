@@ -48,6 +48,7 @@ de désynchronisation possible. Aurora-client charge ces mémoires depuis
 - [pitfall_type_hint_interface.md](pitfall_type_hint_interface.md) — décoration impose le type-hint interface
 - [pitfall_service_entity_repository.md](pitfall_service_entity_repository.md) — `ServiceEntityRepository` hardcode la classe → utiliser `ResolveTargetEntityRepository`
 - [pitfall_bundle_get_path.md](pitfall_bundle_get_path.md) — `AbstractBundle::getPath()` par défaut retourne la racine projet, ce qui fait copier récursivement `public/` dans `public/bundles/aurora/` (7.9 GB de nest infini lors d'un `assets:install`)
+- [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — un nouveau module doit être enregistré dans **2 endroits** pour les traductions : `AuroraBundle.php` (Twig/console) **et** `DumpJsTranslationsCommand` (vue-i18n)
 
 ### Process / méthode
 - [process_make_ft_before_commit.md](process_make_ft_before_commit.md) — **toujours** `make ft` (fix + test) avant chaque commit, résoudre tous les problèmes
