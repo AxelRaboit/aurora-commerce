@@ -10,7 +10,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
  * @property {(agency: object) => *} fromEntity - Reads the field value from an existing agency when opening edit.
  */
 
-export function useAgenciesEdit(agencyList, createPath, updatePath, options = {}) {
+export function useAgenciesForm(agencyList, createPath, updatePath, options = {}) {
     const { t } = useI18n();
     const { request } = useApiRequest();
 

@@ -368,7 +368,7 @@ defineProps({
     deletePath: { type: String, required: true },
 });
 
-// Dit au composable Aurora useAgenciesEdit comment hydrater editForm.code
+// Dit au composable Aurora useAgenciesForm comment hydrater editForm.code
 // (reset à '' en création, lecture depuis agency.code en édition).
 const extraFields = {
     code: {
@@ -412,7 +412,7 @@ Aliases utilisés (déclarés dans `vendor/aurora/vite.config.js`) :
 | `@` | `vendor/aurora/assets` (composants `shared/`, etc.) |
 | `@client` | `aurora-client/assets/client` (votre dossier) |
 
-Le composable Aurora `useAgenciesEdit(extraFields)` :
+Le composable Aurora `useAgenciesForm(extraFields)` :
 - au reset (création) : `editForm.code = ''`
 - à l'ouverture en édition : `editForm.code = agency.code`
 - à la soumission : `request(url, { ...editForm })` envoie `name` ET `code`
@@ -484,7 +484,7 @@ make start                 # PHP server + Vite dev server
 | Validation | Attributs `#[Assert\*]` sur le DTO étendu | Native Symfony Validator |
 | Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
 | Vue formulaire | Slot `extra-form-fields` (scoped sur `editForm`, `errors`) | `<template #extra-form-fields="{ editForm, errors }">` |
-| Vue submit | Prop `extraFields` du composable `useAgenciesEdit` | `{ <field>: { default, fromEntity } }` |
+| Vue submit | Prop `extraFields` du composable `useAgenciesForm` | `{ <field>: { default, fromEntity } }` |
 | Template Twig | Aurora prepend `kernel.project_dir/templates/Core/` au namespace `@Core` | Drop file at `templates/Core/<path>.html.twig` |
 
 ---

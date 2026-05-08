@@ -115,6 +115,14 @@ Convention :
 
 ### Couche 2 — DTO d'entrée + Factory
 
+**Scope** : on instrumente uniquement le DTO **racine** (celui que le
+controller reçoit). Les sub-DTO (DTO inclus dans un tableau du DTO racine,
+type `array<string, PostTranslationInput>`) restent `final readonly` et ne
+sont pas instrumentés — ils ne sont jamais désérialisés directement par un
+controller, ils sont construits par la factory du DTO racine. Si un client
+a besoin d'étendre une sub-DTO, il étend le DTO racine et fournit ses
+propres sub-DTO via la factory qu'il décore.
+
 **Si** l'entité est créée/éditée via un formulaire admin :
 
 ```
@@ -166,14 +174,19 @@ persist + audit log.
 - Avoir des propriétés `protected readonly` (pas `private`) pour que les
   sous-classes y accèdent
 - Avoir `#[AsAlias(<Name>ManagerInterface::class)]`
-- Exposer **deux hooks `protected`** :
-  - `create<Name>(): <Name>Interface` — instancie l'entité concrète
-    (par défaut `new <Name>()`)
-  - `applyInput(<Name>Interface $entity, <Name>InputInterface $input): void`
-    — copie les champs du DTO vers l'entité (par défaut, juste les champs
-    Aurora)
-- `create()` et `update()` appellent ces hooks puis font le persist + flush
-  + audit log
+- Exposer un hook `protected create<X>(): <X>Interface` **pour chaque
+  classe d'entité instanciée par le Manager** (par défaut `new <X>()`).
+  Cas typique : `createAgency()` seul. Cas cascade (Order) : `createOrder()`
+  + `createOrderLine()` car le Manager instancie aussi des `OrderLine`.
+- Exposer un hook `protected applyInput(<Name>Interface $entity,
+  <Name>InputInterface $input): void` **quand le Manager a un flow simple
+  create+update via DTO unique**. Si le Manager expose plutôt N méthodes
+  spécialisées (cas User : `changePassword`, `consumeInvitation`, …),
+  ne pas forcer un `applyInput()` artificiel — exposer uniquement les
+  hooks `create<X>()` et laisser les méthodes métier publiques telles
+  quelles, customisables une par une.
+- `create()` et `update()` (quand ils existent) appellent ces hooks puis
+  font le persist + flush + audit log
 
 Squelette :
 
@@ -367,7 +380,7 @@ Pour `<Name> = Agency` :
 | Interface Serializer | `AgencySerializerInterface` |
 | Repository | `AgencyRepository` |
 | Vue main app | `AgenciesApp.vue` |
-| Composable edit | `useAgenciesEdit.js` (avec option `extraFields`) |
+| Composable form | `useAgenciesForm.js` (unifié create+edit, option `extraFields`) |
 | Hooks Manager | `createAgency()` + `applyInput()` (`protected`) |
 | Vue slots | `extra-headers`, `extra-cells`, `extra-form-fields` |
 
@@ -377,123 +390,47 @@ namespace `Symfony\Component\Security\Core\User\UserInterface`.
 
 ---
 
-## 4.bis Variantes selon la forme de l'entité
+## 4.bis Variantes structurelles
 
-Le pattern Agency est la **référence canonique**, mais 4 entités sur 5
-introduisent des variantes légitimes que la convention doit accepter. Ces
-variantes ont été validées sur les pilotes Deal / User / Post / Order.
+Le pattern Agency est la **référence canonique**. Les autres règles de la
+convention (scope du DTO, hooks par classe instanciée, `applyInput()` quand
+applicable, composables `useXxxForm` unifiés) sont décrites directement dans
+les couches 2/3/5 et ne constituent pas des variantes — juste des
+généralisations de la même règle.
 
-### 4.bis.1 Sub-DTO (DTO inclus dans un DTO racine)
+Restent **deux variantes structurelles** où la forme du composant impose
+réellement un écart au pattern de référence :
 
-**Cas** : un DTO racine contient un tableau de sous-DTO (ex: `PostInput`
-contient `array<string, PostTranslationInput>`).
+### 4.bis.1 Manager à hooks multiples (sans `applyInput()`)
 
-**Convention** : on instrumente **uniquement le DTO racine** (celui que le
-controller reçoit via la factory). Les sub-DTO restent `final readonly` car
-ils ne sont jamais désérialisés directement par un controller — ils sont
-construits à l'intérieur de la factory du DTO racine.
+**Cas** : `User`.
 
-```php
-// Aurora\Module\Editorial\Post\Dto\
-class PostInput implements PostInputInterface { /* root — convention applies */ }
-final readonly class PostTranslationInput { /* nested, NOT instrumented */ }
-final readonly class PostTypeFieldInput   { /* nested, NOT instrumented */ }
-```
+Quand un Manager expose ~20 méthodes spécialisées
+(`changePassword`, `consumeInvitation`, `toggleDevRole`, …) au lieu d'un
+flow simple create+update, on n'expose **pas** de `applyInput()` (cf
+Couche 3). Le client customise les méthodes publiques individuellement. À
+documenter par un commentaire au-dessus du hook `create<X>()` : *"single
+hook : the rest is overridden via individual public methods"*.
 
-Si un client a besoin d'étendre une sub-DTO, il étend le DTO racine et
-fournit lui-même ses propres sub-DTO via la factory qu'il décore. Pas de
-travail supplémentaire dans aurora-core.
+Côté frontend, ce Manager s'accompagne souvent de **deux composables
+distincts** (`useUsersInvite` + `useUsersForm`) car invitation et édition
+sont fonctionnellement différentes (form, validation, route distinctes).
+Slots correspondants : `extra-invite-form-fields` + `extra-form-fields`.
 
-### 4.bis.2 Manager sans `applyInput()` unifié (entités à hooks multiples)
+### 4.bis.2 Editor full-page (pas un modal)
 
-**Cas** : l'entité a un Manager avec ~20+ méthodes spécialisées
-(`toggleDevRole`, `changePassword`, `updateAgencyAndService`,
-`consumeInvitation`…) au lieu d'un simple create/update via DTO unique.
-Exemple : `User`.
+**Cas** : `PostEditor.vue`.
 
-**Convention** : on n'expose **pas** de `applyInput()` car forcer une seule
-méthode de hydratation serait artificiel. À la place :
+Quand le formulaire d'édition est une page entière (aside + main +
+multi-tabs locales + plusieurs panels) au lieu d'un `<AppModal>`, la logique
+de form vit directement dans le composant — pas de composable
+`useXxxForm`. Le composant accepte une prop `extraFields` et expose un
+slot `extra-form-fields` placé **sémantiquement** près d'un panel existant
+proche par fonction (ex : juste après le panel "custom fields", avant
+SeoPanel). L'hydratation des extras se fait dans `onMounted` après le
+chargement initial des données.
 
-- Le Manager devient `class` (non `final`) avec props `protected readonly`
-- **Un seul hook** `protected createX(): XInterface` pour permettre
-  l'instanciation de la classe substituée
-- Les méthodes métier publiques (`toggleDevRole`, etc.) restent telles
-  quelles — un client qui veut customiser les override individuellement
-
-**Documenter explicitement** dans le Manager : commentaire au-dessus du
-`createX()` qui dit "single hook : the rest is overridden via individual
-public methods".
-
-### 4.bis.3 Cascade (Manager qui crée parent + enfants en une transaction)
-
-**Cas** : le Manager instancie une entité parent ET N entités enfants dans
-le même flow. Exemple : `OrderManager::createFromCart()` instancie 1 Order
-et N OrderLines.
-
-**Convention** : exposer **un hook par classe instanciée**, pas un seul.
-
-```php
-// OrderManager
-protected function createOrder(): Order
-{
-    return new Order();
-}
-
-protected function createOrderLine(): OrderLine
-{
-    return new OrderLine();
-}
-
-public function createFromCart(...): Order
-{
-    $order = $this->createOrder();
-    foreach ($cart->getItems() as $cartItem) {
-        $line = $this->createOrderLine()->setListing(...);
-        $order->addLine($line);
-    }
-    // …
-}
-```
-
-Le client qui étend `Order` ET `OrderLine` peut alors les substituer
-indépendamment via 2 overrides distincts.
-
-### 4.bis.4 Composables Vue séparés (`useXxxCreate` + `useXxxEdit`)
-
-**Cas** : le module a deux composables distincts pour création et édition,
-chacun avec son propre form (`newDeal` / `editForm`, ou `inviteForm` /
-`editForm`). Exemples : `Deal`, `User`.
-
-**Convention** : exposer **deux slots distincts**, scoped sur leur form
-respectif :
-
-- `extra-create-form-fields` *(scoped sur `newXxx` / `inviteForm` + `errors`)*
-- `extra-edit-form-fields` *(scoped sur `editForm` + `errors`)*
-
-Chaque composable accepte `options.extraFields`. Le naming des slots reflète
-l'opération (create / edit / invite) plutôt qu'un slot générique
-`extra-form-fields` qui serait ambigu.
-
-Quand le module a **un seul composable unifié** (Agency), garder le slot
-unique `extra-form-fields`.
-
-### 4.bis.5 Editor full-page (pas un modal)
-
-**Cas** : le formulaire d'édition n'est pas un `<AppModal>` mais une page
-entière avec aside + main + multi-tabs (locales) + plusieurs panels.
-Exemple : `PostEditor.vue`.
-
-**Convention** :
-- Le composant est exposé en tant que prop `extraFields` directement (pas
-  via un composable séparé — la logique de form est dans le composant lui-même)
-- Le slot `extra-form-fields` est placé **sémantiquement** dans la sidebar
-  ou en bas du main, à côté d'un panel existant proche par fonction (ex :
-  juste après le panel "custom fields" de PostType, avant SeoPanel)
-- L'hydratation des extra fields se fait dans le `onMounted` après le
-  `applyPostData()`, avec fallback `entity[key] ?? def.default` si pas de
-  `fromEntity`
-
-Pour les listes (`PostsApp.vue`), les slots `extra-headers` / `extra-cells`
+Pour la liste (`PostsApp.vue`), les slots `extra-headers` / `extra-cells`
 restent identiques au pattern Agency — la complexité de l'editor ne change
 pas la liste.
 
@@ -636,7 +573,7 @@ Pour copier-coller un exemple en bon état, partir de **`Agency`** :
 | Repository | `src/Core/Agency/Repository/AgencyRepository.php` |
 | Controller | `src/Core/Agency/Controller/Backend/AgenciesController.php` |
 | Vue main | `assets/Core/backend/agencies/AgenciesApp.vue` |
-| Vue composables | `assets/Core/backend/agencies/composables/useAgenciesEdit.js` |
+| Vue composables | `assets/Core/backend/agencies/composables/useAgenciesForm.js` |
 | Twig | `templates/Core/backend/agencies/index.html.twig` |
 
 Toute déviation de ce pattern doit être justifiée (cas spécifique au domaine

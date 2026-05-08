@@ -5,8 +5,7 @@ import { VueDraggable } from "vue-draggable-plus";
 import { useDealsViewToggle } from "@crm/backend/deals/composables/useDealsViewToggle.js";
 import { useDealsListPage } from "@crm/backend/deals/composables/useDealsListPage.js";
 import { useDealsKanban } from "@crm/backend/deals/composables/useDealsKanban.js";
-import { useDealsCreate } from "@crm/backend/deals/composables/useDealsCreate.js";
-import { useDealsEdit } from "@crm/backend/deals/composables/useDealsEdit.js";
+import { useDealsForm } from "@crm/backend/deals/composables/useDealsForm.js";
 import { useDealsDelete } from "@crm/backend/deals/composables/useDealsDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -58,8 +57,14 @@ const { view, setView } = useDealsViewToggle(props, ensureKanbanColumns);
 const { stageOptions, items, page, totalPages, searchInput, onSearch, goToPage, reset } =
     useDealsListPage(props);
 
-const { showCreate, newDeal, createErrors, createLoading, openCreate, submitCreate } = useDealsCreate(props.createPath, reset, kanbanColumnsLoaded, ensureKanbanColumns, { extraFields: props.extraFields });
-const { showEdit, editingDeal, editForm, editErrors, editLoading, openEdit, submitEdit } = useDealsEdit(props.updatePath, reset, kanbanColumnsLoaded, ensureKanbanColumns, { extraFields: props.extraFields });
+const { formModal, form, errors, loading, openCreate, openEdit, submit } = useDealsForm(
+    props.createPath,
+    props.updatePath,
+    reset,
+    kanbanColumnsLoaded,
+    ensureKanbanColumns,
+    { extraFields: props.extraFields },
+);
 const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete(props.deletePath, reset, kanbanColumnsLoaded, ensureKanbanColumns);
 </script>
 
@@ -268,46 +273,28 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 </div>
             </div>
 
-            <AppModal :show="showCreate" :title="t('backend.crm.deals.create')" v-on:close="showCreate = false">
-                <form class="space-y-4" v-on:submit.prevent="submitCreate">
+            <AppModal
+                :show="formModal.open"
+                :title="formModal.deal ? t('backend.crm.deals.edit', { name: formModal.deal.name ?? '' }) : t('backend.crm.deals.create')"
+                v-on:close="formModal.open = false"
+            >
+                <form class="space-y-4" v-on:submit.prevent="submit">
                     <AppInput
-                        v-model="newDeal.name"
+                        v-model="form.name"
                         :label="t('backend.crm.deals.name')"
                         :placeholder="t('backend.crm.deals.namePlaceholder')"
-                        :error="createErrors.name"
+                        :error="errors.name"
                         required
                     />
-                    <AppSelect v-model="newDeal.stage" :label="t('backend.crm.deals.stage')">
+                    <AppSelect v-model="form.stage" :label="t('backend.crm.deals.stage')">
                         <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
-                    <AppInput v-model="newDeal.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
-                    <AppDatePicker v-model="newDeal.closingDate" :label="t('backend.crm.deals.closingDate')" />
-                    <slot name="extra-create-form-fields" :form="newDeal" :errors="createErrors" />
+                    <AppInput v-model="form.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
+                    <AppDatePicker v-model="form.closingDate" :label="t('backend.crm.deals.closingDate')" />
+                    <slot name="extra-form-fields" :form="form" :errors="errors" :deal="formModal.deal" />
                     <AppModalFooter>
-                        <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                        <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
-                    </AppModalFooter>
-                </form>
-            </AppModal>
-
-            <AppModal :show="showEdit" :title="t('backend.crm.deals.edit', { name: editingDeal?.name ?? '' })" v-on:close="showEdit = false">
-                <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                    <AppInput
-                        v-model="editForm.name"
-                        :label="t('backend.crm.deals.name')"
-                        :placeholder="t('backend.crm.deals.namePlaceholder')"
-                        :error="editErrors.name"
-                        required
-                    />
-                    <AppSelect v-model="editForm.stage" :label="t('backend.crm.deals.stage')">
-                        <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </AppSelect>
-                    <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
-                    <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
-                    <slot name="extra-edit-form-fields" :form="editForm" :errors="editErrors" />
-                    <AppModalFooter>
-                        <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                        <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
+                        <AppButton variant="ghost" size="md" type="button" v-on:click="formModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                        <AppButton variant="primary" size="md" type="submit" :loading="loading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </AppModalFooter>
                 </form>
             </AppModal>

@@ -8,7 +8,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useAgenciesList } from "@core/backend/agencies/composables/useAgenciesList.js";
-import { useAgenciesEdit } from "@core/backend/agencies/composables/useAgenciesEdit.js";
+import { useAgenciesForm } from "@core/backend/agencies/composables/useAgenciesForm.js";
 import { useAgenciesDelete } from "@core/backend/agencies/composables/useAgenciesDelete.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -24,7 +24,7 @@ const props = defineProps({
 });
 
 const { agencyList } = useAgenciesList(props.agencies);
-const { editModal, editForm, openCreate, openEdit, submitEdit } = useAgenciesEdit(
+const { editModal, editForm, openCreate, openEdit, submitEdit } = useAgenciesForm(
     agencyList,
     props.createPath,
     props.updatePath,
