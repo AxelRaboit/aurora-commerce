@@ -5,7 +5,7 @@
 ### Localisation
 - `Controller/Backend/` : endpoints admin sous `/backend/...`
   protégés par `IsGranted` (rôle ou privilege).
-- `Controller/Front/` : endpoints publics frontend (sans `/backend`),
+- `Controller/Frontend/` : endpoints publics frontend (sans `/backend`),
   pas d'auth requise (souvent locale-aware via `{locale}` dans la route).
 
 ### Naming

@@ -10,7 +10,7 @@ src/Core/<Feature>/                            ← ex: src/Core/Agency/
 src/Module/<Module>/<Feature>/                  ← ex: src/Module/Editorial/Post/
 ├── Controller/
 │   ├── Backend/                                ← endpoints admin (/backend/...)
-│   └── Front/                                  ← endpoints frontend (sans /backend)
+│   └── Frontend/                               ← endpoints frontend public (sans /backend)
 ├── Dto/                                        ← Input + InputInterface + InputFactory + InputFactoryInterface
 ├── Entity/                                     ← Interface + Abstract + concrete
 ├── Enum/                                       ← enums backed (StatusEnum, etc.)
@@ -59,7 +59,7 @@ Sinon `src/Core/<Entité>/`.
 
 **Selon besoin** : `Service/` (helpers stateless), `Message/`+
 `MessageHandler/` (async), `EventSubscriber/`, `Twig/`, `Security/`,
-`Controller/Front/`, `Enum/`.
+`Controller/Frontend/`, `Enum/`.
 
 ### Naming des fichiers
 
@@ -85,12 +85,12 @@ src/Core/Agency/
 └── View/AgenciesViewBuilder.php
 ```
 
-### Module avec Front + Backend (Post)
+### Module avec Frontend + Backend (Post)
 
 ```
 src/Module/Editorial/Post/
 ├── Controller/Backend/{PostsController,PostTypesController}.php
-├── Controller/Front/PageController.php
+├── Controller/Frontend/PageController.php
 ├── Dto/...
 ├── Entity/...
 ├── Enum/{PostStatusEnum,PostFieldTypeEnum}.php

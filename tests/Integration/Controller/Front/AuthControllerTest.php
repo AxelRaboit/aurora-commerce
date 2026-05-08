@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Integration\Controller\Front;
+namespace Aurora\Tests\Integration\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;

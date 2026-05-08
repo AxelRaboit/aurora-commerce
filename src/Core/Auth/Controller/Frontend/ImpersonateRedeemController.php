@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Controller\Front;
+namespace Aurora\Core\Auth\Controller\Frontend;
 
 use Aurora\Core\Auth\Service\ImpersonationTokenService;
 use Aurora\Core\Frontend\Service\FrontRouter;
