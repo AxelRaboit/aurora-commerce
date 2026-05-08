@@ -49,6 +49,8 @@ class AuroraBundle extends AbstractBundle
                     'Aurora\Module\Billing\Ocr\Entity\OcrJobInterface' => 'Aurora\Module\Billing\Ocr\Entity\OcrJob',
                     'Aurora\Module\Crm\Company\Entity\CompanyInterface' => 'Aurora\Module\Crm\Company\Entity\Company',
                     'Aurora\Module\Crm\Contact\Entity\ContactInterface' => 'Aurora\Module\Crm\Contact\Entity\Contact',
+                    'Aurora\Module\Editorial\Comment\Entity\CommentInterface' => 'Aurora\Module\Editorial\Comment\Entity\Comment',
+                    'Aurora\Module\Editorial\Comment\Entity\CommentReactionInterface' => 'Aurora\Module\Editorial\Comment\Entity\CommentReaction',
                     'Aurora\Module\Crm\Deal\Entity\DealInterface' => 'Aurora\Module\Crm\Deal\Entity\Deal',
                     'Aurora\Module\Ecommerce\Cart\Entity\CartInterface' => 'Aurora\Module\Ecommerce\Cart\Entity\Cart',
                     'Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface' => 'Aurora\Module\Ecommerce\Cart\Entity\CartItem',
