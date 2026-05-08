@@ -4,8 +4,9 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 
-export function useUsersEdit(props, fetchUsers) {
+export function useUsersEdit(props, fetchUsers, options = {}) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
 
     const selectableUsers = ref([]);
 
@@ -35,6 +36,9 @@ export function useUsersEdit(props, fetchUsers) {
         managerId: null,
         agencyId: null,
         serviceId: null,
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
     });
 
     const managerOptions = computed(() => {
@@ -67,6 +71,9 @@ export function useUsersEdit(props, fetchUsers) {
         editForm.managerId = user.managerId ? String(user.managerId) : "";
         editForm.agencyId = user.agencyId ? String(user.agencyId) : "";
         editForm.serviceId = user.serviceId ? String(user.serviceId) : "";
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.fromEntity ? def.fromEntity(user) : (user[key] ?? def.default);
+        }
         editModal.open = true;
         loadSelectableUsers();
     }

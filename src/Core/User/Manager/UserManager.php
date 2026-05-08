@@ -15,7 +15,7 @@ use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
@@ -29,24 +29,24 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsAlias(UserManagerInterface::class)]
-final readonly class UserManager implements UserManagerInterface
+class UserManager implements UserManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
-        private InvitationManager $invitationManager,
-        private UrlGeneratorInterface $urlGenerator,
-        private EmailVerificationManager $emailVerificationManager,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
-        private AgencyRepository $agencyRepository,
-        private ServiceRepository $serviceRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly UserRepository $userRepository,
+        protected readonly UserPasswordHasherInterface $passwordHasher,
+        protected readonly InvitationManager $invitationManager,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly EmailVerificationManager $emailVerificationManager,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly AgencyRepository $agencyRepository,
+        protected readonly ServiceRepository $serviceRepository,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
     {
-        $user = new User();
+        $user = $this->createUser();
         $user->setName($name);
         $user->setEmail($email);
         $user->setType(UserTypeEnum::Backend);
@@ -64,7 +64,7 @@ final readonly class UserManager implements UserManagerInterface
 
     public function register(string $name, string $email, string $password): User
     {
-        $user = new User();
+        $user = $this->createUser();
         $user->setName($name);
         $user->setEmail($email);
         $user->setType(UserTypeEnum::Backend);
@@ -246,7 +246,7 @@ final readonly class UserManager implements UserManagerInterface
             throw new InvalidArgumentException('backend.users.errors.role_invalid');
         }
 
-        $user = new User();
+        $user = $this->createUser();
         $user->setName($name);
         $user->setEmail($email);
         $user->setType(UserTypeEnum::Backend);
@@ -335,5 +335,16 @@ final readonly class UserManager implements UserManagerInterface
     {
         return UserRoleEnum::highestPriorityForRoles($actor->getRoles())
             >= UserRoleEnum::highestPriorityForRoles($target->getRoles());
+    }
+
+    /**
+     * Instantiates the concrete User entity. Override in a subclass to return
+     * `App\Entity\User` (or any class implementing `CoreUserInterface`) —
+     * `resolve_target_entities` only affects Doctrine relations, not direct
+     * `new`. Used by `create()`, `register()` and `invite()`.
+     */
+    protected function createUser(): User
+    {
+        return new User();
     }
 }

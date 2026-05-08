@@ -11,7 +11,7 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Profile\View\ProfileViewBuilder;
-use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\DTO\MoodInput;
 use Aurora\Core\User\DTO\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;

@@ -11,7 +11,7 @@ use Aurora\Core\Auth\View\DevAccessRequestsViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

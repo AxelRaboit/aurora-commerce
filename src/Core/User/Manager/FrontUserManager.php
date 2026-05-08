@@ -13,7 +13,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Contract\FrontUserManagerInterface;
+use Aurora\Core\User\Manager\FrontUserManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;

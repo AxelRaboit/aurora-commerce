@@ -47,11 +47,17 @@ const props = defineProps({
     selectablePath: { type: String, required: true },
     showPath: { type: String, required: true },
     currentUserId: { type: Number, default: 0 },
+    /**
+     * Extra fields to register on the invite + edit forms. Lets clients extend
+     * the modals + table without forking this component.
+     * Example: { phoneNumber: { default: '', fromEntity: (u) => u.phoneNumber ?? '' } }
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPage } = useUsersSearch(props.listPath);
-const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers);
-const { editModal, editForm, managerOptions, agencyOptions, serviceOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers);
+const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers, { extraFields: props.extraFields });
+const { editModal, editForm, managerOptions, agencyOptions, serviceOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers, { extraFields: props.extraFields });
 
 const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
 
@@ -132,6 +138,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.typeLabel') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.statusLabel') }}</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
+                        <slot name="extra-headers" />
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
                     </tr>
                 </thead>
@@ -160,6 +167,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                             <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
                         </td>
                         <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
+                        <slot name="extra-cells" :user="user" />
                         <td class="px-4 py-3">
                             <div class="flex justify-end">
                                 <UserRowActions
@@ -210,6 +218,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :placeholder="t('backend.users.inviteMessagePlaceholder')"
                     />
                 </div>
+                <slot name="extra-invite-form-fields" :form="inviteForm" :errors="inviteModal.errors" />
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving"><Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.users.sendInvite') }}</AppButton>
@@ -364,6 +373,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     :placeholder="t('backend.users.newPasswordPlaceholder')"
                     :error="editModal.errors.password ?? ''"
                 />
+                <slot name="extra-edit-form-fields" :form="editForm" :errors="editModal.errors" />
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">

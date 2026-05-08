@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\User\Contract;
+namespace Aurora\Core\User\Manager;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Entity\User;

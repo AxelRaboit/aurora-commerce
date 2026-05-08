@@ -6,7 +6,7 @@ namespace Aurora\Core\User\Manager\Decorator;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Enum\LocaleEnum;
-use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Service\UserNotificationService;

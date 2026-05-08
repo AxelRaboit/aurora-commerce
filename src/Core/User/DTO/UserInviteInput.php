@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Core\User\DTO;
 
 use Aurora\Core\Auth\Validator\UniqueEmail;
-use Aurora\Core\Support\Str;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class UserInviteInput
+readonly class UserInviteInput implements UserInviteInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.users.errors.name_required')]
@@ -27,16 +25,23 @@ final readonly class UserInviteInput
         public ?string $message = null,
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public function getName(): string
     {
-        $data = json_decode($request->getContent(), true);
-        $data = is_array($data) ? $data : [];
+        return $this->name;
+    }
 
-        return new self(
-            name: Str::trimFromArray($data, 'name'),
-            email: Str::trimFromArray($data, 'email'),
-            role: Str::trimFromArray($data, 'role'),
-            message: Str::trimOrNullFromArray($data, 'message'),
-        );
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
     }
 }

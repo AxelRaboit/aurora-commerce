@@ -3,14 +3,19 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
-export function useUsersInvite(invitePath, roles, fetchUsers) {
+export function useUsersInvite(invitePath, roles, fetchUsers, options = {}) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
+
     const inviteModal = reactive({ open: false, errors: {}, saving: false });
     const inviteForm = reactive({
         name: "",
         email: "",
         role: roles[0]?.value ?? "",
         message: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
     });
 
     function openInvite() {
@@ -19,6 +24,9 @@ export function useUsersInvite(invitePath, roles, fetchUsers) {
         inviteForm.email = "";
         inviteForm.role = roles[0]?.value ?? "";
         inviteForm.message = "";
+        for (const [key, def] of Object.entries(extraFields)) {
+            inviteForm[key] = def.default;
+        }
         inviteModal.open = true;
     }
 

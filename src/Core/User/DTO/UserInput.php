@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\DTO;
 
-use Aurora\Core\Support\Str;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class UserInput
+readonly class UserInput implements UserInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.users.errors.name_required')]
@@ -30,25 +28,43 @@ final readonly class UserInput
         public ?int $serviceId = null,
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public function getName(): string
     {
-        $data = json_decode($request->getContent(), true);
-        $data = is_array($data) ? $data : [];
+        return $this->name;
+    }
 
-        $password = Str::trimOrNullFromArray($data, 'password');
-        $managerId = $data['managerId'] ?? null;
-        $agencyId = $data['agencyId'] ?? null;
-        $serviceId = $data['serviceId'] ?? null;
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 
-        return new self(
-            name: Str::trimFromArray($data, 'name'),
-            email: Str::trimFromArray($data, 'email'),
-            role: Str::trimFromArray($data, 'role'),
-            locale: Str::trimFromArray($data, 'locale', 'fr') ?: 'fr',
-            password: '' === $password ? null : $password,
-            managerId: is_numeric($managerId) ? (int) $managerId : null,
-            agencyId: is_numeric($agencyId) ? (int) $agencyId : null,
-            serviceId: is_numeric($serviceId) ? (int) $serviceId : null,
-        );
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function getManagerId(): ?int
+    {
+        return $this->managerId;
+    }
+
+    public function getAgencyId(): ?int
+    {
+        return $this->agencyId;
+    }
+
+    public function getServiceId(): ?int
+    {
+        return $this->serviceId;
     }
 }

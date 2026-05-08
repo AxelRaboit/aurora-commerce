@@ -6,14 +6,16 @@ namespace Aurora\Core\User\Serializer;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use const DATE_ATOM;
 
-final readonly class UserSerializer
+#[AsAlias(UserSerializerInterface::class)]
+class UserSerializer implements UserSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
+        protected readonly TranslatorInterface $translator,
     ) {}
 
     /**

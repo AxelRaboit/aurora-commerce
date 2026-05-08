@@ -7,7 +7,7 @@ namespace Aurora\Core\User\Controller\Dev;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\User\Contract\UserManagerInterface;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\DTO\CreateUserInput;
 use Aurora\Core\User\DTO\UpdateUserInput;
 use Aurora\Core\User\Entity\User;

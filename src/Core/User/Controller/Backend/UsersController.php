@@ -7,15 +7,15 @@ namespace Aurora\Core\User\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\User\Contract\UserManagerInterface;
-use Aurora\Core\User\DTO\UserInput;
-use Aurora\Core\User\DTO\UserInviteInput;
+use Aurora\Core\User\DTO\UserInputFactoryInterface;
+use Aurora\Core\User\DTO\UserInviteInputFactoryInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserHierarchyManager;
+use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Manager\UserProfilePhotoManager;
 use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Core\User\Serializer\UserSerializer;
+use Aurora\Core\User\Serializer\UserSerializerInterface;
 use Aurora\Core\User\View\UsersViewBuilder;
 use Aurora\Core\Validation\DTO\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
@@ -29,19 +29,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/users', name: 'backend_users')]
 #[IsGranted('core.users.manage')]
-final class UsersController extends AbstractController
+class UsersController extends AbstractController
 {
     use JsonRequestTrait;
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly UserManagerInterface $userManager,
-        private readonly UserHierarchyManager $userHierarchyManager,
-        private readonly UserSerializer $userSerializer,
-        private readonly PayloadValidator $payloadValidator,
-        private readonly UserProfilePhotoManager $userProfilePhotoManager,
-        private readonly UsersViewBuilder $viewBuilder,
+        protected readonly UserRepository $userRepository,
+        protected readonly UserManagerInterface $userManager,
+        protected readonly UserHierarchyManager $userHierarchyManager,
+        protected readonly UserSerializerInterface $userSerializer,
+        protected readonly PayloadValidator $payloadValidator,
+        protected readonly UserProfilePhotoManager $userProfilePhotoManager,
+        protected readonly UsersViewBuilder $viewBuilder,
+        protected readonly UserInputFactoryInterface $userInputFactory,
+        protected readonly UserInviteInputFactoryInterface $userInviteInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -94,7 +96,7 @@ final class UsersController extends AbstractController
     #[Route('/invite', name: '_invite', methods: [HttpMethodEnum::Post->value])]
     public function invite(Request $request): JsonResponse
     {
-        $input = UserInviteInput::fromRequest($request);
+        $input = $this->userInviteInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -118,7 +120,7 @@ final class UsersController extends AbstractController
             return $this->jsonForbidden();
         }
 
-        $input = UserInput::fromRequest($request);
+        $input = $this->userInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
