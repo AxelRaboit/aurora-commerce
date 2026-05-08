@@ -6,13 +6,25 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 const POLL_INTERVAL_MS = 30_000; // 30s — light enough not to hammer.
 
+// Module-level singleton state. The notifications bell is mounted twice
+// in the sidebar (one for the expanded layout, one for the collapsed
+// layout) — without this singleton, each instance would fetch + poll
+// independently, doubling the network traffic.
+let sharedState = null;
+let refCount = 0;
+let pollTimer = null;
+
 export function useNotifications(paths) {
     const { t } = useI18n();
-    const entries = ref([]);
-    const unreadCount = ref(0);
-    const open = ref(false);
 
-    let pollTimer = null;
+    if (!sharedState) {
+        sharedState = {
+            entries: ref([]),
+            unreadCount: ref(0),
+            open: ref(false),
+        };
+    }
+    const { entries, unreadCount, open } = sharedState;
 
     async function load() {
         try {
@@ -80,12 +92,22 @@ export function useNotifications(paths) {
     }
 
     onMounted(() => {
-        load();
-        pollTimer = setInterval(load, POLL_INTERVAL_MS);
+        // First mount triggers the initial fetch + the shared poll timer.
+        // Subsequent mounts (e.g. the collapsed/expanded sidebar bells)
+        // just join the existing ref-counted singleton.
+        refCount += 1;
+        if (1 === refCount) {
+            load();
+            pollTimer = setInterval(load, POLL_INTERVAL_MS);
+        }
     });
 
     onBeforeUnmount(() => {
-        if (pollTimer) clearInterval(pollTimer);
+        refCount = Math.max(0, refCount - 1);
+        if (0 === refCount && pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        }
     });
 
     return {
