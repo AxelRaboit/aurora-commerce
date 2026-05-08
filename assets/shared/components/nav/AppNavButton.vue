@@ -7,6 +7,8 @@ import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
  *
  * Same `.si` styling, same tooltip behaviour, but renders a <button> instead of an <a>.
  */
+defineOptions({ inheritAttrs: false });
+
 defineProps({
     /** Tailwind hover/text colour for the icon and row when not active. Examples: "primary" | "emerald" | "amber" | "rose". */
     hoverColor: { type: String, default: "primary" },
@@ -32,6 +34,7 @@ const HOVER_CLASSES = {
 <template>
     <AppTooltip :title="tooltipTitle" :description="tooltipDescription" :placement="tooltipPlacement">
         <button
+            v-bind="$attrs"
             :type="type"
             class="si flex items-center rounded-lg text-sm font-medium transition-colors w-full group relative"
             :class="HOVER_CLASSES[hoverColor] ?? HOVER_CLASSES.primary"
