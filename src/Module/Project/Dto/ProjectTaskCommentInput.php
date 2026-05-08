@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ProjectTaskCommentInput
+class ProjectTaskCommentInput implements ProjectTaskCommentInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.projects.errors.comment_content_required')]
         #[Assert\Length(max: 4000, maxMessage: 'backend.projects.errors.comment_content_too_long')]
-        public string $content = '',
+        public readonly string $content = '',
     ) {}
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    public function getContent(): string
     {
-        return new self(content: Str::trimFromArray($data, 'content'));
+        return $this->content;
     }
 }

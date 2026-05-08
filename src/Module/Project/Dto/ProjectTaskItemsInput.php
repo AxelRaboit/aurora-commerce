@@ -8,34 +8,13 @@ namespace Aurora\Module\Project\Dto;
  * Bulk-replace payload for a task's checklist. The client sends the desired
  * full list — the manager wipes existing items and recreates them.
  */
-final readonly class ProjectTaskItemsInput
+class ProjectTaskItemsInput implements ProjectTaskItemsInputInterface
 {
     /** @param list<array{label: string, done: bool}> $items */
-    public function __construct(public array $items = []) {}
+    public function __construct(public readonly array $items = []) {}
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    public function getItems(): array
     {
-        $rawItems = (array) ($data['items'] ?? []);
-        $items = [];
-        foreach ($rawItems as $itemData) {
-            if (!is_array($itemData)) {
-                continue;
-            }
-
-            $label = mb_trim((string) ($itemData['label'] ?? ''));
-            if ('' === $label) {
-                continue;
-            }
-
-            $items[] = [
-                'label' => $label,
-                'done' => (bool) ($itemData['done'] ?? false),
-            ];
-        }
-
-        return new self(items: $items);
+        return $this->items;
     }
 }

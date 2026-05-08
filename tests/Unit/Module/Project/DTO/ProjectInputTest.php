@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Dto;
 
 use Aurora\Module\Project\Dto\ProjectInput;
+use Aurora\Module\Project\Dto\ProjectInputFactory;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use PHPUnit\Framework\TestCase;
 
@@ -12,7 +13,7 @@ final class ProjectInputTest extends TestCase
 {
     public function testFromArrayDefaultsStatusToDraftWhenMissing(): void
     {
-        $input = ProjectInput::fromArray(['title' => 'X']);
+        $input = (new ProjectInputFactory())->fromArray(['title' => 'X']);
 
         self::assertSame(ProjectStatusEnum::Draft->value, $input->status);
         self::assertSame('X', $input->title);
@@ -20,7 +21,7 @@ final class ProjectInputTest extends TestCase
 
     public function testFromArrayTrimsTitleAndDescription(): void
     {
-        $input = ProjectInput::fromArray([
+        $input = (new ProjectInputFactory())->fromArray([
             'title' => '  Refonte  ',
             'description' => '  desc  ',
         ]);
@@ -31,7 +32,7 @@ final class ProjectInputTest extends TestCase
 
     public function testNormalizeIdListFiltersInvalidValues(): void
     {
-        $input = ProjectInput::fromArray([
+        $input = (new ProjectInputFactory())->fromArray([
             'title' => 'X',
             'crmContactIds' => [1, '2', '', null, 0, -3, 5, 5, '7 '],
         ]);
@@ -42,13 +43,13 @@ final class ProjectInputTest extends TestCase
 
     public function testNormalizeIdListReturnsEmptyForNonArray(): void
     {
-        $input = ProjectInput::fromArray(['title' => 'X', 'crmContactIds' => 'not-an-array']);
+        $input = (new ProjectInputFactory())->fromArray(['title' => 'X', 'crmContactIds' => 'not-an-array']);
         self::assertSame([], $input->crmContactIds);
     }
 
     public function testCrmFieldsAreCoercedFromStrings(): void
     {
-        $input = ProjectInput::fromArray([
+        $input = (new ProjectInputFactory())->fromArray([
             'title' => 'X',
             'responsibleUserId' => '12',
             'crmCompanyId' => '7',
@@ -62,7 +63,7 @@ final class ProjectInputTest extends TestCase
 
     public function testEmptyStringsBecomeNullForOptionalIds(): void
     {
-        $input = ProjectInput::fromArray([
+        $input = (new ProjectInputFactory())->fromArray([
             'title' => 'X',
             'responsibleUserId' => '',
             'crmDealId' => '',
@@ -74,7 +75,7 @@ final class ProjectInputTest extends TestCase
 
     public function testStatusEnumReturnsTypedValue(): void
     {
-        $input = ProjectInput::fromArray(['title' => 'X', 'status' => 'active']);
-        self::assertSame(ProjectStatusEnum::Active, $input->statusEnum());
+        $input = (new ProjectInputFactory())->fromArray(['title' => 'X', 'status' => 'active']);
+        self::assertSame(ProjectStatusEnum::Active, $input->getStatusEnum());
     }
 }

@@ -4,80 +4,79 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Dto;
 
-use Aurora\Core\Support\Str;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ProjectInput
+class ProjectInput implements ProjectInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.projects.errors.title_required')]
         #[Assert\Length(max: 255)]
-        public string $title = '',
-        public ?string $description = null,
+        public readonly string $title = '',
+        public readonly ?string $description = null,
         #[Assert\NotBlank(message: 'backend.projects.errors.status_required')]
         #[Assert\Choice(callback: [ProjectStatusEnum::class, 'values'], message: 'backend.projects.errors.status_invalid')]
-        public string $status = ProjectStatusEnum::Draft->value,
-        public ?string $startDate = null,
-        public ?string $endDate = null,
+        public readonly string $status = ProjectStatusEnum::Draft->value,
+        public readonly ?string $startDate = null,
+        public readonly ?string $endDate = null,
         #[Assert\Positive]
-        public ?int $responsibleUserId = null,
+        public readonly ?int $responsibleUserId = null,
         /** @var list<int> */
         #[Assert\All([new Assert\Positive()])]
-        public array $crmContactIds = [],
+        public readonly array $crmContactIds = [],
         #[Assert\Positive]
-        public ?int $crmCompanyId = null,
+        public readonly ?int $crmCompanyId = null,
         #[Assert\Positive]
-        public ?int $crmDealId = null,
+        public readonly ?int $crmDealId = null,
     ) {}
 
-    public function statusEnum(): ProjectStatusEnum
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getStatusEnum(): ProjectStatusEnum
     {
         return ProjectStatusEnum::from($this->status);
     }
 
-    /**
-     * @return list<int>
-     */
-    private static function normalizeIdList(mixed $raw): array
+    public function getStartDate(): ?string
     {
-        if (!is_array($raw)) {
-            return [];
-        }
-
-        $ids = [];
-        foreach ($raw as $value) {
-            if (null === $value) {
-                continue;
-            }
-
-            if ('' === $value) {
-                continue;
-            }
-
-            $id = (int) $value;
-            if ($id > 0) {
-                $ids[] = $id;
-            }
-        }
-
-        return array_values(array_unique($ids));
+        return $this->startDate;
     }
 
-    public static function fromArray(array $data): self
+    public function getEndDate(): ?string
     {
-        return new self(
-            title: Str::trimFromArray($data, 'title'),
-            description: Str::trimOrNullFromArray($data, 'description'),
-            status: isset($data['status']) && '' !== $data['status']
-                ? (string) $data['status']
-                : ProjectStatusEnum::Draft->value,
-            startDate: Str::trimOrNullFromArray($data, 'startDate'),
-            endDate: Str::trimOrNullFromArray($data, 'endDate'),
-            responsibleUserId: isset($data['responsibleUserId']) && '' !== (string) $data['responsibleUserId'] ? (int) $data['responsibleUserId'] : null,
-            crmContactIds: self::normalizeIdList($data['crmContactIds'] ?? []),
-            crmCompanyId: isset($data['crmCompanyId']) && '' !== (string) $data['crmCompanyId'] ? (int) $data['crmCompanyId'] : null,
-            crmDealId: isset($data['crmDealId']) && '' !== (string) $data['crmDealId'] ? (int) $data['crmDealId'] : null,
-        );
+        return $this->endDate;
+    }
+
+    public function getResponsibleUserId(): ?int
+    {
+        return $this->responsibleUserId;
+    }
+
+    public function getCrmContactIds(): array
+    {
+        return $this->crmContactIds;
+    }
+
+    public function getCrmCompanyId(): ?int
+    {
+        return $this->crmCompanyId;
+    }
+
+    public function getCrmDealId(): ?int
+    {
+        return $this->crmDealId;
     }
 }

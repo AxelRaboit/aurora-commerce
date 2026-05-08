@@ -5,21 +5,23 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectTaskAttachmentManager
+#[AsAlias(ProjectTaskAttachmentManagerInterface::class)]
+class ProjectTaskAttachmentManager implements ProjectTaskAttachmentManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MediaRepository $mediaRepository,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MediaRepository $mediaRepository,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
     /** @param list<int> $mediaIds */
-    public function attach(ProjectTask $task, array $mediaIds): int
+    public function attach(ProjectTaskInterface $task, array $mediaIds): int
     {
         if ([] === $mediaIds) {
             return 0;
@@ -51,7 +53,7 @@ final readonly class ProjectTaskAttachmentManager
         return $added;
     }
 
-    public function detach(ProjectTask $task, Media $media): void
+    public function detach(ProjectTaskInterface $task, MediaInterface $media): void
     {
         if (!$task->getAttachments()->contains($media)) {
             return;

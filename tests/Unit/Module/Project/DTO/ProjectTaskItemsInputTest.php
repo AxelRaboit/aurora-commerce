@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Dto;
 
 use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
+use Aurora\Module\Project\Dto\ProjectTaskItemsInputFactory;
 use PHPUnit\Framework\TestCase;
 
 final class ProjectTaskItemsInputTest extends TestCase
 {
     public function testFromArrayBuildsItemsFromValidEntries(): void
     {
-        $input = ProjectTaskItemsInput::fromArray([
+        $input = (new ProjectTaskItemsInputFactory())->fromArray([
             'items' => [
                 ['label' => 'First', 'done' => true],
                 ['label' => 'Second', 'done' => false],
@@ -26,7 +27,7 @@ final class ProjectTaskItemsInputTest extends TestCase
 
     public function testFromArraySkipsItemsWithEmptyLabels(): void
     {
-        $input = ProjectTaskItemsInput::fromArray([
+        $input = (new ProjectTaskItemsInputFactory())->fromArray([
             'items' => [
                 ['label' => 'Keep', 'done' => false],
                 ['label' => '', 'done' => true],     // empty label dropped
@@ -42,7 +43,7 @@ final class ProjectTaskItemsInputTest extends TestCase
 
     public function testFromArrayCoercesDoneToBoolean(): void
     {
-        $input = ProjectTaskItemsInput::fromArray([
+        $input = (new ProjectTaskItemsInputFactory())->fromArray([
             'items' => [
                 ['label' => 'A', 'done' => 'truthy'],
                 ['label' => 'B', 'done' => 0],
@@ -57,7 +58,7 @@ final class ProjectTaskItemsInputTest extends TestCase
 
     public function testFromArrayIgnoresNonArrayItems(): void
     {
-        $input = ProjectTaskItemsInput::fromArray([
+        $input = (new ProjectTaskItemsInputFactory())->fromArray([
             'items' => [
                 ['label' => 'Valid', 'done' => false],
                 'malformed',
@@ -72,7 +73,7 @@ final class ProjectTaskItemsInputTest extends TestCase
 
     public function testFromArrayHandlesMissingItemsKey(): void
     {
-        $input = ProjectTaskItemsInput::fromArray([]);
+        $input = (new ProjectTaskItemsInputFactory())->fromArray([]);
         self::assertSame([], $input->items);
     }
 }

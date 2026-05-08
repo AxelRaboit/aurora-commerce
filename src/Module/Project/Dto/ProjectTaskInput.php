@@ -4,96 +4,108 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Dto;
 
-use Aurora\Core\Support\Str;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ProjectTaskInput
+class ProjectTaskInput implements ProjectTaskInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.projects.errors.title_required')]
         #[Assert\Length(max: 255)]
-        public string $title = '',
-        public ?string $description = null,
+        public readonly string $title = '',
+        public readonly ?string $description = null,
         #[Assert\Positive]
-        public ?int $columnId = null,
+        public readonly ?int $columnId = null,
         #[Assert\NotBlank(message: 'backend.projects.errors.priority_required')]
         #[Assert\Choice(callback: [ProjectTaskPriorityEnum::class, 'values'], message: 'backend.projects.errors.priority_invalid')]
-        public string $priority = ProjectTaskPriorityEnum::Medium->value,
+        public readonly string $priority = ProjectTaskPriorityEnum::Medium->value,
         #[Assert\Positive]
-        public ?int $assigneeId = null,
-        public ?string $dueDate = null,
-        public int $position = 0,
+        public readonly ?int $assigneeId = null,
+        public readonly ?string $dueDate = null,
+        public readonly int $position = 0,
         #[Assert\Positive]
-        public ?int $projectId = null,
+        public readonly ?int $projectId = null,
         #[Assert\PositiveOrZero]
-        public ?int $storyPoints = null,
+        public readonly ?int $storyPoints = null,
         #[Assert\PositiveOrZero]
-        public ?int $estimateMinutes = null,
+        public readonly ?int $estimateMinutes = null,
         /** @var list<int> */
         #[Assert\All([new Assert\Positive()])]
-        public array $labelIds = [],
+        public readonly array $labelIds = [],
         /** @var list<int> */
         #[Assert\All([new Assert\Positive()])]
-        public array $watcherIds = [],
+        public readonly array $watcherIds = [],
         #[Assert\Positive]
-        public ?int $sprintId = null,
+        public readonly ?int $sprintId = null,
     ) {}
 
-    public function priorityEnum(): ProjectTaskPriorityEnum
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getColumnId(): ?int
+    {
+        return $this->columnId;
+    }
+
+    public function getPriority(): string
+    {
+        return $this->priority;
+    }
+
+    public function getPriorityEnum(): ProjectTaskPriorityEnum
     {
         return ProjectTaskPriorityEnum::from($this->priority);
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    public function getAssigneeId(): ?int
     {
-        return new self(
-            title: Str::trimFromArray($data, 'title'),
-            description: Str::trimOrNullFromArray($data, 'description'),
-            columnId: isset($data['columnId']) && '' !== (string) $data['columnId'] ? (int) $data['columnId'] : null,
-            priority: isset($data['priority']) && '' !== $data['priority']
-                ? (string) $data['priority']
-                : ProjectTaskPriorityEnum::Medium->value,
-            assigneeId: isset($data['assigneeId']) && '' !== (string) $data['assigneeId'] ? (int) $data['assigneeId'] : null,
-            dueDate: Str::trimOrNullFromArray($data, 'dueDate'),
-            position: isset($data['position']) ? (int) $data['position'] : 0,
-            projectId: isset($data['projectId']) && '' !== (string) $data['projectId'] ? (int) $data['projectId'] : null,
-            storyPoints: isset($data['storyPoints']) && '' !== (string) $data['storyPoints'] ? (int) $data['storyPoints'] : null,
-            estimateMinutes: isset($data['estimateMinutes']) && '' !== (string) $data['estimateMinutes'] ? (int) $data['estimateMinutes'] : null,
-            labelIds: self::normalizeIdList($data['labelIds'] ?? []),
-            watcherIds: self::normalizeIdList($data['watcherIds'] ?? []),
-            sprintId: isset($data['sprintId']) && '' !== (string) $data['sprintId'] ? (int) $data['sprintId'] : null,
-        );
+        return $this->assigneeId;
     }
 
-    /**
-     * @return list<int>
-     */
-    private static function normalizeIdList(mixed $raw): array
+    public function getDueDate(): ?string
     {
-        if (!is_array($raw)) {
-            return [];
-        }
+        return $this->dueDate;
+    }
 
-        $ids = [];
-        foreach ($raw as $value) {
-            if (null === $value) {
-                continue;
-            }
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
 
-            if ('' === $value) {
-                continue;
-            }
+    public function getProjectId(): ?int
+    {
+        return $this->projectId;
+    }
 
-            $id = (int) $value;
-            if ($id > 0) {
-                $ids[] = $id;
-            }
-        }
+    public function getStoryPoints(): ?int
+    {
+        return $this->storyPoints;
+    }
 
-        return array_values(array_unique($ids));
+    public function getEstimateMinutes(): ?int
+    {
+        return $this->estimateMinutes;
+    }
+
+    public function getLabelIds(): array
+    {
+        return $this->labelIds;
+    }
+
+    public function getWatcherIds(): array
+    {
+        return $this->watcherIds;
+    }
+
+    public function getSprintId(): ?int
+    {
+        return $this->sprintId;
     }
 }

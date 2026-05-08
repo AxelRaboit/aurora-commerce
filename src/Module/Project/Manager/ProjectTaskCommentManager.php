@@ -7,25 +7,28 @@ namespace Aurora\Module\Project\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Notification\Manager\NotificationManager;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Project\Dto\ProjectTaskCommentInput;
-use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Dto\ProjectTaskCommentInputInterface;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
+use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class ProjectTaskCommentManager
+#[AsAlias(ProjectTaskCommentManagerInterface::class)]
+class ProjectTaskCommentManager implements ProjectTaskCommentManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
-        private NotificationManager $notifier,
-        private TranslatorInterface $translator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly NotificationManager $notifier,
+        protected readonly TranslatorInterface $translator,
     ) {}
 
-    public function create(ProjectTask $task, User $author, ProjectTaskCommentInput $input): ProjectTaskComment
+    public function create(ProjectTaskInterface $task, User $author, ProjectTaskCommentInputInterface $input): ProjectTaskCommentInterface
     {
-        $comment = new ProjectTaskComment();
-        $comment->setTask($task)->setAuthor($author)->setContent($input->content);
+        $comment = $this->createProjectTaskComment();
+        $comment->setTask($task)->setAuthor($author)->setContent($input->getContent());
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
@@ -53,7 +56,7 @@ final readonly class ProjectTaskCommentManager
                 $task->getTitle(),
                 $this->translator->trans('backend.notifications.taskCommented', [
                     '%name%' => $author->getName(),
-                    '%content%' => mb_substr($input->content, 0, 200),
+                    '%content%' => mb_substr($input->getContent(), 0, 200),
                 ], null, $recipient->getLocale()->value),
                 null,
                 ['projectId' => $task->getProject()->getId(), 'taskId' => $task->getId(), 'commentId' => $comment->getId()],
@@ -63,7 +66,7 @@ final readonly class ProjectTaskCommentManager
         return $comment;
     }
 
-    public function delete(ProjectTaskComment $comment): void
+    public function delete(ProjectTaskCommentInterface $comment): void
     {
         $taskId = $comment->getTask()->getId();
         $projectId = $comment->getTask()->getProject()->getId();
@@ -76,5 +79,10 @@ final readonly class ProjectTaskCommentManager
             'projectId' => $projectId,
             'commentId' => $commentId,
         ]);
+    }
+
+    protected function createProjectTaskComment(): ProjectTaskCommentInterface
+    {
+        return new ProjectTaskComment();
     }
 }

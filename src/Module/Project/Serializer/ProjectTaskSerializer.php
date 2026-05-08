@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Serializer;
 
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class ProjectTaskSerializer
+#[AsAlias(ProjectTaskSerializerInterface::class)]
+class ProjectTaskSerializer implements ProjectTaskSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private ProjectTaskCommentSerializer $commentSerializer,
+        protected readonly TranslatorInterface $translator,
+        protected readonly ProjectTaskCommentSerializerInterface $commentSerializer,
     ) {}
 
-    public function serialize(ProjectTask $task): array
+    public function serialize(ProjectTaskInterface $task): array
     {
         $items = $task->getItems()->toArray();
         $itemsDoneCount = 0;

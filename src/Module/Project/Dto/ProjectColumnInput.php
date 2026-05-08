@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ProjectColumnInput
+class ProjectColumnInput implements ProjectColumnInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.projects.errors.column_label_required')]
         #[Assert\Length(max: 100, maxMessage: 'backend.projects.errors.column_label_too_long')]
-        public string $label = '',
+        public readonly string $label = '',
     ) {}
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    public function getLabel(): string
     {
-        return new self(
-            label: Str::trimFromArray($data, 'label'),
-        );
+        return $this->label;
     }
 }

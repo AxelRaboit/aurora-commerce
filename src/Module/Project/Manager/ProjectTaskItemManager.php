@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
-use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Dto\ProjectTaskItemsInputInterface;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Entity\ProjectTaskItem;
+use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectTaskItemManager
+#[AsAlias(ProjectTaskItemManagerInterface::class)]
+class ProjectTaskItemManager implements ProjectTaskItemManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
     /**
      * Bulk-replace the task's checklist with the desired list. Simpler and more
      * predictable than diffing — checklists are short, the cost is negligible.
      */
-    public function replaceForTask(ProjectTask $task, ProjectTaskItemsInput $input): void
+    public function replaceForTask(ProjectTaskInterface $task, ProjectTaskItemsInputInterface $input): void
     {
         foreach ($task->getItems()->toArray() as $existing) {
             $this->entityManager->remove($existing);
@@ -29,8 +32,8 @@ final readonly class ProjectTaskItemManager
 
         $this->entityManager->flush();
 
-        foreach ($input->items as $position => $itemData) {
-            $item = new ProjectTaskItem();
+        foreach ($input->getItems() as $position => $itemData) {
+            $item = $this->createProjectTaskItem();
             $item->setTask($task)
                 ->setLabel($itemData['label'])
                 ->setDone($itemData['done'])
@@ -42,7 +45,12 @@ final readonly class ProjectTaskItemManager
 
         $this->auditLogger->log('project', 'task.items.replaced', 'ProjectTask', $task->getId(), [
             'projectId' => $task->getProject()->getId(),
-            'count' => count($input->items),
+            'count' => count($input->getItems()),
         ]);
+    }
+
+    protected function createProjectTaskItem(): ProjectTaskItemInterface
+    {
+        return new ProjectTaskItem();
     }
 }

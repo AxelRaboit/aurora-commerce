@@ -7,15 +7,18 @@ namespace Aurora\Module\Project\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Module\Project\Dto\ProjectColumnInput;
-use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Project\Dto\ProjectColumnInputInterface;
 use Aurora\Module\Project\Entity\ProjectColumn;
+use Aurora\Module\Project\Entity\ProjectColumnInterface;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Repository\ProjectColumnRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class ProjectColumnManager
+#[AsAlias(ProjectColumnManagerInterface::class)]
+class ProjectColumnManager implements ProjectColumnManagerInterface
 {
     /**
      * Translation keys for the default columns seeded on project creation.
@@ -28,23 +31,18 @@ final readonly class ProjectColumnManager
     ];
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ProjectColumnRepository $columnRepository,
-        private AuditLogger $auditLogger,
-        private SequenceGenerator $sequenceGenerator,
-        private TranslatorInterface $translator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly ProjectColumnRepository $columnRepository,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly TranslatorInterface $translator,
     ) {}
 
-    /**
-     * Seed the 3 default Kanban columns when a project is created.
-     *
-     * @return list<ProjectColumn>
-     */
-    public function seedDefaults(Project $project): array
+    public function seedDefaults(ProjectInterface $project): array
     {
         $columns = [];
         foreach (self::DEFAULT_COLUMN_KEYS as $position => $key) {
-            $column = new ProjectColumn();
+            $column = $this->createProjectColumn();
             $column->setProject($project)
                 ->setLabel($this->translator->trans($key))
                 ->setPosition($position)
@@ -59,46 +57,47 @@ final readonly class ProjectColumnManager
         return $columns;
     }
 
-    public function create(Project $project, ProjectColumnInput $input): ProjectColumn
+    public function create(ProjectInterface $project, ProjectColumnInputInterface $input): ProjectColumnInterface
     {
         $existing = $this->columnRepository->findByProject($project);
         $nextPosition = count($existing);
 
-        $column = new ProjectColumn();
+        $column = $this->createProjectColumn();
         $column->setProject($project)
-            ->setLabel($input->label)
+            ->setLabel($input->getLabel())
             ->setPosition($nextPosition)
             ->setReference($this->sequenceGenerator->next(SequencePrefixEnum::ProjectColumn->value));
         $this->entityManager->persist($column);
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'column.created', 'ProjectColumn', $column->getId(), [
+            ...$this->auditPayload($column),
             'projectId' => $project->getId(),
-            'label' => $column->getLabel(),
         ]);
 
         return $column;
     }
 
-    public function update(ProjectColumn $column, ProjectColumnInput $input): void
+    public function update(ProjectColumnInterface $column, ProjectColumnInputInterface $input): void
     {
         $previousLabel = $column->getLabel();
-        $column->setLabel($input->label);
+        $column->setLabel($input->getLabel());
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'column.updated', 'ProjectColumn', $column->getId(), [
+            ...$this->auditPayload($column),
             'projectId' => $column->getProject()->getId(),
             'from' => $previousLabel,
             'to' => $column->getLabel(),
         ]);
     }
 
-    public function delete(ProjectColumn $column): void
+    public function delete(ProjectColumnInterface $column): void
     {
         $project = $column->getProject();
         $remaining = array_values(array_filter(
             $this->columnRepository->findByProject($project),
-            static fn (ProjectColumn $candidate): bool => $candidate->getId() !== $column->getId(),
+            static fn (ProjectColumnInterface $candidate): bool => $candidate->getId() !== $column->getId(),
         ));
 
         if ([] === $remaining) {
@@ -113,7 +112,7 @@ final readonly class ProjectColumnManager
         }
 
         $columnId = $column->getId();
-        $columnLabel = $column->getLabel();
+        $payload = $this->auditPayload($column);
         $this->entityManager->remove($column);
         $this->entityManager->flush();
 
@@ -125,13 +124,13 @@ final readonly class ProjectColumnManager
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'column.deleted', 'ProjectColumn', $columnId, [
+            ...$payload,
             'projectId' => $project->getId(),
-            'label' => $columnLabel,
         ]);
     }
 
     /** @param list<int> $orderedIds */
-    public function reorder(Project $project, array $orderedIds): void
+    public function reorder(ProjectInterface $project, array $orderedIds): void
     {
         $columns = $this->columnRepository->findByProject($project);
         $indexed = [];
@@ -151,5 +150,20 @@ final readonly class ProjectColumnManager
             'projectId' => $project->getId(),
             'columnIds' => $orderedIds,
         ]);
+    }
+
+    protected function createProjectColumn(): ProjectColumnInterface
+    {
+        return new ProjectColumn();
+    }
+
+    /**
+     * Base payload for every ProjectColumn audit entry. Override to add custom
+     * fields. Note: column lifecycle uses domain events (created, updated,
+     * deleted, reordered) which splat-merge this payload inline.
+     */
+    protected function auditPayload(ProjectColumnInterface $column): array
+    {
+        return ['label' => $column->getLabel()];
     }
 }

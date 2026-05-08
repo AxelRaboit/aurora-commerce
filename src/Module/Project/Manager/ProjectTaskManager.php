@@ -10,47 +10,46 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Module\Project\Dto\ProjectTaskInput;
-use Aurora\Module\Project\Entity\Project;
-use Aurora\Module\Project\Entity\ProjectColumn;
+use Aurora\Module\Project\Dto\ProjectTaskInputInterface;
+use Aurora\Module\Project\Entity\ProjectColumnInterface;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Repository\ProjectColumnRepository;
 use Aurora\Module\Project\Repository\ProjectLabelRepository;
 use Aurora\Module\Project\Repository\ProjectSprintRepository;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class ProjectTaskManager
+#[AsAlias(ProjectTaskManagerInterface::class)]
+class ProjectTaskManager implements ProjectTaskManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
-        private AuditLogger $auditLogger,
-        private SequenceGenerator $sequenceGenerator,
-        private ProjectTaskRepository $projectTaskRepository,
-        private ProjectColumnRepository $columnRepository,
-        private ProjectLabelRepository $labelRepository,
-        private ProjectSprintRepository $sprintRepository,
-        private NotificationManager $notifier,
-        private TranslatorInterface $translator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly UserRepository $userRepository,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly ProjectTaskRepository $projectTaskRepository,
+        protected readonly ProjectColumnRepository $columnRepository,
+        protected readonly ProjectLabelRepository $labelRepository,
+        protected readonly ProjectSprintRepository $sprintRepository,
+        protected readonly NotificationManager $notifier,
+        protected readonly TranslatorInterface $translator,
     ) {}
 
-    public function create(Project $project, ProjectTaskInput $input): ProjectTask
+    public function create(ProjectInterface $project, ProjectTaskInputInterface $input): ProjectTaskInterface
     {
-        $task = new ProjectTask();
+        $task = $this->createProjectTask();
         $task->setProject($project);
         $this->applyInput($task, $input);
         $task->setReference($this->sequenceGenerator->next(SequencePrefixEnum::ProjectTask->value));
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('project', 'task.created', 'ProjectTask', $task->getId(), [
-            'projectId' => $project->getId(),
-            'title' => $task->getTitle(),
-            'reference' => $task->getReference(),
-        ]);
+        $this->auditCreated($task);
 
         // Notify newly assigned user.
         if ($task->getAssignee() instanceof User) {
@@ -68,16 +67,13 @@ final readonly class ProjectTaskManager
         return $task;
     }
 
-    public function update(ProjectTask $task, ProjectTaskInput $input): void
+    public function update(ProjectTaskInterface $task, ProjectTaskInputInterface $input): void
     {
         $previousAssigneeId = $task->getAssignee()?->getId();
         $this->applyInput($task, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('project', 'task.updated', 'ProjectTask', $task->getId(), [
-            'projectId' => $task->getProject()->getId(),
-            'title' => $task->getTitle(),
-        ]);
+        $this->auditUpdated($task);
 
         // Notify if assignee changed and is now set.
         $newAssignee = $task->getAssignee();
@@ -93,23 +89,16 @@ final readonly class ProjectTaskManager
         }
     }
 
-    public function delete(ProjectTask $task): void
+    public function delete(ProjectTaskInterface $task): void
     {
-        $projectId = $task->getProject()->getId();
-        $title = $task->getTitle();
-        $id = $task->getId();
+        $this->auditDeleted($task);
 
         $this->entityManager->remove($task);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('project', 'task.deleted', 'ProjectTask', $id, [
-            'projectId' => $projectId,
-            'title' => $title,
-        ]);
     }
 
     /** @param list<int> $orderedIds */
-    public function reorder(Project $project, array $orderedIds, ?ProjectColumn $targetColumn = null): void
+    public function reorder(ProjectInterface $project, array $orderedIds, ?ProjectColumnInterface $targetColumn = null): void
     {
         $tasks = $this->projectTaskRepository->findByProject($project);
         $indexed = [];
@@ -121,7 +110,7 @@ final readonly class ProjectTaskManager
         foreach ($orderedIds as $position => $taskId) {
             if (isset($indexed[$taskId])) {
                 $indexed[$taskId]->setPosition($position);
-                if ($targetColumn instanceof ProjectColumn) {
+                if ($targetColumn instanceof ProjectColumnInterface) {
                     $indexed[$taskId]->setColumn($targetColumn);
                 }
 
@@ -138,28 +127,33 @@ final readonly class ProjectTaskManager
         ]);
     }
 
-    private function applyInput(ProjectTask $task, ProjectTaskInput $input): void
+    protected function createProjectTask(): ProjectTaskInterface
     {
-        $task->setTitle($input->title);
-        $task->setDescription($input->description);
-        if (null !== $input->columnId) {
-            $column = $this->columnRepository->find($input->columnId);
+        return new ProjectTask();
+    }
+
+    protected function applyInput(ProjectTaskInterface $task, ProjectTaskInputInterface $input): void
+    {
+        $task->setTitle($input->getTitle());
+        $task->setDescription($input->getDescription());
+        if (null !== $input->getColumnId()) {
+            $column = $this->columnRepository->find($input->getColumnId());
             if (null !== $column) {
                 $task->setColumn($column);
             }
         }
 
-        $task->setPriority($input->priorityEnum());
-        $task->setAssignee($input->assigneeId ? $this->userRepository->find($input->assigneeId) : null);
-        $task->setDueDate($input->dueDate ? new DateTimeImmutable($input->dueDate) : null);
-        $task->setPosition($input->position);
-        $task->setStoryPoints($input->storyPoints);
-        $task->setEstimateMinutes($input->estimateMinutes);
+        $task->setPriority($input->getPriorityEnum());
+        $task->setAssignee(null !== $input->getAssigneeId() ? $this->userRepository->find($input->getAssigneeId()) : null);
+        $task->setDueDate($input->getDueDate() ? new DateTimeImmutable($input->getDueDate()) : null);
+        $task->setPosition($input->getPosition());
+        $task->setStoryPoints($input->getStoryPoints());
+        $task->setEstimateMinutes($input->getEstimateMinutes());
 
         // Sync labels (many-to-many) in a single batch query.
         $desiredLabels = [];
-        if ([] !== $input->labelIds) {
-            foreach ($this->labelRepository->findBy(['id' => $input->labelIds]) as $label) {
+        if ([] !== $input->getLabelIds()) {
+            foreach ($this->labelRepository->findBy(['id' => $input->getLabelIds()]) as $label) {
                 $desiredLabels[(int) $label->getId()] = $label;
             }
         }
@@ -176,8 +170,8 @@ final readonly class ProjectTaskManager
 
         // Sync watchers (many-to-many).
         $desiredWatchers = [];
-        if ([] !== $input->watcherIds) {
-            foreach ($this->userRepository->findBy(['id' => $input->watcherIds]) as $watcher) {
+        if ([] !== $input->getWatcherIds()) {
+            foreach ($this->userRepository->findBy(['id' => $input->getWatcherIds()]) as $watcher) {
                 $desiredWatchers[(int) $watcher->getId()] = $watcher;
             }
         }
@@ -193,6 +187,35 @@ final readonly class ProjectTaskManager
         }
 
         // Sprint (single FK).
-        $task->setSprint(null !== $input->sprintId ? $this->sprintRepository->find($input->sprintId) : null);
+        $task->setSprint(null !== $input->getSprintId() ? $this->sprintRepository->find($input->getSprintId()) : null);
+    }
+
+    protected function auditCreated(ProjectTaskInterface $task): void
+    {
+        $this->auditLogger->log('project', 'task.created', 'ProjectTask', $task->getId(), [
+            ...$this->auditPayload($task),
+            'projectId' => $task->getProject()->getId(),
+        ]);
+    }
+
+    protected function auditUpdated(ProjectTaskInterface $task): void
+    {
+        $this->auditLogger->log('project', 'task.updated', 'ProjectTask', $task->getId(), [
+            ...$this->auditPayload($task),
+            'projectId' => $task->getProject()->getId(),
+        ]);
+    }
+
+    protected function auditDeleted(ProjectTaskInterface $task): void
+    {
+        $this->auditLogger->log('project', 'task.deleted', 'ProjectTask', $task->getId(), [
+            ...$this->auditPayload($task),
+            'projectId' => $task->getProject()->getId(),
+        ]);
+    }
+
+    protected function auditPayload(ProjectTaskInterface $task): array
+    {
+        return ['title' => $task->getTitle(), 'reference' => $task->getReference()];
     }
 }

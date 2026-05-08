@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Project\Entity\ProjectTaskComment;
+use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectTaskCommentSerializer
+#[AsAlias(ProjectTaskCommentSerializerInterface::class)]
+class ProjectTaskCommentSerializer implements ProjectTaskCommentSerializerInterface
 {
     /** @return array<string, mixed> */
-    public function serialize(ProjectTaskComment $comment): array
+    public function serialize(ProjectTaskCommentInterface $comment): array
     {
         return [
             'id' => $comment->getId(),

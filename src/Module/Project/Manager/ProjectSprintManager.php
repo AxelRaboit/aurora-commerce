@@ -5,66 +5,79 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Module\Project\Dto\ProjectSprintInput;
-use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Project\Dto\ProjectSprintInputInterface;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectSprint;
+use Aurora\Module\Project\Entity\ProjectSprintInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectSprintManager
+#[AsAlias(ProjectSprintManagerInterface::class)]
+class ProjectSprintManager implements ProjectSprintManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(Project $project, ProjectSprintInput $input): ProjectSprint
+    public function create(ProjectInterface $project, ProjectSprintInputInterface $input): ProjectSprintInterface
     {
-        $sprint = new ProjectSprint();
+        $sprint = $this->createProjectSprint();
         $sprint->setProject($project);
         $this->applyInput($sprint, $input);
         $this->entityManager->persist($sprint);
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'sprint.created', 'ProjectSprint', $sprint->getId(), [
+            ...$this->auditPayload($sprint),
             'projectId' => $project->getId(),
-            'name' => $sprint->getName(),
         ]);
 
         return $sprint;
     }
 
-    public function update(ProjectSprint $sprint, ProjectSprintInput $input): void
+    public function update(ProjectSprintInterface $sprint, ProjectSprintInputInterface $input): void
     {
         $this->applyInput($sprint, $input);
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'sprint.updated', 'ProjectSprint', $sprint->getId(), [
+            ...$this->auditPayload($sprint),
             'projectId' => $sprint->getProject()->getId(),
-            'name' => $sprint->getName(),
         ]);
     }
 
-    public function delete(ProjectSprint $sprint): void
+    public function delete(ProjectSprintInterface $sprint): void
     {
         $sprintId = $sprint->getId();
         $projectId = $sprint->getProject()->getId();
-        $name = $sprint->getName();
+        $payload = $this->auditPayload($sprint);
 
         $this->entityManager->remove($sprint);
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'sprint.deleted', 'ProjectSprint', $sprintId, [
+            ...$payload,
             'projectId' => $projectId,
-            'name' => $name,
         ]);
     }
 
-    private function applyInput(ProjectSprint $sprint, ProjectSprintInput $input): void
+    protected function createProjectSprint(): ProjectSprintInterface
     {
-        $sprint->setName($input->name)
-            ->setStartDate($input->startDate ? new DateTimeImmutable($input->startDate) : null)
-            ->setEndDate($input->endDate ? new DateTimeImmutable($input->endDate) : null)
-            ->setIsActive($input->isActive);
+        return new ProjectSprint();
+    }
+
+    protected function applyInput(ProjectSprintInterface $sprint, ProjectSprintInputInterface $input): void
+    {
+        $sprint->setName($input->getName())
+            ->setStartDate($input->getStartDate() ? new DateTimeImmutable($input->getStartDate()) : null)
+            ->setEndDate($input->getEndDate() ? new DateTimeImmutable($input->getEndDate()) : null)
+            ->setIsActive($input->isActive());
+    }
+
+    protected function auditPayload(ProjectSprintInterface $sprint): array
+    {
+        return ['name' => $sprint->getName()];
     }
 }

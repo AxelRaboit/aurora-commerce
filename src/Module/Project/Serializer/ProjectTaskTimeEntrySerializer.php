@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
+use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectTaskTimeEntrySerializer
+#[AsAlias(ProjectTaskTimeEntrySerializerInterface::class)]
+class ProjectTaskTimeEntrySerializer implements ProjectTaskTimeEntrySerializerInterface
 {
     /** @return array<string, mixed> */
-    public function serialize(ProjectTaskTimeEntry $entry): array
+    public function serialize(ProjectTaskTimeEntryInterface $entry): array
     {
         return [
             'id' => $entry->getId(),

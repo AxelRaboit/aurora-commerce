@@ -13,14 +13,14 @@ use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Project\Dto\ProjectColumnInput;
-use Aurora\Module\Project\Dto\ProjectInput;
-use Aurora\Module\Project\Dto\ProjectLabelInput;
-use Aurora\Module\Project\Dto\ProjectSprintInput;
-use Aurora\Module\Project\Dto\ProjectTaskCommentInput;
-use Aurora\Module\Project\Dto\ProjectTaskInput;
-use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
-use Aurora\Module\Project\Dto\ProjectTaskTimeEntryInput;
+use Aurora\Module\Project\Dto\ProjectColumnInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectLabelInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectSprintInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectTaskCommentInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectTaskInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectTaskItemsInputFactoryInterface;
+use Aurora\Module\Project\Dto\ProjectTaskTimeEntryInputFactoryInterface;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;
@@ -90,6 +90,14 @@ final class ProjectsController extends AbstractController
         private readonly ProjectsViewBuilder $viewBuilder,
         private readonly AuditLogRepository $auditLogRepository,
         private readonly AuditLogSerializer $auditLogSerializer,
+        private readonly ProjectInputFactoryInterface $projectInputFactory,
+        private readonly ProjectTaskInputFactoryInterface $taskInputFactory,
+        private readonly ProjectColumnInputFactoryInterface $columnInputFactory,
+        private readonly ProjectLabelInputFactoryInterface $labelInputFactory,
+        private readonly ProjectSprintInputFactoryInterface $sprintInputFactory,
+        private readonly ProjectTaskCommentInputFactoryInterface $commentInputFactory,
+        private readonly ProjectTaskItemsInputFactoryInterface $taskItemsInputFactory,
+        private readonly ProjectTaskTimeEntryInputFactoryInterface $timeEntryInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -108,7 +116,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.projects.create')]
     public function create(Request $request): JsonResponse
     {
-        $input = ProjectInput::fromArray($this->decodeJson($request));
+        $input = $this->projectInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -148,7 +156,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.projects.edit')]
     public function update(Project $project, Request $request): JsonResponse
     {
-        $input = ProjectInput::fromArray($this->decodeJson($request));
+        $input = $this->projectInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -173,7 +181,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function createTask(Project $project, Request $request): JsonResponse
     {
-        $input = ProjectTaskInput::fromArray($this->decodeJson($request));
+        $input = $this->taskInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -189,7 +197,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function updateTask(#[MapEntity(id: 'taskId')] ProjectTask $task, Request $request): JsonResponse
     {
-        $input = ProjectTaskInput::fromArray($this->decodeJson($request));
+        $input = $this->taskInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -229,7 +237,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function createColumn(Project $project, Request $request): JsonResponse
     {
-        $input = ProjectColumnInput::fromArray($this->decodeJson($request));
+        $input = $this->columnInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -245,7 +253,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function updateColumn(#[MapEntity(id: 'columnId')] ProjectColumn $column, Request $request): JsonResponse
     {
-        $input = ProjectColumnInput::fromArray($this->decodeJson($request));
+        $input = $this->columnInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -287,7 +295,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function createLabel(Project $project, Request $request): JsonResponse
     {
-        $input = ProjectLabelInput::fromArray($this->decodeJson($request));
+        $input = $this->labelInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -306,7 +314,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function updateLabel(#[MapEntity(id: 'labelId')] ProjectLabel $label, Request $request): JsonResponse
     {
-        $input = ProjectLabelInput::fromArray($this->decodeJson($request));
+        $input = $this->labelInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -332,7 +340,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function replaceTaskItems(#[MapEntity(id: 'taskId')] ProjectTask $task, Request $request): JsonResponse
     {
-        $input = ProjectTaskItemsInput::fromArray($this->decodeJson($request));
+        $input = $this->taskItemsInputFactory->fromArray($this->decodeJson($request));
         $this->taskItemManager->replaceForTask($task, $input);
 
         return $this->jsonSuccess();
@@ -349,7 +357,7 @@ final class ProjectsController extends AbstractController
             return $this->jsonInvalidInput(['_global' => 'backend.projects.errors.time_user_required']);
         }
 
-        $input = ProjectTaskTimeEntryInput::fromArray($this->decodeJson($request));
+        $input = $this->timeEntryInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -380,7 +388,7 @@ final class ProjectsController extends AbstractController
             throw new AccessDeniedHttpException();
         }
 
-        $input = ProjectTaskCommentInput::fromArray($this->decodeJson($request));
+        $input = $this->commentInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -432,7 +440,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function createSprint(Project $project, Request $request): JsonResponse
     {
-        $input = ProjectSprintInput::fromArray($this->decodeJson($request));
+        $input = $this->sprintInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -447,7 +455,7 @@ final class ProjectsController extends AbstractController
     #[IsGranted('project.tasks.manage')]
     public function updateSprint(#[MapEntity(id: 'sprintId')] ProjectSprint $sprint, Request $request): JsonResponse
     {
-        $input = ProjectSprintInput::fromArray($this->decodeJson($request));
+        $input = $this->sprintInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);

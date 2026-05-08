@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Project\Entity\ProjectSprint;
+use Aurora\Module\Project\Entity\ProjectSprintInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProjectSprintSerializer
+#[AsAlias(ProjectSprintSerializerInterface::class)]
+class ProjectSprintSerializer implements ProjectSprintSerializerInterface
 {
     /** @return array<string, mixed> */
-    public function serialize(ProjectSprint $sprint): array
+    public function serialize(ProjectSprintInterface $sprint): array
     {
         return [
             'id' => $sprint->getId(),

@@ -12,7 +12,7 @@ use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Aurora\Module\Project\Repository\ProjectRepository;
-use Aurora\Module\Project\Serializer\ProjectSerializer;
+use Aurora\Module\Project\Serializer\ProjectSerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,7 +24,7 @@ final readonly class ProjectsViewBuilder
         private CompanyRepository $companyRepository,
         private DealRepository $dealRepository,
         private ProjectRepository $projectRepository,
-        private ProjectSerializer $projectSerializer,
+        private ProjectSerializerInterface $projectSerializer,
         private TranslatorInterface $translator,
     ) {}
 

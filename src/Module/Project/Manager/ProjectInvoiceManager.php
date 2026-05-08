@@ -6,29 +6,33 @@ namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 /**
  * Generates a draft invoice from a project: pulls tiers from the linked CRM
  * company (creating one if missing) and pre-fills basic fields. The user
  * finalizes the invoice manually in the Billing module.
  */
-final readonly class ProjectInvoiceManager
+#[AsAlias(ProjectInvoiceManagerInterface::class)]
+class ProjectInvoiceManager implements ProjectInvoiceManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function generate(Project $project): Invoice
+    public function generate(ProjectInterface $project): InvoiceInterface
     {
-        $invoice = new Invoice();
+        $invoice = $this->createInvoice();
         $invoice->setStatus(InvoiceStatusEnum::Draft)
             ->setIssuedAt(new DateTimeImmutable())
             ->setDueAt(new DateTimeImmutable()->modify('+30 days'))
@@ -36,7 +40,7 @@ final readonly class ProjectInvoiceManager
 
         // Resolve or create a Tiers from the project's CRM company.
         $company = $project->getCrmCompany();
-        if ($company instanceof Company) {
+        if ($company instanceof CompanyInterface) {
             $tiers = $this->resolveOrCreateClientTiers($company->getName(), $company->getAddress());
             $invoice->setBuyerTiers($tiers);
         }
@@ -52,15 +56,25 @@ final readonly class ProjectInvoiceManager
         return $invoice;
     }
 
-    private function resolveOrCreateClientTiers(string $name, ?string $address): Tiers
+    protected function createInvoice(): InvoiceInterface
+    {
+        return new Invoice();
+    }
+
+    protected function createTiers(): TiersInterface
+    {
+        return new Tiers();
+    }
+
+    private function resolveOrCreateClientTiers(string $name, ?string $address): TiersInterface
     {
         $repository = $this->entityManager->getRepository(Tiers::class);
         $existing = $repository->findOneBy(['name' => $name, 'type' => TiersTypeEnum::Client]);
-        if ($existing instanceof Tiers) {
+        if ($existing instanceof TiersInterface) {
             return $existing;
         }
 
-        $tiers = new Tiers();
+        $tiers = $this->createTiers();
         $tiers->setName($name)
             ->setType(TiersTypeEnum::Client)
             ->setAddress($address);

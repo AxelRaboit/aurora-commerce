@@ -5,32 +5,34 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Serializer;
 
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
-use Aurora\Module\Project\Entity\Project;
-use Aurora\Module\Project\Entity\ProjectLabel;
+use Aurora\Module\Project\Entity\ProjectInterface;
+use Aurora\Module\Project\Entity\ProjectLabelInterface;
 use Aurora\Module\Project\Repository\ProjectLabelRepository;
 use Aurora\Module\Project\Repository\ProjectSprintRepository;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class ProjectSerializer
+#[AsAlias(ProjectSerializerInterface::class)]
+class ProjectSerializer implements ProjectSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private ProjectColumnSerializer $columnSerializer,
-        private ProjectLabelRepository $labelRepository,
-        private ProjectSprintRepository $sprintRepository,
-        private ProjectSprintSerializer $sprintSerializer,
+        protected readonly TranslatorInterface $translator,
+        protected readonly ProjectColumnSerializerInterface $columnSerializer,
+        protected readonly ProjectLabelRepository $labelRepository,
+        protected readonly ProjectSprintRepository $sprintRepository,
+        protected readonly ProjectSprintSerializerInterface $sprintSerializer,
     ) {}
 
-    /** @return list<ProjectLabel> */
-    private function labelsForProject(Project $project): array
+    /** @return list<ProjectLabelInterface> */
+    protected function labelsForProject(ProjectInterface $project): array
     {
         return $this->labelRepository->findByProject($project);
     }
 
-    public function serialize(Project $project): array
+    public function serialize(ProjectInterface $project): array
     {
         return [
             'id' => $project->getId(),
@@ -49,7 +51,7 @@ final readonly class ProjectSerializer
                 static fn ($contact): array => ['id' => $contact->getId(), 'name' => $contact->getFullName()],
                 $project->getCrmContacts()->toArray(),
             ),
-            'crmCompany' => $project->getCrmCompany() instanceof Company ? [
+            'crmCompany' => $project->getCrmCompany() instanceof CompanyInterface ? [
                 'id' => $project->getCrmCompany()->getId(),
                 'name' => $project->getCrmCompany()->getName(),
             ] : null,

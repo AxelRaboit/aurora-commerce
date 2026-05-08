@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ProjectTaskTimeEntryInput
+class ProjectTaskTimeEntryInput implements ProjectTaskTimeEntryInputInterface
 {
     public function __construct(
         #[Assert\Positive(message: 'backend.projects.errors.time_minutes_invalid')]
-        public int $minutes = 0,
-        public ?string $note = null,
-        public ?string $loggedAt = null,
+        public readonly int $minutes = 0,
+        public readonly ?string $note = null,
+        public readonly ?string $loggedAt = null,
     ) {}
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
+    public function getMinutes(): int
     {
-        return new self(
-            minutes: isset($data['minutes']) && '' !== (string) $data['minutes'] ? (int) $data['minutes'] : 0,
-            note: Str::trimOrNullFromArray($data, 'note'),
-            loggedAt: Str::trimOrNullFromArray($data, 'loggedAt'),
-        );
+        return $this->minutes;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function getLoggedAt(): ?string
+    {
+        return $this->loggedAt;
     }
 }
