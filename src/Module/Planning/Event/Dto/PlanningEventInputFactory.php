@@ -41,6 +41,7 @@ class PlanningEventInputFactory implements PlanningEventInputFactoryInterface
             if (null === $value) {
                 continue;
             }
+
             if ('' === $value) {
                 continue;
             }

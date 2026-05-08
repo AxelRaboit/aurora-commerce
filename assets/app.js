@@ -42,6 +42,7 @@ const photoModules = import.meta.glob([
 const billingModules = import.meta.glob("./Module/Billing/backend/**/*.vue");
 const gedModules = import.meta.glob("./Module/Ged/backend/**/*.vue");
 const projectModules = import.meta.glob("./Module/Project/backend/**/*.vue");
+const planningModules = import.meta.glob("./Module/Planning/backend/**/*.vue");
 
 // Optional client extension modules. Resolves via the @client alias which
 // points to AURORA_CLIENT_DIR (or an empty fallback when unset). Components
@@ -109,6 +110,12 @@ const vueContext = {
     ...Object.fromEntries(
         Object.entries(projectModules).map(([key, loader]) => [
             key.replace("./Module/Project/", "./project/"),
+            loader,
+        ]),
+    ),
+    ...Object.fromEntries(
+        Object.entries(planningModules).map(([key, loader]) => [
+            key.replace("./Module/Planning/", "./planning/"),
             loader,
         ]),
     ),
