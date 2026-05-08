@@ -103,7 +103,7 @@ class OrderManager implements OrderManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('ecommerce', 'order.created', 'Order', $order->getId(), [
-            'number' => $order->getNumber(),
+            ...$this->auditPayload($order),
             'totalCents' => $totalCents,
         ]);
 
@@ -142,9 +142,7 @@ class OrderManager implements OrderManagerInterface
             $this->entityManager->flush();
         });
 
-        $this->auditLogger->log('ecommerce', 'order.paid', 'Order', $order->getId(), [
-            'number' => $order->getNumber(),
-        ]);
+        $this->auditLogger->log('ecommerce', 'order.paid', 'Order', $order->getId(), $this->auditPayload($order));
 
         $this->notificationService->notifyPaid($order);
     }
@@ -204,7 +202,7 @@ class OrderManager implements OrderManagerInterface
         });
 
         $this->auditLogger->log('ecommerce', 'order.cancelled', 'Order', $order->getId(), [
-            'number' => $order->getNumber(),
+            ...$this->auditPayload($order),
             'from' => $previous->value,
             'refunded' => $needsRefund,
             'alreadyRefunded' => $alreadyRefunded,
@@ -234,7 +232,7 @@ class OrderManager implements OrderManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('ecommerce', $auditAction, 'Order', $order->getId(), [
-            'number' => $order->getNumber(),
+            ...$this->auditPayload($order),
             'from' => $from->value,
         ]);
     }
@@ -333,5 +331,20 @@ class OrderManager implements OrderManagerInterface
     protected function createOrderLine(): OrderLine
     {
         return new OrderLine();
+    }
+
+    /**
+     * Base payload logged on every audit entry for an Order. Override to add
+     * custom fields:
+     * `[...parent::auditPayload($order), 'code' => $order->getCode()]`.
+     *
+     * Note: Order has no standard `update()`/`delete()` flow, so the
+     * `auditCreated/Updated/Deleted` triplet does not apply here. Instead,
+     * domain events (paid, shipped, cancelled, …) call `$this->auditPayload()`
+     * inline to stay extensible.
+     */
+    protected function auditPayload(Order $order): array
+    {
+        return ['number' => $order->getNumber()];
     }
 }

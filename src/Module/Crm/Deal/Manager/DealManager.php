@@ -42,7 +42,7 @@ class DealManager implements DealManagerInterface
         $this->entityManager->persist($deal);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'deal.created', 'Deal', $deal->getId(), ['name' => $deal->getName(), 'reference' => $deal->getReference()]);
+        $this->auditCreated($deal);
 
         return $deal;
     }
@@ -52,7 +52,7 @@ class DealManager implements DealManagerInterface
         $this->applyInput($deal, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'deal.updated', 'Deal', $deal->getId(), ['name' => $deal->getName()]);
+        $this->auditUpdated($deal);
     }
 
     public function changeStage(DealInterface $deal, DealStageEnum $stage): void
@@ -62,7 +62,7 @@ class DealManager implements DealManagerInterface
         $this->entityManager->flush();
 
         $this->auditLogger->log('crm', 'deal.stage_changed', 'Deal', $deal->getId(), [
-            'name' => $deal->getName(),
+            ...$this->auditPayload($deal),
             'from' => $oldStage,
             'to' => $stage->value,
         ]);
@@ -72,13 +72,10 @@ class DealManager implements DealManagerInterface
 
     public function delete(DealInterface $deal): void
     {
-        $name = $deal->getName();
-        $id = $deal->getId();
+        $this->auditDeleted($deal);
 
         $this->entityManager->remove($deal);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('crm', 'deal.deleted', 'Deal', $id, ['name' => $name]);
     }
 
     protected function createDeal(): DealInterface
@@ -95,5 +92,25 @@ class DealManager implements DealManagerInterface
         $deal->setContact($input->getContactId() ? $this->contactRepository->find($input->getContactId()) : null);
         $deal->setCompany($input->getCompanyId() ? $this->companyRepository->find($input->getCompanyId()) : null);
         $deal->setClosingDate($input->getClosingDate() ? new DateTimeImmutable($input->getClosingDate()) : null);
+    }
+
+    protected function auditCreated(DealInterface $deal): void
+    {
+        $this->auditLogger->log('crm', 'deal.created', 'Deal', $deal->getId(), $this->auditPayload($deal));
+    }
+
+    protected function auditUpdated(DealInterface $deal): void
+    {
+        $this->auditLogger->log('crm', 'deal.updated', 'Deal', $deal->getId(), $this->auditPayload($deal));
+    }
+
+    protected function auditDeleted(DealInterface $deal): void
+    {
+        $this->auditLogger->log('crm', 'deal.deleted', 'Deal', $deal->getId(), $this->auditPayload($deal));
+    }
+
+    protected function auditPayload(DealInterface $deal): array
+    {
+        return ['name' => $deal->getName(), 'reference' => $deal->getReference()];
     }
 }
