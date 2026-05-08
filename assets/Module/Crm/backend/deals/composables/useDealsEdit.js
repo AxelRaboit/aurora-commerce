@@ -29,7 +29,7 @@ export function useDealsEdit(
         const extraValues = Object.fromEntries(
             Object.entries(extraFields).map(([key, def]) => [
                 key,
-                def.fromDeal ? def.fromDeal(deal) : (deal[key] ?? def.default),
+                def.fromEntity ? def.fromEntity(deal) : (deal[key] ?? def.default),
             ]),
         );
         editForm.value = {

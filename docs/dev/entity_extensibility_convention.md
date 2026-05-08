@@ -254,7 +254,7 @@ propres champs au tableau retourné par `parent::serialize($entity)`.
   {
       <fieldName>: {
           default: <valeur initiale>,
-          fromAgency: (entity) => <valeur depuis l'entité>,
+          fromEntity: (entity) => <valeur depuis l'entité>,
       },
   }
   ```

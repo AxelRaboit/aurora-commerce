@@ -45,7 +45,7 @@ const props = defineProps({
     /**
      * Extra fields to register on the create + edit forms. Lets clients extend
      * the modals + table without forking this component.
-     * Example: { code: { default: '', fromDeal: (d) => d.code ?? '' } }
+     * Example: { code: { default: '', fromEntity: (d) => d.code ?? '' } }
      */
     extraFields: { type: Object, default: () => ({}) },
 });

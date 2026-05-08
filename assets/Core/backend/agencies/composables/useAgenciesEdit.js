@@ -7,7 +7,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 /**
  * @typedef {Object} ExtraField
  * @property {*} default - Initial/reset value for this field.
- * @property {(agency: object) => *} fromAgency - Reads the field value from an existing agency when opening edit.
+ * @property {(agency: object) => *} fromEntity - Reads the field value from an existing agency when opening edit.
  */
 
 export function useAgenciesEdit(agencyList, createPath, updatePath, options = {}) {
@@ -37,7 +37,7 @@ export function useAgenciesEdit(agencyList, createPath, updatePath, options = {}
 
     function loadExtrasFrom(agency) {
         for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.fromAgency(agency);
+            editForm[key] = def.fromEntity(agency);
         }
     }
 

@@ -373,7 +373,7 @@ defineProps({
 const extraFields = {
     code: {
         default: "",
-        fromAgency: (agency) => agency.code ?? "",
+        fromEntity: (agency) => agency.code ?? "",
     },
 };
 </script>
@@ -484,7 +484,7 @@ make start                 # PHP server + Vite dev server
 | Validation | Attributs `#[Assert\*]` sur le DTO étendu | Native Symfony Validator |
 | Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
 | Vue formulaire | Slot `extra-form-fields` (scoped sur `editForm`, `errors`) | `<template #extra-form-fields="{ editForm, errors }">` |
-| Vue submit | Prop `extraFields` du composable `useAgenciesEdit` | `{ <field>: { default, fromAgency } }` |
+| Vue submit | Prop `extraFields` du composable `useAgenciesEdit` | `{ <field>: { default, fromEntity } }` |
 | Template Twig | Aurora prepend `kernel.project_dir/templates/Core/` au namespace `@Core` | Drop file at `templates/Core/<path>.html.twig` |
 
 ---

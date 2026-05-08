@@ -9,7 +9,7 @@ import { translateServerErrors } from "@/shared/utils/validation/translateServer
 /**
  * @typedef {Object} ExtraField
  * @property {*} default - Initial value (used by openCreate / emptyDealForm).
- * @property {(deal: object) => *} [fromDeal] - Reads the field from an existing deal (used by openEdit).
+ * @property {(deal: object) => *} [fromEntity] - Reads the field from an existing deal (used by openEdit).
  */
 
 /**
