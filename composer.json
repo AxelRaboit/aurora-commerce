@@ -3,6 +3,12 @@
     "description": "Aurora application",
     "type": "library",
     "license": "proprietary",
+    "authors": [
+        {
+            "name": "Axel Raboit",
+            "homepage": "https://github.com/AxelRaboit"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {

@@ -314,6 +314,12 @@ function openSearchFromMobile() {
             </form>
         </div>
 
+        <div class="sh-logo-expanded justify-center py-2 border-t border-line/30">
+            <a href="https://github.com/AxelRaboit" target="_blank" rel="noopener" class="text-xs text-muted/40 hover:text-muted/70 transition-colors tracking-wide select-none">
+                © axelraboit
+            </a>
+        </div>
+
         <div
             class="sidebar-resize-handle"
             :class="{ 'is-dragging': sidebarDragging }"

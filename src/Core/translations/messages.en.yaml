@@ -473,6 +473,7 @@ shared:
     pagination: 'Page {page} of {totalPages}'
     yes: Yes
     no: No
+    built_with: 'Built with Aurora · © axelraboit'
   pagination:
     previous: Previous
     next: Next

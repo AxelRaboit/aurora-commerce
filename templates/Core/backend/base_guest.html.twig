@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="generator" content="Aurora by axelraboit">
+        <!-- Built with Aurora · © axelraboit · https://github.com/AxelRaboit -->
         <title>{% block title %}{{ siteName }}{% endblock %}</title>
         {% if siteFaviconUrl %}
             <link rel="icon" href="{{ siteFaviconUrl }}">
@@ -63,7 +65,7 @@
 
         {% if hero_content|trim %}
             <div class="flex min-h-screen items-center justify-center bg-bg px-4 py-12">
-                <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div class="w-full max-w-7xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <div>
                         {{ include('@Shared/components/app_logo.html.twig', {
                             gradientId: 'app-logo-hero',
@@ -74,7 +76,10 @@
                         }) }}
                         {{ hero_content|raw }}
                     </div>
-                    {{ form_card|raw }}
+                    <div class="flex flex-col items-center gap-3">
+                        {{ form_card|raw }}
+                        <p class="text-xs text-muted/40"><a href="https://github.com/AxelRaboit" target="_blank" rel="noopener" class="hover:text-muted/60 transition-colors">{{ 'shared.common.built_with'|trans }}</a></p>
+                    </div>
                 </div>
             </div>
         {% else %}
@@ -90,6 +95,7 @@
                     appVersion: appVersion ?? null,
                 }) }}
                 {{ form_card|raw }}
+                <p class="mt-3 text-xs text-muted/40"><a href="https://github.com/AxelRaboit" target="_blank" rel="noopener" class="hover:text-muted/60 transition-colors">{{ 'shared.common.built_with'|trans }}</a></p>
             </div>
         {% endif %}
 

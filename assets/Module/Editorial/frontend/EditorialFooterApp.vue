@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 defineProps({
     footerText: { type: String, default: "" },
     footerMenuItems: { type: Array, default: () => [] },
@@ -43,6 +47,9 @@ defineProps({
                 </li>
             </ul>
             <p>{{ footerText }}</p>
+            <p class="opacity-50">
+                <a href="https://github.com/AxelRaboit" target="_blank" rel="noopener" class="hover:opacity-80 transition-opacity">{{ t('shared.common.built_with') }}</a>
+            </p>
         </div>
     </footer>
 </template>

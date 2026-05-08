@@ -3,6 +3,8 @@
 <head>
     {% set pageDescription = pageDescription|default(context.siteDescription ?? '') %}
     {% set alternates = alternates|default([]) %}
+    <!-- Built with Aurora · © axelraboit · https://github.com/AxelRaboit -->
+    <meta name="generator" content="Aurora by axelraboit">
     {{ include('Front/themes/default/partials/head.html.twig') }}
 </head>
 <body class="min-h-screen bg-bg text-primary flex flex-col">
@@ -44,7 +46,7 @@
     }) }}></div>
     {% endblock %}
 
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
         {% block body %}{% endblock %}
     </main>
 

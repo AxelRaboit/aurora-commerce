@@ -473,6 +473,7 @@ shared:
     pagination: 'Page {page} sur {totalPages}'
     yes: Oui
     no: Non
+    built_with: 'Propulsé par Aurora · © axelraboit'
   pagination:
     previous: Précédent
     next: Suivant

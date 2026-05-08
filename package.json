@@ -1,6 +1,7 @@
 {
     "private": true,
     "license": "UNLICENSED",
+    "author": "axelraboit",
     "scripts": {
         "i18n": "bash ./bin/dump-translations",
         "predev": "bash ./bin/dump-translations",
