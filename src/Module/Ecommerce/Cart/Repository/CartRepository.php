@@ -6,15 +6,16 @@ namespace Aurora\Module\Ecommerce\Cart\Repository;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Cart> */
-class CartRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<CartInterface> */
+class CartRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Cart::class);
+        parent::__construct($registry, Cart::class, CartInterface::class);
     }
 
     public function findOneBySession(string $sessionId): ?Cart

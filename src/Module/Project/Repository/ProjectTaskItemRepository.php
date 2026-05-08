@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Repository;
 
 use Aurora\Module\Project\Entity\ProjectTaskItem;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectTaskItem> */
-class ProjectTaskItemRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectTaskItemInterface> */
+class ProjectTaskItemRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectTaskItem::class);
+        parent::__construct($registry, ProjectTaskItem::class, ProjectTaskItemInterface::class);
     }
 }

@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserTypeEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<User>
+ * @extends ResolveTargetEntityRepository<CoreUserInterface>
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, User::class);
+        parent::__construct($registry, User::class, CoreUserInterface::class);
     }
 
     /**
-     * @return array{items: User[], total: int, page: int, totalPages: int}
+     * @return array{items: CoreUserInterface[], total: int, page: int, totalPages: int}
      */
     public function findPaginatedForAdmin(int $page, ?string $search = null, int $limit = 20): array
     {
@@ -42,7 +43,7 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array{items: User[], total: int, page: int, totalPages: int}
+     * @return array{items: CoreUserInterface[], total: int, page: int, totalPages: int}
      */
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?string $role = null): array
     {
@@ -82,12 +83,12 @@ class UserRepository extends ServiceEntityRepository
         return array_map(static fn (array $row): int => (int) $row['id'], $rows);
     }
 
-    public function findByInvitationSelector(string $selector): ?User
+    public function findByInvitationSelector(string $selector): ?CoreUserInterface
     {
         return $this->findOneBy(['invitationSelector' => $selector]);
     }
 
-    /** @return list<User> */
+    /** @return list<CoreUserInterface> */
     public function findAllAdminsAlphabetical(): array
     {
         return $this->createQueryBuilder('u')

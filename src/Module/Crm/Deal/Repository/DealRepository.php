@@ -6,19 +6,20 @@ namespace Aurora\Module\Crm\Deal\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Deal> */
-class DealRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<DealInterface> */
+class DealRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Deal::class);
+        parent::__construct($registry, Deal::class, DealInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?DealStageEnum $stage = null): array

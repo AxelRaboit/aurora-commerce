@@ -6,16 +6,17 @@ namespace Aurora\Module\Project\Repository;
 
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSprint;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectSprintInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectSprint> */
-class ProjectSprintRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectSprintInterface> */
+class ProjectSprintRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectSprint::class);
+        parent::__construct($registry, ProjectSprint::class, ProjectSprintInterface::class);
     }
 
     /** @return list<ProjectSprint> */

@@ -6,15 +6,16 @@ namespace Aurora\Module\Project\Repository;
 
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectTaskTimeEntry> */
-class ProjectTaskTimeEntryRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectTaskTimeEntryInterface> */
+class ProjectTaskTimeEntryRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectTaskTimeEntry::class);
+        parent::__construct($registry, ProjectTaskTimeEntry::class, ProjectTaskTimeEntryInterface::class);
     }
 
     public function totalMinutesForTask(ProjectTask $task): int

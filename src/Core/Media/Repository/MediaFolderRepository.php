@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Repository;
 
 use Aurora\Core\Media\Entity\MediaFolder;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Media\Entity\MediaFolderInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MediaFolder>
+ * @extends ResolveTargetEntityRepository<MediaFolderInterface>
  */
-class MediaFolderRepository extends ServiceEntityRepository
+class MediaFolderRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MediaFolder::class);
+        parent::__construct($registry, MediaFolder::class, MediaFolderInterface::class);
     }
 
     /**

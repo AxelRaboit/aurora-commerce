@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Aurora\Core\Notification\Repository;
 
 use Aurora\Core\Notification\Entity\Notification;
+use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Notification> */
-class NotificationRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<NotificationInterface> */
+class NotificationRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Notification::class);
+        parent::__construct($registry, Notification::class, NotificationInterface::class);
     }
 
     /** @return list<Notification> */

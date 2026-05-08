@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Aurora\Core\Menu\Repository;
 
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MenuItemTranslation>
+ * @extends ResolveTargetEntityRepository<MenuItemTranslationInterface>
  */
-class MenuItemTranslationRepository extends ServiceEntityRepository
+class MenuItemTranslationRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MenuItemTranslation::class);
+        parent::__construct($registry, MenuItemTranslation::class, MenuItemTranslationInterface::class);
     }
 }

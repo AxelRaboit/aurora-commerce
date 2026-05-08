@@ -6,18 +6,19 @@ namespace Aurora\Module\Ged\DocumentCategory\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<DocumentCategory> */
-class DocumentCategoryRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<DocumentCategoryInterface> */
+class DocumentCategoryRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DocumentCategory::class);
+        parent::__construct($registry, DocumentCategory::class, DocumentCategoryInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null): array

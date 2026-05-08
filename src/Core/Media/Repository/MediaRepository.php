@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Repository;
 
 use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Entity\MediaFolder;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Media>
+ * @extends ResolveTargetEntityRepository<MediaInterface>
  */
-class MediaRepository extends ServiceEntityRepository
+class MediaRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, Media::class, MediaInterface::class);
     }
 
     public function getTotalStorageSize(): int

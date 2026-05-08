@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Aurora\Core\Audit\Repository;
 
 use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Audit\Entity\AuditLogInterface;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use DateTimeInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<AuditLog> */
-class AuditLogRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<AuditLogInterface> */
+class AuditLogRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AuditLog::class);
+        parent::__construct($registry, AuditLog::class, AuditLogInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 50, ?string $module = null): array

@@ -6,18 +6,19 @@ namespace Aurora\Module\Crm\Company\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Crm\Company\Entity\Company;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Company> */
-class CompanyRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<CompanyInterface> */
+class CompanyRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Company::class);
+        parent::__construct($registry, Company::class, CompanyInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null): array

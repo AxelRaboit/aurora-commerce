@@ -7,16 +7,17 @@ namespace Aurora\Module\Project\Repository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectTask;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectTask> */
-class ProjectTaskRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectTaskInterface> */
+class ProjectTaskRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectTask::class);
+        parent::__construct($registry, ProjectTask::class, ProjectTaskInterface::class);
     }
 
     /** @return list<ProjectTask> */

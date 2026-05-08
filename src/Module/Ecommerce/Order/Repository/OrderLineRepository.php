@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Repository;
 
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<OrderLine> */
-class OrderLineRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<OrderLineInterface> */
+class OrderLineRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, OrderLine::class);
+        parent::__construct($registry, OrderLine::class, OrderLineInterface::class);
     }
 }

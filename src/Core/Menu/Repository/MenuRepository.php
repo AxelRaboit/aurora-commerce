@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Aurora\Core\Menu\Repository;
 
 use Aurora\Core\Menu\Entity\Menu;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Menu\Entity\MenuInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Menu>
+ * @extends ResolveTargetEntityRepository<MenuInterface>
  */
-class MenuRepository extends ServiceEntityRepository
+class MenuRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Menu::class);
+        parent::__construct($registry, Menu::class, MenuInterface::class);
     }
 
     public function findByLocation(string $location): ?Menu

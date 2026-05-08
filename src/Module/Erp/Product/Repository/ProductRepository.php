@@ -6,21 +6,22 @@ namespace Aurora\Module\Erp\Product\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Product>
+ * @extends ResolveTargetEntityRepository<ProductInterface>
  */
-class ProductRepository extends ServiceEntityRepository
+class ProductRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Product::class);
+        parent::__construct($registry, Product::class, ProductInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?ProductStatusEnum $status = null): array

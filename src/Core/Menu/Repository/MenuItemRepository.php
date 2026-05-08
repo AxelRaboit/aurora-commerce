@@ -6,18 +6,19 @@ namespace Aurora\Core\Menu\Repository;
 
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Menu\Entity\MenuItemInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MenuItem>
+ * @extends ResolveTargetEntityRepository<MenuItemInterface>
  */
-class MenuItemRepository extends ServiceEntityRepository
+class MenuItemRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MenuItem::class);
+        parent::__construct($registry, MenuItem::class, MenuItemInterface::class);
     }
 
     /**

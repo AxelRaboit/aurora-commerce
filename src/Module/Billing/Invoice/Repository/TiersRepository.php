@@ -6,21 +6,22 @@ namespace Aurora\Module\Billing\Invoice\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Tiers>
+ * @extends ResolveTargetEntityRepository<TiersInterface>
  */
-class TiersRepository extends ServiceEntityRepository
+class TiersRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Tiers::class);
+        parent::__construct($registry, Tiers::class, TiersInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?TiersTypeEnum $type = null): array

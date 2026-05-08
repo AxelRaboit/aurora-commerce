@@ -8,13 +8,14 @@ use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order as SortOrder;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Order> */
-class OrderRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<OrderInterface> */
+class OrderRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
@@ -22,7 +23,7 @@ class OrderRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         private readonly SequenceGenerator $sequenceGenerator,
     ) {
-        parent::__construct($registry, Order::class);
+        parent::__construct($registry, Order::class, OrderInterface::class);
     }
 
     public function findOneByToken(string $token): ?Order

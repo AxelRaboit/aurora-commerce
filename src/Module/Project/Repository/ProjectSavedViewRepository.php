@@ -7,16 +7,17 @@ namespace Aurora\Module\Project\Repository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSavedView;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectSavedViewInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectSavedView> */
-class ProjectSavedViewRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectSavedViewInterface> */
+class ProjectSavedViewRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectSavedView::class);
+        parent::__construct($registry, ProjectSavedView::class, ProjectSavedViewInterface::class);
     }
 
     /** @return list<ProjectSavedView> */

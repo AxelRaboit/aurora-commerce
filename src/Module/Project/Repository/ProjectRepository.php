@@ -6,19 +6,20 @@ namespace Aurora\Module\Project\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Project\Entity\Project;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<Project> */
-class ProjectRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectInterface> */
+class ProjectRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Project::class);
+        parent::__construct($registry, Project::class, ProjectInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?ProjectStatusEnum $status = null): array

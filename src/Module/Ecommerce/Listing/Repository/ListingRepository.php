@@ -6,21 +6,22 @@ namespace Aurora\Module\Ecommerce\Listing\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Listing>
+ * @extends ResolveTargetEntityRepository<ListingInterface>
  */
-class ListingRepository extends ServiceEntityRepository
+class ListingRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Listing::class);
+        parent::__construct($registry, Listing::class, ListingInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?bool $visibleOnly = null): array

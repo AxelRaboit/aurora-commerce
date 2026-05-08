@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Repository;
 
 use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
 use Aurora\Core\Repository\Trait\PaginationTrait;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<AccessRequest>
+ * @extends ResolveTargetEntityRepository<AccessRequestInterface>
  */
-class AccessRequestRepository extends ServiceEntityRepository
+class AccessRequestRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AccessRequest::class);
+        parent::__construct($registry, AccessRequest::class, AccessRequestInterface::class);
     }
 
     public function findByToken(string $token): ?AccessRequest

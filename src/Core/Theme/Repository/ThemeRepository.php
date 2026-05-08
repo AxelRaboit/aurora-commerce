@@ -6,17 +6,17 @@ namespace Aurora\Core\Theme\Repository;
 
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Entity\ThemeInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Theme>
+ * @extends ResolveTargetEntityRepository<ThemeInterface>
  */
-class ThemeRepository extends ServiceEntityRepository
+class ThemeRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Theme::class);
+        parent::__construct($registry, Theme::class, ThemeInterface::class);
     }
 
     public function findActive(): ?ThemeInterface

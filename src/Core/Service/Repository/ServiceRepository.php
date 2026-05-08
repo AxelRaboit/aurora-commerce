@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Aurora\Core\Service\Repository;
 
 use Aurora\Core\Service\Entity\Service;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Service\Entity\ServiceInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Service>
+ * @extends ResolveTargetEntityRepository<ServiceInterface>
  */
-class ServiceRepository extends ServiceEntityRepository
+class ServiceRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Service::class);
+        parent::__construct($registry, Service::class, ServiceInterface::class);
     }
 
     /** @return Service[] */

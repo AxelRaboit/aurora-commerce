@@ -7,18 +7,19 @@ namespace Aurora\Module\Billing\Invoice\Repository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Invoice>
+ * @extends ResolveTargetEntityRepository<InvoiceInterface>
  */
-class InvoiceRepository extends ServiceEntityRepository
+class InvoiceRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
@@ -26,7 +27,7 @@ class InvoiceRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         private readonly SequenceGenerator $sequenceGenerator,
     ) {
-        parent::__construct($registry, Invoice::class);
+        parent::__construct($registry, Invoice::class, InvoiceInterface::class);
     }
 
     /**

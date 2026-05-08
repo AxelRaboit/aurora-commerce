@@ -6,21 +6,22 @@ namespace Aurora\Module\Billing\Ocr\Repository;
 
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<OcrJob>
+ * @extends ResolveTargetEntityRepository<OcrJobInterface>
  */
-class OcrJobRepository extends ServiceEntityRepository
+class OcrJobRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, OcrJob::class);
+        parent::__construct($registry, OcrJob::class, OcrJobInterface::class);
     }
 
     public function findPaginated(int $page, int $limit = 20, ?OcrJobStatusEnum $status = null): array

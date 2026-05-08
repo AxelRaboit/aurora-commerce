@@ -8,14 +8,14 @@ use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Setting\Entity\SettingInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Setting>
+ * @extends ResolveTargetEntityRepository<SettingInterface>
  */
-class SettingRepository extends ServiceEntityRepository
+class SettingRepository extends ResolveTargetEntityRepository
 {
     use PaginationTrait;
 
@@ -24,7 +24,7 @@ class SettingRepository extends ServiceEntityRepository
 
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Setting::class);
+        parent::__construct($registry, Setting::class, SettingInterface::class);
     }
 
     public function get(string $key, ?string $default = null): ?string

@@ -6,16 +6,17 @@ namespace Aurora\Module\Project\Repository;
 
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectLabel;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Aurora\Module\Project\Entity\ProjectLabelInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<ProjectLabel> */
-class ProjectLabelRepository extends ServiceEntityRepository
+/** @extends ResolveTargetEntityRepository<ProjectLabelInterface> */
+class ProjectLabelRepository extends ResolveTargetEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectLabel::class);
+        parent::__construct($registry, ProjectLabel::class, ProjectLabelInterface::class);
     }
 
     /** @return list<ProjectLabel> */
