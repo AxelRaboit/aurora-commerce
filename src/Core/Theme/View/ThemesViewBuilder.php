@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Theme\View;
 
 use Aurora\Core\Theme\Repository\ThemeRepository;
-use Aurora\Core\Theme\Serializer\ThemeSerializer;
+use Aurora\Core\Theme\Serializer\ThemeSerializerInterface;
 
 /**
  * Builds the Twig payload for the admin themes page. Centralises the theme
@@ -15,7 +15,7 @@ final readonly class ThemesViewBuilder
 {
     public function __construct(
         private ThemeRepository $themeRepository,
-        private ThemeSerializer $themeSerializer,
+        private ThemeSerializerInterface $themeSerializer,
     ) {}
 
     /**

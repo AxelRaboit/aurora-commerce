@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ThemeInput
+class ThemeInput implements ThemeInputInterface
 {
     /**
      * @param array<string, mixed> $config
@@ -16,23 +15,31 @@ final readonly class ThemeInput
         #[Assert\NotBlank(message: 'themes.errors.slug_required')]
         #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'themes.errors.slug_invalid')]
         #[Assert\Length(max: 100)]
-        public string $slug,
+        public readonly string $slug,
         #[Assert\NotBlank(message: 'themes.errors.name_required')]
         #[Assert\Length(max: 200)]
-        public string $name,
-        public ?string $description,
-        public array $config,
+        public readonly string $name,
+        public readonly ?string $description,
+        public readonly array $config,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getSlug(): string
     {
-        $config = is_array($data['config'] ?? null) ? $data['config'] : [];
+        return $this->slug;
+    }
 
-        return new self(
-            slug: mb_strtolower(Str::trimFromArray($data, 'slug')),
-            name: Str::trimFromArray($data, 'name'),
-            description: Str::trimOrNullFromArray($data, 'description'),
-            config: $config,
-        );
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

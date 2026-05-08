@@ -7,10 +7,10 @@ namespace Aurora\Core\Theme\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Theme\Dto\ThemeInput;
+use Aurora\Core\Theme\Dto\ThemeInputFactoryInterface;
 use Aurora\Core\Theme\Entity\ThemeInterface;
-use Aurora\Core\Theme\Manager\ThemeManager;
-use Aurora\Core\Theme\Serializer\ThemeSerializer;
+use Aurora\Core\Theme\Manager\ThemeManagerInterface;
+use Aurora\Core\Theme\Serializer\ThemeSerializerInterface;
 use Aurora\Core\Theme\View\ThemesViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
@@ -30,10 +30,11 @@ final class ThemesController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly ThemeManager $themeManager,
-        private readonly ThemeSerializer $themeSerializer,
+        private readonly ThemeManagerInterface $themeManager,
+        private readonly ThemeSerializerInterface $themeSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly ThemesViewBuilder $viewBuilder,
+        private readonly ThemeInputFactoryInterface $themeInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -45,7 +46,7 @@ final class ThemesController extends AbstractController
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = ThemeInput::fromArray($this->decodeJson($request));
+        $input = $this->themeInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -73,7 +74,7 @@ final class ThemesController extends AbstractController
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(ThemeInterface $theme, Request $request): JsonResponse
     {
-        $input = ThemeInput::fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
+        $input = $this->themeInputFactory->fromArray(array_merge($this->decodeJson($request), ['slug' => $theme->getSlug()]));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);

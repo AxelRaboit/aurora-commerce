@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Theme\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Theme\Dto\ThemeInput;
+use Aurora\Core\Theme\Dto\ThemeInputInterface;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Repository\ThemeRepository;
@@ -14,47 +14,46 @@ use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
 
-final readonly class ThemeManager
+#[AsAlias(ThemeManagerInterface::class)]
+class ThemeManager implements ThemeManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ThemeRepository $themeRepository,
-        private string $projectDir,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly ThemeRepository $themeRepository,
+        protected readonly string $projectDir,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(ThemeInput $input): ThemeInterface
+    public function create(ThemeInputInterface $input): ThemeInterface
     {
-        if ($this->themeRepository->findBySlug($input->slug) instanceof ThemeInterface) {
+        if ($this->themeRepository->findBySlug($input->getSlug()) instanceof ThemeInterface) {
             throw new InvalidArgumentException(sprintf('slug|%s', 'themes.errors.slug_taken'));
         }
 
-        $theme = new Theme();
-        $theme->setSlug($input->slug);
-        $theme->setName($input->name);
-        $theme->setDescription($input->description);
+        $theme = $this->createTheme();
+        $theme->setSlug($input->getSlug());
+        $theme->setName($input->getName());
+        $theme->setDescription($input->getDescription());
         $theme->setActive(false);
         $theme->setConfig([]);
 
         $this->entityManager->persist($theme);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'theme.created', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
+        $this->auditCreated($theme);
 
         return $theme;
     }
 
-    public function update(ThemeInterface $theme, ThemeInput $input): void
+    public function update(ThemeInterface $theme, ThemeInputInterface $input): void
     {
-        $theme->setName($input->name);
-        $theme->setDescription($input->description);
-        $theme->setConfig($input->config);
-
+        $this->applyInput($theme, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'theme.updated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
+        $this->auditUpdated($theme);
     }
 
     public function activate(ThemeInterface $theme): void
@@ -63,7 +62,7 @@ final readonly class ThemeManager
         $theme->setActive(true);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'theme.activated', 'Theme', $theme->getId(), ['slug' => $theme->getSlug()]);
+        $this->auditLogger->log('core', 'theme.activated', 'Theme', $theme->getId(), $this->auditPayload($theme));
     }
 
     public function delete(ThemeInterface $theme): void
@@ -76,12 +75,10 @@ final readonly class ThemeManager
             throw new RuntimeException('themes.errors.cannot_delete_active');
         }
 
-        $id = $theme->getId();
-        $slug = $theme->getSlug();
+        $this->auditDeleted($theme);
+
         $this->entityManager->remove($theme);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('core', 'theme.deleted', 'Theme', $id, ['slug' => $slug]);
     }
 
     public function countTemplates(string $slug): int
@@ -99,5 +96,37 @@ final readonly class ThemeManager
         }
 
         return $count;
+    }
+
+    protected function createTheme(): ThemeInterface
+    {
+        return new Theme();
+    }
+
+    protected function applyInput(ThemeInterface $theme, ThemeInputInterface $input): void
+    {
+        $theme->setName($input->getName());
+        $theme->setDescription($input->getDescription());
+        $theme->setConfig($input->getConfig());
+    }
+
+    protected function auditCreated(ThemeInterface $theme): void
+    {
+        $this->auditLogger->log('core', 'theme.created', 'Theme', $theme->getId(), $this->auditPayload($theme));
+    }
+
+    protected function auditUpdated(ThemeInterface $theme): void
+    {
+        $this->auditLogger->log('core', 'theme.updated', 'Theme', $theme->getId(), $this->auditPayload($theme));
+    }
+
+    protected function auditDeleted(ThemeInterface $theme): void
+    {
+        $this->auditLogger->log('core', 'theme.deleted', 'Theme', $theme->getId(), $this->auditPayload($theme));
+    }
+
+    protected function auditPayload(ThemeInterface $theme): array
+    {
+        return ['slug' => $theme->getSlug()];
     }
 }

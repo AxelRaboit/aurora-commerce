@@ -23,8 +23,15 @@ const DEFAULTS = {
 
 const DEFAULT_PRIMARY_COLOR = "#6366f1";
 
-export function useThemesEdit(themeList, updatePath) {
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial/reset value.
+ * @property {(theme: object) => *} fromEntity - Reads field value from existing theme on openEdit.
+ */
+
+export function useThemesEdit(themeList, updatePath, options = {}) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
 
     const CSS_SECTIONS = computed(() => [
         {
@@ -99,7 +106,13 @@ export function useThemesEdit(themeList, updatePath) {
         errors: {},
         advanced: false,
     });
-    const editForm = reactive({ name: "", description: "" });
+    const editForm = reactive({
+        name: "",
+        description: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
+    });
     const colorFields = reactive(
         Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, ""])),
     );
@@ -138,6 +151,9 @@ export function useThemesEdit(themeList, updatePath) {
         editModal.advanced = false;
         editForm.name = theme.name;
         editForm.description = theme.description ?? "";
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.fromEntity ? def.fromEntity(theme) : (theme[key] ?? def.default);
+        }
         for (const { key } of ALL_CSS_VARS.value) {
             colorFields[key] = theme.config?.[key] ?? DEFAULTS[key];
         }
@@ -168,6 +184,9 @@ export function useThemesEdit(themeList, updatePath) {
                 method: HttpMethod.Post,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    ...Object.fromEntries(
+                        Object.keys(extraFields).map((key) => [key, editForm[key]]),
+                    ),
                     name: editForm.name,
                     description: editForm.description,
                     config: configFromColors.value,

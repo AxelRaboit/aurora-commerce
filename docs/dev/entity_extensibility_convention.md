@@ -552,6 +552,22 @@ distincts** (`useUsersInvite` + `useUsersForm`) car invitation et édition
 sont fonctionnellement différentes (form, validation, route distinctes).
 Slots correspondants : `extra-invite-form-fields` + `extra-form-fields`.
 
+### 4.bis.1bis Composables Vue séparés (forms structurellement différents)
+
+**Cas additionnel** : `Theme`. Le form de création est minimal (slug, name,
+description) tandis que l'édition expose une interface CSS-config riche
+(variables thème, header/footer modes, primary color picker). Les deux
+forms ne partagent quasiment aucun champ — les unifier produirait un
+composable plus complexe que les deux séparés.
+
+Pattern à appliquer : `useXxxCreate` + `useXxxEdit` avec `extraFields`
+chacun, slots `extra-create-form-fields` (côté create modal) et
+`extra-form-fields` (côté edit modal).
+
+Quand cette variante s'applique-t-elle ? **Quand les deux forms n'ont aucun
+champ commun au-delà de `name`/`description`**. Sinon, le pattern unifié
+`useXxxForm` (Agency, Deal, Service, Media, Menu, …) reste préférable.
+
 ### 4.bis.2 Editor full-page (pas un modal)
 
 **Cas** : `PostEditor.vue`.

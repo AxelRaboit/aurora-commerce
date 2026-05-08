@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Core\Theme\Serializer;
 
 use Aurora\Core\Theme\Entity\ThemeInterface;
-use Aurora\Core\Theme\Manager\ThemeManager;
+use Aurora\Core\Theme\Manager\ThemeManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ThemeSerializer
+#[AsAlias(ThemeSerializerInterface::class)]
+class ThemeSerializer implements ThemeSerializerInterface
 {
-    public function __construct(private ThemeManager $themeManager) {}
+    public function __construct(protected readonly ThemeManagerInterface $themeManager) {}
 
     /** @return array<string, mixed> */
     public function serialize(ThemeInterface $theme): array

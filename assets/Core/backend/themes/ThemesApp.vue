@@ -24,12 +24,19 @@ const props = defineProps({
     updatePath: { type: String, default: "" },
     createPath: { type: String, default: "" },
     deletePath: { type: String, default: "" },
+    /**
+     * Extra fields to register on the create + edit forms. Theme uses two
+     * separate composables (create form is light, edit form is the CSS-config
+     * panel) so the corresponding slots are also distinct:
+     * extra-create-form-fields and extra-form-fields.
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { themeList, accentColor } = useThemesList(props.themes);
 const { activateTheme } = useThemesActivate(themeList, props.activatePath);
-const { createModal, createForm, openCreate, submitCreate } = useThemesCreate(themeList, props.createPath);
-const { CSS_SECTIONS, DEFAULTS, editModal, editForm, colorFields, footerText, headerLogoMediaId, headerCustomText, headerMode, primaryColor, openEdit, resetPrimaryColor, submitEdit } = useThemesEdit(themeList, props.updatePath);
+const { createModal, createForm, openCreate, submitCreate } = useThemesCreate(themeList, props.createPath, { extraFields: props.extraFields });
+const { CSS_SECTIONS, DEFAULTS, editModal, editForm, colorFields, footerText, headerLogoMediaId, headerCustomText, headerMode, primaryColor, openEdit, resetPrimaryColor, submitEdit } = useThemesEdit(themeList, props.updatePath, { extraFields: props.extraFields });
 const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.deletePath);
 </script>
 
@@ -127,6 +134,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     :label="t('shared.common.description')"
                     :rows="2"
                 />
+                <slot name="extra-create-form-fields" :form="createForm" :errors="createModal.errors" />
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="createModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving"><Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.create") }}</AppButton>
@@ -147,6 +155,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     :label="t('shared.common.description')"
                     :rows="2"
                 />
+                <slot name="extra-form-fields" :form="editForm" :errors="editModal.errors" :theme="editModal.editing" />
 
                 <div class="space-y-1.5 pt-6 border-t border-line/60">
                     <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ t('backend.themes.primaryColor') }}</span>

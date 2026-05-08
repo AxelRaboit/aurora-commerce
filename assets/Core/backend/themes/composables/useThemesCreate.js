@@ -3,16 +3,33 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
-export function useThemesCreate(themeList, createPath) {
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial/reset value for this field.
+ */
+
+export function useThemesCreate(themeList, createPath, options = {}) {
     const { t } = useI18n();
+    const extraFields = options.extraFields ?? {};
+
     const createModal = reactive({ open: false, saving: false, errors: {} });
-    const createForm = reactive({ name: "", slug: "", description: "" });
+    const createForm = reactive({
+        name: "",
+        slug: "",
+        description: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
+    });
 
     function openCreate() {
         createModal.errors = {};
         createForm.name = "";
         createForm.slug = "";
         createForm.description = "";
+        for (const [key, def] of Object.entries(extraFields)) {
+            createForm[key] = def.default;
+        }
         createModal.open = true;
     }
 
