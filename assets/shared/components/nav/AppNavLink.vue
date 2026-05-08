@@ -40,7 +40,8 @@ const linkClasses = computed(() => {
     if (props.active) {
         return ACTIVE_CLASSES[props.activeColor] ?? ACTIVE_CLASSES.accent;
     }
-    return HOVER_CLASSES[props.hoverColor] ?? HOVER_CLASSES.primary;
+    const effectiveHoverColor = props.hoverColor !== "primary" ? props.hoverColor : props.activeColor;
+    return HOVER_CLASSES[effectiveHoverColor] ?? HOVER_CLASSES.primary;
 });
 </script>
 

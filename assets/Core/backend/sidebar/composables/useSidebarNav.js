@@ -153,7 +153,7 @@ export function useSidebarNav(navSections, activeRoute) {
         }
         return item.activeColor === "rose"
             ? "text-secondary hover:text-rose-400 hover:bg-rose-600/10"
-            : "text-secondary hover:text-primary hover:bg-surface-2";
+            : "text-secondary hover:text-accent-400 hover:bg-accent-600/10";
     }
 
     function iconClasses(item) {
