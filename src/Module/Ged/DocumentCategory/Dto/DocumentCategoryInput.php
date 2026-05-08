@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class DocumentCategoryInput
+class DocumentCategoryInput implements DocumentCategoryInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.ged.categories.errors.name_required')]
         #[Assert\Length(max: 150)]
-        public string $name = '',
-        public ?string $description = null,
+        public readonly string $name = '',
+        public readonly ?string $description = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getName(): string
     {
-        return new self(
-            name: Str::trimFromArray($data, 'name'),
-            description: Str::trimOrNullFromArray($data, 'description'),
-        );
+        return $this->name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 }

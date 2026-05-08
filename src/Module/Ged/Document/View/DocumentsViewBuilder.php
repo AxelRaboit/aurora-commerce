@@ -6,18 +6,18 @@ namespace Aurora\Module\Ged\Document\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
-use Aurora\Module\Ged\Document\Serializer\DocumentSerializer;
+use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
-use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
+use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class DocumentsViewBuilder
 {
     public function __construct(
         private DocumentRepository $documentRepository,
-        private DocumentSerializer $documentSerializer,
+        private DocumentSerializerInterface $documentSerializer,
         private DocumentCategoryRepository $categoryRepository,
-        private DocumentCategorySerializer $categorySerializer,
+        private DocumentCategorySerializerInterface $categorySerializer,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 

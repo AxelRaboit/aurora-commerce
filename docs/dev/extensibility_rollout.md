@@ -11,8 +11,8 @@ de la convention. Stratégie : module par module, commits atomiques.
 
 | État | Entités |
 |---|---|
-| ✅ Fait | 16 / 24 |
-| 🔜 Reste | 8 / 24 |
+| ✅ Fait | 19 / 24 |
+| 🔜 Reste | 5 / 24 |
 
 Tests : tout doit rester vert (`php bin/phpunit`) après chaque commit.
 
@@ -70,9 +70,9 @@ Pilotes (instrumentés avant la convention finale, commits antérieurs) :
 
 ### Billing (3)
 
-- [ ] `Invoice` (cascade : `InvoiceLine`)
-- [ ] `Tiers`
-- [ ] `OcrJob`
+- [x] `Invoice` (cascade : `InvoiceLine`) — `3ff4ded`
+- [x] `Tiers` — `3ff4ded`
+- [x] `OcrJob` — `3ff4ded`
 
 ### Ged (2)
 

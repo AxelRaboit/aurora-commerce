@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\Serializer;
 
-use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
+use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class DocumentCategorySerializer
+#[AsAlias(DocumentCategorySerializerInterface::class)]
+class DocumentCategorySerializer implements DocumentCategorySerializerInterface
 {
-    public function serialize(DocumentCategory $category): array
+    public function serialize(DocumentCategoryInterface $category): array
     {
         return [
             'id' => $category->getId(),

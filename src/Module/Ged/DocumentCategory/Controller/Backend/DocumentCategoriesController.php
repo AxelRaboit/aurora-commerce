@@ -9,10 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Ged\DocumentCategory\Contract\DocumentCategoryManagerInterface;
-use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInput;
+use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInputFactoryInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
-use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
+use Aurora\Module\Ged\DocumentCategory\Manager\DocumentCategoryManagerInterface;
+use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializerInterface;
 use Aurora\Module\Ged\DocumentCategory\View\DocumentCategoriesViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,10 +29,11 @@ final class DocumentCategoriesController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly DocumentCategorySerializer $serializer,
+        private readonly DocumentCategorySerializerInterface $serializer,
         private readonly DocumentCategoryManagerInterface $manager,
         private readonly PayloadValidator $payloadValidator,
         private readonly DocumentCategoriesViewBuilder $viewBuilder,
+        private readonly DocumentCategoryInputFactoryInterface $inputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,7 +51,7 @@ final class DocumentCategoriesController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = DocumentCategoryInput::fromArray($this->decodeJson($request));
+        $input = $this->inputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -64,7 +65,7 @@ final class DocumentCategoriesController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(DocumentCategory $category, Request $request): JsonResponse
     {
-        $input = DocumentCategoryInput::fromArray($this->decodeJson($request));
+        $input = $this->inputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);

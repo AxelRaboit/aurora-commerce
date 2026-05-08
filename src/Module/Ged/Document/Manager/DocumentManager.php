@@ -8,62 +8,84 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Module\Ged\Document\Contract\DocumentManagerInterface;
-use Aurora\Module\Ged\Document\Dto\DocumentInput;
+use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(DocumentManagerInterface::class)]
-final readonly class DocumentManager implements DocumentManagerInterface
+class DocumentManager implements DocumentManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private DocumentCategoryRepository $categoryRepository,
-        private MediaRepository $mediaRepository,
-        private SequenceGenerator $sequenceGenerator,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly DocumentCategoryRepository $categoryRepository,
+        protected readonly MediaRepository $mediaRepository,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(DocumentInput $input): Document
+    public function create(DocumentInputInterface $input): DocumentInterface
     {
-        $document = new Document();
+        $document = $this->createDocument();
         $document->setReference($this->sequenceGenerator->next(ApplicationParameterEnum::GedDocumentPrefix->value));
         $this->applyInput($document, $input);
         $this->entityManager->persist($document);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('ged', 'document.created', 'Document', $document->getId(), ['title' => $document->getTitle()]);
+        $this->auditCreated($document);
 
         return $document;
     }
 
-    public function update(Document $document, DocumentInput $input): void
+    public function update(DocumentInterface $document, DocumentInputInterface $input): void
     {
         $this->applyInput($document, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('ged', 'document.updated', 'Document', $document->getId(), ['title' => $document->getTitle()]);
+        $this->auditUpdated($document);
     }
 
-    public function delete(Document $document): void
+    public function delete(DocumentInterface $document): void
     {
-        $title = $document->getTitle();
-        $id = $document->getId();
+        $this->auditDeleted($document);
 
         $this->entityManager->remove($document);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('ged', 'document.deleted', 'Document', $id, ['title' => $title]);
     }
 
-    private function applyInput(Document $document, DocumentInput $input): void
+    protected function createDocument(): DocumentInterface
     {
-        $document->setTitle($input->title);
-        $document->setDescription($input->description);
-        $document->setStatus($input->status);
-        $document->setCategory(null !== $input->categoryId ? $this->categoryRepository->find($input->categoryId) : null);
-        $document->setFile(null !== $input->fileId ? $this->mediaRepository->find($input->fileId) : null);
+        return new Document();
+    }
+
+    protected function applyInput(DocumentInterface $document, DocumentInputInterface $input): void
+    {
+        $document->setTitle($input->getTitle());
+        $document->setDescription($input->getDescription());
+        $document->setStatus($input->getStatus());
+        $document->setCategory(null !== $input->getCategoryId() ? $this->categoryRepository->find($input->getCategoryId()) : null);
+        $document->setFile(null !== $input->getFileId() ? $this->mediaRepository->find($input->getFileId()) : null);
+    }
+
+    protected function auditCreated(DocumentInterface $document): void
+    {
+        $this->auditLogger->log('ged', 'document.created', 'Document', $document->getId(), $this->auditPayload($document));
+    }
+
+    protected function auditUpdated(DocumentInterface $document): void
+    {
+        $this->auditLogger->log('ged', 'document.updated', 'Document', $document->getId(), $this->auditPayload($document));
+    }
+
+    protected function auditDeleted(DocumentInterface $document): void
+    {
+        $this->auditLogger->log('ged', 'document.deleted', 'Document', $document->getId(), $this->auditPayload($document));
+    }
+
+    protected function auditPayload(DocumentInterface $document): array
+    {
+        return ['title' => $document->getTitle(), 'reference' => $document->getReference()];
     }
 }

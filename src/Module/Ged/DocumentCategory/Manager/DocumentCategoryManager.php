@@ -5,59 +5,81 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\DocumentCategory\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Module\Ged\DocumentCategory\Contract\DocumentCategoryManagerInterface;
-use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInput;
+use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInputInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
+use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[AsAlias(DocumentCategoryManagerInterface::class)]
-final readonly class DocumentCategoryManager implements DocumentCategoryManagerInterface
+class DocumentCategoryManager implements DocumentCategoryManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private DocumentCategoryRepository $categoryRepository,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly DocumentCategoryRepository $categoryRepository,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(DocumentCategoryInput $input): DocumentCategory
+    public function create(DocumentCategoryInputInterface $input): DocumentCategoryInterface
     {
-        $category = new DocumentCategory();
+        $category = $this->createDocumentCategory();
         $this->applyInput($category, $input);
         $this->entityManager->persist($category);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('ged', 'category.created', 'DocumentCategory', $category->getId(), ['name' => $category->getName()]);
+        $this->auditCreated($category);
 
         return $category;
     }
 
-    public function update(DocumentCategory $category, DocumentCategoryInput $input): void
+    public function update(DocumentCategoryInterface $category, DocumentCategoryInputInterface $input): void
     {
         $this->applyInput($category, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('ged', 'category.updated', 'DocumentCategory', $category->getId(), ['name' => $category->getName()]);
+        $this->auditUpdated($category);
     }
 
-    public function delete(DocumentCategory $category): void
+    public function delete(DocumentCategoryInterface $category): void
     {
-        $name = $category->getName();
-        $id = $category->getId();
+        $this->auditDeleted($category);
 
         $this->entityManager->remove($category);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('ged', 'category.deleted', 'DocumentCategory', $id, ['name' => $name]);
     }
 
-    private function applyInput(DocumentCategory $category, DocumentCategoryInput $input): void
+    protected function createDocumentCategory(): DocumentCategoryInterface
     {
-        $category->setName($input->name);
-        $category->setDescription($input->description);
-        $category->setSlug($this->uniqueSlug($input->name, $category->getId()));
+        return new DocumentCategory();
+    }
+
+    protected function applyInput(DocumentCategoryInterface $category, DocumentCategoryInputInterface $input): void
+    {
+        $category->setName($input->getName());
+        $category->setDescription($input->getDescription());
+        $category->setSlug($this->uniqueSlug($input->getName(), $category->getId()));
+    }
+
+    protected function auditCreated(DocumentCategoryInterface $category): void
+    {
+        $this->auditLogger->log('ged', 'category.created', 'DocumentCategory', $category->getId(), $this->auditPayload($category));
+    }
+
+    protected function auditUpdated(DocumentCategoryInterface $category): void
+    {
+        $this->auditLogger->log('ged', 'category.updated', 'DocumentCategory', $category->getId(), $this->auditPayload($category));
+    }
+
+    protected function auditDeleted(DocumentCategoryInterface $category): void
+    {
+        $this->auditLogger->log('ged', 'category.deleted', 'DocumentCategory', $category->getId(), $this->auditPayload($category));
+    }
+
+    protected function auditPayload(DocumentCategoryInterface $category): array
+    {
+        return ['name' => $category->getName()];
     }
 
     private function uniqueSlug(string $name, ?int $excludeId): string

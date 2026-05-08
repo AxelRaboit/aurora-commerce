@@ -9,10 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Ged\Document\Contract\DocumentManagerInterface;
-use Aurora\Module\Ged\Document\Dto\DocumentInput;
+use Aurora\Module\Ged\Document\Dto\DocumentInputFactoryInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
-use Aurora\Module\Ged\Document\Serializer\DocumentSerializer;
+use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
+use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,10 +29,11 @@ final class DocumentsController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly DocumentSerializer $serializer,
+        private readonly DocumentSerializerInterface $serializer,
         private readonly DocumentManagerInterface $manager,
         private readonly PayloadValidator $payloadValidator,
         private readonly DocumentsViewBuilder $viewBuilder,
+        private readonly DocumentInputFactoryInterface $inputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,7 +51,7 @@ final class DocumentsController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = DocumentInput::fromArray($this->decodeJson($request));
+        $input = $this->inputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -64,7 +65,7 @@ final class DocumentsController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(Document $document, Request $request): JsonResponse
     {
-        $input = DocumentInput::fromArray($this->decodeJson($request));
+        $input = $this->inputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);

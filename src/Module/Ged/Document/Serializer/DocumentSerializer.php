@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Serializer;
 
-use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class DocumentSerializer
+#[AsAlias(DocumentSerializerInterface::class)]
+class DocumentSerializer implements DocumentSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
+        protected readonly TranslatorInterface $translator,
     ) {}
 
-    public function serialize(Document $document): array
+    public function serialize(DocumentInterface $document): array
     {
         $file = $document->getFile();
         $category = $document->getCategory();
