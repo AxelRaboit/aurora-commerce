@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Service\InvoiceExtractor;
 use DateTimeImmutable;
 use PHPUnit\Framework\MockObject\Stub;

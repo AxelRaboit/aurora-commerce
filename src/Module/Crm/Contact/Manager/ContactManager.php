@@ -11,7 +11,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
-use Aurora\Module\Crm\Contact\DTO\ContactInput;
+use Aurora\Module\Crm\Contact\Dto\ContactInput;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;

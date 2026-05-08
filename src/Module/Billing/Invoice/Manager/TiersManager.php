@@ -14,7 +14,7 @@ use Aurora\Module\Billing\Invoice\Contract\TiersManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

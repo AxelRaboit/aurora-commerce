@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\DTO;
+namespace Aurora\Tests\Unit\Dto;
 
-use Aurora\Module\Photo\Gallery\DTO\GalleryInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;

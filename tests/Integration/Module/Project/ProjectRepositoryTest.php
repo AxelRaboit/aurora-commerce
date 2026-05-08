@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Module\Project;
 
-use Aurora\Module\Project\DTO\ProjectInput;
+use Aurora\Module\Project\Dto\ProjectInput;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Manager\ProjectManager;
 use Aurora\Module\Project\Repository\ProjectRepository;

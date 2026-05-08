@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Backend;
 
-use Aurora\Core\Auth\DTO\RegisterInput;
+use Aurora\Core\Auth\Dto\RegisterInput;
 use Aurora\Core\Auth\View\RegisterViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;

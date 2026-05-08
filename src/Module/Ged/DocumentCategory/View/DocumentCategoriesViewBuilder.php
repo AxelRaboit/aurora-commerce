@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\View;
 
-use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

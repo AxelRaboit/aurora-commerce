@@ -7,7 +7,7 @@ namespace Aurora\Core\Auth\Controller\Backend;
 use Aurora\Core\Auth\View\InvitationViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Manager\UserManagerInterface;
-use Aurora\Core\User\DTO\UserSetPasswordInput;
+use Aurora\Core\User\Dto\UserSetPasswordInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

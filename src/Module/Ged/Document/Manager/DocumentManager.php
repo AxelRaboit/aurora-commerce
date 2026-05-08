@@ -9,7 +9,7 @@ use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Ged\Document\Contract\DocumentManagerInterface;
-use Aurora\Module\Ged\Document\DTO\DocumentInput;
+use Aurora\Module\Ged\Document\Dto\DocumentInput;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;

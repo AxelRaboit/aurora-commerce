@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Controller\Backend;
 
 use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
-use Aurora\Core\Auth\DTO\AccessRequestInput;
+use Aurora\Core\Auth\Dto\AccessRequestInput;
 use Aurora\Core\Auth\View\AccessRequestViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;

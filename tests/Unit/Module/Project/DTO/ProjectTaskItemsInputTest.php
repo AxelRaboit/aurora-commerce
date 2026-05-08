@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Module\Project\DTO;
+namespace Aurora\Tests\Unit\Module\Project\Dto;
 
-use Aurora\Module\Project\DTO\ProjectTaskItemsInput;
+use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
 use PHPUnit\Framework\TestCase;
 
 final class ProjectTaskItemsInputTest extends TestCase

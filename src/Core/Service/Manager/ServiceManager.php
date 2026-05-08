@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Service\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Service\DTO\ServiceInput;
+use Aurora\Core\Service\Dto\ServiceInput;
 use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\DTO;
+namespace Aurora\Tests\Unit\Dto;
 
-use Aurora\Module\Photo\Gallery\DTO\GalleryPickInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryPickInput;
 use Aurora\Module\Photo\Gallery\Enum\PickKindEnum;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;

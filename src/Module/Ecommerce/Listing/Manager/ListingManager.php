@@ -11,7 +11,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
-use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Dto\ListingInput;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;

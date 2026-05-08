@@ -179,7 +179,7 @@ php bin/console doctrine:migrations:migrate
 // aurora-client : src/Dto/AgencyInput.php
 namespace App\Dto;
 
-use Aurora\Core\Agency\DTO\AgencyInput as AuroraAgencyInput;
+use Aurora\Core\Agency\Dto\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
 
 readonly class AgencyInput extends AuroraAgencyInput
@@ -208,8 +208,8 @@ On remplace l'alias d'Aurora par le nôtre :
 // aurora-client : src/Dto/AgencyInputFactory.php
 namespace App\Dto;
 
-use Aurora\Core\Agency\DTO\AgencyInputFactoryInterface;
-use Aurora\Core\Agency\DTO\AgencyInputInterface;
+use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
+use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Support\Str;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -278,7 +278,7 @@ namespace App\Manager;
 
 use App\Dto\AgencyInput;
 use App\Entity\Agency;
-use Aurora\Core\Agency\DTO\AgencyInputInterface;
+use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Manager\AgencyManager as AuroraAgencyManager;
 use Aurora\Core\Agency\Manager\AgencyManagerInterface;

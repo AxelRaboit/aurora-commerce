@@ -7,7 +7,7 @@ namespace Aurora\Core\Menu\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Menu\DTO\MenuItemPayload;
+use Aurora\Core\Menu\Dto\MenuItemPayload;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Manager\MenuManager;

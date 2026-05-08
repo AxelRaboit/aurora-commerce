@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Manager;
 
-use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\User\Entity\User;
 

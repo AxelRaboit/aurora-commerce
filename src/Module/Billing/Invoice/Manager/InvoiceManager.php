@@ -17,7 +17,7 @@ use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\OcrJobManagerInterface;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use DateTimeImmutable;

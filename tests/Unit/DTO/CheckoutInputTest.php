@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\DTO;
+namespace Aurora\Tests\Unit\Dto;
 
 use Aurora\Core\Locale\Enum\CountryEnum;
-use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

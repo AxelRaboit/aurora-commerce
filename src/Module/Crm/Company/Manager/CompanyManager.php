@@ -10,7 +10,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
-use Aurora\Module\Crm\Company\DTO\CompanyInput;
+use Aurora\Module\Crm\Company\Dto\CompanyInput;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

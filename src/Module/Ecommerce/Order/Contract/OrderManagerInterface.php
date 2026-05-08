@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Order\Contract;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Order\DTO\CheckoutInput;
+use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 
 interface OrderManagerInterface

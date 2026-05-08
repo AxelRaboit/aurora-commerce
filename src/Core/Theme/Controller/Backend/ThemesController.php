@@ -7,7 +7,7 @@ namespace Aurora\Core\Theme\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Theme\DTO\ThemeInput;
+use Aurora\Core\Theme\Dto\ThemeInput;
 use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Manager\ThemeManager;
 use Aurora\Core\Theme\Serializer\ThemeSerializer;

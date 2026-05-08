@@ -6,8 +6,8 @@ namespace Aurora\Module\Billing\Ocr\Service;
 
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceLineDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceLineDraft;
 
 use function is_array;
 use function mb_strlen;

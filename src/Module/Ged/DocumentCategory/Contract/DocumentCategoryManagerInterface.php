@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\Contract;
 
-use Aurora\Module\Ged\DocumentCategory\DTO\DocumentCategoryInput;
+use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInput;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 
 interface DocumentCategoryManagerInterface

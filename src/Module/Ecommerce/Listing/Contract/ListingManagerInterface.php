@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Contract;
 
-use Aurora\Module\Ecommerce\Listing\DTO\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Dto\ListingInput;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 
 interface ListingManagerInterface

@@ -7,7 +7,7 @@ namespace Aurora\Tests\Unit\Module\Project\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Module\Project\DTO\ProjectColumnInput;
+use Aurora\Module\Project\Dto\ProjectColumnInput;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectTask;

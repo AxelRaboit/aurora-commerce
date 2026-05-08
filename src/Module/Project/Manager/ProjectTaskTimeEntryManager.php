@@ -6,7 +6,7 @@ namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Project\DTO\ProjectTaskTimeEntryInput;
+use Aurora\Module\Project\Dto\ProjectTaskTimeEntryInput;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use DateTimeImmutable;

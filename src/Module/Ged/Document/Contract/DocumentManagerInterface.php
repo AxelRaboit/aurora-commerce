@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Contract;
 
-use Aurora\Module\Ged\Document\DTO\DocumentInput;
+use Aurora\Module\Ged\Document\Dto\DocumentInput;
 use Aurora\Module\Ged\Document\Entity\Document;
 
 interface DocumentManagerInterface

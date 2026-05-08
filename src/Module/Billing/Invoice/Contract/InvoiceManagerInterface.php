@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Contract;
 
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use InvalidArgumentException;
 

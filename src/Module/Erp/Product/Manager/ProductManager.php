@@ -11,7 +11,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Erp\Product\Contract\ProductManagerInterface;
-use Aurora\Module\Erp\Product\DTO\ProductInput;
+use Aurora\Module\Erp\Product\Dto\ProductInput;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;

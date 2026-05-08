@@ -7,7 +7,7 @@ namespace Aurora\Module\Project\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Module\Project\DTO\ProjectColumnInput;
+use Aurora\Module\Project\Dto\ProjectColumnInput;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Repository\ProjectColumnRepository;

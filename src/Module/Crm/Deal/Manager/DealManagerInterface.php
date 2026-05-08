@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\Manager;
 
-use Aurora\Module\Crm\Deal\DTO\DealInputInterface;
+use Aurora\Module\Crm\Deal\Dto\DealInputInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 

@@ -23,7 +23,7 @@ Utilisateur soumet  →  [Client] validation minimale (required, email)
 Chaque formulaire dispose d'un DTO `final readonly` avec injection de constructeur et Symfony Constraints en attributs.
 
 ```php
-// src/Module/Foo/DTO/FooInput.php
+// src/Module/Foo/Dto/FooInput.php
 final readonly class FooInput
 {
     public function __construct(
@@ -369,7 +369,7 @@ export function useFooEdit(updatePath, onUpdated) {
 ## Checklist — nouveau formulaire
 
 ### Backend
-- [ ] Créer `src/Module/Foo/DTO/FooInput.php` — `final readonly`, factory `fromArray()`
+- [ ] Créer `src/Module/Foo/Dto/FooInput.php` — `final readonly`, factory `fromArray()`
 - [ ] Ajouter les `#[Assert\...]` sur chaque propriété avec des clés de traduction
 - [ ] Ajouter les clés dans `messages.fr.yaml` et `messages.en.yaml`
 - [ ] Dans le controller : `$errors = $this->payloadValidator->errors($input);`

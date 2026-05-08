@@ -6,7 +6,7 @@ namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Module\Project\DTO\ProjectInput;
+use Aurora\Module\Project\Dto\ProjectInput;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Manager\ProjectManager;
 use Aurora\Tests\Integration\IntegrationTestCase;

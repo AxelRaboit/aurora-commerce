@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Module\Project\DTO;
+namespace Aurora\Tests\Unit\Module\Project\Dto;
 
-use Aurora\Module\Project\DTO\ProjectInput;
+use Aurora\Module\Project\Dto\ProjectInput;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use PHPUnit\Framework\TestCase;
 

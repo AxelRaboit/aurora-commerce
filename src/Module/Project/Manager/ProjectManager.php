@@ -11,7 +11,7 @@ use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;
-use Aurora\Module\Project\DTO\ProjectInput;
+use Aurora\Module\Project\Dto\ProjectInput;
 use Aurora\Module\Project\Entity\Project;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

@@ -11,7 +11,7 @@ use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Project\DTO\ProjectTaskCommentInput;
+use Aurora\Module\Project\Dto\ProjectTaskCommentInput;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Manager\ProjectTaskCommentManager;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Company\Contract;
 
-use Aurora\Module\Crm\Company\DTO\CompanyInput;
+use Aurora\Module\Crm\Company\Dto\CompanyInput;
 use Aurora\Module\Crm\Company\Entity\Company;
 
 interface CompanyManagerInterface

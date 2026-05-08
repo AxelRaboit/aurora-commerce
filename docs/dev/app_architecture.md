@@ -150,7 +150,7 @@ This command is automatically called by `make install-dev`, `make deploy-prod`, 
 Modules are organized **by domain first, by layer second**:
 
 ```
-Module/<Name>/<Domain>/{Entity,Manager,Repository,DTO,Service,Serializer,Enum,Controller,…}
+Module/<Name>/<Domain>/{Entity,Manager,Repository,Dto,Service,Serializer,Enum,Controller,…}
 ```
 
 ### 4.1 Module/Editorial

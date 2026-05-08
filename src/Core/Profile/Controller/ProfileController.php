@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Profile\Controller;
 
-use Aurora\Core\Auth\DTO\ChangePasswordInput;
+use Aurora\Core\Auth\Dto\ChangePasswordInput;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
@@ -12,8 +12,8 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Profile\View\ProfileViewBuilder;
 use Aurora\Core\User\Manager\UserManagerInterface;
-use Aurora\Core\User\DTO\MoodInput;
-use Aurora\Core\User\DTO\UpdateProfileInput;
+use Aurora\Core\User\Dto\MoodInput;
+use Aurora\Core\User\Dto\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserProfilePhotoManager;

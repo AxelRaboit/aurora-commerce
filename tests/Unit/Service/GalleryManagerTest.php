@@ -10,7 +10,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Photo\Gallery\DTO\GalleryInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Manager\GalleryManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;

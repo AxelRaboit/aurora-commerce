@@ -118,7 +118,7 @@ Convention :
 **Si** l'entité est créée/éditée via un formulaire admin :
 
 ```
-Aurora\<Module>\<Feature>\DTO\
+Aurora\<Module>\<Feature>\Dto\
 ├── <Name>InputInterface.php          # contrat — getters utilisés par le Manager
 ├── <Name>Input.php                    # implémentation par défaut, non-final, readonly
 ├── <Name>InputFactoryInterface.php   # contrat de la factory
@@ -508,7 +508,7 @@ Pour copier-coller un exemple en bon état, partir de **`Agency`** :
 | Couche | Fichiers de référence |
 |---|---|
 | Entity | `src/Core/Agency/Entity/{AgencyInterface,AbstractAgency,Agency}.php` |
-| DTO | `src/Core/Agency/DTO/{AgencyInputInterface,AgencyInput,AgencyInputFactoryInterface,AgencyInputFactory}.php` |
+| DTO | `src/Core/Agency/Dto/{AgencyInputInterface,AgencyInput,AgencyInputFactoryInterface,AgencyInputFactory}.php` |
 | Manager | `src/Core/Agency/Manager/{AgencyManagerInterface,AgencyManager}.php` |
 | Serializer | `src/Core/Agency/Serializer/{AgencySerializerInterface,AgencySerializer}.php` |
 | Repository | `src/Core/Agency/Repository/AgencyRepository.php` |

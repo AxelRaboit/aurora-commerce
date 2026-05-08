@@ -6,8 +6,8 @@ namespace Aurora\Core\Media\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Contract\MediaManagerInterface;
-use Aurora\Core\Media\DTO\MediaFolderInput;
-use Aurora\Core\Media\DTO\MediaInput;
+use Aurora\Core\Media\Dto\MediaFolderInput;
+use Aurora\Core\Media\Dto\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Enum\MimeTypeEnum;

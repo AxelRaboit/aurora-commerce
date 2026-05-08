@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Module\Project\DTO\ProjectSprintInput;
+use Aurora\Module\Project\Dto\ProjectSprintInput;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSprint;
 use DateTimeImmutable;

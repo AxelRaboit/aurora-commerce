@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Controller\Backend;
 
-use Aurora\Core\Agency\DTO\AgencyInputFactoryInterface;
+use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Manager\AgencyManagerInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;

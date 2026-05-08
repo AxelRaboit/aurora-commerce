@@ -6,7 +6,7 @@ namespace Aurora\Module\Billing\Invoice\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Billing\Invoice\Contract\InvoiceLineManagerInterface;
 use Aurora\Module\Billing\Invoice\Contract\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;

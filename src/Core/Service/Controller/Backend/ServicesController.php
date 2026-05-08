@@ -7,7 +7,7 @@ namespace Aurora\Core\Service\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Service\DTO\ServiceInput;
+use Aurora\Core\Service\Dto\ServiceInput;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Manager\ServiceManager;
 use Aurora\Core\Service\Repository\ServiceRepository;

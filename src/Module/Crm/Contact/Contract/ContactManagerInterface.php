@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Contract;
 
-use Aurora\Module\Crm\Contact\DTO\ContactInput;
+use Aurora\Module\Crm\Contact\Dto\ContactInput;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 
 interface ContactManagerInterface

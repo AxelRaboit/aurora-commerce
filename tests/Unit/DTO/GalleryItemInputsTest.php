@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\DTO;
+namespace Aurora\Tests\Unit\Dto;
 
-use Aurora\Module\Photo\Gallery\DTO\GalleryItemAddInput;
-use Aurora\Module\Photo\Gallery\DTO\GalleryItemBulkDeleteInput;
-use Aurora\Module\Photo\Gallery\DTO\GalleryItemCaptionInput;
-use Aurora\Module\Photo\Gallery\DTO\GalleryItemReorderInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryItemAddInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryItemBulkDeleteInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryItemCaptionInput;
+use Aurora\Module\Photo\Gallery\Dto\GalleryItemReorderInput;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

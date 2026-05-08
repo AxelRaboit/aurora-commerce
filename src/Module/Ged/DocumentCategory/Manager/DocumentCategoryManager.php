@@ -6,7 +6,7 @@ namespace Aurora\Module\Ged\DocumentCategory\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\DocumentCategory\Contract\DocumentCategoryManagerInterface;
-use Aurora\Module\Ged\DocumentCategory\DTO\DocumentCategoryInput;
+use Aurora\Module\Ged\DocumentCategory\Dto\DocumentCategoryInput;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;

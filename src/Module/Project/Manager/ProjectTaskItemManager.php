@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Module\Project\DTO\ProjectTaskItemsInput;
+use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskItem;
 use Doctrine\ORM\EntityManagerInterface;

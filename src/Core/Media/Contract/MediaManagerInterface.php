@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Contract;
 
-use Aurora\Core\Media\DTO\MediaFolderInput;
-use Aurora\Core\Media\DTO\MediaInput;
+use Aurora\Core\Media\Dto\MediaFolderInput;
+use Aurora\Core\Media\Dto\MediaInput;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Enum\StorageAreaEnum;

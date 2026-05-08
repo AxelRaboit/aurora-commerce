@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\User\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\PasswordResetManager;

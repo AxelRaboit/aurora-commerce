@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;

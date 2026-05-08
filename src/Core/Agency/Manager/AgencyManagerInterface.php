@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Manager;
 
-use Aurora\Core\Agency\DTO\AgencyInputInterface;
+use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 
 interface AgencyManagerInterface

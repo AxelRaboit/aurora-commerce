@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Contract;
 
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Billing\Ocr\DTO\InvoiceDraft;
+use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

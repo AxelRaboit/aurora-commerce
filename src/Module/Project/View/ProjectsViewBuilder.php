@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\View;
 
 use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Core\Validation\DTO\PaginationRequest;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;

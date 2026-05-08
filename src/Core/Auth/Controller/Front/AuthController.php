@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Front;
 
-use Aurora\Core\Auth\DTO\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\View\AuthFrontViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
