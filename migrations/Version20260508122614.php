@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260508122205 extends AbstractMigration
+final class Version20260508122614 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -63,15 +63,15 @@ final class Version20260508122205 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE seq_post_type_field_id INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE seq_post_type_id INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE seq_post_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_column_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_label_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_saved_view_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_sprint_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_task_comment_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_task_item_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_task_time_entry_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_task_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE seq_project_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_column_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_label_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_saved_view_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_sprint_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_task_comment_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_task_item_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_task_time_entry_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_task_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE seq_core_project_id INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE seq_reset_password_request_id INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE seq_service_id INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE seq_taxonomy_id INCREMENT BY 1 MINVALUE 1 START 1');
@@ -463,15 +463,15 @@ final class Version20260508122205 extends AbstractMigration
         $this->addSql('DROP SEQUENCE seq_post_type_field_id CASCADE');
         $this->addSql('DROP SEQUENCE seq_post_type_id CASCADE');
         $this->addSql('DROP SEQUENCE seq_post_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_column_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_label_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_saved_view_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_sprint_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_task_comment_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_task_item_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_task_time_entry_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_task_id CASCADE');
-        $this->addSql('DROP SEQUENCE seq_project_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_column_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_label_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_saved_view_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_sprint_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_task_comment_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_task_item_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_task_time_entry_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_task_id CASCADE');
+        $this->addSql('DROP SEQUENCE seq_core_project_id CASCADE');
         $this->addSql('DROP SEQUENCE seq_reset_password_request_id CASCADE');
         $this->addSql('DROP SEQUENCE seq_service_id CASCADE');
         $this->addSql('DROP SEQUENCE seq_taxonomy_id CASCADE');

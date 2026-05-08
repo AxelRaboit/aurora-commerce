@@ -13,7 +13,7 @@ class ProjectLabel extends AbstractProjectLabel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_project_label_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_project_label_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
