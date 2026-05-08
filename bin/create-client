@@ -59,7 +59,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,src/{Controller,Entity,Dto,Manager,Serializer,Service,EventListener},templates/Core,config/packages,config/routes,migrations,assets/client/Module}
+mkdir -p "$DEST"/{bin,public,src/{Controller,Entity,Dto,Manager,Serializer,Service,EventListener},templates/Core,config/packages,config/routes,migrations,assets/client/{Module,Overrides}}
 touch "$DEST/src/Controller/.gitkeep"
 touch "$DEST/src/Entity/.gitkeep"
 touch "$DEST/src/Dto/.gitkeep"
@@ -70,6 +70,7 @@ touch "$DEST/src/EventListener/.gitkeep"
 touch "$DEST/templates/Core/.gitkeep"
 touch "$DEST/migrations/.gitkeep"
 touch "$DEST/assets/client/Module/.gitkeep"
+touch "$DEST/assets/client/Overrides/.gitkeep"
 
 # ---------------------------------------------------------------------------
 # composer.json
@@ -566,7 +567,9 @@ ${PROJECT_NAME}/
 ├── templates/
 │   ├── Core/                   # Override @Core/... templates (auto-resolved before Aurora's)
 │   └── Module/<Name>/          # Module-specific templates
-├── assets/client/Module/<Name>/ # Client Vue components — registered as @client by Aurora vite
+├── assets/client/
+│   ├── Module/<Name>/          # Vue components for client feature modules — vue_component('<name>/<rest>')
+│   └── Overrides/              # Wrappers around Aurora components — vue_component('<rest>') (no prefix)
 ├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
 │   ├── packages/               # Symfony + Aurora config overrides
@@ -592,6 +595,7 @@ make aurora-update
 | New service | \`src/Service/\` | autowired |
 | Override Aurora service | \`src/Manager/\`, \`src/Serializer/\`, … | \`#[AsAlias]\` or \`#[AsDecorator]\` |
 | Override Aurora template | \`templates/Core/<mirrored-path>\` | auto-resolved (Aurora prepends client paths) |
+| Override Aurora Vue component | \`assets/client/Overrides/<mirrored-path>.vue\` | \`vue_component('<mirrored-path-without-extension>')\` (no module prefix) |
 | Extend an Aurora entity | \`src/Entity/\` | \`extends AbstractAurora<Name>\` + \`resolve_target_entities\` |
 | Custom DTO | \`src/Dto/\` | \`extends AuroraInput\` |
 | Feature module | \`src/Module/<Name>/\` | \`assets/client/Module/<Name>\` for Vue, register module class in \`services.yaml\` |

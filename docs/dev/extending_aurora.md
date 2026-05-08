@@ -47,7 +47,9 @@ client-app/
 ├── templates/
 │   ├── Core/                   # Overrides for @Core/... templates (auto-resolved before Aurora's)
 │   └── Module/<Name>/          # Module-specific templates
-├── assets/client/Module/<Name>/ # Client Vue components (registered as @client by Aurora's vite config)
+├── assets/client/
+│   ├── Module/<Name>/          # Vue components for first-party feature modules — exposed as <name>/<rest>
+│   └── Overrides/              # Wrappers around Aurora's Vue components — exposed without module prefix
 ├── migrations/                 # Client-specific Doctrine migrations
 ├── config/
 │   ├── packages/               # doctrine.yaml, twig.yaml, etc. — client overrides
