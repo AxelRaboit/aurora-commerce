@@ -37,7 +37,7 @@ overrides live next to the layer they extend.
 | Override an Aurora service | `src/Manager/MyAgencyManager.php` (or `Serializer/`, `Service/`, …) | `#[AsAlias(AuroraInterface::class)]` |
 | Decorate an Aurora service | same folder as above | `#[AsDecorator(AuroraService::class)]` |
 | Listen to an Aurora event | `src/EventListener/MyListener.php` | `#[AsEventListener(AuroraEvent::class)]` |
-| Extend an Aurora entity | `src/Entity/MyAgency.php` extending `AbstractAurora<Name>` | `resolve_target_entities` in `config/packages/doctrine.yaml` |
+| Extend an Aurora entity | `src/Entity/MyAgency.php` extending `AbstractAurora<Name>` (reuse Aurora's `repositoryClass`) | `resolve_target_entities` in `config/packages/doctrine.yaml` |
 | Extend an Aurora DTO | `src/Dto/MyInput.php` extending `Aurora\…\<Name>Input` | `#[AsAlias]` on the matching Factory |
 | Build a feature module | `src/Module/<Name>/` mirroring Aurora's module layout | `tags: [aurora.module]` in `services.yaml` |
 

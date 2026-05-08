@@ -94,6 +94,17 @@ doctrine:
                 alias: AppEntity
 ```
 
+> **Pourquoi `repositoryClass: AgencyRepository::class` côté client marche
+> transparent** : Aurora's repositories étendent
+> `Aurora\Core\Repository\ResolveTargetEntityRepository`, qui résout l'entité
+> via `getClassMetadata(<Interface>::class)` à la construction. Donc une
+> seule instance de repo, mais elle querie automatiquement votre table
+> `client_agencies` dès que `resolve_target_entities` route l'interface vers
+> votre classe. Pas besoin de redéclarer un repository côté client (sauf si
+> vous voulez ajouter vos propres méthodes — auquel cas étendez
+> `Aurora\Core\Agency\Repository\AgencyRepository` et déclarez-le dans
+> `config/packages/doctrine.yaml`).
+
 À partir de cette config, **toutes** les associations Aurora qui type-hint
 `AgencyInterface` (ex: `User::$agency`) résolvent automatiquement vers votre
 `App\Entity\Agency`.

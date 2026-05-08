@@ -262,6 +262,16 @@ doctrine:
             Aurora\Module\Crm\Deal\Entity\DealInterface: App\Entity\Deal
 ```
 
+**Repository** — réutilisez `Aurora\...\Repository\<Name>Repository` directement
+via `#[ORM\Entity(repositoryClass: ...)]`. Toutes les repositories Aurora
+étendent `Aurora\Core\Repository\ResolveTargetEntityRepository` qui résout
+l'entité concrète à la construction via les class metadata Doctrine — la même
+instance de repo querie automatiquement votre table dès que
+`resolve_target_entities` route l'interface vers votre classe. Vous n'avez à
+créer un repository client que si vous voulez ajouter vos propres méthodes
+(auquel cas étendez celui d'Aurora et déclarez-le dans le `repositoryClass`
+de votre entité).
+
 À partir de là, toutes les associations Aurora qui pointent `DealInterface`
 (ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Entity\Deal`.
 
