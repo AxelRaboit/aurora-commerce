@@ -39,6 +39,7 @@ const props = defineProps({
     eventUpdatePath: { type: String, required: true },
     eventDeletePath: { type: String, required: true },
     usersSelectablePath: { type: String, required: true },
+    agenciesSelectablePath: { type: String, required: true },
 });
 
 const { t } = useI18n();
@@ -78,7 +79,11 @@ const { deletingEvent, confirmDelete: confirmDeleteEvent } = useEventDelete(
 );
 
 // --- People filter (sidebar) ------------------------------------------
-const peopleSidebar = usePeopleSidebar(props.usersSelectablePath, plannings);
+const peopleSidebar = usePeopleSidebar(
+    props.usersSelectablePath,
+    props.agenciesSelectablePath,
+    plannings,
+);
 const eventMatcher = computed(() => peopleSidebar.buildEventMatcher(plannings));
 
 // --- Display + calendar -----------------------------------------------

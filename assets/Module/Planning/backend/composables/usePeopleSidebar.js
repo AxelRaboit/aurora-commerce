@@ -11,22 +11,23 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  *
  * Empty selection = show everything (no filter applied).
  *
- * Users come from the /selectable endpoint. Agencies are derived from
- * the plannings list (each planning embeds its agency via the
- * serializer) — that avoids hitting /backend/agencies/selectable, which
- * is gated by ROLE_ADMIN, and means we only ever surface agencies that
- * actually have a planning attached.
+ * Users come from the /selectable endpoint. Agencies are loaded from
+ * /backend/agencies/selectable when the current user can access it
+ * (ROLE_ADMIN). For everyone else, we silently fall back to the agencies
+ * embedded in the loaded plannings — no extra permission needed, but
+ * limited to agencies that already own at least one planning.
  */
-export function usePeopleSidebar(usersSelectablePath, planningsRef) {
+export function usePeopleSidebar(usersSelectablePath, agenciesSelectablePath, planningsRef) {
     const { request } = useApiRequest();
 
     const mode = ref("users");
     const users = ref([]);
+    const fetchedAgencies = ref([]);
     const selectedUserIds = ref(new Set());
     const selectedAgencyIds = ref(new Set());
     const searchQuery = ref("");
 
-    const agencies = computed(() => {
+    const derivedAgencies = computed(() => {
         const seen = new Map();
         for (const planning of planningsRef.value) {
             const agency = planning.agency;
@@ -34,7 +35,16 @@ export function usePeopleSidebar(usersSelectablePath, planningsRef) {
                 seen.set(agency.id, { value: agency.id, label: agency.name });
             }
         }
-        return [...seen.values()].sort((agencyA, agencyB) =>
+        return [...seen.values()];
+    });
+
+    // Prefer the full /selectable list when available, otherwise fall back
+    // to whatever agencies are referenced by the loaded plannings.
+    const agencies = computed(() => {
+        const list = fetchedAgencies.value.length
+            ? fetchedAgencies.value
+            : derivedAgencies.value;
+        return [...list].sort((agencyA, agencyB) =>
             agencyA.label.localeCompare(agencyB.label),
         );
     });
@@ -56,6 +66,11 @@ export function usePeopleSidebar(usersSelectablePath, planningsRef) {
     async function loadUsers() {
         const data = await request(usersSelectablePath, null, HttpMethod.Get);
         if (data?.success) users.value = data.items ?? [];
+    }
+
+    async function loadAgencies() {
+        const data = await request(agenciesSelectablePath, null, HttpMethod.Get);
+        if (data?.success) fetchedAgencies.value = data.items ?? [];
     }
 
     function toggleUser(userId) {
@@ -114,8 +129,11 @@ export function usePeopleSidebar(usersSelectablePath, planningsRef) {
         };
     }
 
-    onMounted(() => {
-        loadUsers();
+    onMounted(async () => {
+        // Sequential — useApiRequest's loading guard rejects parallel calls,
+        // so we await one before starting the next.
+        await loadUsers();
+        await loadAgencies();
     });
 
     return {
