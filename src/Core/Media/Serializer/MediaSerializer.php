@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Serializer;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final readonly class MediaSerializer
+#[AsAlias(MediaSerializerInterface::class)]
+class MediaSerializer implements MediaSerializerInterface
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
+        protected readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     /**
      * @return array<string, mixed>
      */
-    public function serialize(Media $media): array
+    public function serialize(MediaInterface $media): array
     {
         $variantUrls = [];
         foreach (array_keys($media->getVariants()) as $name) {

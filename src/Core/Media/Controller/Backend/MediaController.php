@@ -10,16 +10,16 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Media\Contract\MediaManagerInterface;
-use Aurora\Core\Media\Dto\MediaFolderInput;
-use Aurora\Core\Media\Dto\MediaInput;
+use Aurora\Core\Media\Dto\MediaFolderInputFactoryInterface;
+use Aurora\Core\Media\Dto\MediaInputFactoryInterface;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Serializer\MediaFolderSerializer;
-use Aurora\Core\Media\Serializer\MediaSerializer;
+use Aurora\Core\Media\Serializer\MediaFolderSerializerInterface;
+use Aurora\Core\Media\Serializer\MediaSerializerInterface;
 use Aurora\Core\Media\Service\MediaUsageService;
 use Aurora\Core\Media\View\MediaViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
@@ -42,13 +42,15 @@ class MediaController extends AbstractController
         private readonly MediaRepository $mediaRepository,
         private readonly MediaFolderRepository $folderRepository,
         private readonly MediaManagerInterface $mediaManager,
-        private readonly MediaSerializer $mediaSerializer,
-        private readonly MediaFolderSerializer $folderSerializer,
+        private readonly MediaSerializerInterface $mediaSerializer,
+        private readonly MediaFolderSerializerInterface $folderSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly AuditLogRepository $auditLogRepository,
         private readonly AuditLogSerializer $auditLogSerializer,
         private readonly MediaUsageService $mediaUsageService,
         private readonly MediaViewBuilder $viewBuilder,
+        private readonly MediaInputFactoryInterface $mediaInputFactory,
+        private readonly MediaFolderInputFactoryInterface $folderInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -159,7 +161,7 @@ class MediaController extends AbstractController
     #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
     public function edit(Media $media, Request $request): JsonResponse
     {
-        $input = MediaInput::fromArray($this->decodeJson($request));
+        $input = $this->mediaInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -243,7 +245,7 @@ class MediaController extends AbstractController
     #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
     public function createFolder(Request $request): JsonResponse
     {
-        $input = MediaFolderInput::fromArray($this->decodeJson($request));
+        $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -262,7 +264,7 @@ class MediaController extends AbstractController
     #[Route('/folders/{id}/edit', name: '_folder_edit', methods: [HttpMethodEnum::Post->value])]
     public function editFolder(MediaFolder $folder, Request $request): JsonResponse
     {
-        $input = MediaFolderInput::fromArray($this->decodeJson($request));
+        $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

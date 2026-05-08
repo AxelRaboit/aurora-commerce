@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Serializer;
 
-use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Entity\MediaFolderInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final class MediaFolderSerializer
+#[AsAlias(MediaFolderSerializerInterface::class)]
+class MediaFolderSerializer implements MediaFolderSerializerInterface
 {
     /** @var array<int, int> */
     private array $mediaCounts = [];
@@ -25,7 +27,7 @@ final class MediaFolderSerializer
     /**
      * @return array<string, mixed>
      */
-    public function serialize(MediaFolder $folder): array
+    public function serialize(MediaFolderInterface $folder): array
     {
         return [
             'id' => $folder->getId(),

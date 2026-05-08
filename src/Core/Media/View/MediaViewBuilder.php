@@ -7,8 +7,8 @@ namespace Aurora\Core\Media\View;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Serializer\MediaFolderSerializer;
-use Aurora\Core\Media\Serializer\MediaSerializer;
+use Aurora\Core\Media\Serializer\MediaFolderSerializerInterface;
+use Aurora\Core\Media\Serializer\MediaSerializerInterface;
 
 /**
  * Builds the Twig payload for the admin media library page. Centralises the
@@ -20,8 +20,8 @@ final readonly class MediaViewBuilder
     public function __construct(
         private MediaRepository $mediaRepository,
         private MediaFolderRepository $folderRepository,
-        private MediaSerializer $mediaSerializer,
-        private MediaFolderSerializer $folderSerializer,
+        private MediaSerializerInterface $mediaSerializer,
+        private MediaFolderSerializerInterface $folderSerializer,
     ) {}
 
     /**

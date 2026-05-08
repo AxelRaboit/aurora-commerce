@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Contract\MediaManagerInterface;
-use Aurora\Core\Media\Dto\MediaFolderInput;
-use Aurora\Core\Media\Dto\MediaInput;
+use Aurora\Core\Media\Dto\MediaFolderInputInterface;
+use Aurora\Core\Media\Dto\MediaInputInterface;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
+use Aurora\Core\Media\Entity\MediaFolderInterface;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
@@ -34,25 +35,27 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(MediaManagerInterface::class)]
-final readonly class MediaManager implements MediaManagerInterface
+class MediaManager implements MediaManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SluggerInterface $slugger,
-        private MediaFolderRepository $folderRepository,
-        private MediaRepository $mediaRepository,
-        private ImageVariantGenerator $variantGenerator,
-        private TranslatorInterface $translator,
-        private Security $security,
-        private AuditLogger $auditLogger,
-        private Filesystem $filesystem,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly SluggerInterface $slugger,
+        protected readonly MediaFolderRepository $folderRepository,
+        protected readonly MediaRepository $mediaRepository,
+        protected readonly ImageVariantGenerator $variantGenerator,
+        protected readonly TranslatorInterface $translator,
+        protected readonly Security $security,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly Filesystem $filesystem,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
         #[Autowire('%app.upload_dir%')]
-        private string $uploadDir,
+        protected readonly string $uploadDir,
     ) {}
 
-    public function upload(UploadedFile $file, ?MediaFolder $folder = null, StorageAreaEnum $area = StorageAreaEnum::Media): Media
+    // ── Media: upload + CRUD ──────────────────────────────────────────────────
+
+    public function upload(UploadedFile $file, ?MediaFolderInterface $folder = null, StorageAreaEnum $area = StorageAreaEnum::Media): MediaInterface
     {
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
@@ -72,7 +75,7 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreMediaPrefix->value, SequencePrefixEnum::Media->value) ?? SequencePrefixEnum::Media->value;
 
-        $media = new Media();
+        $media = $this->createMedia();
         $media->setFilename($newFilename);
         $media->setOriginalName($clientName);
         $media->setMimeType($mimeType);
@@ -92,66 +95,52 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->persist($media);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('media', 'uploaded', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
+        $this->auditLogger->log('media', 'uploaded', 'Media', $media->getId(), $this->auditMediaPayload($media));
 
         return $media;
     }
 
-    public function update(Media $media, MediaInput $input): void
+    public function update(MediaInterface $media, MediaInputInterface $input): void
     {
-        $media->setAlt($input->alt);
-        $media->setCaption($input->caption);
-        $media->setFocalX($input->focalX);
-        $media->setFocalY($input->focalY);
-
-        $folder = null;
-        if (null !== $input->folderId) {
-            $folder = $this->folderRepository->find($input->folderId);
-            if (null === $folder) {
-                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.folder_not_found', ['{id}' => $input->folderId]));
-            }
-        }
-
-        $media->setFolder($folder);
+        $this->applyMediaInput($media, $input);
         $this->entityManager->flush();
-        $this->auditLogger->log('media', 'updated', 'Media', $media->getId(), ['name' => $media->getOriginalName()]);
+        $this->auditMediaUpdated($media);
     }
 
-    public function move(Media $media, ?MediaFolder $folder): void
+    public function move(MediaInterface $media, ?MediaFolderInterface $folder): void
     {
         $media->setFolder($folder);
         $this->entityManager->flush();
         $this->auditLogger->log('media', 'moved', 'Media', $media->getId(), [
-            'name' => $media->getOriginalName(),
+            ...$this->auditMediaPayload($media),
             'folder' => $folder?->getName(),
         ]);
     }
 
-    public function delete(Media $media): void
+    public function delete(MediaInterface $media): void
     {
-        $id = $media->getId();
-        $name = $media->getOriginalName();
-
         $filePath = Path::join($this->uploadDir, $media->getPath());
-        // Filesystem::remove() is a no-op when the path is missing, so the
-        // pre-existence check that wrapped the previous @unlink call is redundant.
         $this->filesystem->remove($filePath);
 
         $this->variantGenerator->deleteVariants($media->getVariants());
+
+        $this->auditMediaDeleted($media);
+
         $this->entityManager->remove($media);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('media', 'deleted', 'Media', $id, ['name' => $name]);
     }
 
-    public function createFolder(MediaFolderInput $input): MediaFolder
-    {
-        $folder = new MediaFolder()->setName($input->name);
+    // ── MediaFolder: CRUD ─────────────────────────────────────────────────────
 
-        if (null !== $input->parentId) {
-            $parent = $this->folderRepository->find($input->parentId);
+    public function createFolder(MediaFolderInputInterface $input): MediaFolderInterface
+    {
+        $folder = $this->createMediaFolder();
+        $folder->setName($input->getName());
+
+        if (null !== $input->getParentId()) {
+            $parent = $this->folderRepository->find($input->getParentId());
             if (null === $parent) {
-                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->getParentId()]));
             }
 
             $folder->setParent($parent);
@@ -163,18 +152,20 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->persist($folder);
         $this->entityManager->flush();
 
+        $this->auditFolderCreated($folder);
+
         return $folder;
     }
 
-    public function updateFolder(MediaFolder $folder, MediaFolderInput $input): void
+    public function updateFolder(MediaFolderInterface $folder, MediaFolderInputInterface $input): void
     {
-        $folder->setName($input->name);
+        $folder->setName($input->getName());
 
         $newParent = null;
-        if (null !== $input->parentId) {
-            $newParent = $this->folderRepository->find($input->parentId);
+        if (null !== $input->getParentId()) {
+            $newParent = $this->folderRepository->find($input->getParentId());
             if (null === $newParent) {
-                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->parentId]));
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.parent_folder_not_found', ['{id}' => $input->getParentId()]));
             }
 
             if ($newParent === $folder || $newParent->isDescendantOf($folder)) {
@@ -185,14 +176,20 @@ final readonly class MediaManager implements MediaManagerInterface
         $folder->setParent($newParent);
 
         $this->entityManager->flush();
+
+        $this->auditFolderUpdated($folder);
     }
 
-    public function deleteFolder(MediaFolder $folder): void
+    public function deleteFolder(MediaFolderInterface $folder): void
     {
+        $this->auditFolderDeleted($folder);
+
         // FK onDelete: SET NULL on media/media_folders children → they bubble up to root.
         $this->entityManager->remove($folder);
         $this->entityManager->flush();
     }
+
+    // ── Bulk + reorder + crop ─────────────────────────────────────────────────
 
     public function reorder(array $orderedIds): void
     {
@@ -231,7 +228,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->flush();
     }
 
-    public function bulkMove(array $ids, ?MediaFolder $folder): void
+    public function bulkMove(array $ids, ?MediaFolderInterface $folder): void
     {
         if ([] === $ids) {
             return;
@@ -244,7 +241,7 @@ final readonly class MediaManager implements MediaManagerInterface
         $this->entityManager->flush();
     }
 
-    public function crop(Media $media, int $x, int $y, int $width, int $height): void
+    public function crop(MediaInterface $media, int $x, int $y, int $width, int $height): void
     {
         $mime = MimeTypeEnum::tryFrom($media->getMimeType());
         $sourceAbsolute = Path::join($this->uploadDir, $media->getPath());
@@ -300,8 +297,85 @@ final readonly class MediaManager implements MediaManagerInterface
 
         $this->entityManager->flush();
         $this->auditLogger->log('media', 'cropped', 'Media', $media->getId(), [
-            'name' => $media->getOriginalName(),
+            ...$this->auditMediaPayload($media),
             'crop' => ['x' => $x, 'y' => $y, 'w' => $width, 'h' => $height],
         ]);
+    }
+
+    // ── Hooks: instanciation ──────────────────────────────────────────────────
+
+    protected function createMedia(): MediaInterface
+    {
+        return new Media();
+    }
+
+    protected function createMediaFolder(): MediaFolderInterface
+    {
+        return new MediaFolder();
+    }
+
+    // ── Hooks: hydratation ────────────────────────────────────────────────────
+
+    protected function applyMediaInput(MediaInterface $media, MediaInputInterface $input): void
+    {
+        $media->setAlt($input->getAlt());
+        $media->setCaption($input->getCaption());
+        $media->setFocalX($input->getFocalX());
+        $media->setFocalY($input->getFocalY());
+
+        $folder = null;
+        if (null !== $input->getFolderId()) {
+            $folder = $this->folderRepository->find($input->getFolderId());
+            if (null === $folder) {
+                throw new InvalidArgumentException($this->translator->trans('backend.media.errors.folder_not_found', ['{id}' => $input->getFolderId()]));
+            }
+        }
+
+        $media->setFolder($folder);
+    }
+
+    // ── Hooks: audit ──────────────────────────────────────────────────────────
+
+    protected function auditMediaUpdated(MediaInterface $media): void
+    {
+        $this->auditLogger->log('media', 'updated', 'Media', $media->getId(), $this->auditMediaPayload($media));
+    }
+
+    protected function auditMediaDeleted(MediaInterface $media): void
+    {
+        $this->auditLogger->log('media', 'deleted', 'Media', $media->getId(), $this->auditMediaPayload($media));
+    }
+
+    protected function auditFolderCreated(MediaFolderInterface $folder): void
+    {
+        $this->auditLogger->log('media', 'folder.created', 'MediaFolder', $folder->getId(), $this->auditFolderPayload($folder));
+    }
+
+    protected function auditFolderUpdated(MediaFolderInterface $folder): void
+    {
+        $this->auditLogger->log('media', 'folder.updated', 'MediaFolder', $folder->getId(), $this->auditFolderPayload($folder));
+    }
+
+    protected function auditFolderDeleted(MediaFolderInterface $folder): void
+    {
+        $this->auditLogger->log('media', 'folder.deleted', 'MediaFolder', $folder->getId(), $this->auditFolderPayload($folder));
+    }
+
+    /**
+     * Base payload for every Media audit entry. Override to add custom fields:
+     * `[...parent::auditMediaPayload($media), 'tags' => $media->getTags()]`.
+     *
+     * Note: `upload()` also uses this payload — the create event is `uploaded`
+     * (not `created`) because the operation has additional file-processing
+     * semantics that don't fit the standard `auditCreated` hook signature.
+     */
+    protected function auditMediaPayload(MediaInterface $media): array
+    {
+        return ['name' => $media->getOriginalName()];
+    }
+
+    protected function auditFolderPayload(MediaFolderInterface $folder): array
+    {
+        return ['name' => $folder->getName()];
     }
 }

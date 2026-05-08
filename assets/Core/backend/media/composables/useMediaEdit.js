@@ -4,9 +4,16 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial/reset value.
+ * @property {(media: object) => *} fromEntity - Reads field value from existing media on openEditMedia.
+ */
+
 export function useMediaEdit(props, media) {
     const { t } = useI18n();
     const window = globalThis;
+    const extraFields = props.extraFields ?? {};
 
     const editingMedia = ref(null);
     const editTab = ref("edit");
@@ -19,6 +26,9 @@ export function useMediaEdit(props, media) {
         focalX: null,
         focalY: null,
         folderId: null,
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
     });
     const editErrors = ref({});
     const editSaving = ref(false);
@@ -39,6 +49,12 @@ export function useMediaEdit(props, media) {
             focalX: item.focalX,
             focalY: item.focalY,
             folderId: item.folderId,
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.fromEntity ? def.fromEntity(item) : (item[key] ?? def.default),
+                ]),
+            ),
         });
     }
 

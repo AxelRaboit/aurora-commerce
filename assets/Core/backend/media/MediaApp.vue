@@ -53,6 +53,12 @@ const props = defineProps({
     bulkMovePath: { type: String, default: "/backend/media/bulk-move" },
     cropPath: { type: String, default: "/backend/media/__id__/crop" },
     totalStorageBytes: { type: Number, default: 0 },
+    /**
+     * Extra fields to register on the media edit form. Lets clients extend
+     * the modal without forking this component.
+     * Example: { tags: { default: '', fromEntity: (m) => m.tags ?? '' } }
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { selectedIds, isSelecting, toggle: toggleSelect, clear: clearSelection } = useMultiSelection();
@@ -605,6 +611,8 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         track-by="id"
                         option-label="displayLabel"
                     />
+
+                    <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :media="editingMedia" />
 
                     <dl class="text-xs text-muted space-y-0.5 pt-2 border-t border-line">
                         <div class="flex justify-between"><dt>ID</dt><dd class="font-mono select-all">{{ editingMedia?.id }}</dd></div>

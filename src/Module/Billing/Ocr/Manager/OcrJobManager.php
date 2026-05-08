@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Ocr\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Contract\MediaManagerInterface;
+use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
