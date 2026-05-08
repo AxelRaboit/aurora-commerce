@@ -11,8 +11,8 @@ de la convention. Stratégie : module par module, commits atomiques.
 
 | État | Entités |
 |---|---|
-| ✅ Fait | 10 / 24 |
-| 🔜 Reste | 14 / 24 |
+| ✅ Fait | 11 / 24 |
+| 🔜 Reste | 13 / 24 |
 
 Tests : tout doit rester vert (`php bin/phpunit`) après chaque commit.
 
@@ -49,7 +49,7 @@ Pilotes (instrumentés avant la convention finale, commits antérieurs) :
 - [x] `Comment` — `f01f173`
 - [x] `Form` (cascade : `FormField`) — `21afe8c`
 - [x] `PostType` (cascade : `PostTypeField`) — `6a55216`
-- [ ] `Taxonomy` (cascade : `TaxonomyTerm` + `TaxonomyTermTranslation`)
+- [x] `Taxonomy` (cascade : `TaxonomyTerm` + `TaxonomyTermTranslation`) — `ef10e8c`
 
 ### Crm (2)
 
