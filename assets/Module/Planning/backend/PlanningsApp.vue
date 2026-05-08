@@ -17,7 +17,8 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
-import { Plus, Pencil, Trash2 } from "lucide-vue-next";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import { Plus, Pencil, Trash2, Save, X } from "lucide-vue-next";
 
 const props = defineProps({
     plannings: { type: Array, required: true },
@@ -38,7 +39,14 @@ const selectedPlanningId = ref(plannings.value[0]?.id ?? null);
 const events = ref([]);
 
 const selectedPlanning = computed(
-    () => plannings.value.find((planning) => planning.id === selectedPlanningId.value) ?? null,
+    () => plannings.value.find((planning) => Number(planning.id) === Number(selectedPlanningId.value)) ?? null,
+);
+
+const planningOptions = computed(() =>
+    plannings.value.map((planning) => ({
+        value: planning.id,
+        label: planning.name,
+    })),
 );
 
 const planningForm = usePlanningForm(plannings, props.createPath, props.updatePath);
@@ -177,17 +185,13 @@ const statusOptions = [
 <template>
     <div class="flex flex-col gap-4">
         <div class="flex flex-wrap items-center gap-3">
-            <label class="flex items-center gap-2 text-sm">
-                <span class="text-zinc-600 dark:text-zinc-400">{{ t("backend.plannings.title") }} :</span>
-                <select
+            <div class="min-w-[220px]">
+                <AppSelect
+                    v-if="plannings.length"
                     v-model="selectedPlanningId"
-                    class="rounded border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-                >
-                    <option v-for="planning in plannings" :key="planning.id" :value="planning.id">
-                        {{ planning.name }}
-                    </option>
-                </select>
-            </label>
+                    :options="planningOptions"
+                />
+            </div>
             <span
                 v-if="selectedPlanning"
                 class="inline-block h-3 w-3 rounded-full"
@@ -208,8 +212,8 @@ const statusOptions = [
                 <Trash2 class="h-4 w-4" />
             </AppIconButton>
             <div class="ml-auto">
-                <AppButton v-on:click="planningForm.openCreate()">
-                    <Plus class="h-4 w-4" />
+                <AppButton variant="primary" size="md" v-on:click="planningForm.openCreate()">
+                    <Plus class="h-4 w-4" :stroke-width="2" />
                     {{ t("backend.plannings.new") }}
                 </AppButton>
             </div>
@@ -227,8 +231,13 @@ const statusOptions = [
             <FullCalendar :options="calendarOptions" />
         </div>
 
-        <AppModal v-model:open="planningForm.editModal.open" :title="planningForm.editModal.planning ? t('backend.plannings.edit') : t('backend.plannings.new')">
-            <form class="flex flex-col gap-3" v-on:submit.prevent="planningForm.submit()">
+        <AppModal
+            :show="planningForm.editModal.open"
+            max-width="md"
+            :title="planningForm.editModal.planning ? t('backend.plannings.edit') : t('backend.plannings.new')"
+            v-on:close="planningForm.editModal.open = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="planningForm.submit()">
                 <AppInput
                     v-model="planningForm.editForm.name"
                     :label="t('backend.plannings.fields.name')"
@@ -259,19 +268,26 @@ const statusOptions = [
                     :error="planningForm.editModal.errors.visibility"
                 />
                 <slot name="extra-form-fields" :form="planningForm.editForm" :errors="planningForm.editModal.errors" />
-                <div class="flex justify-end gap-2 pt-2">
-                    <AppButton type="button" variant="ghost" v-on:click="planningForm.editModal.open = false">
+                <AppModalFooter :bordered="true">
+                    <AppButton variant="ghost" size="md" v-on:click="planningForm.editModal.open = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton type="submit" :loading="planningForm.editModal.saving">
+                    <AppButton type="submit" variant="primary" size="md" :loading="planningForm.editModal.saving">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
-                </div>
+                </AppModalFooter>
             </form>
         </AppModal>
 
-        <AppModal v-model:open="eventForm.editModal.open" :title="eventForm.editModal.event ? t('backend.planning_events.edit') : t('backend.planning_events.new')">
-            <form class="flex flex-col gap-3" v-on:submit.prevent="eventForm.submit(selectedPlanningId)">
+        <AppModal
+            :show="eventForm.editModal.open"
+            max-width="md"
+            :title="eventForm.editModal.event ? t('backend.planning_events.edit') : t('backend.planning_events.new')"
+            v-on:close="eventForm.editModal.open = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="eventForm.submit(selectedPlanningId)">
                 <p
                     v-if="eventForm.editModal.readOnly"
                     class="rounded bg-amber-50 p-2 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
@@ -325,29 +341,32 @@ const statusOptions = [
                     :options="statusOptions"
                     :disabled="eventForm.editModal.readOnly"
                 />
-                <div class="flex items-center justify-between gap-2 pt-2">
+                <AppModalFooter :bordered="true">
                     <AppButton
                         v-if="eventForm.editModal.event && !eventForm.editModal.readOnly"
-                        type="button"
                         variant="danger"
+                        size="md"
                         v-on:click="eventForm.remove()"
                     >
-                        <Trash2 class="h-4 w-4" />
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>
-                    <div class="ml-auto flex gap-2">
-                        <AppButton type="button" variant="ghost" v-on:click="eventForm.editModal.open = false">
-                            {{ t("shared.common.cancel") }}
-                        </AppButton>
-                        <AppButton
-                            v-if="!eventForm.editModal.readOnly"
-                            type="submit"
-                            :loading="eventForm.editModal.saving"
-                        >
-                            {{ t("shared.common.save") }}
-                        </AppButton>
-                    </div>
-                </div>
+                    <span class="flex-1" />
+                    <AppButton variant="ghost" size="md" v-on:click="eventForm.editModal.open = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        v-if="!eventForm.editModal.readOnly"
+                        type="submit"
+                        variant="primary"
+                        size="md"
+                        :loading="eventForm.editModal.saving"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
             </form>
         </AppModal>
     </div>
