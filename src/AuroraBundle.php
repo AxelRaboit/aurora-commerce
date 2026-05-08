@@ -133,12 +133,33 @@ use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class AuroraBundle extends AbstractBundle
 {
+    /**
+     * Override AbstractBundle::getPath() — the default returns
+     * `dirname(file, 2)` which resolves to the project root (or vendor
+     * package root when used by a client). That makes Symfony's
+     * `assets:install` treat the project's `public/` as the bundle's
+     * `Resources/public` and copy it recursively into
+     * `public/bundles/aurora/` — infinite nesting.
+     *
+     * Returning `__DIR__` (the `src/` dir) scopes the bundle to its
+     * code dir; no `src/public/` exists, so no asset copy happens.
+     * All internal paths in this bundle use `dirname(__DIR__)` directly,
+     * so the override doesn't affect translations / Doctrine mappings /
+     * Twig namespaces — they still resolve against the project root.
+     */
+    #[Override]
+    public function getPath(): string
+    {
+        return __DIR__;
+    }
+
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $container->import(dirname(__DIR__).'/config/services.yaml');
