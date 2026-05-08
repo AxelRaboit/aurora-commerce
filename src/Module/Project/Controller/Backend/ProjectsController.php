@@ -112,7 +112,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $project = $this->projectManager->create($input);
@@ -152,7 +152,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->projectManager->update($project, $input);
@@ -177,7 +177,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $task = $this->taskManager->create($project, $input);
@@ -193,7 +193,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->taskManager->update($task, $input);
@@ -233,7 +233,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $column = $this->columnManager->create($project, $input);
@@ -249,7 +249,7 @@ final class ProjectsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->columnManager->update($column, $input);
@@ -264,7 +264,7 @@ final class ProjectsController extends AbstractController
         try {
             $this->columnManager->delete($column);
         } catch (DomainException $domainException) {
-            return $this->jsonInvalidInput(['_global' => $domainException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['_global' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess();
@@ -290,7 +290,7 @@ final class ProjectsController extends AbstractController
         $input = ProjectLabelInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $label = $this->labelManager->create($project, $input);
@@ -309,7 +309,7 @@ final class ProjectsController extends AbstractController
         $input = ProjectLabelInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->labelManager->update($label, $input);
@@ -346,13 +346,13 @@ final class ProjectsController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            return $this->jsonInvalidInput(['_global' => 'backend.projects.errors.time_user_required'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['_global' => 'backend.projects.errors.time_user_required']);
         }
 
         $input = ProjectTaskTimeEntryInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $entry = $this->timeEntryManager->create($task, $user, $input);
@@ -383,7 +383,7 @@ final class ProjectsController extends AbstractController
         $input = ProjectTaskCommentInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $comment = $this->commentManager->create($task, $author, $input);
@@ -435,7 +435,7 @@ final class ProjectsController extends AbstractController
         $input = ProjectSprintInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $sprint = $this->sprintManager->create($project, $input);
@@ -450,7 +450,7 @@ final class ProjectsController extends AbstractController
         $input = ProjectSprintInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->sprintManager->update($sprint, $input);
@@ -500,7 +500,7 @@ final class ProjectsController extends AbstractController
         $name = mb_trim((string) ($data['name'] ?? ''));
         $filters = (array) ($data['filters'] ?? []);
         if ('' === $name) {
-            return $this->jsonInvalidInput(['name' => 'backend.projects.errors.saved_view_name_required'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['name' => 'backend.projects.errors.saved_view_name_required']);
         }
 
         $view = $this->savedViewManager->create($user, $project, $name, $filters);

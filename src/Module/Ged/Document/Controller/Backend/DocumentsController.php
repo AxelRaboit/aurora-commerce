@@ -53,7 +53,7 @@ final class DocumentsController extends AbstractController
         $input = DocumentInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $document = $this->manager->create($input);
@@ -67,7 +67,7 @@ final class DocumentsController extends AbstractController
         $input = DocumentInput::fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->manager->update($document, $input);

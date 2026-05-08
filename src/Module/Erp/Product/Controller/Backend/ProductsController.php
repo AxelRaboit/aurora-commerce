@@ -57,13 +57,13 @@ final class ProductsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $product = $this->productManager->create($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['product' => $this->productSerializer->serialize($product)]);
@@ -77,13 +77,13 @@ final class ProductsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->productManager->update($product, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['reference' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['product' => $this->productSerializer->serialize($product)]);

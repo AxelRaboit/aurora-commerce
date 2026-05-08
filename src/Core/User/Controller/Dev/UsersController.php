@@ -61,7 +61,7 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $user = $this->userManager->create($input->name, $input->email, $input->password);
@@ -79,13 +79,13 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->userManager->update($user, $input->name, $input->email);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['email' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['email' => $invalidArgumentException->getMessage()]);
         }
 
         $this->userManager->changeLocaleEnum($user, $input->locale);

@@ -54,7 +54,7 @@ final class ContactsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $contact = $this->contactManager->create($input);
@@ -69,7 +69,7 @@ final class ContactsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->contactManager->update($contact, $input);

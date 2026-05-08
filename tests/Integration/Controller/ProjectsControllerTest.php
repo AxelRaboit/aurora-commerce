@@ -72,7 +72,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
             'status' => ProjectStatusEnum::Draft->value,
         ]);
 
-        self::assertSame(200, $status);
+        self::assertSame(422, $status);
         self::assertFalse($body['success']);
         self::assertArrayHasKey('errors', $body);
         self::assertArrayHasKey('title', $body['errors']);

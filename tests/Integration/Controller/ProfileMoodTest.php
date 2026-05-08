@@ -59,7 +59,7 @@ final class ProfileMoodTest extends IntegrationTestCase
 
         [$status, $body] = $this->postJson('backend_profile_mood', [], ['moodMessage' => $tooLong]);
 
-        self::assertSame(200, $status);
+        self::assertSame(422, $status);
         self::assertFalse($body['success']);
         self::assertArrayHasKey('moodMessage', $body['errors']);
         self::assertNull($this->reloadAdmin()->getMoodMessage());

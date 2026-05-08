@@ -98,13 +98,13 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $user = $this->userManager->invite($input->name, $input->email, $input->role, $input->message);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['role' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['role' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
@@ -122,13 +122,13 @@ final class UsersController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->userHierarchyManager->applyManager($user, $input->managerId);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['managerId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['managerId' => $invalidArgumentException->getMessage()]);
         }
 
         try {
@@ -136,7 +136,7 @@ final class UsersController extends AbstractController
         } catch (InvalidArgumentException $invalidArgumentException) {
             $field = str_contains($invalidArgumentException->getMessage(), 'email') ? 'email' : 'role';
 
-            return $this->jsonInvalidInput([$field => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput([$field => $invalidArgumentException->getMessage()]);
         }
 
         $this->userManager->updateAgencyAndService($user, $input->agencyId, $input->serviceId);
@@ -184,13 +184,13 @@ final class UsersController extends AbstractController
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing']);
         }
 
         try {
             $this->userProfilePhotoManager->upload($user, $file);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
@@ -242,7 +242,7 @@ final class UsersController extends AbstractController
 
         $privileges = $this->decodeJson($request)['privileges'] ?? [];
         if (!is_array($privileges)) {
-            return $this->jsonInvalidInput(['privileges' => 'Invalid format'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['privileges' => 'Invalid format']);
         }
 
         $this->userManager->updatePrivileges($user, array_values(array_filter($privileges, is_string(...))));

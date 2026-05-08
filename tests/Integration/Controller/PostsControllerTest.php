@@ -160,7 +160,7 @@ final class PostsControllerTest extends IntegrationTestCase
 
         [$statusCode, $body] = $this->editPost($post->getId(), $payload);
 
-        self::assertSame(200, $statusCode);
+        self::assertSame(422, $statusCode);
         self::assertFalse($body['success'] ?? true);
         self::assertArrayHasKey('errors', $body);
         self::assertArrayHasKey('status', $body['errors']);

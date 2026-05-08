@@ -127,7 +127,7 @@ final class PostTypesControllerTest extends IntegrationTestCase
             'type' => 'text',
         ]);
 
-        self::assertSame(200, $status);
+        self::assertSame(422, $status);
         self::assertFalse($body['success']);
         self::assertArrayHasKey('name', $body['errors']);
     }

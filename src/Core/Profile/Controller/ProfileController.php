@@ -58,7 +58,7 @@ final class ProfileController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->userManager->update($user, $input->name, $input->email);
@@ -76,13 +76,13 @@ final class ProfileController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
             return $this->jsonInvalidInput([
                 'current_password' => $this->translator->trans('backend.profile.errors.current_password_invalid'),
-            ], Response::HTTP_OK);
+            ]);
         }
 
         $this->userManager->changePassword($user, $input->password);
@@ -117,7 +117,7 @@ final class ProfileController extends AbstractController
         $input = MoodInput::fromRequest($request);
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         $this->userManager->changeMoodMessage($user, $input->moodMessage);
@@ -133,13 +133,13 @@ final class ProfileController extends AbstractController
 
         $file = $request->files->get('photo');
         if (null === $file) {
-            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing'], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => 'backend.users.photo.errors.missing']);
         }
 
         try {
             $this->userProfilePhotoManager->upload($user, $file);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['profilePhotoUrl' => $user->getProfilePhotoUrl()]);

@@ -108,13 +108,13 @@ final class ListingsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $listing = $this->listingManager->create($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['listing' => $this->listingSerializer->serialize($listing)]);
@@ -128,13 +128,13 @@ final class ListingsController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->listingManager->update($listing, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['_global' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['listing' => $this->listingSerializer->serialize($listing)]);

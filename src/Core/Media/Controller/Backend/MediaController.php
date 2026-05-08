@@ -162,13 +162,13 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->mediaManager->update($media, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['folderId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['folderId' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['media' => $this->mediaSerializer->serialize($media)]);
@@ -246,13 +246,13 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $folder = $this->mediaManager->createFolder($input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);
@@ -265,13 +265,13 @@ class MediaController extends AbstractController
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors, Response::HTTP_OK);
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
             $this->mediaManager->updateFolder($folder, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()], Response::HTTP_OK);
+            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()]);
         }
 
         return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);

@@ -115,7 +115,7 @@ final class MediaControllerTest extends IntegrationTestCase
             'parentId' => $child->getId(),
         ]);
 
-        self::assertSame(200, $status);
+        self::assertSame(422, $status);
         self::assertFalse($body['success']);
         self::assertArrayHasKey('parentId', $body['errors']);
     }
@@ -130,7 +130,7 @@ final class MediaControllerTest extends IntegrationTestCase
             'focalY' => -0.2,
         ]);
 
-        self::assertSame(200, $status);
+        self::assertSame(422, $status);
         self::assertFalse($body['success']);
     }
 
