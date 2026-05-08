@@ -24,6 +24,17 @@ de désynchronisation possible. Aurora-client charge ces mémoires depuis
 - [convention_dto_factory.md](convention_dto_factory.md) — pattern Input + InputFactory + AsAlias
 - [convention_manager_hooks.md](convention_manager_hooks.md) — les 3 familles de hooks (createX, applyInput, audit*)
 - [convention_audit_payload.md](convention_audit_payload.md) — règle d'extensibilité des audit logs
+- [convention_doctrine_order_enum.md](convention_doctrine_order_enum.md) — utiliser `Order::Ascending->value` / `Order::Descending->value`, pas `'ASC'`/`'DESC'`
+
+### Structure du projet (où va quoi)
+- [structure_module_layout.md](structure_module_layout.md) — arborescence d'un dossier `src/Core/<Feature>/` ou `src/Module/<Module>/<Feature>/`
+- [structure_entity.md](structure_entity.md) — Interface + Abstract + concrete, table naming, sequences `seq_core_*`
+- [structure_controller.md](structure_controller.md) — Controllers Backend/Front, routes, type-hints, traits utiles
+- [structure_manager_vs_service.md](structure_manager_vs_service.md) — quand mettre dans `Manager/` vs `Service/`
+- [structure_repository.md](structure_repository.md) — `ResolveTargetEntityRepository` pattern, finders
+- [structure_view_builder.md](structure_view_builder.md) — `<Plural>ViewBuilder` pour les payloads Twig admin
+- [structure_templates.md](structure_templates.md) — namespaces Twig, override automatique, conventions de naming
+- [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, patterns extension
 
 ### Décisions architecturales
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
