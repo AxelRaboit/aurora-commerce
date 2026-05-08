@@ -110,6 +110,10 @@ use Aurora\Module\Photo\Gallery\Entity\GalleryItemCommentInterface;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItemInterface;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPickInterface;
+use Aurora\Module\Planning\Event\Entity\PlanningEvent;
+use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;
+use Aurora\Module\Planning\Planning\Entity\Planning;
+use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectColumnInterface;
@@ -206,6 +210,8 @@ class AuroraBundle extends AbstractBundle
                     ProjectTaskCommentInterface::class => ProjectTaskComment::class,
                     ProjectTaskItemInterface::class => ProjectTaskItem::class,
                     ProjectTaskTimeEntryInterface::class => ProjectTaskTimeEntry::class,
+                    PlanningInterface::class => Planning::class,
+                    PlanningEventInterface::class => PlanningEvent::class,
                     DealInterface::class => Deal::class,
                     CartInterface::class => Cart::class,
                     CartItemInterface::class => CartItem::class,
@@ -279,6 +285,13 @@ class AuroraBundle extends AbstractBundle
                         'dir' => $dir.'/src/Module/Project',
                         'prefix' => 'Aurora\Module\Project',
                         'alias' => 'AuroraProject',
+                    ],
+                    'AuroraPlanning' => [
+                        'type' => 'attribute',
+                        'is_bundle' => false,
+                        'dir' => $dir.'/src/Module/Planning',
+                        'prefix' => 'Aurora\Module\Planning',
+                        'alias' => 'AuroraPlanning',
                     ],
                 ],
             ],
