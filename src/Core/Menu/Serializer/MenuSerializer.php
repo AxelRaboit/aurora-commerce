@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Serializer;
 
-use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuInterface;
 use Aurora\Core\Menu\Service\MenuLocationRegistry;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class MenuSerializer
+#[AsAlias(MenuSerializerInterface::class)]
+class MenuSerializer implements MenuSerializerInterface
 {
     public function __construct(
-        private MenuItemSerializer $itemSerializer,
-        private MenuLocationRegistry $locationRegistry,
+        protected readonly MenuItemSerializer $itemSerializer,
+        protected readonly MenuLocationRegistry $locationRegistry,
     ) {}
 
     /** @return array<string, mixed> */
-    public function serialize(Menu $menu): array
+    public function serialize(MenuInterface $menu): array
     {
         return [
             'id' => $menu->getId(),
@@ -33,7 +35,7 @@ final readonly class MenuSerializer
      *
      * @return array<string, mixed>
      */
-    public function serializeFull(Menu $menu): array
+    public function serializeFull(MenuInterface $menu): array
     {
         $rootEntities = [];
         foreach ($menu->getItems() as $item) {

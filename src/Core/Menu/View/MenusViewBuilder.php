@@ -7,7 +7,7 @@ namespace Aurora\Core\Menu\View;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Repository\MenuRepository;
-use Aurora\Core\Menu\Serializer\MenuSerializer;
+use Aurora\Core\Menu\Serializer\MenuSerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -19,7 +19,7 @@ final readonly class MenusViewBuilder
 {
     public function __construct(
         private MenuRepository $menuRepository,
-        private MenuSerializer $menuSerializer,
+        private MenuSerializerInterface $menuSerializer,
         private TranslatorInterface $translator,
     ) {}
 

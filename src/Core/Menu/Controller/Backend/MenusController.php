@@ -7,12 +7,13 @@ namespace Aurora\Core\Menu\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Menu\Dto\MenuItemPayload;
+use Aurora\Core\Menu\Dto\MenuInputFactoryInterface;
+use Aurora\Core\Menu\Dto\MenuItemInputFactoryInterface;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
-use Aurora\Core\Menu\Manager\MenuManager;
+use Aurora\Core\Menu\Manager\MenuManagerInterface;
 use Aurora\Core\Menu\Repository\MenuRepository;
-use Aurora\Core\Menu\Serializer\MenuSerializer;
+use Aurora\Core\Menu\Serializer\MenuSerializerInterface;
 use Aurora\Core\Menu\Service\MenuPickerService;
 use Aurora\Core\Menu\View\MenusViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
@@ -32,12 +33,14 @@ class MenusController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly MenuManager $menuManager,
+        private readonly MenuManagerInterface $menuManager,
         private readonly MenuRepository $menuRepository,
-        private readonly MenuSerializer $menuSerializer,
+        private readonly MenuSerializerInterface $menuSerializer,
         private readonly MenuPickerService $menuPickerService,
         private readonly PayloadValidator $payloadValidator,
         private readonly MenusViewBuilder $viewBuilder,
+        private readonly MenuInputFactoryInterface $menuInputFactory,
+        private readonly MenuItemInputFactoryInterface $menuItemInputFactory,
     ) {}
 
     // ── Page (Vue SPA) ────────────────────────────────────────────────────────
@@ -81,15 +84,14 @@ class MenusController extends AbstractController
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function updateMenu(Menu $menu, Request $request): JsonResponse
     {
-        $data = $this->decodeJson($request);
+        $input = $this->menuInputFactory->fromArray($this->decodeJson($request));
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors);
+        }
 
         try {
-            $this->menuManager->updateMenu(
-                $menu,
-                (string) ($data['name'] ?? ''),
-                (string) ($data['location'] ?? ''),
-                isset($data['description']) ? (string) $data['description'] : null,
-            );
+            $this->menuManager->update($menu, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonFailure($invalidArgumentException->getMessage());
         }
@@ -101,7 +103,7 @@ class MenusController extends AbstractController
     public function deleteMenu(Menu $menu): JsonResponse
     {
         try {
-            $this->menuManager->deleteMenu($menu);
+            $this->menuManager->delete($menu);
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonFailure($invalidArgumentException->getMessage());
         }
@@ -114,13 +116,13 @@ class MenusController extends AbstractController
     #[Route('/{id}/items/create', name: '_items_create', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function createItem(Menu $menu, Request $request): JsonResponse
     {
-        $payload = MenuItemPayload::fromArray($this->decodeJson($request));
-        if (null !== $error = $this->payloadValidator->firstError($payload)) {
+        $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
+        if (null !== $error = $this->payloadValidator->firstError($input)) {
             return $this->jsonFailure($error);
         }
 
         try {
-            $this->menuManager->createItem($menu, $payload->targetType, $payload->targetId, $payload->toOptions());
+            $this->menuManager->createItem($menu, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonFailure($invalidArgumentException->getMessage());
         }
@@ -131,19 +133,15 @@ class MenusController extends AbstractController
     #[Route('/items/{id}/update', name: '_items_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function updateItem(MenuItem $item, Request $request): JsonResponse
     {
-        $payload = MenuItemPayload::fromArray($this->decodeJson($request));
-        if (null !== $error = $this->payloadValidator->firstError($payload)) {
+        $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
+        if (null !== $error = $this->payloadValidator->firstError($input)) {
             return $this->jsonFailure($error);
         }
 
         try {
-            $this->menuManager->updateItem($item, $payload->targetType, $payload->targetId, $payload->toOptions());
+            $this->menuManager->updateItem($item, $input);
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        foreach ($payload->translations as $locale => $label) {
-            $this->menuManager->setTranslation($item, $locale, $label);
         }
 
         return $this->jsonSuccess(['menu' => $this->menuSerializer->serializeFull($item->getMenu())]);

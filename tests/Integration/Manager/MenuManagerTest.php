@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
+use Aurora\Core\Menu\Dto\MenuInput;
+use Aurora\Core\Menu\Dto\MenuItemInput;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
@@ -34,11 +36,41 @@ final class MenuManagerTest extends IntegrationTestCase
         $this->entityManager->flush();
     }
 
+    private function menu(string $name, string $location, ?string $description = null): MenuInput
+    {
+        return new MenuInput(name: $name, location: $location, description: $description);
+    }
+
+    /**
+     * @param array<string, ?string> $translations
+     */
+    private function item(
+        ?MenuItemTargetTypeEnum $targetType,
+        ?int $targetId = null,
+        ?string $customUrl = null,
+        ?int $parentId = null,
+        bool $openInNewTab = false,
+        ?string $cssClass = null,
+        MenuItemVisibilityEnum $visibility = MenuItemVisibilityEnum::Always,
+        array $translations = [],
+    ): MenuItemInput {
+        return new MenuItemInput(
+            targetType: $targetType,
+            targetId: $targetId,
+            customUrl: $customUrl,
+            parentId: $parentId,
+            openInNewTab: $openInNewTab,
+            cssClass: $cssClass,
+            visibility: $visibility,
+            translations: $translations,
+        );
+    }
+
     // ── Menus ─────────────────────────────────────────────────────────────────
 
     public function testCreateMenu(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test', 'Main navigation');
+        $menu = $this->manager->create($this->menu('Header', 'custom-test', 'Main navigation'));
 
         self::assertNotNull($menu->getId());
         self::assertSame('Header', $menu->getName());
@@ -46,29 +78,17 @@ final class MenuManagerTest extends IntegrationTestCase
         self::assertSame('Main navigation', $menu->getDescription());
     }
 
-    public function testCreateMenuWithEmptyNameThrows(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->manager->createMenu('  ', 'custom-test');
-    }
-
-    public function testCreateMenuWithInvalidLocationThrows(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->manager->createMenu('Header', 'Primary Header'); // spaces + uppercase
-    }
-
     public function testCreateMenuDuplicateLocationThrows(): void
     {
-        $this->manager->createMenu('Header', 'custom-test');
+        $this->manager->create($this->menu('Header', 'custom-test'));
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->createMenu('Header 2', 'custom-test');
+        $this->manager->create($this->menu('Header 2', 'custom-test'));
     }
 
     public function testUpdateMenu(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $this->manager->updateMenu($menu, 'Top Header', 'top-test', 'Updated');
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $this->manager->update($menu, $this->menu('Top Header', 'top-test', 'Updated'));
 
         self::assertSame('Top Header', $menu->getName());
         self::assertSame('top-test', $menu->getLocation());
@@ -77,25 +97,25 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testCannotDeleteProtectedMenu(): void
     {
-        $menu = $this->manager->createMenu('Primary', 'primary');
+        $menu = $this->manager->create($this->menu('Primary', 'primary'));
         self::assertTrue($this->manager->isProtected($menu));
 
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->deleteMenu($menu);
+        $this->manager->delete($menu);
     }
 
     public function testCannotChangeLocationOfProtectedMenu(): void
     {
-        $menu = $this->manager->createMenu('Primary', 'primary');
+        $menu = $this->manager->create($this->menu('Primary', 'primary'));
 
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->updateMenu($menu, 'Primary Renamed', 'something-else');
+        $this->manager->update($menu, $this->menu('Primary Renamed', 'something-else'));
     }
 
     public function testCanRenameProtectedMenu(): void
     {
-        $menu = $this->manager->createMenu('Primary', 'primary');
-        $this->manager->updateMenu($menu, 'Renamed', 'primary', 'Updated');
+        $menu = $this->manager->create($this->menu('Primary', 'primary'));
+        $this->manager->update($menu, $this->menu('Renamed', 'primary', 'Updated'));
 
         self::assertSame('Renamed', $menu->getName());
         self::assertSame('primary', $menu->getLocation());
@@ -104,12 +124,12 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testDeleteMenuCascadesItems(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
+        $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontLogin));
 
         $menuId = $menu->getId();
-        $this->manager->deleteMenu($menu);
+        $this->manager->delete($menu);
 
         self::assertNull($this->menuRepository->find($menuId));
     }
@@ -118,12 +138,13 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testCreateItemWithCustomUrl(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $item = $this->manager->createItem($menu, MenuItemTargetTypeEnum::CustomUrl, null, [
-            'customUrl' => 'https://example.com',
-            'openInNewTab' => true,
-            'cssClass' => 'btn',
-        ]);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $item = $this->manager->createItem($menu, $this->item(
+            targetType: MenuItemTargetTypeEnum::CustomUrl,
+            customUrl: 'https://example.com',
+            openInNewTab: true,
+            cssClass: 'btn',
+        ));
 
         self::assertSame(MenuItemTargetTypeEnum::CustomUrl, $item->getTargetType());
         self::assertSame('https://example.com', $item->getCustomUrl());
@@ -134,25 +155,25 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testCreateCustomUrlItemWithoutUrlThrows(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::CustomUrl);
+        $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::CustomUrl));
     }
 
     public function testCreatePostItemWithoutTargetIdThrows(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Post);
+        $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Post));
     }
 
     public function testItemPositionIncrementsPerParent(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $item1 = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $item2 = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin);
-        $child1 = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontRegister, null, ['parentId' => $item1->getId()]);
-        $child2 = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontAccount, null, ['parentId' => $item1->getId()]);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $item1 = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
+        $item2 = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontLogin));
+        $child1 = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontRegister, parentId: $item1->getId()));
+        $child2 = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontAccount, parentId: $item1->getId()));
 
         self::assertSame(0, $item1->getPosition());
         self::assertSame(1, $item2->getPosition());
@@ -163,23 +184,24 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testCreateItemRejectsParentFromOtherMenu(): void
     {
-        $menuA = $this->manager->createMenu('A', 'a');
-        $menuB = $this->manager->createMenu('B', 'b');
-        $itemA = $this->manager->createItem($menuA, MenuItemTargetTypeEnum::Home);
+        $menuA = $this->manager->create($this->menu('A', 'a'));
+        $menuB = $this->manager->create($this->menu('B', 'b'));
+        $itemA = $this->manager->createItem($menuA, $this->item(MenuItemTargetTypeEnum::Home));
 
         $this->expectException(InvalidArgumentException::class);
-        $this->manager->createItem($menuB, MenuItemTargetTypeEnum::Home, null, ['parentId' => $itemA->getId()]);
+        $this->manager->createItem($menuB, $this->item(MenuItemTargetTypeEnum::Home, parentId: $itemA->getId()));
     }
 
     public function testUpdateItem(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $item = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $item = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
 
-        $this->manager->updateItem($item, MenuItemTargetTypeEnum::CustomUrl, null, [
-            'customUrl' => '/about',
-            'visibility' => MenuItemVisibilityEnum::AuthenticatedOnly,
-        ]);
+        $this->manager->updateItem($item, $this->item(
+            targetType: MenuItemTargetTypeEnum::CustomUrl,
+            customUrl: '/about',
+            visibility: MenuItemVisibilityEnum::AuthenticatedOnly,
+        ));
 
         self::assertSame(MenuItemTargetTypeEnum::CustomUrl, $item->getTargetType());
         self::assertSame('/about', $item->getCustomUrl());
@@ -188,9 +210,9 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testDeleteItemRemovesChildren(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $parent = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $child = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, null, ['parentId' => $parent->getId()]);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $parent = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
+        $child = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontLogin, parentId: $parent->getId()));
         $childId = $child->getId();
 
         $this->manager->deleteItem($parent);
@@ -204,10 +226,10 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testReorderItems(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $a = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $b = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin);
-        $c = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontRegister);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $a = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
+        $b = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontLogin));
+        $c = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontRegister));
 
         $this->manager->reorderItems($menu, [
             ['id' => $c->getId(), 'parentId' => null, 'position' => 0],
@@ -228,12 +250,11 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testReorderRejectsCycle(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $a = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $b = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, null, ['parentId' => $a->getId()]);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $a = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
+        $b = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::FrontLogin, parentId: $a->getId()));
 
         $this->expectException(InvalidArgumentException::class);
-        // Try to make a child of b -> impossible (would create cycle a -> b -> a)
         $this->manager->reorderItems($menu, [
             ['id' => $a->getId(), 'parentId' => $b->getId(), 'position' => 0],
         ]);
@@ -243,8 +264,8 @@ final class MenuManagerTest extends IntegrationTestCase
 
     public function testSetAndUpdateTranslation(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $item = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $item = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
 
         $this->manager->setTranslation($item, 'fr', 'Accueil');
         $this->manager->setTranslation($item, 'en', 'Home');
@@ -252,15 +273,14 @@ final class MenuManagerTest extends IntegrationTestCase
         self::assertSame('Accueil', $item->getTranslation('fr')?->getLabel());
         self::assertSame('Home', $item->getTranslation('en')?->getLabel());
 
-        // Update existing
         $this->manager->setTranslation($item, 'fr', "Page d'accueil");
         self::assertSame("Page d'accueil", $item->getTranslation('fr')?->getLabel());
     }
 
     public function testSetTranslationWithEmptyRemovesIt(): void
     {
-        $menu = $this->manager->createMenu('Header', 'custom-test');
-        $item = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->manager->create($this->menu('Header', 'custom-test'));
+        $item = $this->manager->createItem($menu, $this->item(MenuItemTargetTypeEnum::Home));
 
         $this->manager->setTranslation($item, 'fr', 'Accueil');
         self::assertNotNull($item->getTranslation('fr'));
@@ -268,7 +288,6 @@ final class MenuManagerTest extends IntegrationTestCase
         $this->manager->setTranslation($item, 'fr', null);
         self::assertNull($item->getTranslation('fr'));
 
-        // Setting empty string also removes
         $this->manager->setTranslation($item, 'en', 'Home');
         $this->manager->setTranslation($item, 'en', '   ');
         self::assertNull($item->getTranslation('en'));

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Service;
 
+use Aurora\Core\Menu\Dto\MenuInput;
+use Aurora\Core\Menu\Dto\MenuItemInput;
+use Aurora\Core\Menu\Entity\MenuInterface;
+use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Manager\MenuManager;
@@ -51,6 +55,35 @@ final class MenuRendererTest extends IntegrationTestCase
         return $post;
     }
 
+    private function createMenu(string $name, string $location): MenuInterface
+    {
+        return $this->manager->create(new MenuInput($name, $location, null));
+    }
+
+    /** @param array<string, ?string> $translations */
+    private function createItem(
+        MenuInterface $menu,
+        ?MenuItemTargetTypeEnum $targetType,
+        ?int $targetId = null,
+        ?string $customUrl = null,
+        ?int $parentId = null,
+        bool $openInNewTab = false,
+        ?string $cssClass = null,
+        MenuItemVisibilityEnum $visibility = MenuItemVisibilityEnum::Always,
+        array $translations = [],
+    ): MenuItemInterface {
+        return $this->manager->createItem($menu, new MenuItemInput(
+            targetType: $targetType,
+            targetId: $targetId,
+            customUrl: $customUrl,
+            parentId: $parentId,
+            openInNewTab: $openInNewTab,
+            cssClass: $cssClass,
+            visibility: $visibility,
+            translations: $translations,
+        ));
+    }
+
     private function firstTerm(): TaxonomyTerm
     {
         $term = static::getContainer()->get(TaxonomyTermRepository::class)
@@ -67,13 +100,9 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testRenderHomeAndCustomUrlItems(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::CustomUrl, null, [
-            'customUrl' => 'https://example.com',
-            'openInNewTab' => true,
-            'cssClass' => 'btn',
-        ]);
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $this->createItem($menu, MenuItemTargetTypeEnum::CustomUrl, customUrl: 'https://example.com', openInNewTab: true, cssClass: 'btn');
         // Translation override required for CustomUrl
         $custom = $menu->getItems()->last();
         $this->manager->setTranslation($custom, 'fr', 'Exemple');
@@ -93,10 +122,8 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testCustomUrlWithoutTranslationIsDropped(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::CustomUrl, null, [
-            'customUrl' => 'https://example.com',
-        ]);
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::CustomUrl, customUrl: 'https://example.com');
 
         $tree = $this->renderer->render('primary', 'fr');
 
@@ -105,8 +132,8 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testTranslationOverridesNaturalLabel(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $item = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->createMenu('Header', 'primary');
+        $item = $this->createItem($menu, MenuItemTargetTypeEnum::Home);
         $this->manager->setTranslation($item, 'fr', 'Maison');
 
         $tree = $this->renderer->render('primary', 'fr');
@@ -117,8 +144,8 @@ final class MenuRendererTest extends IntegrationTestCase
     public function testRenderPostItem(): void
     {
         $post = $this->publishedPost();
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Post, $post->getId());
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::Post, $post->getId());
 
         $tree = $this->renderer->render('primary', 'fr');
 
@@ -130,8 +157,8 @@ final class MenuRendererTest extends IntegrationTestCase
     public function testRenderTermItem(): void
     {
         $term = $this->firstTerm();
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Term, $term->getId());
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::Term, $term->getId());
 
         $tree = $this->renderer->render('primary', 'fr');
 
@@ -142,8 +169,8 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testPostItemDroppedWhenTargetMissing(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Post, 999999);
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::Post, 999999);
 
         $tree = $this->renderer->render('primary', 'fr');
 
@@ -152,11 +179,9 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testGuestsOnlyVisibleWhenAnonymous(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, null, [
-            'visibility' => MenuItemVisibilityEnum::GuestsOnly,
-        ]);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, visibility: MenuItemVisibilityEnum::GuestsOnly);
+        $this->createItem($menu, MenuItemTargetTypeEnum::Home);
 
         $tree = $this->renderer->render('primary', 'fr');
         self::assertCount(2, $tree);
@@ -164,11 +189,9 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testAuthenticatedOnlyHiddenWhenAnonymous(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontAccount, null, [
-            'visibility' => MenuItemVisibilityEnum::AuthenticatedOnly,
-        ]);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $menu = $this->createMenu('Header', 'primary');
+        $this->createItem($menu, MenuItemTargetTypeEnum::FrontAccount, visibility: MenuItemVisibilityEnum::AuthenticatedOnly);
+        $this->createItem($menu, MenuItemTargetTypeEnum::Home);
 
         // Anonymous: only Home should remain (account is hidden)
         $tree = $this->renderer->render('primary', 'fr');
@@ -178,16 +201,10 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testNestedItemsRenderTree(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $parent = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, null, [
-            'parentId' => $parent->getId(),
-            'visibility' => MenuItemVisibilityEnum::GuestsOnly,
-        ]);
-        $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontRegister, null, [
-            'parentId' => $parent->getId(),
-            'visibility' => MenuItemVisibilityEnum::GuestsOnly,
-        ]);
+        $menu = $this->createMenu('Header', 'primary');
+        $parent = $this->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $this->createItem($menu, MenuItemTargetTypeEnum::FrontLogin, parentId: $parent->getId(), visibility: MenuItemVisibilityEnum::GuestsOnly);
+        $this->createItem($menu, MenuItemTargetTypeEnum::FrontRegister, parentId: $parent->getId(), visibility: MenuItemVisibilityEnum::GuestsOnly);
 
         $this->entityManager->clear();
 
@@ -201,10 +218,10 @@ final class MenuRendererTest extends IntegrationTestCase
 
     public function testItemsOrderedByPosition(): void
     {
-        $menu = $this->manager->createMenu('Header', 'primary');
-        $a = $this->manager->createItem($menu, MenuItemTargetTypeEnum::Home);
-        $b = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontLogin);
-        $c = $this->manager->createItem($menu, MenuItemTargetTypeEnum::FrontRegister);
+        $menu = $this->createMenu('Header', 'primary');
+        $a = $this->createItem($menu, MenuItemTargetTypeEnum::Home);
+        $b = $this->createItem($menu, MenuItemTargetTypeEnum::FrontLogin);
+        $c = $this->createItem($menu, MenuItemTargetTypeEnum::FrontRegister);
 
         $this->manager->reorderItems($menu, [
             ['id' => $c->getId(), 'parentId' => null, 'position' => 0],

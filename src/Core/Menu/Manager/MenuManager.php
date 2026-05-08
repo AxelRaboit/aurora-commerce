@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Core\Menu\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Menu\Dto\MenuInputInterface;
+use Aurora\Core\Menu\Dto\MenuItemInputInterface;
 use Aurora\Core\Menu\Entity\Menu;
+use Aurora\Core\Menu\Entity\MenuInterface;
 use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
-use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
 use Aurora\Core\Menu\Repository\MenuItemRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Service\MenuLocationRegistry;
@@ -19,135 +22,89 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Throwable;
 
-final readonly class MenuManager
+#[AsAlias(MenuManagerInterface::class)]
+class MenuManager implements MenuManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MenuRepository $menuRepository,
-        private MenuItemRepository $menuItemRepository,
-        private MenuLocationRegistry $locationRegistry,
-        private AuditLogger $auditLogger,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MenuRepository $menuRepository,
+        protected readonly MenuItemRepository $menuItemRepository,
+        protected readonly MenuLocationRegistry $locationRegistry,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
     ) {}
 
-    public function isProtected(Menu $menu): bool
+    public function isProtected(MenuInterface $menu): bool
     {
         return $this->locationRegistry->has($menu->getLocation());
     }
 
-    // ── Menu ──────────────────────────────────────────────────────────────────
+    // ── Menu CRUD ─────────────────────────────────────────────────────────────
 
-    public function createMenu(string $name, string $location, ?string $description = null): Menu
+    public function create(MenuInputInterface $input): MenuInterface
     {
-        if ('' === mb_trim($name)) {
-            throw new InvalidArgumentException('backend.menus.errors.name_required');
-        }
-
-        if (!preg_match('/^[a-z0-9_-]+$/', $location)) {
-            throw new InvalidArgumentException('backend.menus.errors.location_format');
-        }
-
-        if ($this->menuRepository->findByLocation($location) instanceof Menu) {
+        if ($this->menuRepository->findByLocation($input->getLocation()) instanceof Menu) {
             throw new InvalidArgumentException('backend.menus.errors.location_taken');
         }
 
-        $menu = new Menu();
-        $menu->setName($name);
-        $menu->setLocation($location);
-        $menu->setDescription($description);
+        $menu = $this->createMenu();
+        $this->applyMenuInput($menu, $input);
 
         $this->entityManager->persist($menu);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'menu.created', 'Menu', $menu->getId(), ['name' => $menu->getName(), 'location' => $menu->getLocation()]);
+        $this->auditMenuCreated($menu);
 
         return $menu;
     }
 
-    public function updateMenu(Menu $menu, string $name, string $location, ?string $description = null): void
+    public function update(MenuInterface $menu, MenuInputInterface $input): void
     {
-        if ('' === mb_trim($name)) {
-            throw new InvalidArgumentException('backend.menus.errors.name_required');
-        }
-
-        if (!preg_match('/^[a-z0-9_-]+$/', $location)) {
-            throw new InvalidArgumentException('backend.menus.errors.location_format');
-        }
-
-        if ($this->isProtected($menu) && $location !== $menu->getLocation()) {
+        if ($this->isProtected($menu) && $input->getLocation() !== $menu->getLocation()) {
             throw new InvalidArgumentException('backend.menus.errors.location_locked');
         }
 
-        if ($location !== $menu->getLocation()) {
-            $existing = $this->menuRepository->findByLocation($location);
+        if ($input->getLocation() !== $menu->getLocation()) {
+            $existing = $this->menuRepository->findByLocation($input->getLocation());
             if ($existing instanceof Menu && $existing->getId() !== $menu->getId()) {
                 throw new InvalidArgumentException('backend.menus.errors.location_taken');
             }
         }
 
-        $menu->setName($name);
-        $menu->setLocation($location);
-        $menu->setDescription($description);
+        $this->applyMenuInput($menu, $input);
 
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'menu.updated', 'Menu', $menu->getId(), ['name' => $menu->getName()]);
+        $this->auditMenuUpdated($menu);
     }
 
-    public function deleteMenu(Menu $menu): void
+    public function delete(MenuInterface $menu): void
     {
         if ($this->isProtected($menu)) {
             throw new InvalidArgumentException('backend.menus.errors.menu_protected');
         }
 
-        $id = $menu->getId();
-        $name = $menu->getName();
+        $this->auditMenuDeleted($menu);
+
         $this->entityManager->remove($menu);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('core', 'menu.deleted', 'Menu', $id, ['name' => $name]);
     }
 
-    // ── Item ──────────────────────────────────────────────────────────────────
+    // ── MenuItem CRUD ─────────────────────────────────────────────────────────
 
-    /**
-     * @param array{
-     *     customUrl?: ?string,
-     *     parentId?: ?int,
-     *     openInNewTab?: bool,
-     *     cssClass?: ?string,
-     *     visibility?: MenuItemVisibilityEnum,
-     * } $options
-     */
-    public function createItem(
-        Menu $menu,
-        MenuItemTargetTypeEnum $targetType,
-        ?int $targetId = null,
-        array $options = [],
-    ): MenuItem {
-        $this->validateTarget($targetType, $targetId, $options['customUrl'] ?? null);
+    public function createItem(MenuInterface $menu, MenuItemInputInterface $input): MenuItemInterface
+    {
+        $this->validateTarget($input);
 
-        $parent = null;
-        if (!empty($options['parentId'])) {
-            $parent = $this->menuItemRepository->find($options['parentId']);
-            if (!$parent instanceof MenuItem || $parent->getMenu()->getId() !== $menu->getId()) {
-                throw new InvalidArgumentException('backend.menus.errors.parent_invalid');
-            }
-        }
-
+        $parent = $this->resolveParent($menu, $input->getParentId());
         $position = $this->nextPosition($menu, $parent);
 
-        $item = new MenuItem();
-        $item->setTargetType($targetType);
-        $item->setTargetId($targetType->requiresTargetId() ? $targetId : null);
-        $item->setCustomUrl($targetType->requiresCustomUrl() ? ($options['customUrl'] ?? null) : null);
-        $item->setOpenInNewTab($options['openInNewTab'] ?? false);
-        $item->setCssClass($options['cssClass'] ?? null);
-        $item->setVisibility($options['visibility'] ?? MenuItemVisibilityEnum::Always);
-        $item->setParent($parent);
+        $item = $this->createMenuItem();
+        $this->applyMenuItemInput($item, $input, $parent);
         $item->setPosition($position);
 
         $menu->addItem($item);
@@ -159,44 +116,30 @@ final readonly class MenuManager
         $item->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'menu.item.created', 'MenuItem', $item->getId(), ['menuId' => $menu->getId()]);
+        $this->applyMenuItemTranslations($item, $input->getTranslations());
+
+        $this->auditMenuItemCreated($item);
 
         return $item;
     }
 
-    /**
-     * @param array{
-     *     customUrl?: ?string,
-     *     openInNewTab?: bool,
-     *     cssClass?: ?string,
-     *     visibility?: MenuItemVisibilityEnum,
-     * } $options
-     */
-    public function updateItem(
-        MenuItem $item,
-        MenuItemTargetTypeEnum $targetType,
-        ?int $targetId = null,
-        array $options = [],
-    ): void {
-        $this->validateTarget($targetType, $targetId, $options['customUrl'] ?? null);
+    public function updateItem(MenuItemInterface $item, MenuItemInputInterface $input): void
+    {
+        $this->validateTarget($input);
 
-        $item->setTargetType($targetType);
-        $item->setTargetId($targetType->requiresTargetId() ? $targetId : null);
-        $item->setCustomUrl($targetType->requiresCustomUrl() ? ($options['customUrl'] ?? null) : null);
-        $item->setOpenInNewTab($options['openInNewTab'] ?? false);
-        $item->setCssClass($options['cssClass'] ?? null);
-        $item->setVisibility($options['visibility'] ?? MenuItemVisibilityEnum::Always);
+        $this->applyMenuItemInput($item, $input);
 
         $this->entityManager->flush();
 
-        $this->auditLogger->log('core', 'menu.item.updated', 'MenuItem', $item->getId());
+        $this->applyMenuItemTranslations($item, $input->getTranslations());
+
+        $this->auditMenuItemUpdated($item);
     }
 
-    public function deleteItem(MenuItem $item): void
+    public function deleteItem(MenuItemInterface $item): void
     {
-        $id = $item->getId();
-        $menuId = $item->getMenu()->getId();
-        $this->auditLogger->log('core', 'menu.item.deleted', 'MenuItem', $id, ['menuId' => $menuId]);
+        $this->auditMenuItemDeleted($item);
+
         $this->entityManager->remove($item);
         $this->entityManager->flush();
     }
@@ -209,7 +152,7 @@ final readonly class MenuManager
      *
      * @param array<array{id: int, parentId: ?int, position: int}> $payload
      */
-    public function reorderItems(Menu $menu, array $payload): void
+    public function reorderItems(MenuInterface $menu, array $payload): void
     {
         $this->entityManager->beginTransaction();
         try {
@@ -250,13 +193,11 @@ final readonly class MenuManager
         }
     }
 
-    // ── Translations ──────────────────────────────────────────────────────────
-
     /**
      * Set (or create) a translation override for an item.
      * Pass null/empty to remove the override (label will fall back to target's own label).
      */
-    public function setTranslation(MenuItem $item, string $locale, ?string $label): void
+    public function setTranslation(MenuItemInterface $item, string $locale, ?string $label): void
     {
         $existing = $item->getTranslation($locale);
         $clean = null === $label ? null : mb_trim($label);
@@ -272,7 +213,7 @@ final readonly class MenuManager
         }
 
         if (!$existing instanceof MenuItemTranslation) {
-            $existing = new MenuItemTranslation();
+            $existing = $this->createMenuItemTranslation();
             $existing->setLocale($locale);
             $item->addTranslation($existing);
             $this->entityManager->persist($existing);
@@ -282,20 +223,133 @@ final readonly class MenuManager
         $this->entityManager->flush();
     }
 
+    // ── Hooks: instanciation ──────────────────────────────────────────────────
+
+    protected function createMenu(): MenuInterface
+    {
+        return new Menu();
+    }
+
+    protected function createMenuItem(): MenuItemInterface
+    {
+        return new MenuItem();
+    }
+
+    protected function createMenuItemTranslation(): MenuItemTranslationInterface
+    {
+        return new MenuItemTranslation();
+    }
+
+    // ── Hooks: hydratation ────────────────────────────────────────────────────
+
+    protected function applyMenuInput(MenuInterface $menu, MenuInputInterface $input): void
+    {
+        $menu->setName($input->getName());
+        $menu->setLocation($input->getLocation());
+        $menu->setDescription($input->getDescription());
+    }
+
+    protected function applyMenuItemInput(MenuItemInterface $item, MenuItemInputInterface $input, ?MenuItemInterface $parent = null): void
+    {
+        $targetType = $input->getTargetType();
+        if (null === $targetType) {
+            throw new InvalidArgumentException('backend.menus.errors.target_type_invalid');
+        }
+
+        $item->setTargetType($targetType);
+        $item->setTargetId($targetType->requiresTargetId() ? $input->getTargetId() : null);
+        $item->setCustomUrl($targetType->requiresCustomUrl() ? $input->getCustomUrl() : null);
+        $item->setOpenInNewTab($input->isOpenInNewTab());
+        $item->setCssClass($input->getCssClass());
+        $item->setVisibility($input->getVisibility());
+
+        if (null !== $parent) {
+            $item->setParent($parent);
+        }
+    }
+
+    // ── Hooks: audit ──────────────────────────────────────────────────────────
+
+    protected function auditMenuCreated(MenuInterface $menu): void
+    {
+        $this->auditLogger->log('core', 'menu.created', 'Menu', $menu->getId(), $this->auditMenuPayload($menu));
+    }
+
+    protected function auditMenuUpdated(MenuInterface $menu): void
+    {
+        $this->auditLogger->log('core', 'menu.updated', 'Menu', $menu->getId(), $this->auditMenuPayload($menu));
+    }
+
+    protected function auditMenuDeleted(MenuInterface $menu): void
+    {
+        $this->auditLogger->log('core', 'menu.deleted', 'Menu', $menu->getId(), $this->auditMenuPayload($menu));
+    }
+
+    protected function auditMenuItemCreated(MenuItemInterface $item): void
+    {
+        $this->auditLogger->log('core', 'menu.item.created', 'MenuItem', $item->getId(), $this->auditMenuItemPayload($item));
+    }
+
+    protected function auditMenuItemUpdated(MenuItemInterface $item): void
+    {
+        $this->auditLogger->log('core', 'menu.item.updated', 'MenuItem', $item->getId(), $this->auditMenuItemPayload($item));
+    }
+
+    protected function auditMenuItemDeleted(MenuItemInterface $item): void
+    {
+        $this->auditLogger->log('core', 'menu.item.deleted', 'MenuItem', $item->getId(), $this->auditMenuItemPayload($item));
+    }
+
+    protected function auditMenuPayload(MenuInterface $menu): array
+    {
+        return ['name' => $menu->getName(), 'location' => $menu->getLocation()];
+    }
+
+    protected function auditMenuItemPayload(MenuItemInterface $item): array
+    {
+        return ['menuId' => $item->getMenu()->getId(), 'reference' => $item->getReference()];
+    }
+
     // ── Internals ─────────────────────────────────────────────────────────────
 
-    private function validateTarget(MenuItemTargetTypeEnum $targetType, ?int $targetId, ?string $customUrl): void
+    private function validateTarget(MenuItemInputInterface $input): void
     {
-        if ($targetType->requiresTargetId() && null === $targetId) {
+        $targetType = $input->getTargetType();
+        if (null === $targetType) {
+            throw new InvalidArgumentException('backend.menus.errors.target_type_invalid');
+        }
+
+        if ($targetType->requiresTargetId() && null === $input->getTargetId()) {
             throw new InvalidArgumentException('backend.menus.errors.target_required');
         }
 
-        if ($targetType->requiresCustomUrl() && (null === $customUrl || '' === mb_trim($customUrl))) {
+        if ($targetType->requiresCustomUrl() && (null === $input->getCustomUrl() || '' === mb_trim($input->getCustomUrl()))) {
             throw new InvalidArgumentException('backend.menus.errors.custom_url_required');
         }
     }
 
-    private function nextPosition(Menu $menu, ?MenuItem $parent): int
+    private function resolveParent(MenuInterface $menu, ?int $parentId): ?MenuItemInterface
+    {
+        if (null === $parentId || 0 === $parentId) {
+            return null;
+        }
+
+        $parent = $this->menuItemRepository->find($parentId);
+        if (!$parent instanceof MenuItem || $parent->getMenu()->getId() !== $menu->getId()) {
+            throw new InvalidArgumentException('backend.menus.errors.parent_invalid');
+        }
+
+        return $parent;
+    }
+
+    private function applyMenuItemTranslations(MenuItemInterface $item, array $translations): void
+    {
+        foreach ($translations as $locale => $label) {
+            $this->setTranslation($item, (string) $locale, $label);
+        }
+    }
+
+    private function nextPosition(MenuInterface $menu, ?MenuItemInterface $parent): int
     {
         $max = -1;
         foreach ($menu->getItems() as $item) {
@@ -308,10 +362,10 @@ final readonly class MenuManager
     }
 
     /** Detect if assigning $candidateParent to $item would create a cycle. */
-    private function wouldCreateCycle(MenuItem $item, MenuItem $candidateParent): bool
+    private function wouldCreateCycle(MenuItemInterface $item, MenuItemInterface $candidateParent): bool
     {
         $cursor = $candidateParent;
-        while ($cursor instanceof MenuItem) {
+        while ($cursor instanceof MenuItemInterface) {
             if ($cursor->getId() === $item->getId()) {
                 return true;
             }

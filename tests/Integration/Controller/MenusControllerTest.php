@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Menu\Dto\MenuInput;
 use Aurora\Core\Menu\Manager\MenuManager;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\User\Entity\User;
@@ -64,7 +65,7 @@ final class MenusControllerTest extends IntegrationTestCase
 
     private function seedMenu(string $location = 'custom-test'): int
     {
-        $menu = static::getContainer()->get(MenuManager::class)->createMenu('Test Menu', $location);
+        $menu = static::getContainer()->get(MenuManager::class)->create(new MenuInput('Test Menu', $location, null));
 
         return $menu->getId();
     }

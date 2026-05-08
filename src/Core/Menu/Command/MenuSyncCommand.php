@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Command;
 
+use Aurora\Core\Menu\Dto\MenuInput;
+use Aurora\Core\Menu\Dto\MenuItemInput;
 use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Manager\MenuManager;
+use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Menu\Manager\MenuManagerInterface;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Service\MenuLocationRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,7 +28,7 @@ class MenuSyncCommand extends Command
     public function __construct(
         private readonly MenuLocationRegistry $registry,
         private readonly MenuRepository $menuRepository,
-        private readonly MenuManager $menuManager,
+        private readonly MenuManagerInterface $menuManager,
     ) {
         parent::__construct();
     }
@@ -59,11 +62,22 @@ class MenuSyncCommand extends Command
             ++$created;
 
             if (!$dryRun) {
-                $menu = $this->menuManager->createMenu($meta['name'], $location, $meta['description']);
+                $menu = $this->menuManager->create(new MenuInput(
+                    name: $meta['name'],
+                    location: $location,
+                    description: $meta['description'],
+                ));
                 foreach ($meta['defaultItems'] as $itemConfig) {
-                    $this->menuManager->createItem($menu, $itemConfig['targetType'], null, [
-                        'visibility' => $itemConfig['visibility'] ?? null,
-                    ]);
+                    $this->menuManager->createItem($menu, new MenuItemInput(
+                        targetType: $itemConfig['targetType'],
+                        targetId: null,
+                        customUrl: null,
+                        parentId: null,
+                        openInNewTab: false,
+                        cssClass: null,
+                        visibility: $itemConfig['visibility'] ?? MenuItemVisibilityEnum::Always,
+                        translations: [],
+                    ));
                 }
             }
         }
