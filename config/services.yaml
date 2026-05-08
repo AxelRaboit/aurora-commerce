@@ -25,6 +25,7 @@ services:
     # Auto-tag every MediaUsageProvider so the aggregator service collects them.
     # Auto-tag every registered front so the FrontRegistry collects them.
     # Auto-tag every menu location provider so the MenuLocationRegistry collects them.
+    # Auto-tag every sequence prefix provider so the conflict listener validates uniqueness at boot.
     _instanceof:
         Aurora\Core\Media\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
@@ -32,10 +33,16 @@ services:
             tags: [aurora.front]
         Aurora\Core\Menu\Contract\MenuLocationProviderInterface:
             tags: [aurora.menu_location_provider]
+        Aurora\Core\Sequence\SequencePrefixProviderInterface:
+            tags: [aurora.sequence_prefix]
 
     Aurora\Core\Media\Service\MediaUsageService:
         arguments:
             $providers: !tagged_iterator aurora.media_usage_provider
+
+    Aurora\Core\Sequence\SequencePrefixConflictListener:
+        arguments:
+            $providers: !tagged_iterator aurora.sequence_prefix
 
     Aurora\Core\Frontend\Service\FrontRegistry:
         arguments:
