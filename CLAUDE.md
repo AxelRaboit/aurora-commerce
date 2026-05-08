@@ -4,6 +4,15 @@ Ce fichier est chargé automatiquement par Claude Code à chaque session dans ce
 dépôt. Il résume les conventions et points d'entrée nécessaires pour bien
 travailler sur `aurora-core` et son écosystème (`aurora-client`).
 
+> **📚 Base de mémoire structurée** : voir [`.claude/memory/MEMORY.md`](.claude/memory/MEMORY.md)
+> pour l'index complet des conventions, décisions, pièges et préférences.
+> Toute nouvelle convention/pattern/piège rencontré dans une session future
+> doit être ajouté là-bas (un fichier `.md` par sujet + ligne dans l'index).
+> Les patterns d'extension destinés à `aurora-client` vivent dans
+> [`.claude/memory/client/`](.claude/memory/client/MEMORY.md) et sont
+> distribués via composer (donc lus depuis `vendor/axelraboit/aurora/`
+> côté client).
+
 ---
 
 ## 1. Stack et architecture
