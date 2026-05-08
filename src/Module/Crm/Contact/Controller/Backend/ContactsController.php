@@ -9,10 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
-use Aurora\Module\Crm\Contact\Dto\ContactInput;
+use Aurora\Module\Crm\Contact\Dto\ContactInputFactoryInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Module\Crm\Contact\Manager\ContactManagerInterface;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Aurora\Module\Crm\Contact\View\ContactsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,10 +29,11 @@ final class ContactsController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly ContactSerializer $contactSerializer,
+        private readonly ContactSerializerInterface $contactSerializer,
         private readonly ContactManagerInterface $contactManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly ContactsViewBuilder $viewBuilder,
+        private readonly ContactInputFactoryInterface $contactInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,7 +51,7 @@ final class ContactsController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = ContactInput::fromArray($this->decodeJson($request));
+        $input = $this->contactInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -65,7 +66,7 @@ final class ContactsController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(Contact $contact, Request $request): JsonResponse
     {
-        $input = ContactInput::fromArray($this->decodeJson($request));
+        $input = $this->contactInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

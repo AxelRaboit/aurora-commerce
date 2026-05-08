@@ -10,67 +10,89 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
-use Aurora\Module\Crm\Contact\Contract\ContactManagerInterface;
-use Aurora\Module\Crm\Contact\Dto\ContactInput;
+use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(ContactManagerInterface::class)]
-final readonly class ContactManager implements ContactManagerInterface
+class ContactManager implements ContactManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private CompanyRepository $companyRepository,
-        private AuditLogger $auditLogger,
-        private CrmNotificationService $notificationService,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly CompanyRepository $companyRepository,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly CrmNotificationService $notificationService,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
     ) {}
 
-    public function create(ContactInput $input): Contact
+    public function create(ContactInputInterface $input): ContactInterface
     {
-        $contact = new Contact();
+        $contact = $this->createContact();
         $this->applyInput($contact, $input);
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmContactPrefix->value, SequencePrefixEnum::Contact->value) ?? SequencePrefixEnum::Contact->value;
         $contact->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($contact);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'contact.created', 'Contact', $contact->getId(), ['name' => $contact->getFullName(), 'reference' => $contact->getReference()]);
+        $this->auditCreated($contact);
 
         $this->notificationService->notifyContactCreated($contact);
 
         return $contact;
     }
 
-    public function update(Contact $contact, ContactInput $input): void
+    public function update(ContactInterface $contact, ContactInputInterface $input): void
     {
         $this->applyInput($contact, $input);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('crm', 'contact.updated', 'Contact', $contact->getId(), ['name' => $contact->getFullName()]);
+        $this->auditUpdated($contact);
     }
 
-    public function delete(Contact $contact): void
+    public function delete(ContactInterface $contact): void
     {
-        $name = $contact->getFullName();
-        $id = $contact->getId();
+        $this->auditDeleted($contact);
 
         $this->entityManager->remove($contact);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('crm', 'contact.deleted', 'Contact', $id, ['name' => $name]);
     }
 
-    private function applyInput(Contact $contact, ContactInput $input): void
+    protected function createContact(): ContactInterface
     {
-        $contact->setFirstName($input->firstName);
-        $contact->setLastName($input->lastName);
-        $contact->setEmail($input->email);
-        $contact->setPhone($input->phone);
-        $contact->setCompany($input->companyId ? $this->companyRepository->find($input->companyId) : null);
-        $contact->setNotes($input->notes);
+        return new Contact();
+    }
+
+    protected function applyInput(ContactInterface $contact, ContactInputInterface $input): void
+    {
+        $contact->setFirstName($input->getFirstName());
+        $contact->setLastName($input->getLastName());
+        $contact->setEmail($input->getEmail());
+        $contact->setPhone($input->getPhone());
+        $contact->setCompany(null !== $input->getCompanyId() ? $this->companyRepository->find($input->getCompanyId()) : null);
+        $contact->setNotes($input->getNotes());
+    }
+
+    protected function auditCreated(ContactInterface $contact): void
+    {
+        $this->auditLogger->log('crm', 'contact.created', 'Contact', $contact->getId(), $this->auditPayload($contact));
+    }
+
+    protected function auditUpdated(ContactInterface $contact): void
+    {
+        $this->auditLogger->log('crm', 'contact.updated', 'Contact', $contact->getId(), $this->auditPayload($contact));
+    }
+
+    protected function auditDeleted(ContactInterface $contact): void
+    {
+        $this->auditLogger->log('crm', 'contact.deleted', 'Contact', $contact->getId(), $this->auditPayload($contact));
+    }
+
+    protected function auditPayload(ContactInterface $contact): array
+    {
+        return ['name' => $contact->getFullName(), 'reference' => $contact->getReference()];
     }
 }

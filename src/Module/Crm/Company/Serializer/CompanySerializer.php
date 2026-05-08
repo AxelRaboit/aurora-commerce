@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Company\Serializer;
 
-use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class CompanySerializer
+#[AsAlias(CompanySerializerInterface::class)]
+class CompanySerializer implements CompanySerializerInterface
 {
-    public function serialize(Company $company): array
+    public function serialize(CompanyInterface $company): array
     {
         return [
             'id' => $company->getId(),

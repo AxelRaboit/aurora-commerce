@@ -7,7 +7,7 @@ namespace Aurora\Module\Crm\Contact\View;
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final readonly class ContactDetailViewBuilder
 {
     public function __construct(
-        private ContactSerializer $contactSerializer,
+        private ContactSerializerInterface $contactSerializer,
         private AuditLogRepository $auditLogRepository,
         private AuditLogSerializer $auditLogSerializer,
         private UrlGeneratorInterface $urlGenerator,

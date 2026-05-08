@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Contact\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,7 +17,7 @@ final readonly class ContactsViewBuilder
 {
     public function __construct(
         private ContactRepository $contactRepository,
-        private ContactSerializer $contactSerializer,
+        private ContactSerializerInterface $contactSerializer,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 

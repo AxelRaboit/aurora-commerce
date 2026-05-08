@@ -4,37 +4,54 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ContactInput
+class ContactInput implements ContactInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'crm.contacts.errors.first_name_required')]
         #[Assert\Length(max: 100)]
-        public string $firstName = '',
+        public readonly string $firstName = '',
         #[Assert\NotBlank(message: 'crm.contacts.errors.last_name_required')]
         #[Assert\Length(max: 100)]
-        public string $lastName = '',
+        public readonly string $lastName = '',
         #[Assert\Email(message: 'crm.contacts.errors.email_invalid')]
         #[Assert\Length(max: 180)]
-        public ?string $email = null,
+        public readonly ?string $email = null,
         #[Assert\Length(max: 50)]
-        public ?string $phone = null,
+        public readonly ?string $phone = null,
         #[Assert\Positive]
-        public ?int $companyId = null,
-        public ?string $notes = null,
+        public readonly ?int $companyId = null,
+        public readonly ?string $notes = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getFirstName(): string
     {
-        return new self(
-            firstName: Str::trimFromArray($data, 'firstName'),
-            lastName: Str::trimFromArray($data, 'lastName'),
-            email: Str::trimOrNullFromArray($data, 'email'),
-            phone: Str::trimOrNullFromArray($data, 'phone'),
-            companyId: isset($data['companyId']) && '' !== (string) $data['companyId'] ? (int) $data['companyId'] : null,
-            notes: Str::trimOrNullFromArray($data, 'notes'),
-        );
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->companyId;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
     }
 }

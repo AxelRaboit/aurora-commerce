@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Company\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
-use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Module\Crm\Company\Serializer\CompanySerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,7 +17,7 @@ final readonly class CompaniesViewBuilder
 {
     public function __construct(
         private CompanyRepository $companyRepository,
-        private CompanySerializer $companySerializer,
+        private CompanySerializerInterface $companySerializer,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 

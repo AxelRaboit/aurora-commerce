@@ -9,10 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Crm\Company\Contract\CompanyManagerInterface;
-use Aurora\Module\Crm\Company\Dto\CompanyInput;
+use Aurora\Module\Crm\Company\Dto\CompanyInputFactoryInterface;
 use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Module\Crm\Company\Manager\CompanyManagerInterface;
+use Aurora\Module\Crm\Company\Serializer\CompanySerializerInterface;
 use Aurora\Module\Crm\Company\View\CompaniesViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,10 +29,11 @@ final class CompaniesController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly CompanySerializer $companySerializer,
+        private readonly CompanySerializerInterface $companySerializer,
         private readonly CompanyManagerInterface $companyManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly CompaniesViewBuilder $viewBuilder,
+        private readonly CompanyInputFactoryInterface $companyInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,7 +51,7 @@ final class CompaniesController extends AbstractController
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = CompanyInput::fromArray($this->decodeJson($request));
+        $input = $this->companyInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -65,7 +66,7 @@ final class CompaniesController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(Company $company, Request $request): JsonResponse
     {
-        $input = CompanyInput::fromArray($this->decodeJson($request));
+        $input = $this->companyInputFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

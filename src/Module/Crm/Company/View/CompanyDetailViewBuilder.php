@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Company\View;
 
 use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Company\Serializer\CompanySerializer;
+use Aurora\Module\Crm\Company\Serializer\CompanySerializerInterface;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Contact\Serializer\ContactSerializer;
+use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,9 +17,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final readonly class CompanyDetailViewBuilder
 {
     public function __construct(
-        private CompanySerializer $companySerializer,
+        private CompanySerializerInterface $companySerializer,
         private ContactRepository $contactRepository,
-        private ContactSerializer $contactSerializer,
+        private ContactSerializerInterface $contactSerializer,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 

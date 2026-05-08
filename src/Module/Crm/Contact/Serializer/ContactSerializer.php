@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Serializer;
 
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ContactSerializer
+#[AsAlias(ContactSerializerInterface::class)]
+class ContactSerializer implements ContactSerializerInterface
 {
-    public function serialize(Contact $contact): array
+    public function serialize(ContactInterface $contact): array
     {
         return [
             'id' => $contact->getId(),
