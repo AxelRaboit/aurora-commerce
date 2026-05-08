@@ -1,4 +1,12 @@
 backend:
+  permissions:
+    names:
+      ged:
+        documents:
+          manage: Gérer les documents (upload, édition)
+          delete: Supprimer les documents
+        categories:
+          manage: Gérer les catégories de documents
   modules:
     ged: GED
   nav:

@@ -1,4 +1,15 @@
 backend:
+  permissions:
+    names:
+      ecommerce:
+        listings:
+          view: View listings
+          create: Create listings
+          edit: Edit listings
+          delete: Delete listings
+        orders:
+          view: View orders
+          manage: Manage orders
   modules:
     ecommerce: Ecommerce
   audit:

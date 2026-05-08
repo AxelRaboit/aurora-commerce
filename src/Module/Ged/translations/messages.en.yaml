@@ -1,4 +1,12 @@
 backend:
+  permissions:
+    names:
+      ged:
+        documents:
+          manage: Manage documents (upload, edit)
+          delete: Delete documents
+        categories:
+          manage: Manage document categories
   modules:
     ged: DMS
   nav:

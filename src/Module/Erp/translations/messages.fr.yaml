@@ -1,4 +1,12 @@
 backend:
+  permissions:
+    names:
+      erp:
+        products:
+          view: Voir les produits
+          create: Créer des produits
+          edit: Modifier les produits
+          delete: Supprimer les produits
   modules:
     erp: ERP
   audit:

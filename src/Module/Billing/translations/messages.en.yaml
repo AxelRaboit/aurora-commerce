@@ -1,4 +1,17 @@
 backend:
+  permissions:
+    names:
+      billing:
+        invoices:
+          view: View invoices
+          create: Create invoices
+          edit: Edit invoices
+          delete: Delete invoices
+        tiers:
+          view: View third-parties
+          manage: Manage third-parties
+        ocr:
+          import: Import invoices via OCR
   modules:
     billing: Billing
   nav:

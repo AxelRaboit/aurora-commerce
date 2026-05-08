@@ -1,4 +1,15 @@
 backend:
+  permissions:
+    names:
+      ecommerce:
+        listings:
+          view: Voir les annonces
+          create: Créer des annonces
+          edit: Modifier les annonces
+          delete: Supprimer les annonces
+        orders:
+          view: Voir les commandes
+          manage: Gérer les commandes
   modules:
     ecommerce: E-commerce
   audit:

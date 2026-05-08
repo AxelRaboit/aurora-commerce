@@ -1,4 +1,14 @@
 backend:
+  permissions:
+    names:
+      project:
+        projects:
+          view: View projects
+          create: Create projects
+          edit: Edit projects
+          delete: Delete projects
+        tasks:
+          manage: Manage project tasks
   notifications:
     taskAssigned: You have been assigned to a task.
     taskCommented: '%name% commented: %content%'

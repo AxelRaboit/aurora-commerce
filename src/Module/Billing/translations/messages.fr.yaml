@@ -1,4 +1,17 @@
 backend:
+  permissions:
+    names:
+      billing:
+        invoices:
+          view: Voir les factures
+          create: Créer des factures
+          edit: Modifier les factures
+          delete: Supprimer les factures
+        tiers:
+          view: Voir les tiers
+          manage: Gérer les tiers
+        ocr:
+          import: Importer des factures par OCR
   modules:
     billing: Facturation
   nav:

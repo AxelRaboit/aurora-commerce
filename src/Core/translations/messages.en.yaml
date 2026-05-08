@@ -1,4 +1,22 @@
 backend:
+  permissions:
+    names:
+      core:
+        users:
+          manage: Manage users
+        agencies:
+          manage: Manage agencies
+        services:
+          manage: Manage services
+        themes:
+          manage: Manage themes
+        settings:
+          manage: Manage settings
+        search:
+          view: Use global search
+        media:
+          view: View media library
+          manage: Manage media library (upload, delete, folders)
   notifications:
     title: Notifications
     empty: No notifications.

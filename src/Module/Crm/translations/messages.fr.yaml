@@ -1,4 +1,16 @@
 backend:
+  permissions:
+    names:
+      crm:
+        contacts:
+          view: Voir les contacts
+          create: Créer des contacts
+          edit: Modifier les contacts
+          delete: Supprimer les contacts
+        companies:
+          manage: Gérer les sociétés
+        deals:
+          manage: Gérer les opportunités
   modules:
     crm: CRM
   nav:

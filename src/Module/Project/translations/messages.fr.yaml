@@ -1,4 +1,14 @@
 backend:
+  permissions:
+    names:
+      project:
+        projects:
+          view: Voir les projets
+          create: Créer des projets
+          edit: Modifier les projets
+          delete: Supprimer les projets
+        tasks:
+          manage: Gérer les tâches des projets
   notifications:
     taskAssigned: Vous avez été assigné à une tâche.
     taskCommented: '%name% a commenté : %content%'
