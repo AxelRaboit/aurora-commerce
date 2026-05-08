@@ -120,13 +120,35 @@ backend:
     permissions: Permissions
     users: Users
   users:
+    name: Name
+    email: Email
+    created: Created
+    actions: Actions
+    searchPlaceholder: Search...
+    allRoles: All roles
+    empty: No users found
+    you: (You)
+    invite: Invite user
+    sendInvite: Send invite
+    inviteMessage: Message (optional)
+    inviteMessagePlaceholder: Add a message...
+    edit_title: "Edit {name}"
+    deleteConfirm: "Delete {name}?"
+    detail:
+      type: Type
+      locale: Locale
+      createdAt: Created at
+      invitedAt: Invited at
+    roleLabel: Role
     role:
       user: User
       admin: Administrator
       dev: Developer
+    typeLabel: Type
     type:
       backend: Backend
       frontend: Frontend
+    statusLabel: Status
     status:
       active: Active
       invited: Invited

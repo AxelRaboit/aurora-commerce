@@ -121,13 +121,35 @@ backend:
     permissions: Permissions
     users: Utilisateurs
   users:
+    name: Nom
+    email: Email
+    created: Créé le
+    actions: Actions
+    searchPlaceholder: Rechercher...
+    allRoles: Tous les rôles
+    empty: Aucun utilisateur trouvé
+    you: "(Vous)"
+    invite: Inviter un utilisateur
+    sendInvite: Envoyer l'invitation
+    inviteMessage: Message (optionnel)
+    inviteMessagePlaceholder: Ajouter un message...
+    edit_title: "Modifier {name}"
+    deleteConfirm: "Supprimer {name} ?"
+    detail:
+      type: Type
+      locale: Langue
+      createdAt: Créé le
+      invitedAt: Invité le
+    roleLabel: Rôle
     role:
       user: Utilisateur
       admin: Administrateur
       dev: Développeur
+    typeLabel: Type
     type:
       backend: Backend
       frontend: Frontend
+    statusLabel: Statut
     status:
       active: Actif
       invited: Invité
