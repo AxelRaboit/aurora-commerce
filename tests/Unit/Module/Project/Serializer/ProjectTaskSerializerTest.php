@@ -10,6 +10,8 @@ use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;
 use Aurora\Module\Project\Entity\ProjectSprint;
+use Aurora\Module\Project\Entity\AbstractProjectTask;
+use Aurora\Module\Project\Entity\AbstractProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTaskItem;
@@ -53,8 +55,8 @@ final class ProjectTaskSerializerTest extends TestCase
             ->setEstimateMinutes(120)
             ->setDueDate(new DateTimeImmutable('2026-05-01'));
         (new ReflectionProperty(ProjectTask::class, 'id'))->setValue($task, 42);
-        (new ReflectionProperty(ProjectTask::class, 'createdAt'))->setValue($task, new DateTimeImmutable('2026-01-01'));
-        (new ReflectionProperty(ProjectTask::class, 'updatedAt'))->setValue($task, new DateTimeImmutable('2026-01-02'));
+        (new ReflectionProperty(AbstractProjectTask::class, 'createdAt'))->setValue($task, new DateTimeImmutable('2026-01-01'));
+        (new ReflectionProperty(AbstractProjectTask::class, 'updatedAt'))->setValue($task, new DateTimeImmutable('2026-01-02'));
 
         return $task;
     }
@@ -152,7 +154,7 @@ final class ProjectTaskSerializerTest extends TestCase
         $comment = new ProjectTaskComment();
         $comment->setTask($task)->setAuthor($author)->setContent('Hello');
         (new ReflectionProperty(ProjectTaskComment::class, 'id'))->setValue($comment, 100);
-        (new ReflectionProperty(ProjectTaskComment::class, 'createdAt'))->setValue($comment, new DateTimeImmutable());
+        (new ReflectionProperty(AbstractProjectTaskComment::class, 'createdAt'))->setValue($comment, new DateTimeImmutable());
         $task->getComments()->add($comment);
 
         $payload = $this->serializer->serialize($task);

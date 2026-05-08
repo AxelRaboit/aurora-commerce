@@ -8,6 +8,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Project\Entity\AbstractProject;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;
@@ -59,8 +60,8 @@ final class ProjectSerializerTest extends TestCase
             ->setEndDate(new DateTimeImmutable('2026-06-30'));
 
         (new ReflectionProperty(Project::class, 'id'))->setValue($project, 1);
-        (new ReflectionProperty(Project::class, 'createdAt'))->setValue($project, new DateTimeImmutable('2026-01-01'));
-        (new ReflectionProperty(Project::class, 'updatedAt'))->setValue($project, new DateTimeImmutable('2026-01-02'));
+        (new ReflectionProperty(AbstractProject::class, 'createdAt'))->setValue($project, new DateTimeImmutable('2026-01-01'));
+        (new ReflectionProperty(AbstractProject::class, 'updatedAt'))->setValue($project, new DateTimeImmutable('2026-01-02'));
 
         return $project;
     }
