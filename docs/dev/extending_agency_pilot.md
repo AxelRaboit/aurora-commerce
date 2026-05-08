@@ -247,6 +247,16 @@ services:
 
 ## 3. Manager — `App\Manager\AgencyManager`
 
+`resolve_target_entities` n'agit que sur la résolution Doctrine (associations,
+queries) — un `new Agency()` PHP littéral instancie toujours la classe importée.
+Aurora's `AgencyManager` expose donc deux hooks `protected` :
+
+- `createAgency(): AgencyInterface` — instancie la nouvelle entité
+- `applyInput(AgencyInterface $agency, AgencyInputInterface $input): void` — la peuple
+
+Vous override l'un ou l'autre (ou les deux) ; `parent::create()` et
+`parent::update()` continuent de gérer persist + audit log.
+
 ```php
 // aurora-client : src/Manager/AgencyManager.php
 namespace App\Manager;
@@ -262,53 +272,25 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 #[AsAlias(AgencyManagerInterface::class)]
 class AgencyManager extends AuroraAgencyManager
 {
-    public function create(AgencyInputInterface $input): AgencyInterface
+    protected function createAgency(): AgencyInterface
     {
-        $agency = parent::create($input);
-
-        if ($input instanceof AgencyInput && $agency instanceof Agency) {
-            $agency->setCode($input->code);
-            $this->entityManager->flush();
-        }
-
-        return $agency;
+        return new Agency();
     }
 
-    public function update(AgencyInterface $agency, AgencyInputInterface $input): void
+    protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
     {
-        parent::update($agency, $input);
+        parent::applyInput($agency, $input);
 
         if ($input instanceof AgencyInput && $agency instanceof Agency) {
             $agency->setCode($input->code);
-            $this->entityManager->flush();
         }
     }
 }
 ```
 
-Aurora's `AgencyManager` a `protected readonly EntityManagerInterface $entityManager`
-(passé du `final readonly` au `class` simple lors de l'instrumentation pilote),
-donc votre sous-classe peut y accéder directement.
-
-L'instanciation `new Agency()` dans le parent retourne désormais votre
-`App\Entity\Agency` automatiquement — le `Aurora\Core\Agency\Entity\Agency`
-(la classe concrète d'aurora-core) reste mappée à `core_agencies` mais aucune
-relation ne pointe plus vers elle (toutes utilisent l'interface, qui résout
-vers la vôtre).
-
-Wait, that's wrong. `parent::create()` dans `AgencyManager` fait
-`new Agency()->setName($input->getName())` qui instancie **la classe Aurora**,
-pas la vôtre. Pour instancier votre classe, il faudrait override `create()`
-complètement. Le pattern actuel marche parce que `parent::create()` persiste
-un `Aurora\Core\...\Agency` (table `core_agencies`), puis on retourne un
-objet… **TODO** : valider le comportement runtime — il faut peut-être faire
-un override complet de `create()` pour instancier `App\Entity\Agency` au lieu
-d'appeler `parent::create()`.
-
-> ⚠️ **À tester** : le fait que `parent::create()` retourne un
-> `Aurora\Core\Agency\Entity\Agency` (et pas votre `App\Entity\Agency`) signifie
-> que le `instanceof Agency` ci-dessus est **toujours faux**, et `$agency->setCode()`
-> n'est jamais appelé. Si c'est le cas, override `create()` complètement.
+`#[AsAlias(AgencyManagerInterface::class)]` remplace l'alias d'Aurora ;
+le controller injecte votre Manager, qui instancie `App\Entity\Agency`
+(via `createAgency`) et persiste dans `client_agencies` avec le bon `code`.
 
 ---
 
@@ -474,7 +456,7 @@ make start                 # PHP server + Vite dev server
 | ResolveTargetEntity | mapping interface → concrete dans `doctrine.yaml` | `App\Entity\Agency` |
 | DTO d'entrée | `AgencyInputInterface` | `extends AgencyInput` |
 | Factory de DTO | `AgencyInputFactoryInterface` | `#[AsAlias]` + nouvelle factory |
-| Manager | `AgencyManagerInterface` (`AgencyManager` non-`final`, props `protected`) | `#[AsAlias]` + `extends AgencyManager` |
+| Manager | `AgencyManagerInterface` + hooks `protected` (`createAgency()`, `applyInput()`) | `#[AsAlias]` + override des hooks |
 | Serializer | `AgencySerializerInterface` | `#[AsAlias]` + `extends AgencySerializer` |
 | Validation | Attributs `#[Assert\*]` sur le DTO étendu | Native Symfony Validator |
 | Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
@@ -489,11 +471,7 @@ make start                 # PHP server + Vite dev server
 1. **Seul Agency** est instrumenté en pilote. Les 46 autres entités Aurora
    sont substituables côté DB (`resolve_target_entities`) mais leurs DTO,
    Manager, Serializer, View et templates restent à ouvrir un par un.
-2. **`parent::create()` dans le Manager instancie la classe Aurora**, pas la
-   classe client. Il y a un override complet à faire dans le Manager client
-   pour vraiment instancier `App\Entity\Agency` (cf. note dans la section 3).
-   À retravailler — possible de faire une factory pour l'entité elle-même.
-3. **La table `core_agencies`** reste mappée à l'entité Aurora et créée par la
+2. **La table `core_agencies`** reste mappée à l'entité Aurora et créée par la
    migration baseline d'Aurora, même si plus rien ne pointe dessus. C'est du
    "dead weight" — pas grave fonctionnellement, on pourra plus tard supprimer
    automatiquement la déclaration `#[ORM\Entity]` sur Aurora's concrete quand
