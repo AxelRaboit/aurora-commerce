@@ -232,7 +232,7 @@ onMounted(() => {
                 <div class="space-y-4 min-w-0">
                     <div class="bg-surface border border-line/60 rounded-xl p-3">
                         <div class="flex flex-wrap items-center gap-3">
-                            <div class="min-w-[240px] flex-1 max-w-sm">
+                            <div class="min-w-60 flex-1 max-w-sm">
                                 <AppSelect v-model="selectedPlanningId" :options="planningOptions" />
                             </div>
                             <span
@@ -517,39 +517,143 @@ onMounted(() => {
 </template>
 
 <style>
+/* Calendar surface aligned with the Aurora theme tokens so it adapts to
+   light / dark mode without hard-coded colours. */
+.fc {
+    --fc-border-color: var(--color-line);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: var(--color-surface-2);
+    --fc-neutral-text-color: var(--color-secondary);
+    --fc-today-bg-color: color-mix(in srgb, var(--color-accent-500) 10%, transparent);
+    --fc-now-indicator-color: rgb(244 63 94); /* rose-500 */
+    --fc-event-bg-color: var(--color-accent-500);
+    --fc-event-border-color: var(--color-accent-500);
+    --fc-event-text-color: #fff;
+    --fc-button-bg-color: var(--color-surface-2);
+    --fc-button-border-color: var(--color-line);
+    --fc-button-text-color: var(--color-primary);
+    --fc-button-hover-bg-color: var(--color-surface-3);
+    --fc-button-hover-border-color: var(--color-line-strong);
+    --fc-button-active-bg-color: color-mix(in srgb, var(--color-accent-500) 20%, transparent);
+    --fc-button-active-border-color: var(--color-accent-500);
+    color: var(--color-primary);
+}
+
+/* Toolbar */
+.fc .fc-toolbar-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+.fc .fc-button {
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: none;
+    box-shadow: none;
+    transition: background-color 150ms, border-color 150ms, color 150ms;
+}
+.fc .fc-button:focus,
+.fc .fc-button-primary:not(:disabled):focus {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-500) 35%, transparent);
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+    color: var(--color-accent-500);
+}
+
+/* Day grid + columns */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+    border-color: var(--color-line);
+}
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-list-day-text,
+.fc .fc-list-day-side-text {
+    color: var(--color-secondary);
+    font-weight: 500;
+    text-decoration: none;
+}
+.fc .fc-day-other .fc-daygrid-day-number {
+    opacity: 0.4;
+}
+
+/* Today highlight + now indicator */
+.fc .fc-day-today {
+    background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent) !important;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+    color: var(--color-accent-500);
+    font-weight: 600;
+}
+
+/* Business hours stay subtle */
+.fc-business-hours,
+.fc .fc-non-business {
+    background-color: transparent !important;
+}
+
+/* Events */
+.fc-event {
+    cursor: pointer;
+    border-radius: 0.375rem;
+    padding: 1px 4px;
+    border-width: 0;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+    transition: filter 120ms;
+}
+.fc-event:hover {
+    filter: brightness(1.08);
+}
+.fc-h-event .fc-event-main,
+.fc-v-event .fc-event-main {
+    color: #fff;
+    font-weight: 500;
+}
 .fc-event-cancelled {
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: 0.55;
 }
 .fc-event-tentative {
     background-image: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 255, 0.18) 0,
-        rgba(255, 255, 255, 0.18) 4px,
+        rgb(255 255 255 / 0.22) 0,
+        rgb(255 255 255 / 0.22) 4px,
         transparent 4px,
         transparent 8px
     );
     opacity: 0.85;
 }
-.fc-day-today {
-    background-color: rgba(59, 130, 246, 0.06) !important;
+
+/* List view */
+.fc .fc-list,
+.fc .fc-list-table {
+    border-color: var(--color-line);
 }
-.fc-business-hours {
-    background-color: transparent !important;
+.fc .fc-list-day-cushion {
+    background-color: var(--color-surface-2);
 }
-.fc .fc-toolbar-title {
-    font-size: 1.1rem;
-    font-weight: 600;
+.fc .fc-list-event:hover td {
+    background-color: var(--color-surface-2);
 }
-.fc .fc-button {
-    border-radius: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.85rem;
-    text-transform: capitalize;
+
+/* Week numbers + popover */
+.fc .fc-daygrid-week-number {
+    background: transparent;
+    color: var(--color-muted);
+    font-weight: 500;
 }
-.fc-event {
-    cursor: pointer;
-    border-radius: 0.25rem;
-    padding: 1px 4px;
+.fc .fc-popover {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-primary);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+.fc .fc-popover-header {
+    background: var(--color-surface-2);
+    color: var(--color-primary);
 }
 </style>
