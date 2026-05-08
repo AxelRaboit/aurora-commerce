@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Manager;
 
-use Aurora\Core\Agency\DTO\AgencyInput;
+use Aurora\Core\Agency\DTO\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class AgencyManager
+#[AsAlias(AgencyManagerInterface::class)]
+class AgencyManager implements AgencyManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private AuditLogger $auditLogger,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(AgencyInput $input): AgencyInterface
+    public function create(AgencyInputInterface $input): AgencyInterface
     {
-        $agency = new Agency()->setName($input->name);
+        $agency = new Agency()->setName($input->getName());
 
         $this->entityManager->persist($agency);
         $this->entityManager->flush();
@@ -29,9 +31,9 @@ final readonly class AgencyManager
         return $agency;
     }
 
-    public function update(AgencyInterface $agency, AgencyInput $input): void
+    public function update(AgencyInterface $agency, AgencyInputInterface $input): void
     {
-        $agency->setName($input->name);
+        $agency->setName($input->getName());
         $this->entityManager->flush();
 
         $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), ['name' => $agency->getName()]);

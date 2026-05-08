@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Aurora\Core\Agency\Serializer;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 use const DATE_ATOM;
 
-final readonly class AgencySerializer
+#[AsAlias(AgencySerializerInterface::class)]
+class AgencySerializer implements AgencySerializerInterface
 {
     /** @return array<string, mixed> */
     public function serialize(AgencyInterface $agency): array

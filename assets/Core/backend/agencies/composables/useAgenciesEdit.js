@@ -1,13 +1,20 @@
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 
-export function useAgenciesEdit(agencyList, createPath, updatePath) {
+/**
+ * @typedef {Object} ExtraField
+ * @property {*} default - Initial/reset value for this field.
+ * @property {(agency: object) => *} fromAgency - Reads the field value from an existing agency when opening edit.
+ */
+
+export function useAgenciesEdit(agencyList, createPath, updatePath, options = {}) {
     const { t } = useI18n();
     const { request } = useApiRequest();
+
+    const extraFields = options.extraFields ?? {};
 
     const editModal = reactive({
         open: false,
@@ -15,12 +22,30 @@ export function useAgenciesEdit(agencyList, createPath, updatePath) {
         errors: {},
         saving: false,
     });
-    const editForm = reactive({ name: "" });
+    const editForm = reactive({
+        name: "",
+        ...Object.fromEntries(
+            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+        ),
+    });
+
+    function resetExtras() {
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.default;
+        }
+    }
+
+    function loadExtrasFrom(agency) {
+        for (const [key, def] of Object.entries(extraFields)) {
+            editForm[key] = def.fromAgency(agency);
+        }
+    }
 
     function openCreate() {
         editModal.agency = null;
         editModal.errors = {};
         editForm.name = "";
+        resetExtras();
         editModal.open = true;
     }
 
@@ -28,6 +53,7 @@ export function useAgenciesEdit(agencyList, createPath, updatePath) {
         editModal.agency = agency;
         editModal.errors = {};
         editForm.name = agency.name;
+        loadExtrasFrom(agency);
         editModal.open = true;
     }
 
@@ -39,7 +65,7 @@ export function useAgenciesEdit(agencyList, createPath, updatePath) {
             const url = isCreate
                 ? createPath
                 : buildPath(updatePath, { id: editModal.agency.id });
-            const data = await request(url, { name: editForm.name });
+            const data = await request(url, { ...editForm });
             if (!data?.success) {
                 editModal.errors = data?.errors ?? {};
                 return;

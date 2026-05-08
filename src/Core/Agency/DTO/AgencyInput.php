@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\DTO;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class AgencyInput
+readonly class AgencyInput implements AgencyInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.agencies.errors.name_required')]
@@ -15,9 +14,8 @@ final readonly class AgencyInput
         public string $name,
     ) {}
 
-    /** @param array<string, mixed> $data */
-    public static function fromArray(array $data): self
+    public function getName(): string
     {
-        return new self(name: Str::trimFromArray($data, 'name'));
+        return $this->name;
     }
 }

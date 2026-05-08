@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Core\Agency\View;
 
 use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Agency\Serializer\AgencySerializer;
+use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
 
-final readonly class AgenciesViewBuilder
+class AgenciesViewBuilder
 {
     public function __construct(
-        private AgencyRepository $agencyRepository,
-        private AgencySerializer $agencySerializer,
+        protected readonly AgencyRepository $agencyRepository,
+        protected readonly AgencySerializerInterface $agencySerializer,
     ) {}
 
     /** @return array<string, mixed> */

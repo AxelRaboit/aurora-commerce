@@ -20,10 +20,16 @@ const props = defineProps({
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { agencyList } = useAgenciesList(props.agencies);
-const { editModal, editForm, openCreate, openEdit, submitEdit } = useAgenciesEdit(agencyList, props.createPath, props.updatePath);
+const { editModal, editForm, openCreate, openEdit, submitEdit } = useAgenciesEdit(
+    agencyList,
+    props.createPath,
+    props.updatePath,
+    { extraFields: props.extraFields },
+);
 const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.deletePath);
 </script>
 
@@ -43,12 +49,14 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.agencies.name") }}</th>
+                        <slot name="extra-headers" />
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-for="agency in agencyList" :key="agency.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-3 font-medium text-primary">{{ agency.name }}</td>
+                        <slot name="extra-cells" :agency="agency" />
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="isAdmin" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(agency)">
@@ -73,6 +81,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                     :error="editModal.errors.name ?? ''"
                     :required="true"
                 />
+                <slot name="extra-form-fields" :edit-form="editForm" :errors="editModal.errors" />
                 <AppModalFooter :bordered="true">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Controller\Backend;
 
-use Aurora\Core\Agency\DTO\AgencyInput;
+use Aurora\Core\Agency\DTO\AgencyInputFactoryInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Manager\AgencyManager;
+use Aurora\Core\Agency\Manager\AgencyManagerInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Agency\Serializer\AgencySerializer;
+use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
 use Aurora\Core\Agency\View\AgenciesViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
@@ -23,17 +23,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/agencies', name: 'backend_agencies')]
 #[IsGranted('ROLE_ADMIN')]
-final class AgenciesController extends AbstractController
+class AgenciesController extends AbstractController
 {
     use JsonRequestTrait;
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly AgencyRepository $agencyRepository,
-        private readonly AgencySerializer $agencySerializer,
-        private readonly AgenciesViewBuilder $viewBuilder,
-        private readonly AgencyManager $agencyManager,
-        private readonly PayloadValidator $payloadValidator,
+        protected readonly AgencyRepository $agencyRepository,
+        protected readonly AgencySerializerInterface $agencySerializer,
+        protected readonly AgenciesViewBuilder $viewBuilder,
+        protected readonly AgencyManagerInterface $agencyManager,
+        protected readonly AgencyInputFactoryInterface $agencyInputFactory,
+        protected readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -56,7 +57,7 @@ final class AgenciesController extends AbstractController
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {
-        $input = AgencyInput::fromArray($this->decodeJson($request));
+        $input = $this->agencyInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
@@ -70,7 +71,7 @@ final class AgenciesController extends AbstractController
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(AgencyInterface $agency, Request $request): JsonResponse
     {
-        $input = AgencyInput::fromArray($this->decodeJson($request));
+        $input = $this->agencyInputFactory->fromArray($this->decodeJson($request));
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
