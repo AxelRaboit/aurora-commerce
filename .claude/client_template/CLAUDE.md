@@ -109,3 +109,26 @@ Recommandation : `CLAUDE.local.md` doit lister les conventions internes
 qui n'ont rien à voir avec aurora-core (architecture du projet, conventions
 équipe, intégrations tierces spécifiques, etc.).
 
+---
+
+## Targets Makefile spécifiques au client (optionnel)
+
+Le `Makefile` est synchronisé depuis aurora-core et **écrasé** à chaque
+`make aurora-update`. Pour ajouter des targets propres au projet client
+sans les perdre :
+
+1. Créer un `Makefile.local` à la racine du projet client.
+2. Y mettre les targets custom :
+   ```makefile
+   deploy-staging:
+       ./bin/deploy.sh staging
+
+   reset-fixtures:
+       php bin/console doctrine:fixtures:load --no-interaction
+   ```
+3. Le Makefile principal fait `-include Makefile.local` à la fin → les
+   targets sont disponibles via `make deploy-staging` etc. comme s'ils
+   étaient dans le Makefile principal.
+
+`Makefile.local` n'est **jamais** touché par `sync-makefile`.
+

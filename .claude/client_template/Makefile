@@ -376,3 +376,14 @@ sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do
 	else \
 		echo "⚠️  $(AURORA)/.claude/client_template/Makefile not found — skipping"; \
 	fi
+
+# ─────────────────────────────────────────────────────────────────────
+# Makefile.local — client-specific targets
+#
+# Anything you want to add that is SPECIFIC to this client project
+# (not a candidate for upstreaming to aurora-core) goes in Makefile.local.
+# That file is NEVER overwritten by `sync-makefile`. Create it next to
+# this Makefile if needed; targets defined there are available via
+# `make <target>` exactly like the ones above.
+# ─────────────────────────────────────────────────────────────────────
+-include Makefile.local
