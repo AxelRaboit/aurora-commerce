@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Serializer;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ListingSerializer
+#[AsAlias(ListingSerializerInterface::class)]
+class ListingSerializer implements ListingSerializerInterface
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(protected readonly SettingRepository $settingRepository) {}
 
-    public function serialize(Listing $listing): array
+    public function serialize(ListingInterface $listing): array
     {
         $product = $listing->getProduct();
         $currency = $product->getCurrency();
@@ -36,12 +38,12 @@ final readonly class ListingSerializer
             'isVisibleOnShop' => $listing->isVisibleOnShop(),
             'seoTitle' => $listing->getSeoTitle(),
             'seoDescription' => $listing->getSeoDescription(),
-            'featuredImage' => $listing->getFeaturedImage() instanceof Media ? [
+            'featuredImage' => $listing->getFeaturedImage() instanceof MediaInterface ? [
                 'id' => $listing->getFeaturedImage()->getId(),
                 'url' => $listing->getFeaturedImage()->getPublicUrl(),
                 'alt' => $listing->getFeaturedImage()->getAlt(),
             ] : null,
-            'displayImage' => $displayImage instanceof Media ? [
+            'displayImage' => $displayImage instanceof MediaInterface ? [
                 'id' => $displayImage->getId(),
                 'url' => $displayImage->getPublicUrl(),
                 'alt' => $displayImage->getAlt(),

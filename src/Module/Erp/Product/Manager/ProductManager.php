@@ -10,9 +10,9 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Module\Erp\Product\Contract\ProductManagerInterface;
-use Aurora\Module\Erp\Product\Dto\ProductInput;
+use Aurora\Module\Erp\Product\Dto\ProductInputInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -20,27 +20,27 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(ProductManagerInterface::class)]
-final readonly class ProductManager implements ProductManagerInterface
+class ProductManager implements ProductManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ProductRepository $productRepository,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
-        private AuditLogger $auditLogger,
-        private TranslatorInterface $translator,
-        private MediaRepository $mediaRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly ProductRepository $productRepository,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly TranslatorInterface $translator,
+        protected readonly MediaRepository $mediaRepository,
     ) {}
 
-    public function create(ProductInput $input): Product
+    public function create(ProductInputInterface $input): ProductInterface
     {
-        $this->assertReferenceIsAvailable($input->reference);
+        $this->assertReferenceIsAvailable($input->getReference());
 
-        $product = new Product();
+        $product = $this->createProduct();
         $this->applyInput($product, $input);
 
-        if (null !== $input->reference) {
-            $product->setReference($input->reference);
+        if (null !== $input->getReference()) {
+            $product->setReference($input->getReference());
         } else {
             $prefix = $this->settingRepository->get(ApplicationParameterEnum::ErpProductPrefix->value, SequencePrefixEnum::Product->value) ?? SequencePrefixEnum::Product->value;
             $product->setReference($this->sequenceGenerator->next($prefix));
@@ -49,70 +49,82 @@ final readonly class ProductManager implements ProductManagerInterface
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        $this->auditLogger->log('erp', 'product.created', 'Product', $product->getId(), [
-            'name' => $product->getName(),
-            'reference' => $product->getReference(),
-        ]);
+        $this->auditCreated($product);
 
         return $product;
     }
 
-    public function update(Product $product, ProductInput $input): void
+    public function update(ProductInterface $product, ProductInputInterface $input): void
     {
-        $this->assertReferenceIsAvailable($input->reference, $product);
+        $this->assertReferenceIsAvailable($input->getReference(), $product);
 
         $this->applyInput($product, $input);
-        if (null !== $input->reference) {
-            $product->setReference($input->reference);
+        if (null !== $input->getReference()) {
+            $product->setReference($input->getReference());
         }
 
         $this->entityManager->flush();
 
-        $this->auditLogger->log('erp', 'product.updated', 'Product', $product->getId(), [
-            'name' => $product->getName(),
-            'reference' => $product->getReference(),
-        ]);
+        $this->auditUpdated($product);
     }
 
-    public function delete(Product $product): void
+    public function delete(ProductInterface $product): void
     {
-        $id = $product->getId();
-        $name = $product->getName();
-        $reference = $product->getReference();
+        $this->auditDeleted($product);
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();
-
-        $this->auditLogger->log('erp', 'product.deleted', 'Product', $id, [
-            'name' => $name,
-            'reference' => $reference,
-        ]);
     }
 
-    private function applyInput(Product $product, ProductInput $input): void
+    protected function createProduct(): ProductInterface
     {
-        $product->setName($input->name);
-        $product->setDescription($input->description);
-        $product->setPriceCents($input->priceCents);
-        $product->setCurrency($input->currency);
-        $product->setStatus($input->status);
-        $product->setType($input->type);
-        $product->setImage(null !== $input->imageId ? $this->mediaRepository->find($input->imageId) : null);
-        $product->setStockQuantity($input->stockQuantity);
+        return new Product();
     }
 
-    private function assertReferenceIsAvailable(?string $reference, ?Product $ignore = null): void
+    protected function applyInput(ProductInterface $product, ProductInputInterface $input): void
+    {
+        $product->setName($input->getName());
+        $product->setDescription($input->getDescription());
+        $product->setPriceCents($input->getPriceCents());
+        $product->setCurrency($input->getCurrency());
+        $product->setStatus($input->getStatus());
+        $product->setType($input->getType());
+        $product->setImage(null !== $input->getImageId() ? $this->mediaRepository->find($input->getImageId()) : null);
+        $product->setStockQuantity($input->getStockQuantity());
+    }
+
+    protected function auditCreated(ProductInterface $product): void
+    {
+        $this->auditLogger->log('erp', 'product.created', 'Product', $product->getId(), $this->auditPayload($product));
+    }
+
+    protected function auditUpdated(ProductInterface $product): void
+    {
+        $this->auditLogger->log('erp', 'product.updated', 'Product', $product->getId(), $this->auditPayload($product));
+    }
+
+    protected function auditDeleted(ProductInterface $product): void
+    {
+        $this->auditLogger->log('erp', 'product.deleted', 'Product', $product->getId(), $this->auditPayload($product));
+    }
+
+    protected function auditPayload(ProductInterface $product): array
+    {
+        return ['name' => $product->getName(), 'reference' => $product->getReference()];
+    }
+
+    private function assertReferenceIsAvailable(?string $reference, ?ProductInterface $ignore = null): void
     {
         if (null === $reference) {
             return;
         }
 
         $existing = $this->productRepository->findOneByReference($reference);
-        if (!$existing instanceof Product) {
+        if (!$existing instanceof ProductInterface) {
             return;
         }
 
-        if ($ignore instanceof Product && $existing->getId() === $ignore->getId()) {
+        if ($ignore instanceof ProductInterface && $existing->getId() === $ignore->getId()) {
             return;
         }
 

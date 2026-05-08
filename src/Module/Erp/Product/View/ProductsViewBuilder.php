@@ -7,7 +7,7 @@ namespace Aurora\Module\Erp\Product\View;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
-use Aurora\Module\Erp\Product\Serializer\ProductSerializer;
+use Aurora\Module\Erp\Product\Serializer\ProductSerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -19,7 +19,7 @@ final readonly class ProductsViewBuilder
 {
     public function __construct(
         private ProductRepository $productRepository,
-        private ProductSerializer $productSerializer,
+        private ProductSerializerInterface $productSerializer,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 

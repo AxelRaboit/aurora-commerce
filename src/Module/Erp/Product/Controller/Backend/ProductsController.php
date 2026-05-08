@@ -9,11 +9,11 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Erp\Product\Contract\ProductManagerInterface;
-use Aurora\Module\Erp\Product\Dto\ProductInput;
+use Aurora\Module\Erp\Product\Dto\ProductInputFactoryInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Manager\ProductManagerInterface;
 use Aurora\Module\Erp\Product\Serializer\ProductActivitySerializer;
-use Aurora\Module\Erp\Product\Serializer\ProductSerializer;
+use Aurora\Module\Erp\Product\Serializer\ProductSerializerInterface;
 use Aurora\Module\Erp\Product\View\ProductsViewBuilder;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,11 +30,12 @@ final class ProductsController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly ProductSerializer $productSerializer,
+        private readonly ProductSerializerInterface $productSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly ProductManagerInterface $productManager,
         private readonly AuditLogRepository $auditLogRepository,
         private readonly ProductsViewBuilder $viewBuilder,
+        private readonly ProductInputFactoryInterface $productInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -53,7 +54,7 @@ final class ProductsController extends AbstractController
     #[IsGranted('erp.products.create')]
     public function create(Request $request): JsonResponse
     {
-        $input = ProductInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = $this->productInputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -73,7 +74,7 @@ final class ProductsController extends AbstractController
     #[IsGranted('erp.products.edit')]
     public function update(Product $product, Request $request): JsonResponse
     {
-        $input = ProductInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = $this->productInputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

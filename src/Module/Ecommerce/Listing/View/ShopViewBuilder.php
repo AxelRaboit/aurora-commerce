@@ -8,7 +8,7 @@ use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
-use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;
 
 /**
  * Builds the Twig payloads for the public shop views.
@@ -17,7 +17,7 @@ final readonly class ShopViewBuilder
 {
     public function __construct(
         private ListingRepository $listingRepository,
-        private ListingSerializer $listingSerializer,
+        private ListingSerializerInterface $listingSerializer,
         private FrontContext $frontContext,
         private ThemeContext $themeContext,
     ) {}

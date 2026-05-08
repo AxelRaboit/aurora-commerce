@@ -7,7 +7,7 @@ namespace Aurora\Module\Erp\Product\View;
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Serializer\ProductActivitySerializer;
-use Aurora\Module\Erp\Product\Serializer\ProductSerializer;
+use Aurora\Module\Erp\Product\Serializer\ProductSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final readonly class ProductDetailViewBuilder
 {
     public function __construct(
-        private ProductSerializer $productSerializer,
+        private ProductSerializerInterface $productSerializer,
         private AuditLogRepository $auditLogRepository,
         private UrlGeneratorInterface $urlGenerator,
     ) {}

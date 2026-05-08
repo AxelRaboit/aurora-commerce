@@ -4,39 +4,64 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class ListingInput
+class ListingInput implements ListingInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'ecommerce.listings.errors.product_required')]
-        public ?int $productId = null,
+        public readonly ?int $productId = null,
         #[Assert\NotBlank(message: 'ecommerce.listings.errors.slug_required')]
         #[Assert\Length(max: 200)]
         #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'ecommerce.listings.errors.slug_invalid')]
-        public string $slug = '',
+        public readonly string $slug = '',
         #[Assert\Length(max: 200)]
-        public ?string $marketingTitle = null,
-        public ?string $marketingDescription = null,
-        public ?int $featuredImageId = null,
-        public bool $isVisibleOnShop = true,
+        public readonly ?string $marketingTitle = null,
+        public readonly ?string $marketingDescription = null,
+        public readonly ?int $featuredImageId = null,
+        public readonly bool $isVisibleOnShop = true,
         #[Assert\Length(max: 200)]
-        public ?string $seoTitle = null,
-        public ?string $seoDescription = null,
+        public readonly ?string $seoTitle = null,
+        public readonly ?string $seoDescription = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getProductId(): ?int
     {
-        return new self(
-            productId: isset($data['productId']) && '' !== (string) $data['productId'] ? (int) $data['productId'] : null,
-            slug: Str::trimFromArray($data, 'slug'),
-            marketingTitle: Str::trimOrNullFromArray($data, 'marketingTitle'),
-            marketingDescription: Str::trimOrNullFromArray($data, 'marketingDescription'),
-            featuredImageId: isset($data['featuredImageId']) && '' !== (string) $data['featuredImageId'] ? (int) $data['featuredImageId'] : null,
-            isVisibleOnShop: (bool) ($data['isVisibleOnShop'] ?? true),
-            seoTitle: Str::trimOrNullFromArray($data, 'seoTitle'),
-            seoDescription: Str::trimOrNullFromArray($data, 'seoDescription'),
-        );
+        return $this->productId;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function getMarketingTitle(): ?string
+    {
+        return $this->marketingTitle;
+    }
+
+    public function getMarketingDescription(): ?string
+    {
+        return $this->marketingDescription;
+    }
+
+    public function getFeaturedImageId(): ?int
+    {
+        return $this->featuredImageId;
+    }
+
+    public function isVisibleOnShop(): bool
+    {
+        return $this->isVisibleOnShop;
+    }
+
+    public function getSeoTitle(): ?string
+    {
+        return $this->seoTitle;
+    }
+
+    public function getSeoDescription(): ?string
+    {
+        return $this->seoDescription;
     }
 }

@@ -8,11 +8,11 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Ecommerce\Listing\Contract\ListingManagerInterface;
-use Aurora\Module\Ecommerce\Listing\Dto\ListingInput;
+use Aurora\Module\Ecommerce\Listing\Dto\ListingInputFactoryInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Manager\ListingManagerInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
-use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializer;
+use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;
 use Aurora\Module\Ecommerce\Listing\View\ListingsViewBuilder;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use InvalidArgumentException;
@@ -32,10 +32,11 @@ final class ListingsController extends AbstractController
     public function __construct(
         private readonly ListingRepository $listingRepository,
         private readonly ProductRepository $productRepository,
-        private readonly ListingSerializer $listingSerializer,
+        private readonly ListingSerializerInterface $listingSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly ListingManagerInterface $listingManager,
         private readonly ListingsViewBuilder $viewBuilder,
+        private readonly ListingInputFactoryInterface $listingInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -104,7 +105,7 @@ final class ListingsController extends AbstractController
     #[IsGranted('ecommerce.listings.create')]
     public function create(Request $request): JsonResponse
     {
-        $input = ListingInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = $this->listingInputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -124,7 +125,7 @@ final class ListingsController extends AbstractController
     #[IsGranted('ecommerce.listings.edit')]
     public function update(Listing $listing, Request $request): JsonResponse
     {
-        $input = ListingInput::fromArray(json_decode($request->getContent(), true) ?? []);
+        $input = $this->listingInputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

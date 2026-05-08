@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Serializer;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class ProductSerializer
+#[AsAlias(ProductSerializerInterface::class)]
+class ProductSerializer implements ProductSerializerInterface
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(protected readonly SettingRepository $settingRepository) {}
 
-    public function serialize(Product $product): array
+    public function serialize(ProductInterface $product): array
     {
         $currency = $product->getCurrency();
         $priceCents = $product->getPriceCents();
@@ -41,7 +43,7 @@ final readonly class ProductSerializer
             'status' => $product->getStatus()->value,
             'type' => $product->getType()->value,
             'requiresShipping' => $product->getType()->requiresShipping(),
-            'image' => $image instanceof Media ? [
+            'image' => $image instanceof MediaInterface ? [
                 'id' => $image->getId(),
                 'url' => $image->getPublicUrl(),
                 'alt' => $image->getAlt(),
