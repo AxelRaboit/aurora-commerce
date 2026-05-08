@@ -7,25 +7,25 @@ namespace Aurora\Module\Ecommerce\Order\Dto;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class CheckoutInput implements CheckoutInputInterface
+class CheckoutInput implements CheckoutInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'frontend.checkout.errors.email_required')]
         #[Assert\Email(message: 'frontend.checkout.errors.email_invalid')]
-        public string $email = '',
+        public readonly string $email = '',
         #[Assert\NotBlank(message: 'frontend.checkout.errors.name_required')]
         #[Assert\Length(max: 200)]
-        public string $name = '',
+        public readonly string $name = '',
         #[Assert\Length(max: 200)]
-        public ?string $addressLine1 = null,
+        public readonly ?string $addressLine1 = null,
         #[Assert\Length(max: 200)]
-        public ?string $addressLine2 = null,
+        public readonly ?string $addressLine2 = null,
         #[Assert\Length(max: 100)]
-        public ?string $city = null,
+        public readonly ?string $city = null,
         #[Assert\Length(max: 20)]
-        public ?string $postalCode = null,
-        public ?string $country = null,
-        public ?string $notes = null,
+        public readonly ?string $postalCode = null,
+        public readonly ?string $country = null,
+        public readonly ?string $notes = null,
     ) {}
 
     public function getEmail(): string

@@ -150,10 +150,32 @@ par Aurora (typiquement `getName(): string`). Pas de setters — le DTO est
 immutable.
 
 `<Name>Input` est :
-- `readonly class` (PAS `final readonly` — le client doit pouvoir étendre)
+- `class` non-`final` avec propriétés `public readonly` individuelles (et
+  **non** `readonly class` global). Pourquoi ? Un parent `readonly class`
+  contraint l'enfant à être également `readonly class` → impossible pour
+  un client d'ajouter une propriété mutable (state interne, cache, …) en
+  étendant. Avec des `public readonly` par propriété, l'enfant peut
+  ajouter des champs `public readonly` ou non-readonly indifféremment.
 - Implémente `<Name>InputInterface`
 - Constructeur en property promotion avec annotations `#[Assert\*]` Symfony
   pour la validation
+
+Squelette :
+
+```php
+class AgencyInput implements AgencyInputInterface
+{
+    public function __construct(
+        #[Assert\NotBlank]
+        public readonly string $name,
+    ) {}
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+}
+```
 
 `<Name>InputFactory` :
 - Implémente `<Name>InputFactoryInterface`

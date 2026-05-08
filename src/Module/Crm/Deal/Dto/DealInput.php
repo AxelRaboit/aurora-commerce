@@ -7,21 +7,21 @@ namespace Aurora\Module\Crm\Deal\Dto;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class DealInput implements DealInputInterface
+class DealInput implements DealInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'crm.deals.errors.name_required')]
         #[Assert\Length(max: 200)]
-        public string $name = '',
+        public readonly string $name = '',
         #[Assert\NotNull]
-        public DealStageEnum $stage = DealStageEnum::Lead,
-        public ?string $value = null,
+        public readonly DealStageEnum $stage = DealStageEnum::Lead,
+        public readonly ?string $value = null,
         #[Assert\Positive]
-        public ?int $contactId = null,
+        public readonly ?int $contactId = null,
         #[Assert\Positive]
-        public ?int $companyId = null,
-        public ?string $closingDate = null,
-        public ?string $notes = null,
+        public readonly ?int $companyId = null,
+        public readonly ?string $closingDate = null,
+        public readonly ?string $notes = null,
     ) {}
 
     public function getName(): string
