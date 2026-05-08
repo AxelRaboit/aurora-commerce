@@ -2,6 +2,19 @@ backend:
   nav:
     plannings: Plannings
     plannings_description: Calendriers et événements liés aux entités du système
+    sections:
+      planning: Planning
+  audit:
+    actions:
+      planning:
+        planning:
+          created: Planning créé
+          updated: Planning mis à jour
+          deleted: Planning supprimé
+        planning_event:
+          created: Événement ajouté au planning
+          updated: Événement mis à jour
+          deleted: Événement supprimé
   plannings:
     title: Plannings
     new: Nouveau planning
