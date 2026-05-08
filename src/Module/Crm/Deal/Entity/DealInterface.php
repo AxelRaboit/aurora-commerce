@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Deal\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use DateTimeImmutable;
 
@@ -30,13 +30,13 @@ interface DealInterface extends TimestampableInterface
 
     public function setValue(?string $value): static;
 
-    public function getContact(): ?Contact;
+    public function getContact(): ?ContactInterface;
 
-    public function setContact(?Contact $contact): static;
+    public function setContact(?ContactInterface $contact): static;
 
-    public function getCompany(): ?Company;
+    public function getCompany(): ?CompanyInterface;
 
-    public function setCompany(?Company $company): static;
+    public function setCompany(?CompanyInterface $company): static;
 
     public function getClosingDate(): ?DateTimeImmutable;
 

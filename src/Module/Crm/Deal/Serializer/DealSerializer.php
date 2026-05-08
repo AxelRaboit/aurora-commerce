@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\Serializer;
 
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use DateTimeInterface;
 
@@ -18,11 +18,11 @@ final readonly class DealSerializer
             'name' => $deal->getName(),
             'stage' => $deal->getStage()->value,
             'value' => $deal->getValue(),
-            'contact' => $deal->getContact() instanceof Contact ? [
+            'contact' => $deal->getContact() instanceof ContactInterface ? [
                 'id' => $deal->getContact()->getId(),
                 'fullName' => $deal->getContact()->getFullName(),
             ] : null,
-            'company' => $deal->getCompany() instanceof Company ? [
+            'company' => $deal->getCompany() instanceof CompanyInterface ? [
                 'id' => $deal->getCompany()->getId(),
                 'name' => $deal->getCompany()->getName(),
             ] : null,

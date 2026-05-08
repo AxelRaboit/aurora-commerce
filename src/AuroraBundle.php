@@ -43,7 +43,12 @@ class AuroraBundle extends AbstractBundle
                     'Aurora\Core\Service\Entity\ServiceInterface' => 'Aurora\Core\Service\Entity\Service',
                     'Aurora\Core\Setting\Entity\SettingInterface' => 'Aurora\Core\Setting\Entity\Setting',
                     'Aurora\Core\Theme\Entity\ThemeInterface' => 'Aurora\Core\Theme\Entity\Theme',
+                    'Aurora\Module\Crm\Company\Entity\CompanyInterface' => 'Aurora\Module\Crm\Company\Entity\Company',
+                    'Aurora\Module\Crm\Contact\Entity\ContactInterface' => 'Aurora\Module\Crm\Contact\Entity\Contact',
                     'Aurora\Module\Crm\Deal\Entity\DealInterface' => 'Aurora\Module\Crm\Deal\Entity\Deal',
+                    'Aurora\Module\Erp\Product\Entity\ProductInterface' => 'Aurora\Module\Erp\Product\Entity\Product',
+                    'Aurora\Module\Ged\Document\Entity\DocumentInterface' => 'Aurora\Module\Ged\Document\Entity\Document',
+                    'Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface' => 'Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory',
                 ],
                 'mappings' => [
                     'AuroraCore' => [

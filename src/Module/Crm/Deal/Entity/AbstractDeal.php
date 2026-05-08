@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Deal\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -30,13 +30,13 @@ abstract class AbstractDeal implements DealInterface
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2, nullable: true)]
     protected ?string $value = null;
 
-    #[ORM\ManyToOne(targetEntity: Contact::class)]
+    #[ORM\ManyToOne(targetEntity: ContactInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?Contact $contact = null;
+    protected ?ContactInterface $contact = null;
 
-    #[ORM\ManyToOne(targetEntity: Company::class)]
+    #[ORM\ManyToOne(targetEntity: CompanyInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?Company $company = null;
+    protected ?CompanyInterface $company = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     protected ?DateTimeImmutable $closingDate = null;
@@ -85,24 +85,24 @@ abstract class AbstractDeal implements DealInterface
         return $this;
     }
 
-    public function getContact(): ?Contact
+    public function getContact(): ?ContactInterface
     {
         return $this->contact;
     }
 
-    public function setContact(?Contact $contact): static
+    public function setContact(?ContactInterface $contact): static
     {
         $this->contact = $contact;
 
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getCompany(): ?CompanyInterface
     {
         return $this->company;
     }
 
-    public function setCompany(?Company $company): static
+    public function setCompany(?CompanyInterface $company): static
     {
         $this->company = $company;
 

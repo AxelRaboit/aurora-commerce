@@ -7,7 +7,7 @@ namespace Aurora\Module\Ecommerce\Listing\Entity;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
-use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,9 +25,9 @@ class Listing
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(targetEntity: Product::class)]
+    #[ORM\OneToOne(targetEntity: ProductInterface::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Product $product;
+    private ProductInterface $product;
 
     #[ORM\Column(length: 32, unique: true, nullable: true)]
     private ?string $reference = null;
@@ -59,12 +59,12 @@ class Listing
         return $this->id;
     }
 
-    public function getProduct(): Product
+    public function getProduct(): ProductInterface
     {
         return $this->product;
     }
 
-    public function setProduct(Product $product): static
+    public function setProduct(ProductInterface $product): static
     {
         $this->product = $product;
 

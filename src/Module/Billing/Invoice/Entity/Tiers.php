@@ -7,7 +7,7 @@ namespace Aurora\Module\Billing\Invoice\Entity;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
-use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -70,9 +70,9 @@ class Tiers
     private ?string $notes = null;
 
     /** Optional link to a CRM Company — kept loose so Billing stays independent. */
-    #[ORM\ManyToOne(targetEntity: Company::class)]
+    #[ORM\ManyToOne(targetEntity: CompanyInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Company $company = null;
+    private ?CompanyInterface $company = null;
 
     public function getId(): ?int
     {
@@ -247,12 +247,12 @@ class Tiers
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getCompany(): ?CompanyInterface
     {
         return $this->company;
     }
 
-    public function setCompany(?Company $company): self
+    public function setCompany(?CompanyInterface $company): self
     {
         $this->company = $company;
 
