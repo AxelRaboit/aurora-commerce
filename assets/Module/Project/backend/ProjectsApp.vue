@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -8,6 +8,7 @@ import { useProjectsCreate } from "./composables/useProjectsCreate.js";
 import { useProjectsEdit } from "./composables/useProjectsEdit.js";
 import { useProjectsDelete } from "./composables/useProjectsDelete.js";
 import { useProjectDetail } from "./composables/useProjectDetail.js";
+import { useAutoSelectFirst } from "./composables/useAutoSelectFirst.js";
 import { useTasksCreate } from "./composables/useTasksCreate.js";
 import { useTasksEdit } from "./composables/useTasksEdit.js";
 import { useTasksKanban } from "./composables/useTasksKanban.js";
@@ -102,11 +103,7 @@ const {
     reloadProject,
 } = useProjectDetail(props.showPath);
 
-watch(projects, (list) => {
-    if (list.length > 0 && !activeProject.value) {
-        openProject(list[0]);
-    }
-});
+useAutoSelectFirst(projects, activeProject, openProject);
 
 const {
     showCreate: showProjectModal,
