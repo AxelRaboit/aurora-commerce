@@ -160,22 +160,39 @@ class AuroraBundle extends AbstractBundle
             ],
         ]);
 
+        // Client templates take priority over Aurora's. For each Aurora namespace,
+        // we prepend the client's templates/<Namespace> directory if it exists, so
+        // clients can override any Aurora template by mirroring its path under
+        // templates/Core, templates/Module/Editorial, templates/Shared, etc.
+        $projectDir = (string) $builder->getParameter('kernel.project_dir');
+        $namespacedPaths = [
+            'Core' => '/templates/Core',
+            'Editorial' => '/templates/Module/Editorial',
+            'Shared' => '/templates/Shared',
+            'Crm' => '/templates/Module/Crm',
+            'Erp' => '/templates/Module/Erp',
+            'Ecommerce' => '/templates/Module/Ecommerce',
+            'Photo' => '/templates/Module/Photo',
+            'Billing' => '/templates/Module/Billing',
+            'Ged' => '/templates/Module/Ged',
+            'Project' => '/templates/Module/Project',
+        ];
+
+        $twigPaths = [];
+        foreach ($namespacedPaths as $namespace => $relative) {
+            if (is_dir($projectDir.$relative)) {
+                $twigPaths[$projectDir.$relative] = $namespace;
+            }
+        }
+        $twigPaths[$dir.'/templates'] = null;
+        $twigPaths[$dir.'/assets/styles'] = 'styles';
+        foreach ($namespacedPaths as $namespace => $relative) {
+            $twigPaths[$dir.$relative] = $namespace;
+        }
+
         $builder->prependExtensionConfig('twig', [
             'file_name_pattern' => '*.twig',
-            'paths' => [
-                $dir.'/templates' => null,
-                $dir.'/assets/styles' => 'styles',
-                $dir.'/templates/Core' => 'Core',
-                $dir.'/templates/Module/Editorial' => 'Editorial',
-                $dir.'/templates/Shared' => 'Shared',
-                $dir.'/templates/Module/Crm' => 'Crm',
-                $dir.'/templates/Module/Erp' => 'Erp',
-                $dir.'/templates/Module/Ecommerce' => 'Ecommerce',
-                $dir.'/templates/Module/Photo' => 'Photo',
-                $dir.'/templates/Module/Billing' => 'Billing',
-                $dir.'/templates/Module/Ged' => 'Ged',
-                $dir.'/templates/Module/Project' => 'Project',
-            ],
+            'paths' => $twigPaths,
         ]);
 
         $builder->prependExtensionConfig('doctrine_migrations', [
