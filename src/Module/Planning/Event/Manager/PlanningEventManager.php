@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace Aurora\Module\Planning\Event\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Planning\Event\Dto\PlanningEventInputInterface;
 use Aurora\Module\Planning\Event\Entity\PlanningEvent;
 use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;
 use Aurora\Module\Planning\Event\Repository\PlanningEventRepository;
+use Aurora\Module\Planning\Planning\Repository\PlanningRepository;
 use Aurora\Module\Planning\Sync\EntityScheduledEvent;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PlanningEventManagerInterface::class)]
@@ -18,8 +23,30 @@ class PlanningEventManager implements PlanningEventManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly PlanningEventRepository $eventRepository,
+        protected readonly PlanningRepository $planningRepository,
+        protected readonly UserRepository $userRepository,
         protected readonly AuditLogger $auditLogger,
     ) {}
+
+    public function create(PlanningEventInputInterface $input): PlanningEventInterface
+    {
+        $planningEvent = $this->createPlanningEvent();
+        $this->applyInput($planningEvent, $input);
+        $this->entityManager->persist($planningEvent);
+        $this->entityManager->flush();
+
+        $this->auditCreated($planningEvent);
+
+        return $planningEvent;
+    }
+
+    public function update(PlanningEventInterface $event, PlanningEventInputInterface $input): void
+    {
+        $this->applyInput($event, $input);
+        $this->entityManager->flush();
+
+        $this->auditUpdated($event);
+    }
 
     public function syncFromSource(EntityScheduledEvent $event): PlanningEventInterface
     {
@@ -63,6 +90,41 @@ class PlanningEventManager implements PlanningEventManagerInterface
     protected function createPlanningEvent(): PlanningEventInterface
     {
         return new PlanningEvent();
+    }
+
+    protected function applyInput(PlanningEventInterface $planningEvent, PlanningEventInputInterface $input): void
+    {
+        $planning = $this->planningRepository->find($input->getPlanningId());
+        if (null === $planning) {
+            throw new InvalidArgumentException('backend.planning_events.errors.planning_not_found');
+        }
+
+        $planningEvent->setPlanning($planning);
+        $planningEvent->setTitle($input->getTitle());
+        $planningEvent->setDescription($input->getDescription());
+        $planningEvent->setLocation($input->getLocation());
+        $planningEvent->setStartAt(new DateTimeImmutable($input->getStartAt()));
+        $planningEvent->setEndAt(new DateTimeImmutable($input->getEndAt()));
+        $planningEvent->setAllDay($input->isAllDay());
+        $planningEvent->setStatus($input->getStatusEnum());
+
+        // Reconcile attendees
+        $desired = [];
+        if ([] !== $input->getAttendeeIds()) {
+            foreach ($this->userRepository->findBy(['id' => $input->getAttendeeIds()]) as $user) {
+                $desired[(int) $user->getId()] = $user;
+            }
+        }
+
+        foreach ($planningEvent->getAttendees()->toArray() as $existing) {
+            if (!isset($desired[(int) $existing->getId()])) {
+                $planningEvent->removeAttendee($existing);
+            }
+        }
+
+        foreach ($desired as $attendee) {
+            $planningEvent->addAttendee($attendee);
+        }
     }
 
     protected function applyDomainEvent(PlanningEventInterface $planningEvent, EntityScheduledEvent $event): void

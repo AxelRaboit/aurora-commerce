@@ -313,6 +313,7 @@ class AuroraBundle extends AbstractBundle
             'Billing' => '/templates/Module/Billing',
             'Ged' => '/templates/Module/Ged',
             'Project' => '/templates/Module/Project',
+            'Planning' => '/templates/Module/Planning',
         ];
 
         $twigPaths = [];
@@ -354,6 +355,7 @@ class AuroraBundle extends AbstractBundle
                     $dir.'/src/Module/Billing/translations',
                     $dir.'/src/Module/Ged/translations',
                     $dir.'/src/Module/Project/translations',
+                    $dir.'/src/Module/Planning/translations',
                 ],
                 'fallbacks' => ['fr'],
             ],

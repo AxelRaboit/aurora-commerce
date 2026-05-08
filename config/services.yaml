@@ -127,6 +127,9 @@ services:
     Aurora\Module\Project\ProjectModule:
         tags: [aurora.module]
 
+    Aurora\Module\Planning\PlanningModule:
+        tags: [aurora.module]
+
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:
             $baseUrl: '%env(OCR_DOCTR_URL)%'

@@ -1,0 +1,56 @@
+backend:
+  nav:
+    plannings: Plannings
+    plannings_description: Calendriers et événements liés aux entités du système
+  plannings:
+    title: Plannings
+    new: Nouveau planning
+    edit: Modifier le planning
+    delete: Supprimer le planning
+    delete_confirm: Êtes-vous sûr de vouloir supprimer ce planning ? Tous ses événements seront aussi supprimés.
+    fields:
+      name: Nom
+      description: Description
+      color: Couleur
+      timezone: Fuseau horaire
+      visibility: Visibilité
+      owner: Propriétaire
+      agency: Agence
+    visibility:
+      private: Privé
+      agency: Agence
+      public: Public
+    errors:
+      name_required: Le nom est requis.
+      color_required: La couleur est requise.
+      color_invalid: Format de couleur invalide (ex&nbsp;: #3b82f6).
+      timezone_required: Le fuseau horaire est requis.
+      visibility_required: La visibilité est requise.
+      visibility_invalid: Visibilité invalide.
+  planning_events:
+    title: Événements
+    new: Nouvel événement
+    edit: Modifier l'événement
+    delete: Supprimer l'événement
+    delete_confirm: Êtes-vous sûr de vouloir supprimer cet événement ?
+    fields:
+      title: Titre
+      description: Description
+      location: Lieu
+      startAt: Début
+      endAt: Fin
+      allDay: Toute la journée
+      status: Statut
+      attendees: Participants
+    status:
+      tentative: Provisoire
+      confirmed: Confirmé
+      cancelled: Annulé
+    errors:
+      planning_required: Le planning est requis.
+      planning_not_found: Planning introuvable.
+      title_required: Le titre est requis.
+      start_required: La date de début est requise.
+      end_required: La date de fin est requise.
+      status_invalid: Statut invalide.
+      source_locked: Cet événement est lié à une autre entité et ne peut être modifié que via celle-ci.

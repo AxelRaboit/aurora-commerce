@@ -1,0 +1,20 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.plannings'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {crumbs: [{label: 'backend.nav.plannings'|trans}]}) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('planning/backend/PlanningsApp', {
+    plannings: plannings,
+    createPath: path('backend_plannings_create'),
+    updatePath: path('backend_plannings_update', {id: '__id__'}),
+    deletePath: path('backend_plannings_delete', {id: '__id__'}),
+    eventsListPath: path('backend_plannings_events_list', {id: '__id__'}),
+    eventCreatePath: path('backend_plannings_events_create', {id: '__id__'}),
+    eventUpdatePath: path('backend_plannings_events_update', {eventId: '__eventId__'}),
+    eventDeletePath: path('backend_plannings_events_delete', {eventId: '__eventId__'}),
+}) }}></div>
+{% endblock %}
