@@ -21,7 +21,8 @@ class AgencyManager implements AgencyManagerInterface
 
     public function create(AgencyInputInterface $input): AgencyInterface
     {
-        $agency = new Agency()->setName($input->getName());
+        $agency = $this->createAgency();
+        $this->applyInput($agency, $input);
 
         $this->entityManager->persist($agency);
         $this->entityManager->flush();
@@ -33,7 +34,7 @@ class AgencyManager implements AgencyManagerInterface
 
     public function update(AgencyInterface $agency, AgencyInputInterface $input): void
     {
-        $agency->setName($input->getName());
+        $this->applyInput($agency, $input);
         $this->entityManager->flush();
 
         $this->auditLogger->log('core', 'agency.updated', 'Agency', $agency->getId(), ['name' => $agency->getName()]);
@@ -45,5 +46,25 @@ class AgencyManager implements AgencyManagerInterface
 
         $this->entityManager->remove($agency);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Instantiates the concrete entity. Override in a subclass to instantiate
+     * a client-specific class — `resolve_target_entities` only affects Doctrine
+     * relation resolution, not direct `new`.
+     */
+    protected function createAgency(): AgencyInterface
+    {
+        return new Agency();
+    }
+
+    /**
+     * Hydrates an agency from an input DTO. Override in a subclass and call
+     * parent::applyInput() first to keep the base fields, then read your own
+     * extra fields off the input.
+     */
+    protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
+    {
+        $agency->setName($input->getName());
     }
 }

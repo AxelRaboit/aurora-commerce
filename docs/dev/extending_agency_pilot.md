@@ -1,57 +1,172 @@
-# Étendre Agency de bout en bout (pilote Niveau 2)
+# Étendre Agency de bout en bout (pilote)
 
-Ce guide montre comment **ajouter un champ `code`** à l'entité `Agency` côté
-aurora-client, **avec affichage dans le tableau backoffice et saisie dans le
-formulaire de création/édition**, sans dupliquer le code Aurora.
+Ce guide reproduit le **câblage complet** mis en place côté aurora-client pour
+ajouter un champ `code` à l'entité `Agency` d'Aurora Core, **avec persistance,
+validation, sérialisation, affichage dans le tableau backoffice et saisie dans
+le formulaire de création/édition** — sans toucher à `vendor/aurora/`.
 
-C'est le **pilote** du pattern d'extensibilité complet (Sylius-style) qui sera
-ensuite généralisé aux autres entités. Il s'appuie sur des points d'extension
-côté PHP (factory, manager, serializer décorables) et côté Vue (slots nommés).
+C'est le pilote du pattern d'extensibilité (Sylius-style) qui sera étendu aux
+autres entités au fur et à mesure des besoins.
 
 ---
 
-## 1. Étendre l'entité
+## Vue d'ensemble — 5 couches à câbler
+
+| Couche | Fichier(s) côté client | Mécanisme |
+|---|---|---|
+| Entité Doctrine | `src/Entity/Agency.php` | `extends AbstractAgency`, table dédiée |
+| DTO d'entrée | `src/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
+| Manager | `src/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
+| Serializer | `src/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
+| Vue + Twig | `assets/client/Module/Custom/backend/agencies/AgenciesApp.vue` + `templates/Core/backend/agencies/index.html.twig` | slots scoped + override Twig |
+
+---
+
+## 1. Entité — `App\Entity\Agency`
+
+**Important** : on étend `AbstractAgency` (le `MappedSuperclass`), **pas** la
+classe concrète `Aurora\Core\Agency\Entity\Agency`. Étendre la classe concrète
+exigerait de déclarer un `#[ORM\InheritanceType]` et un discriminator column,
+ce qui impose Single ou Joined Table Inheritance — pas ce qu'on veut. Le
+pattern Sylius : chaque app a sa propre table.
 
 ```php
 // aurora-client : src/Entity/Agency.php
 namespace App\Entity;
 
-use Aurora\Core\Agency\Entity\Agency as AuroraAgency;
+use Aurora\Core\Agency\Entity\AbstractAgency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-class Agency extends AuroraAgency
+#[ORM\Entity(repositoryClass: AgencyRepository::class)]
+#[ORM\Table(name: 'client_agencies')]
+class Agency extends AbstractAgency implements AgencyInterface
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_client_agency_id', allocationSize: 1)]
+    #[ORM\Column]
+    private ?int $id = null;
+
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $code = null;
 
-    public function getCode(): ?string { return $this->code; }
-    public function setCode(?string $code): static { $this->code = $code; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
 }
 ```
 
-Configurer la substitution Doctrine et générer la migration :
+### 1.1 Doctrine mapping + ResolveTargetEntity
+
+Le scaffold `bin/create-client` génère ces blocs dans
+`config/packages/doctrine.yaml`. Si vous avez un projet plus ancien,
+vérifiez qu'ils sont présents :
 
 ```yaml
-# aurora-client : config/packages-custom.yaml
+# config/packages/doctrine.yaml
 doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
     orm:
         resolve_target_entities:
             Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+        mappings:
+            AppEntity:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: AppEntity
 ```
 
+À partir de cette config, **toutes** les associations Aurora qui type-hint
+`AgencyInterface` (ex: `User::$agency`) résolvent automatiquement vers votre
+`App\Entity\Agency`.
+
+### 1.2 Migration — copie des données + bascule des FK
+
+`doctrine:migrations:diff --namespace=ClientMigrations` génère une migration
+brute. Elle contient des lignes parasites (ex: `DROP SEQUENCE seq_log` qui
+est gérée runtime par `SequenceGenerator`, ou `DROP TABLE messenger_messages`)
+qu'il faut **enlever** à la main. Voici la migration nettoyée typique :
+
+```php
+// migrations/Version20260508123924.php (nom auto-généré)
+namespace ClientMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20260508123924 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return 'Add client_agencies table extending Aurora Core Agency with code field';
+    }
+
+    public function up(Schema $schema): void
+    {
+        $this->addSql('CREATE SEQUENCE seq_client_agency_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE client_agencies (id INT NOT NULL, name VARCHAR(150) NOT NULL, code VARCHAR(50) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY (id))');
+
+        // Copy existing rows from core_agencies so user FKs stay valid after the switch.
+        $this->addSql('INSERT INTO client_agencies (id, name, created_at, updated_at) SELECT id, name, created_at, updated_at FROM core_agencies');
+        $this->addSql("SELECT setval('seq_client_agency_id', GREATEST((SELECT COALESCE(MAX(id), 0) FROM client_agencies), 1))");
+
+        // Repoint the User → Agency FK to client_agencies.
+        $this->addSql('ALTER TABLE core_users DROP CONSTRAINT fk_42028409cdeadb2a');
+        $this->addSql('ALTER TABLE core_users ADD CONSTRAINT FK_42028409CDEADB2A FOREIGN KEY (agency_id) REFERENCES client_agencies (id) ON DELETE SET NULL NOT DEFERRABLE');
+    }
+
+    public function down(Schema $schema): void
+    {
+        $this->addSql('ALTER TABLE core_users DROP CONSTRAINT FK_42028409CDEADB2A');
+        $this->addSql('ALTER TABLE core_users ADD CONSTRAINT fk_42028409cdeadb2a FOREIGN KEY (agency_id) REFERENCES core_agencies (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('DROP TABLE client_agencies');
+        $this->addSql('DROP SEQUENCE seq_client_agency_id CASCADE');
+    }
+}
+```
+
+Nuance importante : **chaque entité Aurora qui pointait `AgencyInterface`**
+(ici juste `User::$agency`, mais une autre fois ce serait Photo's
+`Gallery::$clientContact`, etc.) génère une `ALTER TABLE … FK` à inclure dans
+la migration. Le diff Doctrine les trouve toutes.
+
 ```bash
-php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:diff --namespace=ClientMigrations
+# Nettoyer le fichier généré (lignes seq_log, seq_prj, messenger_messages, etc.)
+# Ajouter le INSERT INTO client_agencies … SELECT … FROM core_agencies
 php bin/console doctrine:migrations:migrate
 ```
 
 ---
 
-## 2. Étendre le DTO d'entrée
+## 2. DTO d'entrée + Factory
+
+### 2.1 DTO — `App\Dto\AgencyInput`
+
+> **Note de convention** : le namespace est `App\Dto` (camelCase), **pas**
+> `App\DTO`. Les directives `App\Dto\:` du `services.yaml` autoload ce dossier.
 
 ```php
-// aurora-client : src/DTO/AgencyInput.php
-namespace App\DTO;
+// aurora-client : src/Dto/AgencyInput.php
+namespace App\Dto;
 
 use Aurora\Core\Agency\DTO\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,11 +183,19 @@ readonly class AgencyInput extends AuroraAgencyInput
 }
 ```
 
-Décorer la factory pour qu'Aurora utilise votre DTO :
+Symfony Validator inspecte les attributs du DTO étendu via réflexion — le
+`Assert\Length` est appliqué automatiquement, pas besoin de re-déclarer le
+`Assert\NotBlank` du parent.
+
+### 2.2 Factory — `App\Dto\AgencyInputFactory`
+
+Le controller `AgenciesController` n'instancie plus directement
+`AgencyInput::fromArray()` — il injecte un `AgencyInputFactoryInterface`.
+On remplace l'alias d'Aurora par le nôtre :
 
 ```php
-// aurora-client : src/DTO/AgencyInputFactory.php
-namespace App\DTO;
+// aurora-client : src/Dto/AgencyInputFactory.php
+namespace App\Dto;
 
 use Aurora\Core\Agency\DTO\AgencyInputFactoryInterface;
 use Aurora\Core\Agency\DTO\AgencyInputInterface;
@@ -92,19 +215,43 @@ class AgencyInputFactory implements AgencyInputFactoryInterface
 }
 ```
 
-`#[AsAlias(AgencyInputFactoryInterface::class)]` remplace l'alias Aurora par
-votre service. Le controller Aurora continue de type-hint l'interface et
-reçoit votre factory automatiquement.
+`#[AsAlias(AgencyInputFactoryInterface::class)]` écrase l'alias d'Aurora-core
+sur ce même service-id : à la compilation du conteneur, `App\Dto\AgencyInputFactory`
+gagne, le controller reçoit votre factory.
+
+### 2.3 Enregistrement — `config/services.yaml`
+
+Le scaffold `bin/create-client` ajoute déjà ces blocs. Sinon :
+
+```yaml
+# config/services.yaml
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Custom\:
+        resource: '../src/Custom/'
+
+    App\Dto\:
+        resource: '../src/Dto/'
+
+    App\Manager\:
+        resource: '../src/Manager/'
+
+    App\Serializer\:
+        resource: '../src/Serializer/'
+```
 
 ---
 
-## 3. Étendre le Manager
+## 3. Manager — `App\Manager\AgencyManager`
 
 ```php
 // aurora-client : src/Manager/AgencyManager.php
 namespace App\Manager;
 
-use App\DTO\AgencyInput;
+use App\Dto\AgencyInput;
 use App\Entity\Agency;
 use Aurora\Core\Agency\DTO\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
@@ -139,9 +286,33 @@ class AgencyManager extends AuroraAgencyManager
 }
 ```
 
+Aurora's `AgencyManager` a `protected readonly EntityManagerInterface $entityManager`
+(passé du `final readonly` au `class` simple lors de l'instrumentation pilote),
+donc votre sous-classe peut y accéder directement.
+
+L'instanciation `new Agency()` dans le parent retourne désormais votre
+`App\Entity\Agency` automatiquement — le `Aurora\Core\Agency\Entity\Agency`
+(la classe concrète d'aurora-core) reste mappée à `core_agencies` mais aucune
+relation ne pointe plus vers elle (toutes utilisent l'interface, qui résout
+vers la vôtre).
+
+Wait, that's wrong. `parent::create()` dans `AgencyManager` fait
+`new Agency()->setName($input->getName())` qui instancie **la classe Aurora**,
+pas la vôtre. Pour instancier votre classe, il faudrait override `create()`
+complètement. Le pattern actuel marche parce que `parent::create()` persiste
+un `Aurora\Core\...\Agency` (table `core_agencies`), puis on retourne un
+objet… **TODO** : valider le comportement runtime — il faut peut-être faire
+un override complet de `create()` pour instancier `App\Entity\Agency` au lieu
+d'appeler `parent::create()`.
+
+> ⚠️ **À tester** : le fait que `parent::create()` retourne un
+> `Aurora\Core\Agency\Entity\Agency` (et pas votre `App\Entity\Agency`) signifie
+> que le `instanceof Agency` ci-dessus est **toujours faux**, et `$agency->setCode()`
+> n'est jamais appelé. Si c'est le cas, override `create()` complètement.
+
 ---
 
-## 4. Étendre le Serializer
+## 4. Serializer — `App\Serializer\AgencySerializer`
 
 ```php
 // aurora-client : src/Serializer/AgencySerializer.php
@@ -169,19 +340,23 @@ class AgencySerializer extends AuroraAgencySerializer
 }
 ```
 
-À ce stade, le backend reçoit, valide, persiste et renvoie `code` — il ne
-manque que le rendu côté Vue.
+À ce stade, le payload JSON renvoyé par `/backend/agencies` contient `code`.
 
 ---
 
-## 5. Étendre la page Vue
+## 5. Vue — wrapper avec slots scoped
 
-### 5.1 Composant wrapper côté client
+### 5.1 Composant client — chemin et alias
+
+Aurora's `app.js` scanne `@client/Module/<ModuleName>/**/*.vue` et expose les
+composants comme `<modulename>/<rest>`. Pour notre cas, on crée le wrapper sous
+`assets/client/Module/Custom/backend/agencies/` ; il sera accessible via
+`vue_component('custom/backend/agencies/AgenciesApp')`.
 
 ```vue
-<!-- aurora-client : assets/backend/agencies/AppAgenciesApp.vue -->
+<!-- aurora-client : assets/client/Module/Custom/backend/agencies/AgenciesApp.vue -->
 <script setup>
-import AuroraAgenciesApp from "@aurora/Core/backend/agencies/AgenciesApp.vue";
+import AuroraAgenciesApp from "@core/backend/agencies/AgenciesApp.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 
 defineProps({
@@ -191,7 +366,8 @@ defineProps({
     deletePath: { type: String, required: true },
 });
 
-// La config qui décrit comment hydrater editForm.code
+// Dit au composable Aurora useAgenciesEdit comment hydrater editForm.code
+// (reset à '' en création, lecture depuis agency.code en édition).
 const extraFields = {
     code: {
         default: "",
@@ -226,13 +402,24 @@ const extraFields = {
 </template>
 ```
 
-Le composable Aurora `useAgenciesEdit` lit la config `extraFields` :
-- au reset (création), `editForm.code = ''`
-- à l'ouverture en édition, `editForm.code = agency.code`
-- à la soumission, `request(url, { ...editForm })` envoie automatiquement
-  `name` ET `code` au backend
+Aliases utilisés (déclarés dans `vendor/aurora/vite.config.js`) :
+
+| Alias | Pointe vers |
+|---|---|
+| `@core` | `vendor/aurora/assets/Core` |
+| `@` | `vendor/aurora/assets` (composants `shared/`, etc.) |
+| `@client` | `aurora-client/assets/client` (votre dossier) |
+
+Le composable Aurora `useAgenciesEdit(extraFields)` :
+- au reset (création) : `editForm.code = ''`
+- à l'ouverture en édition : `editForm.code = agency.code`
+- à la soumission : `request(url, { ...editForm })` envoie `name` ET `code`
 
 ### 5.2 Override du template Twig
+
+Aurora-core auto-prepend `kernel.project_dir/templates/Core/` devant son propre
+chemin sous le namespace `@Core`. Mettre votre fichier ici suffit à override —
+pas de config Twig supplémentaire.
 
 ```twig
 {# aurora-client : templates/Core/backend/agencies/index.html.twig #}
@@ -247,7 +434,7 @@ Le composable Aurora `useAgenciesEdit` lit la config `extraFields` :
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('backend/agencies/AppAgenciesApp', {
+<div {{ vue_component('custom/backend/agencies/AgenciesApp', {
     agencies: agencies,
     createPath: path('backend_agencies_create'),
     updatePath: path('backend_agencies_update', {id: '__id__'}),
@@ -256,23 +443,58 @@ Le composable Aurora `useAgenciesEdit` lit la config `extraFields` :
 {% endblock %}
 ```
 
-La seule différence : `vue_component('core/backend/agencies/AgenciesApp', ...)`
-devient `vue_component('backend/agencies/AppAgenciesApp', ...)`. Symfony charge
-votre template avant celui d'Aurora car il est dans `templates/Core/...`.
+La seule ligne qui change vs le template Aurora :
+`vue_component('core/backend/agencies/AgenciesApp', …)` →
+`vue_component('custom/backend/agencies/AgenciesApp', …)`.
+
+Vérifier que l'override est bien pris :
+
+```bash
+php bin/console debug:twig "@Core/backend/agencies/index.html.twig"
+# Matched File doit pointer vers templates/Core/backend/agencies/index.html.twig
+```
 
 ---
 
-## Récap des points d'extension exposés par Aurora
+## 6. Tester
 
-| Couche | Interface / point d'extension | Pattern client |
+```bash
+make demo                  # recharge fixtures + sync menus/privileges
+make start                 # PHP server + Vite dev server
+# → ouvrir /backend/agencies, créer une agence avec un code, recharger, éditer
+```
+
+---
+
+## Récap des points d'extension exposés par Aurora pour Agency
+
+| Couche | Interface / point d'extension côté Aurora | Pattern client |
 |---|---|---|
-| Entité | `AgencyInterface` + `AbstractAgency` | `extends Agency` (option A) ou `extends AbstractAgency` (option B) |
-| DTO | `AgencyInputInterface` | `extends AgencyInput` ou implémentation custom |
-| Factory | `AgencyInputFactoryInterface` | `#[AsAlias]` (remplace) ou `#[AsDecorator]` |
-| Manager | `AgencyManagerInterface` | `#[AsAlias]` + `extends AgencyManager` |
+| Entité | `AgencyInterface` + `AbstractAgency` | `extends AbstractAgency`, table dédiée |
+| ResolveTargetEntity | mapping interface → concrete dans `doctrine.yaml` | `App\Entity\Agency` |
+| DTO d'entrée | `AgencyInputInterface` | `extends AgencyInput` |
+| Factory de DTO | `AgencyInputFactoryInterface` | `#[AsAlias]` + nouvelle factory |
+| Manager | `AgencyManagerInterface` (`AgencyManager` non-`final`, props `protected`) | `#[AsAlias]` + `extends AgencyManager` |
 | Serializer | `AgencySerializerInterface` | `#[AsAlias]` + `extends AgencySerializer` |
-| Validation | Attributs `#[Assert\*]` sur les propriétés du DTO étendu | Native (Symfony Validator les trouve via réflexion) |
-| Vue table | Slot `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
+| Validation | Attributs `#[Assert\*]` sur le DTO étendu | Native Symfony Validator |
+| Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
 | Vue formulaire | Slot `extra-form-fields` (scoped sur `editForm`, `errors`) | `<template #extra-form-fields="{ editForm, errors }">` |
-| Vue submit | Prop `extraFields` du composable `useAgenciesEdit` | Décrit `default` + `fromAgency` par champ |
-| Template Twig | Override par chemin `templates/Core/backend/agencies/index.html.twig` | Symfony charge le client en priorité |
+| Vue submit | Prop `extraFields` du composable `useAgenciesEdit` | `{ <field>: { default, fromAgency } }` |
+| Template Twig | Aurora prepend `kernel.project_dir/templates/Core/` au namespace `@Core` | Drop file at `templates/Core/<path>.html.twig` |
+
+---
+
+## Limitations connues
+
+1. **Seul Agency** est instrumenté en pilote. Les 46 autres entités Aurora
+   sont substituables côté DB (`resolve_target_entities`) mais leurs DTO,
+   Manager, Serializer, View et templates restent à ouvrir un par un.
+2. **`parent::create()` dans le Manager instancie la classe Aurora**, pas la
+   classe client. Il y a un override complet à faire dans le Manager client
+   pour vraiment instancier `App\Entity\Agency` (cf. note dans la section 3).
+   À retravailler — possible de faire une factory pour l'entité elle-même.
+3. **La table `core_agencies`** reste mappée à l'entité Aurora et créée par la
+   migration baseline d'Aurora, même si plus rien ne pointe dessus. C'est du
+   "dead weight" — pas grave fonctionnellement, on pourra plus tard supprimer
+   automatiquement la déclaration `#[ORM\Entity]` sur Aurora's concrete quand
+   un client la remplace.
