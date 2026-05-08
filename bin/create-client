@@ -543,8 +543,6 @@ cat > "$DEST/README.md" <<EOF
 A client application built on [Aurora](${AURORA_REMOTE}).
 Aurora is installed as a Composer dependency at \`${AURORA_VENDOR_PATH}/\`.
 
----
-
 ## Setup
 
 \`\`\`bash
@@ -554,104 +552,25 @@ make demo                          # load demo fixtures
 make start                         # PHP server + Vite dev server
 \`\`\`
 
-\`make\` lists all targets. The most useful: \`start\`, \`demo\`, \`cc\`, \`aurora-update\`.
+## How do I use Aurora? — read the docs
 
----
+All client-side conventions (where to put code, how to override Aurora
+services / templates / Vue components, how to extend entities, …) live
+in Aurora itself, so they stay in sync with the version you have installed:
 
-## Where do I put my code? — Cheatsheet
-
-The project follows the **Sylius / Symfony convention**: flat,
-responsibility-based folders under \`src/\`. There is no \`Custom/\` umbrella —
-overrides live next to the layer they extend.
-
-### PHP (under \`src/\`)
-
-| I want to… | Drop file at… | How it's wired |
-|---|---|---|
-| Add a page (controller + route) | \`src/Controller/MyController.php\` | \`#[Route]\` attribute, scanned automatically |
-| Add a domain service | \`src/Service/MyService.php\` | autowired |
-| Override an Aurora service | \`src/Manager/MyAgencyManager.php\` (or \`Serializer/\`, \`Service/\`, …) | \`#[AsAlias(AuroraInterface::class)]\` |
-| Decorate an Aurora service | same folder as above | \`#[AsDecorator(AuroraService::class)]\` |
-| Listen to an Aurora event | \`src/EventListener/MyListener.php\` | \`#[AsEventListener(AuroraEvent::class)]\` |
-| Extend an Aurora entity | \`src/Entity/MyAgency.php\` extending \`AbstractAurora<Name>\` | \`resolve_target_entities\` in \`config/packages/doctrine.yaml\` |
-| Extend an Aurora DTO | \`src/Dto/MyInput.php\` extending \`Aurora\\…\\<Name>Input\` | \`#[AsAlias]\` on the matching Factory |
-| Build a feature module | \`src/Module/<Name>/\` mirroring Aurora's module layout | \`tags: [aurora.module]\` in \`services.yaml\` |
-
-### Templates (\`templates/\`)
-
-| I want to… | Drop file at… |
+| Topic | Path |
 |---|---|
-| Override an Aurora template | \`templates/Core/<mirrored-Aurora-path>.html.twig\` *(auto-resolved before vendor's)* |
-| Add a template for a feature module | \`templates/Module/<Name>/...html.twig\` |
-
-### Vue (\`assets/client/\`)
-
-| I want to… | Drop file at… | \`vue_component()\` lookup |
-|---|---|---|
-| Wrap an Aurora Vue component | \`assets/client/Overrides/<mirrored-Aurora-path>.vue\` | \`<mirrored-path-without-.vue>\` (no module prefix) |
-| Vue components for a feature module | \`assets/client/Module/<Name>/<rest>.vue\` | \`<name>/<rest>\` |
-
-### Migrations (\`migrations/\`)
-
-\`\`\`bash
-php bin/console doctrine:migrations:diff --namespace=ClientMigrations
-# review the generated file (delete parasite SQL: seq_log, messenger_messages)
-make migrate
-\`\`\`
-
----
-
-## Project layout
-
-\`\`\`
-${PROJECT_NAME}/
-├── vendor/axelraboit/aurora/   # Aurora core (read-only)
-├── src/
-│   ├── Controller/             # App\Controller\*
-│   ├── Entity/                 # App\Entity\*       — entity overrides (extends AbstractAurora<Name>)
-│   ├── Dto/                    # App\Dto\*          — DTO overrides
-│   ├── Manager/                # App\Manager\*      — manager overrides / decorators
-│   ├── Serializer/             # App\Serializer\*   — serializer overrides / decorators
-│   ├── Service/                # App\Service\*      — domain services
-│   ├── EventListener/          # App\EventListener\*
-│   └── Module/<Name>/          # App\Module\<Name>\* — feature module
-├── templates/
-│   ├── Core/                   # Override Aurora's @Core templates (auto-resolved before vendor's)
-│   └── Module/<Name>/          # Module-specific templates
-├── assets/client/
-│   ├── Module/<Name>/          # Vue components for feature modules
-│   └── Overrides/              # Vue wrappers around Aurora components
-├── migrations/                 # Doctrine migrations (ClientMigrations namespace)
-├── config/
-│   ├── packages/               # doctrine.yaml, twig.yaml, security.yaml…
-│   ├── routes.yaml
-│   └── services.yaml
-├── bin/console
-└── public/index.php
-\`\`\`
-
----
-
-## Going deeper
-
-| Topic | Doc |
-|---|---|
-| Full extension reference (services, events, routes, entities, sequences) | \`${AURORA_VENDOR_PATH}/docs/dev/extending_aurora.md\` |
-| End-to-end pilot: adding a \`code\` field to Agency (Entity + DTO + Manager + Serializer + Vue + Twig) | \`${AURORA_VENDOR_PATH}/docs/dev/extending_agency_pilot.md\` |
+| **Quickstart cheatsheet** — *where do I put my code?* | \`${AURORA_VENDOR_PATH}/docs/dev/client_quickstart.md\` |
+| Full extension reference | \`${AURORA_VENDOR_PATH}/docs/dev/extending_aurora.md\` |
+| End-to-end pilot: extending Agency with a \`code\` field | \`${AURORA_VENDOR_PATH}/docs/dev/extending_agency_pilot.md\` |
 | Aurora app architecture | \`${AURORA_VENDOR_PATH}/docs/dev/app_architecture.md\` |
 | Form validation conventions | \`${AURORA_VENDOR_PATH}/docs/dev/form_validation.md\` |
-
----
 
 ## Updating Aurora
 
 \`\`\`bash
 make aurora-update
 \`\`\`
-
-Runs \`composer update axelraboit/aurora\`. Review aurora's changelog before
-pulling new versions; entity / interface signatures are stable but
-breaking changes will bump the major version.
 EOF
 
 # ---------------------------------------------------------------------------
