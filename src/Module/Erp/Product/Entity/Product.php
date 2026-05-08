@@ -14,7 +14,7 @@ class Product extends AbstractProduct
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_product_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_product_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

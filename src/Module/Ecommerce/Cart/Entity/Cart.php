@@ -15,7 +15,7 @@ class Cart extends AbstractCart
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_cart_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_cart_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

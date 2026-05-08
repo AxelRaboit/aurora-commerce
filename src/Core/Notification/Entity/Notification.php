@@ -13,7 +13,7 @@ class Notification extends AbstractNotification
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_notification_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_notification_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

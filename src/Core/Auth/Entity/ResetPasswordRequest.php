@@ -13,7 +13,7 @@ class ResetPasswordRequest extends AbstractResetPasswordRequest
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_reset_password_request_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_reset_password_request_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

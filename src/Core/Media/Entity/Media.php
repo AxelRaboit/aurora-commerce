@@ -13,7 +13,7 @@ class Media extends AbstractMedia
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_media_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_media_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

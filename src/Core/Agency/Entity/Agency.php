@@ -13,7 +13,7 @@ class Agency extends AbstractAgency
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_agency_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_agency_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

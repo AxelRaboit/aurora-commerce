@@ -13,7 +13,7 @@ class OrderLine extends AbstractOrderLine
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_order_line_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_order_line_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

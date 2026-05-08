@@ -42,7 +42,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
             ->getId();
 
         $postId = (int) $conn->fetchOne(
-            "INSERT INTO core_posts (id, post_type_id, status) VALUES (NEXTVAL('seq_post_id'), ?, 'published') RETURNING id",
+            "INSERT INTO core_posts (id, post_type_id, status) VALUES (NEXTVAL('seq_core_post_id'), ?, 'published') RETURNING id",
             [$postTypeId],
         );
 
@@ -50,7 +50,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         $this->postTypeSlug = 'article';
 
         $conn->executeStatement(
-            "INSERT INTO core_post_translations (id, post_id, locale, title, slug, blocks, noindex, custom_fields) VALUES (NEXTVAL('seq_post_translation_id'), ?, 'fr', 'Front Comment Test', ?, '[]', false, '{}')",
+            "INSERT INTO core_post_translations (id, post_id, locale, title, slug, blocks, noindex, custom_fields) VALUES (NEXTVAL('seq_core_post_translation_id'), ?, 'fr', 'Front Comment Test', ?, '[]', false, '{}')",
             [$postId, $this->postSlug],
         );
 
@@ -109,7 +109,7 @@ final class FrontCommentControllerTest extends IntegrationTestCase
         $conn = static::getContainer()->get(Connection::class);
         $commentId = (int) $conn->fetchOne(
             "INSERT INTO core_comments (id, post_id, author_name, author_email, content, status, created_at)
-             VALUES (NEXTVAL('seq_comment_id'), ?, 'Reactor', 'reactor@example.com', 'React to me', 'approved', NOW()) RETURNING id",
+             VALUES (NEXTVAL('seq_core_comment_id'), ?, 'Reactor', 'reactor@example.com', 'React to me', 'approved', NOW()) RETURNING id",
             [$this->post->getId()],
         );
 

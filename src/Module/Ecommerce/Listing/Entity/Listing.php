@@ -14,7 +14,7 @@ class Listing extends AbstractListing
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_listing_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_listing_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

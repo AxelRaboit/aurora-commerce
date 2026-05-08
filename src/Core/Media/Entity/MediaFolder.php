@@ -14,7 +14,7 @@ class MediaFolder extends AbstractMediaFolder
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_media_folder_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_media_folder_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

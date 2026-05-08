@@ -13,7 +13,7 @@ class DocumentCategory extends AbstractDocumentCategory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_ged_category_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_ged_category_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

@@ -16,7 +16,7 @@ class User extends AbstractUser
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_user_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_user_id', allocationSize: 1)]
     #[ORM\Column]
     #[Groups(['user:read'])]
     private ?int $id = null;

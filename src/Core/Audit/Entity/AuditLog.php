@@ -13,7 +13,7 @@ class AuditLog extends AbstractAuditLog
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_audit_log_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_audit_log_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

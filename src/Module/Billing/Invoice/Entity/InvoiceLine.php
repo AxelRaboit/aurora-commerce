@@ -13,7 +13,7 @@ class InvoiceLine extends AbstractInvoiceLine
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_invoice_line_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_invoice_line_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

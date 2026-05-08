@@ -13,7 +13,7 @@ class Document extends AbstractDocument
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_ged_document_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_ged_document_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

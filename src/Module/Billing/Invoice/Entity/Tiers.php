@@ -13,7 +13,7 @@ class Tiers extends AbstractTiers
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_tiers_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_tiers_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

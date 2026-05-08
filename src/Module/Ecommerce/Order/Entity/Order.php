@@ -15,7 +15,7 @@ class Order extends AbstractOrder
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_order_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_order_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 
