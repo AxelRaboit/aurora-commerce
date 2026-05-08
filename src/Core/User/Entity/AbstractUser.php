@@ -1,0 +1,386 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Core\User\Entity;
+
+use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Service\Entity\ServiceInterface;
+use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Enum\UserStatusEnum;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
+abstract class AbstractUser implements CoreUserInterface
+{
+    use TimestampableTrait;
+
+    public const int MOOD_MESSAGE_MAX_LENGTH = 160;
+
+    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[Groups(['user:read'])]
+    protected ?string $reference = null;
+
+    #[ORM\Column(length: 180)]
+    #[Groups(['user:read'])]
+    protected string $email;
+
+    #[ORM\Column(length: 100)]
+    #[Groups(['user:read'])]
+    protected string $name;
+
+    /** @var list<string> */
+    #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
+    protected array $roles = [];
+
+    /** @var list<string> */
+    #[ORM\Column(type: 'json')]
+    #[Groups(['user:read'])]
+    protected array $privileges = [];
+
+    #[ORM\Column]
+    protected string $password;
+
+    #[ORM\Column(length: 5, enumType: LocaleEnum::class)]
+    #[Groups(['user:read'])]
+    protected LocaleEnum $locale = LocaleEnum::French;
+
+    #[ORM\Column(length: 20, enumType: UserStatusEnum::class, options: ['default' => 'active'])]
+    #[Groups(['user:read'])]
+    protected UserStatusEnum $status = UserStatusEnum::Active;
+
+    #[ORM\Column(length: 20, enumType: UserTypeEnum::class, options: ['default' => 'backend'])]
+    #[Groups(['user:read'])]
+    protected UserTypeEnum $type = UserTypeEnum::Backend;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    protected ?string $profilePhotoPath = null;
+
+    #[ORM\Column(length: self::MOOD_MESSAGE_MAX_LENGTH, nullable: true)]
+    #[Groups(['user:read'])]
+    protected ?string $moodMessage = null;
+
+    #[ORM\ManyToOne(targetEntity: AgencyInterface::class)]
+    #[ORM\JoinColumn(name: 'agency_id', nullable: true, onDelete: 'SET NULL')]
+    protected ?AgencyInterface $agency = null;
+
+    #[ORM\ManyToOne(targetEntity: ServiceInterface::class)]
+    #[ORM\JoinColumn(name: 'service_id', nullable: true, onDelete: 'SET NULL')]
+    protected ?ServiceInterface $service = null;
+
+    /** @var Collection<int, CoreUserInterface> */
+    protected Collection $subordinates;
+
+    #[ORM\Column(length: 20, unique: true, nullable: true)]
+    protected ?string $invitationSelector = null;
+
+    #[ORM\Column(length: 128, nullable: true)]
+    protected ?string $invitationHashedToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    protected ?DateTimeImmutable $invitationExpiresAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[Groups(['user:read'])]
+    protected ?DateTimeImmutable $invitedAt = null;
+
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
+    protected ?string $emailVerificationToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    protected ?DateTimeImmutable $emailVerificationExpiresAt = null;
+
+    public function __construct()
+    {
+        $this->subordinates = new ArrayCollection();
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = UserRoleEnum::User->value;
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getLocale(): LocaleEnum
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(LocaleEnum $locale): static
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getStatus(): UserStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(UserStatusEnum $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return UserStatusEnum::Active === $this->status;
+    }
+
+    public function isInvited(): bool
+    {
+        return UserStatusEnum::Invited === $this->status;
+    }
+
+    public function getInvitationSelector(): ?string
+    {
+        return $this->invitationSelector;
+    }
+
+    public function setInvitationSelector(?string $selector): static
+    {
+        $this->invitationSelector = $selector;
+
+        return $this;
+    }
+
+    public function getInvitationHashedToken(): ?string
+    {
+        return $this->invitationHashedToken;
+    }
+
+    public function setInvitationHashedToken(?string $hashedToken): static
+    {
+        $this->invitationHashedToken = $hashedToken;
+
+        return $this;
+    }
+
+    public function getInvitationExpiresAt(): ?DateTimeImmutable
+    {
+        return $this->invitationExpiresAt;
+    }
+
+    public function setInvitationExpiresAt(?DateTimeImmutable $expiresAt): static
+    {
+        $this->invitationExpiresAt = $expiresAt;
+
+        return $this;
+    }
+
+    public function getInvitedAt(): ?DateTimeImmutable
+    {
+        return $this->invitedAt;
+    }
+
+    public function setInvitedAt(?DateTimeImmutable $invitedAt): static
+    {
+        $this->invitedAt = $invitedAt;
+
+        return $this;
+    }
+
+    public function getEmailVerificationToken(): ?string
+    {
+        return $this->emailVerificationToken;
+    }
+
+    public function setEmailVerificationToken(?string $token): static
+    {
+        $this->emailVerificationToken = $token;
+
+        return $this;
+    }
+
+    public function getEmailVerificationExpiresAt(): ?DateTimeImmutable
+    {
+        return $this->emailVerificationExpiresAt;
+    }
+
+    public function setEmailVerificationExpiresAt(?DateTimeImmutable $expiresAt): static
+    {
+        $this->emailVerificationExpiresAt = $expiresAt;
+
+        return $this;
+    }
+
+    public function getType(): UserTypeEnum
+    {
+        return $this->type;
+    }
+
+    public function setType(UserTypeEnum $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function isAdmin(): bool
+    {
+        return UserTypeEnum::Backend === $this->type;
+    }
+
+    public function isFrontUser(): bool
+    {
+        return UserTypeEnum::Frontend === $this->type;
+    }
+
+    public function getProfilePhotoPath(): ?string
+    {
+        return $this->profilePhotoPath;
+    }
+
+    public function setProfilePhotoPath(?string $profilePhotoPath): static
+    {
+        $this->profilePhotoPath = $profilePhotoPath;
+
+        return $this;
+    }
+
+    public function getProfilePhotoUrl(): ?string
+    {
+        return null === $this->profilePhotoPath ? null : '/uploads/users/'.$this->profilePhotoPath;
+    }
+
+    public function getMoodMessage(): ?string
+    {
+        return $this->moodMessage;
+    }
+
+    public function setMoodMessage(?string $moodMessage): static
+    {
+        if (null !== $moodMessage && mb_strlen($moodMessage) > self::MOOD_MESSAGE_MAX_LENGTH) {
+            throw new InvalidArgumentException(sprintf('Mood message exceeds %d characters.', self::MOOD_MESSAGE_MAX_LENGTH));
+        }
+
+        $this->moodMessage = $moodMessage;
+
+        return $this;
+    }
+
+    public function getSubordinates(): Collection
+    {
+        return $this->subordinates;
+    }
+
+    public function getPrivileges(): array
+    {
+        return $this->privileges;
+    }
+
+    public function setPrivileges(array $privileges): static
+    {
+        $this->privileges = array_values(array_unique($privileges));
+
+        return $this;
+    }
+
+    public function hasPrivilege(string $privilege): bool
+    {
+        return in_array($privilege, $this->privileges, true);
+    }
+
+    public function eraseCredentials(): void {}
+
+    public function getAgency(): ?AgencyInterface
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?AgencyInterface $agency): static
+    {
+        $this->agency = $agency;
+
+        return $this;
+    }
+
+    public function getService(): ?ServiceInterface
+    {
+        return $this->service;
+    }
+
+    public function setService(?ServiceInterface $service): static
+    {
+        $this->service = $service;
+
+        return $this;
+    }
+}

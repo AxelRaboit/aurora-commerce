@@ -30,6 +30,7 @@ class AuroraBundle extends AbstractBundle
                 'auto_mapping' => false,
                 'resolve_target_entities' => [
                     'Aurora\Core\Agency\Entity\AgencyInterface' => 'Aurora\Core\Agency\Entity\Agency',
+                    'Aurora\Core\User\Entity\CoreUserInterface' => 'Aurora\Core\User\Entity\User',
                     'Aurora\Core\Audit\Entity\AuditLogInterface' => 'Aurora\Core\Audit\Entity\AuditLog',
                     'Aurora\Core\Auth\Entity\AccessRequestInterface' => 'Aurora\Core\Auth\Entity\AccessRequest',
                     'Aurora\Core\Auth\Entity\ResetPasswordRequestInterface' => 'Aurora\Core\Auth\Entity\ResetPasswordRequest',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Serializer;
 
+use Aurora\Core\User\Entity\AbstractUser;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Serializer\UserSerializer;
@@ -68,7 +69,7 @@ final class UserSerializerTest extends TestCase
         $user->setRoles($roles);
 
         // TimestampableTrait fields are normally populated by lifecycle callbacks; bypass that here.
-        $createdAt = new ReflectionProperty($user, 'createdAt');
+        $createdAt = new ReflectionProperty(AbstractUser::class, 'createdAt');
         $createdAt->setValue($user, new DateTimeImmutable('2026-01-01 00:00:00'));
 
         return $user;
