@@ -11,8 +11,8 @@ de la convention. Stratégie : module par module, commits atomiques.
 
 | État | Entités |
 |---|---|
-| ✅ Fait | 21 / 24 |
-| 🔜 Reste | 3 / 24 |
+| ✅ Fait | **24 / 24** 🎉 |
+| 🔜 Reste | 0 / 24 |
 
 Tests : tout doit rester vert (`php bin/phpunit`) après chaque commit.
 
@@ -81,8 +81,8 @@ Pilotes (instrumentés avant la convention finale, commits antérieurs) :
 
 ### Project (3)
 
-- [ ] `Project` (cascade : `ProjectColumn`, `ProjectLabel`, `ProjectSprint`, `ProjectSavedView`)
-- [ ] `ProjectTask` (cascade : `ProjectTaskItem`, `ProjectTaskComment`, `ProjectTaskTimeEntry`)
+- [x] `Project` (cascade : `ProjectColumn`, `ProjectLabel`, `ProjectSprint`, `ProjectSavedView`) — `008dab1`
+- [x] `ProjectTask` (cascade : `ProjectTaskItem`, `ProjectTaskComment`, `ProjectTaskTimeEntry`) — `008dab1`
 
 ---
 
