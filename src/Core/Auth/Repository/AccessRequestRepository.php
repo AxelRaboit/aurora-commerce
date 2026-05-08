@@ -7,8 +7,8 @@ namespace Aurora\Core\Auth\Repository;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
-use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Core\Repository\Trait\PaginationTrait;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -24,7 +24,7 @@ class AccessRequestRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, AccessRequest::class, AccessRequestInterface::class);
     }
 
-    public function findByToken(string $token): ?AccessRequest
+    public function findByToken(string $token): ?AccessRequestInterface
     {
         return $this->findOneBy(['token' => $token]);
     }

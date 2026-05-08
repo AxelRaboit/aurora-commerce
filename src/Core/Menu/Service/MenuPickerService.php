@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Core\Menu\Service;
 
 use Aurora\Module\Editorial\Post\Entity\Post;
-use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
-use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyInterface;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyRepository;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
@@ -86,7 +86,7 @@ final readonly class MenuPickerService
         $criteria = $withArchive ? ['hasArchive' => true] : [];
 
         return array_map(
-            static fn (PostType $postType): array => [
+            static fn (PostTypeInterface $postType): array => [
                 'id' => (int) $postType->getId(),
                 'label' => $postType->getLabel(),
                 'hint' => $postType->getSlug(),
@@ -101,7 +101,7 @@ final readonly class MenuPickerService
     public function taxonomies(): array
     {
         return array_map(
-            static function (Taxonomy $taxonomy): array {
+            static function (TaxonomyInterface $taxonomy): array {
                 $translation = $taxonomy->getTranslations()->first();
                 $label = false !== $translation ? $translation->getLabel() : null;
 

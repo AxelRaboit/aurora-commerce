@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Repository;
 
-use Aurora\Core\User\Entity\User;
-use Aurora\Module\Project\Entity\Project;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -34,8 +34,8 @@ class ProjectTaskRepository extends ResolveTargetEntityRepository
             ->getResult();
     }
 
-    /** @return list<ProjectTask> */
-    public function findByProject(Project $project): array
+    /** @return list<ProjectTaskInterface> */
+    public function findByProject(ProjectInterface $project): array
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.project = :project')
@@ -46,8 +46,8 @@ class ProjectTaskRepository extends ResolveTargetEntityRepository
             ->getResult();
     }
 
-    /** @return list<ProjectTask> */
-    public function findByAssignee(User $user): array
+    /** @return list<ProjectTaskInterface> */
+    public function findByAssignee(CoreUserInterface $user): array
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.assignee = :user')

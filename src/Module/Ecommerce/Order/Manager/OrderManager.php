@@ -9,11 +9,9 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
-use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
@@ -41,7 +39,7 @@ class OrderManager implements OrderManagerInterface
         protected readonly SequenceGenerator $sequenceGenerator,
     ) {}
 
-    public function createFromCart(Cart $cart, CheckoutInputInterface $input, ?User $customer, string $locale = 'fr'): Order
+    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale = 'fr'): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -246,7 +244,7 @@ class OrderManager implements OrderManagerInterface
      * and oversold stock. The 2nd transaction blocks until the 1st commits, then re-reads the
      * decremented value and fails cleanly with InvalidArgumentException.
      */
-    public function checkout(Cart $cart, CheckoutInputInterface $input, ?User $customer): Order
+    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -269,7 +267,7 @@ class OrderManager implements OrderManagerInterface
      * Acquires a pessimistic WRITE lock on each product in the cart and re-validates stock
      * within the locked snapshot. Must be called inside a transaction.
      */
-    private function lockAndValidateStock(Cart $cart): void
+    private function lockAndValidateStock(CartInterface $cart): void
     {
         $quantitiesByProductId = [];
         foreach ($cart->getItems() as $cartItem) {

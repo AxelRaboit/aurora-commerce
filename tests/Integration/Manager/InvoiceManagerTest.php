@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

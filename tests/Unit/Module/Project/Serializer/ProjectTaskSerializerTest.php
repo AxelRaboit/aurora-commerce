@@ -6,12 +6,12 @@ namespace Aurora\Tests\Unit\Module\Project\Serializer;
 
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\User\Entity\User;
+use Aurora\Module\Project\Entity\AbstractProjectTask;
+use Aurora\Module\Project\Entity\AbstractProjectTaskComment;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;
 use Aurora\Module\Project\Entity\ProjectSprint;
-use Aurora\Module\Project\Entity\AbstractProjectTask;
-use Aurora\Module\Project\Entity\AbstractProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTaskItem;

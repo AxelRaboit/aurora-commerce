@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Service;
 
-use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\MenuInterface;
+use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Module\Editorial\Post\Entity\Post;
-use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Entity\PostInterface;
+use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -36,7 +36,7 @@ final class MenuRenderer
     /** @var array<string, array<int, array<string, mixed>>> */
     private array $cache = [];
 
-    /** @var array<string, Menu>|null */
+    /** @var array<string, MenuInterface>|null */
     private ?array $menusByLocation = null;
 
     public function __construct(
@@ -65,11 +65,11 @@ final class MenuRenderer
 
         $this->menusByLocation ??= $this->menuRepository->findAllWithItemsKeyedByLocation();
         $menu = $this->menusByLocation[$location] ?? null;
-        if (!$menu instanceof Menu) {
+        if (!$menu instanceof MenuInterface) {
             return $this->cache[$cacheKey] = [];
         }
 
-        $rootItems = $menu->getItems()->filter(static fn (MenuItem $item): bool => !$item->getParent() instanceof MenuItem);
+        $rootItems = $menu->getItems()->filter(static fn (MenuItemInterface $item): bool => !$item->getParent() instanceof MenuItemInterface);
         $rendered = [];
         foreach ($rootItems as $item) {
             $resolved = $this->resolveItem($item, $locale, $isAuthenticated);
@@ -85,7 +85,7 @@ final class MenuRenderer
     }
 
     /** @return array<string, mixed>|null */
-    private function resolveItem(MenuItem $item, string $locale, bool $isAuthenticated): ?array
+    private function resolveItem(MenuItemInterface $item, string $locale, bool $isAuthenticated): ?array
     {
         if (!$this->isVisible($item, $isAuthenticated)) {
             return null;
@@ -124,7 +124,7 @@ final class MenuRenderer
         ];
     }
 
-    private function isVisible(MenuItem $item, bool $isAuthenticated): bool
+    private function isVisible(MenuItemInterface $item, bool $isAuthenticated): bool
     {
         return match ($item->getVisibility()) {
             MenuItemVisibilityEnum::Always => true,
@@ -133,7 +133,7 @@ final class MenuRenderer
         };
     }
 
-    private function resolveUrl(MenuItem $item, string $locale): ?string
+    private function resolveUrl(MenuItemInterface $item, string $locale): ?string
     {
         return match ($item->getTargetType()) {
             MenuItemTargetTypeEnum::Home => $this->urlGenerator->generate('editorial_home', ['locale' => $locale]),
@@ -151,10 +151,10 @@ final class MenuRenderer
         };
     }
 
-    private function resolvePostUrl(MenuItem $item, string $locale): ?string
+    private function resolvePostUrl(MenuItemInterface $item, string $locale): ?string
     {
         $post = $this->postRepository->find($item->getTargetId());
-        if (!$post instanceof Post || $post->isTrashed() || !$post->isPublished()) {
+        if (!$post instanceof PostInterface || $post->isTrashed() || !$post->isPublished()) {
             return null;
         }
 
@@ -170,10 +170,10 @@ final class MenuRenderer
         ]);
     }
 
-    private function resolveTermUrl(MenuItem $item, string $locale): ?string
+    private function resolveTermUrl(MenuItemInterface $item, string $locale): ?string
     {
         $term = $this->termRepository->find($item->getTargetId());
-        if (!$term instanceof TaxonomyTerm) {
+        if (!$term instanceof TaxonomyTermInterface) {
             return null;
         }
 
@@ -189,10 +189,10 @@ final class MenuRenderer
         ]);
     }
 
-    private function resolveArchiveUrl(MenuItem $item, string $locale): ?string
+    private function resolveArchiveUrl(MenuItemInterface $item, string $locale): ?string
     {
         $postType = $this->postTypeRepository->find($item->getTargetId());
-        if (!$postType instanceof PostType) {
+        if (!$postType instanceof PostTypeInterface) {
             return null;
         }
 
@@ -202,7 +202,7 @@ final class MenuRenderer
         ]);
     }
 
-    private function resolveLabel(MenuItem $item, string $locale): ?string
+    private function resolveLabel(MenuItemInterface $item, string $locale): ?string
     {
         // 1. Translation override has priority
         $override = $item->getTranslation($locale)?->getLabel();
@@ -225,10 +225,10 @@ final class MenuRenderer
         };
     }
 
-    private function postLabel(MenuItem $item, string $locale): ?string
+    private function postLabel(MenuItemInterface $item, string $locale): ?string
     {
         $post = $this->postRepository->find($item->getTargetId());
-        if (!$post instanceof Post) {
+        if (!$post instanceof PostInterface) {
             return null;
         }
 
@@ -237,10 +237,10 @@ final class MenuRenderer
         return $translation->getTitle();
     }
 
-    private function termLabel(MenuItem $item, string $locale): ?string
+    private function termLabel(MenuItemInterface $item, string $locale): ?string
     {
         $term = $this->termRepository->find($item->getTargetId());
-        if (!$term instanceof TaxonomyTerm) {
+        if (!$term instanceof TaxonomyTermInterface) {
             return null;
         }
 

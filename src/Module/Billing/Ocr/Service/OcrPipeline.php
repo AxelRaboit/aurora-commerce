@@ -8,10 +8,10 @@ use Aurora\Core\Media\Service\MediaPathResolver;
 use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
-use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Contract\OllamaVisionClientInterface;
-use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
+use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -42,7 +42,7 @@ final readonly class OcrPipeline
         private LoggerInterface $logger,
     ) {}
 
-    public function run(OcrJob $job): void
+    public function run(OcrJobInterface $job): void
     {
         $sourcePath = $this->mediaPathResolver->resolveAbsolutePath($job->getMedia());
         $this->logger->info('OCR pipeline starting', ['job_id' => $job->getId(), 'path' => $sourcePath]);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,9 +25,9 @@ abstract class AbstractOrder implements OrderInterface
     #[ORM\Column(length: 64)]
     protected string $token;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: CoreUserInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?User $customer = null;
+    protected ?CoreUserInterface $customer = null;
 
     #[ORM\Column(length: 16, enumType: OrderStatusEnum::class, options: ['default' => 'pending'])]
     protected OrderStatusEnum $status = OrderStatusEnum::Pending;
@@ -104,12 +104,12 @@ abstract class AbstractOrder implements OrderInterface
         return $this;
     }
 
-    public function getCustomer(): ?User
+    public function getCustomer(): ?CoreUserInterface
     {
         return $this->customer;
     }
 
-    public function setCustomer(?User $customer): static
+    public function setCustomer(?CoreUserInterface $customer): static
     {
         $this->customer = $customer;
 

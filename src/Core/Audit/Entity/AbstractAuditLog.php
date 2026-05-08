@@ -17,48 +17,24 @@ abstract class AbstractAuditLog implements AuditLogInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     protected DateTimeImmutable $createdAt;
 
-    #[ORM\Column(length: 30)]
-    protected string $module;
-
-    #[ORM\Column(length: 100)]
-    protected string $action;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    protected ?string $entityType = null;
-
-    #[ORM\Column(nullable: true)]
-    protected ?int $entityId = null;
-
-    #[ORM\Column(nullable: true)]
-    protected ?int $userId = null;
-
-    #[ORM\Column(length: 180, nullable: true)]
-    protected ?string $userEmail = null;
-
-    #[ORM\Column(length: 180, nullable: true)]
-    protected ?string $userName = null;
-
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    protected ?array $data = null;
-
     public function __construct(
-        string $module,
-        string $action,
-        ?string $entityType = null,
-        ?int $entityId = null,
-        ?int $userId = null,
-        ?string $userEmail = null,
-        ?string $userName = null,
-        ?array $data = null,
+        #[ORM\Column(length: 30)]
+        protected string $module,
+        #[ORM\Column(length: 100)]
+        protected string $action,
+        #[ORM\Column(length: 100, nullable: true)]
+        protected ?string $entityType = null,
+        #[ORM\Column(nullable: true)]
+        protected ?int $entityId = null,
+        #[ORM\Column(nullable: true)]
+        protected ?int $userId = null,
+        #[ORM\Column(length: 180, nullable: true)]
+        protected ?string $userEmail = null,
+        #[ORM\Column(length: 180, nullable: true)]
+        protected ?string $userName = null,
+        #[ORM\Column(type: Types::JSON, nullable: true)]
+        protected ?array $data = null,
     ) {
-        $this->module = $module;
-        $this->action = $action;
-        $this->entityType = $entityType;
-        $this->entityId = $entityId;
-        $this->userId = $userId;
-        $this->userEmail = $userEmail;
-        $this->userName = $userName;
-        $this->data = $data;
         $this->createdAt = new DateTimeImmutable();
     }
 

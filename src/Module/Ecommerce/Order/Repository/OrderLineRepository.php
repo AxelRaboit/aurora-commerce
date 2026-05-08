@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** @extends ResolveTargetEntityRepository<OrderLineInterface> */

@@ -6,9 +6,9 @@ namespace Aurora\Core\Audit\Repository;
 
 use Aurora\Core\Audit\Entity\AuditLog;
 use Aurora\Core\Audit\Entity\AuditLogInterface;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use DateTimeInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

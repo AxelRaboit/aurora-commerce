@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface as CrmCompany;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface as CrmContact;
 use Aurora\Module\Crm\Deal\Entity\DealInterface as CrmDeal;
@@ -41,9 +41,9 @@ interface ProjectInterface extends TimestampableInterface
 
     public function setEndDate(?DateTimeImmutable $endDate): static;
 
-    public function getResponsibleUser(): ?User;
+    public function getResponsibleUser(): ?CoreUserInterface;
 
-    public function setResponsibleUser(?User $responsibleUser): static;
+    public function setResponsibleUser(?CoreUserInterface $responsibleUser): static;
 
     /** @return Collection<int, CrmContact> */
     public function getCrmContacts(): Collection;

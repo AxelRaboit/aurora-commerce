@@ -7,10 +7,11 @@ namespace Aurora\Module\Billing\Invoice\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
-use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
-use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
 use Aurora\Module\Billing\Invoice\Service\InvoiceXlsxExporter;
 use Aurora\Module\Billing\Invoice\View\InvoicesViewBuilder;
@@ -192,7 +193,7 @@ final class InvoicesController extends AbstractController
      * Find a line that belongs to the given invoice. Refusing cross-invoice
      * line ids prevents IDOR via crafted URLs.
      */
-    private function resolveLine(Invoice $invoice, int $lineId): ?InvoiceLine
+    private function resolveLine(Invoice $invoice, int $lineId): ?InvoiceLineInterface
     {
         foreach ($invoice->getLines() as $line) {
             if ($line->getId() === $lineId) {

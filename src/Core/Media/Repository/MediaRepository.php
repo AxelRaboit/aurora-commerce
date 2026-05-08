@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Repository;
 
 use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaFolderInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -96,7 +96,7 @@ class MediaRepository extends ResolveTargetEntityRepository
     /**
      * @return list<Media>
      */
-    public function findByFolder(?MediaFolder $folder, ?string $search = null): array
+    public function findByFolder(?MediaFolderInterface $folder, ?string $search = null): array
     {
         $queryBuilder = $this->createQueryBuilder('m')
             ->leftJoin('m.folder', 'f')
@@ -109,7 +109,7 @@ class MediaRepository extends ResolveTargetEntityRepository
             $queryBuilder
                 ->andWhere('LOWER(m.originalName) LIKE :search OR LOWER(m.alt) LIKE :search')
                 ->setParameter('search', '%'.mb_strtolower($search).'%');
-        } elseif (!$folder instanceof MediaFolder) {
+        } elseif (!$folder instanceof MediaFolderInterface) {
             $queryBuilder->andWhere('m.folder IS NULL');
         } else {
             $queryBuilder->andWhere('m.folder = :folder')->setParameter('folder', $folder);

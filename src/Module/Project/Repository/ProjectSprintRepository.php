@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Repository;
 
-use Aurora\Module\Project\Entity\Project;
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectSprint;
 use Aurora\Module\Project\Entity\ProjectSprintInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +19,8 @@ class ProjectSprintRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, ProjectSprint::class, ProjectSprintInterface::class);
     }
 
-    /** @return list<ProjectSprint> */
-    public function findByProject(Project $project): array
+    /** @return list<ProjectSprintInterface> */
+    public function findByProject(ProjectInterface $project): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.project = :project')

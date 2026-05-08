@@ -24,14 +24,6 @@ abstract class AbstractAccessRequest implements AccessRequestInterface
     #[ORM\Column(length: 64, unique: true)]
     protected string $token;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['access_request:read'])]
-    protected string $requesterEmail;
-
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    #[Groups(['access_request:read'])]
-    protected DateTimeImmutable $expiresAt;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['access_request:read'])]
     protected ?string $requesterName = null;
@@ -44,10 +36,12 @@ abstract class AbstractAccessRequest implements AccessRequestInterface
     #[Groups(['access_request:read'])]
     protected AccessRequestStatusEnum $status = AccessRequestStatusEnum::Pending;
 
-    public function __construct(string $requesterEmail, DateTimeImmutable $expiresAt)
+    public function __construct(#[ORM\Column(length: 255)]
+        #[Groups(['access_request:read'])]
+        protected string $requesterEmail, #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+        #[Groups(['access_request:read'])]
+        protected DateTimeImmutable $expiresAt)
     {
-        $this->requesterEmail = $requesterEmail;
-        $this->expiresAt = $expiresAt;
         $this->token = bin2hex(random_bytes(32));
     }
 

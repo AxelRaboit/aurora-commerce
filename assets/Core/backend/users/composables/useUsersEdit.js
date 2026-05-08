@@ -72,7 +72,9 @@ export function useUsersEdit(props, fetchUsers, options = {}) {
         editForm.agencyId = user.agencyId ? String(user.agencyId) : "";
         editForm.serviceId = user.serviceId ? String(user.serviceId) : "";
         for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.fromEntity ? def.fromEntity(user) : (user[key] ?? def.default);
+            editForm[key] = def.fromEntity
+                ? def.fromEntity(user)
+                : (user[key] ?? def.default);
         }
         editModal.open = true;
         loadSelectableUsers();

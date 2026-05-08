@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Cart\View;
 
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeContext;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 
 /**
@@ -24,10 +24,10 @@ final readonly class CartViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function indexView(Cart $cart, string $locale): array
+    public function indexView(?CartInterface $cart, string $locale): array
     {
         return [
-            'cart' => $this->cartSerializer->serialize($cart),
+            'cart' => $cart instanceof CartInterface ? $this->cartSerializer->serialize($cart) : null,
             'locale' => $locale,
             'context' => $this->frontContext,
             'showFrontMenus' => true,

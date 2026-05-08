@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Serializer;
 
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -23,7 +24,7 @@ class UserSerializer implements UserSerializerInterface
      * subordinates collection — use {@see serializeWithSubordinates()} for
      * single-user views (e.g. profile detail modal).
      */
-    public function serialize(User $user): array
+    public function serialize(CoreUserInterface $user): array
     {
         // Visible role for the badge. Dev is hidden (shown via isDev flag). ROLE_USER is only
         // shown when it is the user's actual highest role — it is excluded when Admin or Dev is
@@ -57,7 +58,7 @@ class UserSerializer implements UserSerializerInterface
             'moodMessage' => $user->getMoodMessage(),
             'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'managerId' => $manager?->getId(),
-            'manager' => $manager instanceof User ? ['id' => $manager->getId(), 'name' => $manager->getName()] : null,
+            'manager' => $manager instanceof CoreUserInterface ? ['id' => $manager->getId(), 'name' => $manager->getName()] : null,
             'agencyId' => $user->getAgency()?->getId(),
             'agencyName' => $user->getAgency()?->getName(),
             'serviceId' => $user->getService()?->getId(),
@@ -73,10 +74,10 @@ class UserSerializer implements UserSerializerInterface
      * load — only call for a single user (detail endpoint), never inside
      * a list loop.
      */
-    public function serializeWithSubordinates(User $user): array
+    public function serializeWithSubordinates(CoreUserInterface $user): array
     {
         $subordinates = array_map(
-            static fn (User $subordinate): array => [
+            static fn (CoreUserInterface $subordinate): array => [
                 'id' => $subordinate->getId(),
                 'name' => $subordinate->getName(),
             ],

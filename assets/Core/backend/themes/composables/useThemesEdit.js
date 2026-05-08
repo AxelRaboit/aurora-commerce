@@ -152,7 +152,9 @@ export function useThemesEdit(themeList, updatePath, options = {}) {
         editForm.name = theme.name;
         editForm.description = theme.description ?? "";
         for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.fromEntity ? def.fromEntity(theme) : (theme[key] ?? def.default);
+            editForm[key] = def.fromEntity
+                ? def.fromEntity(theme)
+                : (theme[key] ?? def.default);
         }
         for (const { key } of ALL_CSS_VARS.value) {
             colorFields[key] = theme.config?.[key] ?? DEFAULTS[key];
@@ -185,7 +187,10 @@ export function useThemesEdit(themeList, updatePath, options = {}) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...Object.fromEntries(
-                        Object.keys(extraFields).map((key) => [key, editForm[key]]),
+                        Object.keys(extraFields).map((key) => [
+                            key,
+                            editForm[key],
+                        ]),
                     ),
                     name: editForm.name,
                     description: editForm.description,

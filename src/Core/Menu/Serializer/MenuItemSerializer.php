@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Serializer;
 
-use Aurora\Core\Menu\Entity\MenuItem;
+use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use Aurora\Module\Editorial\Post\Entity\Post;
-use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\Post\Entity\PostInterface;
+use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,13 +24,13 @@ final readonly class MenuItemSerializer
     ) {}
 
     /**
-     * @param array<int, Post>         $postCache     keyed by id
-     * @param array<int, TaxonomyTerm> $termCache     keyed by id
-     * @param array<int, PostType>     $postTypeCache keyed by id
+     * @param array<int, PostInterface>         $postCache     keyed by id
+     * @param array<int, TaxonomyTermInterface> $termCache     keyed by id
+     * @param array<int, PostTypeInterface>     $postTypeCache keyed by id
      *
      * @return array<string, mixed>
      */
-    public function serialize(MenuItem $item, array $postCache = [], array $termCache = [], array $postTypeCache = []): array
+    public function serialize(MenuItemInterface $item, array $postCache = [], array $termCache = [], array $postTypeCache = []): array
     {
         $translations = [];
         foreach ($item->getTranslations() as $translation) {
@@ -62,9 +62,9 @@ final readonly class MenuItemSerializer
      * Pre-loads referenced Posts/Terms/PostTypes in batches so the recursive
      * serialization stays free of N+1 queries.
      *
-     * @param iterable<MenuItem> $items
+     * @param iterable<MenuItemInterface> $items
      *
-     * @return array{posts: array<int, Post>, terms: array<int, TaxonomyTerm>, postTypes: array<int, PostType>}
+     * @return array{posts: array<int, PostInterface>, terms: array<int, TaxonomyTermInterface>, postTypes: array<int, PostTypeInterface>}
      */
     public function preloadTargets(iterable $items): array
     {
@@ -93,10 +93,10 @@ final readonly class MenuItemSerializer
     }
 
     /**
-     * @param iterable<MenuItem> $items
-     * @param list<int>          $postIds
-     * @param list<int>          $termIds
-     * @param list<int>          $postTypeIds
+     * @param iterable<MenuItemInterface> $items
+     * @param list<int>                   $postIds
+     * @param list<int>                   $termIds
+     * @param list<int>                   $postTypeIds
      */
     private function collectTargetIds(iterable $items, array &$postIds, array &$termIds, array &$postTypeIds): void
     {
@@ -116,13 +116,13 @@ final readonly class MenuItemSerializer
     }
 
     /**
-     * @param array<int, Post>         $postCache
-     * @param array<int, TaxonomyTerm> $termCache
-     * @param array<int, PostType>     $postTypeCache
+     * @param array<int, PostInterface>         $postCache
+     * @param array<int, TaxonomyTermInterface> $termCache
+     * @param array<int, PostTypeInterface>     $postTypeCache
      *
      * @return array<string, mixed>
      */
-    private function resolveTargetPreview(MenuItem $item, array $postCache, array $termCache, array $postTypeCache): array
+    private function resolveTargetPreview(MenuItemInterface $item, array $postCache, array $termCache, array $postTypeCache): array
     {
         return match ($item->getTargetType()) {
             MenuItemTargetTypeEnum::Home => ['label' => $this->translator->trans('frontend.menu.home'), 'hint' => '/'],
@@ -139,11 +139,11 @@ final readonly class MenuItemSerializer
     }
 
     /**
-     * @param array<int, Post> $postCache
+     * @param array<int, PostInterface> $postCache
      *
      * @return array<string, mixed>
      */
-    private function postPreview(MenuItem $item, array $postCache): array
+    private function postPreview(MenuItemInterface $item, array $postCache): array
     {
         $targetId = $item->getTargetId();
         $post = null !== $targetId ? ($postCache[$targetId] ?? $this->postRepository->find($targetId)) : null;
@@ -164,11 +164,11 @@ final readonly class MenuItemSerializer
     }
 
     /**
-     * @param array<int, TaxonomyTerm> $termCache
+     * @param array<int, TaxonomyTermInterface> $termCache
      *
      * @return array<string, mixed>
      */
-    private function termPreview(MenuItem $item, array $termCache): array
+    private function termPreview(MenuItemInterface $item, array $termCache): array
     {
         $targetId = $item->getTargetId();
         $term = null !== $targetId ? ($termCache[$targetId] ?? $this->termRepository->find($targetId)) : null;
@@ -189,11 +189,11 @@ final readonly class MenuItemSerializer
     }
 
     /**
-     * @param array<int, PostType> $postTypeCache
+     * @param array<int, PostTypeInterface> $postTypeCache
      *
      * @return array<string, mixed>
      */
-    private function archivePreview(MenuItem $item, array $postTypeCache): array
+    private function archivePreview(MenuItemInterface $item, array $postTypeCache): array
     {
         $targetId = $item->getTargetId();
         $postType = null !== $targetId ? ($postTypeCache[$targetId] ?? $this->postTypeRepository->find($targetId)) : null;

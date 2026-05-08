@@ -14,26 +14,17 @@ abstract class AbstractResetPasswordRequest implements ResetPasswordRequestInter
     #[ORM\Column(length: 32, unique: true, nullable: true)]
     protected ?string $reference = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    protected User $user;
-
-    #[ORM\Column(length: 100)]
-    protected string $selector;
-
-    #[ORM\Column(length: 100)]
-    protected string $hashedToken;
-
-    #[ORM\Column]
-    protected DateTimeImmutable $expiresAt;
-
-    public function __construct(User $user, string $selector, string $hashedToken, DateTimeImmutable $expiresAt)
-    {
-        $this->user = $user;
-        $this->selector = $selector;
-        $this->hashedToken = $hashedToken;
-        $this->expiresAt = $expiresAt;
-    }
+    public function __construct(
+        #[ORM\ManyToOne]
+        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+        protected User $user,
+        #[ORM\Column(length: 100)]
+        protected string $selector,
+        #[ORM\Column(length: 100)]
+        protected string $hashedToken,
+        #[ORM\Column]
+        protected DateTimeImmutable $expiresAt
+    ) {}
 
     public function getReference(): ?string
     {

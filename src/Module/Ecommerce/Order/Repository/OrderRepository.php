@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order as SortOrder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -26,7 +26,7 @@ class OrderRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, Order::class, OrderInterface::class);
     }
 
-    public function findOneByToken(string $token): ?Order
+    public function findOneByToken(string $token): ?OrderInterface
     {
         return $this->findOneBy(['token' => $token]);
     }

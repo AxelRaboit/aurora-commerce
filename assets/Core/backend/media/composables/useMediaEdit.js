@@ -52,7 +52,9 @@ export function useMediaEdit(props, media) {
             ...Object.fromEntries(
                 Object.entries(extraFields).map(([key, def]) => [
                     key,
-                    def.fromEntity ? def.fromEntity(item) : (item[key] ?? def.default),
+                    def.fromEntity
+                        ? def.fromEntity(item)
+                        : (item[key] ?? def.default),
                 ]),
             ),
         });

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Dto;
 
-use Aurora\Module\Project\Dto\ProjectTaskItemsInput;
 use Aurora\Module\Project\Dto\ProjectTaskItemsInputFactory;
 use PHPUnit\Framework\TestCase;
 

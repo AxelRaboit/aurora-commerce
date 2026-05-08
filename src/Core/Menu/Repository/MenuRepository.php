@@ -20,7 +20,7 @@ class MenuRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, Menu::class, MenuInterface::class);
     }
 
-    public function findByLocation(string $location): ?Menu
+    public function findByLocation(string $location): ?MenuInterface
     {
         return $this->findOneBy(['location' => $location]);
     }
@@ -29,7 +29,7 @@ class MenuRepository extends ResolveTargetEntityRepository
      * Loads all menus with items, children and translations in one query.
      * Keyed by location for O(1) lookup.
      *
-     * @return array<string, Menu>
+     * @return array<string, MenuInterface>
      */
     public function findAllWithItemsKeyedByLocation(): array
     {

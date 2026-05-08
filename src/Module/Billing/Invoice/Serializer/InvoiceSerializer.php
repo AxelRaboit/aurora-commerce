@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Serializer;
 
-use Aurora\Core\Media\Entity\Media;
-use Aurora\Module\Billing\Invoice\Entity\Invoice;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
-use Aurora\Module\Billing\Ocr\Entity\OcrJob;
+use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class InvoiceSerializer
@@ -21,7 +21,7 @@ final readonly class InvoiceSerializer
         private InvoiceRepository $invoiceRepository,
     ) {}
 
-    public function serialize(Invoice $invoice): array
+    public function serialize(InvoiceInterface $invoice): array
     {
         $status = $invoice->getStatus();
 
@@ -35,7 +35,7 @@ final readonly class InvoiceSerializer
             'isCancelled' => $invoice->isCancelled(),
             'isCreditNote' => InvoiceStatusEnum::CreditNote === $invoice->getStatus(),
             'isDeletable' => $invoice->getStatus()->isDeletable(),
-            'supplier' => $invoice->getTiers() instanceof Tiers ? [
+            'supplier' => $invoice->getTiers() instanceof TiersInterface ? [
                 'id' => $invoice->getTiers()->getId(),
                 'name' => $invoice->getTiers()->getName(),
             ] : null,
@@ -63,7 +63,7 @@ final readonly class InvoiceSerializer
      * Full payload used by the review screen — adds supplier full info, lines,
      * payment terms, OCR job traceability and the source document URL.
      */
-    public function serializeDetail(Invoice $invoice): array
+    public function serializeDetail(InvoiceInterface $invoice): array
     {
         $base = $this->serialize($invoice);
 
@@ -77,25 +77,25 @@ final readonly class InvoiceSerializer
             'paymentMethod' => $invoice->getPaymentMethod(),
             'paidAt' => $invoice->getPaidAt()?->format('Y-m-d'),
             'notes' => $invoice->getNotes(),
-            'supplierFull' => $invoice->getTiers() instanceof Tiers ? $this->tiersSerializer->serialize($invoice->getTiers()) : null,
-            'creditNote' => ($cn = $invoice->getCreditNote()) instanceof Invoice ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
-            'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) instanceof Invoice ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
-            'supplierInvoiceCount' => $invoice->getTiers() instanceof Tiers
+            'supplierFull' => $invoice->getTiers() instanceof TiersInterface ? $this->tiersSerializer->serialize($invoice->getTiers()) : null,
+            'creditNote' => ($cn = $invoice->getCreditNote()) instanceof InvoiceInterface ? ['id' => $cn->getId(), 'number' => $cn->getNumber()] : null,
+            'cancelledInvoice' => ($ci = $invoice->getCancelledInvoice()) instanceof InvoiceInterface ? ['id' => $ci->getId(), 'number' => $ci->getNumber()] : null,
+            'supplierInvoiceCount' => $invoice->getTiers() instanceof TiersInterface
                 ? $this->invoiceRepository->countForTiers($invoice->getTiers()->getId())
                 : 0,
-            'buyer' => $invoice->getBuyerTiers() instanceof Tiers
+            'buyer' => $invoice->getBuyerTiers() instanceof TiersInterface
                 ? $this->tiersSerializer->serialize($invoice->getBuyerTiers())
                 : null,
-            'buyerInvoiceCount' => $invoice->getBuyerTiers() instanceof Tiers
+            'buyerInvoiceCount' => $invoice->getBuyerTiers() instanceof TiersInterface
                 ? $this->invoiceRepository->countAsBuyerForTiers($invoice->getBuyerTiers()->getId())
                 : 0,
-            'document' => $document instanceof Media ? [
+            'document' => $document instanceof MediaInterface ? [
                 'id' => $document->getId(),
                 'url' => '/uploads/'.$document->getPath(),
                 'originalName' => $document->getOriginalName(),
                 'mimeType' => $document->getMimeType(),
             ] : null,
-            'ocrJob' => $job instanceof OcrJob ? [
+            'ocrJob' => $job instanceof OcrJobInterface ? [
                 'id' => $job->getId(),
                 'status' => $job->getStatus()->value,
                 'statusLabel' => $this->translator->trans($job->getStatus()->getLabelKey()),
@@ -108,7 +108,7 @@ final readonly class InvoiceSerializer
         ];
     }
 
-    private function serializeLine(InvoiceLine $line): array
+    private function serializeLine(InvoiceLineInterface $line): array
     {
         return [
             'id' => $line->getId(),

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -70,7 +70,7 @@ class ProductRepository extends ResolveTargetEntityRepository
             ->getQuery()->getSingleScalarResult();
     }
 
-    public function findOneByReference(string $reference): ?Product
+    public function findOneByReference(string $reference): ?ProductInterface
     {
         return $this->findOneBy(['reference' => $reference]);
     }

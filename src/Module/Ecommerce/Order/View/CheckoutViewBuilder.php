@@ -7,7 +7,7 @@ namespace Aurora\Module\Ecommerce\Order\View;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeContext;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
@@ -29,7 +29,7 @@ final readonly class CheckoutViewBuilder
      *
      * @return array<string, mixed>
      */
-    public function checkoutView(Cart $cart, bool $cartRequiresShipping, array $formData, string $locale, string $stripePublicKey, string $submitPath): array
+    public function checkoutView(CartInterface $cart, bool $cartRequiresShipping, array $formData, string $locale, string $stripePublicKey, string $submitPath): array
     {
         return [
             'cart' => $this->cartSerializer->serialize($cart),

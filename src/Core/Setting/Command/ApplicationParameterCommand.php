@@ -66,8 +66,8 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param ApplicationParameterEnum[] $enumCases
-     * @param array<string, Setting>     $existing
+     * @param ApplicationParameterEnum[]      $enumCases
+     * @param array<string, SettingInterface> $existing
      */
     private function createMissing(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
@@ -96,8 +96,8 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param ApplicationParameterEnum[] $enumCases
-     * @param array<string, Setting>     $existing
+     * @param ApplicationParameterEnum[]      $enumCases
+     * @param array<string, SettingInterface> $existing
      */
     private function syncMetadata(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
@@ -141,8 +141,8 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param string[]               $enumKeys
-     * @param array<string, Setting> $existing
+     * @param string[]                        $enumKeys
+     * @param array<string, SettingInterface> $existing
      */
     private function deleteObsolete(array $enumKeys, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {

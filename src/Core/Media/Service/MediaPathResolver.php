@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Service;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Entity\MediaInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Path;
@@ -27,7 +27,7 @@ final readonly class MediaPathResolver
         private string $uploadDir,
     ) {}
 
-    public function resolveAbsolutePath(Media $media): string
+    public function resolveAbsolutePath(MediaInterface $media): string
     {
         $absolutePath = Path::join($this->uploadDir, $media->getPath());
 

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 
 final readonly class CartSerializer
 {
-    public function serialize(Cart $cart): array
+    public function serialize(CartInterface $cart): array
     {
         $currency = CurrencyEnum::EUR;
         $items = [];
@@ -33,7 +33,7 @@ final readonly class CartSerializer
         ];
     }
 
-    private function serializeItem(CartItem $item): array
+    private function serializeItem(CartItemInterface $item): array
     {
         $listing = $item->getListing();
         $featured = $listing->getFeaturedImage() ?? $listing->getProduct()->getImage();

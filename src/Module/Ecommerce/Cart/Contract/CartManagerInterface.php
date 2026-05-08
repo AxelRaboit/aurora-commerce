@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Contract;
 
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 
 interface CartManagerInterface
 {
-    public function getCurrentCart(bool $createIfMissing = true): ?Cart;
+    public function getCurrentCart(bool $createIfMissing = true): ?CartInterface;
 
-    public function addItem(Listing $listing, int $quantity = 1): Cart;
+    public function addItem(ListingInterface $listing, int $quantity = 1): CartInterface;
 
-    public function updateItemQuantity(Listing $listing, int $quantity): Cart;
+    public function updateItemQuantity(ListingInterface $listing, int $quantity): CartInterface;
 
-    public function removeItem(Listing $listing): Cart;
+    public function removeItem(ListingInterface $listing): CartInterface;
 
     public function clear(): void;
 }

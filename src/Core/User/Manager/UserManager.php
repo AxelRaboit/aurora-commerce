@@ -15,7 +15,7 @@ use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Manager\UserManagerInterface;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
@@ -94,7 +94,7 @@ class UserManager implements UserManagerInterface
         $this->emailVerificationManager->sendVerificationEmail($user, $verifyUrl);
     }
 
-    public function verifyEmail(string $token): ?User
+    public function verifyEmail(string $token): ?CoreUserInterface
     {
         $user = $this->userRepository->findOneBy(['emailVerificationToken' => $token, 'type' => UserTypeEnum::Backend]);
         if (null === $user) {

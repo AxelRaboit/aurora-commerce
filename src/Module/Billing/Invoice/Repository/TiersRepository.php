@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -45,7 +45,7 @@ class TiersRepository extends ResolveTargetEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
-    public function findOneByVatNumber(string $vatNumber): ?Tiers
+    public function findOneByVatNumber(string $vatNumber): ?TiersInterface
     {
         return $this->findOneBy(['vatNumber' => $vatNumber]);
     }

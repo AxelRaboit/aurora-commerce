@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\User\Manager;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 
 interface UserManagerInterface
@@ -15,7 +16,7 @@ interface UserManagerInterface
 
     public function sendVerificationEmail(User $user): void;
 
-    public function verifyEmail(string $token): ?User;
+    public function verifyEmail(string $token): ?CoreUserInterface;
 
     public function resendVerificationEmail(string $email): void;
 

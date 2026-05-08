@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** @extends ResolveTargetEntityRepository<ProjectTaskTimeEntryInterface> */

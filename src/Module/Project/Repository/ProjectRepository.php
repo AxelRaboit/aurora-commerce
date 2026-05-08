@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

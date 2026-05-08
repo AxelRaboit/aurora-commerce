@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** @extends ResolveTargetEntityRepository<ProjectTaskCommentInterface> */

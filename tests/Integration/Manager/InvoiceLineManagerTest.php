@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
+use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

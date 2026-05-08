@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Dto;
 
-use Aurora\Module\Project\Dto\ProjectTaskInput;
 use Aurora\Module\Project\Dto\ProjectTaskInputFactory;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use PHPUnit\Framework\TestCase;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Notification\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,9 +16,9 @@ abstract class AbstractNotification implements NotificationInterface
 {
     use TimestampableTrait;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: CoreUserInterface::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    protected User $recipient;
+    protected CoreUserInterface $recipient;
 
     /** Free-form type slug — e.g. 'project.task.assigned', 'project.task.mentioned'. */
     #[ORM\Column(length: 80)]
@@ -43,12 +43,12 @@ abstract class AbstractNotification implements NotificationInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     protected ?DateTimeImmutable $readAt = null;
 
-    public function getRecipient(): User
+    public function getRecipient(): CoreUserInterface
     {
         return $this->recipient;
     }
 
-    public function setRecipient(User $user): static
+    public function setRecipient(CoreUserInterface $user): static
     {
         $this->recipient = $user;
 

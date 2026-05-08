@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Company\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

@@ -44,11 +44,6 @@ abstract class AbstractDeal implements DealInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $notes = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getName(): string
     {
         return $this->name;

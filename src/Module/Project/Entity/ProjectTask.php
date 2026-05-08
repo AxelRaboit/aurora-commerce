@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,8 +34,8 @@ class ProjectTask extends AbstractProjectTask
     #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected Collection $attachments;
 
-    /** @var Collection<int, User> */
-    #[ORM\ManyToMany(targetEntity: User::class)]
+    /** @var Collection<int, CoreUserInterface> */
+    #[ORM\ManyToMany(targetEntity: CoreUserInterface::class)]
     #[ORM\JoinTable(name: 'core_project_task_watchers')]
     #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]

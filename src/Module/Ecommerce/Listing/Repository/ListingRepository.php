@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
-use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -49,12 +49,12 @@ class ListingRepository extends ResolveTargetEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
-    public function findOneBySlug(string $slug): ?Listing
+    public function findOneBySlug(string $slug): ?ListingInterface
     {
         return $this->findOneBy(['slug' => $slug]);
     }
 
-    public function findOneByProduct(Product $product): ?Listing
+    public function findOneByProduct(ProductInterface $product): ?ListingInterface
     {
         return $this->findOneBy(['product' => $product]);
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\Common\Collections\Collection;
@@ -22,9 +22,9 @@ interface OrderInterface extends TimestampableInterface
 
     public function setToken(string $token): static;
 
-    public function getCustomer(): ?User;
+    public function getCustomer(): ?CoreUserInterface;
 
-    public function setCustomer(?User $customer): static;
+    public function setCustomer(?CoreUserInterface $customer): static;
 
     public function getStatus(): OrderStatusEnum;
 

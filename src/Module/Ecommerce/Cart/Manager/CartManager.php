@@ -11,9 +11,10 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -35,12 +36,12 @@ final readonly class CartManager implements CartManagerInterface
      * Returns the current cart for the active user (logged) or session (anonymous).
      * Creates an empty one if none exists.
      */
-    public function getCurrentCart(bool $createIfMissing = true): ?Cart
+    public function getCurrentCart(bool $createIfMissing = true): ?CartInterface
     {
         $user = $this->security->getUser();
         if ($user instanceof User) {
             $cart = $this->cartRepository->findOneByUser($user);
-            if (!$cart instanceof Cart && $createIfMissing) {
+            if (!$cart instanceof CartInterface && $createIfMissing) {
                 $cart = new Cart()->setUser($user);
                 $this->entityManager->persist($cart);
                 $this->entityManager->flush();
@@ -54,7 +55,7 @@ final readonly class CartManager implements CartManagerInterface
 
         $sessionId = $this->getOrCreateSessionId();
         $cart = $this->cartRepository->findOneBySession($sessionId);
-        if (!$cart instanceof Cart && $createIfMissing) {
+        if (!$cart instanceof CartInterface && $createIfMissing) {
             $cart = new Cart()->setSessionId($sessionId);
             $this->entityManager->persist($cart);
             $this->entityManager->flush();
@@ -66,7 +67,7 @@ final readonly class CartManager implements CartManagerInterface
         return $cart;
     }
 
-    public function addItem(Listing $listing, int $quantity = 1): Cart
+    public function addItem(ListingInterface $listing, int $quantity = 1): CartInterface
     {
         $cart = $this->getCurrentCart();
         $existing = null;
@@ -98,7 +99,7 @@ final readonly class CartManager implements CartManagerInterface
         return $cart;
     }
 
-    public function updateItemQuantity(Listing $listing, int $quantity): Cart
+    public function updateItemQuantity(ListingInterface $listing, int $quantity): CartInterface
     {
         $cart = $this->getCurrentCart();
         foreach ($cart->getItems() as $item) {
@@ -119,7 +120,7 @@ final readonly class CartManager implements CartManagerInterface
         return $cart;
     }
 
-    public function removeItem(Listing $listing): Cart
+    public function removeItem(ListingInterface $listing): CartInterface
     {
         return $this->updateItemQuantity($listing, 0);
     }
@@ -127,7 +128,7 @@ final readonly class CartManager implements CartManagerInterface
     public function clear(): void
     {
         $cart = $this->getCurrentCart(false);
-        if (!$cart instanceof Cart) {
+        if (!$cart instanceof CartInterface) {
             return;
         }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Service;
 
 use Aurora\Core\Mail\Service\MailService;
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 
@@ -13,7 +13,7 @@ final readonly class CrmNotificationService
 {
     public function __construct(private MailService $mail) {}
 
-    public function notifyContactCreated(Contact $contact): void
+    public function notifyContactCreated(ContactInterface $contact): void
     {
         $this->mail->sendToAdmin(
             'crm.mail.subject_contact_new',

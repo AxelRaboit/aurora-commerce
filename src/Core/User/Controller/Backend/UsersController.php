@@ -9,6 +9,7 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Dto\UserInputFactoryInterface;
 use Aurora\Core\User\Dto\UserInviteInputFactoryInterface;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserHierarchyManager;
@@ -76,7 +77,7 @@ class UsersController extends AbstractController
     public function selectable(): JsonResponse
     {
         $items = array_map(
-            static fn (User $user): array => [
+            static fn (CoreUserInterface $user): array => [
                 'id' => $user->getId(),
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),
@@ -104,7 +105,7 @@ class UsersController extends AbstractController
         }
 
         try {
-            $user = $this->userManager->invite($input->name, $input->email, $input->role, $input->message);
+            $user = $this->userManager->invite($input->getName(), $input->getEmail(), $input->getRole(), $input->getMessage());
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonInvalidInput(['role' => $invalidArgumentException->getMessage()]);
         }
@@ -128,20 +129,20 @@ class UsersController extends AbstractController
         }
 
         try {
-            $this->userHierarchyManager->applyManager($user, $input->managerId);
+            $this->userHierarchyManager->applyManager($user, $input->getManagerId());
         } catch (InvalidArgumentException $invalidArgumentException) {
             return $this->jsonInvalidInput(['managerId' => $invalidArgumentException->getMessage()]);
         }
 
         try {
-            $this->userManager->updateWithRole($user, $input->name, $input->email, $input->role, $input->password);
+            $this->userManager->updateWithRole($user, $input->getName(), $input->getEmail(), $input->getRole(), $input->getPassword());
         } catch (InvalidArgumentException $invalidArgumentException) {
             $field = str_contains($invalidArgumentException->getMessage(), 'email') ? 'email' : 'role';
 
             return $this->jsonInvalidInput([$field => $invalidArgumentException->getMessage()]);
         }
 
-        $this->userManager->updateAgencyAndService($user, $input->agencyId, $input->serviceId);
+        $this->userManager->updateAgencyAndService($user, $input->getAgencyId(), $input->getServiceId());
 
         return $this->jsonSuccess(['user' => $this->userSerializer->serialize($user)]);
     }

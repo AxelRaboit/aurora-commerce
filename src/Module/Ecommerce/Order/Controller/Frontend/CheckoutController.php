@@ -13,11 +13,11 @@ use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputFactoryInterface;
-use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Manager\OrderManagerInterface;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\View\CheckoutViewBuilder;
 use Aurora\Module\Ecommerce\Payment\StripeService;
@@ -58,7 +58,7 @@ class CheckoutController extends AbstractController
         $request->setLocale($locale);
 
         $cart = $this->cartManager->getCurrentCart();
-        if (0 === $cart->getItems()->count()) {
+        if (!$cart instanceof CartInterface || 0 === $cart->getItems()->count()) {
             return $this->redirectToRoute('frontend_cart', ['locale' => $locale]);
         }
 
@@ -77,7 +77,7 @@ class CheckoutController extends AbstractController
         );
     }
 
-    private function handlePost(string $locale, Request $request, Cart $cart, bool $cartRequiresShipping): Response
+    private function handlePost(string $locale, Request $request, CartInterface $cart, bool $cartRequiresShipping): Response
     {
         $formData = $request->request->all();
         $input = $this->checkoutInputFactory->fromArray($formData);
@@ -154,7 +154,7 @@ class CheckoutController extends AbstractController
         return $this->render($this->themeResolver->resolve('order_show'), $this->viewBuilder->showView($order, $locale));
     }
 
-    private function cartContainsPhysicalItem(Cart $cart): bool
+    private function cartContainsPhysicalItem(CartInterface $cart): bool
     {
         foreach ($cart->getItems() as $item) {
             if ($item->getListing()->getProduct()->getType()->requiresShipping()) {

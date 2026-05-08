@@ -58,7 +58,9 @@ export function useDealsForm(
         form.closingDate = deal.closingDate ?? "";
         form.notes = deal.notes ?? "";
         for (const [key, def] of Object.entries(extraFields)) {
-            form[key] = def.fromEntity ? def.fromEntity(deal) : (deal[key] ?? def.default);
+            form[key] = def.fromEntity
+                ? def.fromEntity(deal)
+                : (deal[key] ?? def.default);
         }
     }
 
@@ -80,7 +82,9 @@ export function useDealsForm(
         if (
             !validate({
                 name: () =>
-                    required(t("backend.crm.deals.errors.name_required"))(form.name),
+                    required(t("backend.crm.deals.errors.name_required"))(
+                        form.name,
+                    ),
             })
         )
             return;
@@ -94,7 +98,13 @@ export function useDealsForm(
 
         if (data.success) {
             formModal.open = false;
-            toast.success(t(isCreate ? "backend.crm.deals.created" : "backend.crm.deals.updated"));
+            toast.success(
+                t(
+                    isCreate
+                        ? "backend.crm.deals.created"
+                        : "backend.crm.deals.updated",
+                ),
+            );
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
         } else {

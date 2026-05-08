@@ -117,4 +117,6 @@ interface CoreUserInterface extends UserInterface, PasswordAuthenticatedUserInte
     public function getService(): ?ServiceInterface;
 
     public function setService(?ServiceInterface $service): static;
+
+    public function getCreatedAt(): DateTimeImmutable;
 }

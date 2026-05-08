@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Serializer;
 
 use Aurora\Module\Ecommerce\Order\Entity\Order;
-use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(OrderSerializerInterface::class)]
 class OrderSerializer implements OrderSerializerInterface
@@ -70,7 +70,7 @@ class OrderSerializer implements OrderSerializerInterface
         ];
     }
 
-    private function serializeLine(OrderLine $line): array
+    private function serializeLine(OrderLineInterface $line): array
     {
         $currency = $line->getCurrency();
 

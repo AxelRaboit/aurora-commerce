@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

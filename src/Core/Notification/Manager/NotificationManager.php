@@ -7,6 +7,7 @@ namespace Aurora\Core\Notification\Manager;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Notification\Repository\NotificationRepository;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,7 @@ final readonly class NotificationManager
      * @param array<string, mixed> $data
      */
     public function notify(
-        User $recipient,
+        CoreUserInterface $recipient,
         string $type,
         string $title,
         ?string $body = null,

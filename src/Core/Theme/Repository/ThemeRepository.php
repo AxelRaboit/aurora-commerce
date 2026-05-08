@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Theme\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Theme\Entity\Theme;
 use Aurora\Core\Theme\Entity\ThemeInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

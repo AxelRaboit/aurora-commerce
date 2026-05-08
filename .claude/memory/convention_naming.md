@@ -9,6 +9,13 @@ en boucle for triviale).
 ✅ `$company`, `$contact`, `$translation`, `$invoice`, `$auditPayload`
 ❌ `$c`, `$ct`, `$tr`, `$inv`, `$payload` (si shadowed)
 
+**Pour une instance d'un service / classe : reprendre le nom complet en
+camelCase**. Si le service s'appelle `MySuperCoolFoo`, la variable est
+`$mySuperCoolFoo`. Pas d'abréviation, pas de raccourci.
+
+✅ `$projectColumnManager`, `$galleryDownloadService`, `$mySuperCoolFoo`
+❌ `$mgr`, `$svc`, `$pcm`, `$gds`, `$foo` (perd le contexte)
+
 ### Dossiers / namespaces
 - `Dto/` (pas `DTO/`) — l'acronyme reste "DTO" en prose mais le namespace
   est `Dto` PascalCase comme tous les autres.

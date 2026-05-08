@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\View;
 
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Repository\UserRepository;
@@ -26,7 +27,7 @@ final readonly class DevUsersViewBuilder
         $result = $this->userRepository->findPaginatedForAdmin($page, $search);
 
         $items = array_map(
-            fn (User $user): array => [
+            fn (CoreUserInterface $user): array => [
                 'id' => $user->getId(),
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),

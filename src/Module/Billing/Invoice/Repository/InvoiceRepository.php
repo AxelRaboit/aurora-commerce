@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -11,7 +12,6 @@ use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
@@ -175,7 +175,7 @@ class InvoiceRepository extends ResolveTargetEntityRepository
      * Most recently created invoices flagged as needing human review,
      * used to populate the dashboard queue.
      *
-     * @return list<Invoice>
+     * @return list<InvoiceInterface>
      */
     public function findRecentNeedingReview(int $limit = 5): array
     {

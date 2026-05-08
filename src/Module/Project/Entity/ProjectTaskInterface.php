@@ -6,7 +6,7 @@ namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
@@ -39,9 +39,9 @@ interface ProjectTaskInterface extends TimestampableInterface
 
     public function setPriority(ProjectTaskPriorityEnum $priority): static;
 
-    public function getAssignee(): ?User;
+    public function getAssignee(): ?CoreUserInterface;
 
-    public function setAssignee(?User $assignee): static;
+    public function setAssignee(?CoreUserInterface $assignee): static;
 
     public function getDueDate(): ?DateTimeImmutable;
 
@@ -82,12 +82,12 @@ interface ProjectTaskInterface extends TimestampableInterface
 
     public function removeAttachment(MediaInterface $media): static;
 
-    /** @return Collection<int, User> */
+    /** @return Collection<int, CoreUserInterface> */
     public function getWatchers(): Collection;
 
-    public function addWatcher(User $user): static;
+    public function addWatcher(CoreUserInterface $user): static;
 
-    public function removeWatcher(User $user): static;
+    public function removeWatcher(CoreUserInterface $user): static;
 
     public function getSprint(): ?ProjectSprintInterface;
 

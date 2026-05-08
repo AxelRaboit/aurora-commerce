@@ -6,6 +6,7 @@ namespace Aurora\Core\User\Manager;
 
 use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 
 interface FrontUserManagerInterface
@@ -14,7 +15,7 @@ interface FrontUserManagerInterface
 
     public function sendVerificationEmail(User $user, string $locale = 'fr'): void;
 
-    public function verifyEmail(string $token): ?User;
+    public function verifyEmail(string $token): ?CoreUserInterface;
 
     public function updateProfile(User $user, string $name, ?string $newPassword = null): void;
 

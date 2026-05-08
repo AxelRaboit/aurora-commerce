@@ -12,6 +12,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
+use Aurora\Module\Photo\Gallery\Entity\GalleryInterface;
 use Aurora\Module\Photo\Gallery\Manager\GalleryManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use DateTimeImmutable;
@@ -39,7 +40,7 @@ final class GalleryManagerTest extends TestCase
         $this->watermark = new class(new Filesystem(), Path::join(sys_get_temp_dir(), 'aurora-uploads')) extends GalleryWatermarkService {
             public int $clearCalls = 0;
 
-            public function clearCacheForGallery(Gallery $gallery): void
+            public function clearCacheForGallery(GalleryInterface $gallery): void
             {
                 ++$this->clearCalls;
             }

@@ -38,7 +38,11 @@ class ProjectInputFactory implements ProjectInputFactoryInterface
 
         $ids = [];
         foreach ($raw as $value) {
-            if (null === $value || '' === $value) {
+            if (null === $value) {
+                continue;
+            }
+
+            if ('' === $value) {
                 continue;
             }
 

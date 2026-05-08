@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Manager;
 
-use Aurora\Core\User\Entity\User;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
+use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 
 interface OrderManagerInterface
 {
-    public function createFromCart(Cart $cart, CheckoutInputInterface $input, ?User $customer, string $locale = 'fr'): Order;
+    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale = 'fr'): Order;
 
     public function markPaid(Order $order): void;
 
@@ -25,5 +25,5 @@ interface OrderManagerInterface
      */
     public function cancel(Order $order): void;
 
-    public function checkout(Cart $cart, CheckoutInputInterface $input, ?User $customer): Order;
+    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer): Order;
 }

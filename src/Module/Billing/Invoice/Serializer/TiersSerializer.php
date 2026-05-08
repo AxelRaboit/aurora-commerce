@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Serializer;
 
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 
 final readonly class TiersSerializer
 {
-    public function serialize(Tiers $tiers): array
+    public function serialize(TiersInterface $tiers): array
     {
         return [
             'id' => $tiers->getId(),

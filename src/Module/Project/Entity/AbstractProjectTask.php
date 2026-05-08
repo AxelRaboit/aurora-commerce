@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -39,9 +40,9 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
     #[ORM\Column(length: 20, enumType: ProjectTaskPriorityEnum::class, options: ['default' => 'medium'])]
     protected ProjectTaskPriorityEnum $priority = ProjectTaskPriorityEnum::Medium;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: CoreUserInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?User $assignee = null;
+    protected ?CoreUserInterface $assignee = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     protected ?DateTimeImmutable $dueDate = null;
@@ -73,10 +74,10 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $comments;
 
-    /** @var Collection<int, \Aurora\Core\Media\Entity\MediaInterface> */
+    /** @var Collection<int, MediaInterface> */
     protected Collection $attachments;
 
-    /** @var Collection<int, User> */
+    /** @var Collection<int, CoreUserInterface> */
     protected Collection $watchers;
 
     #[ORM\ManyToOne(targetEntity: ProjectSprintInterface::class, inversedBy: 'tasks')]
@@ -165,12 +166,12 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this;
     }
 
-    public function getAssignee(): ?User
+    public function getAssignee(): ?CoreUserInterface
     {
         return $this->assignee;
     }
 
-    public function setAssignee(?User $assignee): static
+    public function setAssignee(?CoreUserInterface $assignee): static
     {
         $this->assignee = $assignee;
 
@@ -266,7 +267,7 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this->attachments;
     }
 
-    public function addAttachment(\Aurora\Core\Media\Entity\MediaInterface $media): static
+    public function addAttachment(MediaInterface $media): static
     {
         if (!$this->attachments->contains($media)) {
             $this->attachments->add($media);
@@ -275,7 +276,7 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this;
     }
 
-    public function removeAttachment(\Aurora\Core\Media\Entity\MediaInterface $media): static
+    public function removeAttachment(MediaInterface $media): static
     {
         $this->attachments->removeElement($media);
 
@@ -287,7 +288,7 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this->watchers;
     }
 
-    public function addWatcher(User $user): static
+    public function addWatcher(CoreUserInterface $user): static
     {
         if (!$this->watchers->contains($user)) {
             $this->watchers->add($user);
@@ -296,7 +297,7 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this;
     }
 
-    public function removeWatcher(User $user): static
+    public function removeWatcher(CoreUserInterface $user): static
     {
         $this->watchers->removeElement($user);
 

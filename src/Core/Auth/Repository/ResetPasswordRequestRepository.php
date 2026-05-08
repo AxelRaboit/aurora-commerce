@@ -6,8 +6,8 @@ namespace Aurora\Core\Auth\Repository;
 
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Entity\ResetPasswordRequestInterface;
-use Aurora\Core\User\Entity\User;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Core\User\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,7 +20,7 @@ class ResetPasswordRequestRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, ResetPasswordRequest::class, ResetPasswordRequestInterface::class);
     }
 
-    public function findBySelector(string $selector): ?ResetPasswordRequest
+    public function findBySelector(string $selector): ?ResetPasswordRequestInterface
     {
         return $this->findOneBy(['selector' => $selector]);
     }

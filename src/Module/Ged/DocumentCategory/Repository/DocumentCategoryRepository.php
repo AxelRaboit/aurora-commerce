@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

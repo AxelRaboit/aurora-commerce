@@ -15,5 +15,10 @@ class Deal extends AbstractDeal
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\SequenceGenerator(sequenceName: 'seq_core_deal_id', allocationSize: 1)]
     #[ORM\Column]
-    protected ?int $id = null;
+    private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 }

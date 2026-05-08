@@ -10,7 +10,12 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
  * @property {(service: object) => *} fromEntity - Reads the field value from an existing service when opening edit.
  */
 
-export function useServicesForm(serviceList, createPath, updatePath, options = {}) {
+export function useServicesForm(
+    serviceList,
+    createPath,
+    updatePath,
+    options = {},
+) {
     const { t } = useI18n();
     const { request } = useApiRequest();
 

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface as CrmCompany;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface as CrmDeal;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use DateTimeImmutable;
@@ -39,11 +40,11 @@ abstract class AbstractProject implements ProjectInterface
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     protected ?DateTimeImmutable $endDate = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: CoreUserInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?User $responsibleUser = null;
+    protected ?CoreUserInterface $responsibleUser = null;
 
-    /** @var Collection<int, \Aurora\Module\Crm\Contact\Entity\ContactInterface> */
+    /** @var Collection<int, ContactInterface> */
     protected Collection $crmContacts;
 
     #[ORM\ManyToOne(targetEntity: CrmCompany::class)]
@@ -143,12 +144,12 @@ abstract class AbstractProject implements ProjectInterface
         return $this;
     }
 
-    public function getResponsibleUser(): ?User
+    public function getResponsibleUser(): ?CoreUserInterface
     {
         return $this->responsibleUser;
     }
 
-    public function setResponsibleUser(?User $responsibleUser): static
+    public function setResponsibleUser(?CoreUserInterface $responsibleUser): static
     {
         $this->responsibleUser = $responsibleUser;
 
@@ -160,7 +161,7 @@ abstract class AbstractProject implements ProjectInterface
         return $this->crmContacts;
     }
 
-    public function addCrmContact(\Aurora\Module\Crm\Contact\Entity\ContactInterface $contact): static
+    public function addCrmContact(ContactInterface $contact): static
     {
         if (!$this->crmContacts->contains($contact)) {
             $this->crmContacts->add($contact);
@@ -169,7 +170,7 @@ abstract class AbstractProject implements ProjectInterface
         return $this;
     }
 
-    public function removeCrmContact(\Aurora\Module\Crm\Contact\Entity\ContactInterface $contact): static
+    public function removeCrmContact(ContactInterface $contact): static
     {
         $this->crmContacts->removeElement($contact);
 

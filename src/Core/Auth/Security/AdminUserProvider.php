@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Security;
 
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserTypeEnum;
 use Aurora\Core\User\Repository\UserRepository;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 /**
  * Resolves admin/backend users only (type = admin).
  *
- * @implements UserProviderInterface<User>
+ * @implements UserProviderInterface<CoreUserInterface>
  */
 final readonly class AdminUserProvider implements UserProviderInterface
 {

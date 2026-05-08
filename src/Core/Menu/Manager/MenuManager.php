@@ -13,6 +13,7 @@ use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
+use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Repository\MenuItemRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Service\MenuLocationRegistry;
@@ -252,7 +253,7 @@ class MenuManager implements MenuManagerInterface
     protected function applyMenuItemInput(MenuItemInterface $item, MenuItemInputInterface $input, ?MenuItemInterface $parent = null): void
     {
         $targetType = $input->getTargetType();
-        if (null === $targetType) {
+        if (!$targetType instanceof MenuItemTargetTypeEnum) {
             throw new InvalidArgumentException('backend.menus.errors.target_type_invalid');
         }
 
@@ -263,7 +264,7 @@ class MenuManager implements MenuManagerInterface
         $item->setCssClass($input->getCssClass());
         $item->setVisibility($input->getVisibility());
 
-        if (null !== $parent) {
+        if ($parent instanceof MenuItemInterface) {
             $item->setParent($parent);
         }
     }
@@ -315,7 +316,7 @@ class MenuManager implements MenuManagerInterface
     private function validateTarget(MenuItemInputInterface $input): void
     {
         $targetType = $input->getTargetType();
-        if (null === $targetType) {
+        if (!$targetType instanceof MenuItemTargetTypeEnum) {
             throw new InvalidArgumentException('backend.menus.errors.target_type_invalid');
         }
 

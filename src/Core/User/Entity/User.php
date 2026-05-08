@@ -25,7 +25,7 @@ class User extends AbstractUser
     #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?User $manager = null;
 
-    /** @var Collection<int, User> */
+    /** @var Collection<int, CoreUserInterface> */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'manager')]
     protected Collection $subordinates;
 

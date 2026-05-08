@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

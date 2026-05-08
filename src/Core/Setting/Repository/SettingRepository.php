@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Setting\Entity\SettingInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

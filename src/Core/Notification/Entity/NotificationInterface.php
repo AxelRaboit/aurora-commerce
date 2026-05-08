@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Aurora\Core\Notification\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 
 interface NotificationInterface extends TimestampableInterface
 {
     public function getId(): ?int;
 
-    public function getRecipient(): User;
+    public function getRecipient(): CoreUserInterface;
 
-    public function setRecipient(User $user): static;
+    public function setRecipient(CoreUserInterface $user): static;
 
     public function getType(): string;
 

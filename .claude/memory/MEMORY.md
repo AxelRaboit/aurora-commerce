@@ -25,6 +25,7 @@ de désynchronisation possible. Aurora-client charge ces mémoires depuis
 - [convention_manager_hooks.md](convention_manager_hooks.md) — les 3 familles de hooks (createX, applyInput, audit*)
 - [convention_audit_payload.md](convention_audit_payload.md) — règle d'extensibilité des audit logs
 - [convention_doctrine_order_enum.md](convention_doctrine_order_enum.md) — utiliser `Order::Ascending->value` / `Order::Descending->value`, pas `'ASC'`/`'DESC'`
+- [convention_interface_over_concrete.md](convention_interface_over_concrete.md) — type-hint l'Interface (jamais la Concrete) dans repos/managers/serializers/setters/collections/array_map
 
 ### Structure du projet (où va quoi)
 - [structure_module_layout.md](structure_module_layout.md) — arborescence d'un dossier `src/Core/<Feature>/` ou `src/Module/<Module>/<Feature>/`
@@ -48,6 +49,7 @@ de désynchronisation possible. Aurora-client charge ces mémoires depuis
 - [pitfall_service_entity_repository.md](pitfall_service_entity_repository.md) — `ServiceEntityRepository` hardcode la classe → utiliser `ResolveTargetEntityRepository`
 
 ### Process / méthode
+- [process_make_ft_before_commit.md](process_make_ft_before_commit.md) — **toujours** `make ft` (fix + test) avant chaque commit, résoudre tous les problèmes
 - [process_audit_before_generalize.md](process_audit_before_generalize.md) — auditer avant de généraliser une convention sur N entités
 - [process_atomic_commits.md](process_atomic_commits.md) — un commit par entité lors des rollouts massifs
 

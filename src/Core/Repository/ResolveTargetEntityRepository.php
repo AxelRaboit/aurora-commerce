@@ -6,6 +6,7 @@ namespace Aurora\Core\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 
 /**
  * Base class for repositories whose entity may be substituted by a client via
@@ -29,20 +30,20 @@ use Doctrine\Persistence\ManagerRegistry;
 abstract class ResolveTargetEntityRepository extends ServiceEntityRepository
 {
     /**
-     * @param class-string $defaultClass   Aurora's default concrete entity class — used as a fallback
-     *                                     when no manager is registered for it.
-     * @param class-string $interfaceClass The entity contract — Doctrine resolves it to whichever
-     *                                     concrete class is currently mapped.
+     * @param class-string $defaultClass   aurora's default concrete entity class — used as a fallback
+     *                                     when no manager is registered for it
+     * @param class-string $interfaceClass the entity contract — Doctrine resolves it to whichever
+     *                                     concrete class is currently mapped
      */
     public function __construct(ManagerRegistry $registry, string $defaultClass, string $interfaceClass)
     {
-        parent::__construct($registry, self::resolveEntityClass($registry, $defaultClass, $interfaceClass));
+        parent::__construct($registry, $this->resolveEntityClass($registry, $defaultClass, $interfaceClass));
     }
 
-    private static function resolveEntityClass(ManagerRegistry $registry, string $defaultClass, string $interfaceClass): string
+    private function resolveEntityClass(ManagerRegistry $registry, string $defaultClass, string $interfaceClass): string
     {
         $manager = $registry->getManagerForClass($defaultClass);
-        if (null === $manager) {
+        if (!$manager instanceof ObjectManager) {
             return $defaultClass;
         }
 

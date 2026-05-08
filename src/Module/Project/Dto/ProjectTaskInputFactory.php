@@ -42,7 +42,11 @@ class ProjectTaskInputFactory implements ProjectTaskInputFactoryInterface
 
         $ids = [];
         foreach ($raw as $value) {
-            if (null === $value || '' === $value) {
+            if (null === $value) {
+                continue;
+            }
+
+            if ('' === $value) {
                 continue;
             }
 
