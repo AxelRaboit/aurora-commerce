@@ -47,6 +47,13 @@ const props = defineProps({
     createPath: { type: String, required: true },
     editPath: { type: String, required: true },
     previewPath: { type: String, required: true },
+    /**
+     * Extra fields to register on the post form. Lets clients extend the
+     * post editor without forking this component. The extra-form-fields
+     * slot is scoped on `form` (the reactive post payload) and `errors`.
+     * Example: { highlight: { default: false, fromEntity: (p) => p.highlight ?? false } }
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["saved", "back"]);
@@ -108,6 +115,9 @@ const form = reactive({
     translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
     relatedPostIds: [],
     commentsEnabled: true,
+    ...Object.fromEntries(
+        Object.entries(props.extraFields ?? {}).map(([key, def]) => [key, def.default]),
+    ),
 });
 
 const publishedAt = ref(null);
@@ -177,6 +187,10 @@ onMounted(async () => {
         if (data.success) {
             applyPostData(data.post, form, sideState);
             setRelatedPosts(data.post.relatedPosts ?? []);
+            // Hydrate client-registered extra fields from the loaded post.
+            for (const [key, def] of Object.entries(props.extraFields ?? {})) {
+                form[key] = def.fromEntity ? def.fromEntity(data.post) : (data.post[key] ?? def.default);
+            }
             snapshotBase(form.translations);
         }
     } catch {
@@ -596,6 +610,8 @@ function forceSave() {
                 />
             </div>
         </div>
+
+        <slot name="extra-form-fields" :form="form" :errors="errors" />
 
         <PostSeoPanel
             v-if="form.translations[activeLocale]"

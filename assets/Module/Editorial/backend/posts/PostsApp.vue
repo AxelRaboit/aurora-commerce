@@ -48,6 +48,13 @@ const props = defineProps({
     restorePath: { type: String, required: true },
     forceDeletePath: { type: String, required: true },
     emptyTrashPath: { type: String, default: "" },
+    /**
+     * Extra fields not directly used here (the post editor lives in
+     * PostEditor.vue which has its own extraFields prop), but kept on the
+     * list app for symmetry — clients can use it to drive extra-cells
+     * rendering when their slot needs the same config.
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const parsedPostTypes  = props.postTypes ?? [];
@@ -200,6 +207,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.posts.postType") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.status") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.tags.createdAt") }}</th>
+                            <slot name="extra-headers" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.tags.actions") }}</th>
                         </tr>
                     </thead>
@@ -225,6 +233,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                                 </AppBadge>
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
+                            <slot name="extra-cells" :post="post" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton color="sky" v-on:click="openPreview(post)">
