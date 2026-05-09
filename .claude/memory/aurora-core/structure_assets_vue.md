@@ -19,7 +19,17 @@ assets/
 │   └── utils/                              ← helpers JS partagés Core
 ├── Module/
 │   └── <Module>/
-│       └── backend/<plural>/                ← idem Core mais pour les modules
+│       ├── backend/                        ← exclusif contexte admin
+│       │   ├── <Plural>App.vue             ← composant top-level
+│       │   ├── components/                 ← sous-composants backend-only
+│       │   ├── composables/                ← logique métier backend
+│       │   └── utils/                      ← helpers backend-only
+│       ├── frontend/                       ← exclusif contexte public (si applicable)
+│       │   ├── composables/
+│       │   └── …
+│       └── shared/                         ← partagé entre backend ET frontend
+│           ├── components/                 ← composants réutilisés des deux côtés
+│           └── utils/                      ← enums, formatters, helpers cross-context
 └── shared/
     ├── components/                         ← AppButton, AppInput, AppModal, etc.
     │   ├── action/
@@ -34,6 +44,25 @@ assets/
     │   └── list/                           ← useListPage, useUrlSearchSync
     └── utils/                              ← buildPath, httpMethod, validation, …
 ```
+
+### Règle de placement dans un module
+
+Un fichier va dans `backend/`, `frontend/` ou `shared/` selon **qui l'importe** :
+
+| Importé uniquement par `backend/` | Importé uniquement par `frontend/` | Importé des deux côtés |
+|---|---|---|
+| → `backend/` | → `frontend/` | → `shared/` |
+
+**Modules sans frontend** (pas de contexte public) : tout va dans `backend/`, jamais à la racine du module.
+
+Exemples concrets :
+- `Billing/` (pas de frontend) → `backend/components/`, `backend/utils/`
+- `Crm/` (pas de frontend) → `backend/utils/`
+- `Editorial/` (backend + frontend) → `utils/editorjs/` utilisé des deux côtés → `shared/utils/editorjs/`
+- `Ecommerce/` (backend + frontend) → `utils/enums/`, `utils/formatMoney.js` utilisés des deux côtés → `shared/utils/`
+- `Vault/` (backend-only) → tout sous `backend/` ✅
+
+**Anti-pattern** : dossier `components/` ou `utils/` directement à la racine d'un module (même niveau que `backend/`). C'est un signe que le placement n'a pas été réfléchi.
 
 ## Composants Vue
 
