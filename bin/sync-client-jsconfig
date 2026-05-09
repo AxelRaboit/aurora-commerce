@@ -48,7 +48,7 @@ if (existsSync(clientModulesDir)) {
 }
 
 const jsconfig = {
-    compilerOptions: { baseUrl: ".", paths },
+    compilerOptions: { paths },
     include: ["assets/**/*", `${AURORA_VENDOR}/assets/**/*`],
 };
 
