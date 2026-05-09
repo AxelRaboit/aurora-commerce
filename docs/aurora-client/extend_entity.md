@@ -1,7 +1,7 @@
 # Étendre une entité Aurora
 
 Aurora expose un pattern d'extensibilité en 5 couches pour chaque entité
-avec page admin CRUD. Ce guide suit l'exemple de `Agency` (déjà implémenté
+avec page backend CRUD. Ce guide suit l'exemple de `Agency` (déjà implémenté
 dans le projet) qui ajoute un champ `code`.
 
 Pour le détail complet du pattern côté aurora-core, voir

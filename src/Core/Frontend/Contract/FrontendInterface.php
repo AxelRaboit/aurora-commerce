@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Contract;
 
-interface FrontInterface
+interface FrontendInterface
 {
     public function getSlug(): string;
 

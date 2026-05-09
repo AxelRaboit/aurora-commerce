@@ -295,7 +295,7 @@ end-to-end : factory `AgencyInputFactoryInterface` (`#[AsAlias]`),
 slots Vue (`extra-headers` / `extra-cells` / `extra-form-fields`) et
 override Twig.
 
-**Toutes les entités Aurora avec page admin CRUD sont instrumentées** (26 entités
+**Toutes les entités Aurora avec page backend CRUD sont instrumentées** (26 entités
 au total — voir `entity_extensibility_convention.md` section 2.1). Le pattern
 Agency s'applique identiquement à chacune.
 

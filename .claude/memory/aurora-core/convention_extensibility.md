@@ -2,7 +2,7 @@
 
 ## Règle
 
-Toute entité Aurora avec une page admin CRUD doit suivre le pattern Sylius en
+Toute entité Aurora avec une page backend CRUD doit suivre le pattern Sylius en
 5 couches, pour qu'un client puisse étendre **sans forker** aurora-core.
 
 ## Pourquoi

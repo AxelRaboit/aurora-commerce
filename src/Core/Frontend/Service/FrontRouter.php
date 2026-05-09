@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Service;
 
-use Aurora\Core\Frontend\Contract\FrontInterface;
+use Aurora\Core\Frontend\Contract\FrontendInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use RuntimeException;
@@ -16,7 +16,7 @@ final readonly class FrontRouter
         private SettingRepository $settingRepository,
     ) {}
 
-    public function getDefault(): FrontInterface
+    public function getDefault(): FrontendInterface
     {
         $slug = $this->settingRepository->get(ApplicationParameterEnum::DefaultFront->value, 'editorial') ?? 'editorial';
 

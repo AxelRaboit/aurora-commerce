@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Service;
 
-use Aurora\Core\Frontend\Contract\FrontInterface;
+use Aurora\Core\Frontend\Contract\FrontendInterface;
 
 final readonly class FrontRegistry
 {
-    /** @var list<FrontInterface> */
+    /** @var list<FrontendInterface> */
     private array $fronts;
 
-    /** @param iterable<FrontInterface> $fronts */
+    /** @param iterable<FrontendInterface> $fronts */
     public function __construct(iterable $fronts)
     {
         $sorted = iterator_to_array($fronts, false);
-        usort($sorted, static fn (FrontInterface $a, FrontInterface $b): int => $b->getPriority() <=> $a->getPriority());
+        usort($sorted, static fn (FrontendInterface $a, FrontendInterface $b): int => $b->getPriority() <=> $a->getPriority());
         $this->fronts = $sorted;
     }
 
-    /** @return list<FrontInterface> */
+    /** @return list<FrontendInterface> */
     public function all(): array
     {
         return $this->fronts;
     }
 
-    public function find(string $slug): ?FrontInterface
+    public function find(string $slug): ?FrontendInterface
     {
         foreach ($this->fronts as $front) {
             if ($front->getSlug() === $slug) {
@@ -36,7 +36,7 @@ final readonly class FrontRegistry
         return null;
     }
 
-    public function highest(): ?FrontInterface
+    public function highest(): ?FrontendInterface
     {
         return $this->fronts[0] ?? null;
     }

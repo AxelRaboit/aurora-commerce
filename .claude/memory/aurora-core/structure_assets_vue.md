@@ -48,7 +48,7 @@ assets/
 - **Tab suffixe** : onglet dans un AppTabs (`AdminPermissionsTab.vue`).
 
 ### Convention extension (rappel)
-Chaque `<Plural>App.vue` (composant top-level d'admin CRUD) expose :
+Chaque `<Plural>App.vue` (composant top-level d'backend CRUD) expose :
 - **Prop `extraFields`** (`{ type: Object, default: () => ({}) }`)
 - **3 slots scoped** : `extra-headers`, `extra-cells`, `extra-form-fields`
 
@@ -167,5 +167,5 @@ Cf `aurora-core/Makefile` (target `build` / `dev`) pour les détails.
 - ❌ Logique métier dans le composant (calculs complexes, transitions de
   statut). Mettre dans un composable dédié.
 - ❌ Composant naming inconsistant : `AgenciesApp` (plural) vs
-  `PostEditor` (singular). Pour les admin CRUD top-level → toujours
+  `PostEditor` (singular). Pour les backend CRUD top-level → toujours
   `<Plural>App`.

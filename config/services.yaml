@@ -29,7 +29,7 @@ services:
     _instanceof:
         Aurora\Core\Media\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
-        Aurora\Core\Frontend\Contract\FrontInterface:
+        Aurora\Core\Frontend\Contract\FrontendInterface:
             tags: [aurora.front]
         Aurora\Core\Menu\Contract\MenuLocationProviderInterface:
             tags: [aurora.menu_location_provider]
@@ -103,7 +103,7 @@ services:
     Aurora\Module\Editorial\EditorialModule:
         tags: [aurora.module]
 
-    Aurora\Module\Editorial\EditorialFront:
+    Aurora\Module\Editorial\EditorialFrontend:
         tags: [aurora.front]
 
     Aurora\Module\Crm\CrmModule:

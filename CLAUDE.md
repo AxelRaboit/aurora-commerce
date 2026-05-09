@@ -32,7 +32,7 @@ pour la cartographie complète (templates, assets, namespaces Twig, etc.).
 
 ## 2. Convention d'extensibilité (centrale, à respecter scrupuleusement)
 
-Toute entité de aurora-core qui a une page admin CRUD suit le pattern Sylius
+Toute entité de aurora-core qui a une page backend CRUD suit le pattern Sylius
 en 5 couches. **Doc canonique** :
 [`docs/aurora-core/dev/entity_extensibility_convention.md`](docs/aurora-core/dev/entity_extensibility_convention.md).
 
@@ -175,7 +175,7 @@ patterns, location registries, etc.).
    `seq_core_<entity>_id`.
 2. Ajouter au `resolve_target_entities` de `AuroraBundle.php`.
 3. Repository qui étend `ResolveTargetEntityRepository`.
-4. **Si admin CRUD** : 4 fichiers DTO (Input, InputInterface,
+4. **Si backend CRUD** : 4 fichiers DTO (Input, InputInterface,
    InputFactoryInterface, InputFactory) + Manager (Interface + class non-final
    + AsAlias + hooks) + Serializer (Interface + class non-final + AsAlias) +
    Controller (type-hint les interfaces) + Vue (extraFields + slots).

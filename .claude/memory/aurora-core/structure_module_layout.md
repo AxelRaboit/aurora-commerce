@@ -53,7 +53,7 @@ Sinon `src/Core/<Entité>/`.
 
 **Toujours** : `Entity/`, `Repository/`.
 
-**Si admin CRUD** (entité instrumentée, cf
+**Si backend CRUD** (entité instrumentée, cf
 [`convention_extensibility.md`](convention_extensibility.md)) : `Dto/`,
 `Manager/`, `Serializer/`, `Controller/Backend/`, `View/`.
 

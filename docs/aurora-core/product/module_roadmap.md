@@ -107,4 +107,4 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 - Tous les nouveaux modules doivent préfixer leurs tables en `core_`
 - Les modules liés au CRM (Contrats, Tickets) doivent réutiliser les entités `CrmContact` et `CrmCompany` existantes
 - Chaque module doit implémenter `ModuleInterface` et être activable/désactivable via `ApplicationParameterEnum`
-- Privilégier l'intégration dans le frontend via `FrontInterface` si le module a une partie publique
+- Privilégier l'intégration dans le frontend via `FrontendInterface` si le module a une partie publique

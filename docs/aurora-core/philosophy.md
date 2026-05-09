@@ -46,7 +46,7 @@ ne dépend que de Core.
 
 **Les modules** sont des domaines métier autonomes. Chacun implémente
 `ModuleInterface` pour déclarer sa navigation et ses permissions, et peut
-exposer une partie frontend publique via `FrontInterface`. La dépendance entre
+exposer une partie frontend publique via `FrontendInterface`. La dépendance entre
 modules est unidirectionnelle et documentée (Ecommerce → Erp → Core, jamais
 l'inverse).
 
@@ -54,7 +54,7 @@ l'inverse).
 
 ## Le pattern d'extensibilité en 5 couches
 
-Chaque entité Aurora avec une page admin CRUD suit un pattern en 5 couches.
+Chaque entité Aurora avec une page backend CRUD suit un pattern en 5 couches.
 Ce n'est pas une convention arbitraire — chaque couche répond à un besoin
 d'extension précis.
 

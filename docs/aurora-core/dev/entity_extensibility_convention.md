@@ -42,7 +42,7 @@ ajoute son input, etc.
 
 ## 2. Quand appliquer cette convention ?
 
-**Critère unique et net** : *l'entité a-t-elle une page admin CRUD autonome,
+**Critère unique et net** : *l'entité a-t-elle une page backend CRUD autonome,
 avec un tableau ET un formulaire de création/édition dédié ?*
 
 - **Oui** → appliquer le pattern complet (5 couches)
@@ -718,7 +718,7 @@ Pour une nouvelle entité créée from-scratch dans aurora-core :
 - [ ] Référencer dans `src/AuroraBundle.php::$resolve_target_entities`
 - [ ] Repository qui étend `ResolveTargetEntityRepository`
 - [ ] Migration Doctrine standard
-- [ ] **Si l'entité a une page admin CRUD** :
+- [ ] **Si l'entité a une page backend CRUD** :
   - Créer les 4 fichiers DTO (Input + InputInterface + Factory +
     FactoryInterface)
   - Créer les 2 fichiers Manager (Manager + ManagerInterface) avec hooks

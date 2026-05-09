@@ -177,21 +177,21 @@ Module/<Name>/<Domain>/{Entity,Manager,Repository,Dto,Service,Serializer,Enum,Co
 
 | Domain  | What it contains |
 |---------|-----------------|
-| Contact | Entity, Repository, DTO (ContactInput), Serializer, Controller (admin CRUD + detail + activity timeline) |
-| Company | Entity, Repository, DTO, Serializer, Controller (admin CRUD + detail) |
-| Deal    | Entity, Repository, DTO, Serializer, Enum (DealStageEnum), Controller (admin CRUD + Kanban) |
+| Contact | Entity, Repository, DTO (ContactInput), Serializer, Controller (backend CRUD + detail + activity timeline) |
+| Company | Entity, Repository, DTO, Serializer, Controller (backend CRUD + detail) |
+| Deal    | Entity, Repository, DTO, Serializer, Enum (DealStageEnum), Controller (backend CRUD + Kanban) |
 
 ### 4.3 Module/Erp
 
 | Domain  | What it contains |
 |---------|-----------------|
-| Product | Entity (`reference` auto-generated via `SequenceGenerator`), Repository, DTO (ProductInput), Serializer, Enum (ProductStatusEnum, CurrencyEnum), Controller (admin CRUD) |
+| Product | Entity (`reference` auto-generated via `SequenceGenerator`), Repository, DTO (ProductInput), Serializer, Enum (ProductStatusEnum, CurrencyEnum), Controller (backend CRUD) |
 
 ### 4.4 Module/Ecommerce
 
 | Domain  | What it contains |
 |---------|-----------------|
-| Listing | Entity (FK to `Erp\Product`, `reference` auto-generated), Repository, DTO, Serializer, Manager, Controllers (admin CRUD + public Frontend) |
+| Listing | Entity (FK to `Erp\Product`, `reference` auto-generated), Repository, DTO, Serializer, Manager, Controllers (backend CRUD + public Frontend) |
 | Cart    | Entities (Cart, CartItem — `reference` auto-generated), Manager + Contract, Repository, Serializer, Controller |
 | Order   | Entities (Order — `number` sequential via `SequenceGenerator`, OrderLine — `reference` auto-generated), Manager + Contract, Repository, Serializer, Enum (OrderStatusEnum), Services (OrderNotificationService, OrderRefundService), Payment (StripeService), Controllers (admin + front) |
 
@@ -213,21 +213,21 @@ Module/<Name>/<Domain>/{Entity,Manager,Repository,Dto,Service,Serializer,Enum,Co
 
 | Domain           | What it contains |
 |------------------|-----------------|
-| Document         | Entity, Manager, Repository, DTO, Serializer, Enum, Controller (admin CRUD) |
-| DocumentCategory | Entity, Manager, Repository, DTO, Serializer, Controller (admin CRUD) |
+| Document         | Entity, Manager, Repository, DTO, Serializer, Enum, Controller (backend CRUD) |
+| DocumentCategory | Entity, Manager, Repository, DTO, Serializer, Controller (backend CRUD) |
 
 ### 4.8 Module/Planning
 
 | Domain        | What it contains |
 |---------------|-----------------|
-| Planning      | Entity (Planning — container/calendar), Manager, Repository, DTO, Serializer, Controller (admin CRUD) |
+| Planning      | Entity (Planning — container/calendar), Manager, Repository, DTO, Serializer, Controller (backend CRUD) |
 | PlanningEvent | Entity (PlanningEvent — individual event in a planning), Manager, Repository, DTO, Serializer, Controller |
 
 ### 4.9 Module/Project
 
 | Domain      | What it contains |
 |-------------|-----------------|
-| Project     | Entities (Project, ProjectColumn, ProjectLabel, ProjectSprint, ProjectSavedView), Manager, Repository, DTO, Serializer, Enum, Controller (admin CRUD + Kanban) |
+| Project     | Entities (Project, ProjectColumn, ProjectLabel, ProjectSprint, ProjectSavedView), Manager, Repository, DTO, Serializer, Enum, Controller (backend CRUD + Kanban) |
 | ProjectTask | Entities (ProjectTask, ProjectTaskComment, ProjectTaskItem, ProjectTaskTimeEntry), Manager, Repository, DTO, Serializer, Enum, Controller |
 
 ---
@@ -499,7 +499,7 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 - [x] Module/Crm — Contact, Company, Deal (CRUD + Kanban)
 - [x] Permission registry (ModulePermissionVoter + per-module `#[IsGranted]`)
 - [x] Audit log / Activity timeline (Core — cross-module action logging, dev viewer)
-- [x] Module/Erp — Product entity (inventory backend, admin CRUD)
+- [x] Module/Erp — Product entity (inventory backend, backend CRUD)
 - [x] Module/Ecommerce — Listing, Cart, Order, Payment (Stripe), public Frontend
 - [x] Module/Billing — Invoice management, Tiers (supplier/client/…), OCR pipeline (docTR + Ollama VLM), compliance
 - [x] Module/Photo — Client gallery delivery (galleries, items, invites, picks, watermarking)
