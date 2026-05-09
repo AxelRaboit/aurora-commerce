@@ -90,4 +90,4 @@ Quand on écrit un nouveau Manager :
 ## Doc canonique
 
 Section 3 (couche 3 du pattern) de
-[`docs/dev/entity_extensibility_convention.md`](../../docs/dev/entity_extensibility_convention.md).
+[`docs/aurora-core/dev/entity_extensibility_convention.md`](../../docs/aurora-core/dev/entity_extensibility_convention.md).

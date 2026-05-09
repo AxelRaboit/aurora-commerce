@@ -48,10 +48,8 @@ Exemple : Crm/Company + Crm/Contact dans un seul commit (`7d3a1b7`).
 
 ### Suivi
 
-Maintenir un tracker de progression (cf
-`docs/dev/extensibility_rollout.md`) avec une checkbox par entité + le
-hash du commit. Permet de visualiser l'avancement et de retrouver un
-commit rapidement.
+Maintenir un tracker de progression (liste + hash de commit) pour visualiser
+l'avancement lors d'un rollout massif.
 
 ## Préférence utilisateur
 
@@ -62,5 +60,4 @@ commits. À respecter.
 ## Source
 
 Méthode appliquée pour le rollout d'extensibilité Aurora.
-24 entités → ~24 commits, dont quelques-uns groupés (Crm 2 entités, Billing 4 entités, Project 11 managers). Doc tracker :
-[`docs/dev/extensibility_rollout.md`](../../docs/dev/extensibility_rollout.md).
+24 entités → ~24 commits, dont quelques-uns groupés (Crm 2 entités, Billing 4 entités, Project 11 managers).

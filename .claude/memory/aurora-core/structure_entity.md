@@ -186,7 +186,7 @@ Permet au client de substituer la concrete via la même interface.
 
 Le nom de la sequence est detecté à boot par `SequencePrefixConflictListener`
 qui throw si un client réutilise un préfixe `seq_core_*`. Cf
-`docs/dev/extending_aurora.md` section "Sequence prefix convention".
+`docs/aurora-core/dev/extending_aurora.md` section "Sequence prefix convention".
 
 ## Tables
 

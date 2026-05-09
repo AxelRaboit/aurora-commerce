@@ -17,7 +17,7 @@ pour la collaboration.
 - **Code (variables, classes, comments)** : anglais (convention du projet).
 - **Commit messages** : anglais (convention du projet, cohérent avec
   l'historique git).
-- **Docs `docs/dev/`** : français pour la prose, anglais pour le code/
+- **Docs `docs/aurora-core/`** : français pour la prose, anglais pour le code/
   exemples (cohérent avec les docs existantes).
 
 ### Style à éviter

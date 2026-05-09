@@ -38,7 +38,7 @@ Les 5 couches :
    `extra-headers`/`extra-cells`/`extra-form-fields` ; composable
    `useXxxForm.js` unifié create+edit avec option `extraFields`.
 
-**Doc canonique** : [`docs/dev/entity_extensibility_convention.md`](../../docs/dev/entity_extensibility_convention.md).
+**Doc canonique** : [`docs/aurora-core/dev/entity_extensibility_convention.md`](../../docs/aurora-core/dev/entity_extensibility_convention.md).
 
 ## Variantes acceptées
 
@@ -54,5 +54,4 @@ discrétion. Toute nouvelle variante doit être discutée avant d'être ajoutée
 
 ## État
 
-✅ Rollout terminé sur 24 entités. Voir
-[`docs/dev/extensibility_rollout.md`](../../docs/dev/extensibility_rollout.md).
+✅ Rollout terminé sur 24 entités (+ Planning/PlanningEvent). Doc tracker supprimé.

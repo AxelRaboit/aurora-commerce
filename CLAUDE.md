@@ -161,8 +161,6 @@ php bin/console doctrine:migrations:diff
 ## 7. État du rollout d'extensibilité
 
 ✅ **24/24 entités instrumentées** (rollout terminé).
-- Tracker historique : [`docs/dev/extensibility_rollout.md`](docs/dev/extensibility_rollout.md)
-  (peut être supprimé, gardé comme archive)
 - Commits : `git log --oneline --grep="instrument"` pour la liste
 
 Plus aucune entité ne devrait avoir un Manager `final readonly` ou un dossier

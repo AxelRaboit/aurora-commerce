@@ -5,7 +5,7 @@ référencé par `CLAUDE.md` à la racine. Les futures sessions peuvent enrichir
 cette base — toute nouvelle convention/pattern/piège rencontré doit être ajouté
 ici sous forme d'un fichier dédié + une ligne dans cet index.
 
-**Principe** : ne pas dupliquer le contenu des docs `docs/dev/*.md` — y
+**Principe** : ne pas dupliquer le contenu des docs `docs/aurora-core/dev/*.md` — y
 pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 **heuristiques** transversaux qui ne vivent pas naturellement dans les docs.
 
