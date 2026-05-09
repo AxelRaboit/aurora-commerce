@@ -51,6 +51,28 @@ ou un template Twig depuis un projet client.
 
 ---
 
+## 📖 Documentation développeur (symlinks vers vendor via `make aurora-update`)
+
+Les docs sont des **symlinks** vers `vendor/axelraboit/aurora/docs/`.
+**Ne pas éditer ces fichiers** — ils vivent dans vendor.
+
+### docs/aurora-client/ — Guide dev pour travailler dans ce projet
+- [setup.md](docs/aurora-client/setup.md) — Installation locale
+- [architecture.md](docs/aurora-client/architecture.md) — Structure du projet, relation avec aurora-core
+- [dev_workflow.md](docs/aurora-client/dev_workflow.md) — Commandes du quotidien
+- [extend_entity.md](docs/aurora-client/extend_entity.md) — Étendre une entité Aurora (5 couches)
+- [add_module.md](docs/aurora-client/add_module.md) — Créer un module client complet
+- [database.md](docs/aurora-client/database.md) — Migrations, fixtures, séquences
+- [assets_vue.md](docs/aurora-client/assets_vue.md) — Composants Vue côté client
+- [update_aurora.md](docs/aurora-client/update_aurora.md) — Mettre à jour aurora-core
+
+### docs/aurora-core/ — Architecture interne du bundle
+- [dev/app_architecture.md](docs/aurora-core/dev/app_architecture.md) — Architecture, modules, Vite aliases
+- [dev/entity_extensibility_convention.md](docs/aurora-core/dev/entity_extensibility_convention.md) — Convention d'extensibilité des entités
+- [dev/extending_aurora.md](docs/aurora-core/dev/extending_aurora.md) — Points d'extension publics du bundle
+
+---
+
 ## Quand ajouter une nouvelle mémoire ?
 
 Si pendant une session tu rencontres :

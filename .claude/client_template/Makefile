@@ -361,6 +361,11 @@ sync-claude-md: ## Refresh CLAUDE.md + .claude/memory symlinks from aurora-core 
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-core .claude/memory/aurora-core
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-client .claude/memory/aurora-client
 	@echo "✅ .claude/memory/aurora-core + aurora-client symlinked from vendor"
+	@mkdir -p docs
+	@rm -rf docs/aurora-core docs/aurora-client
+	@ln -sfn ../$(AURORA)/docs/aurora-core docs/aurora-core
+	@ln -sfn ../$(AURORA)/docs/aurora-client docs/aurora-client
+	@echo "✅ docs/aurora-core + aurora-client symlinked from vendor"
 
 sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do not edit by hand)
 	@if [ -f $(AURORA)/.claude/client_template/Makefile ]; then \

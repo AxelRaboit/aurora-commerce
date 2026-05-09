@@ -1,0 +1,206 @@
+# Assets Vue — Composants côté client
+
+## Structure
+
+```
+assets/client/
+├── Module/
+│   └── <ModuleName>/
+│       ├── admin/
+│       │   └── <Feature>App.vue      # composant admin du module
+│       └── frontend/
+│           └── <Feature>App.vue      # composant frontend public
+├── Overrides/
+│   └── backend/
+│       └── <feature>/
+│           └── <Feature>App.vue      # remplace un composant Aurora
+└── locales/
+    ├── fr.js                          # traductions Vue-only (FR)
+    └── en.js                          # traductions Vue-only (EN)
+```
+
+---
+
+## Conventions de nommage
+
+Les composants sont enregistrés automatiquement par Aurora selon leur chemin :
+
+| Fichier | Identifiant vue_component |
+|---|---|
+| `assets/client/Module/Tracking/admin/ProjectsApp.vue` | `tracking/admin/ProjectsApp` |
+| `assets/client/Overrides/backend/agencies/AgenciesApp.vue` | `core/backend/agencies/AgenciesApp` |
+
+Dans Twig :
+
+```twig
+{{ vue_component('tracking/admin/ProjectsApp') }}
+{{ vue_component('core/backend/agencies/AgenciesApp') }}
+```
+
+---
+
+## Aliases Vite disponibles
+
+| Alias | Chemin |
+|---|---|
+| `@` | `vendor/axelraboit/aurora/assets/` |
+| `@core` | `vendor/axelraboit/aurora/assets/Core/` |
+| `@shared` | `vendor/axelraboit/aurora/assets/shared/` |
+| `@editorial` | `vendor/axelraboit/aurora/assets/Module/Editorial/` |
+| `@crm` | `vendor/axelraboit/aurora/assets/Module/Crm/` |
+| `@erp` | `vendor/axelraboit/aurora/assets/Module/Erp/` |
+| `@ged` | `vendor/axelraboit/aurora/assets/Module/Ged/` |
+| `@planning` | `vendor/axelraboit/aurora/assets/Module/Planning/` |
+| `@client` | `assets/client/` |
+
+Les aliases sont régénérés dans `jsconfig.json` via `make sync-jsconfig`.
+
+---
+
+## Composants partagés Aurora (`@shared`)
+
+Toujours utiliser les composants `App*` d'Aurora plutôt que les éléments HTML bruts.
+
+| Composant | Usage |
+|---|---|
+| `AppInput` | Champ texte (`<input>`) |
+| `AppTextarea` | Zone de texte (`<textarea>`) |
+| `AppSelect` | Liste déroulante (`<select>`) |
+| `AppButton` | Bouton (`<button>`) |
+| `AppDatePicker` | Sélecteur de date (jamais `type="date"` natif) |
+| `AppModal` | Modale (API `:show` + `@close`, jamais `v-model:open`) |
+| `AppCheckbox` | Case à cocher |
+| `AppBadge` | Badge statut |
+
+Import :
+
+```vue
+<script setup>
+import AppInput from '@shared/components/AppInput.vue';
+import AppButton from '@shared/components/AppButton.vue';
+import AppModal from '@shared/components/AppModal.vue';
+</script>
+```
+
+---
+
+## Conventions Vue
+
+### Directives
+
+```vue
+<!-- ✅ Correct -->
+<button v-on:click="handleClick">...</button>
+<div :class="{ active: isActive }">...</div>
+
+<!-- ❌ Éviter -->
+<button @click="handleClick">...</button>
+```
+
+### Privacy dans les composables
+
+```js
+// ✅ Variable module-level non exportée (pas de préfixe _)
+const cache = new Map();
+
+export function useMyComposable() {
+  // ...
+}
+```
+
+```js
+// ✅ Champs privés dans les classes
+class MyService {
+  #config;
+  constructor(config) { this.#config = config; }
+}
+```
+
+### Formulaires (`editForm`)
+
+`editForm` ne doit contenir **que** les champs envoyés au backend :
+
+```js
+// ✅ Correct
+const editForm = reactive({
+  title: '',
+  description: '',
+});
+
+// Submit
+await request(url, { ...editForm });  // spread — envoie tout
+```
+
+```js
+// ❌ Éviter — champs parasites
+const editForm = reactive({
+  title: '',
+  isLoading: false,    // état UI — ne pas mettre ici
+  displayLabel: computed(() => editForm.title.toUpperCase()),  // computed — ne pas mettre ici
+});
+```
+
+---
+
+## Traductions Vue (`locales/`)
+
+Les fichiers `assets/client/locales/{fr,en}.js` contiennent les labels
+utilisés **uniquement côté Vue** (boutons, labels de permissions dans l'UI) :
+
+```js
+// assets/client/locales/fr.js
+export default {
+  tracking: {
+    projects: {
+      title: 'Projets',
+      create: 'Nouveau projet',
+    },
+  },
+  backend: {
+    permissions: {
+      names: {
+        tracking: {
+          projects: {
+            manage: 'Gérer les projets',
+            delete: 'Supprimer les projets',
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+> **Important** : pour chaque `NavPermission('tracking.projects.manage')` déclaré
+> dans `TrackingModule`, ajouter la clé `backend.permissions.names.tracking.projects.manage`
+> en FR **et** EN dans les locales Vue. Sans ça, la permission s'affiche avec
+> sa clé brute dans l'UI de gestion des droits.
+
+---
+
+## Overrides de composants Aurora
+
+Pour remplacer un composant Aurora existant, créer un fichier sous
+`assets/client/Overrides/` en miroir du chemin Aurora :
+
+```
+# Composant Aurora
+vendor/axelraboit/aurora/assets/Core/backend/agencies/AgenciesApp.vue
+                                 ↓
+# Override client
+assets/client/Overrides/backend/agencies/AgenciesApp.vue
+```
+
+Le chemin `vue_component` reste identique — Aurora choisit automatiquement
+le composant client s'il existe.
+
+---
+
+## Lancer le dev serveur
+
+```bash
+make dev     # Vite en mode watch — rechargement à chaud
+make build   # Build de production
+```
+
+En développement, Vite est lancé automatiquement par `make start`.

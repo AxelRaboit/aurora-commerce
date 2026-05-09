@@ -1,0 +1,151 @@
+# Architecture — Structure du projet
+
+## Vue d'ensemble
+
+Aurora-client est une **application Symfony cliente** qui consomme `axelraboit/aurora`
+(aurora-core) comme package Composer. Aurora-core fournit toute l'infrastructure
+(modules métier, entités, UI admin, assets Vue) — aurora-client n'écrit que le **delta** :
+les extensions, les modules propres au projet, les overrides.
+
+```
+aurora-client/
+├── src/                    # Code PHP client
+│   ├── Entity/             # Entités étendues (surcharge d'entités Aurora)
+│   ├── Dto/                # DTOs étendus + factories
+│   ├── Manager/            # Managers étendus
+│   ├── Serializer/         # Serializers étendus
+│   ├── Controller/         # Controllers propres au client
+│   ├── Service/            # Services stateless propres au client
+│   ├── EventListener/      # Listeners d'événements
+│   └── Module/             # Modules métier propres au client
+│       └── Tracking/       # Exemple : module de suivi de projets
+├── assets/client/          # Assets Vue côté client
+│   ├── Module/             # Composants pour les modules client
+│   │   └── Tracking/       # Composants du module Tracking
+│   ├── Overrides/          # Composants qui remplacent des composants Aurora
+│   └── locales/            # Traductions Vue-only (en.js, fr.js)
+├── templates/              # Templates Twig qui surchargent Aurora
+│   ├── Core/               # Overrides de templates Core Aurora
+│   └── Module/             # Templates des modules client
+├── config/                 # Configuration Symfony
+│   ├── packages/           # YAML bundles (doctrine, twig, security…)
+│   ├── routes.yaml         # Chargement des routes (Aurora + client)
+│   └── services.yaml       # Enregistrement des services + modules
+├── migrations/             # Migrations Doctrine propres au client
+└── vendor/axelraboit/aurora/  # Aurora-core (lecture seule, jamais modifié)
+```
+
+---
+
+## Relation avec aurora-core
+
+```
+aurora-client  ──uses──►  vendor/axelraboit/aurora  (aurora-core)
+                                │
+                                ├── src/              bundle PHP
+                                ├── assets/           composants Vue
+                                ├── templates/        templates Twig
+                                ├── docs/             documentation
+                                └── .claude/memory/   mémoires Claude
+```
+
+**Règle d'or** : ne jamais modifier de fichier sous `vendor/`. Toute
+personnalisation passe par les points d'extension d'Aurora (héritage,
+`#[AsAlias]`, slots Vue, override Twig). Voir [extend_entity.md](extend_entity.md).
+
+---
+
+## Configuration Doctrine
+
+`config/packages/doctrine.yaml` déclare deux mappings :
+
+```yaml
+doctrine:
+    orm:
+        mappings:
+            AppEntity:     { dir: src/Entity,  prefix: App\Entity }
+            AuroraClient:  { dir: src/Module,  prefix: App\Module }
+        resolve_target_entities:
+            Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+```
+
+- **AppEntity** — entités qui étendent des entités Aurora (ex: `Agency`)
+- **AuroraClient** — modules client complets (ex: `Module/Tracking/`)
+- **resolve_target_entities** — substitue une interface Aurora par l'entité cliente
+
+---
+
+## Enregistrement des modules
+
+Dans `config/services.yaml`, chaque module client est taggé `aurora.module` :
+
+```yaml
+App\Module\Tracking\TrackingModule:
+    tags: [aurora.module]
+```
+
+Si le module a une partie frontend publique, il implémente aussi `FrontInterface` :
+
+```yaml
+App\Module\Tracking\TrackingFront:
+    tags: [aurora.front]
+```
+
+Aurora collecte tous les services taggés et les intègre automatiquement dans la
+sidebar admin, le système de permissions et le routing frontend.
+
+---
+
+## Chargement des assets
+
+`assets/client/` est mappé à l'alias `@client` dans Vite. Aurora scanne
+`@client/Module/**/*.vue` et enregistre les composants avec la même convention
+que ses propres modules :
+
+```
+assets/client/Module/Tracking/admin/ProjectsApp.vue
+→ vue_component('tracking/admin/ProjectsApp')
+```
+
+Les overrides de composants Aurora vivent sous `assets/client/Overrides/` :
+
+```
+assets/client/Overrides/backend/agencies/AgenciesApp.vue
+→ remplace le composant Aurora 'core/backend/agencies/AgenciesApp'
+```
+
+---
+
+## Chargement des templates
+
+Aurora prepend automatiquement `templates/` du projet client devant ses propres
+templates pour chaque namespace Twig (`@Core`, `@Editorial`, `@Crm`, etc.).
+Un fichier `templates/Core/backend/agencies/index.html.twig` surcharge donc
+`vendor/axelraboit/aurora/templates/Core/backend/agencies/index.html.twig`
+sans aucune configuration supplémentaire.
+
+---
+
+## Translations
+
+Les traductions client suivent deux canaux :
+
+| Canal | Fichiers | Usage |
+|---|---|---|
+| Symfony (Twig/PHP) | `src/Module/*/translations/messages.{fr,en}.yaml` | Labels admin, emails, validations |
+| Vue (vue-i18n) | `assets/client/locales/{fr,en}.js` | Labels Vue-only (boutons, permissions UI) |
+
+Enregistrement dans `config/services.yaml` :
+
+```yaml
+App\Core\Command\DumpJsTranslationsCommand:
+    arguments:
+        $sourceDirs:
+            - '%kernel.project_dir%/src/Module/Tracking/translations'
+```
+
+Après avoir modifié un YAML de traduction :
+
+```bash
+make i18n   # régénère assets/locales/generated/*.json
+```

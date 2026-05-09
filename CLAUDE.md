@@ -25,7 +25,7 @@ travailler sur `aurora-core` et son écosystème (`aurora-client`).
   `src/Module/{Billing,Crm,Ecommerce,Editorial,Erp,Photo,Project,Ged}/`
   (modules métier autonomes).
 
-**Lecture rapide** : [`docs/dev/app_architecture.md`](docs/dev/app_architecture.md)
+**Lecture rapide** : [`docs/aurora-core/dev/app_architecture.md`](docs/aurora-core/dev/app_architecture.md)
 pour la cartographie complète (templates, assets, namespaces Twig, etc.).
 
 ---
@@ -34,7 +34,7 @@ pour la cartographie complète (templates, assets, namespaces Twig, etc.).
 
 Toute entité de aurora-core qui a une page admin CRUD suit le pattern Sylius
 en 5 couches. **Doc canonique** :
-[`docs/dev/entity_extensibility_convention.md`](docs/dev/entity_extensibility_convention.md).
+[`docs/aurora-core/dev/entity_extensibility_convention.md`](docs/aurora-core/dev/entity_extensibility_convention.md).
 
 **Résumé des règles dures** :
 
@@ -83,10 +83,10 @@ déclare son propre `repositoryClass` sur l'entité concrète.
 ## 3. Côté client (aurora-client)
 
 Pour étendre une entité depuis l'app client :
-- **Cheatsheet** : [`docs/dev/client_quickstart.md`](docs/dev/client_quickstart.md)
+- **Cheatsheet** : [`docs/aurora-core/dev/client_quickstart.md`](docs/aurora-core/dev/client_quickstart.md)
 - **Guide pas-à-pas** (exemple Agency complet) :
-  [`docs/dev/extending_agency_pilot.md`](docs/dev/extending_agency_pilot.md)
-- **Vue d'ensemble** : [`docs/dev/extending_aurora.md`](docs/dev/extending_aurora.md)
+  [`docs/aurora-core/dev/extending_agency_pilot.md`](docs/aurora-core/dev/extending_agency_pilot.md)
+- **Vue d'ensemble** : [`docs/aurora-core/dev/extending_aurora.md`](docs/aurora-core/dev/extending_aurora.md)
 
 Patterns clés pour étendre :
 - Substituer une entité : étendre `Abstract<Name>`, déclarer
