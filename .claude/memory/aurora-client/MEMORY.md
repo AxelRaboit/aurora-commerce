@@ -25,6 +25,12 @@ client.
 - [pattern_override_twig.md](pattern_override_twig.md) — namespace prepend
   automatique du bundle
 
+## Index — patterns avancés
+
+- [pattern_add_custom_permissions.md](pattern_add_custom_permissions.md) —
+  ajouter des permissions custom via `ModuleInterface` (auto-tag, groupage par
+  module id, traduction obligatoire)
+
 ## Index — pièges côté client
 
 - [pitfall_create_hook_required.md](pitfall_create_hook_required.md) —

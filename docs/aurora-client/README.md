@@ -16,4 +16,5 @@ conventions d'extensibilité, ops) sont dans [`aurora-core/`](../aurora-core/REA
 | [add_module.md](add_module.md) | Créer un module client complet |
 | [database.md](database.md) | Migrations, fixtures, séquences |
 | [assets_vue.md](assets_vue.md) | Composants Vue côté client |
+| [custom_permissions.md](custom_permissions.md) | Ajouter des permissions custom à un module Aurora |
 | [update_aurora.md](update_aurora.md) | Mettre à jour aurora-core (`make aurora-update`) |
