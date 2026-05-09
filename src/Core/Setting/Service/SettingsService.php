@@ -20,7 +20,7 @@ use Aurora\Core\Setting\Repository\SettingRepository;
  * The repository is intentionally kept rule-free so direct persistence
  * (migrations, seeders, the sync command) is not double-validated.
  */
-final readonly class SettingsManager
+final readonly class SettingsService
 {
     public function __construct(
         private SettingRepository $repository,

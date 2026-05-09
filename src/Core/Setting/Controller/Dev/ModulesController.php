@@ -10,7 +10,7 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
-use Aurora\Core\Setting\Service\SettingsManager;
+use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\Setting\View\ModulesViewBuilder;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -29,7 +29,7 @@ final class ModulesController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly SettingsManager $settingsManager,
+        private readonly SettingsService $settingsManager,
         private readonly ModulesViewBuilder $viewBuilder,
         private readonly UserPasswordHasherInterface $passwordHasher,
     ) {}

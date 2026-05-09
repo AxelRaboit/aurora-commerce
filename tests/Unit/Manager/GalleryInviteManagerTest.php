@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Service;
+namespace Aurora\Tests\Unit\Manager;
 
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Core\Sequence\SequenceGenerator;
@@ -11,7 +11,7 @@ use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
 use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
 use Aurora\Module\Photo\Gallery\Service\GalleryAccessService;
-use Aurora\Module\Photo\Gallery\Service\GalleryInviteManager;
+use Aurora\Module\Photo\Gallery\Manager\GalleryInviteManager;
 use Aurora\Module\Photo\Gallery\Service\GalleryNotificationService;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;

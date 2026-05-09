@@ -9,7 +9,7 @@ use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
-use Aurora\Core\Setting\Service\SettingsManager;
+use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\Setting\View\ParametersViewBuilder;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;
@@ -27,7 +27,7 @@ final class ParametersController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly SettingsManager $settingsManager,
+        private readonly SettingsService $settingsManager,
         private readonly ParametersViewBuilder $viewBuilder,
     ) {}
 

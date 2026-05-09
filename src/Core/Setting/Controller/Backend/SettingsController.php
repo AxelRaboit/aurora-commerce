@@ -10,7 +10,7 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
-use Aurora\Core\Setting\Service\SettingsManager;
+use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\Setting\View\SettingsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +26,7 @@ final class SettingsController extends AbstractController
     use JsonResponseTrait;
 
     public function __construct(
-        private readonly SettingsManager $settingsManager,
+        private readonly SettingsService $settingsManager,
         private readonly SettingsViewBuilder $viewBuilder,
     ) {}
 

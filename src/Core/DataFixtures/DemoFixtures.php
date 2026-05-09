@@ -13,7 +13,7 @@ use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Service\SettingsManager;
+use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -84,7 +84,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly SettingsManager $settingsManager,
+        private readonly SettingsService $settingsManager,
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
         private readonly Filesystem $fs = new Filesystem(),
