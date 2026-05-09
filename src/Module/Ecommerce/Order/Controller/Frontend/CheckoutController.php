@@ -12,7 +12,7 @@ use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputFactoryInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;

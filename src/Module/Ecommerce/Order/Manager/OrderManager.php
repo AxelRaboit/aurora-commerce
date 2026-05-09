@@ -10,7 +10,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;

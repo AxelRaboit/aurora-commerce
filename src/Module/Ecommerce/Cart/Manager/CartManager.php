@@ -9,10 +9,10 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
-use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
+use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,15 +21,15 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsAlias(CartManagerInterface::class)]
-final readonly class CartManager implements CartManagerInterface
+class CartManager implements CartManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private CartRepository $cartRepository,
-        private RequestStack $requestStack,
-        private Security $security,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly CartRepository $cartRepository,
+        protected readonly RequestStack $requestStack,
+        protected readonly Security $security,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
     ) {}
 
     /**
@@ -42,7 +42,7 @@ final readonly class CartManager implements CartManagerInterface
         if ($user instanceof User) {
             $cart = $this->cartRepository->findOneByUser($user);
             if (!$cart instanceof CartInterface && $createIfMissing) {
-                $cart = new Cart()->setUser($user);
+                $cart = $this->createCart()->setUser($user);
                 $this->entityManager->persist($cart);
                 $this->entityManager->flush();
                 $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
@@ -56,7 +56,7 @@ final readonly class CartManager implements CartManagerInterface
         $sessionId = $this->getOrCreateSessionId();
         $cart = $this->cartRepository->findOneBySession($sessionId);
         if (!$cart instanceof CartInterface && $createIfMissing) {
-            $cart = new Cart()->setSessionId($sessionId);
+            $cart = $this->createCart()->setSessionId($sessionId);
             $this->entityManager->persist($cart);
             $this->entityManager->flush();
             $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
@@ -82,7 +82,7 @@ final readonly class CartManager implements CartManagerInterface
             $existing->setQuantity($existing->getQuantity() + max(1, $quantity));
         } else {
             $product = $listing->getProduct();
-            $item = new CartItem()
+            $item = $this->createCartItem()
                 ->setListing($listing)
                 ->setQuantity(max(1, $quantity))
                 ->setUnitPriceCents($product->getPriceCents() ?? 0)
@@ -138,6 +138,16 @@ final readonly class CartManager implements CartManagerInterface
 
         $cart->getItems()->clear();
         $this->entityManager->flush();
+    }
+
+    protected function createCart(): CartInterface
+    {
+        return new Cart();
+    }
+
+    protected function createCartItem(): CartItemInterface
+    {
+        return new CartItem();
     }
 
     private function getOrCreateSessionId(): string

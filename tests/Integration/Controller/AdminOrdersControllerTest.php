@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInput;
 use Aurora\Module\Ecommerce\Order\Entity\Order;

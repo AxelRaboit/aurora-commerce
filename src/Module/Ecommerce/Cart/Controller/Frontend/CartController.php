@@ -9,7 +9,7 @@ use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeResolver;
-use Aurora\Module\Ecommerce\Cart\Contract\CartManagerInterface;
+use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 use Aurora\Module\Ecommerce\Cart\View\CartViewBuilder;
