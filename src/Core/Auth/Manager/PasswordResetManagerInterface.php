@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Contract;
+namespace Aurora\Core\Auth\Manager;
 
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 

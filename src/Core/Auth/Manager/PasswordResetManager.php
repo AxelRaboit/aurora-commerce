@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Manager;
 
-use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
+use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Repository\ResetPasswordRequestRepository;
 use Aurora\Core\Sequence\SequenceGenerator;

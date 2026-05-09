@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Dev;
 
-use Aurora\Core\Auth\Contract\AccessRequestManagerInterface;
+use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Repository\AccessRequestRepository;
 use Aurora\Core\Auth\View\DevAccessRequestsViewBuilder;

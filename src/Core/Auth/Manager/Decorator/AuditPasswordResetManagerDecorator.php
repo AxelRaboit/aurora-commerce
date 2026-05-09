@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Manager\Decorator;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Auth\Contract\PasswordResetManagerInterface;
+use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
