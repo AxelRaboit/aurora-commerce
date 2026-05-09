@@ -349,10 +349,10 @@ aurora-update: ## Pull latest Aurora changes
 	make sync-makefile
 	@echo "✅ Aurora updated"
 
-sync-claude-md: ## Refresh CLAUDE.md + .claude/memory symlinks from aurora-core (auto-generated, do not edit by hand)
+sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + docs from aurora-core vendor
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \
-		cp $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
-		echo "✅ CLAUDE.md synced from aurora-core"; \
+		ln -sfn $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
+		echo "✅ CLAUDE.md symlinked from vendor"; \
 	else \
 		echo "⚠️  $(AURORA)/.claude/client_template/CLAUDE.md not found — skipping"; \
 	fi

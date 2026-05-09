@@ -1,14 +1,13 @@
 # Aurora-client — Guide pour Claude
 
-> ⚠️ **Fichier auto-généré** depuis
-> `vendor/axelraboit/aurora/.claude/client_template/CLAUDE.md` à chaque
-> `make aurora-update`. Toute modification locale sera **écrasée**. Pour
-> modifier le contenu : éditer le template dans aurora-core puis commit
-> + push, et lancer `make aurora-update` côté client.
+> 🔗 **Fichier symlinké** vers
+> `vendor/axelraboit/aurora/.claude/client_template/CLAUDE.md`.
+> Toujours à jour avec la version installée d'aurora-core — aucun sync manuel requis.
+> Pour modifier le contenu : éditer le template dans aurora-core puis commit + push,
+> et lancer `make aurora-update` côté client (recrée le symlink).
 >
-> Si tu veux ajouter du contenu **spécifique au projet client** (qui ne
-> doit pas être écrasé) : créer `CLAUDE.local.md` à côté de ce fichier
-> et le référencer dans la section dédiée plus bas.
+> Pour ajouter du contenu **spécifique au projet client** : créer `CLAUDE.local.md`
+> à côté de ce fichier — Claude Code charge les deux automatiquement.
 
 App Symfony cliente qui consomme `axelraboit/aurora` (aurora-core) comme
 bundle composer + assets npm. Sert d'**exemple canonique** de comment
