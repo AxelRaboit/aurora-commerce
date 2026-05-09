@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s every ERP admin route (`erp_*`) when the ErpAdminEnabled setting is off.
+ * 404s every ERP admin route (`erp_*`) when the ErpEnabled setting is off.
  * ERP has no front routes, so a single prefix list is enough.
  */
 final readonly class ErpRouteGateSubscriber implements EventSubscriberInterface

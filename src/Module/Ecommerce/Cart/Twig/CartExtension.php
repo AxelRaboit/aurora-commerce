@@ -33,8 +33,8 @@ final readonly class CartExtension
     }
 
     /** Whether the ecommerce front is enabled — for templates to conditionally render shop/cart entries. */
-    #[AsTwigFunction(name: 'is_ecommerce_front_enabled')]
-    public function isEcommerceFrontEnabled(): bool
+    #[AsTwigFunction(name: 'is_ecommerce_shop_enabled')]
+    public function isEcommerceShopEnabled(): bool
     {
         return $this->ecommerceContext->isFrontEnabled();
     }

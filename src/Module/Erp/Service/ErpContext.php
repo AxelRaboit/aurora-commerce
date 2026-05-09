@@ -18,6 +18,6 @@ final readonly class ErpContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::ErpAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::ErpEnabled->value, true);
     }
 }

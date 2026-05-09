@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s every CRM admin route (`crm_*`) when the CrmAdminEnabled setting is off.
+ * 404s every CRM admin route (`crm_*`) when the CrmEnabled setting is off.
  * CRM has no front routes, so a single prefix list is enough.
  */
 final readonly class CrmRouteGateSubscriber implements EventSubscriberInterface

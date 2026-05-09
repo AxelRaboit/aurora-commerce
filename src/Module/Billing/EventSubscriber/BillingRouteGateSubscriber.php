@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s every Billing admin route (`billing_*`) when BillingAdminEnabled is off.
+ * 404s every Billing admin route (`billing_*`) when BillingEnabled is off.
  */
 final readonly class BillingRouteGateSubscriber implements EventSubscriberInterface
 {

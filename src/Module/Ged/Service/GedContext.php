@@ -13,6 +13,6 @@ final readonly class GedContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::GedAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::GedEnabled->value, true);
     }
 }

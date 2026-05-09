@@ -141,7 +141,7 @@ final class MenuRenderer
             MenuItemTargetTypeEnum::FrontRegister => $this->urlGenerator->generate('frontend_register', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontAccount => $this->urlGenerator->generate('frontend_account', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontLogout => $this->urlGenerator->generate('frontend_logout', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceFrontEnabled->value, true)
+            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceShopEnabled->value, true)
                 ? $this->urlGenerator->generate('frontend_shop_index', ['locale' => $locale])
                 : null,
             MenuItemTargetTypeEnum::CustomUrl => $item->getCustomUrl() ?: null,

@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s every Project admin route (`backend_projects*`) when the ProjectAdminEnabled setting is off.
+ * 404s every Project admin route (`backend_projects*`) when the ProjectEnabled setting is off.
  */
 final readonly class ProjectRouteGateSubscriber implements EventSubscriberInterface
 {

@@ -20,11 +20,11 @@ final readonly class EcommerceContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceEnabled->value, true);
     }
 
     public function isFrontEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceFrontEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceShopEnabled->value, true);
     }
 }

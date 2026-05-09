@@ -16,6 +16,6 @@ final readonly class ProjectContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::ProjectAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::ProjectEnabled->value, true);
     }
 }

@@ -18,6 +18,6 @@ final readonly class CrmContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::CrmAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::CrmEnabled->value, true);
     }
 }

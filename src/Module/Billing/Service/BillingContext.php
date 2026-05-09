@@ -20,6 +20,6 @@ final readonly class BillingContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::BillingAdminEnabled->value, true);
+        return $this->settingRepository->getBoolean(ApplicationParameterEnum::BillingEnabled->value, true);
     }
 }

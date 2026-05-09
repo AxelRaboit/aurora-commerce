@@ -14,8 +14,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Gates ecommerce routes against the admin/front toggles.
  *
  * Two independent prefix groups:
- *  - admin (`ecommerce_*`)              → 404 when EcommerceAdminEnabled is off
- *  - front (`front_shop`, `front_cart`, …) → 404 when EcommerceFrontEnabled is off
+ *  - admin (`ecommerce_*`)              → 404 when EcommerceEnabled is off
+ *  - front (`front_shop`, `front_cart`, …) → 404 when EcommerceShopEnabled is off
  *
  * Runs early (priority 16) so even POST endpoints get blocked cleanly without hitting
  * the cart/order managers.

@@ -32,16 +32,16 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case FaviconMediaId = 'favicon_media_id';
     case SeoTitleTemplate = 'seo_title_template';
     case SeoDefaultDescription = 'seo_default_description';
-    case EcommerceAdminEnabled = 'backend_ecommerce_admin_enabled';
-    case EcommerceFrontEnabled = 'backend_ecommerce_front_enabled';
+    case EcommerceEnabled = 'backend_ecommerce_admin_enabled';
+    case EcommerceShopEnabled = 'backend_ecommerce_front_enabled';
     case EcommerceLowStockThreshold = 'backend_ecommerce_low_stock_threshold';
-    case EditorialAdminEnabled = 'backend_editorial_admin_enabled';
-    case CrmAdminEnabled = 'backend_crm_admin_enabled';
-    case ErpAdminEnabled = 'backend_erp_admin_enabled';
-    case PhotoAdminEnabled = 'photo_admin_enabled';
-    case PhotoFrontEnabled = 'photo_front_enabled';
-    case BillingAdminEnabled = 'backend_billing_admin_enabled';
-    case GedAdminEnabled = 'backend_ged_admin_enabled';
+    case EditorialEnabled = 'backend_editorial_admin_enabled';
+    case CrmEnabled = 'backend_crm_admin_enabled';
+    case ErpEnabled = 'backend_erp_admin_enabled';
+    case PhotoEnabled = 'photo_admin_enabled';
+    case PhotoPublicEnabled = 'photo_front_enabled';
+    case BillingEnabled = 'backend_billing_admin_enabled';
+    case GedEnabled = 'backend_ged_admin_enabled';
     case GedDocumentPrefix = 'backend_ged_document_prefix';
     case BillingInvoicePrefix = 'backend_billing_invoice_prefix';
     case BillingCreditNotePrefix = 'backend_billing_credit_note_prefix';
@@ -76,7 +76,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryFinalizationPrefix = 'photo_gallery_finalization_prefix';
     case PhotoGalleryItemCommentPrefix = 'photo_gallery_item_comment_prefix';
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
-    case ProjectAdminEnabled = 'backend_project_admin_enabled';
+    case ProjectEnabled = 'backend_project_admin_enabled';
+    case PlanningEnabled = 'backend_planning_admin_enabled';
 
     public function getKey(): string
     {
@@ -110,16 +111,16 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => 'Favicon',
             self::SeoTitleTemplate => 'Template de titre SEO',
             self::SeoDefaultDescription => 'Description SEO par défaut',
-            self::EcommerceAdminEnabled => 'Administration e-commerce activée',
-            self::EcommerceFrontEnabled => 'Boutique e-commerce activée (front)',
+            self::EcommerceEnabled => 'Module E-commerce activé',
+            self::EcommerceShopEnabled => 'Boutique e-commerce visible sur le site public',
             self::EcommerceLowStockThreshold => 'Seuil de stock bas (e-commerce)',
-            self::EditorialAdminEnabled => 'Administration Editorial activée',
-            self::CrmAdminEnabled => 'Administration CRM activée',
-            self::ErpAdminEnabled => 'Administration ERP activée',
-            self::PhotoAdminEnabled => 'Administration Photo activée',
-            self::PhotoFrontEnabled => 'Galeries publiques activées (front)',
-            self::BillingAdminEnabled => 'Administration facturation activée',
-            self::GedAdminEnabled => 'Administration GED activée',
+            self::EditorialEnabled => 'Module Editorial activé',
+            self::CrmEnabled => 'Module CRM activé',
+            self::ErpEnabled => 'Module ERP activé',
+            self::PhotoEnabled => 'Module Photo activé',
+            self::PhotoPublicEnabled => 'Galeries visibles sur le site public',
+            self::BillingEnabled => 'Module Facturation activé',
+            self::GedEnabled => 'Module GED activé',
             self::GedDocumentPrefix => 'Préfixe des références documents GED',
             self::BillingInvoicePrefix => 'Préfixe des numéros de factures',
             self::BillingCreditNotePrefix => 'Préfixe des numéros d\'avoirs',
@@ -154,7 +155,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix => 'Préfixe des références finalisations de galerie',
             self::PhotoGalleryItemCommentPrefix => 'Préfixe des références commentaires de photo',
             self::PhotoGalleryPickPrefix => 'Préfixe des références sélections de photo',
-            self::ProjectAdminEnabled => 'Administration Projets activée',
+            self::ProjectEnabled => 'Module Projet activé',
+            self::PlanningEnabled => 'Module Planning activé',
         };
     }
 
@@ -185,14 +187,14 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => 'ID du média utilisé comme favicon',
             self::SeoTitleTemplate => 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex: {title} — {siteName}',
             self::SeoDefaultDescription => 'Meta description utilisée quand aucune description spécifique n\'est définie',
-            self::EcommerceAdminEnabled => "Active la section E-commerce dans l'administration (gestion des listings, commandes). Décocher cache la sidebar admin et 404 les routes /admin/ecommerce/*.",
-            self::EcommerceFrontEnabled => 'Active la boutique côté site public (catalogue, fiche produit, panier, checkout, page commande client). Décocher 404 toutes les routes /shop, /cart, /checkout, /order/*.',
+            self::EcommerceEnabled => "Active la section E-commerce dans l'administration (gestion des listings, commandes). Décocher cache la sidebar admin et 404 les routes /admin/ecommerce/*.",
+            self::EcommerceShopEnabled => 'Active la boutique côté site public (catalogue, fiche produit, panier, checkout, page commande client). Décocher 404 toutes les routes /shop, /cart, /checkout, /order/*.',
             self::EcommerceLowStockThreshold => "Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.",
-            self::EditorialAdminEnabled => "Active la section Editorial dans l'administration (articles, menus, formulaires, sitemap). Décocher cache la sidebar et 404 les routes backend_editorial_*.",
-            self::CrmAdminEnabled => "Active la section CRM dans l'administration (contacts, entreprises, affaires, kanban). Décocher cache la sidebar et 404 les routes /admin/crm/*.",
-            self::ErpAdminEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
-            self::PhotoAdminEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
-            self::PhotoFrontEnabled => 'Active les galeries publiques côté front (pages /g/{slug}). Décocher 404 toutes les pages galerie pour les clients.',
+            self::EditorialEnabled => "Active la section Editorial dans l'administration (articles, menus, formulaires, sitemap). Décocher cache la sidebar et 404 les routes backend_editorial_*.",
+            self::CrmEnabled => "Active la section CRM dans l'administration (contacts, entreprises, affaires, kanban). Décocher cache la sidebar et 404 les routes /admin/crm/*.",
+            self::ErpEnabled => "Active la section ERP dans l'administration (produits). Décocher cache la sidebar et 404 les routes /admin/erp/*.",
+            self::PhotoEnabled => "Active la section Photographie dans l'administration (galeries de livraison client). Décocher cache la sidebar et 404 les routes /admin/galleries/*.",
+            self::PhotoPublicEnabled => 'Active les galeries publiques côté front (pages /g/{slug}). Décocher 404 toutes les pages galerie pour les clients.',
             self::BillingInvoicePrefix => 'Préfixe du numéro de facture auto-généré à la validation (ex: FAC). Laissez vide pour désactiver.',
             self::BillingCreditNotePrefix => 'Préfixe du numéro d\'avoir auto-généré (ex: AV). Laissez vide pour désactiver.',
             self::EcommerceListingPrefix => 'Préfixe de la référence produit boutique auto-générée (ex: LST). Laissez vide pour désactiver.',
@@ -201,8 +203,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CrmContactPrefix => 'Préfixe de la référence contact CRM auto-générée (ex: CTT). Laissez vide pour désactiver.',
             self::CrmCompanyPrefix => 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.',
             self::EcommerceOrderPrefix => 'Préfixe du numéro de commande auto-généré (ex: ORD). Laissez vide pour désactiver.',
-            self::BillingAdminEnabled => "Active la section Facturation dans l'administration (factures fournisseurs, OCR, import). Décocher cache la sidebar et 404 les routes /admin/billing/*.",
-            self::GedAdminEnabled => "Active la section GED dans l'administration. Décocher cache la sidebar et 404 les routes /admin/ged/*.",
+            self::BillingEnabled => "Active la section Facturation dans l'administration (factures fournisseurs, OCR, import). Décocher cache la sidebar et 404 les routes /admin/billing/*.",
+            self::GedEnabled => "Active la section GED dans l'administration. Décocher cache la sidebar et 404 les routes /admin/ged/*.",
             self::GedDocumentPrefix => 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.',
             self::EmailLocale => 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.',
             self::PhotoGalleryPrefix => 'Préfixe de la référence galerie photo auto-générée (ex: GAL).',
@@ -229,7 +231,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix,
             self::PhotoGalleryItemCommentPrefix,
             self::PhotoGalleryPickPrefix => 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.',
-            self::ProjectAdminEnabled => "Active la section Projets dans l'administration.",
+            self::ProjectEnabled => "Active la section Projet dans l'administration.",
+            self::PlanningEnabled => "Active la section Planning dans l'administration.",
         };
     }
 
@@ -260,16 +263,16 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => '',
             self::SeoTitleTemplate => '{title} — {siteName}',
             self::SeoDefaultDescription => '',
-            self::EcommerceAdminEnabled => '1',
-            self::EcommerceFrontEnabled => '1',
+            self::EcommerceEnabled => '1',
+            self::EcommerceShopEnabled => '1',
             self::EcommerceLowStockThreshold => '5',
-            self::EditorialAdminEnabled => '1',
-            self::CrmAdminEnabled => '1',
-            self::ErpAdminEnabled => '1',
-            self::PhotoAdminEnabled => '1',
-            self::PhotoFrontEnabled => '1',
-            self::BillingAdminEnabled => '1',
-            self::GedAdminEnabled => '1',
+            self::EditorialEnabled => '1',
+            self::CrmEnabled => '1',
+            self::ErpEnabled => '1',
+            self::PhotoEnabled => '1',
+            self::PhotoPublicEnabled => '1',
+            self::BillingEnabled => '1',
+            self::GedEnabled => '1',
             self::GedDocumentPrefix => 'DOC',
             self::BillingInvoicePrefix => SequencePrefixEnum::Invoice->value,
             self::BillingCreditNotePrefix => SequencePrefixEnum::CreditNote->value,
@@ -304,7 +307,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix => SequencePrefixEnum::GalleryFinalization->value,
             self::PhotoGalleryItemCommentPrefix => SequencePrefixEnum::GalleryItemComment->value,
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
-            self::ProjectAdminEnabled => '1',
+            self::ProjectEnabled => '1',
+            self::PlanningEnabled => '1',
         };
     }
 
@@ -314,7 +318,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EditorialAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled, self::ProjectAdminEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EditorialEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::CrmEnabled, self::ErpEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
@@ -336,9 +340,9 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getCascadeRequires(): ?string
     {
         return match ($this) {
-            self::ErpAdminEnabled => self::CrmAdminEnabled->value,
-            self::EcommerceAdminEnabled, self::EcommerceFrontEnabled => self::ErpAdminEnabled->value,
-            self::BillingAdminEnabled => self::CrmAdminEnabled->value,
+            self::ErpEnabled => self::CrmEnabled->value,
+            self::EcommerceEnabled, self::EcommerceShopEnabled => self::ErpEnabled->value,
+            self::BillingEnabled => self::CrmEnabled->value,
             default => null,
         };
     }
@@ -376,14 +380,15 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getModuleId(): ?string
     {
         return match ($this) {
-            self::EditorialAdminEnabled => 'editorial',
-            self::CrmAdminEnabled => 'crm',
-            self::ErpAdminEnabled => 'erp',
-            self::EcommerceAdminEnabled => 'ecommerce',
-            self::PhotoAdminEnabled => 'photo',
-            self::BillingAdminEnabled => 'billing',
-            self::GedAdminEnabled => 'ged',
-            self::ProjectAdminEnabled => 'project',
+            self::EditorialEnabled => 'editorial',
+            self::CrmEnabled => 'crm',
+            self::ErpEnabled => 'erp',
+            self::EcommerceEnabled => 'ecommerce',
+            self::PhotoEnabled => 'photo',
+            self::BillingEnabled => 'billing',
+            self::GedEnabled => 'ged',
+            self::ProjectEnabled => 'project',
+            self::PlanningEnabled => 'planning',
             default => null,
         };
     }
@@ -398,7 +403,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::EditorialAdminEnabled, self::CrmAdminEnabled, self::ErpAdminEnabled, self::EcommerceAdminEnabled, self::EcommerceFrontEnabled, self::PhotoAdminEnabled, self::PhotoFrontEnabled, self::BillingAdminEnabled, self::GedAdminEnabled, self::ProjectAdminEnabled => 'modules',
+            self::EditorialEnabled, self::CrmEnabled, self::ErpEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled => 'modules',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
