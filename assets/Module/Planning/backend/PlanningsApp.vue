@@ -396,7 +396,7 @@ onMounted(() => {
                 <slot name="extra-form-fields" :edit-form="planningForm.editForm" :errors="planningForm.editModal.errors" />
             </form>
             <template #footer>
-                <AppModalFooter :bordered="true">
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="planningForm.editModal.open = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
@@ -504,7 +504,7 @@ onMounted(() => {
                 />
             </form>
             <template #footer>
-                <AppModalFooter :bordered="true">
+                <AppModalFooter>
                     <AppButton
                         v-if="eventForm.editModal.event && !eventForm.editModal.readOnly && canManageEvents"
                         variant="danger"

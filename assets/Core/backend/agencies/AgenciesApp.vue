@@ -84,7 +84,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                 <slot name="extra-form-fields" :edit-form="editForm" :errors="editModal.errors" />
             </form>
             <template #footer>
-                <AppModalFooter :bordered="true">
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
