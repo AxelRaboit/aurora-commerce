@@ -10,6 +10,7 @@ PHP_CS_FIXER  = $(PHP_BIN) $(AURORA)/tools/php-cs-fixer/vendor/bin/php-cs-fixer
 TWIG_CS_FIXER = $(PHP_BIN) $(AURORA)/tools/twig-cs-fixer/vendor/bin/twig-cs-fixer
 PHPSTAN       = $(PHP_BIN) $(AURORA)/tools/phpstan/vendor/bin/phpstan
 RECTOR        = $(PHP_BIN) $(AURORA)/tools/rector/vendor/bin/rector
+RECTOR_CONFIG = $(if $(wildcard rector.php),rector.php,$(AURORA)/tools/rector/rector.php)
 
 # === Build Commands ===
 pnpm-setup: ## Setup pnpm via corepack (usage: make pnpm-setup VERSION=10.11.0)
@@ -291,7 +292,7 @@ lint-twig: ## Check Twig code style
 	$(TWIG_CS_FIXER)
 
 rector: ## Run Rector (dry-run)
-	$(RECTOR) process --dry-run -c $(AURORA)/tools/rector/rector.php
+	$(RECTOR) process --dry-run -c $(RECTOR_CONFIG)
 
 fix-php: ## Fix PHP code style
 	$(PHP_CS_FIXER) fix --config=$(AURORA)/.php-cs-fixer.dist.php
@@ -303,7 +304,7 @@ fix-twig: ## Fix Twig code style
 	$(TWIG_CS_FIXER) --fix
 
 fix-rector: ## Apply Rector suggestions
-	$(RECTOR) process -c $(AURORA)/tools/rector/rector.php
+	$(RECTOR) process -c $(RECTOR_CONFIG)
 
 fix: ## Run all fixers + stan
 	make i18n
