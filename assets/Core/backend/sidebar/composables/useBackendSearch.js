@@ -39,7 +39,7 @@ function itemKey(kind, item) {
 
 // ── Composable ────────────────────────────────────────────────────────────────
 
-export function useAdminSearch({ searchPath, navItems, currentRoute }) {
+export function useBackendSearch({ searchPath, navItems, currentRoute }) {
     // ── State ─────────────────────────────────────────────────────────────────
 
     const searchOpen = ref(false);

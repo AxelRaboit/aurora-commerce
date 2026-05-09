@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  *
  * @implements UserProviderInterface<CoreUserInterface>
  */
-final readonly class AdminUserProvider implements UserProviderInterface
+final readonly class BackendUserProvider implements UserProviderInterface
 {
     public function __construct(private UserRepository $userRepository) {}
 

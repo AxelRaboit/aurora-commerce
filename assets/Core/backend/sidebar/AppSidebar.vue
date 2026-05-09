@@ -4,7 +4,7 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/shared/composables/useTheme.js";
 import { useResizable } from "@/shared/composables/useResizable.js";
-import { useAdminSearch } from "@core/backend/sidebar/composables/useAdminSearch.js";
+import { useBackendSearch } from "@core/backend/sidebar/composables/useBackendSearch.js";
 import { useSidebarCollapse } from "@core/backend/sidebar/composables/useSidebarCollapse.js";
 import { useSidebarNav } from "@core/backend/sidebar/composables/useSidebarNav.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
@@ -85,7 +85,7 @@ const {
     searchHighlightedIndex, searchInputRef,
     sections, flatResults, totalResults,
     openPalette, closePalette, activateResult, entryIndex,
-} = useAdminSearch({ searchPath: props.searchPath, navItems, currentRoute: props.activeRoute });
+} = useBackendSearch({ searchPath: props.searchPath, navItems, currentRoute: props.activeRoute });
 
 function openSearchFromMobile() {
     closeMobile();

@@ -12,7 +12,7 @@ security:
                 class: Aurora\Core\User\Entity\User
                 property: email
         admin_user_provider:
-            id: Aurora\Core\Auth\Security\AdminUserProvider
+            id: Aurora\Core\Auth\Security\BackendUserProvider
         front_user_provider:
             id: Aurora\Core\Auth\Security\FrontUserProvider
 
@@ -26,7 +26,7 @@ security:
             context: admin
             pattern: ^/(backend|dev)
             provider: admin_user_provider
-            user_checker: Aurora\Core\Auth\Security\AdminUserChecker
+            user_checker: Aurora\Core\Auth\Security\BackendUserChecker
             form_login:
                 login_path: backend_login
                 check_path: backend_login
