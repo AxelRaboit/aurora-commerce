@@ -495,7 +495,7 @@ onMounted(() => {
                 <AppModalFooter :bordered="true">
                     <AppButton
                         v-if="eventForm.editModal.event && !eventForm.editModal.readOnly && canManageEvents"
-                        variant="danger-subtle"
+                        variant="danger"
                         size="md"
                         v-on:click="deletingEvent = eventForm.editModal.event"
                     >

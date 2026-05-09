@@ -242,7 +242,7 @@ async function removePhoto() {
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('backend.profile.danger.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.danger.description') }}</p>
             </header>
-            <AppButton variant="danger-subtle" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
+            <AppButton variant="danger" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
                 {{ t('backend.profile.danger.submit') }}
             </AppButton>
         </div>

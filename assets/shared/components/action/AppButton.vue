@@ -17,7 +17,7 @@ const variants = {
     secondary: 'bg-surface-3 hover:bg-surface-2 text-primary border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-base',
     danger: 'bg-rose-600 hover:bg-rose-500 text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500',
     'danger-outline': 'bg-transparent hover:bg-rose-500/10 text-rose-400 border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500',
-    'danger-subtle': 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-900/40',
+
     accent: 'bg-accent hover:bg-accent-hover text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-accent',
     ghost: 'bg-transparent hover:bg-surface-2 text-secondary hover:text-primary',
     dashed: 'bg-transparent border-2 border-dashed border-line text-secondary hover:bg-surface-2 hover:text-primary',
