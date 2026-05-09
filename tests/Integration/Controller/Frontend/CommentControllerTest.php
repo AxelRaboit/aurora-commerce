@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Integration\Controller;
+namespace Aurora\Tests\Integration\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class FrontCommentControllerTest extends IntegrationTestCase
+final class CommentControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
     private Post $post;

@@ -23,7 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class AdminOrdersControllerTest extends IntegrationTestCase
+final class OrdersControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
     private Order $order;
