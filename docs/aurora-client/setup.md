@@ -1,5 +1,9 @@
 # Setup — Installation locale
 
+> **Nouveau projet ?** Si tu pars d'aurora-client pour démarrer un vrai projet,
+> commence par `make install-dev` puis lance `make init-project` pour supprimer
+> tous les exemples showcase. Voir la section [Démarrer un nouveau projet](#démarrer-un-nouveau-projet).
+
 ## Prérequis
 
 | Outil | Version minimale |
@@ -147,3 +151,27 @@ automatiquement par `make db-test`. Tous les tests doivent passer en vert.
 | `OCR_DOCTR_URL` | *(optionnel)* | URL du microservice docTR (module Billing/OCR) |
 | `OLLAMA_URL` | *(optionnel)* | URL Ollama pour l'extraction OCR |
 | `OLLAMA_VISION_MODEL` | `qwen2.5vl:3b` | Modèle vision Ollama |
+
+---
+
+## Démarrer un nouveau projet
+
+Aurora-client est le point de départ pour tout nouveau projet. Une fois
+`make install-dev` fait, supprime le code showcase :
+
+```bash
+make init-project
+```
+
+Cette commande :
+- Supprime le module Tracking, l'extension Agency, les overrides Vue et les templates showcase
+- Restaure des configs propres (`services.yaml`, `doctrine.yaml`, `twig.yaml`)
+- Supprime les migrations showcase et recrée la base depuis zéro
+- Resynchronise les paramètres, privileges et menus Aurora
+
+Après `make init-project`, ton projet est vierge — prêt à recevoir ton propre code.
+
+**Étapes suivantes recommandées :**
+1. Mettre à jour `composer.json` (name, description)
+2. Mettre à jour `.env` (`APP_NAME`, `DATABASE_URL`)
+3. `git commit -m "chore: init project from aurora-client template"`

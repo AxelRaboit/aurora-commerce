@@ -1,0 +1,42 @@
+parameters:
+    app.admin_email: '%env(ADMIN_EMAIL)%'
+    app.mailer_from: '%env(MAILER_FROM)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Responsibility-based PSR-4 prefixes (Sylius / Symfony convention).
+    # Modules with their own bundle-like structure live under App\Module\<Name>.
+    # Aurora extension layers (Entity / Dto / Manager / Serializer) sit flat
+    # under src/. Use #[AsAlias(<Interface>)] to replace an Aurora default
+    # service, or #[AsDecorator] to wrap it.
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Entity\:
+        resource: '../src/Entity/'
+
+    App\Dto\:
+        resource: '../src/Dto/'
+
+    App\Manager\:
+        resource: '../src/Manager/'
+
+    App\Serializer\:
+        resource: '../src/Serializer/'
+
+    App\Service\:
+        resource: '../src/Service/'
+
+    App\EventListener\:
+        resource: '../src/EventListener/'
+
+    App\Module\:
+        resource: '../src/Module/'
+
+    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
+        arguments:
+            $auroraDir: '%kernel.project_dir%/vendor/axelraboit/aurora'

@@ -379,6 +379,49 @@ sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do
 		echo "⚠️  $(AURORA)/.claude/client_template/Makefile not found — skipping"; \
 	fi
 
+init-project: ## Remove all showcase examples and reset to a clean project base
+	@echo ""
+	@echo "⚠️  This will PERMANENTLY delete all showcase code (Tracking module, Agency extension,"
+	@echo "   Vue overrides, showcase templates and migrations) and reset the database."
+	@echo "   Run this once when starting a real project from aurora-client."
+	@echo ""
+	@printf "   Type 'yes' to confirm: "; read confirm; \
+	if [ "$$confirm" != "yes" ]; then echo "Aborted."; exit 1; fi
+	@echo ""
+	@echo "→ Removing showcase PHP code..."
+	@rm -rf src/Module/Tracking
+	@rm -f  src/Entity/Agency.php
+	@rm -f  src/Dto/AgencyInput.php src/Dto/AgencyInputFactory.php
+	@rm -f  src/Manager/AgencyManager.php
+	@rm -f  src/Serializer/AgencySerializer.php
+	@echo "→ Removing showcase assets..."
+	@rm -rf assets/client/Module/Tracking
+	@rm -rf assets/client/Overrides
+	@echo "→ Removing showcase templates..."
+	@rm -rf templates/Module/Tracking
+	@rm -rf templates/Core
+	@echo "→ Removing showcase migrations..."
+	@rm -f migrations/*.php
+	@echo "→ Restoring clean config files..."
+	@cp $(AURORA)/.claude/client_template/project-init/config/services.yaml config/services.yaml
+	@cp $(AURORA)/.claude/client_template/project-init/config/packages/doctrine.yaml config/packages/doctrine.yaml
+	@cp $(AURORA)/.claude/client_template/project-init/config/packages/twig.yaml config/packages/twig.yaml
+	@echo "→ Resetting database..."
+	@$(CONSOLE) doctrine:database:drop --force --if-exists --quiet
+	@$(CONSOLE) doctrine:database:create --if-not-exists --quiet
+	@$(CONSOLE) doctrine:migrations:migrate --no-interaction --quiet
+	@$(CONSOLE) aurora:application-parameter --quiet
+	@$(CONSOLE) aurora:sequences:resync --quiet
+	@$(CONSOLE) aurora:privileges:sync --quiet
+	@$(CONSOLE) aurora:menus:sync --quiet
+	@$(CONSOLE) cache:clear --quiet
+	@echo ""
+	@echo "✅ Project is clean. You can now start building your own modules."
+	@echo "   Next steps:"
+	@echo "   1. Update composer.json (name, description)"
+	@echo "   2. Update .env (APP_NAME, DATABASE_URL)"
+	@echo "   3. git commit -m 'chore: init project from aurora-client template'"
+
 # ─────────────────────────────────────────────────────────────────────
 # Makefile.local — client-specific targets
 #
