@@ -16,12 +16,12 @@ const AURORA_DIR   = resolve(__dirname, "..");
 const CLIENT_DIR   = process.cwd();
 const AURORA_VENDOR = "vendor/axelraboit/aurora";
 
-// Static aliases
+// Without baseUrl, path values must be relative (TS 5.0+ requirement).
 const paths = {
-    "@/*":       [`${AURORA_VENDOR}/assets/*`],
-    "@core/*":   [`${AURORA_VENDOR}/assets/Core/*`],
-    "@shared/*": [`${AURORA_VENDOR}/assets/shared/*`],
-    "@client/*": ["assets/client/*"],
+    "@/*":       [`./${AURORA_VENDOR}/assets/*`],
+    "@core/*":   [`./${AURORA_VENDOR}/assets/Core/*`],
+    "@shared/*": [`./${AURORA_VENDOR}/assets/shared/*`],
+    "@client/*": ["./assets/client/*"],
 };
 
 // Dynamic module aliases — one per Module/<Name>/ directory in aurora
@@ -30,7 +30,7 @@ if (existsSync(modulesDir)) {
     for (const entry of readdirSync(modulesDir, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
         paths[`@${entry.name.toLowerCase()}/*`] = [
-            `${AURORA_VENDOR}/assets/Module/${entry.name}/*`,
+            `./${AURORA_VENDOR}/assets/Module/${entry.name}/*`,
         ];
     }
 }
@@ -42,7 +42,7 @@ if (existsSync(clientModulesDir)) {
     for (const entry of readdirSync(clientModulesDir, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
         paths[`@${entry.name.toLowerCase()}/*`] = [
-            `assets/client/Module/${entry.name}/*`,
+            `./assets/client/Module/${entry.name}/*`,
         ];
     }
 }
