@@ -12,6 +12,7 @@ import { useVaultUnlockLifecycle } from '@vault/backend/composables/useVaultUnlo
 import { useVaultFilter } from '@vault/backend/composables/useVaultFilter.js';
 import { useVaultFolderAccordion } from '@vault/backend/composables/useVaultFolderAccordion.js';
 import { useVaultChangeMasterPassword } from '@vault/backend/composables/useVaultChangeMasterPassword.js';
+import { useVaultDestroyVault } from '@vault/backend/composables/useVaultDestroyVault.js';
 import { ICONS } from '@vault/backend/utils/recordTypes.js';
 import VaultSetupScreen from '@vault/backend/components/VaultSetupScreen.vue';
 import VaultUnlockScreen from '@vault/backend/components/VaultUnlockScreen.vue';
@@ -19,6 +20,7 @@ import VaultEntryFormModal from '@vault/backend/components/VaultEntryFormModal.v
 import VaultEntryViewModal from '@vault/backend/components/VaultEntryViewModal.vue';
 import VaultEntryRow from '@vault/backend/components/VaultEntryRow.vue';
 import VaultChangeMasterPasswordModal from '@vault/backend/components/VaultChangeMasterPasswordModal.vue';
+import VaultDestroyModal from '@vault/backend/components/VaultDestroyModal.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppListItemButton from '@shared/components/action/AppListItemButton.vue';
@@ -50,6 +52,7 @@ const props = defineProps({
     updateFolderPath: { type: String, required: true },
     deleteFolderPath: { type: String, required: true },
     changeMasterPasswordPath: { type: String, required: true },
+    destroyVaultPath: { type: String, required: true },
     extraFields: { type: Array, default: () => [] },
 });
 
@@ -108,6 +111,13 @@ const changePwd = useVaultChangeMasterPassword(
     },
 );
 
+const destroyVault = useVaultDestroyVault(props.destroyVaultPath, vaultConfig, entries, () => {
+    vaultConfig.value = null;
+    entries.value = [];
+    folders.value = [];
+    crypto.lock();
+});
+
 const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts, folderChildCounts, entriesInFolder } = useVaultFolderAccordion(entries, folders);
 
 </script>
@@ -127,20 +137,23 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
         </template>
 
         <template v-else>
-            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2">
-                <AppSearchInput v-model="searchQuery" :placeholder="t('vault.entries.searchPlaceholder')" />
-                <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="vaultForm.openCreate()">
+            <div class="flex items-center gap-2">
+                <AppSearchInput v-model="searchQuery" class="flex-1 min-w-0" :placeholder="t('vault.entries.searchPlaceholder')" />
+                <AppButton variant="primary" size="md" class="shrink-0" v-on:click="vaultForm.openCreate()">
                     <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t('vault.entries.add') }}
+                    <span class="hidden sm:inline">{{ t('vault.entries.add') }}</span>
                 </AppButton>
-                <AppButton variant="ghost" size="md" class="w-full sm:w-auto" v-on:click="changePwd.open()">
-                    <ShieldCheck class="w-4 h-4" :stroke-width="1.5" />
-                    {{ t('vault.change_password.title') }}
-                </AppButton>
-                <AppButton variant="ghost" size="md" class="w-full sm:w-auto" v-on:click="lockVault">
-                    <Lock class="w-4 h-4" :stroke-width="1.5" />
-                    {{ t('vault.unlock.lock') }}
-                </AppButton>
+                <div class="flex items-center gap-0.5 shrink-0 border-l border-line pl-2">
+                    <AppIconButton :title="t('vault.unlock.lock')" v-on:click="lockVault">
+                        <Lock class="w-4 h-4" :stroke-width="1.5" />
+                    </AppIconButton>
+                    <AppIconButton :title="t('vault.change_password.title')" v-on:click="changePwd.open()">
+                        <ShieldCheck class="w-4 h-4" :stroke-width="1.5" />
+                    </AppIconButton>
+                    <AppIconButton color="rose" :title="t('vault.destroy.button')" v-on:click="destroyVault.open()">
+                        <Trash2 class="w-4 h-4" :stroke-width="1.5" />
+                    </AppIconButton>
+                </div>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-4">
@@ -501,6 +514,16 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                 </AppModalFooter>
             </template>
         </AppModal>
+        <VaultDestroyModal
+            :show="destroyVault.show.value"
+            :master-password="destroyVault.masterPassword.value"
+            :loading="destroyVault.loading.value"
+            :error="destroyVault.error.value"
+            v-on:close="destroyVault.close()"
+            v-on:update:master-password="destroyVault.masterPassword.value = $event"
+            v-on:destroy="destroyVault.destroy()"
+        />
+
         <VaultChangeMasterPasswordModal
             :show="changePwd.show.value"
             :step="changePwd.step.value"

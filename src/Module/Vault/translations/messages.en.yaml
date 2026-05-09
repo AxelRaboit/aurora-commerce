@@ -113,6 +113,13 @@ vault:
     processing: Re-encrypting…
     processing_hint: Your entries are being re-encrypted. Do not close the page.
     success: Master password changed successfully.
+  destroy:
+    button: Destroy vault
+    title: Destroy vault
+    warning: "This action is irreversible. All your entries, folders and vault configuration will be permanently deleted."
+    password_label: Master password
+    submit: Destroy permanently
+    error: An error occurred. Please try again.
   session:
     keep_unlocked: Keep unlocked
     duration: Duration

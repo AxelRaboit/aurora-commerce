@@ -116,6 +116,13 @@ vault:
     processing: "Re-chiffrement en cours…"
     processing_hint: Vos entrées sont re-chiffrées. Ne fermez pas la page.
     success: Mot de passe maître modifié avec succès.
+  destroy:
+    button: Détruire le coffre
+    title: Détruire le coffre
+    warning: "Cette action est irréversible. Toutes vos entrées, dossiers et la configuration du coffre seront définitivement supprimés."
+    password_label: Mot de passe maître
+    submit: Détruire définitivement
+    error: Une erreur est survenue. Veuillez réessayer.
   session:
     keep_unlocked: Rester déverrouillé
     duration: Durée

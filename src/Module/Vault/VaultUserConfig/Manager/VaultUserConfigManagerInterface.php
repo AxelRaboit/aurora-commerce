@@ -16,4 +16,6 @@ interface VaultUserConfigManagerInterface
      * @param array<array{id: int, encryptedData: string, iv: string}> $reEncryptedEntries
      */
     public function changeMasterPassword(VaultUserConfigInterface $config, string $newSalt, array $reEncryptedEntries): void;
+
+    public function destroyVault(CoreUserInterface $user, VaultUserConfigInterface $config): void;
 }

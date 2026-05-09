@@ -8,6 +8,7 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntryInterface;
 use Aurora\Module\Vault\VaultEntry\Repository\VaultEntryRepository;
+use Aurora\Module\Vault\VaultFolder\Repository\VaultFolderRepository;
 use Aurora\Module\Vault\VaultUserConfig\Dto\VaultUserConfigInputInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
@@ -21,6 +22,7 @@ class VaultUserConfigManager implements VaultUserConfigManagerInterface
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
         protected readonly VaultEntryRepository $vaultEntryRepository,
+        protected readonly VaultFolderRepository $vaultFolderRepository,
     ) {}
 
     public function setup(CoreUserInterface $user, VaultUserConfigInputInterface $input): VaultUserConfigInterface
@@ -63,6 +65,25 @@ class VaultUserConfigManager implements VaultUserConfigManagerInterface
 
         $this->entityManager->flush();
         $this->auditLogger->log('vault', 'config.password_changed', 'VaultUserConfig', $config->getId(), $this->auditPayload($config));
+    }
+
+    public function destroyVault(CoreUserInterface $user, VaultUserConfigInterface $config): void
+    {
+        $configId = $config->getId();
+        $userId = $user->getId();
+
+        $this->entityManager->createQuery('DELETE FROM Aurora\Module\Vault\VaultEntry\Entity\VaultEntry e WHERE e.user = :user')
+            ->setParameter('user', $user)
+            ->execute();
+
+        $this->entityManager->createQuery('DELETE FROM Aurora\Module\Vault\VaultFolder\Entity\VaultFolder f WHERE f.user = :user')
+            ->setParameter('user', $user)
+            ->execute();
+
+        $this->entityManager->remove($config);
+        $this->entityManager->flush();
+
+        $this->auditLogger->log('vault', 'config.destroyed', 'VaultUserConfig', $configId, ['userId' => $userId]);
     }
 
     protected function auditSetup(VaultUserConfigInterface $config): void

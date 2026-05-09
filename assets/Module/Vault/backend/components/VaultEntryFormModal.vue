@@ -14,7 +14,7 @@ import { useVaultFolderOptions } from '@vault/backend/composables/useVaultFolder
 import VaultTypePickerModal from '@vault/backend/components/VaultTypePickerModal.vue';
 import { Save, X, Star, ChevronDown, Eye, EyeOff } from 'lucide-vue-next';
 
-const form = defineModel({ required: true });
+const form = defineModel({ type: Object, required: true });
 
 const props = defineProps({
     show: { type: Boolean, default: false },

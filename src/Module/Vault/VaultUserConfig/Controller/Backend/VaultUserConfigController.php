@@ -81,4 +81,20 @@ final class VaultUserConfigController extends AbstractController
 
         return $this->jsonSuccess(['config' => $this->vaultUserConfigSerializer->serialize($config)]);
     }
+
+    #[Route('/destroy', name: '_destroy', methods: [HttpMethodEnum::Post->value])]
+    public function destroy(): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $config = $this->vaultUserConfigRepository->findOneByUser($user);
+        if (!$config instanceof VaultUserConfigInterface) {
+            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        $this->vaultUserConfigManager->destroyVault($user, $config);
+
+        return $this->jsonSuccess([]);
+    }
 }
