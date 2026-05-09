@@ -6,6 +6,7 @@ namespace Aurora\Core\Auth\Manager\Decorator;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
@@ -19,7 +20,7 @@ final readonly class AuditAccessRequestManagerDecorator implements AccessRequest
         private AuditLogger $auditLogger,
     ) {}
 
-    public function create(string $email, ?string $name, ?string $message): AccessRequest
+    public function create(string $email, ?string $name, ?string $message): AccessRequestInterface
     {
         $request = $this->inner->create($email, $name, $message);
         $this->auditLogger->log('core', 'access_request.created', 'AccessRequest', $request->getId(), ['email' => $email]);

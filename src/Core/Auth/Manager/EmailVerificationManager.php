@@ -6,6 +6,7 @@ namespace Aurora\Core\Auth\Manager;
 
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +33,7 @@ class EmailVerificationManager implements EmailVerificationManagerInterface
      * one) and persists it. Returns the plain token so the caller can build
      * the verification URL.
      */
-    public function generateToken(User $user): string
+    public function generateToken(CoreUserInterface $user): string
     {
         $token = bin2hex(random_bytes(32));
         $user->setEmailVerificationToken($token);
@@ -43,7 +44,7 @@ class EmailVerificationManager implements EmailVerificationManagerInterface
         return $token;
     }
 
-    public function sendVerificationEmail(User $user, string $verifyUrl): void
+    public function sendVerificationEmail(CoreUserInterface $user, string $verifyUrl): void
     {
         $siteName = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
 

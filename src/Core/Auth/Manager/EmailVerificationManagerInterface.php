@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Manager;
 
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Entity\CoreUserInterface;
 
 interface EmailVerificationManagerInterface
 {
-    public function generateToken(User $user): string;
+    public function generateToken(CoreUserInterface $user): string;
 
-    public function sendVerificationEmail(User $user, string $verifyUrl): void;
+    public function sendVerificationEmail(CoreUserInterface $user, string $verifyUrl): void;
 }
