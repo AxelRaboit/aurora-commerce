@@ -56,6 +56,10 @@ backend:
       users:
         photo_uploaded: Photo de profil téléversée
         photo_removed: Photo de profil supprimée
+      mount_point:
+        created: Point de montage créé
+        updated: Point de montage modifié
+        deleted: Point de montage supprimé
   access_requests:
     intro: Gérez les demandes d'accès à l'administration en attente de validation.
     approved: Demande de {name} approuvée.
@@ -152,6 +156,7 @@ backend:
     overview: Vue d'ensemble
     parameters: Paramètres
     modules: Modules
+    mount_points: Points de montage
     permissions: Permissions
     users: Utilisateurs
   users:

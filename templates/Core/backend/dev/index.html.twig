@@ -11,6 +11,7 @@
         audit: 'backend.tabs.audit'|trans,
         permissions: 'backend.tabs.permissions'|trans,
         modules: 'backend.tabs.modules'|trans,
+        mount_points: 'backend.tabs.mount_points'|trans,
     } %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
@@ -31,6 +32,7 @@
     audit: tab == 'audit' ? audit : {},
     permissions: tab == 'permissions' ? permissions : {},
     modules: tab == 'modules' ? modules : {},
+    mountPoints: tab == 'mount_points' ? mountPoints : {},
     search: search ?? '',
     overviewPath: path('dev_dashboard'),
     parametersPath: path('dev_parameters'),
@@ -49,6 +51,11 @@
     modulesPath: path('dev_modules'),
     moduleUpdatePath: path('dev_modules_update', {key: '__key__'}),
     moduleVerifyPasswordPath: path('dev_modules_verify_password'),
+    mountPointsPath: path('dev_mount_points'),
+    mountPointCreatePath: path('dev_mount_points_create'),
+    mountPointUpdatePath: path('dev_mount_points_update', {id: '__id__'}),
+    mountPointDeletePath: path('dev_mount_points_delete', {id: '__id__'}),
+    mountPointTestPath: path('dev_mount_points_test', {id: '__id__'}),
     impersonatePath: path('backend_dashboard', {_switch_user: '__email__'}),
     csrfToken: csrf_token('admin'),
 }) }} class="flex-1"></div>

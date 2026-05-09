@@ -366,6 +366,13 @@ sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + docs from aurora-core ve
 	@ln -sfn ../$(AURORA)/docs/aurora-core docs/aurora-core
 	@ln -sfn ../$(AURORA)/docs/aurora-client docs/aurora-client
 	@echo "✅ docs/aurora-core + aurora-client symlinked from vendor"
+	@if [ ! -f .claude/settings.json ] && [ -f $(AURORA)/.claude/client_template/.claude/settings.json ]; then \
+		mkdir -p .claude; \
+		cp $(AURORA)/.claude/client_template/.claude/settings.json .claude/settings.json; \
+		echo "✅ .claude/settings.json created from aurora template"; \
+	elif [ -f .claude/settings.json ]; then \
+		echo "ℹ️  .claude/settings.json already exists — not overwritten"; \
+	fi
 
 sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do not edit by hand)
 	@if [ -f $(AURORA)/.claude/client_template/Makefile ]; then \

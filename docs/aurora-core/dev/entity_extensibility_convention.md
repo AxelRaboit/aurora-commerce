@@ -54,7 +54,7 @@ avec un tableau ET un formulaire de création/édition dédié ?*
 
 | Module | Entités |
 |---|---|
-| Core | `Agency`, `Media`, `MediaFolder`, `Menu`, `Service`, `Theme`, `User` |
+| Core | `Agency`, `Media`, `MediaFolder`, `Menu`, `MountPoint`, `Service`, `Theme`, `User` |
 | Editorial | `Comment`, `Form`, `Post`, `PostType`, `Taxonomy` |
 | Crm | `Company`, `Contact`, `Deal` |
 | Erp | `Product` |

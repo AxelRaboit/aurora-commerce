@@ -24,6 +24,8 @@ use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
+use Aurora\Core\MountPoint\Entity\MountPoint;
+use Aurora\Core\MountPoint\Entity\MountPointInterface;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Service\Entity\Service;
@@ -245,6 +247,7 @@ class AuroraBundle extends AbstractBundle
                     ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
+                    MountPointInterface::class => MountPoint::class,
                 ],
                 'mappings' => [
                     'AuroraCore' => [

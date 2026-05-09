@@ -9,6 +9,7 @@ import AdminAccessRequestsTab from "@core/backend/dev/AdminAccessRequestsTab.vue
 import AdminAuditTab from "@core/backend/dev/AdminAuditTab.vue";
 import AdminPermissionsTab from "@core/backend/dev/AdminPermissionsTab.vue";
 import AdminModulesTab from "@core/backend/dev/AdminModulesTab.vue";
+import AdminMountPointsTab from "@core/backend/dev/AdminMountPointsTab.vue";
 import {
     LayoutDashboard,
     Sliders,
@@ -17,6 +18,7 @@ import {
     ScrollText,
     ShieldCheck,
     Puzzle,
+    Network,
 } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -30,6 +32,7 @@ const props = defineProps({
     audit: { type: Object, default: () => ({}) },
     permissions: { type: Object, default: () => ({}) },
     modules: { type: Object, default: () => ({}) },
+    mountPoints: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
     overviewPath: { type: String, required: true },
     parametersPath: { type: String, required: true },
@@ -46,6 +49,11 @@ const props = defineProps({
     modulesPath: { type: String, required: true },
     moduleUpdatePath: { type: String, required: true },
     moduleVerifyPasswordPath: { type: String, required: true },
+    mountPointsPath: { type: String, required: true },
+    mountPointCreatePath: { type: String, required: true },
+    mountPointUpdatePath: { type: String, required: true },
+    mountPointDeletePath: { type: String, required: true },
+    mountPointTestPath: { type: String, required: true },
     accessRequestApprovePath: { type: String, required: true },
     accessRequestRejectPath: { type: String, required: true },
     accessRequestPurgePath: { type: String, required: true },
@@ -61,6 +69,7 @@ const ROUTE_BY_TAB = {
     audit: () => props.auditPath,
     permissions: () => props.permissionsPath,
     modules: () => props.modulesPath,
+    mount_points: () => props.mountPointsPath,
 };
 
 const tabs = [
@@ -71,6 +80,7 @@ const tabs = [
     { key: "audit", label: () => t("backend.tabs.audit"), icon: ScrollText },
     { key: "permissions", label: () => t("backend.tabs.permissions"), icon: ShieldCheck },
     { key: "modules", label: () => t("backend.tabs.modules"), icon: Puzzle },
+    { key: "mount_points", label: () => t("backend.tabs.mount_points"), icon: Network },
 ];
 
 const { state: tab, set: setTab } = useUrlSyncedState({
@@ -93,6 +103,7 @@ function initialDataFor(key) {
         audit: props.audit,
         permissions: props.permissions,
         modules: props.modules,
+        mount_points: props.mountPoints,
     }[key] ?? null;
 }
 </script>
@@ -175,6 +186,15 @@ function initialDataFor(key) {
                     :module-update-path="moduleUpdatePath"
                     :module-verify-password-path="moduleVerifyPasswordPath"
                     :initial-data="initialDataFor('modules')"
+                />
+                <AdminMountPointsTab
+                    v-else-if="tab === 'mount_points'"
+                    :mount-points-path="mountPointsPath"
+                    :mount-point-create-path="mountPointCreatePath"
+                    :mount-point-update-path="mountPointUpdatePath"
+                    :mount-point-delete-path="mountPointDeletePath"
+                    :mount-point-test-path="mountPointTestPath"
+                    :initial-data="initialDataFor('mount_points')"
                 />
             </KeepAlive>
         </div>
