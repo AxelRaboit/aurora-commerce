@@ -26,6 +26,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [convention_js_privacy.md](convention_js_privacy.md) — privacy JS : `#field` dans les classes (jamais `_field`), variable module-level non exportée pour les composables (pas de `_` préfixe)
 - [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` (format nested) en FR + EN dans le YAML du module
 - [convention_privilege_gating.md](convention_privilege_gating.md) — gate les actions à 2 endroits : `#[IsGranted]` côté serveur (autorité) **et** `v-if="can(...)"` côté Vue (UX). Jamais l'un sans l'autre
+- [convention_privilege_granularity.md](convention_privilege_granularity.md) — toujours décomposer en `view/create/edit/delete` plutôt qu'un `manage` fourre-tout. Permet des profils de droits fins pour `ROLE_USER`
 - [convention_i18n_source_files.md](convention_i18n_source_files.md) — éditer les **YAML sources** (`src/.../translations/`), jamais le JSON généré dans `assets/locales/generated/`. `make i18n` régénère, `npm run build` consomme
 
 ### Structure du projet (où va quoi)

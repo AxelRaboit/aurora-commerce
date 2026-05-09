@@ -23,8 +23,12 @@ final readonly class PlanningModule implements ModuleInterface
     {
         return [
             new NavPermission('planning.plannings.view'),
-            new NavPermission('planning.plannings.manage'),
-            new NavPermission('planning.events.manage'),
+            new NavPermission('planning.plannings.create'),
+            new NavPermission('planning.plannings.edit'),
+            new NavPermission('planning.plannings.delete'),
+            new NavPermission('planning.events.create'),
+            new NavPermission('planning.events.edit'),
+            new NavPermission('planning.events.delete'),
         ];
     }
 

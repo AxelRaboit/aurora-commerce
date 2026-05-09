@@ -4,9 +4,13 @@ backend:
       planning:
         plannings:
           view: Voir les plannings
-          manage: Gérer les plannings (création, édition, suppression)
+          create: Créer des plannings
+          edit: Modifier les plannings
+          delete: Supprimer les plannings
         events:
-          manage: Gérer les événements du planning
+          create: Créer des événements
+          edit: Modifier les événements
+          delete: Supprimer les événements
   nav:
     plannings: Plannings
     plannings_description: Calendriers et événements liés aux entités du système

@@ -44,8 +44,14 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { can } = usePrivileges();
-const canManagePlannings = computed(() => can("planning.plannings.manage"));
-const canManageEvents = computed(() => can("planning.events.manage"));
+const canCreatePlannings = computed(() => can("planning.plannings.create"));
+const canEditPlannings = computed(() => can("planning.plannings.edit"));
+const canDeletePlannings = computed(() => can("planning.plannings.delete"));
+const canManagePlannings = computed(() => canCreatePlannings.value || canEditPlannings.value || canDeletePlannings.value);
+const canCreateEvents = computed(() => can("planning.events.create"));
+const canEditEvents = computed(() => can("planning.events.edit"));
+const canDeleteEvents = computed(() => can("planning.events.delete"));
+const canManageEvents = computed(() => canCreateEvents.value || canEditEvents.value || canDeleteEvents.value);
 
 // --- Domain state -----------------------------------------------------
 const {

@@ -52,7 +52,7 @@ class PlanningEventsController extends AbstractController
     }
 
     #[Route('/{id}/events', name: '_events_create', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.events.manage')]
+    #[IsGranted('planning.events.create')]
     public function create(PlanningInterface $planning, Request $request): JsonResponse
     {
         $payload = $this->decodeJson($request);
@@ -74,7 +74,7 @@ class PlanningEventsController extends AbstractController
     }
 
     #[Route('/events/{eventId}/edit', name: '_events_update', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.events.manage')]
+    #[IsGranted('planning.events.edit')]
     public function update(int $eventId, Request $request): JsonResponse
     {
         $event = $this->eventRepository->find($eventId);
@@ -105,7 +105,7 @@ class PlanningEventsController extends AbstractController
     }
 
     #[Route('/events/{eventId}/delete', name: '_events_delete', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.events.manage')]
+    #[IsGranted('planning.events.delete')]
     public function delete(int $eventId): JsonResponse
     {
         $event = $this->eventRepository->find($eventId);

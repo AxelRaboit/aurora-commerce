@@ -127,3 +127,45 @@ src/Module/ClientHr/ClientHrPermissionsModule.php     → id 'hr'
 ```
 
 Chacun s'enregistre automatiquement via `_instanceof`.
+
+---
+
+## Bonne pratique : préférer des permissions granulaires
+
+Toujours décomposer les permissions en actions atomiques plutôt qu'un `manage`
+fourre-tout. Cela permet d'attribuer des profils de droits fins aux utilisateurs
+`ROLE_USER` (ex : accès en lecture seule, ou création sans droit de suppression).
+
+```php
+// ✅ Granulaire — recommandé
+return [
+    new NavPermission('crm.contacts.view'),
+    new NavPermission('crm.contacts.create'),
+    new NavPermission('crm.contacts.edit'),
+    new NavPermission('crm.contacts.delete'),
+];
+
+// ❌ Trop vague
+return [
+    new NavPermission('crm.contacts.view'),
+    new NavPermission('crm.contacts.manage'),
+];
+```
+
+La correspondance Controller ↔ permission :
+
+| Action | `#[IsGranted]` |
+|---|---|
+| `index()` / `list()` | `*.view` (sur la classe) |
+| `create()` | `*.create` |
+| `update()` | `*.edit` |
+| `delete()` | `*.delete` |
+
+Dans la Vue, si une action regroupe create + edit + delete (ex : un bouton
+"Modifier" qui peut aussi créer), utiliser un computed combiné :
+
+```js
+const canManage = computed(
+    () => can('crm.contacts.create') || can('crm.contacts.edit') || can('crm.contacts.delete')
+);
+```

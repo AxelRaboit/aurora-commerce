@@ -23,7 +23,9 @@ final readonly class HrModule implements ModuleInterface
     {
         return [
             new NavPermission('hr.employees.view'),
-            new NavPermission('hr.employees.manage'),
+            new NavPermission('hr.employees.create'),
+            new NavPermission('hr.employees.edit'),
+            new NavPermission('hr.employees.delete'),
         ];
     }
 

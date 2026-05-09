@@ -4,7 +4,9 @@ backend:
       hr:
         employees:
           view: Voir les employés
-          manage: Gérer les employés (création, édition, suppression)
+          create: Créer des employés
+          edit: Modifier les employés
+          delete: Supprimer les employés
   nav:
     sections:
       hr: RH

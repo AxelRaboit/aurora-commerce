@@ -4,7 +4,9 @@ backend:
       planning:
         plannings:
           view: View plannings
-          manage: Manage plannings (create, edit, delete)
+          create: Create plannings
+          edit: Edit plannings
+          delete: Delete plannings
         events:
           manage: Manage planning events
   nav:

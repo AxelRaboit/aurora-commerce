@@ -42,7 +42,7 @@ class PlanningsController extends AbstractController
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.plannings.manage')]
+    #[IsGranted('planning.plannings.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->planningInputFactory->fromArray($this->decodeJson($request));
@@ -57,7 +57,7 @@ class PlanningsController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.plannings.manage')]
+    #[IsGranted('planning.plannings.edit')]
     public function update(PlanningInterface $planning, Request $request): JsonResponse
     {
         $input = $this->planningInputFactory->fromArray($this->decodeJson($request));
@@ -72,7 +72,7 @@ class PlanningsController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('planning.plannings.manage')]
+    #[IsGranted('planning.plannings.delete')]
     public function delete(PlanningInterface $planning): JsonResponse
     {
         $this->planningManager->delete($planning);

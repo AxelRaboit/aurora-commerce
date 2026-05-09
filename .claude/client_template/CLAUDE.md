@@ -59,15 +59,16 @@ Les docs sont des **symlinks** vers `vendor/axelraboit/aurora/docs/`.
 **Ne pas éditer ces fichiers** — ils vivent dans vendor.
 
 ### docs/aurora-client/ — Guide dev pour travailler dans ce projet
-- [philosophy.md](docs/aurora-client/philosophy.md) — Philosophie du projet (deux modes : étendre Aurora vs créer un module)
-- [setup.md](docs/aurora-client/setup.md) — Installation locale
-- [architecture.md](docs/aurora-client/architecture.md) — Structure du projet, relation avec aurora-core
-- [dev_workflow.md](docs/aurora-client/dev_workflow.md) — Commandes du quotidien
-- [extend_entity.md](docs/aurora-client/extend_entity.md) — Étendre une entité Aurora (5 couches)
-- [add_module.md](docs/aurora-client/add_module.md) — Créer un module client complet
-- [database.md](docs/aurora-client/database.md) — Migrations, fixtures, séquences
-- [assets_vue.md](docs/aurora-client/assets_vue.md) — Composants Vue côté client
-- [update_aurora.md](docs/aurora-client/update_aurora.md) — Mettre à jour aurora-core
+- [getting_started/philosophy.md](docs/aurora-client/getting_started/philosophy.md) — Philosophie du projet (deux modes : étendre Aurora vs créer un module)
+- [getting_started/setup.md](docs/aurora-client/getting_started/setup.md) — Installation locale
+- [getting_started/architecture.md](docs/aurora-client/getting_started/architecture.md) — Structure du projet, relation avec aurora-core
+- [dev/dev_workflow.md](docs/aurora-client/dev/dev_workflow.md) — Commandes du quotidien
+- [dev/database.md](docs/aurora-client/dev/database.md) — Migrations, fixtures, séquences
+- [dev/assets_vue.md](docs/aurora-client/dev/assets_vue.md) — Composants Vue côté client
+- [dev/update_aurora.md](docs/aurora-client/dev/update_aurora.md) — Mettre à jour aurora-core
+- [extending/extend_entity.md](docs/aurora-client/extending/extend_entity.md) — Étendre une entité Aurora (5 couches)
+- [extending/add_module.md](docs/aurora-client/extending/add_module.md) — Créer un module client complet
+- [extending/custom_permissions.md](docs/aurora-client/extending/custom_permissions.md) — Permissions custom (granularité view/create/edit/delete)
 
 ### docs/aurora-core/ — Architecture interne du bundle
 - [philosophy.md](docs/aurora-core/philosophy.md) — Philosophie d'Aurora Core (zéro fork, 5 couches, système de modules)

@@ -71,7 +71,7 @@ class TrackingModule implements ModuleInterface
                     new NavItem(
                         label: 'admin.nav.tracking.projects',
                         route: 'tracking_admin_projects_index',
-                        permission: 'tracking.projects.manage',
+                        permission: 'tracking.projects.view',
                     ),
                 ],
             ),
@@ -81,7 +81,9 @@ class TrackingModule implements ModuleInterface
     public function getPermissions(): array
     {
         return [
-            new NavPermission('tracking.projects.manage'),
+            new NavPermission('tracking.projects.view'),
+            new NavPermission('tracking.projects.create'),
+            new NavPermission('tracking.projects.edit'),
             new NavPermission('tracking.projects.delete'),
         ];
     }
@@ -296,7 +298,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/tracking/projects', name: 'tracking_admin_projects_')]
-#[IsGranted('tracking.projects.manage')]
+#[IsGranted('tracking.projects.view')]
 class ProjectsController extends AbstractController
 {
     use JsonResponseTrait;

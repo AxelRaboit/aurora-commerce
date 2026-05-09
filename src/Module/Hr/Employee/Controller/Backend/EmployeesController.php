@@ -51,7 +51,7 @@ class EmployeesController extends AbstractController
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('hr.employees.manage')]
+    #[IsGranted('hr.employees.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->employeeInputFactory->fromArray($this->decodeJson($request));
@@ -66,7 +66,7 @@ class EmployeesController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_update', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('hr.employees.manage')]
+    #[IsGranted('hr.employees.edit')]
     public function update(EmployeeInterface $employee, Request $request): JsonResponse
     {
         $input = $this->employeeInputFactory->fromArray($this->decodeJson($request));
@@ -81,7 +81,7 @@ class EmployeesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('hr.employees.manage')]
+    #[IsGranted('hr.employees.delete')]
     public function delete(EmployeeInterface $employee): JsonResponse
     {
         $this->employeeManager->delete($employee);

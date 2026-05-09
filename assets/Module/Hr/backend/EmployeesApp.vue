@@ -74,7 +74,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.employees.searchPlaceholder')" v-on:search="onSearch" />
             <AppButton
-                v-if="can('hr.employees.manage')"
+                v-if="can('hr.employees.create')"
                 variant="primary"
                 size="md"
                 class="w-full sm:w-auto"
@@ -97,7 +97,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     </div>
                     <div class="flex items-center gap-0.5 shrink-0">
                         <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <template v-if="can('hr.employees.manage')">
+                        <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
                             <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         </template>
@@ -131,7 +131,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <template v-if="can('hr.employees.manage')">
+                                <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
                                     <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 </template>
