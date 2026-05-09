@@ -195,12 +195,14 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     </dd>
                 </div>
             </dl>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="viewingEmployee = null">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('shared.common.close') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="viewingEmployee = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.close') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Edit / Create modal -->
@@ -254,32 +256,36 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                 </div>
                 <slot name="extra-form-fields" :form="form" />
             </form>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="closeModal">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('shared.common.cancel') }}
-                </AppButton>
-                <AppButton variant="primary" size="md" :loading="saving" v-on:click="submit">
-                    <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('shared.common.save') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="closeModal">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.cancel') }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="saving" v-on:click="submit">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.save') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete confirmation modal -->
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.employees.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.employees.deleteWarning') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('shared.common.cancel') }}
-                </AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
-                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('shared.common.delete') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.cancel') }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.delete') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

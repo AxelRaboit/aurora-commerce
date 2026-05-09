@@ -409,61 +409,73 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         <!-- Reopen confirmation -->
         <AppModal :show="showReopenModal" max-width="sm" :title="t('photo.galleries.admin.reopen')" v-on:close="showReopenModal = false">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.reopenConfirm") }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showReopenModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="reopenLoading" v-on:click="confirmReopen">
-                    <Unlock class="w-4 h-4" :stroke-width="2" />
-                    {{ t("photo.galleries.admin.reopen") }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showReopenModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="reopenLoading" v-on:click="confirmReopen">
+                        <Unlock class="w-4 h-4" :stroke-width="2" />
+                        {{ t("photo.galleries.admin.reopen") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Invite delete confirmation -->
         <AppModal :show="!!pendingInviteDelete" max-width="sm" :title="t('photo.galleries.admin.invites.deleteConfirmTitle')" v-on:close="pendingInviteDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.invites.deleteConfirm", { name: pendingInviteDelete?.name }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingInviteDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="inviteDeleting" v-on:click="confirmDeleteInvite"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingInviteDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="inviteDeleting" v-on:click="confirmDeleteInvite"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Finalization reopen confirmation -->
         <AppModal :show="!!pendingFinalizationDelete" max-width="sm" :title="t('photo.galleries.admin.finalizations.reopen')" v-on:close="pendingFinalizationDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.finalizations.reopenConfirm") }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingFinalizationDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="finalizationDeleteLoading" v-on:click="confirmDeleteFinalization">
-                    <Unlock class="w-4 h-4" :stroke-width="2" />
-                    {{ t("photo.galleries.admin.finalizations.reopen") }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingFinalizationDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="finalizationDeleteLoading" v-on:click="confirmDeleteFinalization">
+                        <Unlock class="w-4 h-4" :stroke-width="2" />
+                        {{ t("photo.galleries.admin.finalizations.reopen") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Comment delete confirmation -->
         <AppModal :show="!!pendingCommentDelete" max-width="sm" :title="t('photo.galleries.admin.comments.delete')" v-on:close="pendingCommentDelete = null">
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.comments.deleteConfirm") }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingCommentDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="commentDeleteLoading" v-on:click="confirmDeleteComment"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingCommentDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="commentDeleteLoading" v-on:click="confirmDeleteComment"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Single delete confirmation -->
         <AppModal :show="!!pendingDeleteItem" max-width="sm" v-on:close="pendingDeleteItem = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemDeleteConfirm") }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteOneLoading" v-on:click="confirmDeleteOne"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteOneLoading" v-on:click="confirmDeleteOne"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Bulk delete confirmation -->
         <AppModal :show="pendingBulkDelete" max-width="sm" v-on:close="pendingBulkDelete = false">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemsBulkDeleteConfirm", { count: selected.size }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="confirmBulkDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="confirmBulkDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

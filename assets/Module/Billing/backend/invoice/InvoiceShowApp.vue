@@ -61,13 +61,15 @@ const { formatDateNumeric } = useDateFormat();
                 rows="3"
                 class="w-full px-3 py-2 rounded-lg border border-line/60 bg-surface text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-500/30 resize-none"
             />
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showCreditNoteModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="creatingCreditNote" v-on:click="createCreditNote">
-                    <FileX class="w-4 h-4" :stroke-width="2" />
-                    {{ t('backend.billing.invoices.show.confirmCreditNote') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showCreditNoteModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="creatingCreditNote" v-on:click="createCreditNote">
+                        <FileX class="w-4 h-4" :stroke-width="2" />
+                        {{ t('backend.billing.invoices.show.confirmCreditNote') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Banners -->
@@ -106,10 +108,12 @@ const { formatDateNumeric } = useDateFormat();
                     {{ t('backend.billing.invoices.deleteBuyerToo', { name: invoice.buyer?.name ?? '' }) }}
                 </label>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteInvoice"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleting" v-on:click="deleteInvoice"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

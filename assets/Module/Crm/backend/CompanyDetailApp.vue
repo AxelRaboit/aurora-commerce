@@ -217,20 +217,24 @@ async function submitContact() {
                 <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="editErrors.website" />
                 <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
                 <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: company.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
     <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" v-on:close="showCreateContact = false">
@@ -261,10 +265,12 @@ async function submitContact() {
             <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
             <AppTextarea v-model="newContact.notes" :rows="2" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
             <p class="text-xs text-muted">{{ t('backend.crm.companies.contactLinked', { name: company.name }) }}</p>
+        </form>
+        <template #footer>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" type="button" v-on:click="showCreateContact = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="primary" size="md" type="submit" :loading="contactLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
             </AppModalFooter>
-        </form>
+        </template>
     </AppModal>
 </template>

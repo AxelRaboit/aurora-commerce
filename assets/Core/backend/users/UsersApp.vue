@@ -222,11 +222,13 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     />
                 </div>
                 <slot name="extra-invite-form-fields" :form="inviteForm" :errors="inviteModal.errors" />
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving"><Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.users.sendInvite') }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!viewingUser" max-width="md" v-on:close="viewingUser = null">
@@ -302,10 +304,12 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     </div>
                 </div>
 
+            </div>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
                 </AppModalFooter>
-            </div>
+            </template>
         </AppModal>
 
         <AppModal :show="editModal.open" max-width="lg" :title="t('backend.users.edit_title', { name: editModal.editing?.name ?? '' })" v-on:close="editModal.open = false">
@@ -381,14 +385,16 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     :error="editModal.errors.password ?? ''"
                 />
                 <slot name="extra-edit-form-fields" :form="editForm" :errors="editModal.errors" />
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
                     </AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Privileges modal — dedicated, Dev only -->
@@ -403,7 +409,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 </div>
                 <div v-for="group in privilegesByModule" :key="group.module" class="space-y-2">
                     <p class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('backend.modules.' + group.module, group.module) }}</p>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <AppCheckbox
                             v-for="priv in group.privileges"
                             :key="priv"
@@ -414,34 +420,40 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         </AppCheckbox>
                     </div>
                 </div>
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
+            </div>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="privilegesModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" :loading="privilegesModal.saving" v-on:click="savePrivileges">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
                     </AppButton>
-                </div>
-            </div>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
             <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
                 {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enableConfirm' : 'backend.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
             </p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="togglingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton :variant="togglingUser?.status === UserStatus.Disabled ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
-                    {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enable' : 'backend.users.disable') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="togglingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton :variant="togglingUser?.status === UserStatus.Disabled ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
+                        {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enable' : 'backend.users.disable') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

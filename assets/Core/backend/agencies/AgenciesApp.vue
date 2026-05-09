@@ -82,6 +82,8 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                     :required="true"
                 />
                 <slot name="extra-form-fields" :edit-form="editForm" :errors="editModal.errors" />
+            </form>
+            <template #footer>
                 <AppModalFooter :bordered="true">
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
@@ -89,15 +91,17 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                         {{ t("shared.common.save") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="!!deletingAgency" max-width="sm" v-on:close="deletingAgency = null">
             <p class="text-sm text-primary">{{ t("backend.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingAgency = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingAgency = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

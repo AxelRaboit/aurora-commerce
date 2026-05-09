@@ -135,11 +135,13 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     :rows="2"
                 />
                 <slot name="extra-create-form-fields" :form="createForm" :errors="createModal.errors" />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="createModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="createModal.saving"><Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.create") }}</AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="editModal.open" max-width="lg" :title="t('backend.themes.edit')" v-on:close="editModal.open = false">
@@ -220,11 +222,13 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     />
                 </div>
 
+            </form>
+            <template #footer>
                 <AppModalFooter bordered>
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="!!deletingTheme" max-width="sm" :title="t('backend.themes.deleteConfirm', { name: deletingTheme?.name ?? '' })" v-on:close="deletingTheme = null">

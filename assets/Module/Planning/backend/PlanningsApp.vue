@@ -394,6 +394,8 @@ onMounted(() => {
                     :error="planningForm.editModal.errors.visibility ?? ''"
                 />
                 <slot name="extra-form-fields" :edit-form="planningForm.editForm" :errors="planningForm.editModal.errors" />
+            </form>
+            <template #footer>
                 <AppModalFooter :bordered="true">
                     <AppButton variant="ghost" size="md" v-on:click="planningForm.editModal.open = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -404,7 +406,7 @@ onMounted(() => {
                         {{ t("shared.common.save") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <!-- Delete planning confirm -->
@@ -412,16 +414,18 @@ onMounted(() => {
             <p class="text-sm text-primary">
                 {{ t("backend.plannings.delete_confirm", { name: deletingPlanning?.name ?? "" }) }}
             </p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingPlanning = null">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("shared.common.cancel") }}
-                </AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeletePlanning">
-                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("shared.common.delete") }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingPlanning = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeletePlanning">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Edit / Create event -->
@@ -498,6 +502,8 @@ onMounted(() => {
                     :disabled="eventForm.editModal.readOnly"
                     open-direction="top"
                 />
+            </form>
+            <template #footer>
                 <AppModalFooter :bordered="true">
                     <AppButton
                         v-if="eventForm.editModal.event && !eventForm.editModal.readOnly && canManageEvents"
@@ -524,7 +530,7 @@ onMounted(() => {
                         {{ t("shared.common.save") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <!-- Delete event confirm -->
@@ -532,16 +538,18 @@ onMounted(() => {
             <p class="text-sm text-primary">
                 {{ t("backend.planning_events.delete_confirm", { title: deletingEvent?.title ?? "" }) }}
             </p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="deletingEvent = null">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("shared.common.cancel") }}
-                </AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteEvent">
-                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("shared.common.delete") }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingEvent = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteEvent">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

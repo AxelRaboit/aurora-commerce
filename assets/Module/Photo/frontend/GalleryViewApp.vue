@@ -442,11 +442,13 @@ function downloadOne(itemId) {
                 <p class="text-sm text-muted">{{ t("photo.frontend.identity.intro") }}</p>
                 <AppInput v-model="visitorName" :label="t('photo.frontend.identity.name')" required />
                 <AppInput v-model="visitorEmail" type="email" :label="t('photo.frontend.identity.email')" required />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showIdentityModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit">{{ t("photo.frontend.identity.submit") }}</AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <!-- Comment modal -->
@@ -480,6 +482,8 @@ function downloadOne(itemId) {
                     :rows="4"
                     maxlength="2000"
                 />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showCommentBox = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("photo.frontend.comments.cancel") }}
@@ -489,7 +493,7 @@ function downloadOne(itemId) {
                         {{ t("photo.frontend.comments.submit") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <!-- Share my selection modal -->
@@ -508,9 +512,11 @@ function downloadOne(itemId) {
                     {{ shareCopied ? t("photo.frontend.share.copied") : t("photo.frontend.share.copy") }}
                 </AppButton>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" type="button" v-on:click="showShareModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" type="button" v-on:click="showShareModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Finalize modal -->
@@ -532,6 +538,8 @@ function downloadOne(itemId) {
                     :error="finalizeEmailError"
                     required
                 />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showFinalizeModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="finalizing">
@@ -539,7 +547,7 @@ function downloadOne(itemId) {
                         {{ t("photo.frontend.finalize") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
     </div>
 </template>

@@ -230,18 +230,22 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                     <span>{{ t('backend.billing.ocr.logsRunning') }}</span>
                 </div>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="logsJob = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="logsJob = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!pendingValidate" max-width="sm" v-on:close="pendingValidate = null">
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.validateConfirm', { id: pendingValidate?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.ocr.validateHelp') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingValidate = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.billing.invoices.show.validate') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingValidate = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="!!validatingJobId" v-on:click="confirmValidate"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.billing.invoices.show.validate') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null; deleteTiersToo = false">
@@ -251,10 +255,12 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
                 <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
                 {{ t('backend.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
             </label>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

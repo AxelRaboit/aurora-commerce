@@ -685,19 +685,23 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     track-by="id"
                     option-label="displayLabel"
                 />
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="folderModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="pendingBulkDelete" max-width="sm" :title="t('backend.media.bulkDeleteConfirm', { count: selectedIds.size })" v-on:close="pendingBulkDelete = false">
             <p class="text-sm text-secondary">{{ t("backend.media.bulkDeleteConfirmDesc") }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="doBulkDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingBulkDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="bulkDeleteLoading" v-on:click="doBulkDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!deletingMedia" max-width="md" v-on:close="deletingMedia = null">
@@ -732,20 +736,24 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
             <p v-else-if="deletingMediaUsage" class="text-xs text-emerald-500 italic">{{ t("backend.media.usageNone") }}</p>
 
-            <div class="flex justify-end gap-2 mt-4">
-                <AppButton variant="ghost" size="md" v-on:click="deletingMedia = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">
-                    {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("backend.media.deleteAnyway") : t("shared.common.delete") }}
-                </AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingMedia = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">
+                        {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("backend.media.deleteAnyway") : t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!deletingFolder" max-width="sm" v-on:close="deletingFolder = null">
             <p class="text-sm text-primary">{{ t("backend.media.deleteFolderConfirm", { name: deletingFolder?.name }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingFolder = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteFolder"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingFolder = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteFolder"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!previewMedia" max-width="4xl" v-on:close="previewMedia = null">
@@ -801,10 +809,12 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 track-by="id"
                 option-label="displayLabel"
             />
-            <div class="flex justify-end gap-2 mt-4">
-                <AppButton variant="ghost" size="md" v-on:click="openBulkMove = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="openBulkMove = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" v-on:click="bulkMove(); openBulkMove = false"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <MediaCropperModal

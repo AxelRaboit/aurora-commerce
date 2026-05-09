@@ -292,20 +292,24 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     <AppInput v-model="form.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
                     <AppDatePicker v-model="form.closingDate" :label="t('backend.crm.deals.closingDate')" />
                     <slot name="extra-form-fields" :form="form" :errors="errors" :deal="formModal.deal" />
+                </form>
+                <template #footer>
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="formModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                         <AppButton variant="primary" size="md" type="submit" :loading="loading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </AppModalFooter>
-                </form>
+                </template>
             </AppModal>
 
             <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
                 <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
                 <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
-                <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-                </AppModalFooter>
+                <template #footer>
+                    <AppModalFooter>
+                        <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                        <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+                    </AppModalFooter>
+                </template>
             </AppModal>
         </div>
     </div>

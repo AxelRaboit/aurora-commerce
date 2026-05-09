@@ -239,6 +239,8 @@ const onCoverChange = onGalleryCoverChange;
                         </ul>
                     </div>
                 </div>
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="createLoading">
@@ -246,7 +248,7 @@ const onCoverChange = onGalleryCoverChange;
                         {{ t("shared.common.create") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <!-- Edit modal -->
@@ -362,6 +364,8 @@ const onCoverChange = onGalleryCoverChange;
                         </ul>
                     </div>
                 </div>
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" :loading="editLoading">
@@ -369,15 +373,17 @@ const onCoverChange = onGalleryCoverChange;
                         {{ t("shared.common.save") }}
                     </AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.deleteConfirm", { title: pendingDelete?.title ?? '' }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

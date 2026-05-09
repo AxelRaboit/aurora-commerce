@@ -88,11 +88,13 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
                 />
                 <p v-if="menuModal.editing?.protected" class="text-xs text-amber-500 -mt-2">{{ t('backend.menus.locationLockedHint') }}</p>
                 <AppInput v-model="menuForm.description" :label="t('backend.menus.description')" />
+            </form>
+            <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" v-on:click="menuModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" :loading="menuModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
-            </form>
+            </template>
         </AppModal>
 
         <AppModal :show="!!confirmDeleteMenu" max-width="sm" v-on:close="confirmDeleteMenu = null">

@@ -434,20 +434,24 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             </div>
         </div>
 
-        <AppModalFooter bordered>
-            <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-            <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-        </AppModalFooter>
+        <template #footer>
+            <AppModalFooter bordered>
+                <AppButton variant="ghost" size="md" v-on:click="showFieldModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="primary" size="md" :disabled="fieldSaving" v-on:click="submitField"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+            </AppModalFooter>
+        </template>
     </AppModal>
 
     <AppModal :show="showDeleteConfirm" max-width="sm" :title="t('backend.forms.deleteConfirmTitle')" v-on:close="showDeleteConfirm = false">
         <p class="text-sm text-secondary">{{ t("backend.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
-        <AppModalFooter bordered>
-            <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-            <AppButton variant="danger" size="md" :disabled="deleting" v-on:click="confirmDelete">
-                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
-            </AppButton>
-        </AppModalFooter>
+        <template #footer>
+            <AppModalFooter bordered>
+                <AppButton variant="ghost" size="md" v-on:click="showDeleteConfirm = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton variant="danger" size="md" :disabled="deleting" v-on:click="confirmDelete">
+                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
+                </AppButton>
+            </AppModalFooter>
+        </template>
     </AppModal>
 
     <AppModal :show="!!viewingSubmission" max-width="md" :title="t('backend.forms.viewSubmission')" v-on:close="viewingSubmission = null">
@@ -467,16 +471,20 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 </p>
             </div>
         </div>
-        <div class="flex justify-end pt-2 border-t border-line">
-            <AppButton variant="ghost" size="md" v-on:click="viewingSubmission = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-        </div>
+        <template #footer>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="viewingSubmission = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+            </AppModalFooter>
+        </template>
     </AppModal>
 
     <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
         <p class="text-sm text-primary">{{ t('backend.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
-        <div class="flex justify-end gap-2 pt-3 border-t border-line">
-            <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-            <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
-        </div>
+        <template #footer>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="pendingDeleteField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                <AppButton variant="danger" size="md" :loading="deleteFieldLoading" v-on:click="doDeleteField"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
+            </AppModalFooter>
+        </template>
     </AppModal>
 </template>

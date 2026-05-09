@@ -631,12 +631,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     open-direction="top"
                 />
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="projectCreateLoading" v-on:click="submitCreateProject">
-                    <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="projectCreateLoading" v-on:click="submitCreateProject">
+                        <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Edit Project modal -->
@@ -695,12 +697,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     open-direction="top"
                 />
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showEditProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="projectEditLoading" v-on:click="submitEditProject">
-                    <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showEditProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="projectEditLoading" v-on:click="submitEditProject">
+                        <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Create Task modal -->
@@ -770,12 +774,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <option v-for="opt in sprintOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showCreateTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="createTaskLoading" v-on:click="submitCreateTask">
-                    <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showCreateTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="createTaskLoading" v-on:click="submitCreateTask">
+                        <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Edit Task modal -->
@@ -990,12 +996,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </div>
                 </div>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showEditTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="editTaskLoading" v-on:click="submitEditTask">
-                    <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showEditTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="editTaskLoading" v-on:click="submitEditTask">
+                        <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- View Task modal -->
@@ -1124,29 +1132,35 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </div>
                 </div>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showViewTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showViewTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete project confirm -->
         <AppModal :show="!!pendingDeleteProject" max-width="sm" v-on:close="confirmDeleteProject(null)">
             <p class="text-sm text-primary">{{ t('backend.projects.deleteConfirm', { name: pendingDeleteProject?.title ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.projects.deleteWarning') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="confirmDeleteProject(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="projectDeleting" v-on:click="doDeleteProject"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="confirmDeleteProject(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="projectDeleting" v-on:click="doDeleteProject"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete task confirm -->
         <AppModal :show="!!pendingDeleteTask" max-width="sm" v-on:close="confirmDeleteTask(null)">
             <p class="text-sm text-primary">{{ t('backend.projects.task.deleteConfirm', { name: pendingDeleteTask?.title ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.projects.task.deleteWarning') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="confirmDeleteTask(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="taskDeleting" v-on:click="doDeleteTask"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="confirmDeleteTask(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="taskDeleting" v-on:click="doDeleteTask"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Create column modal -->
@@ -1160,10 +1174,12 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :error="createColumnErrors.label"
                 />
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showCreateColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="createColumnLoading" v-on:click="submitCreateColumn"><Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showCreateColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="createColumnLoading" v-on:click="submitCreateColumn"><Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Rename column modal -->
@@ -1177,20 +1193,24 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :error="renameErrors.label"
                 />
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="showRenameColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" :loading="renameLoading" v-on:click="submitRenameColumn"><Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showRenameColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" :loading="renameLoading" v-on:click="submitRenameColumn"><Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete column confirm -->
         <AppModal :show="!!pendingDeleteColumn" max-width="sm" v-on:close="pendingDeleteColumn = null">
             <p class="text-sm text-primary">{{ t('backend.projects.columns.deleteConfirm', { label: pendingDeleteColumn?.label ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.projects.columns.deleteWarning') }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="pendingDeleteColumn = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" :loading="deleteColumnLoading" v-on:click="doDeleteColumn"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDeleteColumn = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteColumnLoading" v-on:click="doDeleteColumn"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Labels manager -->
@@ -1239,24 +1259,28 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </div>
                 </div>
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="labelsManage.showLabelsModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
-                <AppButton v-if="labelsManage.editingLabel.value" variant="ghost" size="md" v-on:click="labelsManage.cancelEdit"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="labelsManage.loading.value" v-on:click="labelsManage.submitLabel">
-                    <Save v-if="labelsManage.editingLabel.value" class="w-4 h-4" :stroke-width="2" />
-                    <Plus v-else class="w-4 h-4" :stroke-width="2" />
-                    {{ labelsManage.editingLabel.value ? t('shared.common.save') : t('shared.common.create') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="labelsManage.showLabelsModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
+                    <AppButton v-if="labelsManage.editingLabel.value" variant="ghost" size="md" v-on:click="labelsManage.cancelEdit"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="labelsManage.loading.value" v-on:click="labelsManage.submitLabel">
+                        <Save v-if="labelsManage.editingLabel.value" class="w-4 h-4" :stroke-width="2" />
+                        <Plus v-else class="w-4 h-4" :stroke-width="2" />
+                        {{ labelsManage.editingLabel.value ? t('shared.common.save') : t('shared.common.create') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete label confirm -->
         <AppModal :show="!!labelsManage.pendingDeleteLabel.value" max-width="sm" v-on:close="labelsManage.pendingDeleteLabel.value = null">
             <p class="text-sm text-primary">{{ t('backend.projects.errors.label_delete_confirm', { name: labelsManage.pendingDeleteLabel.value?.name ?? '' }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="labelsManage.pendingDeleteLabel.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" class="bg-rose-500 hover:bg-rose-600" v-on:click="labelsManage.deleteLabel()"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="labelsManage.pendingDeleteLabel.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" class="bg-rose-500 hover:bg-rose-600" v-on:click="labelsManage.deleteLabel()"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Sprints manager -->
@@ -1301,32 +1325,36 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </label>
                 </div>
             </div>
-            <AppModalFooter>
-                <AppButton
-                    v-if="sprintsManage.editingSprint.value"
-                    variant="ghost"
-                    size="md"
-                    class="sm:mr-auto"
-                    v-on:click="sprintsManage.cancelEdit"
-                >
-                    <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}
-                </AppButton>
-                <AppButton variant="ghost" size="md" v-on:click="sprintsManage.showSprintsModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
-                <AppButton variant="primary" size="md" :loading="sprintsManage.loading.value" v-on:click="sprintsManage.submitSprint">
-                    <Save v-if="sprintsManage.editingSprint.value" class="w-4 h-4" :stroke-width="2" />
-                    <Plus v-else class="w-4 h-4" :stroke-width="2" />
-                    {{ sprintsManage.editingSprint.value ? t('shared.common.save') : t('shared.common.create') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton
+                        v-if="sprintsManage.editingSprint.value"
+                        variant="ghost"
+                        size="md"
+                        class="sm:mr-auto"
+                        v-on:click="sprintsManage.cancelEdit"
+                    >
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}
+                    </AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="sprintsManage.showSprintsModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="sprintsManage.loading.value" v-on:click="sprintsManage.submitSprint">
+                        <Save v-if="sprintsManage.editingSprint.value" class="w-4 h-4" :stroke-width="2" />
+                        <Plus v-else class="w-4 h-4" :stroke-width="2" />
+                        {{ sprintsManage.editingSprint.value ? t('shared.common.save') : t('shared.common.create') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete sprint confirm -->
         <AppModal :show="!!sprintsManage.pendingDeleteSprint.value" max-width="sm" v-on:close="sprintsManage.pendingDeleteSprint.value = null">
             <p class="text-sm text-primary">{{ t('backend.projects.errors.sprint_delete_confirm', { name: sprintsManage.pendingDeleteSprint.value?.name ?? '' }) }}</p>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="sprintsManage.pendingDeleteSprint.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" class="bg-rose-500 hover:bg-rose-600" v-on:click="sprintsManage.deleteSprint()"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="sprintsManage.pendingDeleteSprint.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" class="bg-rose-500 hover:bg-rose-600" v-on:click="sprintsManage.deleteSprint()"><Trash2 class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.delete') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Save view modal -->
@@ -1339,12 +1367,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :error="savedViews.viewErrors.value.name"
                 />
             </div>
-            <AppModalFooter>
-                <AppButton variant="ghost" size="md" v-on:click="savedViews.showSaveModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="savedViews.saveView({ statusFilter, search: searchInput })">
-                    <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
-                </AppButton>
-            </AppModalFooter>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="savedViews.showSaveModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" v-on:click="savedViews.saveView({ statusFilter, search: searchInput })">
+                        <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

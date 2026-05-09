@@ -70,8 +70,13 @@ const maxWidthClass = computed(() => ({
 
 const panelClass = computed(() => [
     maxWidthClass.value,
-    props.noPadding ? "overflow-hidden" : "p-6 space-y-4",
-    props.scrollable ? "overflow-y-auto max-h-[90vh] scrollbar-thin" : "",
+    props.noPadding ? "overflow-hidden" : "",
+    props.scrollable ? "max-h-[90vh]" : "",
+]);
+
+const contentClass = computed(() => [
+    props.noPadding ? "" : "px-6 space-y-4",
+    props.scrollable ? "overflow-y-auto scrollbar-thin flex-1 py-6" : "py-6",
 ]);
 </script>
 
@@ -101,10 +106,11 @@ const panelClass = computed(() => [
                     v-show="show"
                     role="dialog"
                     aria-modal="true"
-                    class="relative z-10 w-full bg-surface border border-line rounded-xl shadow-xl"
+                    class="relative z-10 w-full bg-surface border border-line rounded-xl shadow-xl flex flex-col overflow-hidden"
                     :class="panelClass"
                 >
-                    <div v-if="title" class="flex items-center justify-between gap-4">
+                    <!-- Header -->
+                    <div v-if="title" class="shrink-0 flex items-center justify-between gap-4 px-6 pt-6 pb-2">
                         <h2 class="text-lg font-semibold text-primary">{{ title }}</h2>
                         <button
                             v-if="closeable"
@@ -116,7 +122,16 @@ const panelClass = computed(() => [
                             <X class="w-4 h-4" :stroke-width="2" />
                         </button>
                     </div>
-                    <slot />
+
+                    <!-- Scrollable content -->
+                    <div :class="contentClass">
+                        <slot />
+                    </div>
+
+                    <!-- Sticky footer -->
+                    <div v-if="$slots.footer" class="shrink-0 px-6 pb-6 pt-3 border-t border-line">
+                        <slot name="footer" />
+                    </div>
                 </div>
             </Transition>
         </div>
