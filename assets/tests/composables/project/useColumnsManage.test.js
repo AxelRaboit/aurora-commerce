@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useColumnsManage } from "@/Module/Project/backend/composables/useColumnsManage.js";
+import { useColumnsManage } from "@project/backend/composables/useColumnsManage.js";
 
 const PATHS = {
     create: "/backend/projects/__id__/columns",

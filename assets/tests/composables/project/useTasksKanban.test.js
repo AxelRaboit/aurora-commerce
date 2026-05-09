@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useTasksKanban } from "@/Module/Project/backend/composables/useTasksKanban.js";
+import { useTasksKanban } from "@project/backend/composables/useTasksKanban.js";
 
 const REORDER_PATH = "/backend/projects/__id__/tasks/reorder";
 
