@@ -87,7 +87,7 @@ App\Module\Tracking\TrackingModule:
 Si le module a une partie frontend publique, il implémente aussi `FrontInterface` :
 
 ```yaml
-App\Module\Tracking\TrackingFrontend:
+App\Module\Tracking\Frontend\TrackingFrontend:
     tags: [aurora.front]
 ```
 

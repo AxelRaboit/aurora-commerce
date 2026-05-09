@@ -14,7 +14,8 @@ Ce guide utilise **Tracking** comme exemple de référence (déjà implémenté)
 ```
 src/Module/Tracking/
 ├── TrackingModule.php              # enregistrement nav + permissions
-├── TrackingFrontend.php            # (optionnel) entrypoint frontend public
+├── Frontend/
+│   ├── TrackingFrontend.php        # (optionnel) entrypoint frontend public
 ├── Enum/
 │   └── ProjectStatusEnum.php
 ├── Project/
