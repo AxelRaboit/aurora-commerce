@@ -6,7 +6,7 @@ namespace Aurora\Core\User\Controller\Backend;
 
 use Aurora\Core\Auth\Service\ImpersonationTokenService;
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,7 +19,7 @@ final class ImpersonateFrontController extends AbstractController
 {
     public function __construct(
         private readonly ImpersonationTokenService $tokenService,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
     ) {}
 
     public function __invoke(User $user): RedirectResponse
@@ -29,7 +29,7 @@ final class ImpersonateFrontController extends AbstractController
         }
 
         $token = $this->tokenService->generate($user);
-        $locale = $this->frontContext->defaultLocale();
+        $locale = $this->context->defaultLocale();
 
         return $this->redirectToRoute('frontend_impersonate_redeem', [
             'locale' => $locale,

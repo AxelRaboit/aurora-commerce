@@ -6,7 +6,7 @@ namespace Aurora\Core\Frontend\Service;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
 
-final readonly class FrontRegistry
+final readonly class Registry
 {
     /** @var list<FrontendInterface> */
     private array $fronts;

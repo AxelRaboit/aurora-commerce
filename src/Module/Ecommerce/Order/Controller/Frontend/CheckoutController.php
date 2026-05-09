@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckoutController extends AbstractController
 {
-    use FrontLocaleTrait;
+    use LocaleTrait;
     use JsonResponseTrait;
 
     public function __construct(
@@ -42,7 +42,7 @@ class CheckoutController extends AbstractController
         private readonly OrderRepository $orderRepository,
         private readonly PayloadValidator $payloadValidator,
         private readonly Security $security,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
         private readonly CheckoutViewBuilder $viewBuilder,
         private readonly StripeService $stripeService,
@@ -54,7 +54,7 @@ class CheckoutController extends AbstractController
     #[Route('/{locale}/checkout', name: 'frontend_checkout', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value], priority: 8)]
     public function checkout(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $cart = $this->cartManager->getCurrentCart();
@@ -116,7 +116,7 @@ class CheckoutController extends AbstractController
     #[Route('/{locale}/order/{token}/payment-return', name: 'frontend_order_payment_return', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function paymentReturn(string $locale, string $token, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
 
         $order = $this->orderRepository->findOneByToken($token);
         if (!$order instanceof Order) {
@@ -143,7 +143,7 @@ class CheckoutController extends AbstractController
     #[Route('/{locale}/order/{token}', name: 'frontend_order_show', requirements: ['locale' => '[a-z]{2}', 'token' => '[a-f0-9]{32}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function show(string $locale, string $token, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $order = $this->orderRepository->findOneByToken($token);

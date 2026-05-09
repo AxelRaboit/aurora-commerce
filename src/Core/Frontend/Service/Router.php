@@ -9,10 +9,10 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use RuntimeException;
 
-final readonly class FrontRouter
+final readonly class Router
 {
     public function __construct(
-        private FrontRegistry $registry,
+        private Registry $registry,
         private SettingRepository $settingRepository,
     ) {}
 

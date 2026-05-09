@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\View;
 
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
@@ -20,7 +20,7 @@ final readonly class CheckoutViewBuilder
     public function __construct(
         private CartSerializer $cartSerializer,
         private OrderSerializerInterface $orderSerializer,
-        private FrontContext $frontContext,
+        private Context $context,
         private ThemeContext $themeContext,
     ) {}
 
@@ -39,7 +39,7 @@ final readonly class CheckoutViewBuilder
             'stripePublicKey' => $stripePublicKey,
             'submitPath' => $submitPath,
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
@@ -53,7 +53,7 @@ final readonly class CheckoutViewBuilder
         return [
             'order' => $this->orderSerializer->serialize($order),
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];

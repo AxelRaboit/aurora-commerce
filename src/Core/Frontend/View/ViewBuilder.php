@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\View;
 
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeContext;
 
 /**
  * Provides the base template variables required by the default front layout.
  * Inject this in any custom front controller or view builder.
  */
-final readonly class FrontViewBuilder
+final readonly class ViewBuilder
 {
     public function __construct(
-        private FrontContext $frontContext,
+        private Context $context,
         private ThemeContext $themeContext,
     ) {}
 
@@ -30,9 +30,9 @@ final readonly class FrontViewBuilder
     {
         return [
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'themeContext' => $this->themeContext,
-            'pageDescription' => $pageDescription ?: ($this->frontContext->siteDescription() ?? ''),
+            'pageDescription' => $pageDescription ?: ($this->context->siteDescription() ?? ''),
             'alternates' => $alternates,
             'showFrontMenus' => $showFrontMenus,
         ];

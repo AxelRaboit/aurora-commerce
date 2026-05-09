@@ -23,7 +23,7 @@ services:
         resource: '../src/'
 
     # Auto-tag every MediaUsageProvider so the aggregator service collects them.
-    # Auto-tag every registered front so the FrontRegistry collects them.
+    # Auto-tag every registered front so the Registry collects them.
     # Auto-tag every menu location provider so the MenuLocationRegistry collects them.
     # Auto-tag every sequence prefix provider so the conflict listener validates uniqueness at boot.
     _instanceof:
@@ -46,7 +46,7 @@ services:
         arguments:
             $providers: !tagged_iterator aurora.sequence_prefix
 
-    Aurora\Core\Frontend\Service\FrontRegistry:
+    Aurora\Core\Frontend\Service\Registry:
         arguments:
             $fronts: !tagged_iterator aurora.front
 

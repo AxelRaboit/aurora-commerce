@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\View;
 
-use Aurora\Core\Frontend\Service\FrontRegistry;
+use Aurora\Core\Frontend\Service\Registry;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -21,7 +21,7 @@ final readonly class SettingsViewBuilder
         private SettingRepository $settingRepository,
         private MediaRepository $mediaRepository,
         private UrlGeneratorInterface $urlGenerator,
-        private FrontRegistry $frontRegistry,
+        private Registry $registry,
     ) {}
 
     /**
@@ -76,7 +76,7 @@ final readonly class SettingsViewBuilder
             return array_values(array_map(
                 static fn ($front): array => ['value' => $front->getSlug(), 'label' => $front->getLabel()],
                 array_filter(
-                    $this->frontRegistry->all(),
+                    $this->registry->all(),
                     fn ($front): bool => null === $front->getModuleSettingKey()
                         || $this->settingRepository->getBoolean($front->getModuleSettingKey(), true),
                 ),

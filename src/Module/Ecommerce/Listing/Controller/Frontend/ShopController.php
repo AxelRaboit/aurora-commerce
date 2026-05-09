@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Listing\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Controller\LocaleTrait;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
@@ -18,11 +18,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ShopController extends AbstractController
 {
-    use FrontLocaleTrait;
+    use LocaleTrait;
 
     public function __construct(
         private readonly ListingRepository $listingRepository,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
         private readonly ShopViewBuilder $viewBuilder,
     ) {}
@@ -30,7 +30,7 @@ class ShopController extends AbstractController
     #[Route('/{locale}/shop', name: 'frontend_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $page = max(1, (int) $request->query->get('page', '1'));
@@ -41,7 +41,7 @@ class ShopController extends AbstractController
     #[Route('/{locale}/shop/{slug}', name: 'frontend_shop_product', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function show(string $locale, string $slug, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $listing = $this->listingRepository->findOneBySlug($slug);

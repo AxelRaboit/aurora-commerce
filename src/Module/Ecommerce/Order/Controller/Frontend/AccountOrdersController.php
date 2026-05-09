@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Controller\LocaleTrait;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\View\AccountOrdersViewBuilder;
@@ -18,11 +18,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AccountOrdersController extends AbstractController
 {
-    use FrontLocaleTrait;
+    use LocaleTrait;
 
     public function __construct(
         private readonly Security $security,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
         private readonly AccountOrdersViewBuilder $viewBuilder,
     ) {}
@@ -30,7 +30,7 @@ class AccountOrdersController extends AbstractController
     #[Route('/{locale}/account/orders', name: 'frontend_account_orders', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $user = $this->security->getUser();

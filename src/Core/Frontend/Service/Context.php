@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\Order;
 /**
  * Aggregates site-wide configuration used by public-facing controllers.
  */
-final class FrontContext
+final class Context
 {
     /** @var list<LocaleInterface>|null */
     private ?array $cachedLocales = null;

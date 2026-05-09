@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Controller;
 
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Symfony\Component\HttpFoundation\Response;
 
-trait FrontLocaleTrait
+trait LocaleTrait
 {
-    private function assertActiveLocale(FrontContext $frontContext, string $locale): void
+    private function assertActiveLocale(Context $context, string $locale): void
     {
-        if (!$frontContext->isLocaleActive($locale)) {
+        if (!$context->isLocaleActive($locale)) {
             throw $this->createNotFoundException(sprintf('LocaleEnum "%s" is not active.', $locale));
         }
     }

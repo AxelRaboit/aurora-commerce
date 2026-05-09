@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\View;
 
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
@@ -18,7 +18,7 @@ final readonly class ShopViewBuilder
     public function __construct(
         private ListingRepository $listingRepository,
         private ListingSerializerInterface $listingSerializer,
-        private FrontContext $frontContext,
+        private Context $context,
         private ThemeContext $themeContext,
     ) {}
 
@@ -37,7 +37,7 @@ final readonly class ShopViewBuilder
                 'total' => $result['total'],
             ],
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
@@ -51,7 +51,7 @@ final readonly class ShopViewBuilder
         return [
             'listing' => $this->listingSerializer->serialize($listing),
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];

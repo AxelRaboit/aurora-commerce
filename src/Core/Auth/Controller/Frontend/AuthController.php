@@ -6,9 +6,9 @@ namespace Aurora\Core\Auth\Controller\Frontend;
 
 use Aurora\Core\Auth\Dto\FrontRegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
-use Aurora\Core\Auth\View\AuthFrontViewBuilder;
+use Aurora\Core\Auth\View\Frontend\AuthViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Theme\Service\ThemeResolver;
@@ -37,9 +37,9 @@ class AuthController extends AbstractController
         private readonly SettingRepository $settingRepository,
         private readonly TranslatorInterface $translator,
         private readonly PayloadValidator $payloadValidator,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
-        private readonly AuthFrontViewBuilder $viewBuilder,
+        private readonly AuthViewBuilder $viewBuilder,
     ) {}
 
     #[Route('/{locale}/login', name: 'frontend_login', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -246,7 +246,7 @@ class AuthController extends AbstractController
 
     private function assertActiveLocale(string $locale): void
     {
-        if (!$this->frontContext->isLocaleActive($locale)) {
+        if (!$this->context->isLocaleActive($locale)) {
             throw $this->createNotFoundException(sprintf('LocaleEnum "%s" is not active.', $locale));
         }
     }

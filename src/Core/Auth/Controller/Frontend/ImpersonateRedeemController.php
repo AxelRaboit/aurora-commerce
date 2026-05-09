@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Controller\Frontend;
 
 use Aurora\Core\Auth\Service\ImpersonationTokenService;
-use Aurora\Core\Frontend\Service\FrontRouter;
+use Aurora\Core\Frontend\Service\Router;
 use Aurora\Core\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,7 +23,7 @@ final class ImpersonateRedeemController extends AbstractController
         private readonly ImpersonationTokenService $tokenService,
         private readonly TokenStorageInterface $tokenStorage,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly FrontRouter $frontRouter,
+        private readonly Router $router,
     ) {}
 
     public function __invoke(string $locale, string $token, Request $request): RedirectResponse
@@ -40,7 +40,7 @@ final class ImpersonateRedeemController extends AbstractController
 
         $this->dispatcher->dispatch(new InteractiveLoginEvent($request, $authToken));
 
-        $front = $this->frontRouter->getDefault();
+        $front = $this->router->getDefault();
 
         return $this->redirectToRoute($front->getHomeRoute(), ['locale' => $locale]);
     }

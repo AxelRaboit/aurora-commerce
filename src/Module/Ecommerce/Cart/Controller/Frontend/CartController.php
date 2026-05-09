@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Cart\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\FrontLocaleTrait;
+use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
@@ -22,14 +22,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CartController extends AbstractController
 {
-    use FrontLocaleTrait;
+    use LocaleTrait;
     use JsonResponseTrait;
 
     public function __construct(
         private readonly CartManagerInterface $cartManager,
         private readonly CartSerializer $cartSerializer,
         private readonly ListingRepository $listingRepository,
-        private readonly FrontContext $frontContext,
+        private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
         private readonly CartViewBuilder $viewBuilder,
     ) {}
@@ -37,7 +37,7 @@ class CartController extends AbstractController
     #[Route('/{locale}/cart', name: 'frontend_cart', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
     public function index(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $request->setLocale($locale);
 
         $cart = $this->cartManager->getCurrentCart();
@@ -48,7 +48,7 @@ class CartController extends AbstractController
     #[Route('/{locale}/cart/add', name: 'frontend_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]
     public function add(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $payload = $this->payload($request);
         $listingId = (int) ($payload['listingId'] ?? 0);
         $quantity = max(1, (int) ($payload['quantity'] ?? 1));
@@ -66,7 +66,7 @@ class CartController extends AbstractController
     #[Route('/{locale}/cart/update', name: 'frontend_cart_update', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]
     public function update(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $payload = $this->payload($request);
         $listingId = (int) ($payload['listingId'] ?? 0);
         $quantity = (int) ($payload['quantity'] ?? 0);
@@ -82,7 +82,7 @@ class CartController extends AbstractController
     #[Route('/{locale}/cart/remove', name: 'frontend_cart_remove', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]
     public function remove(string $locale, Request $request): Response
     {
-        $this->assertActiveLocale($this->frontContext, $locale);
+        $this->assertActiveLocale($this->context, $locale);
         $payload = $this->payload($request);
         $listingId = (int) ($payload['listingId'] ?? 0);
         $listing = $this->listingRepository->find($listingId);

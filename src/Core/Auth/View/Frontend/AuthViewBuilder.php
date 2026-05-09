@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\View;
+namespace Aurora\Core\Auth\View\Frontend;
 
 use Aurora\Core\Auth\Security\Frontend\LoginAuthenticator;
-use Aurora\Core\Frontend\Service\FrontContext;
+use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,10 +15,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * verify, forgot, reset, account). Centralises the locale + front context
  * + theme context shape so each controller action stays focused on flow.
  */
-final readonly class AuthFrontViewBuilder
+final readonly class AuthViewBuilder
 {
     public function __construct(
-        private FrontContext $frontContext,
+        private Context $context,
         private ThemeContext $themeContext,
     ) {}
 
@@ -120,7 +120,7 @@ final readonly class AuthFrontViewBuilder
     {
         return [
             'locale' => $locale,
-            'context' => $this->frontContext,
+            'context' => $this->context,
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
