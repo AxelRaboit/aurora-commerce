@@ -205,9 +205,12 @@ test-frontend: i18n ## Run frontend unit tests (Vitest)
 test-e2e: ## Run end-to-end tests (Playwright)
 	$(PNPM) --dir=$(AURORA) run test:e2e
 
-db-test: ## Create and migrate the test database
-	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
-	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
+db-test: ## Create test database with fresh schema (schema:create avoids cross-namespace migration ordering issues)
+	$(CONSOLE) doctrine:database:drop --env=test --force --if-exists
+	$(CONSOLE) doctrine:database:create --env=test
+	$(CONSOLE) doctrine:schema:create --env=test
+	$(CONSOLE) doctrine:migrations:sync-metadata-storage --env=test
+	$(CONSOLE) doctrine:migrations:version --env=test --add --all --no-interaction
 
 # === Code Quality ===
 stan: ## Run PHPStan
