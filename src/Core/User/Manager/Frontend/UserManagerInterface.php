@@ -11,9 +11,9 @@ use Aurora\Core\User\Entity\User;
 
 interface UserManagerInterface
 {
-    public function register(RegisterInput $input): User;
+    public function register(RegisterInput $input): CoreUserInterface;
 
-    public function sendVerificationEmail(User $user, string $locale = 'fr'): void;
+    public function sendVerificationEmail(CoreUserInterface $user, string $locale = 'fr'): void;
 
     public function verifyEmail(string $token): ?CoreUserInterface;
 

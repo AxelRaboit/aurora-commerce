@@ -35,7 +35,7 @@ class AccessRequestManager implements AccessRequestManagerInterface
         protected readonly SequenceGenerator $sequenceGenerator,
     ) {}
 
-    public function create(string $email, ?string $name, ?string $message): AccessRequest
+    public function create(string $email, ?string $name, ?string $message): AccessRequestInterface
     {
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreAccessRequestPrefix->value, SequencePrefixEnum::AccessRequest->value) ?? SequencePrefixEnum::AccessRequest->value;
 
