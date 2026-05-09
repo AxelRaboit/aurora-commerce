@@ -8,6 +8,7 @@ conventions d'extensibilité, ops) sont dans [`aurora-core/`](../aurora-core/REA
 
 | Fichier | Contenu |
 |---|---|
+| [philosophy.md](philosophy.md) | Philosophie du projet — les deux modes de travail, ce qu'on ne fait pas |
 | [setup.md](setup.md) | Installation locale — première mise en route |
 | [architecture.md](architecture.md) | Structure du projet, relation avec aurora-core |
 | [dev_workflow.md](dev_workflow.md) | Commandes du quotidien |

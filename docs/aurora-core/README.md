@@ -1,5 +1,11 @@
 # Documentation Aurora Core
 
+## Philosophie
+
+| Fichier | Contenu |
+|---|---|
+| [philosophy.md](philosophy.md) | Principes fondateurs, pattern d'extensibilité, système de modules |
+
 ## dev/ — Guides développeur
 
 | Fichier | Contenu |
