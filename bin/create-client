@@ -217,6 +217,9 @@ ADMIN_EMAIL=admin@${PROJECT_NAME}.local
 ###< symfony/mailer ###
 
 APP_NAME=${PROJECT_NAME}
+
+# Generate with: php -r "echo base64_encode(random_bytes(32)) . PHP_EOL;"
+AURORA_MOUNT_POINT_KEY=replace_with_base64_32_bytes_key
 EOF
 
 # ---------------------------------------------------------------------------
@@ -226,16 +229,21 @@ EOF
 cat > "$DEST/.env.local.example" <<EOF
 APP_SECRET=your-random-secret-here
 DATABASE_URL="postgresql://app:password@127.0.0.1:5432/${PROJECT_NAME}?serverVersion=18&charset=utf8"
+
+# Generate with: php -r "echo base64_encode(random_bytes(32)) . PHP_EOL;"
+AURORA_MOUNT_POINT_KEY=replace_with_base64_32_bytes_key
 EOF
 
 if [[ -f "$AURORA_ENV_LOCAL" ]]; then
     info "Pre-filling .env.local from aurora's .env.local..."
     AURORA_DB_URL="$(grep '^DATABASE_URL=' "$AURORA_ENV_LOCAL" | cut -d= -f2- | tr -d '"')"
     AURORA_SECRET="$(grep '^APP_SECRET=' "$AURORA_ENV_LOCAL" | cut -d= -f2-)"
+    AURORA_MOUNT_KEY="$(grep '^AURORA_MOUNT_POINT_KEY=' "$AURORA_ENV_LOCAL" | cut -d= -f2-)"
     CLIENT_DB_URL="$(echo "$AURORA_DB_URL" | sed "s|/[^/?]*?|/${PROJECT_NAME//-/_}_dev?|")"
     cat > "$DEST/.env.local" <<EOF
 APP_SECRET=${AURORA_SECRET}
 DATABASE_URL="${CLIENT_DB_URL}"
+${AURORA_MOUNT_KEY:+AURORA_MOUNT_POINT_KEY=${AURORA_MOUNT_KEY}}
 EOF
     success ".env.local created"
 else

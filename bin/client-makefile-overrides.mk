@@ -100,6 +100,19 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 sync-jsconfig: ## Regenerate jsconfig.json from aurora module aliases (run after aurora-update)
 	node $(AURORA)/bin/sync-client-jsconfig
 
+check-env-drift: ## Warn about env vars in Aurora's .env not present in client env files
+	@aurora_vars=$$(grep -v '^#' $(AURORA)/.env | grep -v '^$$' | sed 's/=.*//' | sort); \
+	client_vars=$$(cat .env .env.local.example .env.test 2>/dev/null | grep -v '^#' | grep -v '^$$' | sed 's/=.*//' | sort -u); \
+	missing=$$(comm -23 <(echo "$$aurora_vars") <(echo "$$client_vars")); \
+	if [ -n "$$missing" ]; then \
+		echo ""; \
+		echo "⚠️  New Aurora env vars not declared in your .env / .env.local.example:"; \
+		echo "$$missing" | sed 's/^/   - /'; \
+		echo ""; \
+		echo "   → Add them to .env (placeholder) and .env.local (real value)."; \
+		echo ""; \
+	fi
+
 aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) update axelraboit/aurora
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
@@ -112,4 +125,5 @@ aurora-update: ## Pull latest Aurora changes
 	make migrate
 	$(CONSOLE) aurora:privileges:sync
 	make sync-jsconfig
+	make check-env-drift
 	@echo "✅ Aurora updated"
