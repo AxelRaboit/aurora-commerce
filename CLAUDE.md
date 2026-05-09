@@ -5,13 +5,13 @@ dépôt. Il résume les conventions et points d'entrée nécessaires pour bien
 travailler sur `aurora-core` et son écosystème (`aurora-client`).
 
 > **📚 Base de mémoire structurée** : voir [`.claude/memory/MEMORY.md`](.claude/memory/MEMORY.md)
-> pour l'index complet des conventions, décisions, pièges et préférences.
-> Toute nouvelle convention/pattern/piège rencontré dans une session future
-> doit être ajouté là-bas (un fichier `.md` par sujet + ligne dans l'index).
-> Les patterns d'extension destinés à `aurora-client` vivent dans
-> [`.claude/memory/client/`](.claude/memory/client/MEMORY.md) et sont
-> distribués via composer (donc lus depuis `vendor/axelraboit/aurora/`
-> côté client).
+> pour l'index racine. Les mémoires sont organisées en deux sous-dossiers :
+> - [`.claude/memory/aurora-core/`](.claude/memory/aurora-core/MEMORY.md) —
+>   conventions, décisions, pièges et préférences propres au bundle core.
+>   Toute nouvelle mémoire core va ici (un fichier `.md` + ligne dans l'index).
+> - [`.claude/memory/aurora-client/`](.claude/memory/aurora-client/MEMORY.md) —
+>   patterns d'extension côté consommateur, distribués via composer
+>   (lus depuis `vendor/axelraboit/aurora/.claude/memory/aurora-client/`).
 
 ---
 

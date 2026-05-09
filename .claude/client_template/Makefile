@@ -349,21 +349,18 @@ aurora-update: ## Pull latest Aurora changes
 	make sync-makefile
 	@echo "✅ Aurora updated"
 
-sync-claude-md: ## Refresh CLAUDE.md + .claude/memory from aurora-core (auto-generated, do not edit by hand)
+sync-claude-md: ## Refresh CLAUDE.md + .claude/memory symlinks from aurora-core (auto-generated, do not edit by hand)
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \
 		cp $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
 		echo "✅ CLAUDE.md synced from aurora-core"; \
 	else \
 		echo "⚠️  $(AURORA)/.claude/client_template/CLAUDE.md not found — skipping"; \
 	fi
-	@if [ -d $(AURORA)/.claude/memory/client ]; then \
-		mkdir -p .claude/memory; \
-		rm -rf .claude/memory/aurora; \
-		cp -r $(AURORA)/.claude/memory/client .claude/memory/aurora; \
-		echo "✅ .claude/memory/aurora/ synced from aurora-core (client memories)"; \
-	else \
-		echo "⚠️  $(AURORA)/.claude/memory/client not found — skipping memory sync"; \
-	fi
+	@mkdir -p .claude/memory
+	@rm -rf .claude/memory/aurora-core .claude/memory/aurora-client
+	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-core .claude/memory/aurora-core
+	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-client .claude/memory/aurora-client
+	@echo "✅ .claude/memory/aurora-core + aurora-client symlinked from vendor"
 
 sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do not edit by hand)
 	@if [ -f $(AURORA)/.claude/client_template/Makefile ]; then \

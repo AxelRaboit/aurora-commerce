@@ -16,37 +16,38 @@ bundle composer + assets npm. Sert d'**exemple canonique** de comment
 
 ---
 
-## 📚 Base de mémoire (synchronisée localement via `make aurora-update`)
+## 📚 Base de mémoire (symlinks vers vendor via `make aurora-update`)
 
-La mémoire projet vit côté **aurora-core** et est synchronisée vers
-`.claude/memory/aurora/` à chaque `make aurora-update`. **Ne pas éditer
-ces fichiers à la main** — ils sont écrasés au prochain sync.
+Les mémoires sont des **symlinks** vers `vendor/axelraboit/aurora/.claude/memory/`
+créés par `make aurora-update`. Elles restent toujours en phase avec la version
+installée d'aurora-core. **Ne pas éditer ces fichiers** — ils vivent dans vendor.
 
-**Index principal aurora-core** :
-[`vendor/axelraboit/aurora/.claude/memory/MEMORY.md`](vendor/axelraboit/aurora/.claude/memory/MEMORY.md)
-(conventions générales aurora-core qu'il est utile de connaître côté client).
+### Contexte aurora-core (conventions internes du bundle)
+[`.claude/memory/aurora-core/MEMORY.md`](.claude/memory/aurora-core/MEMORY.md)
+— conventions, décisions, pièges et heuristiques du bundle aurora-core.
+Utile pour comprendre *pourquoi* une API est faite ainsi avant de l'étendre.
 
-**Patterns d'extension client** (synchronisés localement) :
-[`.claude/memory/aurora/MEMORY.md`](.claude/memory/aurora/MEMORY.md)
-— c'est ici qu'on trouve tout pour étendre une entité, un DTO, un Manager,
-un Serializer, la Vue ou un template Twig.
+### Patterns d'extension aurora-client
+[`.claude/memory/aurora-client/MEMORY.md`](.claude/memory/aurora-client/MEMORY.md)
+— tout pour étendre une entité, un DTO, un Manager, un Serializer, la Vue
+ou un template Twig depuis un projet client.
 
 **Checklist d'extension complète** :
-[`.claude/memory/aurora/checklist_extend_full_entity.md`](.claude/memory/aurora/checklist_extend_full_entity.md)
+[`.claude/memory/aurora-client/checklist_extend_full_entity.md`](.claude/memory/aurora-client/checklist_extend_full_entity.md)
 — pas-à-pas pour étendre une entité de bout en bout.
 
 **Pattern par couche** (5 couches Sylius) :
-- [Entité](.claude/memory/aurora/pattern_extend_entity.md)
-- [DTO](.claude/memory/aurora/pattern_extend_dto.md)
-- [Manager](.claude/memory/aurora/pattern_extend_manager.md)
-- [Serializer](.claude/memory/aurora/pattern_extend_serializer.md)
-- [Vue](.claude/memory/aurora/pattern_extend_vue.md)
-- [Twig override](.claude/memory/aurora/pattern_override_twig.md)
-- [Repository](.claude/memory/aurora/pattern_extend_repository.md)
+- [Entité](.claude/memory/aurora-client/pattern_extend_entity.md)
+- [DTO](.claude/memory/aurora-client/pattern_extend_dto.md)
+- [Manager](.claude/memory/aurora-client/pattern_extend_manager.md)
+- [Serializer](.claude/memory/aurora-client/pattern_extend_serializer.md)
+- [Vue](.claude/memory/aurora-client/pattern_extend_vue.md)
+- [Twig override](.claude/memory/aurora-client/pattern_override_twig.md)
+- [Repository](.claude/memory/aurora-client/pattern_extend_repository.md)
 
 **Pièges à connaître** :
-- [Toujours override `create<X>()` quand on étend une entité](.claude/memory/aurora/pitfall_create_hook_required.md)
-- [Toujours `parent::applyInput()` AVANT d'ajouter ses setters](.claude/memory/aurora/pitfall_call_parent_apply_input.md)
+- [Toujours override `create<X>()` quand on étend une entité](.claude/memory/aurora-client/pitfall_create_hook_required.md)
+- [Toujours `parent::applyInput()` AVANT d'ajouter ses setters](.claude/memory/aurora-client/pitfall_call_parent_apply_input.md)
 
 ---
 
@@ -61,9 +62,9 @@ Si pendant une session tu rencontres :
 → Trois options selon le scope :
 
 1. **Pattern d'extension Aurora utilisable par tous les clients** : ajouter
-   à `aurora-core/.claude/memory/client/` + commit + push côté aurora-core.
-   Sera synchronisé chez tous les clients au prochain `make aurora-update`
-   (vers `.claude/memory/aurora/`).
+   à `aurora-core/.claude/memory/aurora-client/` + commit + push côté aurora-core.
+   Sera disponible chez tous les clients via vendor au prochain `make aurora-update`
+   (symlinké depuis `.claude/memory/aurora-client/`).
 
 2. **Convention/pattern interne au projet client** (pas réutilisable) :
    créer une mémoire **locale** ici dans `aurora-client/.claude/memory/`

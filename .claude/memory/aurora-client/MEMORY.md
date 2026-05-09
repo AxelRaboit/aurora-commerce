@@ -2,7 +2,7 @@
 
 Ce dossier vit dans aurora-core et est **distribué via composer** quand un
 client met à jour `axelraboit/aurora`. Aurora-client charge ces mémoires
-depuis `vendor/axelraboit/aurora/.claude/memory/client/`.
+depuis `vendor/axelraboit/aurora/.claude/memory/aurora-client/`.
 
 **Avantage** : pas de duplication. Une mise à jour de la convention
 d'aurora-core met automatiquement à jour les patterns d'extension côté
