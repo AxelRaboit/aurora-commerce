@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security\Frontend;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-final readonly class FrontAuthEntryPoint implements AuthenticationEntryPointInterface
+final readonly class AuthEntryPoint implements AuthenticationEntryPointInterface
 {
     public function __construct(private UrlGeneratorInterface $urlGenerator) {}
 

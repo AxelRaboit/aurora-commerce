@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-final class FrontLoginAuthenticator extends AbstractLoginFormAuthenticator
+final class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 

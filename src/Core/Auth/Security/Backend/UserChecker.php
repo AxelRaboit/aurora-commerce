@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Security;
+namespace Aurora\Core\Auth\Security\Backend;
 
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserStatusEnum;
@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusExce
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class BackendUserChecker implements UserCheckerInterface
+final class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void {}
 

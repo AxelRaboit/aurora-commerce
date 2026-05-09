@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\View;
 
-use Aurora\Core\Auth\Security\FrontLoginAuthenticator;
+use Aurora\Core\Auth\Security\Frontend\LoginAuthenticator;
 use Aurora\Core\Frontend\Service\FrontContext;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -29,7 +29,7 @@ final readonly class AuthFrontViewBuilder
     {
         return [
             ...$this->base($locale),
-            'checkPath' => FrontLoginAuthenticator::CHECK_PATH,
+            'checkPath' => LoginAuthenticator::CHECK_PATH,
             'error' => $error,
             'lastEmail' => $lastEmail,
         ];
