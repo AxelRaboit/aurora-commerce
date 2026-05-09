@@ -16,9 +16,9 @@ templates/
 │   └── <Module>/
 │       ├── backend/   ← admin pages du module
 │       │   └── <plural>/index.html.twig
-│       ├── front/     ← public pages du module (gallery viewer, etc.)
+│       ├── frontend/  ← public pages du module (gallery viewer, etc.)
 │       └── email/     ← email templates du module
-├── Front/
+├── Frontend/
 │   └── themes/        ← thèmes frontend (le client peut ajouter ses thèmes)
 ├── Shared/
 │   ├── components/    ← partials Twig réutilisables (boutons, cards, …)
@@ -43,7 +43,7 @@ templates/
 | `@Billing` | `templates/Module/Billing/` |
 | `@Ecommerce` | `templates/Module/Ecommerce/` |
 | `@Ged` | `templates/Module/Ged/` |
-| `@Front` | `templates/Front/` |
+| `@Frontend` | `templates/Frontend/` |
 | `@Shared` | `templates/Shared/` |
 
 ## Override automatique côté client
@@ -72,9 +72,9 @@ pour les détails côté client.
   pour PostEditor full-page).
 
 ### Pages frontend
-- `<Module>/front/<page>.html.twig` (snake_case dans le path).
+- `<Module>/frontend/<page>.html.twig` (snake_case dans le path).
 - Les pages frontend héritent souvent d'un layout dans `Shared/` ou
-  `Front/themes/<theme>/layout.html.twig`.
+  `Frontend/themes/<theme>/layout.html.twig`.
 
 ### Emails
 - `<Module>/email/<event>.html.twig` (ex: `Crm/email/deal_stage_changed.html.twig`).
@@ -119,7 +119,7 @@ les pages admin SPA.
   dossier.
 - ❌ Snake_case puis camelCase incohérent dans les paths
   (`Crm/Backend/Deals/` vs `Crm/backend/deals/`). On utilise **lowercase**
-  pour les sous-dossiers fonctionnels (`backend/`, `front/`, `email/`,
+  pour les sous-dossiers fonctionnels (`backend/`, `frontend/`, `email/`,
   `<plural>/`).
 
 ## Twig CS Fixer
