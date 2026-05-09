@@ -13,6 +13,8 @@ backend:
     taskAssigned: Vous avez été assigné à une tâche.
     taskCommented: '%name% a commenté : %content%'
   nav:
+    sections:
+      project: Projet
     projects: Projets
     projects_description: Suivi des projets, tâches et tableaux Kanban
   audit:
