@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Manager;
 
-use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;

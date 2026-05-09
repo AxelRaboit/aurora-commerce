@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Backend;
 
-use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Dto\ResetPasswordInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\View\PasswordResetViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Validation\Service\PayloadValidator;

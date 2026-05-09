@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Manager\Decorator;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserTypeEnum;
 use DateTimeImmutable;

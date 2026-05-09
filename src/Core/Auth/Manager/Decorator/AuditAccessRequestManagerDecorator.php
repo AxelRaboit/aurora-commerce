@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Manager\Decorator;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
