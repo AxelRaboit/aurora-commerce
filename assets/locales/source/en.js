@@ -1732,6 +1732,7 @@ export default {
             all: "All",
             loadMore: "Load more",
             send: "Send",
+            next: "Next",
         },
         media: {
             choose: "Choose an image",

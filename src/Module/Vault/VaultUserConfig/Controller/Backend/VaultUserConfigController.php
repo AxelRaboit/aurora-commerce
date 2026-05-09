@@ -57,4 +57,28 @@ final class VaultUserConfigController extends AbstractController
 
         return $this->jsonSuccess(['config' => $this->vaultUserConfigSerializer->serialize($config)]);
     }
+
+    #[Route('/change-master-password', name: '_change_master_password', methods: [HttpMethodEnum::Post->value])]
+    public function changeMasterPassword(Request $request): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $config = $this->vaultUserConfigRepository->findOneByUser($user);
+        if (!$config instanceof VaultUserConfigInterface) {
+            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = $this->decodeJson($request);
+        $newSalt = $data['argon2Salt'] ?? '';
+        $entries = $data['entries'] ?? [];
+
+        if ('' === $newSalt || !is_array($entries)) {
+            return new JsonResponse(['success' => false], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->vaultUserConfigManager->changeMasterPassword($config, $newSalt, $entries);
+
+        return $this->jsonSuccess(['config' => $this->vaultUserConfigSerializer->serialize($config)]);
+    }
 }

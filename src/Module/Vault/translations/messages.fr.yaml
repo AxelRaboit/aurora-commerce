@@ -23,6 +23,7 @@ backend:
           deleted: Dossier supprimé
         config:
           setup: Coffre-fort initialisé
+          password_changed: Mot de passe maître modifié
 
 vault:
   setup:
@@ -106,6 +107,15 @@ vault:
     errors:
       name_required: Le nom est requis.
       color_invalid: La couleur doit être au format hexadécimal (#RRGGBB).
+  change_password:
+    title: Modifier le mot de passe maître
+    step1_hint: Saisissez votre mot de passe maître actuel pour confirmer votre identité.
+    new_password: Nouveau mot de passe maître
+    warning: Toutes vos entrées seront re-chiffrées avec le nouveau mot de passe. Cette opération peut prendre quelques secondes.
+    submit: Modifier le mot de passe
+    processing: "Re-chiffrement en cours…"
+    processing_hint: Vos entrées sont re-chiffrées. Ne fermez pas la page.
+    success: Mot de passe maître modifié avec succès.
   session:
     keep_unlocked: Rester déverrouillé
     duration: Durée

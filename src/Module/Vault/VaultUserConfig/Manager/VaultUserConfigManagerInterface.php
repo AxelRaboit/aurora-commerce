@@ -11,4 +11,9 @@ use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
 interface VaultUserConfigManagerInterface
 {
     public function setup(CoreUserInterface $user, VaultUserConfigInputInterface $input): VaultUserConfigInterface;
+
+    /**
+     * @param array<array{id: int, encryptedData: string, iv: string}> $reEncryptedEntries
+     */
+    public function changeMasterPassword(VaultUserConfigInterface $config, string $newSalt, array $reEncryptedEntries): void;
 }

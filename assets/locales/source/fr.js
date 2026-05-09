@@ -1813,6 +1813,7 @@ export default {
             all: "Tous",
             loadMore: "Charger plus",
             send: "Envoyer",
+            next: "Suivant",
         },
         media: {
             choose: "Choisir une image",

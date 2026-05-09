@@ -38,6 +38,7 @@ final readonly class VaultEntriesViewBuilder
             'entries' => array_map($this->vaultEntrySerializer->serialize(...), $entries),
             'folders' => array_map($this->vaultFolderSerializer->serialize(...), $folders),
             'setupPath' => $this->urlGenerator->generate('backend_vault_config_setup'),
+            'changeMasterPasswordPath' => $this->urlGenerator->generate('backend_vault_config_change_master_password'),
             'createEntryPath' => $this->urlGenerator->generate('backend_vault_entries_create'),
             'updateEntryPath' => $this->urlGenerator->generate('backend_vault_entries_update', ['id' => '__id__']),
             'deleteEntryPath' => $this->urlGenerator->generate('backend_vault_entries_delete', ['id' => '__id__']),

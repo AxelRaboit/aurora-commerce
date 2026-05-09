@@ -11,12 +11,14 @@ import { useVaultNavigation } from '@vault/backend/composables/useVaultNavigatio
 import { useVaultUnlockLifecycle } from '@vault/backend/composables/useVaultUnlockLifecycle.js';
 import { useVaultFilter } from '@vault/backend/composables/useVaultFilter.js';
 import { useVaultFolderAccordion } from '@vault/backend/composables/useVaultFolderAccordion.js';
+import { useVaultChangeMasterPassword } from '@vault/backend/composables/useVaultChangeMasterPassword.js';
 import { ICONS } from '@vault/backend/utils/recordTypes.js';
 import VaultSetupScreen from '@vault/backend/components/VaultSetupScreen.vue';
 import VaultUnlockScreen from '@vault/backend/components/VaultUnlockScreen.vue';
 import VaultEntryFormModal from '@vault/backend/components/VaultEntryFormModal.vue';
 import VaultEntryViewModal from '@vault/backend/components/VaultEntryViewModal.vue';
 import VaultEntryRow from '@vault/backend/components/VaultEntryRow.vue';
+import VaultChangeMasterPasswordModal from '@vault/backend/components/VaultChangeMasterPasswordModal.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppListItemButton from '@shared/components/action/AppListItemButton.vue';
@@ -30,7 +32,7 @@ import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import {
-    Plus, Lock, Star, Pencil, Trash2, X, Save, Home, Layers, Folder, FolderOpen,
+    Plus, Lock, Star, Pencil, Trash2, X, Save, Home, Layers, Folder, FolderOpen, ShieldCheck,
     ChevronRight, ChevronDown, Eye,
 } from 'lucide-vue-next';
 
@@ -47,6 +49,7 @@ const props = defineProps({
     createFolderPath: { type: String, required: true },
     updateFolderPath: { type: String, required: true },
     deleteFolderPath: { type: String, required: true },
+    changeMasterPasswordPath: { type: String, required: true },
     extraFields: { type: Array, default: () => [] },
 });
 
@@ -94,6 +97,17 @@ const viewingEntry = ref(null);
 function openView(entry) { viewingEntry.value = entry; }
 function closeView() { viewingEntry.value = null; }
 
+const changePwd = useVaultChangeMasterPassword(
+    props.changeMasterPasswordPath,
+    vaultConfig,
+    entries,
+    decryptedCache,
+    (newSalt, newMasterPassword, config) => {
+        vaultConfig.value = config;
+        crypto.unlock(newMasterPassword, newSalt);
+    },
+);
+
 const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts, folderChildCounts, entriesInFolder } = useVaultFolderAccordion(entries, folders);
 
 </script>
@@ -118,6 +132,10 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="vaultForm.openCreate()">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t('vault.entries.add') }}
+                </AppButton>
+                <AppButton variant="ghost" size="md" class="w-full sm:w-auto" v-on:click="changePwd.open()">
+                    <ShieldCheck class="w-4 h-4" :stroke-width="1.5" />
+                    {{ t('vault.change_password.title') }}
                 </AppButton>
                 <AppButton variant="ghost" size="md" class="w-full sm:w-auto" v-on:click="lockVault">
                     <Lock class="w-4 h-4" :stroke-width="1.5" />
@@ -483,5 +501,20 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                 </AppModalFooter>
             </template>
         </AppModal>
+        <VaultChangeMasterPasswordModal
+            :show="changePwd.show.value"
+            :step="changePwd.step.value"
+            :current-password="changePwd.currentPassword.value"
+            :new-password="changePwd.newPassword.value"
+            :confirm-password="changePwd.confirmPassword.value"
+            :progress="changePwd.progress.value"
+            :errors="changePwd.errors.value"
+            v-on:close="changePwd.close()"
+            v-on:update:current-password="changePwd.currentPassword.value = $event"
+            v-on:update:new-password="changePwd.newPassword.value = $event"
+            v-on:update:confirm-password="changePwd.confirmPassword.value = $event"
+            v-on:verify="changePwd.verifyCurrentPassword()"
+            v-on:change="changePwd.changePassword()"
+        />
     </div>
 </template>

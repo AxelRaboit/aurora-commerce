@@ -8,7 +8,8 @@ import AppInput from '@shared/components/form/AppInput.vue';
 import AppToggle from '@shared/components/form/AppToggle.vue';
 import AppSelect from '@shared/components/form/AppSelect.vue';
 import VaultPasswordStrengthBar from '@vault/backend/components/VaultPasswordStrengthBar.vue';
-import { ShieldCheck, AlertTriangle } from 'lucide-vue-next';
+import AppMessage from '@shared/components/feedback/AppMessage.vue';
+import { ShieldCheck } from 'lucide-vue-next';
 
 const props = defineProps({
     setupPath: { type: String, required: true },
@@ -78,10 +79,7 @@ async function handleSubmit() {
                     />
                 </div>
 
-                <div class="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                    <AlertTriangle class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" :stroke-width="2" />
-                    <p class="text-xs text-amber-700 dark:text-amber-400">{{ t('vault.setup.warning') }}</p>
-                </div>
+                <AppMessage variant="warning">{{ t('vault.setup.warning') }}</AppMessage>
 
                 <AppButton
                     variant="primary"

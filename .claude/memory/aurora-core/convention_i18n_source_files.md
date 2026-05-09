@@ -53,6 +53,21 @@ Le `.gitignore` ne couvre PAS ces JSON (ils sont versionnés pour que
 `npm run build` fonctionne sans `make i18n` préalable côté CI). C'est
 pourquoi la discipline humaine reste nécessaire.
 
+## Clés partagées — attention au contexte sémantique
+
+`shared.common.*` regroupe les actions génériques applicables partout. Mais un même
+mot peut exister à des endroits différents avec des sens différents :
+
+- `shared.pagination.next` → le bouton "Suivant" de la pagination (→ page suivante)
+- `shared.common.next` → "Suivant" dans un wizard/stepper (→ étape suivante)
+
+**Règle** : avant de réutiliser une clé `shared.*` existante, vérifier que le
+contexte est identique. Si le mot est le même mais le contexte diffère (ou si la
+traduction pourrait diverger dans une autre langue), créer une clé dédiée.
+
+Exemple concret : en anglais "Next" fonctionne dans les deux cas, mais en allemand
+"Nächste" (pagination) vs "Weiter" (wizard) sont différents — d'où deux clés.
+
 ## Voir aussi
 
 - [`pitfall_module_translations_two_registrations.md`](pitfall_module_translations_two_registrations.md)

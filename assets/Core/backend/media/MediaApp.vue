@@ -12,6 +12,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppProgressBar from "@/shared/components/feedback/AppProgressBar.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
@@ -286,9 +287,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <span class="truncate max-w-[80%]">{{ f.name }}</span>
                             <span>{{ f.percent }}%</span>
                         </div>
-                        <div class="h-1.5 bg-surface-3 rounded-full overflow-hidden">
-                            <div class="h-full bg-accent-500 transition-all duration-200 rounded-full" :style="{ width: f.percent + '%' }" />
-                        </div>
+                        <AppProgressBar :value="f.percent" size="sm" />
                     </div>
                 </div>
 

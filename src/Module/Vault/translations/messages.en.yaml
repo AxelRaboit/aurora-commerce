@@ -104,6 +104,15 @@ vault:
     errors:
       name_required: Name is required.
       color_invalid: Colour must be in hex format (#RRGGBB).
+  change_password:
+    title: Change master password
+    step1_hint: Enter your current master password to confirm your identity.
+    new_password: New master password
+    warning: All your entries will be re-encrypted with the new password. This may take a few seconds.
+    submit: Change password
+    processing: Re-encrypting…
+    processing_hint: Your entries are being re-encrypted. Do not close the page.
+    success: Master password changed successfully.
   session:
     keep_unlocked: Keep unlocked
     duration: Duration
