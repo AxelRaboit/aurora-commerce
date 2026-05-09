@@ -53,6 +53,7 @@ backend:
       empty: No companies.
       created: Company created.
       updated: Company updated.
+      deleted: Company deleted.
       searchPlaceholder: Search a company…
       name: Name
       namePlaceholder: Company name

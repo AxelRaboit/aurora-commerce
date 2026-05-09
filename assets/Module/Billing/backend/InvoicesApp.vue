@@ -65,7 +65,7 @@ const exportXlsxUrl = computed(() => {
 
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reload(), 'admin.billing.invoices.deleted',
+    props.deletePath, () => reload(), 'backend.billing.invoices.deleted',
 );
 
 const STATUS_SELECT = computed(() =>

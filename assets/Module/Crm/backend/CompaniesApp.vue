@@ -84,7 +84,7 @@ async function submitEdit() {
 
 // --- Delete ---
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), 'admin.crm.companies.deleted',
+    props.deletePath, () => reset(), 'backend.crm.companies.deleted',
 );
 </script>
 

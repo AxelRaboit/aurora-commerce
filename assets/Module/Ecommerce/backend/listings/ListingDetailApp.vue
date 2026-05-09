@@ -98,7 +98,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                     </div>
                     <div class="flex items-center justify-between sm:justify-end gap-2 sm:shrink-0">
                         <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
-                            {{ t(listing.isVisibleOnShop ? 'admin.ecommerce.listings.visible' : 'admin.ecommerce.listings.hidden') }}
+                            {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
                         </AppBadge>
                         <div class="flex items-center gap-1">
                             <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="showEdit = true"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>

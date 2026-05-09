@@ -434,12 +434,12 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
         <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
-                {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enableConfirm' : 'admin.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
+                {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enableConfirm' : 'backend.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
             </p>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="togglingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton :variant="togglingUser?.status === UserStatus.Disabled ? 'primary' : 'danger'" size="md" v-on:click="confirmToggleDisabled">
-                    {{ t(togglingUser?.status === UserStatus.Disabled ? 'admin.users.enable' : 'admin.users.disable') }}
+                    {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enable' : 'backend.users.disable') }}
                 </AppButton>
             </AppModalFooter>
         </AppModal>

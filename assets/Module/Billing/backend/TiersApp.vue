@@ -48,7 +48,7 @@ const { items, page, totalPages, search, onSearch, goToPage, reload } = useListP
 function onTypeChange() { reload(); }
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reload(), 'admin.billing.tiers.deleted',
+    props.deletePath, () => reload(), 'backend.billing.tiers.deleted',
 );
 
 const TYPE_BADGE = {

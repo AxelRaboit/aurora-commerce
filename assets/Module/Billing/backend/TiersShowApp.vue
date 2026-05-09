@@ -45,7 +45,7 @@ async function updateField(field, value) {
 async function deleteTiers() {
     if (deleting.value) return;
     deleting.value = true;
-    const data = await submit(props.deletePath, null, { successMessage: 'admin.billing.tiers.deleted' });
+    const data = await submit(props.deletePath, null, { successMessage: 'backend.billing.tiers.deleted' });
     deleting.value = false;
     showDeleteModal.value = false;
     if (data) window.location.href = props.listPath;

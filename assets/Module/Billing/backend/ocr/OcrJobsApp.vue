@@ -51,7 +51,7 @@ function onStatusChange() {
 }
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reload(), 'admin.billing.ocr.deleted',
+    props.deletePath, () => reload(), 'backend.billing.ocr.deleted',
 );
 
 const errorJob = ref(null);

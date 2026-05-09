@@ -108,7 +108,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
                         <td class="px-6 py-3">
                             <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
-                                {{ t(listing.isVisibleOnShop ? 'admin.ecommerce.listings.visible' : 'admin.ecommerce.listings.hidden') }}
+                                {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
                             </AppBadge>
                         </td>
                         <td class="px-6 py-3">
@@ -134,7 +134,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <p class="text-xs font-mono text-muted mt-0.5 truncate">/{{ listing.slug }}</p>
                     </div>
                     <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
-                        {{ t(listing.isVisibleOnShop ? 'admin.ecommerce.listings.visible' : 'admin.ecommerce.listings.hidden') }}
+                        {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
                     </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
