@@ -8,13 +8,15 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-final readonly class UserProfilePhotoManager
+#[AsAlias(UserProfilePhotoManagerInterface::class)]
+class UserProfilePhotoManager implements UserProfilePhotoManagerInterface
 {
     private const int MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -26,12 +28,12 @@ final readonly class UserProfilePhotoManager
     ];
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SluggerInterface $slugger,
-        private AuditLogger $auditLogger,
-        private Filesystem $filesystem,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly SluggerInterface $slugger,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly Filesystem $filesystem,
         #[Autowire('%app.upload_dir%/users')]
-        private string $uploadDir,
+        protected readonly string $uploadDir,
     ) {}
 
     public function upload(User $user, UploadedFile $file): void

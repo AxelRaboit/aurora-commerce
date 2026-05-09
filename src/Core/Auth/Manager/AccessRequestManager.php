@@ -6,6 +6,7 @@ namespace Aurora\Core\Auth\Manager;
 
 use Aurora\Core\Auth\Manager\AccessRequestManagerInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
+use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
@@ -21,25 +22,25 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 #[AsAlias(AccessRequestManagerInterface::class)]
-final readonly class AccessRequestManager implements AccessRequestManagerInterface
+class AccessRequestManager implements AccessRequestManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MailerInterface $mailer,
-        private TwigEnvironment $twig,
-        private UrlGeneratorInterface $urlGenerator,
-        private SettingRepository $settingRepository,
-        private TranslatorInterface $translator,
-        private string $adminEmail,
-        private string $mailerFrom,
-        private SequenceGenerator $sequenceGenerator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MailerInterface $mailer,
+        protected readonly TwigEnvironment $twig,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly TranslatorInterface $translator,
+        protected readonly string $adminEmail,
+        protected readonly string $mailerFrom,
+        protected readonly SequenceGenerator $sequenceGenerator,
     ) {}
 
     public function create(string $email, ?string $name, ?string $message): AccessRequest
     {
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreAccessRequestPrefix->value, SequencePrefixEnum::AccessRequest->value) ?? SequencePrefixEnum::AccessRequest->value;
 
-        $request = new AccessRequest($email, new DateTimeImmutable('+48 hours'));
+        $request = $this->createAccessRequest($email, new DateTimeImmutable('+48 hours'));
         $request->setRequesterName($name ?: null);
         $request->setMessage($message ?: null);
         $request->setReference($this->sequenceGenerator->next($prefix));
@@ -73,7 +74,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
         return $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
     }
 
-    private function sendAdminNotification(AccessRequest $request): void
+    private function sendAdminNotification(AccessRequestInterface $request): void
     {
         $siteName = $this->siteName();
         $adminUrl = $this->urlGenerator->generate('dev_access_requests', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -93,7 +94,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
             ->html($body));
     }
 
-    private function sendRequesterApproval(AccessRequest $request, ?string $generatedPassword = null): void
+    private function sendRequesterApproval(AccessRequestInterface $request, ?string $generatedPassword = null): void
     {
         $siteName = $this->siteName();
         $loginUrl = $this->urlGenerator->generate('backend_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -114,7 +115,7 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
             ->html($body));
     }
 
-    private function sendRequesterRejection(AccessRequest $request): void
+    private function sendRequesterRejection(AccessRequestInterface $request): void
     {
         $siteName = $this->siteName();
 
@@ -130,5 +131,10 @@ final readonly class AccessRequestManager implements AccessRequestManagerInterfa
             ->to($request->getRequesterEmail())
             ->subject(sprintf('[%s] %s', $siteName, $subject))
             ->html($body));
+    }
+
+    protected function createAccessRequest(string $email, DateTimeImmutable $expiresAt): AccessRequestInterface
+    {
+        return new AccessRequest($email, $expiresAt);
     }
 }

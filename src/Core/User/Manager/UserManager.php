@@ -6,8 +6,8 @@ namespace Aurora\Core\User\Manager;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Auth\Manager\EmailVerificationManager;
-use Aurora\Core\Auth\Manager\InvitationManager;
+use Aurora\Core\Auth\Manager\EmailVerificationManagerInterface;
+use Aurora\Core\Auth\Manager\InvitationManagerInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
@@ -37,9 +37,9 @@ class UserManager implements UserManagerInterface
         protected readonly EntityManagerInterface $entityManager,
         protected readonly UserRepository $userRepository,
         protected readonly UserPasswordHasherInterface $passwordHasher,
-        protected readonly InvitationManager $invitationManager,
+        protected readonly InvitationManagerInterface $invitationManager,
         protected readonly UrlGeneratorInterface $urlGenerator,
-        protected readonly EmailVerificationManager $emailVerificationManager,
+        protected readonly EmailVerificationManagerInterface $emailVerificationManager,
         protected readonly SequenceGenerator $sequenceGenerator,
         protected readonly SettingRepository $settingRepository,
         protected readonly AgencyRepository $agencyRepository,

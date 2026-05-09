@@ -11,16 +11,18 @@ use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 /**
  * Lightweight notifier — persists in-app notifications and (optionally) sends email.
  * Keep email synchronous for now; queueing via Messenger is a future improvement.
  */
-final readonly class NotificationManager
+#[AsAlias(NotificationManagerInterface::class)]
+class NotificationManager implements NotificationManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private NotificationRepository $notificationRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly NotificationRepository $notificationRepository,
     ) {}
 
     /**
@@ -34,7 +36,7 @@ final readonly class NotificationManager
         ?string $url = null,
         array $data = [],
     ): NotificationInterface {
-        $notification = new Notification();
+        $notification = $this->createNotification();
         $notification->setRecipient($recipient)
             ->setType($type)
             ->setTitle($title)
@@ -69,5 +71,10 @@ final readonly class NotificationManager
     public function deleteAllForUser(User $user): int
     {
         return $this->notificationRepository->deleteAllForUser($user);
+    }
+
+    protected function createNotification(): NotificationInterface
+    {
+        return new Notification();
     }
 }

@@ -7,19 +7,21 @@ namespace Aurora\Core\Auth\Manager;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
 
-final readonly class InvitationManager
+#[AsAlias(InvitationManagerInterface::class)]
+class InvitationManager implements InvitationManagerInterface
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private TwigEnvironment $twig,
-        private UrlGeneratorInterface $urlGenerator,
-        private SettingRepository $settingRepository,
-        private string $mailerFrom,
+        protected readonly MailerInterface $mailer,
+        protected readonly TwigEnvironment $twig,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly string $mailerFrom,
     ) {}
 
     public function sendInvitation(User $user, string $plainToken, ?string $customMessage): void

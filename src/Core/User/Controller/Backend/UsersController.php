@@ -12,9 +12,9 @@ use Aurora\Core\User\Dto\UserInviteInputFactoryInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Manager\UserHierarchyManager;
+use Aurora\Core\User\Manager\UserHierarchyManagerInterface;
 use Aurora\Core\User\Manager\UserManagerInterface;
-use Aurora\Core\User\Manager\UserProfilePhotoManager;
+use Aurora\Core\User\Manager\UserProfilePhotoManagerInterface;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\User\Serializer\UserSerializerInterface;
 use Aurora\Core\User\View\UsersViewBuilder;
@@ -38,10 +38,10 @@ class UsersController extends AbstractController
     public function __construct(
         protected readonly UserRepository $userRepository,
         protected readonly UserManagerInterface $userManager,
-        protected readonly UserHierarchyManager $userHierarchyManager,
+        protected readonly UserHierarchyManagerInterface $userHierarchyManager,
         protected readonly UserSerializerInterface $userSerializer,
         protected readonly PayloadValidator $payloadValidator,
-        protected readonly UserProfilePhotoManager $userProfilePhotoManager,
+        protected readonly UserProfilePhotoManagerInterface $userProfilePhotoManager,
         protected readonly UsersViewBuilder $viewBuilder,
         protected readonly UserInputFactoryInterface $userInputFactory,
         protected readonly UserInviteInputFactoryInterface $userInviteInputFactory,

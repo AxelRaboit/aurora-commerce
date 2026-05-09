@@ -6,6 +6,7 @@ namespace Aurora\Core\Auth\Manager;
 
 use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Auth\Entity\ResetPasswordRequestInterface;
 use Aurora\Core\Auth\Repository\ResetPasswordRequestRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
@@ -25,20 +26,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AsAlias(PasswordResetManagerInterface::class)]
-final readonly class PasswordResetManager implements PasswordResetManagerInterface
+class PasswordResetManager implements PasswordResetManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
-        private ResetPasswordRequestRepository $resetRepo,
-        private UserPasswordHasherInterface $passwordHasher,
-        private MailerInterface $mailer,
-        private SettingRepository $settingRepository,
-        private UrlGeneratorInterface $urlGenerator,
-        private Environment $twig,
-        private TranslatorInterface $translator,
-        private string $mailerFrom,
-        private SequenceGenerator $sequenceGenerator,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly UserRepository $userRepository,
+        protected readonly ResetPasswordRequestRepository $resetRepo,
+        protected readonly UserPasswordHasherInterface $passwordHasher,
+        protected readonly MailerInterface $mailer,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly Environment $twig,
+        protected readonly TranslatorInterface $translator,
+        protected readonly string $mailerFrom,
+        protected readonly SequenceGenerator $sequenceGenerator,
     ) {}
 
     /**
@@ -77,7 +78,7 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
         $hashedToken = hash('sha256', $plainToken);
         $expiresAt = new DateTimeImmutable('+1 hour');
 
-        $resetRequest = new ResetPasswordRequest($user, $selector, $hashedToken, $expiresAt);
+        $resetRequest = $this->createResetPasswordRequest($user, $selector, $hashedToken, $expiresAt);
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreResetPasswordPrefix->value, SequencePrefixEnum::ResetPasswordRequest->value) ?? SequencePrefixEnum::ResetPasswordRequest->value;
         $resetRequest->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($resetRequest);
@@ -132,5 +133,10 @@ final readonly class PasswordResetManager implements PasswordResetManagerInterfa
 
         $this->entityManager->remove($resetRequest);
         $this->entityManager->flush();
+    }
+
+    protected function createResetPasswordRequest(User $user, string $selector, string $hashedToken, DateTimeImmutable $expiresAt): ResetPasswordRequestInterface
+    {
+        return new ResetPasswordRequest($user, $selector, $hashedToken, $expiresAt);
     }
 }

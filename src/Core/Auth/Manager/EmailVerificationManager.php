@@ -9,20 +9,22 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-final readonly class EmailVerificationManager
+#[AsAlias(EmailVerificationManagerInterface::class)]
+class EmailVerificationManager implements EmailVerificationManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MailerInterface $mailer,
-        private SettingRepository $settingRepository,
-        private Environment $twig,
-        private TranslatorInterface $translator,
-        private string $mailerFrom,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly MailerInterface $mailer,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly Environment $twig,
+        protected readonly TranslatorInterface $translator,
+        protected readonly string $mailerFrom,
     ) {}
 
     /**

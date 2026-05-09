@@ -7,8 +7,8 @@ namespace Aurora\Core\User\Manager\Frontend;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\Dto\Frontend\RegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
-use Aurora\Core\Auth\Manager\EmailVerificationManager;
-use Aurora\Core\Auth\Manager\PasswordResetManager;
+use Aurora\Core\Auth\Manager\EmailVerificationManagerInterface;
+use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
@@ -27,26 +27,26 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsAlias(UserManagerInterface::class)]
-final readonly class UserManager implements UserManagerInterface
+class UserManager implements UserManagerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
-        private UrlGeneratorInterface $urlGenerator,
-        private EmailVerificationManager $emailVerificationManager,
-        private PasswordResetManager $passwordResetManager,
-        private AuditLogger $auditLogger,
-        private UserNotificationService $notificationService,
-        private SequenceGenerator $sequenceGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly EntityManagerInterface $entityManager,
+        protected readonly UserRepository $userRepository,
+        protected readonly UserPasswordHasherInterface $passwordHasher,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly EmailVerificationManagerInterface $emailVerificationManager,
+        protected readonly PasswordResetManagerInterface $passwordResetManager,
+        protected readonly AuditLogger $auditLogger,
+        protected readonly UserNotificationService $notificationService,
+        protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
     ) {}
 
     public function register(RegisterInput $input): User
     {
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
 
-        $user = new User();
+        $user = $this->createUser();
         $user->setName($input->name);
         $user->setEmail($input->email);
         $user->setType(UserTypeEnum::Frontend);
@@ -166,5 +166,10 @@ final readonly class UserManager implements UserManagerInterface
     public function resetPassword(ResetPasswordRequest $resetRequest, string $newPassword): void
     {
         $this->passwordResetManager->resetPassword($resetRequest, $newPassword);
+    }
+
+    protected function createUser(): CoreUserInterface
+    {
+        return new User();
     }
 }

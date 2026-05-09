@@ -7,7 +7,7 @@ namespace Aurora\Core\Notification\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Notification\Entity\NotificationInterface;
-use Aurora\Core\Notification\Manager\NotificationManager;
+use Aurora\Core\Notification\Manager\NotificationManagerInterface;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Notification\Serializer\NotificationSerializer;
 use Aurora\Core\User\Entity\User;
@@ -27,7 +27,7 @@ final class NotificationsController extends AbstractController
     public function __construct(
         private readonly NotificationRepository $notificationRepository,
         private readonly NotificationSerializer $serializer,
-        private readonly NotificationManager $notificationManager,
+        private readonly NotificationManagerInterface $notificationManager,
     ) {}
 
     #[Route('', name: '_list', methods: [HttpMethodEnum::Get->value])]

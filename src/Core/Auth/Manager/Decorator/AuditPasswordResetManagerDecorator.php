@@ -7,6 +7,9 @@ namespace Aurora\Core\Auth\Manager\Decorator;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Enum\UserTypeEnum;
+use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
@@ -25,9 +28,22 @@ final readonly class AuditPasswordResetManagerDecorator implements PasswordReset
         $this->auditLogger->log('core', 'password_reset.link_requested', null, null, ['email' => $email]);
     }
 
-    public function validateToken(string $selector, string $token): ?ResetPasswordRequest
+    /**
+     * @return array{selector: string, plainToken: string, expiresAt: DateTimeImmutable}
+     */
+    public function createRequestForUser(User $user): array
     {
-        return $this->inner->validateToken($selector, $token);
+        return $this->inner->createRequestForUser($user);
+    }
+
+    public function sendResetEmail(User $user, string $resetUrl, ?DateTimeImmutable $expiresAt = null): void
+    {
+        $this->inner->sendResetEmail($user, $resetUrl, $expiresAt);
+    }
+
+    public function validateToken(string $selector, string $token, ?UserTypeEnum $expectedType = UserTypeEnum::Backend): ?ResetPasswordRequest
+    {
+        return $this->inner->validateToken($selector, $token, $expectedType);
     }
 
     public function resetPassword(ResetPasswordRequest $resetRequest, string $newPassword): void

@@ -16,7 +16,7 @@ use Aurora\Core\User\Dto\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserManagerInterface;
-use Aurora\Core\User\Manager\UserProfilePhotoManager;
+use Aurora\Core\User\Manager\UserProfilePhotoManagerInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +39,7 @@ final class ProfileController extends AbstractController
         private readonly UserManagerInterface $userManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly TranslatorInterface $translator,
-        private readonly UserProfilePhotoManager $userProfilePhotoManager,
+        private readonly UserProfilePhotoManagerInterface $userProfilePhotoManager,
         private readonly ProfileViewBuilder $viewBuilder,
     ) {}
 
