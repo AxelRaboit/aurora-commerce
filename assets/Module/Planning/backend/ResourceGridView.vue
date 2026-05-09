@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import EventChip from "./EventChip.vue";
+import { STATUS_TONES } from "./composables/useEventFilters.js";
+import { useResourceGridLogic } from "./composables/useResourceGridLogic.js";
 
 const props = defineProps({
     weekDays: { type: Array, required: true },
@@ -23,79 +24,8 @@ const emit = defineEmits([
 ]);
 
 const { t } = useI18n();
-
-const STATUS_TONES = {
-    confirmed: { bg: null, opacity: 1, classes: "" },
-    tentative: { bg: null, opacity: 0.65, classes: "fc-event-tentative" },
-    cancelled: { bg: "#9ca3af", opacity: 0.55, classes: "line-through" },
-};
-
-function isSameDay(isoDate, day) {
-    if (!isoDate) return false;
-    const date = new Date(isoDate);
-    return (
-        date.getFullYear() === day.getFullYear()
-        && date.getMonth() === day.getMonth()
-        && date.getDate() === day.getDate()
-    );
-}
-
-function isToday(day) {
-    const now = new Date();
-    return (
-        day.getFullYear() === now.getFullYear()
-        && day.getMonth() === now.getMonth()
-        && day.getDate() === now.getDate()
-    );
-}
-
-function formatDayHeader(day) {
-    return new Intl.DateTimeFormat(document.documentElement.lang || "fr", {
-        weekday: "short",
-        day: "2-digit",
-    }).format(day);
-}
-
-function eventsFor(user, day) {
-    return props.events.filter(
-        (event) =>
-            event.attendees?.some((attendee) => Number(attendee.id) === Number(user.id))
-            && isSameDay(event.startAt, day),
-    );
-}
-
-function eventsWithoutAttendees(day) {
-    return props.events.filter(
-        (event) =>
-            !event.attendees?.length && isSameDay(event.startAt, day),
-    );
-}
-
-const hasUnassignedRow = computed(() =>
-    props.events.some(
-        (event) =>
-            !event.attendees?.length
-            && props.weekDays.some((day) => isSameDay(event.startAt, day)),
-    ),
-);
-
-function eventStyle(event) {
-    const tone = STATUS_TONES[event.status] ?? STATUS_TONES.confirmed;
-    const color = tone.bg ?? props.baseColor;
-    return {
-        backgroundColor: color,
-        borderColor: color,
-        opacity: tone.opacity,
-    };
-}
-
-function onCellClick(user, day) {
-    const start = new Date(day);
-    start.setHours(9, 0, 0, 0);
-    const end = new Date(start);
-    end.setHours(10, 0, 0, 0);
-    emit("create-event", { day, user, start, end });
-}
+const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, hasUnassignedRow, eventStyle, onCellClick } =
+    useResourceGridLogic(props, emit);
 </script>
 
 <template>

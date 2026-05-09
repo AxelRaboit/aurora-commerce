@@ -32,20 +32,6 @@ use Symfony\Component\Yaml\Yaml;
 #[AsCommand(name: 'app:translations:dump-js', description: 'Dump Symfony YAML translations as JSON for vue-i18n')]
 final class DumpJsTranslationsCommand extends Command
 {
-    private const array AURORA_SOURCE_DIRS = [
-        'src/Core/translations',
-        'src/Module/Editorial/translations',
-        'src/Module/Crm/translations',
-        'src/Module/Erp/translations',
-        'src/Module/Ecommerce/translations',
-        'src/Module/Photo/translations',
-        'src/Module/Billing/translations',
-        'src/Module/Ged/translations',
-        'src/Module/Project/translations',
-        'src/Module/Planning/translations',
-        'src/Module/Hr/translations',
-    ];
-
     private const string OUTPUT_DIR = 'assets/locales/generated';
 
     /**
@@ -76,7 +62,7 @@ final class DumpJsTranslationsCommand extends Command
             $merged = [];
             $sourcesFound = 0;
 
-            foreach (self::AURORA_SOURCE_DIRS as $relativeDir) {
+            foreach ($this->discoverAuroraSourceDirs() as $relativeDir) {
                 $sourcePath = Path::join($this->auroraDir, $relativeDir, sprintf('messages.%s.yaml', $locale));
                 if ($this->mergeIfExists($sourcePath, $merged)) {
                     ++$sourcesFound;
@@ -108,6 +94,27 @@ final class DumpJsTranslationsCommand extends Command
         $io->success('Translations dumped. vue-i18n will auto-pick them on next dev/build.');
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Discovers translation source dirs at runtime: Core + all module translation dirs.
+     *
+     * @return list<string> relative paths from $auroraDir
+     */
+    private function discoverAuroraSourceDirs(): array
+    {
+        $dirs = [];
+
+        if (is_dir(Path::join($this->auroraDir, 'src/Core/translations'))) {
+            $dirs[] = 'src/Core/translations';
+        }
+
+        $found = glob(Path::join($this->auroraDir, 'src/Module/*/translations'), GLOB_ONLYDIR);
+        foreach ($found ?: [] as $absolutePath) {
+            $dirs[] = Path::makeRelative($absolutePath, $this->auroraDir);
+        }
+
+        return $dirs;
     }
 
     /**

@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useLoadMore } from "@/shared/composables/api/useLoadMore.js";
+import { useProductsOptions } from "./composables/useProductsOptions.js";
+import { useProductDetailEdit, useProductActivityLabels } from "./composables/useProductDetailEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -17,11 +17,8 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppLoadMore from "@/shared/components/nav/AppLoadMore.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Package, Save, X } from "lucide-vue-next";
-import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
-import { CURRENCY_OPTIONS, symbolFor, DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
-import { toast } from "vue-sonner";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -35,61 +32,12 @@ const props = defineProps({
     activityPath: { type: String, required: true },
 });
 
-const STATUS_OPTIONS = [
-    { value: "draft", label: () => t("backend.erp.products.status.draft") },
-    { value: "active", label: () => t("backend.erp.products.status.active") },
-    { value: "archived", label: () => t("backend.erp.products.status.archived") },
-];
-
-const STATUS_TONE = { draft: "amber", active: "emerald", archived: "slate" };
-
-const TYPE_OPTIONS = [
-    { value: "physical", label: () => t("backend.erp.products.types.physical") },
-    { value: "digital", label: () => t("backend.erp.products.types.digital") },
-    { value: "service", label: () => t("backend.erp.products.types.service") },
-];
-
-const TYPE_TONE = { physical: "slate", digital: "accent", service: "violet" };
+const { STATUS_OPTIONS, STATUS_TONE, TYPE_OPTIONS, TYPE_TONE } = useProductsOptions();
 
 const product = ref({ ...props.product });
 
-// --- Edit ---
-const showEdit = ref(false);
-const editForm = ref({
-    name: product.value.name,
-    reference: product.value.reference ?? "",
-    description: product.value.description ?? "",
-    price: product.value.price ?? "",
-    currency: product.value.currency ?? DEFAULT_CURRENCY,
-    status: product.value.status ?? "draft",
-    type: product.value.type ?? "physical",
-});
-const { errors: editErrors, validate: validateEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-
-async function submitEdit() {
-    if (!validateEdit({
-        name: () => required(t("backend.erp.products.errors.name_required"))(editForm.value.name),
-    })) return;
-
-    const data = await editRequest(props.updatePath, {
-        name: editForm.value.name,
-        reference: editForm.value.reference,
-        description: editForm.value.description,
-        price: editForm.value.price === "" ? null : editForm.value.price,
-        currency: editForm.value.currency,
-        status: editForm.value.status,
-        type: editForm.value.type,
-    });
-    if (!data) return;
-    if (data.success) {
-        product.value = { ...product.value, ...(data.product ?? editForm.value) };
-        showEdit.value = false;
-        toast.success(t("shared.common.saved"));
-    } else {
-        setEditErrors(translateServerErrors(t, data.errors));
-    }
-}
+const { showEdit, editForm, editFormImage, editErrors, editLoading, submitEdit } = useProductDetailEdit(props.updatePath, product);
+const actionLabel = useProductActivityLabels();
 
 // --- Activity (load more) ---
 const { items: activityItems, hasMore: hasMoreActivity, loading: loadingActivity, loadMore: loadMoreActivity } =
@@ -97,15 +45,6 @@ const { items: activityItems, hasMore: hasMoreActivity, loading: loadingActivity
 
 // --- Delete ---
 const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
-
-const actionLabel = (action) => {
-    const map = {
-        "product.created": t("backend.erp.activity.created"),
-        "product.updated": t("backend.erp.activity.updated"),
-        "product.deleted": t("backend.erp.activity.deleted"),
-    };
-    return map[action] ?? action;
-};
 </script>
 
 <template>

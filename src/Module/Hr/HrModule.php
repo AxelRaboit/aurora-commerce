@@ -35,6 +35,11 @@ final readonly class HrModule implements ModuleInterface
             return [];
         }
 
+        return $this->getCatalogNavSections();
+    }
+
+    public function getCatalogNavSections(): array
+    {
         return [
             new NavSection('hr', [
                 new NavItem('backend_hr_employees', 'backend.nav.employees', 'users', requiredPrivilege: 'hr.employees.view', descriptionKey: 'backend.nav.employees_description'),

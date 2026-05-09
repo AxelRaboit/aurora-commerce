@@ -1,11 +1,8 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
-import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
-import { ref } from "vue";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
+import { useDocumentCategoriesForm } from "./composables/useDocumentCategoriesForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -14,10 +11,6 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { Plus, Pencil, Trash2, Save, X } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
-import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -34,43 +27,11 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
     props.listPath, { initialSearch: props.search, initialData: props.categories },
 );
 
-function emptyForm() { return { name: "", description: "" }; }
-
-const showCreate = ref(false);
-const newCategory = ref(emptyForm());
-const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-function openCreate() { newCategory.value = emptyForm(); clearCreate(); showCreate.value = true; }
-async function submitCreate() {
-    if (!validateCreate({ name: () => required(t("backend.ged.categories.errors.name_required"))(newCategory.value.name) })) return;
-    const data = await createRequest(props.createPath, newCategory.value);
-    if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t("backend.ged.categories.created")); reset(); }
-    else setCreateErrors(translateServerErrors(t, data.errors));
-}
-
-const showEdit = ref(false);
-const editingCategory = ref(null);
-const editForm = ref(emptyForm());
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-function openEdit(category) {
-    editingCategory.value = category;
-    editForm.value = { name: category.name, description: category.description ?? "" };
-    clearEdit(); showEdit.value = true;
-}
-async function submitEdit() {
-    if (!validateEdit({ name: () => required(t("backend.ged.categories.errors.name_required"))(editForm.value.name) })) return;
-    const url = buildPath(props.updatePath, { id: editingCategory.value.id });
-    const data = await editRequest(url, editForm.value);
-    if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t("backend.ged.categories.updated")); reset(); }
-    else setEditErrors(translateServerErrors(t, data.errors));
-}
-
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), "backend.ged.categories.deleted",
-);
+const {
+    showCreate, newCategory, createErrors, createLoading, openCreate, submitCreate,
+    showEdit, editingCategory, editForm, editErrors, editLoading, openEdit, submitEdit,
+    pendingDelete, deleteLoading, confirmDelete, doDelete,
+} = useDocumentCategoriesForm(props.createPath, props.updatePath, props.deletePath, reset);
 </script>
 
 <template>

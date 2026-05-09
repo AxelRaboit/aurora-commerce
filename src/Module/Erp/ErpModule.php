@@ -35,6 +35,11 @@ final readonly class ErpModule implements ModuleInterface
             return [];
         }
 
+        return $this->getCatalogNavSections();
+    }
+
+    public function getCatalogNavSections(): array
+    {
         return [
             new NavSection('erp', [
                 new NavItem('backend_erp_products', 'backend.nav.products', 'package', descriptionKey: 'backend.nav.products_description'),

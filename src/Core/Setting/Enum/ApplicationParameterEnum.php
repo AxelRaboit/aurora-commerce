@@ -79,6 +79,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case ProjectEnabled = 'backend_project_admin_enabled';
     case PlanningEnabled = 'backend_planning_admin_enabled';
     case HrEnabled = 'backend_hr_admin_enabled';
+    case VaultEnabled = 'backend_vault_admin_enabled';
 
     public function getKey(): string
     {
@@ -159,6 +160,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ProjectEnabled => 'Module Projet activé',
             self::PlanningEnabled => 'Module Planning activé',
             self::HrEnabled => 'Module RH activé',
+            self::VaultEnabled => 'Module Coffre-fort activé',
         };
     }
 
@@ -236,6 +238,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ProjectEnabled => "Active la section Projet dans l'administration.",
             self::PlanningEnabled => "Active la section Planning dans l'administration.",
             self::HrEnabled => "Active la section RH dans l'administration.",
+            self::VaultEnabled => 'Active le coffre-fort de mots de passe (chiffrement E2E, accessible à tous les utilisateurs authentifiés).',
         };
     }
 
@@ -313,6 +316,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ProjectEnabled => '1',
             self::PlanningEnabled => '1',
             self::HrEnabled => '1',
+            self::VaultEnabled => '1',
         };
     }
 
@@ -322,7 +326,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EditorialEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::CrmEnabled, self::ErpEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled, self::HrEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::EditorialEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::CrmEnabled, self::ErpEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled, self::HrEnabled, self::VaultEnabled => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
@@ -394,6 +398,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ProjectEnabled => 'project',
             self::PlanningEnabled => 'planning',
             self::HrEnabled => 'hr',
+            self::VaultEnabled => 'vault',
             default => null,
         };
     }
@@ -408,7 +413,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::EditorialEnabled, self::CrmEnabled, self::ErpEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled, self::HrEnabled => 'modules',
+            self::EditorialEnabled, self::CrmEnabled, self::ErpEnabled, self::EcommerceEnabled, self::EcommerceShopEnabled, self::PhotoEnabled, self::PhotoPublicEnabled, self::BillingEnabled, self::GedEnabled, self::ProjectEnabled, self::PlanningEnabled, self::HrEnabled, self::VaultEnabled => 'modules',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',

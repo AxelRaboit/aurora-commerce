@@ -37,6 +37,11 @@ final readonly class CrmModule implements ModuleInterface
             return [];
         }
 
+        return $this->getCatalogNavSections();
+    }
+
+    public function getCatalogNavSections(): array
+    {
         return [
             new NavSection('crm', [
                 new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', descriptionKey: 'backend.nav.contacts_description'),

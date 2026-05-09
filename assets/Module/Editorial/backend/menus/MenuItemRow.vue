@@ -31,15 +31,14 @@ function visibilityIcon(item) {
         <div class="flex items-center gap-2 px-3 py-2.5">
             <GripVertical class="drag-handle w-4 h-4 text-muted cursor-grab active:cursor-grabbing shrink-0" :stroke-width="2" />
 
-            <button
+            <AppIconButton
                 v-if="item.children?.length"
-                type="button"
-                class="shrink-0 p-0.5 rounded hover:bg-surface-2 transition-colors"
+                class="shrink-0"
                 :title="expanded ? t('shared.common.collapse') : t('shared.common.expand')"
                 v-on:click="expanded = !expanded"
             >
                 <ChevronRight class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-90': expanded }" :stroke-width="2" />
-            </button>
+            </AppIconButton>
             <div v-else class="w-5 shrink-0" />
 
             <div class="flex-1 min-w-0">

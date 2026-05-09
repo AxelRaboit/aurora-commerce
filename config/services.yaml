@@ -99,6 +99,10 @@ services:
         arguments:
             $modules: !tagged_iterator aurora.module
 
+    Aurora\Core\Setting\View\ModulesViewBuilder:
+        arguments:
+            $modules: !tagged_iterator aurora.module
+
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:
             $baseUrl: '%env(OCR_DOCTR_URL)%'

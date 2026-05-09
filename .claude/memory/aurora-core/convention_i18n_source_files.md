@@ -56,8 +56,8 @@ pourquoi la discipline humaine reste nécessaire.
 ## Voir aussi
 
 - [`pitfall_module_translations_two_registrations.md`](pitfall_module_translations_two_registrations.md)
-  — un nouveau module doit s'enregistrer dans `AuroraBundle.php` ET
-  `DumpJsTranslationsCommand` pour que les YAML soient lus.
+  — pour un nouveau module, seul `resolve_target_entities` dans `AuroraBundle.php` est manuel.
+  Mappings, Twig, translator paths et DumpJsTranslations sont auto-découverts par glob.
 - [`convention_privilege_translations.md`](convention_privilege_translations.md)
   — où placer les traductions de privilèges par module.
 

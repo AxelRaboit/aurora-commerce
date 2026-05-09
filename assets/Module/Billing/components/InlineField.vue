@@ -2,6 +2,7 @@
 import { ref, computed, nextTick, watch } from "vue";
 import { Pencil, Check, X } from "lucide-vue-next";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { parseMoney } from "@/shared/utils/format/parseMoney.js";
 
 const props = defineProps({
@@ -146,12 +147,24 @@ watch(() => props.disabled, (d) => { if (d) editing.value = false; });
                 :disabled="saving"
                 v-on:keydown="onKeydown"
             >
-            <button type="button" :disabled="saving" class="inline-flex items-center justify-center w-6 h-6 rounded text-emerald-400 hover:bg-emerald-500/10 transition-colors shrink-0 disabled:opacity-50" v-on:click="commit">
+            <AppIconButton
+                type="button"
+                color="emerald"
+                size="compact"
+                :disabled="saving"
+                v-on:click="commit"
+            >
                 <Check class="w-3.5 h-3.5" :stroke-width="2.5" />
-            </button>
-            <button type="button" :disabled="saving" class="inline-flex items-center justify-center w-6 h-6 rounded text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0 disabled:opacity-50" v-on:click="cancel">
+            </AppIconButton>
+            <AppIconButton
+                type="button"
+                color="rose"
+                size="compact"
+                :disabled="saving"
+                v-on:click="cancel"
+            >
                 <X class="w-3.5 h-3.5" :stroke-width="2.5" />
-            </button>
+            </AppIconButton>
         </div>
     </div>
 </template>

@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useInvoiceFilter } from "./composables/useInvoiceFilter.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -33,9 +33,6 @@ const props = defineProps({
     statusOptions: { type: Array, default: () => [] },
 });
 
-const statusFilter = ref("");
-const counts = ref(props.invoices.counts ?? {});
-
 const { items, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
     props.listPath,
     {
@@ -46,33 +43,14 @@ const { items, page, totalPages, search, onSearch, goToPage, reload } = useListP
     },
 );
 
-function onStatusChange() {
-    reload();
-}
+const { statusFilter, counts, onStatusChange, STATUS_SELECT, exportXlsxUrl } = useInvoiceFilter(props, reload, search);
 
 function goToInvoice(id) {
     window.location.href = buildPath(props.showPath, { id });
 }
 
-const exportXlsxUrl = computed(() => {
-    const params = new URLSearchParams();
-    if (search.value) params.set('search', search.value);
-    if (statusFilter.value) params.set('status', statusFilter.value);
-    const qs = params.toString();
-    return qs ? `${props.exportXlsxPath}?${qs}` : props.exportXlsxPath;
-});
-
-
-
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deletePath, () => reload(), 'backend.billing.invoices.deleted',
-);
-
-const STATUS_SELECT = computed(() =>
-    props.statusOptions.map(option => ({
-        value: option.value,
-        label: `${t(option.labelKey)} (${counts.value[option.value] ?? 0})`,
-    })),
 );
 
 const { formatDateNumeric } = useDateFormat();

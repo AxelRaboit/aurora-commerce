@@ -45,7 +45,7 @@ assets/
   (`MediaCropperModal.vue`, `RevisionsOverlay.vue`).
 - **Panel suffixe** : section d'un editor (`PostSeoPanel.vue`,
   `PostFeaturedImagePanel.vue`).
-- **Tab suffixe** : onglet dans un AppTabs (`AdminPermissionsTab.vue`).
+- **Tab suffixe** : onglet dans un AppTabs (`PermissionsTab.vue`).
 
 ### Convention extension (rappel)
 Chaque `<Plural>App.vue` (composant top-level d'backend CRUD) expose :

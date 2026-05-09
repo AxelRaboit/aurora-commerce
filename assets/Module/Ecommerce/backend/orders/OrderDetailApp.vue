@@ -212,7 +212,7 @@ const refund = useOrderRefund(props.refundPath, order);
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="refund.close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm">{{ t('backend.ecommerce.orders.refund.confirm') }}</AppButton>
+                    <AppButton variant="danger" size="md" :loading="refund.loading.value" v-on:click="refund.confirm"><Undo2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.ecommerce.orders.refund.confirm') }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>

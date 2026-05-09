@@ -2,10 +2,10 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useCompanyDetailEdit } from "./composables/useCompanyDetailEdit.js";
+import { useCompanyContactCreate } from "./composables/useCompanyContactCreate.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -15,9 +15,6 @@ import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Pencil, Trash2, Plus, Save, X } from "lucide-vue-next";
-import { required, url, email as emailValidator } from "@/shared/utils/validation/validators.js";
-import { toast } from "vue-sonner";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -38,60 +35,10 @@ const props = defineProps({
 const company = ref({ ...props.company });
 const contacts = ref([...props.contacts]);
 
-// Edit
-const showEdit = ref(false);
-const editForm = ref({
-    name: company.value.name,
-    industry: company.value.industry ?? "",
-    website: company.value.website ?? "",
-    phone: company.value.phone ?? "",
-    address: company.value.address ?? "",
-    notes: company.value.notes ?? "",
-});
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-
-async function submitEdit() {
-    if (!validateEdit({
-        name: () => required(t("backend.crm.companies.errors.name_required"))(editForm.value.name),
-        website: () => url(t("backend.crm.companies.errors.website_invalid"))(editForm.value.website),
-    })) return;
-    const data = await editRequest(props.updatePath, editForm.value);
-    if (!data) return;
-    if (data.success) {
-        company.value = { ...company.value, ...(data.company ?? editForm.value) };
-        showEdit.value = false;
-        toast.success(t("shared.common.saved"));
-    } else {
-        setEditErrors(translateServerErrors(t, data.errors));
-    }
-}
-
-// Delete
+const { showEdit, editForm, editErrors, editLoading, submitEdit } = useCompanyDetailEdit(props.updatePath, company);
 const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete(props.deletePath, props.backPath);
-
-// Create contact
-const showCreateContact = ref(false);
-const newContact = ref({ firstName: "", lastName: "", email: "", phone: "", notes: "" });
-const { errors: contactErrors, validate: validateContact, clearErrors: clearContact, setErrors: setContactErrors } = useForm();
-const { loading: contactLoading, request: contactRequest } = useApiRequest();
-function openCreateContact() { newContact.value = { firstName: "", lastName: "", email: "", phone: "", notes: "" }; clearContact(); showCreateContact.value = true; }
-async function submitContact() {
-    if (!validateContact({
-        firstName: () => required(t("backend.crm.contacts.errors.first_name_required"))(newContact.value.firstName),
-        lastName: () => required(t("backend.crm.contacts.errors.last_name_required"))(newContact.value.lastName),
-        email: () => newContact.value.email ? emailValidator(t("backend.crm.contacts.errors.email_invalid"))(newContact.value.email) : null,
-    })) return;
-    const data = await contactRequest(props.createContactPath, { ...newContact.value, companyId: props.companyId });
-    if (!data) return;
-    if (data.success) {
-        showCreateContact.value = false;
-        toast.success(t("backend.crm.contacts.created"));
-        if (data.contact) contacts.value = [data.contact, ...contacts.value];
-    } else {
-        setContactErrors(translateServerErrors(t, data.errors));
-    }
-}
+const { showCreateContact, newContact, contactErrors, contactLoading, openCreateContact, submitContact } =
+    useCompanyContactCreate(props.createContactPath, props.companyId, contacts);
 </script>
 
 <template>

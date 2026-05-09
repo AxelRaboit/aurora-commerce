@@ -1,11 +1,8 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
-import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
+import { useDocumentsForm, DOCUMENT_STATUS_BADGE } from "./composables/useDocumentsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
@@ -17,10 +14,6 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
 import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
-import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -35,66 +28,18 @@ const props = defineProps({
     mediaPickerPath: { type: String, default: "" },
 });
 
-const statusOptions = [
-    { value: "draft", label: t("backend.ged.documents.status_draft") },
-    { value: "published", label: t("backend.ged.documents.status_published") },
-    { value: "archived", label: t("backend.ged.documents.status_archived") },
-];
-
-const statusBadgeColor = { draft: "gray", published: "emerald", archived: "accent" };
-
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath, { initialSearch: props.search, initialData: props.documents },
 );
 
-function emptyForm() { return { title: "", description: "", status: "draft", categoryId: null, fileId: null, fileName: null }; }
-
-// Create
-const showCreate = ref(false);
-const newDoc = ref(emptyForm());
-const showMediaPickerCreate = ref(false);
-const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-function openCreate() { newDoc.value = emptyForm(); clearCreate(); showCreate.value = true; }
-function onFilePickedCreate(media) { newDoc.value.fileId = media.id; newDoc.value.fileName = media.fileName; showMediaPickerCreate.value = false; }
-async function submitCreate() {
-    if (!validateCreate({ title: () => required(t("backend.ged.documents.errors.title_required"))(newDoc.value.title) })) return;
-    const payload = { ...newDoc.value };
-    const data = await createRequest(props.createPath, payload);
-    if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t("backend.ged.documents.created")); reset(); }
-    else setCreateErrors(translateServerErrors(t, data.errors));
-}
-
-// Edit
-const showEdit = ref(false);
-const editingDoc = ref(null);
-const editForm = ref(emptyForm());
-const showMediaPickerEdit = ref(false);
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-function openEdit(doc) {
-    editingDoc.value = doc;
-    editForm.value = { title: doc.title, description: doc.description ?? "", status: doc.status, categoryId: doc.categoryId ?? null, fileId: doc.fileId, fileName: doc.fileName };
-    clearEdit(); showEdit.value = true;
-}
-function onFilePickedEdit(media) { editForm.value.fileId = media.id; editForm.value.fileName = media.fileName; showMediaPickerEdit.value = false; }
-async function submitEdit() {
-    if (!validateEdit({ title: () => required(t("backend.ged.documents.errors.title_required"))(editForm.value.title) })) return;
-    const url = buildPath(props.updatePath, { id: editingDoc.value.id });
-    const payload = { ...editForm.value };
-    const data = await editRequest(url, payload);
-    if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t("backend.ged.documents.updated")); reset(); }
-    else setEditErrors(translateServerErrors(t, data.errors));
-}
-
-// Delete
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deletePath, () => reset(), "backend.ged.documents.deleted",
-);
+const {
+    statusOptions,
+    showCreate, newDoc, showMediaPickerCreate, createErrors, createLoading, openCreate, onFilePickedCreate, submitCreate,
+    showEdit, editingDoc, editForm, showMediaPickerEdit, editErrors, editLoading, openEdit, onFilePickedEdit, submitEdit,
+    pendingDelete, deleteLoading, confirmDelete, doDelete,
+} = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset);
 </script>
 
 <template>
@@ -131,7 +76,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
                         <td class="px-6 py-3 hidden lg:table-cell">
-                            <AppBadge :color="statusBadgeColor[doc.status]">{{ doc.statusLabel }}</AppBadge>
+                            <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
                         </td>
                         <td class="px-6 py-3 hidden lg:table-cell">
                             <span v-if="doc.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ doc.fileName }}</span>

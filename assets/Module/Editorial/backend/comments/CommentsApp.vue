@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { useCommentModeration } from "@/Module/Editorial/backend/comments/composables/useCommentModeration.js";
+import { useCommentFilter } from "@/Module/Editorial/backend/comments/composables/useCommentFilter.js";
 import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
 import { MessageSquare, Check, Ban, Trash2, Eye, X } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -31,8 +32,6 @@ const props = defineProps({
     stats: { type: Object, default: () => ({ pending: 0, approved: 0, spam: 0 }) },
 });
 
-const statusFilter = ref("");
-const viewingComment = ref(null);
 
 const { items: comments, loading, page, totalPages, total, load: fetchComments, goToPage, reset: resetComments } = usePaginatedFetch(
     () => props.listPath,
@@ -62,23 +61,7 @@ const {
     fetchComments,
 );
 
-const tabs = computed(() => [
-    { key: "", label: t("backend.comments.all"), count: localStats.value.pending + localStats.value.approved + localStats.value.spam },
-    { key: CommentStatus.Pending, label: t("backend.comments.pending"), count: localStats.value.pending },
-    { key: CommentStatus.Approved, label: t("backend.comments.approved"), count: localStats.value.approved },
-    { key: CommentStatus.Spam, label: t("backend.comments.spam"), count: localStats.value.spam },
-]);
-
-function selectTab(key) {
-    statusFilter.value = key;
-    resetComments();
-}
-
-function statusBadgeColor(status) {
-    if (status === CommentStatus.Approved) return "emerald";
-    if (status === CommentStatus.Spam) return "rose";
-    return "amber";
-}
+const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useCommentFilter(localStats, resetComments);
 </script>
 
 <template>

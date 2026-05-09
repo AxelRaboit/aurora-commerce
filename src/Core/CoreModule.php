@@ -32,6 +32,11 @@ final class CoreModule implements ModuleInterface
 
     public function getNavSections(): array
     {
+        return $this->getCatalogNavSections();
+    }
+
+    public function getCatalogNavSections(): array
+    {
         return [
             new NavSection('core', [
                 new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', descriptionKey: 'backend.nav.dashboard_description'),

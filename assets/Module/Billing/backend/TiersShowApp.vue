@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useInlineEdit } from "@/shared/composables/form/useInlineEdit.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useTiersActions } from "./composables/useTiersActions.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -32,24 +32,7 @@ const props = defineProps({
     statusOptions: { type: Array, default: () => [] },
 });
 
-const tiers = ref({ ...props.tiers });
-const showDeleteModal = ref(false);
-const deleting = ref(false);
-const { saveField, submit } = useInlineEdit();
-
-async function updateField(field, value) {
-    const data = await saveField(props.updatePath, field, value);
-    if (data) tiers.value = data.tiers;
-}
-
-async function deleteTiers() {
-    if (deleting.value) return;
-    deleting.value = true;
-    const data = await submit(props.deletePath, null, { successMessage: 'backend.billing.tiers.deleted' });
-    deleting.value = false;
-    showDeleteModal.value = false;
-    if (data) window.location.href = props.listPath;
-}
+const { tiers, showDeleteModal, deleting, updateField, deleteTiers } = useTiersActions(props);
 
 const statusFilter = ref("");
 

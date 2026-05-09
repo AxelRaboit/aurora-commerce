@@ -1,0 +1,183 @@
+backend:
+  permissions:
+    names:
+      vault:
+        use: Use the vault
+  modules:
+    vault: Vault
+  nav:
+    sections:
+      vault: Vault
+    vault: Vault
+    vault_description: End-to-end encrypted password manager
+  audit:
+    actions:
+      vault:
+        entry:
+          created: Entry created
+          updated: Entry updated
+          deleted: Entry deleted
+        folder:
+          created: Folder created
+          updated: Folder updated
+          deleted: Folder deleted
+        config:
+          setup: Vault initialised
+
+vault:
+  setup:
+    title: Set up your vault
+    description: Choose a master password to encrypt your vault. It will never be sent to the server.
+    masterPassword: Master password
+    masterPasswordPlaceholder: Choose a strong password
+    confirmPassword: Confirm password
+    confirmPasswordPlaceholder: Confirm your password
+    submit: Create vault
+    warning: Warning — if you lose this password, your data will be unrecoverable.
+    strength:
+      weak: Very weak
+      fair: Weak
+      good: Fair
+      strong: Strong
+      very_strong: Very strong
+    errors:
+      password_required: Master password is required.
+      passwords_mismatch: Passwords do not match.
+  unlock:
+    title: Unlock your vault
+    masterPassword: Master password
+    masterPasswordPlaceholder: Enter your master password
+    submit: Unlock
+    error: Incorrect password.
+    lock: Lock
+  entries:
+    add: New entry
+    create: Create entry
+    edit: Edit entry
+    empty: No entries in this vault.
+    emptyFolder: No entries in this folder.
+    emptyFavorites: No favourites.
+    created: Entry created.
+    updated: Entry updated.
+    deleted: Entry deleted.
+    count: entry(s)
+    all_entries_label: All entries
+    searchPlaceholder: Search vault…
+    title: Title
+    titlePlaceholder: E.g. Gmail, GitHub…
+    url: URL
+    urlPlaceholder: https://example.com
+    folder: Folder
+    folderNone: No folder
+    type: Type
+    favorite: Favourite
+    favoriteAdded: Added to favourites.
+    favoriteRemoved: Removed from favourites.
+    deleteConfirm: 'Delete entry "{title}"?'
+    deleteWarning: This action is irreversible. The encrypted data will be permanently deleted.
+    errors:
+      title_required: Title is required.
+      encrypted_data_required: Encrypted data is required.
+      iv_required: Initialisation vector is required.
+  folders:
+    add: New folder
+    create: Create folder
+    edit: Edit folder
+    manage: Manage folders
+    empty: No folders.
+    created: Folder created.
+    updated: Folder updated.
+    deleted: Folder deleted.
+    all_folders: All folders
+    sub_folders_count: sub-folder(s)
+    all: All entries
+    favorites: Favourites
+    folders: Folders
+    root: Root
+    name: Name
+    namePlaceholder: Folder name
+    color: Colour
+    deleteConfirm: 'Delete folder "{name}"?'
+    deleteWarning: Entries in the folder will be kept (without folder).
+    parent: Parent folder
+    noParent: Root (no parent)
+    errors:
+      name_required: Name is required.
+      color_invalid: Colour must be in hex format (#RRGGBB).
+  session:
+    keep_unlocked: Keep unlocked
+    duration: Duration
+    duration_5min: 5 minutes
+    duration_15min: 15 minutes
+    duration_30min: 30 minutes
+    duration_1h: 1 hour
+    duration_4h: 4 hours
+    duration_8h: 8 hours
+    duration_browser: Until tab closes
+    restored: Vault unlocked automatically.
+    restored_browser: "Vault unlocked, active until tab closes."
+    restored_minutes: "Vault unlocked, {m} min remaining."
+    restored_hours: "Vault unlocked, {h}h{m} remaining."
+    expires_at: "Auto-lock at {time}"
+  config:
+    errors:
+      salt_required: The cryptographic salt is required.
+  types:
+    login: Login
+    card: Payment card
+    identity: Identity
+    secure_note: Secure note
+    bank_account: Bank account
+    ssh_key: SSH key
+    passport: Passport
+    driver_license: Driver's licence
+    email: Email
+    database: Database
+    server: Server
+    api_key: API key
+    crypto_wallet: Crypto wallet
+    wifi_password: Wi-Fi password
+    software_license: Software licence
+  view:
+    copy: Copy
+    copied: "{field} copied."
+    reveal: Reveal
+    hide: Hide
+    noFields: No data recorded.
+  fields:
+    username: Username
+    usernamePlaceholder: Username or email
+    password: Password
+    passwordPlaceholder: Password
+    notes: Notes
+    notesPlaceholder: Notes…
+    cardNumber: Card number
+    cardHolder: Card holder
+    expiryDate: Expiry date
+    cvv: CVV
+    pin: PIN
+    bankName: Bank
+    iban: IBAN
+    bic: BIC
+    publicKey: Public key
+    privateKey: Private key
+    passphrase: Passphrase
+    issuer: Issuer
+    passportNumber: Passport number
+    licenseNumber: Licence number
+    licenseKey: Licence key
+    host: Host
+    port: Port
+    database: Database
+    apiKey: API key
+    apiSecret: API secret
+    walletAddress: Wallet address
+    seedPhrase: Seed phrase
+    ssid: SSID
+    wifiPassword: Wi-Fi password
+    firstName: First name
+    lastName: Last name
+    birthDate: Date of birth
+    email: Email
+    phone: Phone
+    address: Address

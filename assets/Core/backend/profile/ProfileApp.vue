@@ -1,13 +1,11 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { Upload, Trash2, Save } from "lucide-vue-next";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
 import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useProfileLocale } from "@core/backend/profile/composables/useProfileLocale.js";
@@ -15,6 +13,7 @@ import { useProfileInfo } from "@core/backend/profile/composables/useProfileInfo
 import { useProfileMood } from "@core/backend/profile/composables/useProfileMood.js";
 import { useProfilePassword } from "@core/backend/profile/composables/useProfilePassword.js";
 import { useProfileDelete } from "@core/backend/profile/composables/useProfileDelete.js";
+import { useProfilePhoto } from "@core/backend/profile/composables/useProfilePhoto.js";
 
 const { t } = useI18n();
 
@@ -41,48 +40,7 @@ const { infoName, infoEmail, infoLoading, infoErrors, saveInfo } = useProfileInf
 const { moodMessage, moodLoading, moodError, saveMood } = useProfileMood(props.moodPath, props.userMoodMessage, props.moodMessageMaxLength);
 const { currentPassword, newPassword, confirmPassword, passwordLoading, passwordErrors, savePassword } = useProfilePassword(props.passwordPath);
 const { deleteLoading, deleteAccount } = useProfileDelete(props.deletePath, props.loginPath, props.deleteCsrf);
-
-const photoUrl = ref(props.userPhotoUrl);
-const photoLoading = ref(false);
-
-async function onPhotoSelected(file) {
-    if (!file) return;
-    photoLoading.value = true;
-    try {
-        const formData = new FormData();
-        formData.append("photo", file);
-        const response = await fetch(props.photoUploadPath, { method: HttpMethod.Post, body: formData });
-        const data = await response.json();
-        if (!data.success) {
-            toast.error(t(data.errors?.photo ?? data.error ?? "shared.common.error"));
-            return;
-        }
-        photoUrl.value = data.profilePhotoUrl ?? "";
-        toast.success(t("backend.users.photo.uploaded"));
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        photoLoading.value = false;
-    }
-}
-
-async function removePhoto() {
-    photoLoading.value = true;
-    try {
-        const response = await fetch(props.photoDeletePath, { method: HttpMethod.Post });
-        const data = await response.json();
-        if (!data.success) {
-            toast.error(t(data.error ?? "shared.common.error"));
-            return;
-        }
-        photoUrl.value = "";
-        toast.success(t("backend.users.photo.removed"));
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        photoLoading.value = false;
-    }
-}
+const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto(props.photoUploadPath, props.photoDeletePath, props.userPhotoUrl);
 </script>
 
 <template>
@@ -93,18 +51,18 @@ async function removePhoto() {
                 <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.locale.subtitle') }}</p>
             </header>
             <div>
-                <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.profile.locale.field') }}</label>
-                <select
+                <AppSelect
                     v-model="selectedLocale"
+                    :label="t('backend.profile.locale.field')"
+                    :options="[
+                        { value: 'fr', label: t('shared.locales.fr') },
+                        { value: 'en', label: t('shared.locales.en') },
+                        { value: 'es', label: t('shared.locales.es') },
+                        { value: 'de', label: t('shared.locales.de') },
+                    ]"
                     :disabled="localeLoading"
-                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-accent-500 focus:outline-none transition disabled:opacity-50"
-                    v-on:change="changeLocale"
-                >
-                    <option value="fr">{{ t('shared.locales.fr') }}</option>
-                    <option value="en">{{ t('shared.locales.en') }}</option>
-                    <option value="es">{{ t('shared.locales.es') }}</option>
-                    <option value="de">{{ t('shared.locales.de') }}</option>
-                </select>
+                    v-on:update:model-value="changeLocale"
+                />
             </div>
         </div>
 
@@ -243,6 +201,7 @@ async function removePhoto() {
                 <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.danger.description') }}</p>
             </header>
             <AppButton variant="danger" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
+                <Trash2 class="w-4 h-4" :stroke-width="2" />
                 {{ t('backend.profile.danger.submit') }}
             </AppButton>
         </div>

@@ -173,7 +173,10 @@ patterns, location registries, etc.).
 
 1. Créer `Interface + Abstract + concrete` dans `Entity/` avec sequence
    `seq_core_<entity>_id`.
-2. Ajouter au `resolve_target_entities` de `AuroraBundle.php`.
+2. Ajouter au `resolve_target_entities` de `AuroraBundle.php` — **seule
+   ligne manuelle nécessaire**. Tout le reste est auto-découvert par glob :
+   Doctrine mappings, Twig namespaces, Symfony translator paths,
+   DumpJsTranslationsCommand.
 3. Repository qui étend `ResolveTargetEntityRepository`.
 4. **Si backend CRUD** : 4 fichiers DTO (Input, InputInterface,
    InputFactoryInterface, InputFactory) + Manager (Interface + class non-final
@@ -182,6 +185,11 @@ patterns, location registries, etc.).
 5. Ajouter à la table 2.1 de `entity_extensibility_convention.md` si la
    liste change.
 6. Tests + build verts, commit atomique.
+
+> **Créer un nouveau module** (`src/Module/<Module>/`) : le dossier seul
+> suffit pour que Doctrine, Twig et les traductions le découvrent
+> automatiquement. Seul `resolve_target_entities` est à renseigner
+> manuellement pour chaque entité du module.
 
 ---
 

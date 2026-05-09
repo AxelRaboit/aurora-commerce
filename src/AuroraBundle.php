@@ -136,6 +136,12 @@ use Aurora\Module\Project\Entity\ProjectTaskItem;
 use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
+use Aurora\Module\Vault\VaultEntry\Entity\VaultEntry;
+use Aurora\Module\Vault\VaultEntry\Entity\VaultEntryInterface;
+use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
+use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
+use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
+use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -172,6 +178,8 @@ class AuroraBundle extends AbstractBundle
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $dir = dirname(__DIR__);
+
+        $moduleDirs = glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [];
 
         $builder->prependExtensionConfig('doctrine', [
             'orm' => [
@@ -247,87 +255,35 @@ class AuroraBundle extends AbstractBundle
                     ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
+                    VaultEntryInterface::class => VaultEntry::class,
+                    VaultFolderInterface::class => VaultFolder::class,
+                    VaultUserConfigInterface::class => VaultUserConfig::class,
                     MountPointInterface::class => MountPoint::class,
                 ],
-                'mappings' => [
-                    'AuroraCore' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Core',
-                        'prefix' => 'Aurora\Core',
-                        'alias' => 'AuroraCore',
+                'mappings' => array_merge(
+                    [
+                        'AuroraCore' => [
+                            'type' => 'attribute',
+                            'is_bundle' => false,
+                            'dir' => $dir.'/src/Core',
+                            'prefix' => 'Aurora\Core',
+                            'alias' => 'AuroraCore',
+                        ],
                     ],
-                    'AuroraEditorial' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Editorial',
-                        'prefix' => 'Aurora\Module\Editorial',
-                        'alias' => 'AuroraEditorial',
-                    ],
-                    'AuroraCrm' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Crm',
-                        'prefix' => 'Aurora\Module\Crm',
-                        'alias' => 'AuroraCrm',
-                    ],
-                    'AuroraErp' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Erp',
-                        'prefix' => 'Aurora\Module\Erp',
-                        'alias' => 'AuroraErp',
-                    ],
-                    'AuroraEcommerce' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Ecommerce',
-                        'prefix' => 'Aurora\Module\Ecommerce',
-                        'alias' => 'AuroraEcommerce',
-                    ],
-                    'AuroraPhoto' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Photo',
-                        'prefix' => 'Aurora\Module\Photo',
-                        'alias' => 'AuroraPhoto',
-                    ],
-                    'AuroraBilling' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Billing',
-                        'prefix' => 'Aurora\Module\Billing',
-                        'alias' => 'AuroraBilling',
-                    ],
-                    'AuroraGed' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Ged',
-                        'prefix' => 'Aurora\Module\Ged',
-                        'alias' => 'AuroraGed',
-                    ],
-                    'AuroraProject' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Project',
-                        'prefix' => 'Aurora\Module\Project',
-                        'alias' => 'AuroraProject',
-                    ],
-                    'AuroraPlanning' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Planning',
-                        'prefix' => 'Aurora\Module\Planning',
-                        'alias' => 'AuroraPlanning',
-                    ],
-                    'AuroraHr' => [
-                        'type' => 'attribute',
-                        'is_bundle' => false,
-                        'dir' => $dir.'/src/Module/Hr',
-                        'prefix' => 'Aurora\Module\Hr',
-                        'alias' => 'AuroraHr',
-                    ],
-                ],
+                    ...array_map(static function (string $moduleDir): array {
+                        $moduleName = basename($moduleDir);
+
+                        return [
+                            'Aurora'.$moduleName => [
+                                'type' => 'attribute',
+                                'is_bundle' => false,
+                                'dir' => $moduleDir,
+                                'prefix' => 'Aurora\\Module\\'.$moduleName,
+                                'alias' => 'Aurora'.$moduleName,
+                            ],
+                        ];
+                    }, $moduleDirs),
+                ),
             ],
         ]);
 
@@ -336,20 +292,19 @@ class AuroraBundle extends AbstractBundle
         // clients can override any Aurora template by mirroring its path under
         // templates/Core, templates/Module/Editorial, templates/Shared, etc.
         $projectDir = (string) $builder->getParameter('kernel.project_dir');
-        $namespacedPaths = [
-            'Core' => '/templates/Core',
-            'Editorial' => '/templates/Module/Editorial',
-            'Shared' => '/templates/Shared',
-            'Crm' => '/templates/Module/Crm',
-            'Erp' => '/templates/Module/Erp',
-            'Ecommerce' => '/templates/Module/Ecommerce',
-            'Photo' => '/templates/Module/Photo',
-            'Billing' => '/templates/Module/Billing',
-            'Ged' => '/templates/Module/Ged',
-            'Project' => '/templates/Module/Project',
-            'Planning' => '/templates/Module/Planning',
-            'Hr' => '/templates/Module/Hr',
-        ];
+        $moduleNamespacedPaths = [];
+        foreach ($moduleDirs as $moduleDir) {
+            $moduleName = basename($moduleDir);
+            $relative = '/templates/Module/'.$moduleName;
+            if (is_dir($dir.$relative)) {
+                $moduleNamespacedPaths[$moduleName] = $relative;
+            }
+        }
+
+        $namespacedPaths = array_merge(
+            ['Core' => '/templates/Core', 'Shared' => '/templates/Shared'],
+            $moduleNamespacedPaths,
+        );
 
         $twigPaths = [];
         foreach ($namespacedPaths as $namespace => $relative) {
@@ -381,18 +336,10 @@ class AuroraBundle extends AbstractBundle
             'enabled_locales' => ['fr', 'en'],
             'translator' => [
                 'default_path' => $dir.'/src/Core/translations',
-                'paths' => [
-                    $dir.'/src/Module/Editorial/translations',
-                    $dir.'/src/Module/Crm/translations',
-                    $dir.'/src/Module/Erp/translations',
-                    $dir.'/src/Module/Ecommerce/translations',
-                    $dir.'/src/Module/Photo/translations',
-                    $dir.'/src/Module/Billing/translations',
-                    $dir.'/src/Module/Ged/translations',
-                    $dir.'/src/Module/Project/translations',
-                    $dir.'/src/Module/Planning/translations',
-                    $dir.'/src/Module/Hr/translations',
-                ],
+                'paths' => array_values(array_filter(
+                    array_map(static fn (string $moduleDir): string => $moduleDir.'/translations', $moduleDirs),
+                    is_dir(...),
+                )),
                 'fallbacks' => ['fr'],
             ],
         ]);

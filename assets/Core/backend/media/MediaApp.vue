@@ -689,7 +689,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="folderModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="folderModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="folderModal.saving" v-on:click="submitFolder"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -740,6 +740,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="deletingMedia = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="danger" size="md" v-on:click="confirmDeleteMedia">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ deletingMediaUsage && deletingMediaUsage.total > 0 ? t("backend.media.deleteAnyway") : t("shared.common.delete") }}
                     </AppButton>
                 </AppModalFooter>

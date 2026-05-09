@@ -1,11 +1,9 @@
 <script setup>
-import { ref } from "vue";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useCompaniesCreate } from "./composables/useCompaniesCreate.js";
+import { useCompaniesEdit } from "./composables/useCompaniesEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -16,9 +14,6 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { Plus, Pencil, Trash2, Eye, Save, X } from "lucide-vue-next";
-import { toast } from "vue-sonner";
-import { required, url } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -38,51 +33,8 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
     { initialSearch: props.search, initialData: props.companies },
 );
 
-function emptyForm() {
-    return { name: "", industry: "", website: "", phone: "", address: "", notes: "" };
-}
-
-// Create
-const showCreate = ref(false);
-const newCompany = ref(emptyForm());
-const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
-const { loading: createLoading, request: createRequest } = useApiRequest();
-function openCreate() { newCompany.value = emptyForm(); clearCreate(); showCreate.value = true; }
-async function submitCreate() {
-    if (!validateCreate({
-        name: () => required(t("backend.crm.companies.errors.name_required"))(newCompany.value.name),
-        website: () => url(t("backend.crm.companies.errors.website_invalid"))(newCompany.value.website),
-    })) return;
-    const data = await createRequest(props.createPath, newCompany.value);
-    if (!data) return;
-    if (data.success) { showCreate.value = false; toast.success(t('backend.crm.companies.created')); reset(); }
-    else setCreateErrors(translateServerErrors(t, data.errors));
-}
-
-// Edit
-const showEdit = ref(false);
-const editingCompany = ref(null);
-const editForm = ref(emptyForm());
-const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
-function openEdit(company) {
-    editingCompany.value = company;
-    editForm.value = { name: company.name, industry: company.industry ?? "", website: company.website ?? "", phone: company.phone ?? "", address: company.address ?? "", notes: company.notes ?? "" };
-    clearEdit(); showEdit.value = true;
-}
-async function submitEdit() {
-    if (!validateEdit({
-        name: () => required(t("backend.crm.companies.errors.name_required"))(editForm.value.name),
-        website: () => url(t("backend.crm.companies.errors.website_invalid"))(editForm.value.website),
-    })) return;
-    const updateUrl = buildPath(props.updatePath, { id: editingCompany.value.id });
-    const data = await editRequest(updateUrl, editForm.value);
-    if (!data) return;
-    if (data.success) { showEdit.value = false; toast.success(t('backend.crm.companies.updated')); reset(); }
-    else setEditErrors(translateServerErrors(t, data.errors));
-}
-
-// --- Delete ---
+const { showCreate, newCompany, createErrors, createLoading, openCreate, submitCreate } = useCompaniesCreate(props.createPath, reset);
+const { showEdit, editingCompany, editForm, editErrors, editLoading, openEdit, submitEdit } = useCompaniesEdit(props.updatePath, reset);
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deletePath, () => reset(), 'backend.crm.companies.deleted',
 );

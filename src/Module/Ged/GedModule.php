@@ -34,6 +34,11 @@ final readonly class GedModule implements ModuleInterface
             return [];
         }
 
+        return $this->getCatalogNavSections();
+    }
+
+    public function getCatalogNavSections(): array
+    {
         return [
             new NavSection('ged', [
                 new NavItem('backend_ged_documents', 'backend.nav.documents', 'folder-open', descriptionKey: 'backend.nav.documents_description'),

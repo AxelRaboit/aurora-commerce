@@ -1,9 +1,8 @@
 <script setup>
-import { computed, ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
+import { useOrderStatusFilter, ORDER_STATUS_BADGE, formatOrderTotal } from "./composables/useOrderStatusFilter.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -31,12 +30,6 @@ const props = defineProps({
     extraFields: { type: Object, default: () => ({}) },
 });
 
-const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"];
-
-const statusFilter = ref(props.currentStatus);
-const localStats = ref({ ...props.stats });
-const syncStatusUrl = useUrlSearchSync("status");
-
 const { items, page, totalPages, search: searchInput, onSearch, reload, goToPage } = useListPage(
     props.listPath,
     {
@@ -46,32 +39,9 @@ const { items, page, totalPages, search: searchInput, onSearch, reload, goToPage
     },
 );
 
-function selectTab(status) {
-    statusFilter.value = status;
-    syncStatusUrl(status);
-    reload();
-}
-
-const tabs = computed(() => [
-    { key: "", label: t("backend.ecommerce.orders.tabs.all"), count: STATUSES.reduce((sum, s) => sum + (localStats.value[s] ?? 0), 0) },
-    ...STATUSES.map((s) => ({ key: s, label: t(`backend.ecommerce.orders.status.${s}`), count: localStats.value[s] ?? 0 })),
-]);
-
-const statusBadge = (status) => ({
-    pending: "amber",
-    paid: "sky",
-    shipped: "accent",
-    delivered: "emerald",
-    cancelled: "rose",
-}[status] ?? "slate");
-
-function formatTotal(order) {
-    try {
-        return new Intl.NumberFormat(undefined, { style: "currency", currency: order.currency }).format(order.total);
-    } catch {
-        return `${order.total} ${order.currencySymbol}`;
-    }
-}
+const { statusFilter, localStats, tabs, selectTab } = useOrderStatusFilter(props, reload);
+const statusBadge = (status) => ORDER_STATUS_BADGE[status] ?? "slate";
+const formatTotal = (order) => formatOrderTotal(order);
 </script>
 
 <template>

@@ -1,7 +1,8 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
+import { usePlanningPrivileges } from "./composables/usePlanningPrivileges.js";
 import FullCalendar from "@fullcalendar/vue3";
 import { Plus, Pencil, Trash2, Save, X, CalendarDays, Users, Building2, LayoutGrid, Rows3, CheckSquare, Square } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -44,14 +45,10 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { can } = usePrivileges();
-const canCreatePlannings = computed(() => can("planning.plannings.create"));
-const canEditPlannings = computed(() => can("planning.plannings.edit"));
-const canDeletePlannings = computed(() => can("planning.plannings.delete"));
-const canManagePlannings = computed(() => canCreatePlannings.value || canEditPlannings.value || canDeletePlannings.value);
-const canCreateEvents = computed(() => can("planning.events.create"));
-const canEditEvents = computed(() => can("planning.events.edit"));
-const canDeleteEvents = computed(() => can("planning.events.delete"));
-const canManageEvents = computed(() => canCreateEvents.value || canEditEvents.value || canDeleteEvents.value);
+const {
+    canCreatePlannings, canEditPlannings, canDeletePlannings, canManagePlannings,
+    canCreateEvents, canEditEvents, canDeleteEvents, canManageEvents,
+} = usePlanningPrivileges(can);
 
 // --- Domain state -----------------------------------------------------
 const {

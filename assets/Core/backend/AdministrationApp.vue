@@ -3,13 +3,13 @@ import { useI18n } from "vue-i18n";
 import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import DashboardOverview from "@core/backend/dashboard/DashboardOverview.vue";
-import AdminParametersTab from "@core/backend/dev/AdminParametersTab.vue";
-import AdminUsersTab from "@core/backend/dev/AdminUsersTab.vue";
-import AdminAccessRequestsTab from "@core/backend/dev/AdminAccessRequestsTab.vue";
-import AdminAuditTab from "@core/backend/dev/AdminAuditTab.vue";
-import AdminPermissionsTab from "@core/backend/dev/AdminPermissionsTab.vue";
-import AdminModulesTab from "@core/backend/dev/AdminModulesTab.vue";
-import AdminMountPointsTab from "@core/backend/dev/AdminMountPointsTab.vue";
+import ParametersTab from "@core/backend/dev/ParametersTab.vue";
+import UsersTab from "@core/backend/dev/UsersTab.vue";
+import AccessRequestsTab from "@core/backend/dev/AccessRequestsTab.vue";
+import AuditTab from "@core/backend/dev/AuditTab.vue";
+import PermissionsTab from "@core/backend/dev/PermissionsTab.vue";
+import ModulesTab from "@core/backend/dev/ModulesTab.vue";
+import MountPointsTab from "@core/backend/dev/MountPointsTab.vue";
 import {
     LayoutDashboard,
     Sliders,
@@ -60,32 +60,21 @@ const props = defineProps({
     csrfToken: { type: String, default: "" },
 });
 
-// ── Tab state + URL sync ─────────────────────────────────────────────────────
-const ROUTE_BY_TAB = {
-    overview: () => props.overviewPath,
-    parameters: () => props.parametersPath,
-    users: () => props.usersPath,
-    access_requests: () => props.accessRequestsPath,
-    audit: () => props.auditPath,
-    permissions: () => props.permissionsPath,
-    modules: () => props.modulesPath,
-    mount_points: () => props.mountPointsPath,
-};
-
+// Each tab is self-describing: label, icon, URL path and initial SSR data colocated.
 const tabs = [
-    { key: "overview", label: () => t("backend.tabs.overview"), icon: LayoutDashboard },
-    { key: "parameters", label: () => t("backend.tabs.parameters"), icon: Sliders },
-    { key: "users", label: () => t("backend.tabs.users"), icon: Users },
-    { key: "access_requests", label: () => t("backend.tabs.access_requests"), icon: KeyRound },
-    { key: "audit", label: () => t("backend.tabs.audit"), icon: ScrollText },
-    { key: "permissions", label: () => t("backend.tabs.permissions"), icon: ShieldCheck },
-    { key: "modules", label: () => t("backend.tabs.modules"), icon: Puzzle },
-    { key: "mount_points", label: () => t("backend.tabs.mount_points"), icon: Network },
+    { key: "overview",        label: () => t("backend.tabs.overview"),        icon: LayoutDashboard, path: () => props.overviewPath,        initialData: () => props.stats },
+    { key: "parameters",      label: () => t("backend.tabs.parameters"),      icon: Sliders,         path: () => props.parametersPath,      initialData: () => props.parameters },
+    { key: "users",           label: () => t("backend.tabs.users"),           icon: Users,           path: () => props.usersPath,           initialData: () => props.users },
+    { key: "access_requests", label: () => t("backend.tabs.access_requests"), icon: KeyRound,        path: () => props.accessRequestsPath,  initialData: () => props.accessRequests },
+    { key: "audit",           label: () => t("backend.tabs.audit"),           icon: ScrollText,      path: () => props.auditPath,           initialData: () => props.audit },
+    { key: "permissions",     label: () => t("backend.tabs.permissions"),     icon: ShieldCheck,     path: () => props.permissionsPath,     initialData: () => props.permissions },
+    { key: "modules",         label: () => t("backend.tabs.modules"),         icon: Puzzle,          path: () => props.modulesPath,         initialData: () => props.modules },
+    { key: "mount_points",    label: () => t("backend.tabs.mount_points"),    icon: Network,         path: () => props.mountPointsPath,     initialData: () => props.mountPoints },
 ];
 
 const { state: tab, set: setTab } = useUrlSyncedState({
     initial: props.tab,
-    serialize: (next) => ROUTE_BY_TAB[next]?.() ?? null,
+    serialize: (next) => tabs.find((t) => t.key === next)?.path?.() ?? null,
     deserialize: (event) => event.state?.value ?? props.tab,
 });
 
@@ -95,16 +84,7 @@ const { state: tab, set: setTab } = useUrlSyncedState({
 // state across tab switches so we don't refetch every time.
 function initialDataFor(key) {
     if (key !== props.tab) return null;
-    return {
-        overview: props.stats,
-        parameters: props.parameters,
-        users: props.users,
-        access_requests: props.accessRequests,
-        audit: props.audit,
-        permissions: props.permissions,
-        modules: props.modules,
-        mount_points: props.mountPoints,
-    }[key] ?? null;
+    return tabs.find((t) => t.key === key)?.initialData?.() ?? null;
 }
 </script>
 
@@ -141,14 +121,14 @@ function initialDataFor(key) {
                     v-if="tab === 'overview'"
                     :stats="initialDataFor('overview') ?? {}"
                 />
-                <AdminParametersTab
+                <ParametersTab
                     v-else-if="tab === 'parameters'"
                     :parameters-path="parametersPath"
                     :parameter-update-path="parameterUpdatePath"
                     :initial-data="initialDataFor('parameters')"
                     :initial-search="search"
                 />
-                <AdminUsersTab
+                <UsersTab
                     v-else-if="tab === 'users'"
                     :users-path="usersPath"
                     :user-create-path="userCreatePath"
@@ -160,7 +140,7 @@ function initialDataFor(key) {
                     :initial-data="initialDataFor('users')"
                     :initial-search="search"
                 />
-                <AdminAccessRequestsTab
+                <AccessRequestsTab
                     v-else-if="tab === 'access_requests'"
                     :access-requests-path="accessRequestsPath"
                     :access-request-approve-path="accessRequestApprovePath"
@@ -170,24 +150,24 @@ function initialDataFor(key) {
                     :initial-data="initialDataFor('access_requests')"
                     :initial-search="search"
                 />
-                <AdminAuditTab
+                <AuditTab
                     v-else-if="tab === 'audit'"
                     :audit-path="auditPath"
                     :initial-data="initialDataFor('audit')"
                 />
-                <AdminPermissionsTab
+                <PermissionsTab
                     v-else-if="tab === 'permissions'"
                     :permissions-path="permissionsPath"
                     :initial-data="initialDataFor('permissions')"
                 />
-                <AdminModulesTab
+                <ModulesTab
                     v-else-if="tab === 'modules'"
                     :modules-path="modulesPath"
                     :module-update-path="moduleUpdatePath"
                     :module-verify-password-path="moduleVerifyPasswordPath"
                     :initial-data="initialDataFor('modules')"
                 />
-                <AdminMountPointsTab
+                <MountPointsTab
                     v-else-if="tab === 'mount_points'"
                     :mount-points-path="mountPointsPath"
                     :mount-point-create-path="mountPointCreatePath"
