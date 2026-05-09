@@ -5,8 +5,11 @@
 | Fichier | Contenu |
 |---|---|
 | [app_architecture.md](dev/app_architecture.md) | Vue d'ensemble de l'architecture (Symfony, Vue 3, modules) |
-| [form_validation.md](dev/form_validation.md) | Convention de validation des formulaires (DTO, PayloadValidator, useForm) |
+| [entity_extensibility_convention.md](dev/entity_extensibility_convention.md) | Convention d'extensibilité des entités (5 couches, pattern Sylius) |
 | [extending_aurora.md](dev/extending_aurora.md) | Comment utiliser Aurora Core comme base d'une app client |
+| [extending_agency_pilot.md](dev/extending_agency_pilot.md) | Guide pas-à-pas d'extension complète (exemple Agency) |
+| [client_quickstart.md](dev/client_quickstart.md) | Démarrage rapide côté client consommateur |
+| [form_validation.md](dev/form_validation.md) | Convention de validation des formulaires (DTO, PayloadValidator, useForm) |
 
 ## ops/ — Infrastructure & déploiement
 

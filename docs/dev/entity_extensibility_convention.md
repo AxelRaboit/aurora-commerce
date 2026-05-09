@@ -63,6 +63,7 @@ avec un tableau ET un formulaire de création/édition dédié ?*
 | Billing | `Invoice`, `Tiers`, `OcrJob` |
 | Ged | `Document`, `DocumentCategory` |
 | Project | `Project`, `ProjectTask` |
+| Planning | `Planning`, `PlanningEvent` |
 
 **Exclues du Core** (CRUD admin absent ou hors-scope) :
 - `Locale` : pas de page admin, géré via fixtures + `LocaleEnum`

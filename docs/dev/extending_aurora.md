@@ -1,28 +1,26 @@
 # Extending Aurora
 
 Aurora is designed to be used as a **core** for client applications.
-Each client lives in its own git repository and consumes Aurora as a git
-submodule under `vendor/aurora/`.
+Each client lives in its own git repository and consumes Aurora as a
+**Composer package** (`axelraboit/aurora`).
 
 This document is the contract: it describes **how** clients extend Aurora
-without ever modifying core files. Anything documented here is considered
+without ever modifying vendor files. Anything documented here is considered
 part of the public extension surface and won't be broken without a major
 version bump.
 
 ## Creating a new client project
 
-Run the scaffold script from inside aurora-core:
+Start from the `aurora-client` template repository (or clone it). Then pull
+in the latest Aurora version:
 
 ```bash
-bin/create-client <project-name> [destination-dir]
-
-# Examples
-bin/create-client acme-corp
-bin/create-client acme-corp ~/projects/acme-corp
+composer require axelraboit/aurora:dev-develop
+make aurora-update
 ```
 
-The script creates the full project structure, initialises git, adds Aurora
-as a submodule, and runs `composer install`.
+`make aurora-update` installs the Composer package, syncs the Makefile,
+`CLAUDE.md` and `.claude/memory/` symlinks from vendor.
 
 ## Project structure
 
@@ -34,7 +32,7 @@ mirror Aurora's own module layout.
 
 ```
 client-app/
-├── vendor/aurora/              # Aurora core (read-only — never edited directly)
+├── vendor/axelraboit/aurora/   # Aurora core (read-only — never edited directly)
 ├── src/
 │   ├── Controller/             # App\Controller\*   — client routes
 │   ├── Entity/                 # App\Entity\*       — entity overrides (extends AbstractAurora<Name>)
@@ -59,11 +57,10 @@ client-app/
 └── .env                        # Client env overrides
 ```
 
-Rule of thumb: **the client never edits files under `vendor/aurora/`.** All
+Rule of thumb: **the client never edits files under `vendor/axelraboit/aurora/`.** All
 customisation happens through the extension points below — overrides live
 under the matching responsibility folder, never under a generic `Custom/`
-bucket. Updating Aurora is then a one-liner
-(`composer update axelraboit/aurora`).
+bucket. Updating Aurora is then a one-liner (`make aurora-update`).
 
 ## How Aurora loads client files
 
@@ -298,10 +295,9 @@ end-to-end : factory `AgencyInputFactoryInterface` (`#[AsAlias]`),
 slots Vue (`extra-headers` / `extra-cells` / `extra-form-fields`) et
 override Twig.
 
-Tous les autres modules ne sont pas (encore) extensibles à ce niveau — seul
-Agency a été instrumenté en pilote. Les autres entités sont substituables côté
-DB via `resolve_target_entities` (section 6.bis), mais leurs DTO, Manager,
-Serializer et templates restent à ouvrir un par un selon le besoin.
+**Toutes les entités Aurora avec page admin CRUD sont instrumentées** (26 entités
+au total — voir `entity_extensibility_convention.md` section 2.1). Le pattern
+Agency s'applique identiquement à chacune.
 
 ### 7. Bundle configuration
 
@@ -440,6 +436,8 @@ côté client.** La liste est mise à jour à chaque ajout dans le Core.
 | `PRJ` | Project |
 | `TSK` | ProjectTask |
 | `PRJC` | ProjectColumn |
+| `PLN` | Planning |
+| `PEV` | PlanningEvent |
 
 #### Convention de nommage
 
@@ -454,10 +452,12 @@ Pour éviter les conflits futurs, les préfixes clients doivent :
 ## Updating Aurora in a client
 
 ```bash
-git submodule update --remote vendor/aurora
-git add vendor/aurora
-git commit -m "chore: bump aurora to <sha>"
+make aurora-update
 ```
+
+Cette commande fait en séquence : `composer update axelraboit/aurora`, réinstalle
+les dépendances npm du vendor, joue les migrations, resync les privileges, le
+jsconfig, le security.yaml, le CLAUDE.md et le Makefile.
 
 Breaking changes are listed in Aurora's `CHANGELOG.md` under a `BREAKING:` line.
 

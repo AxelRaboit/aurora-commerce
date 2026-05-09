@@ -17,7 +17,10 @@ src/
     Ecommerce/  -- shop (listings, cart, orders, payments)
     Editorial/  -- editorial CMS (posts, taxonomies, comments, forms, SEO)
     Erp/        -- ERP (products, inventory)
+    Ged/        -- document management (documents, categories)
     Photo/      -- client gallery delivery (galleries, items, invites)
+    Planning/   -- planning & agenda (plannings, events)
+    Project/    -- project management (projects, tasks, sprints, kanban)
 
 templates/
   Core/         -- admin templates for Core domains
@@ -25,6 +28,9 @@ templates/
     Editorial/  -- admin templates for the Editorial module   (@Editorial)
     Crm/        -- admin templates for the CRM module         (@Crm)
     Erp/        -- admin templates for the ERP module         (@Erp)
+    Ged/        -- admin templates for the GED module         (@Ged)
+    Planning/   -- admin templates for the Planning module    (@Planning)
+    Project/    -- admin templates for the Project module     (@Project)
   front/        -- front-end theme templates (kept flat, see §5.3)
   shared/       -- base layout, shared components, emails     (@Shared)
 
@@ -34,6 +40,9 @@ assets/
     Editorial/  -- Vue controllers and sub-components for Editorial
     Crm/        -- Vue controllers and sub-components for CRM
     Erp/        -- Vue controllers and sub-components for ERP
+    Ged/        -- Vue controllers and sub-components for GED
+    Planning/   -- Vue controllers and sub-components for Planning
+    Project/    -- Vue controllers and sub-components for Project
   shared/       -- cross-cutting Vue components, composables, utils, enums
   (root)        -- entrypoints: app.js, flash.js, theme.js, admin/guest/index.js
 ```
@@ -200,6 +209,27 @@ Module/<Name>/<Domain>/{Entity,Manager,Repository,Dto,Service,Serializer,Enum,Co
 |---------|-----------------|
 | Gallery | Entities (Gallery, GalleryItem, GalleryInvite, GalleryFinalization, GalleryPick, GalleryItemComment — all with `reference`), Manager, Repository, Serializer, Enum, Services (GalleryWatermarkService, GalleryDownloadService, GalleryAccessService, GalleryNotificationService, GalleryPickService), Controllers (admin + front) |
 
+### 4.7 Module/Ged
+
+| Domain           | What it contains |
+|------------------|-----------------|
+| Document         | Entity, Manager, Repository, DTO, Serializer, Enum, Controller (admin CRUD) |
+| DocumentCategory | Entity, Manager, Repository, DTO, Serializer, Controller (admin CRUD) |
+
+### 4.8 Module/Planning
+
+| Domain        | What it contains |
+|---------------|-----------------|
+| Planning      | Entity (Planning — container/calendar), Manager, Repository, DTO, Serializer, Controller (admin CRUD) |
+| PlanningEvent | Entity (PlanningEvent — individual event in a planning), Manager, Repository, DTO, Serializer, Controller |
+
+### 4.9 Module/Project
+
+| Domain      | What it contains |
+|-------------|-----------------|
+| Project     | Entities (Project, ProjectColumn, ProjectLabel, ProjectSprint, ProjectSavedView), Manager, Repository, DTO, Serializer, Enum, Controller (admin CRUD + Kanban) |
+| ProjectTask | Entities (ProjectTask, ProjectTaskComment, ProjectTaskItem, ProjectTaskTimeEntry), Manager, Repository, DTO, Serializer, Enum, Controller |
+
 ---
 
 ## 5. Conventions
@@ -237,14 +267,16 @@ Il n'y a pas de dossier `vue/` dans aurora-core — les controllers vivent direc
 
 Vite aliases:
 
-| Alias        | Path                       |
-|--------------|---------------------------|
-| `@`          | `assets/`                 |
-| `@core`      | `assets/Core/`            |
-| `@editorial` | `assets/Module/Editorial/`|
-| `@crm`       | `assets/Module/Crm/`      |
-| `@erp`       | `assets/Module/Erp/`      |
-| `@shared`    | `assets/shared/`          |
+| Alias        | Path                         |
+|--------------|------------------------------|
+| `@`          | `assets/`                    |
+| `@core`      | `assets/Core/`               |
+| `@editorial` | `assets/Module/Editorial/`   |
+| `@crm`       | `assets/Module/Crm/`         |
+| `@erp`       | `assets/Module/Erp/`         |
+| `@ged`       | `assets/Module/Ged/`         |
+| `@planning`  | `assets/Module/Planning/`    |
+| `@shared`    | `assets/shared/`             |
 
 ### 5.4 Routes
 
@@ -353,6 +385,9 @@ a `Module/<Name>/Frontend/Controller/` directory with public routes (typically p
 | CRM        | ❌ Never | Contacts/companies/deals are private business data |
 | ERP        | ❌ Internal-only | Inventory stays backend; the public catalog lives in Ecommerce |
 | Billing    | ❌ Internal-only | Invoice management, suppliers, OCR — admin only |
+| Ged        | ❌ Internal-only | Document storage — admin only |
+| Planning   | ❌ Internal-only | Internal planning/agenda — admin only |
+| Project    | ❌ Internal-only | Project & task management — admin only |
 | Core       | n/a | Infrastructure |
 
 ### 6.5 Module dependencies & shared entities
@@ -390,7 +425,10 @@ Each module owns its translations:
 | Ecommerce | `src/Module/Ecommerce/translations/messages.{locale}.yaml` |
 | Editorial | `src/Module/Editorial/translations/messages.{locale}.yaml` |
 | ERP | `src/Module/Erp/translations/messages.{locale}.yaml` |
+| Ged | `src/Module/Ged/translations/messages.{locale}.yaml` |
 | Photo | `src/Module/Photo/translations/messages.{locale}.yaml` |
+| Planning | `src/Module/Planning/translations/messages.{locale}.yaml` |
+| Project | `src/Module/Project/translations/messages.{locale}.yaml` |
 
 Symfony's translator merges all paths automatically — keys can share top-level prefixes
 (e.g. `admin.nav.*` is partially defined by every module that contributes a sidebar entry).
@@ -465,6 +503,9 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 - [x] Module/Ecommerce — Listing, Cart, Order, Payment (Stripe), public Frontend
 - [x] Module/Billing — Invoice management, Tiers (supplier/client/…), OCR pipeline (docTR + Ollama VLM), compliance
 - [x] Module/Photo — Client gallery delivery (galleries, items, invites, picks, watermarking)
+- [x] Module/Ged — Document management (documents, categories)
+- [x] Module/Planning — Planning & agenda (plannings, events)
+- [x] Module/Project — Project & task management (projects, tasks, sprints, kanban, time tracking)
 - [x] Core/Sequence — Named PostgreSQL sequences for all PKs + configurable business reference numbers
 - [x] Core/Media — Module-scoped upload dirs (`media/`, `ocr/`, `users/`, `photo/`) with `%app.upload_dir%`
 - [x] Auth: simplified 3-role system (User/Admin/Dev) + per-user fine-grained privileges

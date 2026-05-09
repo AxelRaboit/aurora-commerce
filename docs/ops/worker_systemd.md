@@ -95,7 +95,7 @@ Le handler `ProcessOcrJobMessage` consommé par ce worker dépend de deux servic
 - **Ollama** — modèle vision pour la compréhension structurée. Doit tourner sur l'host
   (port 11434) avec le modèle pré-tiré :
   ```bash
-  ollama pull qwen2.5vl:7b
+  ollama pull qwen2.5vl:3b
   ```
 
 Voir `.env` pour les variables `OCR_DOCTR_URL`, `OLLAMA_URL`, `OLLAMA_VISION_MODEL`.

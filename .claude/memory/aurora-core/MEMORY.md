@@ -57,6 +57,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 
 ### Préférences utilisateur
 - [pref_no_co_authored.md](pref_no_co_authored.md) — pas de `Co-Authored-By` Claude dans les commits
+- [pref_commit_language.md](pref_commit_language.md) — messages de commit toujours en anglais
 - [pref_french_dialogue.md](pref_french_dialogue.md) — l'utilisateur parle français, Claude répond en français
 
 ## Règles d'usage

@@ -13,23 +13,12 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | Facturation (factures, avoir, OCR, tiers) | ✅ Core |
 | GED (documents) | ✅ Core |
 | Photo (galeries client) | ✅ Core |
-| Suivi de projets | ✅ Aurora-client (Tracking) |
+| Projets / Tâches | ✅ Core |
+| Planning / Agenda | ✅ Core |
 
 ---
 
 ## 🔴 Haute priorité
-
-### Projets / Tâches
-**Inspiré de :** Dolibarr — Module Projets  
-**Pourquoi :** Manque évident. Le module Tracking d'aurora-client démontre le besoin. Se greffe naturellement sur le CRM (affecter un projet à un contact/entreprise).  
-**Fonctionnalités cibles :**
-- Projets avec statut, dates, responsable
-- Tâches avec assignation, avancement, priorité
-- Jalons / livrables
-- Vue liste et vue tableau Kanban
-- Lien vers contacts/entreprises CRM
-
----
 
 ### Contrats / Abonnements
 **Inspiré de :** Dolibarr — Module Contrats  
@@ -39,17 +28,6 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 - Génération automatique de factures récurrentes
 - Alertes d'échéance
 - Lien vers tiers (Billing)
-
----
-
-### Agenda / Événements
-**Inspiré de :** Dolibarr — Module Agenda  
-**Pourquoi :** Complète naturellement le CRM. RDV clients, rappels, suivi des interactions.  
-**Fonctionnalités cibles :**
-- Calendrier partagé
-- Événements liés à des contacts/affaires CRM
-- Rappels par email
-- Vue jour / semaine / mois
 
 ---
 
@@ -127,6 +105,6 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 ## Notes d'implémentation
 
 - Tous les nouveaux modules doivent préfixer leurs tables en `core_`
-- Les modules liés au CRM (Projets, Agenda, Tickets) doivent réutiliser les entités `CrmContact` et `CrmCompany` existantes
+- Les modules liés au CRM (Contrats, Tickets) doivent réutiliser les entités `CrmContact` et `CrmCompany` existantes
 - Chaque module doit implémenter `ModuleInterface` et être activable/désactivable via `ApplicationParameterEnum`
 - Privilégier l'intégration dans le frontend via `FrontInterface` si le module a une partie publique
