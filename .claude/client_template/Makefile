@@ -200,7 +200,7 @@ test-backend-integration: db-test ## Run backend integration tests
 	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox --testsuite=Integration
 
 test-frontend: i18n ## Run frontend unit tests (Vitest)
-	$(PNPM) --dir=$(AURORA) run test
+	$(if $(wildcard vitest.config.js),$(PNPM) run test,$(PNPM) --dir=$(AURORA) run test)
 
 test-e2e: ## Run end-to-end tests (Playwright)
 	$(PNPM) --dir=$(AURORA) run test:e2e
