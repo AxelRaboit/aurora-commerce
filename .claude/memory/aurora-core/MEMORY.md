@@ -50,7 +50,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [pitfall_type_hint_interface.md](pitfall_type_hint_interface.md) — décoration impose le type-hint interface
 - [pitfall_service_entity_repository.md](pitfall_service_entity_repository.md) — `ServiceEntityRepository` hardcode la classe → utiliser `ResolveTargetEntityRepository`
 - [pitfall_bundle_get_path.md](pitfall_bundle_get_path.md) — `AbstractBundle::getPath()` par défaut retourne la racine projet, ce qui fait copier récursivement `public/` dans `public/bundles/aurora/` (7.9 GB de nest infini lors d'un `assets:install`)
-- [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — un nouveau module doit être enregistré dans **3 endroits** : `AuroraBundle.php` (Twig/console), `DumpJsTranslationsCommand` (vue-i18n), **et** `config/services.yaml` (tag `aurora.module` sidebar/permissions)
+- [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — un nouveau module doit être enregistré dans **2 endroits** : `AuroraBundle.php` (Twig/console) et `DumpJsTranslationsCommand` (vue-i18n). `services.yaml` et `app.js` sont automatiques via `_instanceof` et glob Vite.
 - [pitfall_sequence_generator_naming.md](pitfall_sequence_generator_naming.md) — `app_seq_*` = séquences métier (SequenceGenerator), `seq_core_*_id` = PKs Doctrine. Ne pas confondre. `schema_filter` dans doctrine.yaml exclut `app_seq_*` des diffs
 
 ### Process / méthode

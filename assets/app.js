@@ -21,29 +21,15 @@ registerControllers(
     }),
 );
 
+// Core Vue components (backend + frontend).
 const coreModules = import.meta.glob([
     "./Core/backend/**/*.vue",
     "./Core/frontend/**/*.vue",
 ]);
-const editorialModules = import.meta.glob([
-    "./Module/Editorial/backend/**/*.vue",
-    "./Module/Editorial/frontend/**/*.vue",
-]);
-const crmModules = import.meta.glob("./Module/Crm/backend/**/*.vue");
-const erpModules = import.meta.glob("./Module/Erp/backend/**/*.vue");
-const ecommerceModules = import.meta.glob([
-    "./Module/Ecommerce/backend/**/*.vue",
-    "./Module/Ecommerce/frontend/**/*.vue",
-]);
-const photoModules = import.meta.glob([
-    "./Module/Photo/backend/**/*.vue",
-    "./Module/Photo/frontend/**/*.vue",
-]);
-const billingModules = import.meta.glob("./Module/Billing/backend/**/*.vue");
-const gedModules = import.meta.glob("./Module/Ged/backend/**/*.vue");
-const projectModules = import.meta.glob("./Module/Project/backend/**/*.vue");
-const planningModules = import.meta.glob("./Module/Planning/backend/**/*.vue");
-const hrModules = import.meta.glob("./Module/Hr/backend/**/*.vue");
+
+// All first-party module Vue components (backend + frontend) — auto-discovered.
+// Adding a new module under assets/Module/<Name>/ requires no change here.
+const auroraModules = import.meta.glob("./Module/**/*.vue");
 
 // Optional client extension modules. Resolves via the @client alias which
 // points to AURORA_CLIENT_DIR (or an empty fallback when unset). Components
@@ -60,71 +46,21 @@ const clientModules = import.meta.glob("@client/Module/**/*.vue");
 const clientOverrides = import.meta.glob("@client/Overrides/**/*.vue");
 
 const vueContext = {
+    // Core: ./Core/backend/Foo.vue → ./core/backend/Foo.vue
     ...Object.fromEntries(
         Object.entries(coreModules).map(([key, loader]) => [
             key.replace("./Core/", "./core/"),
             loader,
         ]),
     ),
+    // Modules: ./Module/Hr/backend/Foo.vue → ./hr/backend/Foo.vue
     ...Object.fromEntries(
-        Object.entries(editorialModules).map(([key, loader]) => [
-            key.replace("./Module/Editorial/", "./editorial/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(crmModules).map(([key, loader]) => [
-            key.replace("./Module/Crm/", "./crm/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(erpModules).map(([key, loader]) => [
-            key.replace("./Module/Erp/", "./erp/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(ecommerceModules).map(([key, loader]) => [
-            key.replace("./Module/Ecommerce/", "./ecommerce/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(photoModules).map(([key, loader]) => [
-            key.replace("./Module/Photo/", "./photo/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(billingModules).map(([key, loader]) => [
-            key.replace("./Module/Billing/", "./billing/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(gedModules).map(([key, loader]) => [
-            key.replace("./Module/Ged/", "./ged/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(projectModules).map(([key, loader]) => [
-            key.replace("./Module/Project/", "./project/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(planningModules).map(([key, loader]) => [
-            key.replace("./Module/Planning/", "./planning/"),
-            loader,
-        ]),
-    ),
-    ...Object.fromEntries(
-        Object.entries(hrModules).map(([key, loader]) => [
-            key.replace("./Module/Hr/", "./hr/"),
-            loader,
-        ]),
+        Object.entries(auroraModules).map(([key, loader]) => {
+            const match = key.match(/^\.\/Module\/([^/]+)\/(.*)/);
+            if (!match) return [key, loader];
+            const [, moduleName, rest] = match;
+            return [`./${moduleName.toLowerCase()}/${rest}`, loader];
+        }),
     ),
     // Client modules: extract "<ModuleName>/<rest>.vue" from any key shape and
     // remap to "./<modulename>/<rest>.vue". Works regardless of how Vite

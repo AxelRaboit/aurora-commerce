@@ -27,6 +27,8 @@ services:
     # Auto-tag every menu location provider so the MenuLocationRegistry collects them.
     # Auto-tag every sequence prefix provider so the conflict listener validates uniqueness at boot.
     _instanceof:
+        Aurora\Core\Module\ModuleInterface:
+            tags: [aurora.module]
         Aurora\Core\Media\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
         Aurora\Core\Frontend\Contract\FrontendInterface:
@@ -96,42 +98,6 @@ services:
     Aurora\Core\Module\PermissionRegistry:
         arguments:
             $modules: !tagged_iterator aurora.module
-
-    Aurora\Core\CoreModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Editorial\EditorialModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Editorial\EditorialFrontend:
-        tags: [aurora.front]
-
-    Aurora\Module\Crm\CrmModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Erp\ErpModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Ecommerce\EcommerceModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Photo\PhotoModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Billing\BillingModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Ged\GedModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Project\ProjectModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Planning\PlanningModule:
-        tags: [aurora.module]
-
-    Aurora\Module\Hr\HrModule:
-        tags: [aurora.module]
 
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:
