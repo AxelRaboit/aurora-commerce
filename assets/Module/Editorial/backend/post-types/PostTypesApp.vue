@@ -17,7 +17,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
+import { PostFieldType } from "@editorial/shared/enums/postFieldType.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();

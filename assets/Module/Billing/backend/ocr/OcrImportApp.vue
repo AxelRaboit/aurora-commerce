@@ -16,7 +16,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Eye, Trash2, RotateCcw, FileText, ScrollText, LayoutList, CircleCheck, X, Check } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isPdfMimeType, isImageMimeType } from "@core/utils/enums/media/mimeType.js";
-import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
+import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/backend/utils/ocrJobStatus.js";
 
 const OCR_ACCEPTED_MIME_TYPES = [
     MimeType.Jpeg,

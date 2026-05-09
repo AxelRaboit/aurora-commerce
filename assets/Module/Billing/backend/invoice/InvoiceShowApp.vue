@@ -11,12 +11,12 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import InlineField from "@billing/components/InlineField.vue";
+import InlineField from "@billing/backend/components/InlineField.vue";
 import { Check, Trash2, Plus, FileX, ExternalLink, ScanLine, X } from "lucide-vue-next";
 import { formatCents, formatBpAsPercent } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isImageMimeType, isPdfMimeType } from "@core/utils/enums/media/mimeType.js";
-import { OcrJobStatus } from "@billing/utils/ocrJobStatus.js";
+import { OcrJobStatus } from "@billing/backend/utils/ocrJobStatus.js";
 
 const { t } = useI18n();
 

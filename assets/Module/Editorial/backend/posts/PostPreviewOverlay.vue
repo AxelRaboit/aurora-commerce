@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { ExternalLink, X } from "lucide-vue-next";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useBackButtonClose } from "@/shared/composables/overlay/useBackButtonClose.js";
-import { PostStatus } from "@editorial/utils/enums/postStatus.js";
+import { PostStatus } from "@editorial/shared/enums/postStatus.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();

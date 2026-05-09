@@ -26,7 +26,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
-import { PostStatus } from "@editorial/utils/enums/postStatus.js";
+import { PostStatus } from "@editorial/shared/enums/postStatus.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();

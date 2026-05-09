@@ -3,9 +3,9 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, Check } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import { TEMPLATES } from "@editorial/utils/editorjs/templates.js";
-import { TEMPLATE_CATEGORIES } from "@editorial/utils/editorjs/blockTypes.js";
-import { BlockType } from "@editorial/utils/editorjs/blockType.js";
+import { TEMPLATES } from "@editorial/shared/editorjs/templates.js";
+import { TEMPLATE_CATEGORIES } from "@editorial/shared/editorjs/blockTypes.js";
+import { BlockType } from "@editorial/shared/editorjs/blockType.js";
 
 const { t } = useI18n();
 

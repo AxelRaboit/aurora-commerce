@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
-import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/utils/ocrJobStatus.js";
+import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/backend/utils/ocrJobStatus.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useOcrJobs } from "@billing/backend/ocr/composables/useOcrJobs.js";
 import AppButton from "@/shared/components/action/AppButton.vue";

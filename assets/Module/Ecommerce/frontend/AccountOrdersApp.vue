@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import AppLink from "@/shared/components/nav/AppLink.vue";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();

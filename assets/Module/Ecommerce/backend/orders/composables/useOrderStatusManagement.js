@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Truck, PackageCheck } from "lucide-vue-next";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
-import { OrderStatus } from "@/Module/Ecommerce/utils/enums/orderStatus.js";
+import { OrderStatus } from "@/Module/Ecommerce/shared/enums/orderStatus.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useOrderStatusManagement(updateStatusPath, order, activity) {

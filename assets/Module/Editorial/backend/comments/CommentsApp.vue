@@ -4,7 +4,7 @@ import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js
 import { useI18n } from "vue-i18n";
 import { useCommentModeration } from "@/Module/Editorial/backend/comments/composables/useCommentModeration.js";
 import { useCommentFilter } from "@/Module/Editorial/backend/comments/composables/useCommentFilter.js";
-import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
+import { CommentStatus } from "@/Module/Editorial/shared/enums/commentStatus.js";
 import { MessageSquare, Check, Ban, Trash2, Eye, X } from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";

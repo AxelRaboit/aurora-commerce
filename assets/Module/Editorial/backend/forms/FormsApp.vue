@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
-import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
+import { FormFieldType } from "@editorial/shared/enums/formFieldType.js";
 import { useFormsList } from "@editorial/backend/forms/composables/useFormsList.js";
 import { useFormEditor } from "@editorial/backend/forms/composables/useFormEditor.js";
 import { useFormFields } from "@editorial/backend/forms/composables/useFormFields.js";

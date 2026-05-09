@@ -6,7 +6,7 @@ import AppImage from "@/shared/components/display/AppImage.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 const { t } = useI18n();

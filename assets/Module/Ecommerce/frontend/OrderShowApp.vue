@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppLink from "@/shared/components/nav/AppLink.vue";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 const { t } = useI18n();
 

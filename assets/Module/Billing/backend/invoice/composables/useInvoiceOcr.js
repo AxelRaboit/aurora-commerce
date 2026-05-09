@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { OcrJobStatus } from "@billing/utils/ocrJobStatus.js";
+import { OcrJobStatus } from "@billing/backend/utils/ocrJobStatus.js";
 
 const FIELD_LABELS = {
     supplier_name: "backend.billing.suppliers.name",

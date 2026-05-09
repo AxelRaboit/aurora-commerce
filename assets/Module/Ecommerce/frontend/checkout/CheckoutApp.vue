@@ -7,7 +7,7 @@ import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import { useStripeCard } from "@ecommerce/frontend/checkout/composables/useStripeCard.js";
 import { useCheckoutSubmit } from "@ecommerce/frontend/checkout/composables/useCheckoutSubmit.js";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 const { t } = useI18n();
 

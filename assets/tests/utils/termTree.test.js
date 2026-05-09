@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
     buildTermTree,
     flattenTreeWithDepth,
-} from "@/Module/Editorial/utils/termTree.js";
+} from "@/Module/Editorial/shared/termTree.js";
 
 const terms = [
     { id: 3, parentId: 1, position: 1 },

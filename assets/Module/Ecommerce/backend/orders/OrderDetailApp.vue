@@ -5,7 +5,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { formatCurrency } from "@/shared/utils/format/formatPrice.js";
 import { useOrderStatusManagement } from "@/Module/Ecommerce/backend/orders/composables/useOrderStatusManagement.js";
 import { useOrderRefund } from "@/Module/Ecommerce/backend/orders/composables/useOrderRefund.js";
-import { OrderStatus } from "@/Module/Ecommerce/utils/enums/orderStatus.js";
+import { OrderStatus } from "@/Module/Ecommerce/shared/enums/orderStatus.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";

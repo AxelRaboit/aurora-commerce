@@ -28,7 +28,7 @@ import { usePostSave } from "./composables/usePostSave.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { useRelatedSearch } from "./composables/useRelatedSearch.js";
 import { applyPostData } from "./utils/applyPostData.js";
-import { PostStatus, POST_STATUS_VALUES } from "@editorial/utils/enums/postStatus.js";
+import { PostStatus, POST_STATUS_VALUES } from "@editorial/shared/enums/postStatus.js";
 import { useSlugLock } from "@/shared/composables/form/useSlugLock.js";
 import { useKeyboardShortcut } from "@/shared/composables/useKeyboardShortcut.js";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";

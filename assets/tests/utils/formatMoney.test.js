@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 describe("formatMoney", () => {
     it("formats whole numbers with two decimals and symbol", () => {

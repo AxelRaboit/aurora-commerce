@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ProductStatus } from "@/Module/Ecommerce/utils/enums/productStatus.js";
+import { ProductStatus } from "@/Module/Ecommerce/shared/enums/productStatus.js";
 import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";

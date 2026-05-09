@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
+import { CommentStatus } from "@/Module/Editorial/shared/enums/commentStatus.js";
 
 export const COMMENT_STATUS_BADGE = {
     [CommentStatus.Approved]: "emerald",

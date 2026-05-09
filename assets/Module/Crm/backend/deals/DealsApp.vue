@@ -18,7 +18,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, X } from "lucide-vue-next";
-import { stageBadge, stageBadgeBordered } from "@crm/utils/deals/stageStyles.js";
+import { stageBadge, stageBadgeBordered } from "@crm/backend/utils/deals/stageStyles.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();

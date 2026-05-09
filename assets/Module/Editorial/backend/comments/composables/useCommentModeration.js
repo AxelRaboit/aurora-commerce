@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { CommentStatus } from "@/Module/Editorial/utils/enums/commentStatus.js";
+import { CommentStatus } from "@/Module/Editorial/shared/enums/commentStatus.js";
 
 export function useCommentModeration(paths, initialStats, onRefresh) {
     const { t } = useI18n();

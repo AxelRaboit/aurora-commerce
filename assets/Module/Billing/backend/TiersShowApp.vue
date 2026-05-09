@@ -13,7 +13,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import InlineField from "@billing/components/InlineField.vue";
+import InlineField from "@billing/backend/components/InlineField.vue";
 import { Eye, Trash2, X } from "lucide-vue-next";
 import { formatCents } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";

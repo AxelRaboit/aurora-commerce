@@ -5,7 +5,7 @@ import AppImage from "@/shared/components/display/AppImage.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 const { t } = useI18n();
 

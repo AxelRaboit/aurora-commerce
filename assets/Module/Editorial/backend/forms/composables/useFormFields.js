@@ -3,7 +3,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { FormFieldType } from "@editorial/utils/enums/formFieldType.js";
+import { FormFieldType } from "@editorial/shared/enums/formFieldType.js";
 
 export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
     const { t } = useI18n();

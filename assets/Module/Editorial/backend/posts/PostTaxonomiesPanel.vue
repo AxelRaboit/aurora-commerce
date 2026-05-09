@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { buildTermTree, flattenTreeWithDepth } from "@editorial/utils/termTree.js";
+import { buildTermTree, flattenTreeWithDepth } from "@editorial/shared/termTree.js";
 
 const { t } = useI18n();
 

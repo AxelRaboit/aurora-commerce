@@ -4,7 +4,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
-import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
+import { PostFieldType } from "@editorial/shared/enums/postFieldType.js";
 
 export function usePostTypeFields(props, selected, replacePostType) {
     const { t } = useI18n();

@@ -1,5 +1,5 @@
 import { ref, watch, onMounted, onUnmounted } from "vue";
-import { OcrJobStatus } from "@billing/utils/ocrJobStatus.js";
+import { OcrJobStatus } from "@billing/backend/utils/ocrJobStatus.js";
 
 const PREVIEW_STORE_KEY = "aurora-ocr-previews";
 

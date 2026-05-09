@@ -14,7 +14,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
-import { PostFieldType } from "@editorial/utils/enums/postFieldType.js";
+import { PostFieldType } from "@editorial/shared/enums/postFieldType.js";
 
 const { t } = useI18n();
 

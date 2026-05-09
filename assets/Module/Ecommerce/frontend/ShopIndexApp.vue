@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { formatMoney } from "@ecommerce/utils/formatMoney.js";
+import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 
 const { t } = useI18n();
 
