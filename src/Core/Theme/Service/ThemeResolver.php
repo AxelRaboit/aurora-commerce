@@ -16,13 +16,13 @@ final readonly class ThemeResolver
     public function resolve(string $templateName): string
     {
         $activeSlug = $this->themeContext->activeThemeSlug();
-        $activePath = Path::join($this->projectDir, 'templates/Front/themes', $activeSlug, sprintf('%s.html.twig', $templateName));
+        $activePath = Path::join($this->projectDir, 'templates/Frontend/themes', $activeSlug, sprintf('%s.html.twig', $templateName));
 
         if ('default' !== $activeSlug && file_exists($activePath)) {
-            return sprintf('Front/themes/%s/%s.html.twig', $activeSlug, $templateName);
+            return sprintf('Frontend/themes/%s/%s.html.twig', $activeSlug, $templateName);
         }
 
-        return sprintf('Front/themes/default/%s.html.twig', $templateName);
+        return sprintf('Frontend/themes/default/%s.html.twig', $templateName);
     }
 
     /** @return array<string, string> */

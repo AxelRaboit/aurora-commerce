@@ -83,7 +83,7 @@ class ThemeManager implements ThemeManagerInterface
 
     public function countTemplates(string $slug): int
     {
-        $dir = Path::join($this->projectDir, 'templates/Front/themes', $slug);
+        $dir = Path::join($this->projectDir, 'templates/Frontend/themes', $slug);
         if (!is_dir($dir)) {
             return 0;
         }
