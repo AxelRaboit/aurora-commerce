@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Auth\Dto;
+namespace Aurora\Core\Auth\Dto\Frontend;
 
 use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final readonly class FrontRegisterInput
+final readonly class RegisterInput
 {
     public function __construct(
         #[Assert\NotBlank(message: 'frontend.errors.name_required')]

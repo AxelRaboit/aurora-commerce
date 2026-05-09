@@ -26,7 +26,7 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 
-final readonly class AdminStatsService
+final readonly class StatsService
 {
     public function __construct(
         private PostRepository $postRepository,

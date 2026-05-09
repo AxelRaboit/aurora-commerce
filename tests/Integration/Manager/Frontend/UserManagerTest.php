@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Integration\Manager;
+namespace Aurora\Tests\Integration\Manager\Frontend;
 
-use Aurora\Core\Auth\Dto\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\Frontend\RegisterInput;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
-use Aurora\Core\User\Manager\FrontUserManager;
+use Aurora\Core\User\Manager\Frontend\UserManager;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-final class FrontUserManagerTest extends IntegrationTestCase
+final class UserManagerTest extends IntegrationTestCase
 {
-    private FrontUserManager $manager;
+    private UserManager $manager;
     private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
 
@@ -24,14 +24,14 @@ final class FrontUserManagerTest extends IntegrationTestCase
     {
         parent::setUp();
         static::bootKernel();
-        $this->manager = static::getContainer()->get(FrontUserManager::class);
+        $this->manager = static::getContainer()->get(UserManager::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
     }
 
     public function testRegisterCreatesPendingFrontUser(): void
     {
-        $input = new FrontRegisterInput(
+        $input = new RegisterInput(
             name: 'Alice',
             email: 'alice-'.uniqid().'@aurora.test',
             password: 'verysecure123',
@@ -107,7 +107,7 @@ final class FrontUserManagerTest extends IntegrationTestCase
 
     private function createPendingUser(): User
     {
-        $input = new FrontRegisterInput(
+        $input = new RegisterInput(
             name: 'Pending',
             email: 'pending-'.uniqid().'@aurora.test',
             password: 'verysecure123',

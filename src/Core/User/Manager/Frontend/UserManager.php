@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\User\Manager;
+namespace Aurora\Core\User\Manager\Frontend;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Auth\Dto\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\Frontend\RegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Manager\EmailVerificationManager;
 use Aurora\Core\Auth\Manager\PasswordResetManager;
@@ -26,8 +26,8 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-#[AsAlias(FrontUserManagerInterface::class)]
-final readonly class FrontUserManager implements FrontUserManagerInterface
+#[AsAlias(UserManagerInterface::class)]
+final readonly class UserManager implements UserManagerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -42,7 +42,7 @@ final readonly class FrontUserManager implements FrontUserManagerInterface
         private SettingRepository $settingRepository,
     ) {}
 
-    public function register(FrontRegisterInput $input): User
+    public function register(RegisterInput $input): User
     {
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CoreUserPrefix->value, SequencePrefixEnum::User->value) ?? SequencePrefixEnum::User->value;
 

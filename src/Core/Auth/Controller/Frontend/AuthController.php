@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Auth\Controller\Frontend;
 
-use Aurora\Core\Auth\Dto\FrontRegisterInput;
+use Aurora\Core\Auth\Dto\Frontend\RegisterInput;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\View\Frontend\AuthViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
@@ -15,7 +15,7 @@ use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
-use Aurora\Core\User\Manager\FrontUserManager;
+use Aurora\Core\User\Manager\Frontend\UserManager;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use LogicException;
@@ -32,7 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AuthController extends AbstractController
 {
     public function __construct(
-        private readonly FrontUserManager $frontUserManager,
+        private readonly UserManager $frontUserManager,
         private readonly UserRepository $userRepository,
         private readonly SettingRepository $settingRepository,
         private readonly TranslatorInterface $translator,
@@ -88,7 +88,7 @@ class AuthController extends AbstractController
             ));
         }
 
-        $input = FrontRegisterInput::fromArray($request->request->all(), $locale);
+        $input = RegisterInput::fromArray($request->request->all(), $locale);
         $errors = $this->payloadValidator->errors($input);
 
         if ([] === $errors && $this->userRepository->findOneBy(['email' => $input->email, 'type' => UserTypeEnum::Frontend])) {

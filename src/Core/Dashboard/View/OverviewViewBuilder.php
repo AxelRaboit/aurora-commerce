@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Dashboard\View;
 
-use Aurora\Core\Dashboard\Service\AdminStatsService;
+use Aurora\Core\Dashboard\Service\StatsService;
 
 /**
- * Builds the Twig payload for the dev overview tab. Wraps AdminStatsService
+ * Builds the Twig payload for the dev overview tab. Wraps StatsService
  * so the controller stays focused on flow (XHR vs full page rendering).
  */
 final readonly class OverviewViewBuilder
 {
-    public function __construct(private AdminStatsService $statsService) {}
+    public function __construct(private StatsService $statsService) {}
 
     /**
      * @return array<string, mixed>
