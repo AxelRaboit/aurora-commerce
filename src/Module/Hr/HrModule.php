@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Hr;
+
+use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\NavItem;
+use Aurora\Core\Module\NavPermission;
+use Aurora\Core\Module\NavSection;
+use Aurora\Module\Hr\Service\HrContext;
+
+final readonly class HrModule implements ModuleInterface
+{
+    public function __construct(private HrContext $hrContext) {}
+
+    public function getId(): string
+    {
+        return 'hr';
+    }
+
+    public function getPermissions(): array
+    {
+        return [
+            new NavPermission('hr.employees.view'),
+            new NavPermission('hr.employees.manage'),
+        ];
+    }
+
+    public function getNavSections(): array
+    {
+        if (!$this->hrContext->isAdminEnabled()) {
+            return [];
+        }
+
+        return [
+            new NavSection('hr', [
+                new NavItem('backend_hr_employees', 'backend.nav.employees', 'users', requiredPrivilege: 'hr.employees.view', descriptionKey: 'backend.nav.employees_description'),
+            ], priority: 45),
+        ];
+    }
+}

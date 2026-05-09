@@ -1,5 +1,11 @@
 backend:
   permissions:
+    intro: Manage user access rights per module. Each permission can be granted individually.
+    searchPlaceholder: Filter modules…
+    empty: No modules found.
+    none: No permissions defined for this module.
+    name: Permission
+    key: Technical key
     names:
       core:
         users:
@@ -30,7 +36,15 @@ backend:
   modules:
     media: Media
     users: Users
+    hr: HR
+    planning: Planning
+    project: Project
   audit:
+    module: Module
+    action: Action
+    user: User
+    date: Date
+    empty: No audit entries.
     actions:
       media:
         cropped: Media cropped
@@ -119,7 +133,7 @@ backend:
       updated: Updated
       moved: Moved
       deleted: Deleted
-      cropped: Recadré
+      cropped: Cropped
     favourite: Add to favourites
     unfavourite: Remove from favourites
     errors:
@@ -142,7 +156,7 @@ backend:
     email: Email
     created: Created
     actions: Actions
-    searchPlaceholder: Search...
+    searchPlaceholder: Search a user…
     allRoles: All roles
     empty: No users found
     you: (You)
@@ -288,6 +302,9 @@ backend:
       error_heading: Invalid or expired link
       error_message: This verification link is invalid or has expired. Please register again.
   nav:
+    sections:
+      platform: Platform
+      dev: Administration
     administration: Developer access
     administration_description: Technical tools, audit log, access requests and advanced configuration
     agencies: Agencies

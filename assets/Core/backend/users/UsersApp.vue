@@ -47,6 +47,7 @@ const props = defineProps({
     selectablePath: { type: String, required: true },
     showPath: { type: String, required: true },
     currentUserId: { type: Number, default: 0 },
+    currentUserEmail: { type: String, default: "" },
     /**
      * Extra fields to register on the invite + edit forms. Lets clients extend
      * the modals + table without forking this component.
@@ -59,7 +60,7 @@ const { search, roleFilter, users, loading, page, totalPages, fetchUsers, goToPa
 const { inviteModal, inviteForm, openInvite, submitInvite } = useUsersInvite(props.invitePath, props.roles, fetchUsers, { extraFields: props.extraFields });
 const { editModal, editForm, managerOptions, agencyOptions, serviceOptions, openEdit, onPhotoSelected, removePhoto, submitEdit } = useUsersEdit(props, fetchUsers, { extraFields: props.extraFields });
 
-const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, UserStatus } = useUsersActions(props, fetchUsers);
+const { viewingUser, openView, resendInvitation, togglingUser, askToggleDisabled, confirmToggleDisabled, deletingUser, confirmDelete, statusBadgeColor, isCurrent, canActOn, canEditUser, UserStatus } = useUsersActions(props, fetchUsers);
 
 function openViewWithPrivileges(user) {
     openView(user);
@@ -113,6 +114,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :user="user"
                         :is-dev="isDev"
                         :can-act="canActOn(user)"
+                        :can-edit="canEditUser(user)"
                         :has-privileges="privilegesByModule.length > 0"
                         :impersonate-path="impersonatePath"
                         :impersonate-front-path="impersonateFrontPath"
@@ -174,6 +176,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                     :user="user"
                                     :is-dev="isDev"
                                     :can-act="canActOn(user)"
+                                    :can-edit="canEditUser(user)"
                                     :has-privileges="privilegesByModule.length > 0"
                                     :impersonate-path="impersonatePath"
                                     :impersonate-front-path="impersonateFrontPath"
@@ -242,13 +245,13 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.status') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.statusLabel') }}</dt>
                         <dd class="mt-1">
                             <AppBadge :color="statusBadgeColor(viewingUser.status)">{{ viewingUser.statusLabel }}</AppBadge>
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.role') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.roleLabel') }}</dt>
                         <dd class="mt-1 flex items-center gap-1 flex-wrap">
                             <AppBadge v-if="viewingUser.isDev" color="rose">Dev</AppBadge>
                             <AppBadge v-if="viewingUser.roleLabel" color="accent">{{ viewingUser.roleLabel }}</AppBadge>
@@ -343,6 +346,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :label="t('backend.users.role')"
                         :allow-empty="false"
                         :error="editModal.errors.role ?? ''"
+                        open-direction="top"
                     />
                     <AppMultiselect
                         v-model="editForm.managerId"
@@ -350,6 +354,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :label="t('backend.users.manager.label')"
                         :allow-empty="true"
                         :error="editModal.errors.managerId ?? ''"
+                        open-direction="top"
                     />
                     <AppMultiselect
                         v-if="agencyOptions.length > 1"
@@ -357,6 +362,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :options="agencyOptions"
                         :label="t('backend.nav.agencies')"
                         :allow-empty="true"
+                        open-direction="top"
                     />
                     <AppMultiselect
                         v-if="serviceOptions.length > 1"
@@ -364,6 +370,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :options="serviceOptions"
                         :label="t('backend.nav.services')"
                         :allow-empty="true"
+                        open-direction="top"
                     />
                 </div>
                 <AppInput

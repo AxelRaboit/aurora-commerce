@@ -1525,6 +1525,9 @@ export default {
             ged: "DMS",
             media: "Media",
             users: "Users",
+            hr: "HR",
+            planning: "Planning",
+            project: "Project",
         },
         roles: {
             ROLE_USER: "User",
@@ -1659,6 +1662,8 @@ export default {
             expand: "Expand",
             collapse: "Collapse",
             select_placeholder: "Select…",
+            no_options: "No items available",
+            no_result: "No results found",
             select_to_pick: "Press enter to select",
             select_selected: "Selected",
             select_to_remove: "Press enter to remove",

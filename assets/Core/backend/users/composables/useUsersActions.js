@@ -99,9 +99,12 @@ export function useUsersActions(props, fetchUsers) {
         return "rose";
     }
 
-    const isCurrent = (user) => user.id === props.currentUserId;
+    const isCurrent = (user) =>
+        user.id === props.currentUserId ||
+        (props.currentUserEmail && user.email === props.currentUserEmail);
     const canActOn = (user) =>
         !isCurrent(user) && props.currentUserPriority >= user.rolePriority;
+    const canEditUser = (user) => isCurrent(user) || canActOn(user);
 
     return {
         viewingUser,
@@ -115,6 +118,7 @@ export function useUsersActions(props, fetchUsers) {
         statusBadgeColor,
         isCurrent,
         canActOn,
+        canEditUser,
         UserStatus,
     };
 }

@@ -15,6 +15,7 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | Photo (galeries client) | ✅ Core |
 | Projets / Tâches | ✅ Core |
 | Planning / Agenda | ✅ Core |
+| RH (fiches employés) | ✅ Core (partiel — fiches employés avec lien User) |
 
 ---
 
@@ -48,7 +49,7 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 **Inspiré de :** Dolibarr — Module RH  
 **Pourquoi :** Gestion interne de l'équipe. Moins prioritaire pour les projets client.  
 **Fonctionnalités cibles :**
-- Fiches employés
+- Fiches employés ✅ implémentées (entité `HrEmployee` avec lien `User`, CRUD backend complet, synchronisation agence/service via `UserAgencyServiceUpdatingEvent`)
 - Gestion des congés / absences
 - Notes de frais
 - Organigramme (lien avec le système Manager existant dans Users)

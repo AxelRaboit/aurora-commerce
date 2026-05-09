@@ -1,5 +1,11 @@
 backend:
   permissions:
+    intro: Gérez les droits d'accès des utilisateurs par module. Chaque permission peut être accordée individuellement.
+    searchPlaceholder: Filtrer les modules…
+    empty: Aucun module trouvé.
+    none: Aucune permission définie pour ce module.
+    name: Permission
+    key: Clé technique
     names:
       core:
         users:
@@ -30,7 +36,15 @@ backend:
   modules:
     media: Médias
     users: Utilisateurs
+    hr: RH
+    planning: Planning
+    project: Projet
   audit:
+    module: Module
+    action: Action
+    user: Utilisateur
+    date: Date
+    empty: Aucune entrée d'audit.
     actions:
       media:
         cropped: Média recadré
@@ -143,7 +157,7 @@ backend:
     email: Email
     created: Créé le
     actions: Actions
-    searchPlaceholder: Rechercher...
+    searchPlaceholder: Rechercher un utilisateur…
     allRoles: Tous les rôles
     empty: Aucun utilisateur trouvé
     you: "(Vous)"
@@ -289,6 +303,9 @@ backend:
       error_heading: Lien invalide ou expiré
       error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
   nav:
+    sections:
+      platform: Plateforme
+      dev: Administration
     administration: Accès développeur
     administration_description: Outils techniques, audit, requêtes d'accès et configuration avancée
     agencies: Agences

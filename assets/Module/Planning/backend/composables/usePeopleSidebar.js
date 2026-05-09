@@ -17,7 +17,11 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * embedded in the loaded plannings — no extra permission needed, but
  * limited to agencies that already own at least one planning.
  */
-export function usePeopleSidebar(usersSelectablePath, agenciesSelectablePath, planningsRef) {
+export function usePeopleSidebar(
+    usersSelectablePath,
+    agenciesSelectablePath,
+    planningsRef,
+) {
     const { request } = useApiRequest();
 
     const mode = ref("users");
@@ -69,7 +73,11 @@ export function usePeopleSidebar(usersSelectablePath, agenciesSelectablePath, pl
     }
 
     async function loadAgencies() {
-        const data = await request(agenciesSelectablePath, null, HttpMethod.Get);
+        const data = await request(
+            agenciesSelectablePath,
+            null,
+            HttpMethod.Get,
+        );
         if (data?.success) fetchedAgencies.value = data.items ?? [];
     }
 

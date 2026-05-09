@@ -130,6 +130,9 @@ services:
     Aurora\Module\Planning\PlanningModule:
         tags: [aurora.module]
 
+    Aurora\Module\Hr\HrModule:
+        tags: [aurora.module]
+
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:
             $baseUrl: '%env(OCR_DOCTR_URL)%'

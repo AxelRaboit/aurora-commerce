@@ -136,7 +136,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppModal :show="showCreate" :title="t('backend.crm.contacts.create')" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="newContact.firstName"
                         :label="t('backend.crm.contacts.firstName')"
@@ -171,7 +171,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: editingContact?.fullName ?? '' })" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.firstName"
                         :label="t('backend.crm.contacts.firstName')"

@@ -61,13 +61,13 @@ const filteredModules = computed(() => {
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.permissions.name') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted font-mono">{{ t('backend.permissions.key') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted font-mono w-72">{{ t('backend.permissions.key') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
                     <tr v-for="permission in moduleEntry.permissions" :key="permission.name" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-2"><span class="text-primary text-sm">{{ t(`backend.permissions.names.${permission.name}`) }}</span></td>
-                        <td class="px-4 py-2"><span class="font-mono text-xs text-muted">{{ permission.name }}</span></td>
+                        <td class="px-4 py-2 w-72"><span class="font-mono text-xs text-accent-400 whitespace-nowrap">{{ permission.name }}</span></td>
                     </tr>
                 </tbody>
             </table>

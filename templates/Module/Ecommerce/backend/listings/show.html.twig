@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: listing.displayTitle,
         crumbs: [
-            {label: 'backend.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
+            {label: 'backend.nav.sections.ecommerce'|trans},
             {label: 'backend.nav.listings'|trans, href: backPath},
             {label: listing.displayTitle},
         ],

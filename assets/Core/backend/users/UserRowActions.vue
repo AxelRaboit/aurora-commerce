@@ -10,6 +10,7 @@ const props = defineProps({
     user: { type: Object, required: true },
     isDev: { type: Boolean, default: false },
     canAct: { type: Boolean, required: true },
+    canEdit: { type: Boolean, default: false },
     hasPrivileges: { type: Boolean, default: false },
     impersonatePath: { type: String, default: "" },
     impersonateFrontPath: { type: String, default: "" },
@@ -21,7 +22,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
 <template>
     <div class="flex items-center gap-0.5">
         <AppIconButton
-            color="accent"
+            color="sky"
             :title="t('backend.users.view')"
             v-on:click="emit('view', user)"
         >
@@ -52,7 +53,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
             <LogIn class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>
         <AppIconButton
-            v-if="canAct"
+            v-if="canAct || canEdit"
             color="accent"
             :title="t('shared.common.edit')"
             v-on:click="emit('edit', user)"

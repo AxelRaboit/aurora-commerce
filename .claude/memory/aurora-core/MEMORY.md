@@ -12,6 +12,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 ## Index
 
 ### Conventions de code
+- [convention_breadcrumb_section.md](convention_breadcrumb_section.md) — premier fil de breadcrumb = `backend.nav.sections.<moduleId>|trans` (appliqué sur 31 templates)
 - [convention_extensibility.md](convention_extensibility.md) — résumé exécutif des 5 couches du pattern Sylius
 - [convention_naming.md](convention_naming.md) — naming des variables, dossiers, fichiers
 - [convention_dto_factory.md](convention_dto_factory.md) — pattern Input + InputFactory + AsAlias
@@ -38,6 +39,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, patterns extension
 
 ### Décisions architecturales
+- [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`. Exemple : `UserAgencyServiceUpdatingEvent` + `HrEmployeeSyncListener`
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`
@@ -48,7 +50,8 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [pitfall_type_hint_interface.md](pitfall_type_hint_interface.md) — décoration impose le type-hint interface
 - [pitfall_service_entity_repository.md](pitfall_service_entity_repository.md) — `ServiceEntityRepository` hardcode la classe → utiliser `ResolveTargetEntityRepository`
 - [pitfall_bundle_get_path.md](pitfall_bundle_get_path.md) — `AbstractBundle::getPath()` par défaut retourne la racine projet, ce qui fait copier récursivement `public/` dans `public/bundles/aurora/` (7.9 GB de nest infini lors d'un `assets:install`)
-- [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — un nouveau module doit être enregistré dans **2 endroits** pour les traductions : `AuroraBundle.php` (Twig/console) **et** `DumpJsTranslationsCommand` (vue-i18n)
+- [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — un nouveau module doit être enregistré dans **3 endroits** : `AuroraBundle.php` (Twig/console), `DumpJsTranslationsCommand` (vue-i18n), **et** `config/services.yaml` (tag `aurora.module` sidebar/permissions)
+- [pitfall_sequence_generator_naming.md](pitfall_sequence_generator_naming.md) — `app_seq_*` = séquences métier (SequenceGenerator), `seq_core_*_id` = PKs Doctrine. Ne pas confondre. `schema_filter` dans doctrine.yaml exclut `app_seq_*` des diffs
 
 ### Process / méthode
 - [process_make_ft_before_commit.md](process_make_ft_before_commit.md) — **toujours** `make ft` (fix + test) avant chaque commit, résoudre tous les problèmes

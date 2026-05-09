@@ -49,4 +49,5 @@ enum SequencePrefixEnum: string
     case ProjectColumn = 'PRJC';
     case Planning = 'PLN';
     case PlanningEvent = 'PEV';
+    case Employee = 'EMP';
 }

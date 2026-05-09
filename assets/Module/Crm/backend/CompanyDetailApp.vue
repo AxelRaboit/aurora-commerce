@@ -235,7 +235,7 @@ async function submitContact() {
     </div>
     <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" v-on:close="showCreateContact = false">
         <form class="space-y-4" v-on:submit.prevent="submitContact">
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <AppInput
                     v-model="newContact.firstName"
                     :label="t('backend.crm.contacts.firstName')"

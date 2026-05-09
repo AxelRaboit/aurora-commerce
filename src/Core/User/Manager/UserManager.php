@@ -20,11 +20,13 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\User\Event\UserAgencyServiceUpdatingEvent;
 use Aurora\Core\User\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -42,6 +44,7 @@ class UserManager implements UserManagerInterface
         protected readonly SettingRepository $settingRepository,
         protected readonly AgencyRepository $agencyRepository,
         protected readonly ServiceRepository $serviceRepository,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -205,8 +208,15 @@ class UserManager implements UserManagerInterface
         $agency = null !== $agencyId ? $this->agencyRepository->find($agencyId) : null;
         $service = null !== $serviceId ? $this->serviceRepository->find($serviceId) : null;
 
-        $user->setAgency($agency instanceof AgencyInterface ? $agency : null);
-        $user->setService($service instanceof ServiceInterface ? $service : null);
+        $event = new UserAgencyServiceUpdatingEvent(
+            $user,
+            $agency instanceof AgencyInterface ? $agency : null,
+            $service instanceof ServiceInterface ? $service : null,
+        );
+        $this->eventDispatcher->dispatch($event);
+
+        $user->setAgency($event->getAgency());
+        $user->setService($event->getService());
 
         $this->entityManager->flush();
     }

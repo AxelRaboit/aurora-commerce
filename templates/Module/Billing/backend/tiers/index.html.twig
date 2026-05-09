@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'backend.modules.billing'|trans, href: path('backend_billing_invoices')},
+            {label: 'backend.nav.sections.billing'|trans},
             {label: 'backend.nav.tiers'|trans},
         ],
     }) }}

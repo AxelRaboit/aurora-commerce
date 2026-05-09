@@ -1,0 +1,55 @@
+backend:
+  permissions:
+    names:
+      hr:
+        employees:
+          view: View employees
+          manage: Manage employees (create, edit, delete)
+  nav:
+    sections:
+      hr: HR
+    employees: Employees
+    employees_description: Employee directory and user account linking
+  audit:
+    actions:
+      hr:
+        employee:
+          created: Employee created
+          updated: Employee updated
+          deleted: Employee deleted
+  employees:
+    add: New employee
+    backToList: Back to employees
+    empty: No employees found.
+    searchPlaceholder: Search an employee…
+    deleteConfirm: 'Delete employee "{name}"?'
+    deleteWarning: This action cannot be undone.
+    name: Name
+    fields:
+      firstName: First name
+      lastName: Last name
+      jobTitle: Job title
+      phone: Phone
+      workEmail: Work email
+      hiredAt: Hire date
+      leftAt: Leave date
+      user: User account
+      service: Service
+      agency: Agency
+    placeholders:
+      firstName: e.g. John
+      lastName: e.g. Smith
+      jobTitle: e.g. Backend developer
+      phone: e.g. +1 555 000 0000
+      workEmail: e.g. john.smith@company.com
+      user: Link to a user account
+      service: Select a service
+      agency: Select an agency
+    toast:
+      created: Employee created.
+      updated: Employee updated.
+      deleted: Employee deleted.
+    errors:
+      first_name_required: First name is required.
+      last_name_required: Last name is required.
+      work_email_invalid: Work email address is not valid.

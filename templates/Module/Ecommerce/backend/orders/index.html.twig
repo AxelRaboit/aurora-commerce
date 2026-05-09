@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'backend.modules.ecommerce'|trans, href: path('backend_ecommerce_listings')},
+            {label: 'backend.nav.sections.ecommerce'|trans},
             {label: 'backend.nav.orders'|trans},
         ],
     }) }}

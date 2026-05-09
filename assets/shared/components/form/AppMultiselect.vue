@@ -58,7 +58,10 @@ function onSelect(value) {
             deselect-label=""
             :class="{ 'multiselect--error': error }"
             v-on:update:model-value="onSelect"
-        />
+        >
+            <template #noOptions>{{ t('shared.common.no_options') }}</template>
+            <template #noResult>{{ t('shared.common.no_result') }}</template>
+        </Multiselect>
         <p v-if="error" class="text-xs text-red-500">{{ error }}</p>
     </div>
 </template>

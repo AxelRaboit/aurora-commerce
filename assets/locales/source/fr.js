@@ -1601,6 +1601,9 @@ export default {
             ged: "GED",
             media: "Médias",
             users: "Utilisateurs",
+            hr: "RH",
+            planning: "Planning",
+            project: "Projet",
         },
         roles: {
             ROLE_USER: "Utilisateur",
@@ -1738,6 +1741,8 @@ export default {
             expand: "Déplier",
             collapse: "Replier",
             select_placeholder: "Sélectionner…",
+            no_options: "Aucun élément disponible",
+            no_result: "Aucun résultat",
             select_to_pick: "Appuyez sur Entrée pour sélectionner",
             select_selected: "Sélectionné",
             select_to_remove: "Appuyez sur Entrée pour retirer",

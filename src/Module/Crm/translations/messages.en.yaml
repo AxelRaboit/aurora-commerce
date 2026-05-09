@@ -14,6 +14,8 @@ backend:
   modules:
     crm: CRM
   nav:
+    sections:
+      crm: CRM
     contacts: Contacts
     contacts_description: Address book of people connected to your business
     companies: Companies

@@ -367,7 +367,7 @@ onMounted(() => {
                     :label="t('backend.plannings.fields.description')"
                     :placeholder="t('backend.plannings.fields.descriptionPlaceholder')"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="planningForm.editForm.color"
                         :label="t('backend.plannings.fields.color')"
@@ -453,7 +453,7 @@ onMounted(() => {
                     :placeholder="t('backend.planning_events.fields.locationPlaceholder')"
                     :disabled="eventForm.editModal.readOnly"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker
                         v-model="eventForm.editForm.startAt"
                         :label="t('backend.planning_events.fields.startAt')"

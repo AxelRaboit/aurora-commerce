@@ -189,7 +189,7 @@ const actionLabel = (action) => {
                     :error="editErrors.name"
                     required
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.reference"
                         :label="t('backend.erp.products.reference')"

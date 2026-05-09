@@ -5,6 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
+            {label: 'backend.nav.sections.platform'|trans},
             {label: 'backend.nav.users'|trans},
         ],
     }) }}
@@ -32,5 +33,6 @@
     selectablePath: path('backend_users_selectable'),
     showPath: path('backend_users_show', {id: '__id__'}),
     currentUserId: app.user.id,
+    currentUserEmail: app.user.email,
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}

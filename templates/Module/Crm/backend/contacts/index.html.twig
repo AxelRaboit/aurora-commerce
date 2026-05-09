@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'backend.modules.crm'|trans, href: path('backend_crm_contacts')},
+            {label: 'backend.nav.sections.crm'|trans},
             {label: 'backend.nav.contacts'|trans},
         ],
     }) }}

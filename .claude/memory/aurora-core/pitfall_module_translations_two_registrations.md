@@ -1,9 +1,9 @@
-# Piège : nouveau module → **2 registrations** de traductions
+# Piège : nouveau module → **3 registrations** obligatoires
 
 ## Règle
 
 Quand tu crées un nouveau module avec un dossier `src/Module/<Module>/translations/`,
-il faut l'enregistrer **deux fois** :
+il faut l'enregistrer **trois fois** :
 
 1. **Serveur (Twig + console)** : `src/AuroraBundle.php`
    ```php
@@ -24,6 +24,15 @@ il faut l'enregistrer **deux fois** :
        'src/Module/<Module>/translations',
    ];
    ```
+
+3. **Sidebar / permissions** : `config/services.yaml`
+   ```yaml
+   App\Module\<Module>\<ModuleClass>:
+       tags:
+           - { name: aurora.module }
+   ```
+   Sans ce tag, le module n'apparaît pas dans la sidebar admin et ses permissions
+   ne sont pas reconnues par `ModulePermissionVoter`.
 
 ## Pourquoi
 
@@ -48,13 +57,17 @@ page Vue.
 À chaque création de module qui ajoute des traductions :
 
 ```bash
-# 1. Vérifier les 2 fichiers
+# 1. Vérifier les 2 fichiers de traductions
 grep -n "src/Module/<Module>/translations" \
     src/AuroraBundle.php \
     src/Core/Setting/Command/DumpJsTranslationsCommand.php
 
 # Doit retourner UNE ligne dans CHACUN des 2 fichiers.
 # Si manquant : ajouter à l'endroit qui manque.
+
+# 2. Vérifier le tag aurora.module dans services.yaml
+grep -n "aurora.module" config/services.yaml
+# Doit contenir une entrée pour le nouveau module.
 
 # 2. Lancer make i18n + rebuild
 make i18n

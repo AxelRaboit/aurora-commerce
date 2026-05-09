@@ -3,7 +3,7 @@
 {% block title %}{{ 'backend.nav.plannings'|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {crumbs: [{label: 'backend.nav.plannings'|trans}]}) }}
+    {{ include('@Shared/components/page_header.html.twig', {crumbs: [{label: 'backend.nav.sections.planning'|trans}, {label: 'backend.nav.plannings'|trans}]}) }}
 {% endblock %}
 
 {% block body %}

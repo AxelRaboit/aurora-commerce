@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: gallery.title,
         crumbs: [
-            {label: 'backend.modules.photo'|trans, href: path('backend_galleries')},
+            {label: 'backend.nav.sections.photo'|trans},
             {label: 'backend.nav.galleries'|trans, href: path('backend_galleries')},
             {label: gallery.title},
         ],

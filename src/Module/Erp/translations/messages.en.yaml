@@ -17,6 +17,8 @@ backend:
           updated: Product updated
           deleted: Product deleted
   nav:
+    sections:
+      erp: ERP
     products: Products
     products_description: Catalog of products, SKUs and pricing
   erp:

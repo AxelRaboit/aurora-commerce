@@ -303,7 +303,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
                 <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="confirmDelete(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
                 </AppModalFooter>
             </AppModal>

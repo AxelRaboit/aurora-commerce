@@ -19,6 +19,7 @@ src/
     Erp/        -- ERP (products, inventory)
     Ged/        -- document management (documents, categories)
     Photo/      -- client gallery delivery (galleries, items, invites)
+    Hr/         -- human resources (employee records)
     Planning/   -- planning & agenda (plannings, events)
     Project/    -- project management (projects, tasks, sprints, kanban)
 
@@ -29,6 +30,7 @@ templates/
     Crm/        -- admin templates for the CRM module         (@Crm)
     Erp/        -- admin templates for the ERP module         (@Erp)
     Ged/        -- admin templates for the GED module         (@Ged)
+    Hr/         -- admin templates for the Hr module           (@Hr)
     Planning/   -- admin templates for the Planning module    (@Planning)
     Project/    -- admin templates for the Project module     (@Project)
   front/        -- front-end theme templates (kept flat, see §5.3)
@@ -41,6 +43,7 @@ assets/
     Crm/        -- Vue controllers and sub-components for CRM
     Erp/        -- Vue controllers and sub-components for ERP
     Ged/        -- Vue controllers and sub-components for GED
+    Hr/         -- Vue controllers and sub-components for Hr
     Planning/   -- Vue controllers and sub-components for Planning
     Project/    -- Vue controllers and sub-components for Project
   shared/       -- cross-cutting Vue components, composables, utils, enums
@@ -216,14 +219,20 @@ Module/<Name>/<Domain>/{Entity,Manager,Repository,Dto,Service,Serializer,Enum,Co
 | Document         | Entity, Manager, Repository, DTO, Serializer, Enum, Controller (backend CRUD) |
 | DocumentCategory | Entity, Manager, Repository, DTO, Serializer, Controller (backend CRUD) |
 
-### 4.8 Module/Planning
+### 4.8 Module/Hr
+
+| Domain     | What it contains |
+|------------|-----------------|
+| Employee   | Entity (HrEmployee — employee record linked to a User), Manager, Repository, DTO, Serializer, Controller (backend CRUD). Syncs agency/service from User via `UserAgencyServiceUpdatingEvent`. |
+
+### 4.9 Module/Planning
 
 | Domain        | What it contains |
 |---------------|-----------------|
 | Planning      | Entity (Planning — container/calendar), Manager, Repository, DTO, Serializer, Controller (backend CRUD) |
 | PlanningEvent | Entity (PlanningEvent — individual event in a planning), Manager, Repository, DTO, Serializer, Controller |
 
-### 4.9 Module/Project
+### 4.10 Module/Project
 
 | Domain      | What it contains |
 |-------------|-----------------|
@@ -275,6 +284,7 @@ Vite aliases:
 | `@crm`       | `assets/Module/Crm/`         |
 | `@erp`       | `assets/Module/Erp/`         |
 | `@ged`       | `assets/Module/Ged/`         |
+| `@hr`        | `assets/Module/Hr/`          |
 | `@planning`  | `assets/Module/Planning/`    |
 | `@shared`    | `assets/shared/`             |
 
@@ -346,7 +356,7 @@ See the client `Makefile` variables `CLIENT_ASSETS` and `AURORA_ENV` for how thi
 10. Add Vue-only labels (form fields, editor blocks…) under `assets/locales/source/{locale}.js`
 11. Add validator messages to `src/Core/translations/validators.*.yaml` if needed (or to the module's own file)
 12. Generate + run Doctrine migration
-13. **Sequences**: for each new entity, add `#[ORM\GeneratedValue(strategy: 'SEQUENCE')]` + `#[ORM\SequenceGenerator(sequenceName: 'seq_{slug}_id')]`; for business sequential references, add a `SequencePrefixEnum` case + `ApplicationParameterEnum` case (group `sequences`); run `make sync-params`
+13. **Sequences**: for each new entity, add `#[ORM\GeneratedValue(strategy: 'SEQUENCE')]` + `#[ORM\SequenceGenerator(sequenceName: 'seq_core_{entity}_id')]`; for business sequential references (human-readable `reference` field), add a `SequencePrefixEnum` case + `ApplicationParameterEnum` case (group `sequences`) — `SequenceGenerator` stores counters in `app_sequence_counters` table (rows created automatically on first use, no extra setup); run `make sync-params`
 
 ---
 
@@ -386,6 +396,7 @@ a `Module/<Name>/Frontend/Controller/` directory with public routes (typically p
 | ERP        | ❌ Internal-only | Inventory stays backend; the public catalog lives in Ecommerce |
 | Billing    | ❌ Internal-only | Invoice management, suppliers, OCR — admin only |
 | Ged        | ❌ Internal-only | Document storage — admin only |
+| Hr         | ❌ Internal-only | Employee records — admin only |
 | Planning   | ❌ Internal-only | Internal planning/agenda — admin only |
 | Project    | ❌ Internal-only | Project & task management — admin only |
 | Core       | n/a | Infrastructure |
@@ -427,6 +438,7 @@ Each module owns its translations:
 | ERP | `src/Module/Erp/translations/messages.{locale}.yaml` |
 | Ged | `src/Module/Ged/translations/messages.{locale}.yaml` |
 | Photo | `src/Module/Photo/translations/messages.{locale}.yaml` |
+| Hr | `src/Module/Hr/translations/messages.{locale}.yaml` |
 | Planning | `src/Module/Planning/translations/messages.{locale}.yaml` |
 | Project | `src/Module/Project/translations/messages.{locale}.yaml` |
 
@@ -450,9 +462,16 @@ deep-merges each module's YAML, then converts Symfony's `%var%` placeholders to 
 **Convention**: a key used in **both** Twig and Vue lives in YAML. A key used **only** in Vue
 stays in the JS source. Never duplicate the same key in both files.
 
-### 6.8 PostgreSQL sequences
+### 6.8 Sequences and business references
 
-All entity PKs use Doctrine's `SEQUENCE` strategy with explicit named sequences (`seq_{slug}_id`).
+Two distinct mechanisms coexist — never confuse them:
+
+| Family | Mechanism | Example | Owner |
+|---|---|---|---|
+| Entity PKs | PostgreSQL sequence `seq_core_<entity>_id` | `seq_core_invoice_id` | Doctrine migrations |
+| Business references | Table `app_sequence_counters` | row `(prefix='FAC', year=2026)` | `SequenceGenerator` |
+
+All entity PKs use Doctrine's `SEQUENCE` strategy with explicit named sequences (`seq_core_<entity>_id`).
 This makes sequences visible and manageable in PostgreSQL — no silent `IDENTITY` columns.
 
 All business entities also carry a human-readable `reference` field (e.g. `FAC-2026-0001`,
@@ -460,16 +479,25 @@ All business entities also carry a human-readable `reference` field (e.g. `FAC-2
 `nextYearly()`. Prefixes are configurable in **Settings → Séquences** (`ApplicationParameterEnum`
 cases with group `sequences`). Canonical defaults live in `SequencePrefixEnum`.
 
+Business references are backed by the **`app_sequence_counters`** table, fully managed by
+Doctrine migrations — no PostgreSQL sequences, no `schema_filter` needed.
+
 ```
-seq_{slug}_id   — PK sequences, one per entity (created by Doctrine migrations)
-seq_{prefix}_{year}  — yearly business sequences (FAC-2026-0001 …)
-seq_{prefix}         — global business sequences (ORD-000001 …)
+Schema: app_sequence_counters(prefix VARCHAR(30), year INT, last_value INT)
+Primary key: (prefix, year)
+
+year = 0    → global sequence   → next('LOG')          → LOG-000032
+year = YYYY → yearly sequence   → nextYearly('FAC', 2026) → FAC-2026-0001
 ```
+
+Increment is atomic via PostgreSQL upsert: `INSERT … ON CONFLICT DO UPDATE RETURNING`.
+A new prefix row is created automatically on first use — no manual setup required.
+To inspect current values: `SELECT * FROM app_sequence_counters ORDER BY prefix, year;`
 
 After data imports or fixture loads, run:
 
 ```bash
-make sync-sequences   # resets all seq_*_id to MAX(id)+1
+make sync-sequences   # resets all seq_core_*_id to MAX(id)+1 (entity PKs only)
 ```
 
 ### 6.6 Entity naming: no module prefix on class names
@@ -504,6 +532,7 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 - [x] Module/Billing — Invoice management, Tiers (supplier/client/…), OCR pipeline (docTR + Ollama VLM), compliance
 - [x] Module/Photo — Client gallery delivery (galleries, items, invites, picks, watermarking)
 - [x] Module/Ged — Document management (documents, categories)
+- [x] Module/Hr — Human resources, employee records (HrEmployee + User link, agency/service sync via domain events)
 - [x] Module/Planning — Planning & agenda (plannings, events)
 - [x] Module/Project — Project & task management (projects, tasks, sprints, kanban, time tracking)
 - [x] Core/Sequence — Named PostgreSQL sequences for all PKs + configurable business reference numbers

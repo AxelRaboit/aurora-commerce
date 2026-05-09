@@ -594,7 +594,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppSelect v-model="newProject.status" :label="t('backend.projects.fields.status')">
                     <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker v-model="newProject.startDate" :label="t('backend.projects.fields.startDate')" />
                     <AppDatePicker v-model="newProject.endDate" :label="t('backend.projects.fields.endDate')" />
                 </div>
@@ -658,7 +658,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppSelect v-model="editProjectForm.status" :label="t('backend.projects.fields.status')">
                     <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker v-model="editProjectForm.startDate" :label="t('backend.projects.fields.startDate')" />
                     <AppDatePicker v-model="editProjectForm.endDate" :label="t('backend.projects.fields.endDate')" />
                 </div>
@@ -719,7 +719,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :placeholder="t('backend.projects.placeholders.taskDescription')"
                     :rows="3"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppSelect v-model="newTask.columnId" :label="t('backend.projects.task.fields.column')">
                         <option v-for="column in (activeProject?.columns ?? [])" :key="column.id" :value="column.id">{{ column.label }}</option>
                     </AppSelect>
@@ -742,7 +742,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker v-model="newTask.dueDate" :label="t('backend.projects.task.fields.dueDate')" />
                     <AppInput
                         v-model.number="newTask.storyPoints"
@@ -794,7 +794,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :placeholder="t('backend.projects.placeholders.taskDescription')"
                     :rows="3"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppSelect v-model="editTaskForm.columnId" :label="t('backend.projects.task.fields.column')">
                         <option v-for="column in (activeProject?.columns ?? [])" :key="column.id" :value="column.id">{{ column.label }}</option>
                     </AppSelect>
@@ -817,7 +817,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                 />
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker v-model="editTaskForm.dueDate" :label="t('backend.projects.task.fields.dueDate')" />
                     <AppInput
                         v-model.number="editTaskForm.storyPoints"
@@ -1291,7 +1291,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         {{ sprintsManage.editingSprint.value ? t('backend.projects.sprints.edit') : t('backend.projects.sprints.add') }}
                     </p>
                     <AppInput v-model="sprintsManage.sprintForm.value.name" :label="t('backend.projects.sprints.nameField')" :placeholder="t('backend.projects.sprints.namePlaceholder')" :error="sprintsManage.sprintErrors.value.name ?? ''" />
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <AppDatePicker v-model="sprintsManage.sprintForm.value.startDate" :label="t('backend.projects.fields.startDate')" />
                         <AppDatePicker v-model="sprintsManage.sprintForm.value.endDate" :label="t('backend.projects.fields.endDate')" />
                     </div>

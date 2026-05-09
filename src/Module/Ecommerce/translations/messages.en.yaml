@@ -27,6 +27,8 @@ backend:
           cancelled: Order cancelled
           refunded: Order refunded
   nav:
+    sections:
+      ecommerce: E-commerce
     listings: Shop
     listings_description: Items listed in the online shop and their stock
     orders: Orders

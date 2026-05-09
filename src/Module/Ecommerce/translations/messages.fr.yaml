@@ -27,6 +27,8 @@ backend:
           cancelled: Commande annulée
           refunded: Commande remboursée
   nav:
+    sections:
+      ecommerce: E-commerce
     listings: Boutique
     listings_description: Articles publiés sur la boutique en ligne et leur stock
     orders: Commandes

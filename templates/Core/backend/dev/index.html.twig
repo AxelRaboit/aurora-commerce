@@ -14,6 +14,7 @@
     } %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
+            {label: 'backend.nav.sections.dev'|trans},
             {label: 'backend.nav.administration'|trans, href: path('dev_dashboard')},
             {label: tabLabels[tab] ?? tab},
         ],

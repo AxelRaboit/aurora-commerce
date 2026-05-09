@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: product.name,
         crumbs: [
-            {label: 'backend.modules.erp'|trans, href: path('backend_erp_products')},
+            {label: 'backend.nav.sections.erp'|trans},
             {label: 'backend.nav.products'|trans, href: backPath},
             {label: product.name},
         ],

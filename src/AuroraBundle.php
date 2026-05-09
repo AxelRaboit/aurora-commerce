@@ -98,6 +98,8 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
+use Aurora\Module\Hr\Employee\Entity\Employee;
+use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalizationInterface;
@@ -233,6 +235,7 @@ class AuroraBundle extends AbstractBundle
                     ProjectTaskTimeEntryInterface::class => ProjectTaskTimeEntry::class,
                     PlanningInterface::class => Planning::class,
                     PlanningEventInterface::class => PlanningEvent::class,
+                    EmployeeInterface::class => Employee::class,
                     DealInterface::class => Deal::class,
                     CartInterface::class => Cart::class,
                     CartItemInterface::class => CartItem::class,
@@ -314,6 +317,13 @@ class AuroraBundle extends AbstractBundle
                         'prefix' => 'Aurora\Module\Planning',
                         'alias' => 'AuroraPlanning',
                     ],
+                    'AuroraHr' => [
+                        'type' => 'attribute',
+                        'is_bundle' => false,
+                        'dir' => $dir.'/src/Module/Hr',
+                        'prefix' => 'Aurora\Module\Hr',
+                        'alias' => 'AuroraHr',
+                    ],
                 ],
             ],
         ]);
@@ -335,6 +345,7 @@ class AuroraBundle extends AbstractBundle
             'Ged' => '/templates/Module/Ged',
             'Project' => '/templates/Module/Project',
             'Planning' => '/templates/Module/Planning',
+            'Hr' => '/templates/Module/Hr',
         ];
 
         $twigPaths = [];
@@ -377,6 +388,7 @@ class AuroraBundle extends AbstractBundle
                     $dir.'/src/Module/Ged/translations',
                     $dir.'/src/Module/Project/translations',
                     $dir.'/src/Module/Planning/translations',
+                    $dir.'/src/Module/Hr/translations',
                 ],
                 'fallbacks' => ['fr'],
             ],

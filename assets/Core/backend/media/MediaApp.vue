@@ -664,7 +664,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         <QrCode class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("backend.media.qrCode") }}
                     </AppButton>
-                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-3" v-on:click="closeEditMedia"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-1" v-on:click="closeEditMedia"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 </div>
             </form>
         </AppModal>

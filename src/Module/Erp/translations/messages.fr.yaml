@@ -17,6 +17,8 @@ backend:
           updated: Produit mis à jour
           deleted: Produit supprimé
   nav:
+    sections:
+      erp: ERP
     products: Produits
     products_description: Catalogue des produits, références et tarifs
   erp:

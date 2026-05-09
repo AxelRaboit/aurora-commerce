@@ -6,7 +6,7 @@
     {{ include('@Shared/components/page_header.html.twig', {
         title: deal.name,
         crumbs: [
-            {label: 'backend.modules.crm'|trans, href: path('backend_crm_contacts')},
+            {label: 'backend.nav.sections.crm'|trans},
             {label: 'backend.nav.deals'|trans, href: backPath},
             {label: deal.name},
         ],
