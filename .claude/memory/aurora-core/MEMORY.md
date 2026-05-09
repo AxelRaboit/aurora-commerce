@@ -60,6 +60,9 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [pref_commit_language.md](pref_commit_language.md) — messages de commit toujours en anglais
 - [pref_french_dialogue.md](pref_french_dialogue.md) — l'utilisateur parle français, Claude répond en français
 
+### Contexte projet
+- [project_aurora_client_role.md](project_aurora_client_role.md) — aurora-client est un projet démo + template de départ pour de nouveaux projets
+
 ## Règles d'usage
 
 - **Lecture** : toute mémoire potentiellement pertinente doit être lue avant

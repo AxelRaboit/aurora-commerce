@@ -1,6 +1,23 @@
 # Philosophie d'Aurora Client
 
-## Ce qu'est un projet Aurora Client
+## Ce qu'est aurora-client
+
+Aurora-client remplit **deux rôles simultanés** :
+
+1. **Projet de démonstration** — il illustre concrètement toutes les façons
+   d'étendre Aurora Core : extension d'entité existante (Agency + champ `code`),
+   module client from scratch (Tracking), override de composant Vue, frontend
+   public. Chaque feature présente dans aurora-client est volontairement simple
+   — elle montre le pattern, pas une vraie application métier.
+
+2. **Template de départ** — quand un nouveau projet client Aurora démarre, il
+   part d'aurora-client. On clone le dépôt, on adapte ou supprime ce qui est
+   spécifique à la démo (module Tracking, extension Agency), et on construit
+   le domaine propre au projet.
+
+---
+
+## Ce qu'est un projet Aurora Client (en général)
 
 Un projet Aurora Client est une **application Symfony** qui consomme
 `axelraboit/aurora` comme package Composer. Aurora Core fournit la plateforme —

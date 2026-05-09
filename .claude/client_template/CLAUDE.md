@@ -10,8 +10,11 @@
 > à côté de ce fichier — Claude Code charge les deux automatiquement.
 
 App Symfony cliente qui consomme `axelraboit/aurora` (aurora-core) comme
-bundle composer + assets npm. Sert d'**exemple canonique** de comment
-étendre Aurora pour un usage métier.
+bundle composer + assets npm.
+
+**Double rôle** : projet de **démonstration** (illustre tous les patterns
+d'extension Aurora — Agency, module Tracking, overrides Vue) et **template
+de départ** pour tout nouveau projet client Aurora.
 
 ---
 
