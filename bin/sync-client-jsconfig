@@ -24,13 +24,25 @@ const paths = {
     "@client/*": ["assets/client/*"],
 };
 
-// Dynamic module aliases — one per Module/<Name>/ directory
+// Dynamic module aliases — one per Module/<Name>/ directory in aurora
 const modulesDir = join(AURORA_DIR, "assets", "Module");
 if (existsSync(modulesDir)) {
     for (const entry of readdirSync(modulesDir, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
         paths[`@${entry.name.toLowerCase()}/*`] = [
             `${AURORA_VENDOR}/assets/Module/${entry.name}/*`,
+        ];
+    }
+}
+
+// Dynamic client module aliases — one per assets/client/Module/<Name>/ directory
+// Client aliases take precedence over aurora aliases with the same name.
+const clientModulesDir = join(CLIENT_DIR, "assets", "client", "Module");
+if (existsSync(clientModulesDir)) {
+    for (const entry of readdirSync(clientModulesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        paths[`@${entry.name.toLowerCase()}/*`] = [
+            `assets/client/Module/${entry.name}/*`,
         ];
     }
 }
