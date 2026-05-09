@@ -172,6 +172,7 @@ export default {
             },
         },
         parameters: {
+            intro: "View and edit the application technical parameters.",
             key: "Parameter",
             value: "Value",
             description: "Description",
@@ -191,6 +192,13 @@ export default {
             },
             save: "Save",
             saved: "Settings saved.",
+            modulesSearchPlaceholder: "Search a module…",
+            confirmPassword: "Confirm action",
+            confirmPasswordDescription:
+                "Confirm your password to enable or disable modules.",
+            confirmPasswordPlaceholder: "Password…",
+            confirmPasswordInvalid: "Incorrect password.",
+            confirmPasswordConfirm: "Confirm",
             browseMedia: "Browse media",
             noPageSelected:
                 "No page selected — showing the article list by default.",

@@ -41,6 +41,7 @@ onMounted(() => {
 
 <template>
     <div class="space-y-4">
+        <p class="text-sm text-secondary">{{ t('backend.access_requests.intro') }}</p>
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="accessRequests.searchInput.value"

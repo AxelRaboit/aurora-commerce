@@ -45,6 +45,7 @@ const props = defineProps({
     permissionsPath: { type: String, required: true },
     modulesPath: { type: String, required: true },
     moduleUpdatePath: { type: String, required: true },
+    moduleVerifyPasswordPath: { type: String, required: true },
     accessRequestApprovePath: { type: String, required: true },
     accessRequestRejectPath: { type: String, required: true },
     accessRequestPurgePath: { type: String, required: true },
@@ -172,6 +173,7 @@ function initialDataFor(key) {
                     v-else-if="tab === 'modules'"
                     :modules-path="modulesPath"
                     :module-update-path="moduleUpdatePath"
+                    :module-verify-password-path="moduleVerifyPasswordPath"
                     :initial-data="initialDataFor('modules')"
                 />
             </KeepAlive>

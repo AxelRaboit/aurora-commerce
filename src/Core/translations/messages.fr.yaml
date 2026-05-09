@@ -40,6 +40,7 @@ backend:
     planning: Planning
     project: Projet
   audit:
+    intro: Historique des actions effectuées par les utilisateurs de l'administration.
     module: Module
     action: Action
     user: Utilisateur
@@ -56,6 +57,7 @@ backend:
         photo_uploaded: Photo de profil téléversée
         photo_removed: Photo de profil supprimée
   access_requests:
+    intro: Gérez les demandes d'accès à l'administration en attente de validation.
     approved: Demande de {name} approuvée.
     purged: Demandes traitées supprimées.
     rejected: Demande de {name} rejetée.
@@ -153,6 +155,7 @@ backend:
     permissions: Permissions
     users: Utilisateurs
   users:
+    intro: Gérez les utilisateurs de l'administration et leurs rôles.
     name: Nom
     email: Email
     created: Créé le
@@ -369,6 +372,8 @@ backend:
       modules: Modules
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: "Recommandé : image carrée (1:1)."
+    modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
+    modulesEmpty: Aucun module trouvé.
 frontend:
   menu:
     home: Accueil

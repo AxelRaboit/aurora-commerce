@@ -221,7 +221,6 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                         placeholder="© {year} {siteName}"
                     />
                 </div>
-
             </form>
             <template #footer>
                 <AppModalFooter bordered>

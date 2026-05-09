@@ -303,7 +303,6 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         </div>
                     </div>
                 </div>
-
             </div>
             <template #footer>
                 <AppModalFooter>

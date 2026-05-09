@@ -32,6 +32,7 @@ onMounted(() => {
 
 <template>
     <div class="space-y-3">
+        <p class="text-sm text-secondary">{{ t('backend.parameters.intro') }}</p>
         <div>
             <AppSearchInput
                 v-model="parameters.searchInput.value"

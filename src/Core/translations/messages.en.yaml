@@ -40,6 +40,7 @@ backend:
     planning: Planning
     project: Project
   audit:
+    intro: History of actions performed by administration users.
     module: Module
     action: Action
     user: User
@@ -56,6 +57,7 @@ backend:
         photo_uploaded: Profile photo uploaded
         photo_removed: Profile photo removed
   access_requests:
+    intro: Manage pending access requests to the administration.
     approved: Request from {name} approved.
     purged: Processed requests deleted.
     rejected: Request from {name} rejected.
@@ -152,6 +154,7 @@ backend:
     permissions: Permissions
     users: Users
   users:
+    intro: Manage administration users and their roles.
     name: Name
     email: Email
     created: Created
@@ -367,8 +370,10 @@ backend:
       email: Emails
       sequences: Sequences
       modules: Modules
-    cascadeLocked: "Enable “{parent}” first to edit this setting."
+    cascadeLocked: 'Enable “{parent}” first to edit this setting.'
     mediaSquareHint: "Recommended: square image (1:1)."
+    modulesIntro: Enable or disable application modules. Changes are saved immediately.
+    modulesEmpty: No module found.
 frontend:
   menu:
     home: Home

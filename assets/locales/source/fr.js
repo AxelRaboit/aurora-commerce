@@ -173,6 +173,7 @@ export default {
             },
         },
         parameters: {
+            intro: "Consultez et modifiez les paramètres techniques de l'application.",
             key: "Paramètre",
             value: "Valeur",
             description: "Description",
@@ -192,6 +193,13 @@ export default {
             },
             save: "Enregistrer",
             saved: "Réglages sauvegardés.",
+            modulesSearchPlaceholder: "Rechercher un module…",
+            confirmPassword: "Confirmer l'action",
+            confirmPasswordDescription:
+                "Confirmez le mot de passe pour activer ou désactiver des modules.",
+            confirmPasswordPlaceholder: "Mot de passe…",
+            confirmPasswordInvalid: "Mot de passe incorrect.",
+            confirmPasswordConfirm: "Confirmer",
             browseMedia: "Parcourir les médias",
             noPageSelected:
                 "Aucune page sélectionnée — affichage de la liste des articles par défaut.",

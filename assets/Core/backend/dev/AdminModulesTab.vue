@@ -1,145 +1,90 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import { Lock, Save } from "lucide-vue-next";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import { Lock } from "lucide-vue-next";
+import { useAdminModules } from "@core/backend/dev/composables/useAdminModules.js";
 
 const { t } = useI18n();
 
 const props = defineProps({
     modulesPath: { type: String, required: true },
     moduleUpdatePath: { type: String, required: true },
+    moduleVerifyPasswordPath: { type: String, required: true },
     initialData: { type: Object, default: null },
 });
 
-const parameters = ref(props.initialData?.parameters ?? []);
-const fieldValues = reactive({});
-const initialValues = {};
-const parameterByKey = {};
-const saving = ref(false);
+const modules = useAdminModules(
+    props.modulesPath,
+    props.moduleUpdatePath,
+    props.moduleVerifyPasswordPath,
+    props.initialData,
+);
 
-function init(params) {
-    for (const p of params) {
-        const value = p.value ?? "0";
-        fieldValues[p.key] = value;
-        initialValues[p.key] = value;
-        parameterByKey[p.key] = p;
-    }
-}
-
-init(parameters.value);
-
-onMounted(async () => {
-    if (parameters.value.length) return;
-    const res = await fetch(props.modulesPath, { headers: { "X-Requested-With": "XMLHttpRequest" } });
-    const data = await res.json();
-    parameters.value = data.parameters ?? [];
-    init(parameters.value);
+onMounted(() => {
+    if (!modules.parameters.value.length) modules.load();
 });
-
-function isLocked(parameter) {
-    return parameter.requires ? fieldValues[parameter.requires] !== "1" : false;
-}
-
-function lockReason(parameter) {
-    const parent = parameter.requires ? parameterByKey[parameter.requires] : null;
-    return parent ? t("backend.settings.cascadeLocked", { parent: parent.label }) : "";
-}
-
-function onToggle(parameter, enabled) {
-    fieldValues[parameter.key] = enabled ? "1" : "0";
-    if (!enabled) {
-        for (const child of Object.values(parameterByKey)) {
-            if (child.requires === parameter.key && fieldValues[child.key] === "1") {
-                onToggle(child, false);
-            }
-        }
-    }
-}
-
-async function save() {
-    saving.value = true;
-
-    const changed = parameters.value
-        .filter((p) => fieldValues[p.key] !== initialValues[p.key])
-        .sort((a, b) => (a.requires ? 1 : 0) - (b.requires ? 1 : 0));
-
-    if (!changed.length) {
-        saving.value = false;
-        toast.success(t("backend.settings.saved"));
-        return;
-    }
-
-    try {
-        for (const parameter of changed) {
-            const res = await fetch(props.moduleUpdatePath.replace("__key__", parameter.key), {
-                method: HttpMethod.Patch,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ value: fieldValues[parameter.key] }),
-            });
-
-            const result = await res.json();
-
-            if (!result.success) {
-                if (result.error === SettingErrorCode.CascadeViolation) {
-                    const parent = parameterByKey[result.parentKey];
-                    toast.error(t("backend.settings.cascadeLocked", { parent: parent?.label ?? result.parentKey }));
-                } else {
-                    toast.error(t("shared.common.error"));
-                }
-                return;
-            }
-
-            initialValues[parameter.key] = fieldValues[parameter.key];
-        }
-
-        toast.success(t("backend.settings.saved"));
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        saving.value = false;
-    }
-}
 </script>
 
 <template>
-    <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
-        <div
-            v-for="parameter in parameters"
-            :key="parameter.key"
-            class="flex items-center justify-between gap-4"
-            :class="{ 'opacity-60': isLocked(parameter) }"
-        >
-            <div class="min-w-0">
-                <p class="text-sm font-medium text-primary flex items-center gap-1.5">
-                    {{ parameter.label }}
-                    <Lock v-if="isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                </p>
-                <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
-                <p v-if="isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ lockReason(parameter) }}</p>
+    <div class="space-y-3">
+        <p class="text-sm text-secondary">{{ t("backend.settings.modulesIntro") }}</p>
+        <AppSearchInput
+            v-model="modules.searchInput.value"
+            :placeholder="t('backend.settings.modulesSearchPlaceholder')"
+        />
+
+        <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
+            <p v-if="!modules.filteredParameters.value.length" class="py-4 text-center text-sm text-muted">{{ t("backend.settings.modulesEmpty") }}</p>
+
+            <div
+                v-for="parameter in modules.filteredParameters.value"
+                :key="parameter.key"
+                class="flex items-center justify-between gap-4"
+                :class="{ 'opacity-60': modules.isLocked(parameter) }"
+            >
+                <div class="min-w-0">
+                    <p class="text-sm font-medium text-primary flex items-center gap-1.5">
+                        {{ parameter.label }}
+                        <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                    </p>
+                    <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
+                    <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
+                </div>
+                <AppToggle
+                    :model-value="!modules.isLocked(parameter) && modules.fieldValues[parameter.key] === '1'"
+                    :disabled="modules.isLocked(parameter) || modules.saving.value"
+                    v-on:update:model-value="modules.onToggle(parameter, $event)"
+                />
             </div>
-            <AppToggle
-                :model-value="!isLocked(parameter) && fieldValues[parameter.key] === '1'"
-                :disabled="isLocked(parameter)"
-                v-on:update:model-value="onToggle(parameter, $event)"
-            />
         </div>
 
-        <div class="pt-2 border-t border-line flex justify-end">
-            <AppButton
-                type="button"
-                variant="primary"
-                size="md"
-                :loading="saving"
-                v-on:click="save"
-            >
-                <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t("backend.settings.save") }}
-            </AppButton>
-        </div>
+        <AppModal
+            :show="modules.showPasswordModal.value"
+            :title="t('backend.settings.confirmPassword')"
+            max-width="sm"
+            v-on:close="modules.showPasswordModal.value = false"
+        >
+            <p class="text-sm text-muted">{{ t("backend.settings.confirmPasswordDescription") }}</p>
+            <AppInput
+                v-model="modules.password.value"
+                type="password"
+                :placeholder="t('backend.settings.confirmPasswordPlaceholder')"
+                :error="modules.passwordError.value"
+                v-on:keydown.enter="modules.confirmPassword"
+            />
+            <div class="flex justify-end gap-2">
+                <AppButton variant="ghost" size="md" v-on:click="modules.showPasswordModal.value = false">
+                    {{ t("shared.common.cancel") }}
+                </AppButton>
+                <AppButton variant="primary" size="md" :loading="modules.verifying.value" v-on:click="modules.confirmPassword">
+                    {{ t("backend.settings.confirmPasswordConfirm") }}
+                </AppButton>
+            </div>
+        </AppModal>
     </div>
 </template>

@@ -29,6 +29,7 @@ onMounted(() => {
 
 <template>
     <div class="space-y-3">
+        <p class="text-sm text-secondary">{{ t('backend.audit.intro') }}</p>
         <div v-if="data?.modules?.length">
             <AppMultiselect
                 :model-value="module"
