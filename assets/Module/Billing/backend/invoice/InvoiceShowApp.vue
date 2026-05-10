@@ -361,7 +361,7 @@ const { formatDateNumeric } = useDateFormat();
                             </div>
                         </dl>
                     </template>
-                    <p v-else class="text-xs text-muted italic">{{ t('backend.billing.invoices.show.noBuyer') }}</p>
+                    <AppNoData v-else :message="t('backend.billing.invoices.show.noBuyer')" />
                 </div>
             </div>
 

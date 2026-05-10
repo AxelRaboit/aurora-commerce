@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { buildTermTree, flattenTreeWithDepth } from "@editorial/shared/termTree.js";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 
 const { t } = useI18n();
 
@@ -51,11 +52,11 @@ function termLabel(term) {
                 <input type="checkbox" class="sr-only" :checked="selectedTermIds.includes(term.id)" v-on:change="emit('toggle-term', term.id)">
                 {{ termLabel(term) }}
             </label>
-            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("backend.posts.termsPickerEmpty") }}</p>
+            <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
         </div>
 
         <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
-            <p v-if="!taxonomy.terms.length" class="text-xs text-muted italic">{{ t("backend.posts.termsPickerEmpty") }}</p>
+            <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
             <label
                 v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
                 :key="term.id"

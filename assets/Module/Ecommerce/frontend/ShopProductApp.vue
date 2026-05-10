@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import { ImageOff } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import { formatMoney } from "@ecommerce/shared/formatMoney.js";
@@ -62,7 +63,8 @@ async function addToCart() {
                     :alt="listing.displayImage.alt || listing.displayTitle"
                     object-fit="cover"
                 />
-                <div v-else class="w-full h-full flex items-center justify-center text-muted">
+                <div v-else class="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
+                    <ImageOff class="w-8 h-8 opacity-40" :stroke-width="1.5" />
                     {{ t('frontend.shop.no_image') }}
                 </div>
             </div>

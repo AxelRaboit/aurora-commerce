@@ -531,13 +531,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <div class="text-xs text-muted mt-1">{{ t("backend.media.usageContent") }}</div>
                         </div>
                     </div>
-                    <p v-if="mediaUsage.total === 0" class="text-xs text-muted text-center">{{ t("backend.media.usageNone") }}</p>
+                    <AppNoData v-if="mediaUsage.total === 0" :message="t('backend.media.usageNone')" />
                 </template>
             </div>
 
             <div v-if="editTab === 'history'" class="space-y-2 min-h-32">
                 <div v-if="historyLoading" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
-                <div v-else-if="!mediaHistory.length" class="text-center py-8 text-muted text-sm">{{ t("backend.media.noHistory") }}</div>
+                <AppNoData v-else-if="!mediaHistory.length" :message="t('backend.media.noHistory')" />
                 <div v-else class="divide-y divide-line/40">
                     <div v-for="entry in mediaHistory" :key="entry.id" class="py-2.5 flex items-start gap-3">
                         <div class="flex-1 min-w-0">
@@ -733,7 +733,10 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
             </div>
 
-            <p v-else-if="deletingMediaUsage" class="text-xs text-emerald-500 italic">{{ t("backend.media.usageNone") }}</p>
+            <p v-else-if="deletingMediaUsage" class="flex items-center gap-1.5 text-xs text-emerald-500 italic">
+                <CheckSquare class="w-3.5 h-3.5" :stroke-width="1.5" />
+                {{ t("backend.media.usageNone") }}
+            </p>
 
             <template #footer>
                 <AppModalFooter>

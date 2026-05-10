@@ -18,6 +18,7 @@ import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import {
     Heart,
     Printer,
@@ -177,9 +178,7 @@ function downloadOne(itemId) {
         </header>
 
         <!-- Grid -->
-        <div v-if="displayedItems.length === 0" class="text-center text-muted py-20">
-            {{ t("photo.frontend.empty") }}
-        </div>
+        <AppNoData v-if="displayedItems.length === 0" :message="t('photo.frontend.empty')" />
         <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             <button
                 v-for="(item, index) in displayedItems"

@@ -10,6 +10,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Plus, Pencil, Trash2, Save, X } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -70,7 +71,7 @@ const {
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="3" class="px-6 py-8 text-center text-sm text-muted">{{ t("backend.ged.categories.empty") }}</td>
+                        <td :colspan="3"><AppNoData :message="t('backend.ged.categories.empty')" /></td>
                     </tr>
                 </tbody>
             </table>

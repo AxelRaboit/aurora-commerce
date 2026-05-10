@@ -12,6 +12,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
 import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X } from "lucide-vue-next";
 
@@ -90,7 +91,7 @@ const {
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t("backend.ged.documents.empty") }}</td>
+                        <td :colspan="5"><AppNoData :message="t('backend.ged.documents.empty')" /></td>
                     </tr>
                 </tbody>
             </table>

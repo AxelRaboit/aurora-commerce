@@ -146,7 +146,10 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                                     {{ t("shared.common.remove") }}
                                 </AppTextLinkButton>
                             </div>
-                            <div v-else class="text-sm text-muted italic mb-2">{{ t("backend.settings.noPageSelected") }}</div>
+                            <div v-else class="flex items-center gap-1.5 text-sm text-muted italic mb-2">
+                                <FileText class="w-3.5 h-3.5 opacity-60" :stroke-width="1.5" />
+                                {{ t("backend.settings.noPageSelected") }}
+                            </div>
                             <div class="relative">
                                 <AppInput
                                     type="text"

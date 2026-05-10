@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import EventChip from "./EventChip.vue";
 import { STATUS_TONES } from "./composables/useEventFilters.js";
 import { useResourceGridLogic } from "./composables/useResourceGridLogic.js";
@@ -50,12 +51,7 @@ const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, 
         </div>
 
         <!-- Empty state -->
-        <div
-            v-if="!users.length"
-            class="px-6 py-12 text-center text-sm text-muted"
-        >
-            {{ t("backend.plannings.resourceView.noUsers") }}
-        </div>
+        <AppNoData v-if="!users.length" :message="t('backend.plannings.resourceView.noUsers')" />
 
         <!-- Grid -->
         <div v-else class="overflow-x-auto">

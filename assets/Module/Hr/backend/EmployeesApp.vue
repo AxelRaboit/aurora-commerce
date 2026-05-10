@@ -16,6 +16,7 @@ import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useEmployeeForm } from "./composables/useEmployeeForm.js";
 import { useEmployeeFormOptions } from "./composables/useEmployeeFormOptions.js";
 
@@ -104,7 +105,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     </div>
                 </div>
             </div>
-            <p v-if="!items?.length" class="text-center text-sm text-muted py-8">{{ t('backend.employees.empty') }}</p>
+            <AppNoData v-if="!items?.length" :message="t('backend.employees.empty')" />
         </div>
 
         <!-- Desktop table -->
@@ -139,7 +140,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.employees.empty') }}</td>
+                        <td :colspan="5"><AppNoData :message="t('backend.employees.empty')" /></td>
                     </tr>
                 </tbody>
             </table>

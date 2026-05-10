@@ -2,6 +2,7 @@
 import { Bell, Check, X, Trash2 } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useNotifications } from "./composables/useNotifications.js";
 
 const props = defineProps({
@@ -83,9 +84,7 @@ function onItemClick(entry) {
                         </div>
                     </div>
                     <div class="overflow-y-auto scrollbar-thin flex-1">
-                        <p v-if="!entries.length" class="px-4 py-6 text-xs text-muted text-center">
-                            {{ t('backend.notifications.empty') }}
-                        </p>
+                        <AppNoData v-if="!entries.length" :message="t('backend.notifications.empty')" />
                         <div
                             v-for="entry in entries"
                             :key="entry.id"

@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -40,7 +41,7 @@ onMounted(() => {
         />
 
         <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
-            <p v-if="!modules.filteredParameters.value.length" class="py-4 text-center text-sm text-muted">{{ t("backend.settings.modulesEmpty") }}</p>
+            <AppNoData v-if="!modules.filteredParameters.value.length" :message="t('backend.settings.modulesEmpty')" />
 
             <div
                 v-for="parameter in modules.filteredParameters.value"

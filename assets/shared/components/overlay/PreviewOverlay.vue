@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 
 const { t } = useI18n();
 
@@ -46,7 +47,7 @@ defineEmits(["close"]);
                     />
                     <h1 v-if="title" class="text-3xl font-bold text-primary mb-8">{{ title }}</h1>
                     <div v-if="html" class="prose-preview" v-html="html" />
-                    <p v-else class="text-muted text-sm italic">{{ t("backend.posts.previewEmpty") }}</p>
+                    <AppNoData v-else :message="t('backend.posts.previewEmpty')" />
                 </div>
             </div>
         </Transition>

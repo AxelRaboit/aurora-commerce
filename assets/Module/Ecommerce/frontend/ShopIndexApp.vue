@@ -1,7 +1,9 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { formatMoney } from "@ecommerce/shared/formatMoney.js";
+import { ImageOff } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -28,7 +30,7 @@ function pageUrl(n) {
     <section>
         <h1 class="text-3xl font-bold mb-6">{{ t('frontend.shop.title') }}</h1>
 
-        <p v-if="!listings.length" class="text-muted">{{ t('frontend.shop.empty') }}</p>
+        <AppNoData v-if="!listings.length" :message="t('frontend.shop.empty')" />
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <article
@@ -45,7 +47,10 @@ function pageUrl(n) {
                             object-fit="cover"
                             loading="lazy"
                         />
-                        <div v-else class="w-full h-full flex items-center justify-center text-muted text-xs">{{ t('frontend.shop.no_image') }}</div>
+                        <div v-else class="w-full h-full flex flex-col items-center justify-center gap-1 text-muted text-xs">
+                            <ImageOff class="w-6 h-6 opacity-40" :stroke-width="1.5" />
+                            {{ t('frontend.shop.no_image') }}
+                        </div>
                     </div>
                     <div class="p-4 space-y-2">
                         <div class="flex items-start justify-between gap-2">

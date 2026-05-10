@@ -8,6 +8,7 @@ import PostCommentsForm from "./PostCommentsForm.vue";
 import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -133,7 +134,7 @@ function formatDate(iso) {
         <div v-if="loading" class="text-muted text-sm mb-8">{{ t("shared.common.loading") }}</div>
 
         <template v-else>
-            <p v-if="!roots.length" class="text-muted text-sm mb-8">{{ t("shared.comment.empty") }}</p>
+            <AppNoData v-if="!roots.length" :message="t('shared.comment.empty')" />
 
             <div v-else class="space-y-6 mb-10">
                 <div v-for="rootComment in roots" :key="rootComment.id" class="bg-surface-2 rounded-lg p-5">
