@@ -431,7 +431,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     <AppOverlayIconButton size="sm" variant="light" :title="t('backend.media.preview')" v-on:click.stop="previewMedia = item">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppOverlayIconButton>
-                                    <AppOverlayIconButton v-if="can('core.media.manage')" size="sm" variant="light" :title="t('shared.common.edit')" v-on:click.stop="openEditMedia(item)">
+                                    <AppOverlayIconButton
+                                        v-if="can('core.media.manage')"
+                                        size="sm"
+                                        variant="light"
+                                        :title="t('shared.common.edit')"
+                                        v-on:click.stop="openEditMedia(item)"
+                                    >
                                         <Pencil class="w-4 h-4" :stroke-width="2" />
                                     </AppOverlayIconButton>
                                     <AppOverlayIconButton size="sm" variant="light" :title="t('backend.media.copyUrl')" v-on:click.stop="copyUrl(item)">
@@ -649,7 +655,6 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         </div>
                     </dl>
                 </div>
-
             </form>
             <template #footer>
                 <AppModalFooter>

@@ -331,7 +331,6 @@ const parentOptions = computed(() => {
                         </label>
                     </div>
                 </div>
-
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -395,7 +394,6 @@ const parentOptions = computed(() => {
                     :placeholder="t('backend.taxonomies.terms.descriptionPlaceholder')"
                     :rows="2"
                 />
-
             </form>
             <template #footer>
                 <AppModalFooter>

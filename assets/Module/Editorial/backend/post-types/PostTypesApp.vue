@@ -234,7 +234,6 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                         </label>
                     </div>
                 </div>
-
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -303,7 +302,6 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                     <AppCheckbox v-model="fieldForm.required" :label="t('backend.postTypes.fields.required')" />
                     <AppCheckbox v-model="fieldForm.translatable" :label="t('backend.postTypes.fields.translatable')" />
                 </div>
-
             </form>
             <template #footer>
                 <AppModalFooter>

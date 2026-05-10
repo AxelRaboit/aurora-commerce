@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Path;
+use Throwable;
 
 #[AsAlias(PdfDocumentManagerInterface::class)]
 class PdfDocumentManager implements PdfDocumentManagerInterface
@@ -91,12 +92,12 @@ class PdfDocumentManager implements PdfDocumentManagerInterface
         try {
             $this->pdfManipulator->fill($templatePath, $fieldValues, $outputPath, $flatten);
 
-            if (!file_exists($outputPath) || filesize($outputPath) === 0) {
+            if (!file_exists($outputPath) || 0 === filesize($outputPath)) {
                 return null;
             }
 
             return $this->storage->store($outputPath, $reference);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null;
         } finally {
             if (file_exists($outputPath)) {

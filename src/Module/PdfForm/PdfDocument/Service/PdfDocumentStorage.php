@@ -43,9 +43,9 @@ final readonly class PdfDocumentStorage
     /** @return string Relative path within storage dir (e.g. 2026/05/PDF-000001.pdf) */
     public function store(string $sourcePath, string $reference): string
     {
-        $now     = new DateTimeImmutable();
-        $year    = $now->format('Y');
-        $month   = $now->format('m');
+        $now = new DateTimeImmutable();
+        $year = $now->format('Y');
+        $month = $now->format('m');
         $destDir = Path::join($this->storageDir(), $year, $month);
 
         $fs = new Filesystem();
@@ -61,7 +61,7 @@ final readonly class PdfDocumentStorage
     {
         $path = $this->absolutePath($document);
         if (null !== $path && file_exists($path)) {
-            (new Filesystem())->remove($path);
+            new Filesystem()->remove($path);
         }
     }
 }

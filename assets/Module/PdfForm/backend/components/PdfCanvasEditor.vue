@@ -40,8 +40,15 @@ watch(() => props.pdfUrl, (url) => {
         <div v-if="loading" class="absolute inset-0 z-20 flex items-center justify-center bg-surface/70 backdrop-blur-sm rounded-lg">
             <div class="flex items-center gap-2 text-sm text-muted">
                 <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                    />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
                 {{ t("backend.pdfform.documents.previewUpdating") }}
             </div>
@@ -65,7 +72,7 @@ watch(() => props.pdfUrl, (url) => {
                         :style="{ left: o.left + 'px', top: o.top + 'px', width: o.width + 'px', height: o.height + 'px' }"
                         v-on:change="updateField(o.fieldName, $event.target.checked ? 'Yes' : 'Off')"
                         v-on:focus="emit('field-focus', o.fieldName)"
-                    />
+                    >
                     <input
                         v-else-if="o.fieldType === 'radio'"
                         type="radio"
@@ -76,7 +83,7 @@ watch(() => props.pdfUrl, (url) => {
                         :style="{ left: o.left + 'px', top: o.top + 'px', width: o.width + 'px', height: o.height + 'px' }"
                         v-on:change="updateField(o.radioGroupName, o.optionValue)"
                         v-on:focus="emit('field-focus', o.radioGroupName)"
-                    />
+                    >
                     <input
                         v-else
                         type="text"
@@ -93,7 +100,7 @@ watch(() => props.pdfUrl, (url) => {
                         }"
                         v-on:input="updateField(o.fieldName, $event.target.value)"
                         v-on:focus="emit('field-focus', o.fieldName)"
-                    />
+                    >
                 </template>
             </div>
         </div>

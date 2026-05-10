@@ -27,7 +27,12 @@ function emptyGenerateForm(template) {
     };
 }
 
-export function usePdfDocumentsForm(generatePath, deletePath, templateListPath, reset) {
+export function usePdfDocumentsForm(
+    generatePath,
+    deletePath,
+    templateListPath,
+    reset,
+) {
     const { t } = useI18n();
 
     // ── Modale unique (step 1 = picker, step 2 = éditeur, step 3 = signature) ─
@@ -44,13 +49,18 @@ export function usePdfDocumentsForm(generatePath, deletePath, templateListPath, 
     const pickerTotalPages = ref(1);
     const pickerLoading = ref(false);
     const pickerLoadingMore = ref(false);
-    const pickerHasMore = computed(() => pickerPage.value < pickerTotalPages.value);
+    const pickerHasMore = computed(
+        () => pickerPage.value < pickerTotalPages.value,
+    );
 
     async function fetchPicker(page, isReset) {
         if (isReset) pickerLoading.value = true;
         else pickerLoadingMore.value = true;
         try {
-            const params = new URLSearchParams({ page: String(page), status: "active" });
+            const params = new URLSearchParams({
+                page: String(page),
+                status: "active",
+            });
             if (pickerSearch.value) params.set("search", pickerSearch.value);
             const res = await fetch(`${templateListPath}?${params}`, {
                 headers: { "X-Requested-With": "XMLHttpRequest" },
@@ -95,7 +105,11 @@ export function usePdfDocumentsForm(generatePath, deletePath, templateListPath, 
         resetPositions();
         step.value = 2;
         // Extraire les positions une seule fois pour les overlays
-        extractPositions(template, generateForm.value.fieldValues, template.fields ?? []);
+        extractPositions(
+            template,
+            generateForm.value.fieldValues,
+            template.fields ?? [],
+        );
     }
 
     function backToPicker() {
@@ -111,21 +125,39 @@ export function usePdfDocumentsForm(generatePath, deletePath, templateListPath, 
     }
 
     // ── Positions des champs (extraites une seule fois par template) ──────────
-    const { fieldPositions, render: extractPositions, reset: resetPositions } = usePdfLivePreview();
+    const {
+        fieldPositions,
+        render: extractPositions,
+        reset: resetPositions,
+    } = usePdfLivePreview();
 
     // ── Éditeur ───────────────────────────────────────────────────────────────
     const generateForm = ref(emptyGenerateForm(null));
-    const { errors: generateErrors, validate: validateGenerate, clearErrors: clearGenerate, setErrors: setGenerateErrors } = useForm();
+    const {
+        errors: generateErrors,
+        validate: validateGenerate,
+        clearErrors: clearGenerate,
+        setErrors: setGenerateErrors,
+    } = useForm();
     const { loading: generateLoading, request: generateRequest } = useRequest();
 
     async function submitGenerate() {
-        if (!validateGenerate({
-            templateId: () => required(t("backend.pdfform.documents.errors.template_required"))(generateForm.value.templateId),
-        })) return;
+        if (
+            !validateGenerate({
+                templateId: () =>
+                    required(
+                        t("backend.pdfform.documents.errors.template_required"),
+                    )(generateForm.value.templateId),
+            })
+        )
+            return;
 
         const payload = { ...generateForm.value };
         if (editorTemplate.value?.requiresSignature && signatureData.value) {
-            payload.fieldValues = { ...payload.fieldValues, __signature__: signatureData.value };
+            payload.fieldValues = {
+                ...payload.fieldValues,
+                __signature__: signatureData.value,
+            };
         }
 
         const data = await generateRequest(generatePath, payload);
@@ -145,15 +177,36 @@ export function usePdfDocumentsForm(generatePath, deletePath, templateListPath, 
         loading: deleteLoading,
         confirm: confirmDelete,
         submit: doDelete,
-    } = useDelete(deletePath, () => reset(), "backend.pdfform.documents.deleted");
+    } = useDelete(
+        deletePath,
+        () => reset(),
+        "backend.pdfform.documents.deleted",
+    );
 
     return {
-        showModal, step, openModal, backToPicker, goToSignature, backToEditor,
-        pickerItems, pickerLoading, pickerLoadingMore, pickerHasMore,
-        debouncedSearch, loadMorePicker, selectTemplate,
-        editorTemplate, generateForm, generateErrors, generateLoading,
-        fieldPositions, signatureData,
+        showModal,
+        step,
+        openModal,
+        backToPicker,
+        goToSignature,
+        backToEditor,
+        pickerItems,
+        pickerLoading,
+        pickerLoadingMore,
+        pickerHasMore,
+        debouncedSearch,
+        loadMorePicker,
+        selectTemplate,
+        editorTemplate,
+        generateForm,
+        generateErrors,
+        generateLoading,
+        fieldPositions,
+        signatureData,
         submitGenerate,
-        pendingDelete, deleteLoading, confirmDelete, doDelete,
+        pendingDelete,
+        deleteLoading,
+        confirmDelete,
+        doDelete,
     };
 }

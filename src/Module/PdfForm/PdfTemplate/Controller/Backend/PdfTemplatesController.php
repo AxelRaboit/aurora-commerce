@@ -15,6 +15,7 @@ use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Aurora\Module\PdfForm\PdfTemplate\Manager\PdfTemplateManagerInterface;
 use Aurora\Module\PdfForm\PdfTemplate\Serializer\PdfTemplateSerializerInterface;
 use Aurora\Module\PdfForm\PdfTemplate\View\PdfTemplatesViewBuilder;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,8 +94,8 @@ final class PdfTemplatesController extends AbstractController
     {
         try {
             $fields = $this->manager->detectAndSyncFields($template);
-        } catch (\RuntimeException $exception) {
-            return $this->jsonFailure($exception->getMessage(), HttpStatusEnum::ServiceUnavailable->value);
+        } catch (RuntimeException $runtimeException) {
+            return $this->jsonFailure($runtimeException->getMessage(), HttpStatusEnum::ServiceUnavailable->value);
         }
 
         return $this->jsonSuccess([

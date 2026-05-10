@@ -54,7 +54,13 @@ const {
     <div class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.pdfform.documents.searchPlaceholder')" v-on:search="onSearch" />
-            <AppButton v-if="can('pdfform.documents.generate')" variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openModal">
+            <AppButton
+                v-if="can('pdfform.documents.generate')"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openModal"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.pdfform.documents.add") }}
             </AppButton>
         </div>
@@ -171,7 +177,13 @@ const {
                     <template v-else-if="step === 3">
                         <AppButton variant="ghost" size="md" v-on:click="backToEditor"><ChevronLeft class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.back") }}</AppButton>
                         <AppButton variant="ghost" size="md" v-on:click="showModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                        <AppButton variant="primary" size="md" :loading="generateLoading" :disabled="!signatureData" v-on:click="submitGenerate">
+                        <AppButton
+                            variant="primary"
+                            size="md"
+                            :loading="generateLoading"
+                            :disabled="!signatureData"
+                            v-on:click="submitGenerate"
+                        >
                             <FileOutput class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.documents.generate") }}
                         </AppButton>
                     </template>
@@ -181,7 +193,13 @@ const {
                         <AppButton v-if="editorTemplate?.requiresSignature" variant="primary" size="md" v-on:click="goToSignature">
                             <PenLine class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.documents.signatureNext") }}
                         </AppButton>
-                        <AppButton v-else variant="primary" size="md" :loading="generateLoading" v-on:click="submitGenerate">
+                        <AppButton
+                            v-else
+                            variant="primary"
+                            size="md"
+                            :loading="generateLoading"
+                            v-on:click="submitGenerate"
+                        >
                             <FileOutput class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.documents.generate") }}
                         </AppButton>
                     </template>
@@ -220,7 +238,14 @@ const {
         </AppModal>
 
         <!-- Delete modal -->
-        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" :title="t('shared.common.delete')" :icon="Trash2" v-on:close="pendingDelete = null">
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.pdfform.documents.deleteConfirm", { reference: pendingDelete?.reference ?? "" }) }}</p>
             <p class="text-sm text-secondary">{{ t("backend.pdfform.documents.deleteWarning") }}</p>
             <template #footer>

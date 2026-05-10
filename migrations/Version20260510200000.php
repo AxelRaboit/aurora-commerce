@@ -16,11 +16,11 @@ final class Version20260510200000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE core_pdfform_templates ADD requires_signature BOOLEAN DEFAULT FALSE NOT NULL");
+        $this->addSql('ALTER TABLE core_pdfform_templates ADD requires_signature BOOLEAN DEFAULT FALSE NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE core_pdfform_templates DROP COLUMN requires_signature");
+        $this->addSql('ALTER TABLE core_pdfform_templates DROP COLUMN requires_signature');
     }
 }

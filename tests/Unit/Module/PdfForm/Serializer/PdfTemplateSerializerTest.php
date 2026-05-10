@@ -8,6 +8,7 @@ use Aurora\Module\PdfForm\Enum\PdfTemplateStatusEnum;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Aurora\Module\PdfForm\PdfTemplate\Serializer\PdfTemplateSerializer;
 use Aurora\Module\PdfForm\PdfTemplateField\Serializer\PdfTemplateFieldSerializerInterface;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,8 +39,8 @@ final class PdfTemplateSerializerTest extends TestCase
         $template->method('isFlattenOnGenerate')->willReturn($flattenOnGenerate);
         $template->method('isRequiresSignature')->willReturn($requiresSignature);
         $template->method('getFields')->willReturn(new ArrayCollection());
-        $template->method('getCreatedAt')->willReturn(new \DateTimeImmutable('2026-01-01'));
-        $template->method('getUpdatedAt')->willReturn(new \DateTimeImmutable('2026-01-01'));
+        $template->method('getCreatedAt')->willReturn(new DateTimeImmutable('2026-01-01'));
+        $template->method('getUpdatedAt')->willReturn(new DateTimeImmutable('2026-01-01'));
 
         return $template;
     }

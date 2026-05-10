@@ -35,7 +35,10 @@ function computeOverlay(viewport, pos, fieldName) {
         top: Math.min(y1, y2),
         width: Math.abs(x2 - x1),
         height: Math.abs(y2 - y1),
-        fontSize: Math.max(Math.abs(y2 - y1) * PDF_FONT_SIZE_RATIO, PDF_MIN_FONT_SIZE),
+        fontSize: Math.max(
+            Math.abs(y2 - y1) * PDF_FONT_SIZE_RATIO,
+            PDF_MIN_FONT_SIZE,
+        ),
     };
 }
 
@@ -58,7 +61,10 @@ export function usePdfRenderer(containerRef, fieldPositions) {
     }
 
     function getScale() {
-        return Math.min((containerRef.value?.clientWidth ?? 700) / PDF_A4_WIDTH_PT, PDF_MAX_SCALE);
+        return Math.min(
+            (containerRef.value?.clientWidth ?? 700) / PDF_A4_WIDTH_PT,
+            PDF_MAX_SCALE,
+        );
     }
 
     async function drawPages(pageList) {
@@ -83,7 +89,10 @@ export function usePdfRenderer(containerRef, fieldPositions) {
 
         try {
             const pdfjs = await loadPdfJs();
-            if (pdfDocInstance) { await pdfDocInstance.destroy(); pdfDocInstance = null; }
+            if (pdfDocInstance) {
+                await pdfDocInstance.destroy();
+                pdfDocInstance = null;
+            }
 
             pdfDocInstance = await pdfjs.getDocument(url).promise;
             const scale = getScale();
@@ -98,7 +107,11 @@ export function usePdfRenderer(containerRef, fieldPositions) {
                     height: Math.floor(viewport.height),
                     viewport,
                     page,
-                    overlays: buildPageOverlays(viewport, num - 1, fieldPositions.value),
+                    overlays: buildPageOverlays(
+                        viewport,
+                        num - 1,
+                        fieldPositions.value,
+                    ),
                 });
             }
 
@@ -113,13 +126,21 @@ export function usePdfRenderer(containerRef, fieldPositions) {
     }
 
     // Recalcule les overlays quand les positions de champs arrivent après le rendu initial
-    watch(fieldPositions, (positions) => {
-        if (!pages.value.length || !Object.keys(positions).length) return;
-        pages.value = pages.value.map((p) => ({
-            ...p,
-            overlays: buildPageOverlays(p.viewport, p.pageNum - 1, positions),
-        }));
-    }, { deep: true });
+    watch(
+        fieldPositions,
+        (positions) => {
+            if (!pages.value.length || !Object.keys(positions).length) return;
+            pages.value = pages.value.map((p) => ({
+                ...p,
+                overlays: buildPageOverlays(
+                    p.viewport,
+                    p.pageNum - 1,
+                    positions,
+                ),
+            }));
+        },
+        { deep: true },
+    );
 
     onMounted(() => {
         if (fieldPositions.value !== undefined) {
@@ -131,5 +152,11 @@ export function usePdfRenderer(containerRef, fieldPositions) {
         if (pdfDocInstance) await pdfDocInstance.destroy();
     });
 
-    return { pages, loading, setCanvasRef, load, currentUrl: { get: () => currentUrl } };
+    return {
+        pages,
+        loading,
+        setCanvasRef,
+        load,
+        currentUrl: { get: () => currentUrl },
+    };
 }

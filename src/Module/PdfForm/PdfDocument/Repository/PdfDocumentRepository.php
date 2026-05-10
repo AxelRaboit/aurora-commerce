@@ -8,7 +8,6 @@ use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocumentInterface;
-use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

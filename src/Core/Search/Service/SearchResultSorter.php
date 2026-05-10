@@ -16,8 +16,8 @@ use Aurora\Module\Editorial\Post\Entity\PostInterface;
 final readonly class SearchResultSorter
 {
     /**
-     * @param list<PostInterface> $posts      Hydrated post entities to sort.
-     * @param list<int>           $orderedIds IDs in relevance order (best match first).
+     * @param list<PostInterface> $posts      hydrated post entities to sort
+     * @param list<int>           $orderedIds IDs in relevance order (best match first)
      *
      * @return list<PostInterface>
      */

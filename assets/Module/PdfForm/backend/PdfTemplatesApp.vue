@@ -49,7 +49,13 @@ const {
     <div class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.pdfform.templates.searchPlaceholder')" v-on:search="onSearch" />
-            <AppButton v-if="can('pdfform.templates.manage')" variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+            <AppButton
+                v-if="can('pdfform.templates.manage')"
+                variant="primary"
+                size="md"
+                class="w-full sm:w-auto"
+                v-on:click="openCreate"
+            >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.pdfform.templates.add") }}
             </AppButton>
         </div>
@@ -96,11 +102,30 @@ const {
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <!-- Create modal -->
-        <AppModal :show="showCreate" :title="t('backend.pdfform.templates.create')" :icon="FileText" :closeable="false" :scrollable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.pdfform.templates.create')"
+            :icon="FileText"
+            :closeable="false"
+            :scrollable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <AppInput v-model="newTemplate.name" :label="t('backend.pdfform.templates.name')" :placeholder="t('backend.pdfform.templates.namePlaceholder')" :error="createErrors.name" required />
+                <AppInput
+                    v-model="newTemplate.name"
+                    :label="t('backend.pdfform.templates.name')"
+                    :placeholder="t('backend.pdfform.templates.namePlaceholder')"
+                    :error="createErrors.name"
+                    required
+                />
                 <AppInput v-model="newTemplate.description" :label="t('backend.pdfform.templates.description')" :placeholder="t('backend.pdfform.templates.descriptionPlaceholder')" />
-                <AppMultiselect v-model="newTemplate.status" :label="t('backend.pdfform.templates.status')" :options="statusOptions" :allow-empty="false" :searchable="false" />
+                <AppMultiselect
+                    v-model="newTemplate.status"
+                    :label="t('backend.pdfform.templates.status')"
+                    :options="statusOptions"
+                    :allow-empty="false"
+                    :searchable="false"
+                />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerCreate = true">
                         <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.templates.chooseFile") }}
@@ -119,17 +144,44 @@ const {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading" v-on:click="submitCreate"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="createLoading"
+                        v-on:click="submitCreate"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
+                    </AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" :title="t('backend.pdfform.templates.edit', { name: editingTemplate?.name ?? '' })" :icon="Pencil" :closeable="false" :scrollable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.pdfform.templates.edit', { name: editingTemplate?.name ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            :scrollable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <AppInput v-model="editForm.name" :label="t('backend.pdfform.templates.name')" :placeholder="t('backend.pdfform.templates.namePlaceholder')" :error="editErrors.name" required />
+                <AppInput
+                    v-model="editForm.name"
+                    :label="t('backend.pdfform.templates.name')"
+                    :placeholder="t('backend.pdfform.templates.namePlaceholder')"
+                    :error="editErrors.name"
+                    required
+                />
                 <AppInput v-model="editForm.description" :label="t('backend.pdfform.templates.description')" :placeholder="t('backend.pdfform.templates.descriptionPlaceholder')" />
-                <AppMultiselect v-model="editForm.status" :label="t('backend.pdfform.templates.status')" :options="statusOptions" :allow-empty="false" :searchable="false" />
+                <AppMultiselect
+                    v-model="editForm.status"
+                    :label="t('backend.pdfform.templates.status')"
+                    :options="statusOptions"
+                    :allow-empty="false"
+                    :searchable="false"
+                />
                 <div class="flex items-center gap-3">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerEdit = true">
                         <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.templates.chooseFile") }}
@@ -146,13 +198,28 @@ const {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading" v-on:click="submitEdit"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="editLoading"
+                        v-on:click="submitEdit"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
+                    </AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
 
         <!-- Delete modal -->
-        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" :title="t('shared.common.delete')" :icon="Trash2" v-on:close="pendingDelete = null">
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.pdfform.templates.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
             <p class="text-sm text-secondary">{{ t("backend.pdfform.templates.deleteWarning") }}</p>
             <template #footer>
@@ -164,7 +231,14 @@ const {
         </AppModal>
 
         <!-- Fields modal -->
-        <AppModal :show="showFields" :title="fieldsTemplate?.name ?? ''" :icon="ScanSearch" :closeable="false" max-width="2xl" v-on:close="showFields = false">
+        <AppModal
+            :show="showFields"
+            :title="fieldsTemplate?.name ?? ''"
+            :icon="ScanSearch"
+            :closeable="false"
+            max-width="2xl"
+            v-on:close="showFields = false"
+        >
             <div v-if="fieldsTemplate?.fields?.length" class="border border-line rounded-lg overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
@@ -199,11 +273,24 @@ const {
         </AppModal>
 
         <!-- Edit field modal -->
-        <AppModal :show="showEditField" :title="t('backend.pdfform.fields.editField', { label: editingField?.label ?? '' })" :icon="Settings" :closeable="false" :scrollable="false" v-on:close="showEditField = false">
+        <AppModal
+            :show="showEditField"
+            :title="t('backend.pdfform.fields.editField', { label: editingField?.label ?? '' })"
+            :icon="Settings"
+            :closeable="false"
+            :scrollable="false"
+            v-on:close="showEditField = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitFieldEdit">
                 <AppInput v-model="fieldForm.label" :label="t('backend.pdfform.fields.label')" :error="fieldErrors.label" required />
                 <AppInput v-model="fieldForm.pdfFieldName" :label="t('backend.pdfform.fields.pdfFieldName')" :error="fieldErrors.pdfFieldName" required />
-                <AppMultiselect v-model="fieldForm.fieldType" :label="t('backend.pdfform.fields.fieldType')" :options="fieldTypeOptions" :allow-empty="false" :searchable="false" />
+                <AppMultiselect
+                    v-model="fieldForm.fieldType"
+                    :label="t('backend.pdfform.fields.fieldType')"
+                    :options="fieldTypeOptions"
+                    :allow-empty="false"
+                    :searchable="false"
+                />
                 <AppInput v-model="fieldForm.mappingKey" :label="t('backend.pdfform.fields.mappingKey')" :placeholder="t('backend.pdfform.fields.mappingKeyPlaceholder')" />
                 <AppInput v-model="fieldForm.defaultValue" :label="t('backend.pdfform.fields.defaultValue')" :placeholder="t('backend.pdfform.fields.defaultValuePlaceholder')" />
             </form>

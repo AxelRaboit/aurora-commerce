@@ -98,7 +98,13 @@ onUnmounted(() => {
                 {{ t("backend.pdfform.documents.signatureHint") }}
             </p>
         </div>
-        <AppButton type="button" variant="ghost" size="sm" :disabled="isEmpty" v-on:click="clear">
+        <AppButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            :disabled="isEmpty"
+            v-on:click="clear"
+        >
             <Eraser class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.pdfform.documents.signatureClear") }}
         </AppButton>
     </div>

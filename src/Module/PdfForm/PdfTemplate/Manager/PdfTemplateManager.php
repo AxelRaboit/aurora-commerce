@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PdfForm\PdfTemplate\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Module\PdfForm\Enum\PdfFieldTypeEnum;
 use Aurora\Module\PdfForm\PdfTemplate\Dto\PdfTemplateInputInterface;
@@ -61,7 +62,7 @@ class PdfTemplateManager implements PdfTemplateManagerInterface
     public function detectAndSyncFields(PdfTemplateInterface $template): array
     {
         $file = $template->getFile();
-        if (null === $file) {
+        if (!$file instanceof MediaInterface) {
             return [];
         }
 
@@ -91,6 +92,7 @@ class PdfTemplateManager implements PdfTemplateManagerInterface
                 $field->setPosition($position);
                 $this->entityManager->persist($field);
             }
+
             ++$position;
         }
 

@@ -6,7 +6,10 @@ namespace Aurora\Core\Scheduler\MessageHandler;
 
 use Aurora\Core\Scheduler\Message\CleanTempFilesMessage;
 use Aurora\Module\PdfForm\PdfDocument\Repository\PdfDocumentRepository;
+use FilesystemIterator;
 use Psr\Log\LoggerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -82,17 +85,21 @@ final readonly class CleanTempFilesHandler
         $knownSet = array_flip($knownPaths);
 
         $removed = 0;
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($pdfformDir, \FilesystemIterator::SKIP_DOTS),
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($pdfformDir, FilesystemIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {
-            if (!$file->isFile() || $file->getExtension() !== 'pdf') {
+            if (!$file->isFile()) {
+                continue;
+            }
+
+            if ('pdf' !== $file->getExtension()) {
                 continue;
             }
 
             // Relative path within var/pdfform/ (e.g. 2026-05/PDF-000001.pdf)
-            $relativePath = ltrim(str_replace($pdfformDir, '', $file->getPathname()), DIRECTORY_SEPARATOR);
+            $relativePath = mb_ltrim(str_replace($pdfformDir, '', $file->getPathname()), DIRECTORY_SEPARATOR);
 
             if (!isset($knownSet[$relativePath])) {
                 @unlink($file->getPathname());

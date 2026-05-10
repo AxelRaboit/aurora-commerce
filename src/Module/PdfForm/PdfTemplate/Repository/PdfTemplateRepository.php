@@ -34,7 +34,7 @@ class PdfTemplateRepository extends ResolveTargetEntityRepository
             $countQb->andWhere('LOWER(t.name) LIKE :search')->setParameter('search', $pattern);
         }
 
-        if (null !== $status) {
+        if ($status instanceof PdfTemplateStatusEnum) {
             $qb->andWhere('t.status = :status')->setParameter('status', $status);
             $countQb->andWhere('t.status = :status')->setParameter('status', $status);
         }

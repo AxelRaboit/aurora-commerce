@@ -4,7 +4,10 @@
  */
 export function usePdfFieldInteraction(fieldValues, emit) {
     function updateField(fieldName, value) {
-        emit("update:fieldValues", { ...fieldValues.value, [fieldName]: value });
+        emit("update:fieldValues", {
+            ...fieldValues.value,
+            [fieldName]: value,
+        });
     }
 
     function isChecked(fieldName) {

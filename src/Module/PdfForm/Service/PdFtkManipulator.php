@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PdfForm\Service;
 
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PdfManipulatorInterface::class)]
 final class PdFtkManipulator implements PdfManipulatorInterface
 {
-    private const string TMP_XFDF_PREFIX   = 'aurora_pdfform_xfdf_';
+    private const string TMP_XFDF_PREFIX = 'aurora_pdfform_xfdf_';
+
     private const string TMP_VALUES_PREFIX = 'aurora_pdfform_values_';
 
     private ?bool $available = null;
@@ -22,13 +24,13 @@ final class PdFtkManipulator implements PdfManipulatorInterface
 
         exec('which pdftk 2>/dev/null', $out, $code);
 
-        return $this->available = ($code === 0 && [] !== $out);
+        return $this->available = (0 === $code && [] !== $out);
     }
 
     public function detectFields(string $pdfPath): array
     {
         if (!$this->isAvailable()) {
-            throw new \RuntimeException('pdftk is not installed on this server.');
+            throw new RuntimeException('pdftk is not installed on this server.');
         }
 
         $output = [];
@@ -43,11 +45,12 @@ final class PdFtkManipulator implements PdfManipulatorInterface
             // Flatten via Node.js + pdf-lib: embeds a Unicode font before flattening
             // so accented/special characters render correctly (pdftk uses Latin-1 only).
             $this->fillAndFlattenWithPdfLib($pdfPath, $fieldValues, $outputPath);
+
             return;
         }
 
         if (!$this->isAvailable()) {
-            throw new \RuntimeException('pdftk is not installed on this server.');
+            throw new RuntimeException('pdftk is not installed on this server.');
         }
 
         $xfdfPath = tempnam(sys_get_temp_dir(), self::TMP_XFDF_PREFIX).'.xfdf';
@@ -97,16 +100,17 @@ final class PdFtkManipulator implements PdfManipulatorInterface
                 if (isset($current['name'])) {
                     $fields[] = ['name' => $current['name'], 'type' => $current['type'] ?? 'text'];
                 }
+
                 $current = [];
                 continue;
             }
 
             if (str_starts_with($line, 'FieldName:')) {
-                $current['name'] = trim(substr($line, strlen('FieldName:')));
+                $current['name'] = mb_trim(mb_substr($line, mb_strlen('FieldName:')));
             } elseif (str_starts_with($line, 'FieldType:')) {
-                $current['rawType'] = strtolower(trim(substr($line, strlen('FieldType:'))));
+                $current['rawType'] = mb_strtolower(mb_trim(mb_substr($line, mb_strlen('FieldType:'))));
             } elseif (str_starts_with($line, 'FieldFlags:')) {
-                $current['flags'] = (int) trim(substr($line, strlen('FieldFlags:')));
+                $current['flags'] = (int) mb_trim(mb_substr($line, mb_strlen('FieldFlags:')));
             }
 
             // Resolve type once we have both rawType and flags (flags may arrive after type)
@@ -114,7 +118,7 @@ final class PdFtkManipulator implements PdfManipulatorInterface
                 $flags = $current['flags'] ?? 0;
                 $current['type'] = match ($current['rawType']) {
                     // Bit 15 (value 16384) = Radio flag. Radio groups have it set.
-                    'button' => ($flags & 16384) ? 'radio' : 'checkbox',
+                    'button' => (($flags & 16384) !== 0) ? 'radio' : 'checkbox',
                     'choice' => 'dropdown',
                     'signature' => 'signature',
                     default => 'text',
@@ -134,7 +138,7 @@ final class PdFtkManipulator implements PdfManipulatorInterface
     {
         $fields = '';
         foreach ($fieldValues as $name => $value) {
-            $encodedName  = htmlspecialchars($name, ENT_XML1, 'UTF-8');
+            $encodedName = htmlspecialchars($name, ENT_XML1, 'UTF-8');
             $encodedValue = htmlspecialchars($value, ENT_XML1, 'UTF-8');
             $fields .= "    <field name=\"{$encodedName}\"><value>{$encodedValue}</value></field>\n";
         }

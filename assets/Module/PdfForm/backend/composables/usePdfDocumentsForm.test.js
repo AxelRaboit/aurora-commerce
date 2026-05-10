@@ -46,9 +46,14 @@ const pdfformMessages = {
 
 function mountWithComposable(setupFn) {
     const Wrapper = defineComponent({
-        setup: () => { setupFn(); return () => h("div"); },
+        setup: () => {
+            setupFn();
+            return () => h("div");
+        },
     });
-    return mount(Wrapper, { global: { plugins: [createTestI18n(pdfformMessages)] } });
+    return mount(Wrapper, {
+        global: { plugins: [createTestI18n(pdfformMessages)] },
+    });
 }
 
 function makeTemplate(overrides = {}) {
@@ -63,10 +68,13 @@ function makeTemplate(overrides = {}) {
 }
 
 beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => PICKER_RESPONSE,
-    }));
+    vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => PICKER_RESPONSE,
+        }),
+    );
 });
 
 afterEach(() => {
@@ -77,7 +85,14 @@ afterEach(() => {
 describe("usePdfDocumentsForm — step navigation", () => {
     it("step is 1 after openModal", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         api.openModal();
         await nextTick();
@@ -87,7 +102,14 @@ describe("usePdfDocumentsForm — step navigation", () => {
 
     it("selectTemplate moves to step 2 and sets editorTemplate", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         const template = makeTemplate({ name: "Mon contrat" });
         api.selectTemplate(template);
@@ -99,7 +121,14 @@ describe("usePdfDocumentsForm — step navigation", () => {
 
     it("goToSignature moves to step 3", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         api.selectTemplate(makeTemplate());
         api.goToSignature();
@@ -110,7 +139,14 @@ describe("usePdfDocumentsForm — step navigation", () => {
 
     it("backToEditor returns to step 2 from step 3", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         api.selectTemplate(makeTemplate());
         api.goToSignature();
@@ -122,7 +158,14 @@ describe("usePdfDocumentsForm — step navigation", () => {
 
     it("backToPicker returns to step 1 from step 2", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         api.selectTemplate(makeTemplate());
         api.backToPicker();
@@ -133,7 +176,14 @@ describe("usePdfDocumentsForm — step navigation", () => {
 
     it("selectTemplate resets signatureData to null", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
         api.selectTemplate(makeTemplate({ requiresSignature: true }));
         api.signatureData.value = "data:image/png;base64,abc";
@@ -146,10 +196,23 @@ describe("usePdfDocumentsForm — step navigation", () => {
 describe("usePdfDocumentsForm — submitGenerate", () => {
     it("includes __signature__ in payload when template requiresSignature and signatureData is set", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
-        fetch.mockResolvedValueOnce({ ok: true, json: async () => PICKER_RESPONSE });
-        fetch.mockResolvedValueOnce({ ok: true, json: async () => GENERATE_SUCCESS_RESPONSE });
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => PICKER_RESPONSE,
+        });
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => GENERATE_SUCCESS_RESPONSE,
+        });
 
         const signatureDataUrl = "data:image/png;base64,iVBORw0KGgo=";
         api.selectTemplate(makeTemplate({ id: 1, requiresSignature: true }));
@@ -159,7 +222,9 @@ describe("usePdfDocumentsForm — submitGenerate", () => {
         await api.submitGenerate();
         await nextTick();
 
-        const generateCall = fetch.mock.calls.find((call) => call[0] === "/generate");
+        const generateCall = fetch.mock.calls.find(
+            (call) => call[0] === "/generate",
+        );
         expect(generateCall).toBeDefined();
 
         const body = JSON.parse(generateCall[1].body);
@@ -168,10 +233,23 @@ describe("usePdfDocumentsForm — submitGenerate", () => {
 
     it("does not include __signature__ when template does not require signature", async () => {
         let api;
-        mountWithComposable(() => { api = usePdfDocumentsForm("/generate", "/delete", "/templates", vi.fn()); });
+        mountWithComposable(() => {
+            api = usePdfDocumentsForm(
+                "/generate",
+                "/delete",
+                "/templates",
+                vi.fn(),
+            );
+        });
 
-        fetch.mockResolvedValueOnce({ ok: true, json: async () => PICKER_RESPONSE });
-        fetch.mockResolvedValueOnce({ ok: true, json: async () => GENERATE_SUCCESS_RESPONSE });
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => PICKER_RESPONSE,
+        });
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => GENERATE_SUCCESS_RESPONSE,
+        });
 
         api.selectTemplate(makeTemplate({ id: 1, requiresSignature: false }));
         api.generateForm.value.templateId = 1;
@@ -180,7 +258,9 @@ describe("usePdfDocumentsForm — submitGenerate", () => {
         await api.submitGenerate();
         await nextTick();
 
-        const generateCall = fetch.mock.calls.find((call) => call[0] === "/generate");
+        const generateCall = fetch.mock.calls.find(
+            (call) => call[0] === "/generate",
+        );
         expect(generateCall).toBeDefined();
 
         const body = JSON.parse(generateCall[1].body);

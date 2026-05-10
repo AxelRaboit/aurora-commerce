@@ -27,20 +27,38 @@ function emptyForm() {
     };
 }
 
-export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFieldsPath, updateFieldPath, reset) {
+export function usePdfTemplatesForm(
+    createPath,
+    updatePath,
+    deletePath,
+    detectFieldsPath,
+    updateFieldPath,
+    reset,
+) {
     const { t } = useI18n();
 
     const statusOptions = [
         { value: "draft", label: t("backend.pdfform.templates.status_draft") },
-        { value: "active", label: t("backend.pdfform.templates.status_active") },
-        { value: "archived", label: t("backend.pdfform.templates.status_archived") },
+        {
+            value: "active",
+            label: t("backend.pdfform.templates.status_active"),
+        },
+        {
+            value: "archived",
+            label: t("backend.pdfform.templates.status_archived"),
+        },
     ];
 
     // ── Create ────────────────────────────────────────────────────────────────
     const showCreate = ref(false);
     const newTemplate = ref(emptyForm());
     const showMediaPickerCreate = ref(false);
-    const { errors: createErrors, validate: validateCreate, clearErrors: clearCreate, setErrors: setCreateErrors } = useForm();
+    const {
+        errors: createErrors,
+        validate: validateCreate,
+        clearErrors: clearCreate,
+        setErrors: setCreateErrors,
+    } = useForm();
     const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
@@ -56,7 +74,15 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
     }
 
     async function submitCreate() {
-        if (!validateCreate({ name: () => required(t("backend.pdfform.templates.errors.name_required"))(newTemplate.value.name) })) return;
+        if (
+            !validateCreate({
+                name: () =>
+                    required(
+                        t("backend.pdfform.templates.errors.name_required"),
+                    )(newTemplate.value.name),
+            })
+        )
+            return;
         const autoDetect = newTemplate.value.autoDetectFields;
         const data = await createRequest(createPath, { ...newTemplate.value });
         if (!data) return;
@@ -66,18 +92,30 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
             reset();
             if (autoDetect && data.template?.id && newTemplate.value.fileId) {
                 // Déclencher la détection automatique sur le template nouvellement créé
-                const path = buildPath(detectFieldsPath, { id: data.template.id });
-                const detection = await fetch(path, { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const path = buildPath(detectFieldsPath, {
+                    id: data.template.id,
+                });
+                const detection = await fetch(path, {
+                    method: "POST",
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                });
                 const detectionData = await detection.json();
                 if (detectionData.success) {
                     const count = detectionData.template?.fields?.length ?? 0;
-                    toast.success(count > 0
-                        ? t("backend.pdfform.templates.detectFieldsSuccess", { count })
-                        : t("backend.pdfform.templates.detectFieldsEmpty")
+                    toast.success(
+                        count > 0
+                            ? t(
+                                  "backend.pdfform.templates.detectFieldsSuccess",
+                                  { count },
+                              )
+                            : t("backend.pdfform.templates.detectFieldsEmpty"),
                     );
                     reset();
                 } else {
-                    toast.error(detectionData.error ?? t("backend.pdfform.pdftk.unavailable"));
+                    toast.error(
+                        detectionData.error ??
+                            t("backend.pdfform.pdftk.unavailable"),
+                    );
                 }
             }
         } else {
@@ -90,7 +128,12 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
     const editingTemplate = ref(null);
     const editForm = ref(emptyForm());
     const showMediaPickerEdit = ref(false);
-    const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
+    const {
+        errors: editErrors,
+        validate: validateEdit,
+        clearErrors: clearEdit,
+        setErrors: setEditErrors,
+    } = useForm();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(template) {
@@ -115,13 +158,25 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
     }
 
     async function submitEdit() {
-        if (!validateEdit({ name: () => required(t("backend.pdfform.templates.errors.name_required"))(editForm.value.name) })) return;
+        if (
+            !validateEdit({
+                name: () =>
+                    required(
+                        t("backend.pdfform.templates.errors.name_required"),
+                    )(editForm.value.name),
+            })
+        )
+            return;
         const path = buildPath(updatePath, { id: editingTemplate.value.id });
         const data = await editRequest(path, { ...editForm.value });
         if (!data) return;
         if (data.success) {
             showEdit.value = false;
-            toast.success(t("backend.pdfform.templates.edit", { name: editingTemplate.value.name }));
+            toast.success(
+                t("backend.pdfform.templates.edit", {
+                    name: editingTemplate.value.name,
+                }),
+            );
             reset();
         } else {
             setEditErrors(translateServerErrors(data.errors ?? {}));
@@ -134,7 +189,11 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
         loading: deleteLoading,
         confirm: confirmDelete,
         submit: doDelete,
-    } = useDelete(deletePath, () => reset(), "backend.pdfform.templates.deleted");
+    } = useDelete(
+        deletePath,
+        () => reset(),
+        "backend.pdfform.templates.deleted",
+    );
 
     // ── Detect fields ─────────────────────────────────────────────────────────
     const showFields = ref(false);
@@ -143,8 +202,13 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
     const editingField = ref(null);
     const fieldForm = ref({});
     const showEditField = ref(false);
-    const { loading: fieldEditLoading, request: fieldEditRequest } = useRequest();
-    const { errors: fieldErrors, validate: validateField, clearErrors: clearField } = useForm();
+    const { loading: fieldEditLoading, request: fieldEditRequest } =
+        useRequest();
+    const {
+        errors: fieldErrors,
+        validate: validateField,
+        clearErrors: clearField,
+    } = useForm();
 
     const fieldTypeOptions = [
         { value: "text", label: t("backend.pdfform.fields.type_text") },
@@ -152,7 +216,10 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
         { value: "radio", label: t("backend.pdfform.fields.type_radio") },
         { value: "dropdown", label: t("backend.pdfform.fields.type_dropdown") },
         { value: "date", label: t("backend.pdfform.fields.type_date") },
-        { value: "signature", label: t("backend.pdfform.fields.type_signature") },
+        {
+            value: "signature",
+            label: t("backend.pdfform.fields.type_signature"),
+        },
     ];
 
     function openFields(template) {
@@ -164,20 +231,33 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
         if (!fieldsTemplate.value) return;
         detectLoading.value = true;
         try {
-            const path = buildPath(detectFieldsPath, { id: fieldsTemplate.value.id });
-            const res = await fetch(path, { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" } });
+            const path = buildPath(detectFieldsPath, {
+                id: fieldsTemplate.value.id,
+            });
+            const res = await fetch(path, {
+                method: "POST",
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+            });
             const data = await res.json();
             if (data.success) {
                 // Forcer un nouvel objet pour garantir la réactivité Vue
-                fieldsTemplate.value = { ...(data.template ?? {}), fields: data.template?.fields ?? [] };
+                fieldsTemplate.value = {
+                    ...(data.template ?? {}),
+                    fields: data.template?.fields ?? [],
+                };
                 const count = fieldsTemplate.value.fields.length;
-                toast.success(count > 0
-                    ? t("backend.pdfform.templates.detectFieldsSuccess", { count })
-                    : t("backend.pdfform.templates.detectFieldsEmpty")
+                toast.success(
+                    count > 0
+                        ? t("backend.pdfform.templates.detectFieldsSuccess", {
+                              count,
+                          })
+                        : t("backend.pdfform.templates.detectFieldsEmpty"),
                 );
                 reset(); // Recharge la liste pour mettre à jour le compteur "Champs"
             } else {
-                toast.error(data.error ?? t("backend.pdfform.pdftk.unavailable"));
+                toast.error(
+                    data.error ?? t("backend.pdfform.pdftk.unavailable"),
+                );
             }
         } finally {
             detectLoading.value = false;
@@ -199,13 +279,23 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
     }
 
     async function submitFieldEdit() {
-        if (!validateField({ label: () => required(t("backend.pdfform.fields.errors.label_required"))(fieldForm.value.label) })) return;
+        if (
+            !validateField({
+                label: () =>
+                    required(t("backend.pdfform.fields.errors.label_required"))(
+                        fieldForm.value.label,
+                    ),
+            })
+        )
+            return;
         const path = buildPath(updateFieldPath, { id: editingField.value.id });
         const data = await fieldEditRequest(path, { ...fieldForm.value });
         if (!data) return;
         if (data.success) {
             showEditField.value = false;
-            const idx = fieldsTemplate.value.fields.findIndex((f) => f.id === editingField.value.id);
+            const idx = fieldsTemplate.value.fields.findIndex(
+                (f) => f.id === editingField.value.id,
+            );
             if (idx !== -1) fieldsTemplate.value.fields[idx] = data.field;
             reset();
         }
@@ -213,10 +303,39 @@ export function usePdfTemplatesForm(createPath, updatePath, deletePath, detectFi
 
     return {
         statusOptions,
-        showCreate, newTemplate, showMediaPickerCreate, createErrors, createLoading, openCreate, onFilePickedCreate, submitCreate,
-        showEdit, editingTemplate, editForm, showMediaPickerEdit, editErrors, editLoading, openEdit, onFilePickedEdit, submitEdit,
-        pendingDelete, deleteLoading, confirmDelete, doDelete,
-        showFields, fieldsTemplate, detectLoading, openFields, detectFields,
-        fieldTypeOptions, editingField, fieldForm, showEditField, fieldErrors, fieldEditLoading, openEditField, submitFieldEdit,
+        showCreate,
+        newTemplate,
+        showMediaPickerCreate,
+        createErrors,
+        createLoading,
+        openCreate,
+        onFilePickedCreate,
+        submitCreate,
+        showEdit,
+        editingTemplate,
+        editForm,
+        showMediaPickerEdit,
+        editErrors,
+        editLoading,
+        openEdit,
+        onFilePickedEdit,
+        submitEdit,
+        pendingDelete,
+        deleteLoading,
+        confirmDelete,
+        doDelete,
+        showFields,
+        fieldsTemplate,
+        detectLoading,
+        openFields,
+        detectFields,
+        fieldTypeOptions,
+        editingField,
+        fieldForm,
+        showEditField,
+        fieldErrors,
+        fieldEditLoading,
+        openEditField,
+        submitFieldEdit,
     };
 }
