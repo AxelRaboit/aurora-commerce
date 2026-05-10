@@ -150,14 +150,22 @@ backend:
       parent_folder_not_found: Parent folder {id} not found.
   tabs:
     access_requests: Access Requests
+    access_requests_description: Pending access requests awaiting approval.
     audit: Audit
+    audit_description: Full history of all actions performed in the application.
     invitations: Invitations
     overview: Overview
+    overview_description: Key indicators and recent activity.
     parameters: Parameters
+    parameters_description: Technical parameters and configuration values.
     modules: Modules
+    modules_description: Enable or disable modules and their features.
     mount_points: Mount Points
+    mount_points_description: Connections to external resources (DB, API, SFTP).
     permissions: Permissions
+    permissions_description: View privileges registered per module.
     users: Users
+    users_description: Manage user accounts, roles and privileges.
   users:
     intro: Manage administration users and their roles.
     name: Name
@@ -367,13 +375,21 @@ backend:
   settings:
     tabs:
       general: General
+      general_description: Site name, admin email, public URL.
       reading: Reading
+      reading_description: Posts per page, homepage, comments.
       localization: Localization
+      localization_description: Language, timezone, date format.
       branding: Branding
+      branding_description: Logo, favicon and visual identity.
       seo: SEO
+      seo_description: Title template and default meta description.
       system: System
+      system_description: Maintenance, registrations, access and uploads.
       email: Emails
+      email_description: Language for outgoing emails.
       sequences: Sequences
+      sequences_description: Prefixes for auto-generated references.
       modules: Modules
     cascadeLocked: 'Enable “{parent}” first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'

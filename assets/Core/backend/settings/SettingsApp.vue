@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
@@ -41,6 +42,17 @@ const tabLabels = {
     sequences: () => t("backend.settings.tabs.sequences"),
 };
 
+const tabDescriptions = {
+    general: () => t("backend.settings.tabs.general_description"),
+    reading: () => t("backend.settings.tabs.reading_description"),
+    localization: () => t("backend.settings.tabs.localization_description"),
+    branding: () => t("backend.settings.tabs.branding_description"),
+    seo: () => t("backend.settings.tabs.seo_description"),
+    system: () => t("backend.settings.tabs.system_description"),
+    email: () => t("backend.settings.tabs.email_description"),
+    sequences: () => t("backend.settings.tabs.sequences_description"),
+};
+
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
     useSettingsForm(props.groups, availableGroups, props.updatePath);
 
@@ -54,26 +66,38 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTab
+            <AppTooltip
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                :active="activeTab === groupName"
-                v-on:click="activeTab = groupName"
+                :title="tabLabels[groupName]?.() ?? groupName"
+                :description="tabDescriptions[groupName]?.()"
+                placement="right"
             >
-                {{ tabLabels[groupName]?.() ?? groupName }}
-            </AppTab>
+                <AppTab
+                    :active="activeTab === groupName"
+                    v-on:click="activeTab = groupName"
+                >
+                    {{ tabLabels[groupName]?.() ?? groupName }}
+                </AppTab>
+            </AppTooltip>
         </nav>
 
         <div class="flex md:hidden gap-1 flex-wrap mb-4 w-full">
-            <AppTab
+            <AppTooltip
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                :active="activeTab === groupName"
-                size="sm"
-                v-on:click="activeTab = groupName"
+                :title="tabLabels[groupName]?.() ?? groupName"
+                :description="tabDescriptions[groupName]?.()"
+                placement="bottom"
             >
-                {{ tabLabels[groupName]?.() ?? groupName }}
-            </AppTab>
+                <AppTab
+                    :active="activeTab === groupName"
+                    size="sm"
+                    v-on:click="activeTab = groupName"
+                >
+                    {{ tabLabels[groupName]?.() ?? groupName }}
+                </AppTab>
+            </AppTooltip>
         </div>
 
         <div class="flex-1 min-w-0">

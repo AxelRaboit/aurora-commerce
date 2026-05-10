@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import DashboardOverview from "@core/backend/dashboard/DashboardOverview.vue";
 import ParametersTab from "@core/backend/dev/ParametersTab.vue";
 import UsersTab from "@core/backend/dev/UsersTab.vue";
@@ -63,14 +64,14 @@ const props = defineProps({
 
 // Each tab is self-describing: label, icon, URL path and initial SSR data colocated.
 const tabs = [
-    { key: "overview",        label: () => t("backend.tabs.overview"),        icon: LayoutDashboard, path: () => props.overviewPath,        initialData: () => props.stats },
-    { key: "parameters",      label: () => t("backend.tabs.parameters"),      icon: Sliders,         path: () => props.parametersPath,      initialData: () => props.parameters },
-    { key: "users",           label: () => t("backend.tabs.users"),           icon: Users,           path: () => props.usersPath,           initialData: () => props.users },
-    { key: "access_requests", label: () => t("backend.tabs.access_requests"), icon: KeyRound,        path: () => props.accessRequestsPath,  initialData: () => props.accessRequests },
-    { key: "audit",           label: () => t("backend.tabs.audit"),           icon: ScrollText,      path: () => props.auditPath,           initialData: () => props.audit },
-    { key: "permissions",     label: () => t("backend.tabs.permissions"),     icon: ShieldCheck,     path: () => props.permissionsPath,     initialData: () => props.permissions },
-    { key: "modules",         label: () => t("backend.tabs.modules"),         icon: Puzzle,          path: () => props.modulesPath,         initialData: () => props.modules },
-    { key: "mount_points",    label: () => t("backend.tabs.mount_points"),    icon: Network,         path: () => props.mountPointsPath,     initialData: () => props.mountPoints },
+    { key: "overview",        label: () => t("backend.tabs.overview"),        description: () => t("backend.tabs.overview_description"),        icon: LayoutDashboard, path: () => props.overviewPath,        initialData: () => props.stats },
+    { key: "parameters",      label: () => t("backend.tabs.parameters"),      description: () => t("backend.tabs.parameters_description"),      icon: Sliders,         path: () => props.parametersPath,      initialData: () => props.parameters },
+    { key: "users",           label: () => t("backend.tabs.users"),           description: () => t("backend.tabs.users_description"),           icon: Users,           path: () => props.usersPath,           initialData: () => props.users },
+    { key: "access_requests", label: () => t("backend.tabs.access_requests"), description: () => t("backend.tabs.access_requests_description"), icon: KeyRound,        path: () => props.accessRequestsPath,  initialData: () => props.accessRequests },
+    { key: "audit",           label: () => t("backend.tabs.audit"),           description: () => t("backend.tabs.audit_description"),           icon: ScrollText,      path: () => props.auditPath,           initialData: () => props.audit },
+    { key: "permissions",     label: () => t("backend.tabs.permissions"),     description: () => t("backend.tabs.permissions_description"),     icon: ShieldCheck,     path: () => props.permissionsPath,     initialData: () => props.permissions },
+    { key: "modules",         label: () => t("backend.tabs.modules"),         description: () => t("backend.tabs.modules_description"),         icon: Puzzle,          path: () => props.modulesPath,         initialData: () => props.modules },
+    { key: "mount_points",    label: () => t("backend.tabs.mount_points"),    description: () => t("backend.tabs.mount_points_description"),    icon: Network,         path: () => props.mountPointsPath,     initialData: () => props.mountPoints },
 ];
 
 const { state: tab, set: setTab } = useUrlSyncedState({
@@ -92,28 +93,40 @@ function initialDataFor(key) {
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTab
+            <AppTooltip
                 v-for="tabItem in tabs"
                 :key="tabItem.key"
-                :active="tab === tabItem.key"
-                v-on:click="setTab(tabItem.key)"
+                :title="tabItem.label()"
+                :description="tabItem.description()"
+                placement="right"
             >
-                <component :is="tabItem.icon" class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ tabItem.label() }}
-            </AppTab>
+                <AppTab
+                    :active="tab === tabItem.key"
+                    v-on:click="setTab(tabItem.key)"
+                >
+                    <component :is="tabItem.icon" class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    {{ tabItem.label() }}
+                </AppTab>
+            </AppTooltip>
         </nav>
 
         <div class="flex md:hidden gap-1 flex-wrap w-full">
-            <AppTab
+            <AppTooltip
                 v-for="tabItem in tabs"
                 :key="tabItem.key"
-                :active="tab === tabItem.key"
-                size="sm"
-                v-on:click="setTab(tabItem.key)"
+                :title="tabItem.label()"
+                :description="tabItem.description()"
+                placement="bottom"
             >
-                <component :is="tabItem.icon" class="w-4 h-4" :stroke-width="2" />
-                {{ tabItem.label() }}
-            </AppTab>
+                <AppTab
+                    :active="tab === tabItem.key"
+                    size="sm"
+                    v-on:click="setTab(tabItem.key)"
+                >
+                    <component :is="tabItem.icon" class="w-4 h-4" :stroke-width="2" />
+                    {{ tabItem.label() }}
+                </AppTab>
+            </AppTooltip>
         </div>
 
         <div class="flex-1 min-w-0 space-y-6">

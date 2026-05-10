@@ -151,14 +151,22 @@ backend:
       parent_folder_not_found: Le dossier parent {id} est introuvable.
   tabs:
     access_requests: Demandes d'accès
+    access_requests_description: "Demandes d'accès en attente d'approbation."
     audit: Audit
+    audit_description: "Historique de toutes les actions effectuées dans l'application."
     invitations: Invitations
     overview: Vue d'ensemble
+    overview_description: "Indicateurs clés et activité récente."
     parameters: Paramètres
+    parameters_description: "Paramètres techniques et valeurs de configuration."
     modules: Modules
+    modules_description: "Activer ou désactiver les modules et leurs fonctionnalités."
     mount_points: Points de montage
+    mount_points_description: "Connexions vers des ressources externes (BDD, API, SFTP)."
     permissions: Permissions
+    permissions_description: "Consulter les privilèges enregistrés par module."
     users: Utilisateurs
+    users_description: "Gérer les comptes, rôles et privilèges des utilisateurs."
   users:
     intro: Gérez les utilisateurs de l'administration et leurs rôles.
     name: Nom
@@ -367,13 +375,21 @@ backend:
   settings:
     tabs:
       general: Général
+      general_description: "Nom du site, email admin, URL publique."
       reading: Lecture
+      reading_description: "Articles par page, page d'accueil, commentaires."
       localization: Localisation
+      localization_description: "Langue, fuseau horaire, format de date."
       branding: Branding
+      branding_description: "Logo, favicon et identité visuelle."
       seo: SEO
+      seo_description: "Template de titre et meta description par défaut."
       system: Système
+      system_description: "Maintenance, inscriptions, accès et uploads."
       email: Emails
+      email_description: "Langue des emails sortants."
       sequences: Séquences
+      sequences_description: "Préfixes des références auto-générées."
       modules: Modules
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: "Recommandé : image carrée (1:1)."
