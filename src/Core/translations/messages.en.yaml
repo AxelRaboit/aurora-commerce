@@ -376,9 +376,187 @@ backend:
       sequences: Sequences
       modules: Modules
     cascadeLocked: 'Enable “{parent}” first to edit this setting.'
-    mediaSquareHint: "Recommended: square image (1:1)."
+    mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.
     modulesEmpty: No module found.
+  parameters:
+    site_name:
+      label: Site name
+      description: Name displayed on the public site and in emails
+    site_description:
+      label: Site description
+      description: Short description used as the default meta description
+    site_url:
+      label: Public site URL
+      description: Absolute URL of the site (no trailing slash), used in emails and the sitemap
+    admin_email:
+      label: Administrator email
+      description: Email address of the administrator
+    default_locale:
+      label: Default locale
+      description: 'Default language code (fr, en, es, de)'
+    posts_per_page:
+      label: Posts per page
+      description: Number of posts displayed per page on public lists
+    max_upload_size_mb:
+      label: Max upload size (MB)
+      description: Maximum allowed size for a media upload, in megabytes
+    allowed_upload_extensions:
+      label: Allowed extensions
+      description: 'Comma-separated list of allowed extensions (jpg,png,pdf,…)'
+    timezone:
+      label: Timezone
+      description: 'PHP timezone (e.g. Europe/Paris)'
+    date_format:
+      label: Date display format
+      description: 'Date display format (e.g. d/m/Y)'
+    comments_enabled:
+      label: Comments enabled
+      description: 'Comments enabled (0 = disabled, 1 = enabled)'
+    comment_moderation_enabled:
+      label: Comment moderation
+      description: 'If enabled, comments await moderation before publication (1 = enabled, 0 = auto-approve)'
+    maintenance_mode:
+      label: Maintenance mode
+      description: 'Maintenance mode (0 = disabled, 1 = site closed to public)'
+    admin_registration_enabled:
+      label: Admin registrations open
+      description: Allow registrations via /register (admin interface) — disable after creating the first admin account
+    admin_access_request_enabled:
+      label: Admin access requests open
+      description: Allow access requests via /access-request (access request form for the administration)
+    front_registration_enabled:
+      label: Front-end registrations open
+      description: 'Allow public registrations on the front end (0 = disabled, 1 = enabled)'
+    post_revisions_limit:
+      label: Post revisions kept
+      description: Maximum number of revisions kept per post (oldest are deleted)
+    trash_auto_purge_days:
+      label: Auto-purge trash (days)
+      description: 'Number of days before permanent deletion of trashed posts (0 = never)'
+    homepage_post_id:
+      label: Homepage post ID
+      description: ID of a post displayed on the homepage. Empty = latest posts list.
+    default_front:
+      label: Default front
+      description: 'Slug of the front displayed by default on “/”. E.g. editorial, tracking.'
+    logo_media_id:
+      label: Site logo
+      description: ID of the media used as the logo
+    favicon_media_id:
+      label: Favicon
+      description: ID of the media used as the favicon
+    seo_title_template:
+      label: SEO title template
+      description: 'Template for page titles. Use {title} and {siteName}. E.g. {title} — {siteName}'
+    seo_default_description:
+      label: Default SEO description
+      description: Meta description used when no specific description is defined
+    ecommerce_low_stock_threshold:
+      label: Low stock threshold (e-commerce)
+      description: “Displays a \”Only X left\” warning on the product page when available stock is less than or equal to this value. Set to 0 to disable.”
+    ged_document_prefix:
+      label: DMS document reference prefix
+      description: 'Auto-generated DMS document reference prefix (e.g. DOC). Leave empty to disable.'
+    billing_invoice_prefix:
+      label: Invoice number prefix
+      description: 'Auto-generated invoice number prefix upon validation (e.g. INV). Leave empty to disable.'
+    billing_credit_note_prefix:
+      label: Credit note number prefix
+      description: 'Auto-generated credit note number prefix (e.g. CN). Leave empty to disable.'
+    ecommerce_order_prefix:
+      label: Order number prefix
+      description: 'Auto-generated order number prefix (e.g. ORD). Leave empty to disable.'
+    ecommerce_listing_prefix:
+      label: Shop product reference prefix
+      description: 'Auto-generated shop product reference prefix (e.g. LST). Leave empty to disable.'
+    erp_product_prefix:
+      label: ERP product reference prefix
+      description: 'Auto-generated product reference prefix (e.g. PROD). Leave empty to disable.'
+    crm_deal_prefix:
+      label: CRM deal reference prefix
+      description: 'Auto-generated CRM deal reference prefix (e.g. DEAL). Leave empty to disable.'
+    crm_contact_prefix:
+      label: CRM contact reference prefix
+      description: 'Auto-generated CRM contact reference prefix (e.g. CTT). Leave empty to disable.'
+    crm_company_prefix:
+      label: CRM company reference prefix
+      description: 'Auto-generated CRM company reference prefix (e.g. CPY). Leave empty to disable.'
+    email_locale:
+      label: Forced email locale
+      description: 'Language code (fr, en, es, de) to force for all outgoing emails. Empty = use the current request locale.'
+    photo_gallery_prefix:
+      label: Gallery reference prefix
+      description: 'Auto-generated photo gallery reference prefix (e.g. GAL).'
+    editorial_post_prefix:
+      label: Post reference prefix
+      description: 'Auto-generated post reference prefix (e.g. ART).'
+    editorial_form_prefix:
+      label: Form reference prefix
+      description: 'Auto-generated form reference prefix (e.g. FRM).'
+    billing_tiers_prefix:
+      label: Third-party reference prefix
+      description: 'Auto-generated third-party (supplier/client) reference prefix (e.g. TRS).'
+    core_user_prefix:
+      label: User reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_media_prefix:
+      label: Media reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_access_request_prefix:
+      label: Access request reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    editorial_form_submission_prefix:
+      label: Form submission reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    photo_gallery_item_prefix:
+      label: Photo reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    photo_gallery_invite_prefix:
+      label: Gallery invite reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    editorial_comment_prefix:
+      label: Comment reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_audit_log_prefix:
+      label: Audit log prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_reset_password_prefix:
+      label: Password reset request prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_media_folder_prefix:
+      label: Media folder reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    core_menu_item_prefix:
+      label: Menu item reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    billing_ocr_job_prefix:
+      label: OCR job reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    ecommerce_cart_prefix:
+      label: Cart reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    ecommerce_cart_item_prefix:
+      label: Cart item reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    ecommerce_order_line_prefix:
+      label: Order line reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    editorial_form_field_prefix:
+      label: Form field reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    editorial_taxonomy_term_prefix:
+      label: Taxonomy term reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    photo_gallery_finalization_prefix:
+      label: Gallery finalization reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    photo_gallery_item_comment_prefix:
+      label: Photo comment reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+    photo_gallery_pick_prefix:
+      label: Photo pick reference prefix
+      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
 frontend:
   menu:
     home: Home

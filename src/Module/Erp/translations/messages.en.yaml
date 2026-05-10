@@ -9,6 +9,7 @@ backend:
           delete: Delete products
   modules:
     erp: ERP
+    erp_description: 'Enables the ERP section in the admin (products). Requires CRM.'
   audit:
     actions:
       erp:

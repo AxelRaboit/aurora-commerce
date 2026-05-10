@@ -9,6 +9,7 @@ backend:
           manage: Gérer les catégories de documents
   modules:
     ged: GED
+    ged_description: "Active la section GED dans l'administration."
   nav:
     sections:
       ged: GED

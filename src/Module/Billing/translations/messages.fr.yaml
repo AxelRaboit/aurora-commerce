@@ -14,6 +14,7 @@ backend:
           import: Importer des factures par OCR
   modules:
     billing: Facturation
+    billing_description: "Active la section Facturation dans l'administration. Nécessite le CRM."
   nav:
     invoices: Factures
     invoices_description: Factures clients et fournisseurs (création, paiement, archivage)

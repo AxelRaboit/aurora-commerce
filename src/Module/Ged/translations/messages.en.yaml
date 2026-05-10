@@ -9,6 +9,7 @@ backend:
           manage: Manage document categories
   modules:
     ged: DMS
+    ged_description: 'Enables the DMS section in the admin.'
   nav:
     sections:
       ged: DMS

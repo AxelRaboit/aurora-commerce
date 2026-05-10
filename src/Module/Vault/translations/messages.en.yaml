@@ -5,11 +5,14 @@ backend:
         use: Use the vault
   modules:
     vault: Tools
+    vault_description: 'Enables utility tools.'
   nav:
     sections:
       vault: Tools
     vault: Vault
     vault_description: End-to-end encrypted password manager
+    password_generator: Password generator
+    password_generator_description: Enables the password generator.
   audit:
     actions:
       vault:

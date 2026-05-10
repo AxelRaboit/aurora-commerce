@@ -11,6 +11,9 @@ backend:
           create: Créer des événements
           edit: Modifier les événements
           delete: Supprimer les événements
+  modules:
+    planning: Planning
+    planning_description: "Active la section Planning dans l'administration."
   nav:
     plannings: Plannings
     plannings_description: Calendriers et événements liés aux entités du système

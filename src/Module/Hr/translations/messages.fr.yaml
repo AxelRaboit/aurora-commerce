@@ -7,6 +7,9 @@ backend:
           create: Créer des employés
           edit: Modifier les employés
           delete: Supprimer les employés
+  modules:
+    hr: RH
+    hr_description: "Active la section RH dans l'administration."
   nav:
     sections:
       hr: RH

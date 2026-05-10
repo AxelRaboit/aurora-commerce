@@ -13,6 +13,7 @@ backend:
           manage: Gérer les opportunités
   modules:
     crm: CRM
+    crm_description: "Active la section CRM dans l'administration (contacts, entreprises, affaires)."
   nav:
     sections:
       crm: CRM

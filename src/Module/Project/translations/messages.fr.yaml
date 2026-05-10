@@ -12,6 +12,9 @@ backend:
   notifications:
     taskAssigned: Vous avez été assigné à une tâche.
     taskCommented: '%name% a commenté : %content%'
+  modules:
+    project: Projet
+    project_description: "Active la section Projet dans l'administration."
   nav:
     sections:
       project: Projet

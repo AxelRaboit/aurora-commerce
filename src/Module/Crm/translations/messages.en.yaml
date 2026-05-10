@@ -13,6 +13,7 @@ backend:
           manage: Manage deals
   modules:
     crm: CRM
+    crm_description: 'Enables the CRM section in the admin (contacts, companies, deals).'
   nav:
     sections:
       crm: CRM

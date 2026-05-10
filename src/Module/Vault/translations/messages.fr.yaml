@@ -5,11 +5,14 @@ backend:
         use: Utiliser le coffre-fort
   modules:
     vault: Outils
+    vault_description: 'Active les outils utilitaires.'
   nav:
     sections:
       vault: Outils
     vault: Coffre-fort
     vault_description: Gestionnaire de mots de passe chiffré de bout en bout
+    password_generator: Générateur de mots de passe
+    password_generator_description: Active le générateur de mots de passe.
   audit:
     actions:
       vault:

@@ -12,6 +12,9 @@ backend:
           manage: Gérer les commandes
   modules:
     ecommerce: E-commerce
+    ecommerce_description: "Active la section E-commerce dans l'administration (listings, commandes). Nécessite l'ERP."
+    ecommerce_shop: Boutique publique
+    ecommerce_shop_description: 'Active la boutique côté site public (catalogue, panier, checkout). Nécessite le module E-commerce.'
   audit:
     actions:
       ecommerce:

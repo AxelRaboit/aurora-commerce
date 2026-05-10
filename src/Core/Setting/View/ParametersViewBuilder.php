@@ -7,6 +7,7 @@ namespace Aurora\Core\Setting\View;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Builds the Twig payload for the dev parameters dashboard tab. Centralises
@@ -15,7 +16,10 @@ use Aurora\Core\Setting\Repository\SettingRepository;
  */
 final readonly class ParametersViewBuilder
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(
+        private SettingRepository $settingRepository,
+        private TranslatorInterface $translator,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -36,9 +40,9 @@ final readonly class ParametersViewBuilder
         $items = array_map(
             fn ($parameter): array => [
                 'key' => $parameter->getKey(),
-                'label' => $labelsByKey[$parameter->getKey()] ?? $parameter->getKey(),
+                'label' => $this->translator->trans($labelsByKey[$parameter->getKey()] ?? $parameter->getKey()),
                 'value' => $parameter->getValue(),
-                'description' => $parameter->getDescription(),
+                'description' => $this->translator->trans($parameter->getDescription()),
                 'type' => $parameter->getType(),
                 'group' => $parameter->getGroup(),
             ],

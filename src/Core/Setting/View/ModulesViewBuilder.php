@@ -8,6 +8,7 @@ use Aurora\Core\Module\ModuleInterface;
 use Aurora\Core\Module\NavSection;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class ModulesViewBuilder
 {
@@ -15,6 +16,7 @@ final readonly class ModulesViewBuilder
     public function __construct(
         private SettingRepository $settingRepository,
         private iterable $modules,
+        private TranslatorInterface $translator,
     ) {}
 
     /**
@@ -49,8 +51,8 @@ final readonly class ModulesViewBuilder
 
                 $subModules[] = [
                     'key' => $subParameter->getKey(),
-                    'label' => $subParameter->getLabel(),
-                    'description' => $subParameter->getDescription(),
+                    'label' => $this->translator->trans($subParameter->getLabel()),
+                    'description' => $this->translator->trans($subParameter->getDescription()),
                     'value' => $this->settingRepository->get($subParameter->getKey(), $subParameter->getDefaultValue()),
                     'requires' => $subParameter->getCascadeRequires(),
                 ];
@@ -58,8 +60,8 @@ final readonly class ModulesViewBuilder
 
             $parameters[] = [
                 'key' => $parameter->getKey(),
-                'label' => $parameter->getLabel(),
-                'description' => $parameter->getDescription(),
+                'label' => $this->translator->trans($parameter->getLabel()),
+                'description' => $this->translator->trans($parameter->getDescription()),
                 'value' => $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue()),
                 'requires' => $parameter->getCascadeRequires(),
                 'navItems' => $navItems,
