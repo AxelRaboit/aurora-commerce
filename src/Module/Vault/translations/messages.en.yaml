@@ -26,6 +26,7 @@ backend:
           deleted: Folder deleted
         config:
           setup: Vault initialised
+          password_changed: Master password changed
 
 vault:
   setup:
@@ -63,6 +64,7 @@ vault:
     created: Entry created.
     updated: Entry updated.
     deleted: Entry deleted.
+    moved: Entry moved.
     count: entry(s)
     all_entries_label: All entries
     searchPlaceholder: Search vault…
@@ -91,6 +93,7 @@ vault:
     created: Folder created.
     updated: Folder updated.
     deleted: Folder deleted.
+    moved: Folder moved.
     all_folders: All folders
     sub_folders_count: sub-folder(s)
     all: All entries

@@ -172,6 +172,7 @@ backend:
       brandingDetail: Branding
     upload: Upload
     uploaded: '{count} file(s) uploaded'
+    uploaded_one: File uploaded
     empty: No media in this folder
     altWarning: Some media items are missing alternative text
     missingAlt: Missing alt

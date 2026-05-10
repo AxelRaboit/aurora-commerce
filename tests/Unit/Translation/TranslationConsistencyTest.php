@@ -1,0 +1,182 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Tests\Unit\Translation;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
+
+final class TranslationConsistencyTest extends TestCase
+{
+    private const PLACEHOLDER_EXCEPTIONS = [
+        // ICU plural syntax — accolades imbriquées contiennent du texte traduit, pas des placeholders
+        'photo.galleries.usage.itemCount',
+    ];
+
+    private const PARITY_EXCEPTIONS = [
+        // Laisse vide pour l'instant — on ajoutera au fur et à mesure
+    ];
+
+    /** @return list<array{string, array<string, mixed>, array<string, mixed>}> */
+    public static function translationPairsProvider(): array
+    {
+        $srcDir = dirname(__DIR__, 3).'/src';
+        $pairs = [];
+
+        $dirs = array_merge(
+            glob($srcDir.'/Core/translations', GLOB_ONLYDIR) ?: [],
+            glob($srcDir.'/Module/*/translations', GLOB_ONLYDIR) ?: [],
+        );
+
+        foreach ($dirs as $dir) {
+            $frFile = $dir.'/messages.fr.yaml';
+            $enFile = $dir.'/messages.en.yaml';
+
+            if (!file_exists($frFile) || !file_exists($enFile)) {
+                continue;
+            }
+
+            $pathParts = explode('/', $dir);
+            $moduleIndex = array_search('Module', $pathParts, true);
+            $module = false !== $moduleIndex ? $pathParts[$moduleIndex + 1] : 'Core';
+
+            $pairs[$module] = [
+                $module,
+                Yaml::parseFile($frFile) ?? [],
+                Yaml::parseFile($enFile) ?? [],
+            ];
+        }
+
+        return array_values($pairs);
+    }
+
+    /**
+     * @param array<string, mixed> $fr
+     * @param array<string, mixed> $en
+     */
+    #[DataProvider('translationPairsProvider')]
+    public function testFrEnKeyParity(string $module, array $fr, array $en): void
+    {
+        $flatFr = $this->flattenKeys($fr);
+        $flatEn = $this->flattenKeys($en);
+
+        $missingInEn = array_diff_key($flatFr, $flatEn);
+        $missingInFr = array_diff_key($flatEn, $flatFr);
+
+        foreach (self::PARITY_EXCEPTIONS as $exception) {
+            unset($missingInEn[$exception], $missingInFr[$exception]);
+        }
+
+        self::assertEmpty(
+            $missingInEn,
+            sprintf(
+                '[%s] Keys present in FR but missing in EN: %s',
+                $module,
+                implode(', ', array_keys($missingInEn)),
+            ),
+        );
+
+        self::assertEmpty(
+            $missingInFr,
+            sprintf(
+                '[%s] Keys present in EN but missing in FR: %s',
+                $module,
+                implode(', ', array_keys($missingInFr)),
+            ),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $fr
+     * @param array<string, mixed> $en
+     */
+    #[DataProvider('translationPairsProvider')]
+    public function testNoEmptyValues(string $module, array $fr, array $en): void
+    {
+        $flatFr = $this->flattenKeys($fr);
+        $flatEn = $this->flattenKeys($en);
+
+        $emptyFr = array_filter($flatFr, static fn (mixed $value): bool => '' === $value || null === $value);
+        $emptyEn = array_filter($flatEn, static fn (mixed $value): bool => '' === $value || null === $value);
+
+        self::assertEmpty(
+            $emptyFr,
+            sprintf('[%s] Empty or null values in FR: %s', $module, implode(', ', array_keys($emptyFr))),
+        );
+
+        self::assertEmpty(
+            $emptyEn,
+            sprintf('[%s] Empty or null values in EN: %s', $module, implode(', ', array_keys($emptyEn))),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $fr
+     * @param array<string, mixed> $en
+     */
+    #[DataProvider('translationPairsProvider')]
+    public function testPlaceholderConsistency(string $module, array $fr, array $en): void
+    {
+        $flatFr = $this->flattenKeys($fr);
+        $flatEn = $this->flattenKeys($en);
+
+        $commonKeys = array_intersect_key($flatFr, $flatEn);
+
+        foreach ($commonKeys as $key => $_) {
+            if (in_array($key, self::PLACEHOLDER_EXCEPTIONS, true)) {
+                continue;
+            }
+
+            $frValue = (string) $flatFr[$key];
+            $enValue = (string) $flatEn[$key];
+
+            $frPlaceholders = $this->extractPlaceholders($frValue);
+            $enPlaceholders = $this->extractPlaceholders($enValue);
+
+            sort($frPlaceholders);
+            sort($enPlaceholders);
+
+            self::assertSame(
+                $enPlaceholders,
+                $frPlaceholders,
+                sprintf(
+                    '[%s] Placeholder mismatch for key "%s": FR has {%s}, EN has {%s}',
+                    $module,
+                    $key,
+                    implode('}, {', $frPlaceholders),
+                    implode('}, {', $enPlaceholders),
+                ),
+            );
+        }
+    }
+
+    /** @return list<string> */
+    private function extractPlaceholders(string $value): array
+    {
+        preg_match_all('/\{([^}]+)\}/', $value, $matches);
+
+        return $matches[1];
+    }
+
+    /**
+     * @param array<string, mixed> $array
+     *
+     * @return array<string, mixed>
+     */
+    private function flattenKeys(array $array, string $prefix = ''): array
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            $fullKey = '' === $prefix ? (string) $key : $prefix.'.'.$key;
+            if (is_array($value)) {
+                $result += $this->flattenKeys($value, $fullKey);
+            } else {
+                $result[$fullKey] = $value;
+            }
+        }
+
+        return $result;
+    }
+}

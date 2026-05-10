@@ -8,7 +8,9 @@ backend:
           edit: Edit plannings
           delete: Delete plannings
         events:
-          manage: Manage planning events
+          create: Create planning events
+          edit: Edit planning events
+          delete: Delete planning events
   modules:
     planning: Planning
     planning_description: 'Enables the Planning section in the admin.'
