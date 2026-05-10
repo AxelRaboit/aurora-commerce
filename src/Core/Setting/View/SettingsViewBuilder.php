@@ -9,6 +9,7 @@ use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Builds the Twig payload for the admin settings page. Centralises the
@@ -22,6 +23,7 @@ final readonly class SettingsViewBuilder
         private MediaRepository $mediaRepository,
         private UrlGeneratorInterface $urlGenerator,
         private Registry $registry,
+        private TranslatorInterface $translator,
     ) {}
 
     /**
@@ -51,8 +53,8 @@ final readonly class SettingsViewBuilder
 
             $groups[$groupName][] = [
                 'key' => $parameter->getKey(),
-                'label' => $parameter->getLabel(),
-                'description' => $parameter->getDescription(),
+                'label' => $this->translator->trans($parameter->getLabel()),
+                'description' => $this->translator->trans($parameter->getDescription()),
                 'type' => $parameter->getType(),
                 'group' => $groupName,
                 'value' => $value,
