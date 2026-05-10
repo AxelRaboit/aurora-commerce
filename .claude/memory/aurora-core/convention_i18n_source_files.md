@@ -1,83 +1,69 @@
-# Convention : éditer les YAML sources, jamais les JSON générés
+---
+name: Convention traductions i18n (YAML sources + structure)
+description: Architecture complète des traductions — où écrire, structure par feature, pipeline YAML→JSON, tests de cohérence
+type: project
+---
 
 ## Règle
 
-**Toujours** ajouter / modifier les traductions dans les **fichiers
-sources YAML** :
+**Source unique de vérité : les fichiers YAML.** Le JSON frontend est un artefact
+de build régénéré par `make i18n`. Ne jamais toucher `assets/locales/generated/*.json`.
 
-- `src/Core/translations/messages.{fr,en}.yaml`
-- `src/Module/<Module>/translations/messages.{fr,en}.yaml`
+## Structure des fichiers
 
-**Jamais** modifier directement :
-
-- `assets/locales/generated/fr.json`
-- `assets/locales/generated/en.json`
-
-Ces JSON sont **régénérés** par `make i18n` (qui appelle
-`app:translations:dump-js`). Toute édition manuelle sera **écrasée** au
-prochain dump.
-
-## Workflow correct
-
-```bash
-# 1. Éditer les YAML sources
-vim src/Module/Planning/translations/messages.fr.yaml
-vim src/Module/Planning/translations/messages.en.yaml
-
-# 2. Régénérer les JSON pour vue-i18n
-make i18n
-
-# 3. Rebuild les assets pour que le frontend prenne la nouvelle version
-npm run build
-# ou laisser le dev server le faire automatiquement
+### Modules métier
+```
+src/Module/<Module>/translations/messages.{fr,en}.yaml
 ```
 
-## Pourquoi
+### Core — découpé par feature (depuis mai 2026)
+```
+src/Core/Auth/translations/         → backend.auth, frontend.login/register/…, shared.password
+src/Core/Audit/translations/        → backend.audit
+src/Core/Mail/translations/         → frontend.mail, shared.mail
+src/Core/Media/translations/        → backend.media, shared.media, shared.dropZone
+src/Core/Menu/translations/         → backend.menus, backend.nav, frontend.menu
+src/Core/Module/translations/       → backend.permissions, backend.modules
+src/Core/MountPoint/translations/   → backend.mountPoints
+src/Core/Notification/translations/ → backend.notifications
+src/Core/Profile/translations/      → backend.profile, backend.impersonation
+src/Core/Search/translations/       → backend.search
+src/Core/Setting/translations/      → backend.settings, backend.parameters, backend.tabs, backend.stats
+src/Core/Theme/translations/        → backend.themes, frontend.theme
+src/Core/User/translations/         → backend.users, backend.roles, backend.invitations, backend.access_requests
+src/Core/translations/              → shared.common, shared.locales, shared.pagination, shared.form, shared.comment + security.* + validators.*
+```
 
-- **Source unique de vérité** : Symfony Translator (Twig + console)
-  + vue-i18n (frontend) lisent tous les deux les YAML. Le JSON est juste
-  un cache de build pour le bundle JS.
-- **Diff lisible** : les YAML sont pluggés dans Git ; les JSON générés
-  changent à chaque dump et polluent les diffs.
-- **Rollback automatique** : si quelqu'un modifie le JSON pour tester,
-  `make i18n` ramène à l'état canonique. Mais perte de l'édition si pas
-  reportée.
+**Découverte automatique** via glob dans `AuroraBundle` et `DumpJsTranslationsCommand` :
+`src/Core/*/translations/`, `src/Module/*/translations/` — aucune config manuelle.
 
-## Comment détecter une violation
+## Workflow
 
-Si un PR contient un diff sur `assets/locales/generated/*.json` SANS
-diff correspondant sur `src/.../translations/messages.*.yaml`, il y a
-violation.
+```bash
+# Modifier FR + EN dans le bon fichier YAML, puis :
+make i18n   # régénère assets/locales/generated/{fr,en}.json
+```
 
-Le `.gitignore` ne couvre PAS ces JSON (ils sont versionnés pour que
-`npm run build` fonctionne sans `make i18n` préalable côté CI). C'est
-pourquoi la discipline humaine reste nécessaire.
+## Where does a key go?
 
-## Clés partagées — attention au contexte sémantique
+- `backend.billing.*` → `src/Module/Billing/translations/`
+- `backend.media.*` → `src/Core/Media/translations/`
+- `shared.common.*` → `src/Core/translations/messages.{fr,en}.yaml`
+- Nouvelle feature Core → créer `src/Core/<Feature>/translations/messages.{fr,en}.yaml`
 
-`shared.common.*` regroupe les actions génériques applicables partout. Mais un même
-mot peut exister à des endroits différents avec des sens différents :
+**Why:** séparation par feature = co-localisation avec le code qui utilise la traduction.
+Un dev qui touche `src/Core/Media/` sait exactement où sont ses traductions.
 
-- `shared.pagination.next` → le bouton "Suivant" de la pagination (→ page suivante)
-- `shared.common.next` → "Suivant" dans un wizard/stepper (→ étape suivante)
+## Tests de cohérence
 
-**Règle** : avant de réutiliser une clé `shared.*` existante, vérifier que le
-contexte est identique. Si le mot est le même mais le contexte diffère (ou si la
-traduction pourrait diverger dans une autre langue), créer une clé dédiée.
+`tests/Unit/Translation/TranslationConsistencyTest.php` tourne à chaque `make ft` et
+valide sur toutes les paires FR/EN (25 au total) :
+1. Parité des clés FR↔EN
+2. Pas de valeurs vides
+3. Cohérence des `{placeholders}`
 
-Exemple concret : en anglais "Next" fonctionne dans les deux cas, mais en allemand
-"Nächste" (pagination) vs "Weiter" (wizard) sont différents — d'où deux clés.
+## How to apply
 
-## Voir aussi
-
-- [`pitfall_module_translations_two_registrations.md`](pitfall_module_translations_two_registrations.md)
-  — pour un nouveau module, seul `resolve_target_entities` dans `AuroraBundle.php` est manuel.
-  Mappings, Twig, translator paths et DumpJsTranslations sont auto-découverts par glob.
-- [`convention_privilege_translations.md`](convention_privilege_translations.md)
-  — où placer les traductions de privilèges par module.
-
-## Source
-
-Convention rappelée par l'utilisateur le 2026-05-09 après ajout des
-traductions de privilèges, pour rappel que tout passe par les YAML
-sources.
+- Nouveau module : créer `src/Module/<Module>/translations/messages.{fr,en}.yaml`, découvert auto.
+- Nouvelle feature Core : créer `src/Core/<Feature>/translations/messages.{fr,en}.yaml`, découvert auto.
+- Doc complète : `docs/aurora-core/dev/translations.md`
