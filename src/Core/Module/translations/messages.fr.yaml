@@ -1,0 +1,35 @@
+backend:
+  permissions:
+    intro: Gérez les droits d'accès des utilisateurs par module. Chaque permission peut être accordée individuellement.
+    searchPlaceholder: Filtrer les modules…
+    empty: Aucun module trouvé.
+    none: Aucune permission définie pour ce module.
+    name: Permission
+    key: Clé technique
+    names:
+      core:
+        users:
+          manage: Gérer les utilisateurs
+        agencies:
+          manage: Gérer les agences
+        services:
+          manage: Gérer les services
+        themes:
+          manage: Gérer les thèmes
+        settings:
+          manage: Gérer les paramètres
+        search:
+          view: Utiliser la recherche globale
+        media:
+          view: Voir la médiathèque
+          manage: 'Gérer la médiathèque (upload, suppression, dossiers)'
+        menus:
+          manage: Gérer les menus
+    role: Rôle requis
+  modules:
+    media: Médias
+    users: Utilisateurs
+    hr: RH
+    planning: Planning
+    project: Projet
+    core: Cœur

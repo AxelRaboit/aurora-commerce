@@ -1,0 +1,151 @@
+backend:
+  media:
+    usage:
+      postFeatured: Image principale
+      postContent: Bloc image
+      brandingLogo: Logo du site
+      brandingFavicon: Favicon
+      brandingDetail: Identité visuelle
+    upload: Téléverser
+    uploaded: '{count} fichier(s) téléversé(s)'
+    uploaded_one: Fichier téléversé
+    empty: Aucun média dans ce dossier
+    altWarning: Certains médias n'ont pas de texte alternatif
+    missingAlt: Alt manquant
+    editMedia: Modifier le média
+    moved: Média déplacé
+    rootFolder: Racine
+    allMedia: Tous les médias
+    expand: Déplier
+    collapse: Replier
+    dropToUpload: Déposer les fichiers pour les téléverser
+    filterAll: Tous
+    filterImages: Images
+    filterVideos: Vidéos
+    filterPdf: PDF
+    filterOther: Autres
+    sortDate: Date
+    sortName: Nom
+    sortSize: Taille
+    sortPositionHint: Ordre personnalisé (glisser-déposer)
+    selected: sélectionné(s)
+    selectAll: Tout sélectionner
+    bulkDeleted: Médias supprimés
+    bulkMoved: Médias déplacés
+    bulkDeleteConfirm: 'Supprimer {count} média(s) ?'
+    bulkMove: 'Déplacer {count} média(s)'
+    urlCopied: URL copiée
+    copyUrl: Copier l'URL
+    preview: Aperçu
+    open: Ouvrir
+    qrCode: QR Code
+    downloadQr: Télécharger le QR
+    storage: Stockage utilisé
+    move: Déplacer
+    uploadedBy: Téléversé par
+    createdAt: Créé le
+    updatedAt: Modifié le
+    permalink: Lien permanent
+    crop: Recadrer
+    cropTitle: Recadrer l'image
+    applyCrop: Appliquer le recadrage
+    cropped: Image recadrée
+    captionPlaceholder: Décrivez ce média…
+    favourites: Favoris
+    tabEdit: Édition
+    tabHistory: Historique
+    tabUsage: Utilisation
+    usageTotal: Total
+    usageDirect: Image principale
+    usageContent: Dans le contenu
+    usageNone: Ce média n'est utilisé nulle part
+    noHistory: Aucune modification enregistrée
+    historyAction:
+      uploaded: Téléversé
+      updated: Modifié
+      moved: Déplacé
+      deleted: Supprimé
+      cropped: Recadré
+    favourite: Ajouter aux favoris
+    unfavourite: Retirer des favoris
+    errors:
+      focal_out_of_range: Le point focal doit être compris entre 0 et 1.
+      folder_name_required: Le nom du dossier est requis.
+      folder_not_found: 'Le dossier {id} est introuvable.'
+      folder_self_nested: Un dossier ne peut pas être déplacé dans lui-même ou un de ses sous-dossiers.
+      parent_folder_not_found: 'Le dossier parent {id} est introuvable.'
+      alt_required: Le texte alternatif est requis.
+    folders: Dossiers
+    subfolders: Sous-dossiers
+    files: Fichiers
+    newFolder: Nouveau
+    searchPlaceholder: Rechercher…
+    alt: Texte alternatif
+    altPlaceholder: Décris l'image pour les lecteurs d'écran…
+    caption: Légende
+    folder: Dossier
+    filename: Fichier
+    size: Taille
+    dimensions: Dimensions
+    mimeType: Type
+    focalHint: Clique sur l'image pour définir le point focal.
+    resetFocal: Réinitialiser
+    deleteConfirm: 'Supprimer « {name} » ? Cette action est irréversible.'
+    checkingUsage: Vérification des utilisations…
+    usageWarning: 'Ce média est actuellement utilisé à {count} endroit(s). Le supprimer cassera ces emplacements :'
+    deleteAnyway: Supprimer quand même
+    usageGroups:
+      post:
+        featured: Articles (image principale)
+        content: Articles (dans le contenu)
+      gallery:
+        cover: Galeries (couverture)
+        item: Galeries (photos)
+      branding:
+        setting: Identité visuelle
+      other: Autres
+    bulkDelete: 'Supprimer la sélection ({count})'
+    bulkDeleteConfirmDesc: Cette action est irréversible. Les fichiers seront définitivement supprimés.
+    createFolder: Créer un dossier
+    editFolder: Renommer le dossier
+    folderName: Nom du dossier
+    parentFolder: Dossier parent
+    deleteFolderConfirm: 'Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.'
+shared:
+  media:
+    choose: Choisir une image
+    change: Changer
+    remove: Retirer
+    picker:
+      title: Choisir un média
+      search: Rechercher par nom ou alt…
+      allFolders: Tous les médias
+      rootFolder: Racine
+      empty: Aucun média trouvé
+      select: Sélectionner
+      addSelected: Ajouter la sélection
+      selectedCount: sélectionné(s)
+      in: Dans
+      items: résultats
+      dimensions: Dimensions
+      size: Taille
+      uploaded: Mis en ligne
+      folder: Dossier
+      alt: Texte alternatif
+      altPlaceholder: Décrivez l'image pour les lecteurs d'écran et le SEO
+      caption: Légende
+      captionPlaceholder: Légende affichée sous l'image
+      openInLibrary: Ouvrir dans la médiathèque
+      upload: Téléverser
+      dropHere: Déposer pour téléverser
+      subfolders: Sous-dossiers
+      files: Fichiers
+    filters:
+      all: Tous
+      image: Images
+      video: Vidéos
+      document: Documents
+  dropZone:
+    cta: Choisir un fichier
+    drop: Déposez votre fichier ici
+    uploading: Envoi…

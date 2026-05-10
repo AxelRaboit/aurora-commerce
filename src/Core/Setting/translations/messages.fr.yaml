@@ -1,0 +1,262 @@
+backend:
+  settings:
+    tabs:
+      general: Général
+      general_description: 'Nom du site, email admin, URL publique.'
+      reading: Lecture
+      reading_description: "Articles par page, page d'accueil, commentaires."
+      localization: Localisation
+      localization_description: 'Langue, fuseau horaire, format de date.'
+      branding: Branding
+      branding_description: 'Logo, favicon et identité visuelle.'
+      seo: SEO
+      seo_description: Template de titre et meta description par défaut.
+      system: Système
+      system_description: 'Maintenance, inscriptions, accès et uploads.'
+      email: Emails
+      email_description: Langue des emails sortants.
+      sequences: Séquences
+      sequences_description: Préfixes des références auto-générées.
+      modules: Modules
+      ecommerce: E-commerce
+    cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
+    mediaSquareHint: 'Recommandé : image carrée (1:1).'
+    modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
+    modulesEmpty: Aucun module trouvé.
+    save: Enregistrer
+    saved: Réglages sauvegardés.
+    modulesSearchPlaceholder: Rechercher un module…
+    confirmPassword: Confirmer l'action
+    confirmPasswordDescription: Confirmez le mot de passe pour activer ou désactiver des modules.
+    confirmPasswordPlaceholder: Mot de passe…
+    confirmPasswordInvalid: Mot de passe incorrect.
+    confirmPasswordConfirm: Confirmer
+    browseMedia: Parcourir les médias
+    noPageSelected: Aucune page sélectionnée — affichage de la liste des articles par défaut.
+    searchPost: Rechercher une page…
+    orId: "ou saisir l'ID :"
+    sequenceSearch: Rechercher une séquence…
+  parameters:
+    site_name:
+      label: Nom du site
+      description: Nom affiché sur le site public et dans les emails
+    site_description:
+      label: Description du site
+      description: Courte description utilisée comme meta description par défaut
+    site_url:
+      label: URL publique du site
+      description: 'URL absolue du site (sans slash final), utilisée dans les emails et le sitemap'
+    admin_email:
+      label: Email administrateur
+      description: Adresse email de l'administrateur
+    default_locale:
+      label: Langue par défaut
+      description: 'Code de la langue par défaut (fr, en, es, de)'
+    posts_per_page:
+      label: Articles par page
+      description: Nombre d'articles affichés par page sur les listes publiques
+    max_upload_size_mb:
+      label: Taille max d'upload (Mo)
+      description: 'Taille maximale autorisée pour un upload média, en mégaoctets'
+    allowed_upload_extensions:
+      label: Extensions autorisées
+      description: "Liste d'extensions autorisées séparées par virgule (jpg,png,pdf,…)"
+    timezone:
+      label: Fuseau horaire
+      description: 'Fuseau horaire PHP (ex: Europe/Paris)'
+    date_format:
+      label: Format d'affichage des dates
+      description: "Format d'affichage des dates (ex: d/m/Y)"
+    comments_enabled:
+      label: Commentaires activés
+      description: 'Commentaires activés (0 = désactivés, 1 = activés)'
+    comment_moderation_enabled:
+      label: Modération des commentaires
+      description: 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)'
+    maintenance_mode:
+      label: Mode maintenance
+      description: 'Mode maintenance (0 = désactivé, 1 = site fermé au public)'
+    admin_registration_enabled:
+      label: Inscriptions admin ouvertes
+      description: Autoriser les inscriptions via /register (interface admin). À désactiver après la création du premier compte admin.
+    admin_access_request_enabled:
+      label: Demandes d'accès admin ouvertes
+      description: Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)
+    front_registration_enabled:
+      label: Inscriptions front ouvertes
+      description: 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)'
+    post_revisions_limit:
+      label: Nombre de révisions gardées par article
+      description: Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)
+    trash_auto_purge_days:
+      label: Purge auto de la corbeille (jours)
+      description: Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)
+    homepage_post_id:
+      label: Page d'accueil (ID du post)
+      description: ID d'un post affiché sur la page d'accueil. Vide = liste des derniers articles.
+    default_front:
+      label: Front par défaut
+      description: 'Slug du front affiché par défaut sur "/".'
+    logo_media_id:
+      label: Logo du site
+      description: ID du média utilisé comme logo
+    favicon_media_id:
+      label: Favicon
+      description: ID du média utilisé comme favicon
+    seo_title_template:
+      label: Template de titre SEO
+      description: 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex. : {title} · {siteName}'
+    seo_default_description:
+      label: Description SEO par défaut
+      description: Meta description utilisée quand aucune description spécifique n'est définie
+    ecommerce_low_stock_threshold:
+      label: Seuil de stock bas (e-commerce)
+      description: Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.
+    ged_document_prefix:
+      label: Préfixe des références documents GED
+      description: 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.'
+    billing_invoice_prefix:
+      label: Préfixe des numéros de factures
+      description: 'Préfixe du numéro de facture auto-généré à la validation (ex: FAC). Laissez vide pour désactiver.'
+    billing_credit_note_prefix:
+      label: Préfixe des numéros d'avoirs
+      description: "Préfixe du numéro d'avoir auto-généré (ex: AV). Laissez vide pour désactiver."
+    ecommerce_order_prefix:
+      label: Préfixe des numéros de commandes
+      description: 'Préfixe du numéro de commande auto-généré (ex: ORD). Laissez vide pour désactiver.'
+    ecommerce_listing_prefix:
+      label: Préfixe des références produits boutique
+      description: 'Préfixe de la référence produit boutique auto-générée (ex: LST). Laissez vide pour désactiver.'
+    erp_product_prefix:
+      label: Préfixe des références produits ERP
+      description: 'Préfixe de la référence produit auto-générée (ex: PROD). Laissez vide pour désactiver.'
+    crm_deal_prefix:
+      label: Préfixe des références affaires CRM
+      description: 'Préfixe de la référence affaire CRM auto-générée (ex: DEAL). Laissez vide pour désactiver.'
+    crm_contact_prefix:
+      label: Préfixe des références contacts CRM
+      description: 'Préfixe de la référence contact CRM auto-générée (ex: CTT). Laissez vide pour désactiver.'
+    crm_company_prefix:
+      label: Préfixe des références entreprises CRM
+      description: 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.'
+    email_locale:
+      label: Langue forcée pour les emails
+      description: 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.'
+    photo_gallery_prefix:
+      label: Préfixe des numéros de galeries
+      description: 'Préfixe de la référence galerie photo auto-générée (ex: GAL).'
+    editorial_post_prefix:
+      label: Préfixe des numéros d'articles
+      description: 'Préfixe de la référence article auto-générée (ex: ART).'
+    editorial_form_prefix:
+      label: Préfixe des numéros de formulaires
+      description: 'Préfixe de la référence formulaire auto-générée (ex: FRM).'
+    billing_tiers_prefix:
+      label: Préfixe des numéros de tiers
+      description: 'Préfixe de la référence tiers (fournisseur/client) auto-générée (ex: TRS).'
+    core_user_prefix:
+      label: Préfixe des références utilisateurs
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_media_prefix:
+      label: Préfixe des références médias
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_access_request_prefix:
+      label: Préfixe des références demandes d'accès
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    editorial_form_submission_prefix:
+      label: Préfixe des numéros de soumissions
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    photo_gallery_item_prefix:
+      label: Préfixe des références photos
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    photo_gallery_invite_prefix:
+      label: Préfixe des références invitations galerie
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    editorial_comment_prefix:
+      label: Préfixe des numéros de commentaires
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_audit_log_prefix:
+      label: Préfixe des logs d'audit
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_reset_password_prefix:
+      label: Préfixe des demandes de réinitialisation de mot de passe
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_media_folder_prefix:
+      label: Préfixe des références dossiers médias
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    core_menu_item_prefix:
+      label: Préfixe des références éléments de menu
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    billing_ocr_job_prefix:
+      label: Préfixe des références jobs OCR
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    ecommerce_cart_prefix:
+      label: Préfixe des références paniers
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    ecommerce_cart_item_prefix:
+      label: Préfixe des références lignes de panier
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    ecommerce_order_line_prefix:
+      label: Préfixe des références lignes de commande
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    editorial_form_field_prefix:
+      label: Préfixe des références champs de formulaire
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    editorial_taxonomy_term_prefix:
+      label: Préfixe des références termes de taxonomie
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    photo_gallery_finalization_prefix:
+      label: Préfixe des références finalisations de galerie
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    photo_gallery_item_comment_prefix:
+      label: Préfixe des références commentaires de photo
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    photo_gallery_pick_prefix:
+      label: Préfixe des références sélections de photo
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    intro: Consultez et modifiez les paramètres techniques de l'application.
+    key: Paramètre
+    value: Valeur
+    description: Description
+    empty: Aucun paramètre.
+    saved: Paramètre enregistré.
+    searchPlaceholder: Rechercher par clé…
+    allGroups: Tous les groupes
+  title: Administration
+  stats:
+    posts: Articles
+    media: Médias
+    menus: Menus
+    users: Utilisateurs
+    published: publiés
+    draft: brouillons
+    byType: Articles par type
+    recent: Activité récente
+    postsByMonth: Articles publiés par mois
+    pipeline: pipeline
+    won: Affaires gagnées
+    dealsByStage: Affaires par étape
+    productsByStatus: Produits par statut
+    inventory: Inventaire
+  forms:
+    errors:
+      slug_format: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
+      slug_taken: Ce slug est déjà utilisé pour cette langue.
+  tabs:
+    access_requests: Demandes d'accès
+    access_requests_description: Demandes d'accès en attente d'approbation.
+    audit: Audit
+    audit_description: Historique de toutes les actions effectuées dans l'application.
+    invitations: Invitations
+    overview: Vue d'ensemble
+    overview_description: Indicateurs clés et activité récente.
+    parameters: Paramètres
+    parameters_description: Paramètres techniques et valeurs de configuration.
+    modules: Modules
+    modules_description: Activer ou désactiver les modules et leurs fonctionnalités.
+    mount_points: Points de montage
+    mount_points_description: 'Connexions vers des ressources externes (BDD, API, SFTP).'
+    permissions: Permissions
+    permissions_description: Consulter les privilèges enregistrés par module.
+    users: Utilisateurs
+    users_description: 'Gérer les comptes, rôles et privilèges des utilisateurs.'

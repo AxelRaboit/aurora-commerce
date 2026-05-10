@@ -109,6 +109,11 @@ final class DumpJsTranslationsCommand extends Command
             $dirs[] = 'src/Core/translations';
         }
 
+        $found = glob(Path::join($this->auroraDir, 'src/Core/*/translations'), GLOB_ONLYDIR);
+        foreach ($found ?: [] as $absolutePath) {
+            $dirs[] = Path::makeRelative($absolutePath, $this->auroraDir);
+        }
+
         $found = glob(Path::join($this->auroraDir, 'src/Module/*/translations'), GLOB_ONLYDIR);
         foreach ($found ?: [] as $absolutePath) {
             $dirs[] = Path::makeRelative($absolutePath, $this->auroraDir);

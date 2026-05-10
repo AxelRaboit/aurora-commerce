@@ -27,6 +27,7 @@ final class TranslationConsistencyTest extends TestCase
 
         $dirs = array_merge(
             glob($srcDir.'/Core/translations', GLOB_ONLYDIR) ?: [],
+            glob($srcDir.'/Core/*/translations', GLOB_ONLYDIR) ?: [],
             glob($srcDir.'/Module/*/translations', GLOB_ONLYDIR) ?: [],
         );
 
@@ -40,7 +41,15 @@ final class TranslationConsistencyTest extends TestCase
 
             $pathParts = explode('/', $dir);
             $moduleIndex = array_search('Module', $pathParts, true);
-            $module = false !== $moduleIndex ? $pathParts[$moduleIndex + 1] : 'Core';
+            $coreFeatureIndex = array_search('Core', $pathParts, true);
+
+            if (false !== $moduleIndex) {
+                $module = $pathParts[$moduleIndex + 1];
+            } elseif (false !== $coreFeatureIndex && isset($pathParts[$coreFeatureIndex + 1]) && 'translations' !== $pathParts[$coreFeatureIndex + 1]) {
+                $module = 'Core.'.$pathParts[$coreFeatureIndex + 1];
+            } else {
+                $module = 'Core';
+            }
 
             $pairs[$module] = [
                 $module,

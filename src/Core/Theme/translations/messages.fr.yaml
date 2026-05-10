@@ -1,0 +1,56 @@
+backend:
+  themes:
+    title: Thèmes
+    new: Nouveau thème
+    activate: Activer
+    active: Actif
+    edit: Modifier
+    colors: Couleurs
+    resetColor: Réinitialiser
+    primaryColor: Couleur principale
+    primaryColorLabel: Couleur d'accent
+    primaryColorHint: 'Sert de base aux boutons, liens, badges et au logo. Toute la palette est dérivée automatiquement.'
+    sections:
+      general: Général
+      header: En-tête
+      footer: Pied de page
+    vars:
+      accent: Couleur principale
+      accentHover: Couleur principale (hover)
+      bg: Fond
+      surface: Surface
+      surface2: Surface secondaire
+      primary: Texte principal
+      secondary: Texte secondaire
+      muted: Texte atténué
+      border: Bordure
+      text: Texte
+    headerContent: Contenu
+    headerModeDefault: Nom du site
+    headerModeText: Texte custom
+    headerModeImage: Image média
+    headerCustomText: Texte personnalisé
+    headerLogoMediaId: ID du média
+    footerText: Texte du pied de page
+    slugLabel: Slug
+    headerMediaHint: Trouvez l'ID dans Médias → ouvrez un média → champ ID.
+    headerTextPlaceholder: Mon site
+    configHint: 'Variables disponibles : --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    configJsonError: Le JSON de configuration est invalide.
+    deleteConfirm: 'Supprimer le thème "{name}" ? Cette action est irréversible.'
+    cannotDeleteDefault: Impossible de supprimer le thème par défaut.
+    cannotDeleteActive: Impossible de supprimer le thème actif.
+    created: Thème créé.
+    updated: Thème mis à jour.
+    activated: Thème activé.
+    deleted: Thème supprimé.
+    templateCount: '{count} fichier(s) de template'
+    errors:
+      slug_invalid: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
+      slug_taken: Ce slug est déjà utilisé.
+      name_required: Le nom est requis.
+frontend:
+  theme:
+    no_posts: Aucun article publié pour le moment.
+    no_content: Aucun contenu.

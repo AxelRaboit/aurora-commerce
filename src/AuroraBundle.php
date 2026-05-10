@@ -331,13 +331,18 @@ class AuroraBundle extends AbstractBundle
             'enable_profiler' => false,
         ]);
 
+        $coreDirs = glob($dir.'/src/Core/*/translations', GLOB_ONLYDIR) ?: [];
+
         $builder->prependExtensionConfig('framework', [
             'default_locale' => 'fr',
             'enabled_locales' => ['fr', 'en'],
             'translator' => [
                 'default_path' => $dir.'/src/Core/translations',
                 'paths' => array_values(array_filter(
-                    array_map(static fn (string $moduleDir): string => $moduleDir.'/translations', $moduleDirs),
+                    array_merge(
+                        array_map(static fn (string $moduleDir): string => $moduleDir.'/translations', $moduleDirs),
+                        $coreDirs,
+                    ),
                     is_dir(...),
                 )),
                 'fallbacks' => ['fr'],

@@ -1,0 +1,18 @@
+backend:
+  search:
+    button: Rechercher…
+    placeholder: 'Rechercher des contenus, médias…'
+    hint: 'Tapez pour rechercher dans les contenus, termes et médias.'
+    empty: Aucun résultat.
+    keys:
+      navigate: Naviguer
+      select: Sélectionner
+      close: Fermer
+    sections:
+      recent: Récents
+      nav: Navigation
+      projects: Projets
+      tasks: Tâches
+      posts: Contenus
+      terms: Termes
+      media: Médias

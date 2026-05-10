@@ -1,0 +1,52 @@
+backend:
+  profile:
+    errors:
+      current_password_invalid: The current password is incorrect.
+      email_invalid: Invalid email address.
+      email_taken: This email address is already in use.
+      invalid_csrf: Invalid security token.
+      invalid_locale: Unsupported language.
+      name_required: Name is required.
+      password_mismatch: Passwords do not match.
+      password_too_short: The password must be at least 8 characters long.
+    photo:
+      title: Profile photo
+      subtitle: Shown in the sidebar and user list.
+    mood:
+      title: Mood
+      subtitle: A short line that captures how you're feeling right now.
+      placeholder: What's on your mind…
+      hint: 160 characters max.
+      saved: Mood updated.
+      errors:
+        too_long: Mood must not exceed 160 characters.
+    locale:
+      title: Language
+      subtitle: Choose the display language of the administration.
+      field: Language
+    info:
+      title: Profile information
+      subtitle: Update your name and email address.
+      name: Full name
+      listView: List view
+      kanbanView: Kanban view
+      namePlaceholder: John Doe
+      email: Email address
+      emailPlaceholder: "you{'@'}example.com"
+      saved: Profile updated successfully.
+    password:
+      title: Change password
+      subtitle: 'Use a long, random password to secure your account.'
+      current: Current password
+      new: New password
+      confirm: Confirm password
+      saved: Password updated successfully.
+      error_current: The current password is incorrect.
+    danger:
+      title: Danger zone
+      description: Deleting your account is irreversible. All your data will be permanently erased.
+      submit: Delete my account
+      confirm: Are you sure you want to delete your account? This action cannot be undone.
+  impersonation:
+    banner: 'You are impersonating {name}'
+    leave: Leave

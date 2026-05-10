@@ -1,0 +1,143 @@
+backend:
+  users:
+    intro: Manage administration users and their roles.
+    name: Name
+    email: Email
+    created: Created
+    actions: Actions
+    searchPlaceholder: Search a user…
+    allRoles: All roles
+    empty: No users found
+    you: (You)
+    invite: Invite user
+    sendInvite: Send invite
+    inviteMessage: Message (optional)
+    inviteMessagePlaceholder: Add a message...
+    edit_title: 'Edit {name}'
+    deleteConfirm: 'Delete {name}?'
+    detail:
+      type: Type
+      locale: Locale
+      createdAt: Created at
+      invitedAt: Invited at
+    roleLabel: Role
+    role:
+      user: User
+      admin: Administrator
+      dev: Developer
+    typeLabel: Type
+    type:
+      backend: Backend
+      frontend: Frontend
+    statusLabel: Status
+    status:
+      active: Active
+      invited: Invited
+      disabled: Disabled
+      pending_verification: Pending verification
+    cannot_delete_self: You cannot delete your own account.
+    cannot_modify_higher_role: You cannot modify a user with a higher role than yours.
+    cannot_modify_self: You cannot modify your own role.
+    dev_granted: Dev role granted.
+    dev_revoked: Dev role revoked.
+    errors:
+      email_invalid: Invalid email address.
+      email_required: Email address is required.
+      email_taken: This email address is already in use.
+      email_too_long: Email address must not exceed 180 characters.
+      name_required: Name is required.
+      name_too_long: Name must not exceed 100 characters.
+      role_invalid: Invalid role.
+      role_required: Role is required.
+      password_too_short: Password must be at least 8 characters.
+      manager_self: A user cannot be their own manager.
+      manager_not_found: The selected manager does not exist.
+      manager_cycle: This assignment would create a reporting loop.
+    newPassword: New password
+    newPasswordPlaceholder: Leave empty to keep current
+    toast:
+      created: User created successfully.
+      updated: User updated.
+      deleted: User deleted.
+    add: Add user
+    invitationSent: Invitation sent.
+    invitationResent: Invitation resent.
+    resendInvitation: Resend invitation
+    enable: Enable
+    disable: Disable
+    edit: Edit
+    namePlaceholder: John Doe
+    emailPlaceholder: "john{'@'}example.com"
+    password: Password
+    password_optional: Password (leave empty to keep)
+    locale: Language
+    role_dev: Dev
+    role_user: User
+    grant_dev: Grant Dev role
+    revoke_dev: Revoke Dev role
+    grantDevConfirm: 'Grant Dev role to {name}?'
+    revokeDevConfirm: 'Revoke Dev role from {name}?'
+    impersonate: 'Impersonate {name}'
+    impersonateFront: 'View frontend as {name}'
+    disableConfirm: "Disable {name}'s account? They will no longer be able to sign in."
+    enableConfirm: "Re-enable {name}'s account?"
+    view: View profile
+    manager:
+      label: Manager
+      none: No manager
+      subordinates: 'Direct reports ({count})'
+    privileges:
+      title: Privileges
+      save: Save privileges
+      saved: Privileges updated
+      no_dev_target: Cannot assign privileges to a Dev user.
+    photo:
+      upload: Change photo
+      remove: Remove photo
+      hint: 'JPEG, PNG or WebP. 5 MB max.'
+      uploaded: Photo updated.
+      removed: Photo removed.
+      errors:
+        invalid_type: 'Unsupported format. Use JPEG, PNG or WebP.'
+        too_large: The image is too large (5 MB max).
+        missing: No image selected.
+  roles:
+    ROLE_USER: User
+    ROLE_ADMIN: Admin
+    ROLE_DEV: Developer
+  invitations:
+    sent: 'Invitation sent to {email}.'
+    description: Send an email invitation to allow someone to join the administration.
+    email: Recipient email address
+    emailPlaceholder: "example{'@'}domain.com"
+    message: Custom message (optional)
+    messagePlaceholder: Add a message to accompany the invitation…
+    credentialsHint: You can include login credentials in the email.
+    credentialEmail: Login email
+    credentialPassword: Password
+    send: Send invitation
+    sending: Sending…
+  access_requests:
+    intro: Manage pending access requests to the administration.
+    approved: 'Request from {name} approved.'
+    purged: Processed requests deleted.
+    rejected: 'Request from {name} rejected.'
+    status_pending: Pending
+    status_approved: Approved
+    status_rejected: Rejected
+    requester: Requester
+    message: Message
+    status: Status
+    date: Date
+    expires: Expires
+    empty: No access requests.
+    approve: Approve
+    reject: Reject
+    purge: Purge
+    approveConfirm: 'Approve the request from {name}? They will receive an email.'
+    rejectConfirm: 'Reject the request from {name}?'
+    purgeConfirm: Delete all approved and rejected requests? This action cannot be undone.
+    approved_toast: Access request approved.
+    rejected_toast: Access request rejected.
+    purged_toast: Processed requests deleted.
+    searchPlaceholder: 'Search by email, name or message…'

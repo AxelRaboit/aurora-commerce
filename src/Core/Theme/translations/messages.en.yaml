@@ -1,0 +1,56 @@
+backend:
+  themes:
+    title: Themes
+    new: New theme
+    activate: Activate
+    active: Active
+    edit: Edit
+    colors: Colors
+    resetColor: Reset
+    primaryColor: Primary color
+    primaryColorLabel: Accent colour
+    primaryColorHint: 'Used for buttons, links, badges and the logo. The full palette is generated automatically.'
+    sections:
+      general: General
+      header: Header
+      footer: Footer
+    vars:
+      accent: Primary color
+      accentHover: Primary color (hover)
+      bg: Background
+      surface: Surface
+      surface2: Secondary surface
+      primary: Main text
+      secondary: Secondary text
+      muted: Muted text
+      border: Border
+      text: Text
+    headerContent: Content
+    headerModeDefault: Site name
+    headerModeText: Custom text
+    headerModeImage: Media image
+    headerCustomText: Custom text
+    headerLogoMediaId: Media ID
+    footerText: Footer text
+    slugLabel: Slug
+    headerMediaHint: Find the ID in Media → open a media → ID field.
+    headerTextPlaceholder: My site
+    configHint: 'Available variables: --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    configJsonError: The configuration JSON is invalid.
+    deleteConfirm: 'Delete theme "{name}"? This action is irreversible.'
+    cannotDeleteDefault: Cannot delete the default theme.
+    cannotDeleteActive: Cannot delete the active theme.
+    created: Theme created.
+    updated: Theme updated.
+    activated: Theme activated.
+    deleted: Theme deleted.
+    templateCount: '{count} template file(s)'
+    errors:
+      slug_invalid: 'Slug may only contain lowercase letters, numbers, and hyphens.'
+      slug_taken: This slug is already in use.
+      name_required: Name is required.
+frontend:
+  theme:
+    no_posts: No posts published yet.
+    no_content: No content.

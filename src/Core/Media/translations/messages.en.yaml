@@ -1,0 +1,151 @@
+backend:
+  media:
+    usage:
+      postFeatured: Featured image
+      postContent: Image block
+      brandingLogo: Site logo
+      brandingFavicon: Favicon
+      brandingDetail: Branding
+    upload: Upload
+    uploaded: '{count} file(s) uploaded'
+    uploaded_one: File uploaded
+    empty: No media in this folder
+    altWarning: Some media items are missing alternative text
+    missingAlt: Missing alt
+    editMedia: Edit media
+    moved: Media moved
+    rootFolder: Root
+    allMedia: All media
+    expand: Expand
+    collapse: Collapse
+    dropToUpload: Drop files here to upload
+    filterAll: All
+    filterImages: Images
+    filterVideos: Videos
+    filterPdf: PDF
+    filterOther: Other
+    sortDate: Date
+    sortName: Name
+    sortSize: Size
+    sortPositionHint: Custom order (drag and drop)
+    selected: selected
+    selectAll: Select all
+    bulkDeleted: Media deleted
+    bulkMoved: Media moved
+    bulkDeleteConfirm: 'Delete {count} item(s)?'
+    bulkMove: 'Move {count} item(s)'
+    urlCopied: URL copied
+    copyUrl: Copy URL
+    preview: Preview
+    open: Open
+    qrCode: QR Code
+    downloadQr: Download QR
+    storage: Storage used
+    move: Move
+    uploadedBy: Uploaded by
+    createdAt: Created at
+    updatedAt: Updated at
+    permalink: Permalink
+    crop: Crop
+    cropTitle: Crop image
+    applyCrop: Apply crop
+    cropped: Image cropped
+    captionPlaceholder: Describe this media…
+    favourites: Favourites
+    tabEdit: Edit
+    tabHistory: History
+    tabUsage: Usage
+    usageTotal: Total
+    usageDirect: Featured image
+    usageContent: In content
+    usageNone: This media is not used anywhere
+    noHistory: No changes recorded
+    historyAction:
+      uploaded: Uploaded
+      updated: Updated
+      moved: Moved
+      deleted: Deleted
+      cropped: Cropped
+    favourite: Add to favourites
+    unfavourite: Remove from favourites
+    errors:
+      focal_out_of_range: Focal point must be between 0 and 1.
+      folder_name_required: Folder name is required.
+      folder_not_found: 'Folder {id} not found.'
+      folder_self_nested: A folder cannot be moved into itself or one of its subfolders.
+      parent_folder_not_found: 'Parent folder {id} not found.'
+      alt_required: Alternative text is required.
+    folders: Folders
+    subfolders: Subfolders
+    files: Files
+    newFolder: New
+    searchPlaceholder: Search…
+    alt: Alt text
+    altPlaceholder: Describe the image for screen readers…
+    caption: Caption
+    folder: Folder
+    filename: File
+    size: Size
+    dimensions: Dimensions
+    mimeType: Type
+    focalHint: Click the image to set the focal point.
+    resetFocal: Reset
+    deleteConfirm: 'Delete "{name}"? This action is irreversible.'
+    checkingUsage: Checking usage…
+    usageWarning: 'This media is currently used in {count} place(s). Deleting it will break these locations:'
+    deleteAnyway: Delete anyway
+    usageGroups:
+      post:
+        featured: Posts (featured image)
+        content: Posts (inside content)
+      gallery:
+        cover: Galleries (cover)
+        item: Galleries (photos)
+      branding:
+        setting: Branding
+      other: Other
+    bulkDelete: 'Delete selection ({count})'
+    bulkDeleteConfirmDesc: This action is irreversible. The files will be permanently deleted.
+    createFolder: Create folder
+    editFolder: Rename folder
+    folderName: Folder name
+    parentFolder: Parent folder
+    deleteFolderConfirm: 'Delete folder "{name}"? Its content will move to the root.'
+shared:
+  media:
+    choose: Choose an image
+    change: Change
+    remove: Remove
+    picker:
+      title: Choose a media
+      search: Search by name or alt…
+      allFolders: All media
+      rootFolder: Root
+      empty: No media found
+      select: Select
+      addSelected: Add selection
+      selectedCount: selected
+      in: In
+      items: results
+      dimensions: Dimensions
+      size: Size
+      uploaded: Uploaded
+      folder: Folder
+      alt: Alt text
+      altPlaceholder: Describe the image for screen readers and SEO
+      caption: Caption
+      captionPlaceholder: Caption shown below the image
+      openInLibrary: Open in library
+      upload: Upload
+      dropHere: Drop to upload
+      subfolders: Subfolders
+      files: Files
+    filters:
+      all: All
+      image: Images
+      video: Videos
+      document: Documents
+  dropZone:
+    cta: Choose a file
+    drop: Drop your file here
+    uploading: Uploading…

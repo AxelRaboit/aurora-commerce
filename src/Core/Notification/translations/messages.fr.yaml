@@ -1,0 +1,11 @@
+backend:
+  notifications:
+    title: Notifications
+    empty: Aucune notification.
+    close: Fermer
+    delete: Supprimer cette notification
+    deleteAll: Tout supprimer
+    markAllRead: Tout marquer comme lu
+    justNow: à l'instant
+    minutesAgo: 'il y a {n} min'
+    hoursAgo: 'il y a {n} h'
