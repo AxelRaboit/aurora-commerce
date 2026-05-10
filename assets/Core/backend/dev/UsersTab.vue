@@ -70,30 +70,26 @@ onMounted(() => {
 
         <div class="sm:hidden space-y-3">
             <p v-if="!users.parsedUsers.value.items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.users.empty') }}</p>
-            <div v-for="user in users.parsedUsers.value.items" :key="user.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="flex items-start gap-3 min-w-0">
-                        <AppAvatar :name="user.name" :email="user.email" size="lg" />
-                        <div class="min-w-0">
-                            <p class="font-medium text-primary truncate">{{ user.name }}</p>
-                            <p class="text-xs text-secondary truncate">{{ user.email }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <UserBadges :user="user" />
+            <div v-for="user in users.parsedUsers.value.items" :key="user.id" class="bg-surface border border-line rounded-lg overflow-hidden">
+                <div class="flex items-center gap-3 p-4">
+                    <AppAvatar :name="user.name" :email="user.email" size="lg" class="shrink-0" />
+                    <div class="min-w-0">
+                        <p class="font-medium text-primary truncate">{{ user.name }}</p>
+                        <p class="text-xs text-secondary truncate">{{ user.email }}</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-1 border-t border-line">
+                <div class="flex flex-wrap gap-1 px-4 pb-3">
+                    <UserBadges :user="user" />
+                </div>
+                <div class="flex items-center justify-between px-3 py-2 border-t border-line bg-surface-2/40">
                     <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
-                    <div class="flex items-center gap-1">
-                        <UserActions
-                            :user="user"
-                            :impersonate-path="users.impersonatePath"
-                            v-on:edit="users.openEdit"
-                            v-on:toggle-role="users.confirmToggleRole"
-                            v-on:delete="users.confirmDelete"
-                        />
-                    </div>
+                    <UserActions
+                        :user="user"
+                        :impersonate-path="users.impersonatePath"
+                        v-on:edit="users.openEdit"
+                        v-on:toggle-role="users.confirmToggleRole"
+                        v-on:delete="users.confirmDelete"
+                    />
                 </div>
             </div>
         </div>

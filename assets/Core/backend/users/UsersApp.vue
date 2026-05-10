@@ -89,27 +89,31 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
-            <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
-                <div class="flex items-start gap-3">
-                    <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="40" />
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-primary text-sm">
-                            {{ user.name }}
-                            <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
-                        </p>
-                        <p class="text-xs text-muted mt-0.5">{{ user.email }}</p>
-                    </div>
-                    <div class="flex flex-col items-end gap-1 shrink-0">
-                        <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
-                        <div class="flex items-center gap-1">
-                            <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
-                            <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
-                            <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
-                        </div>
+            <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                <!-- Avatar + nom + email -->
+                <div class="flex items-center gap-3 p-4">
+                    <AppAvatar
+                        variant="solid"
+                        :name="user.name"
+                        :photo-url="user.profilePhotoUrl ?? ''"
+                        :size="40"
+                        class="shrink-0"
+                    />
+                    <div class="min-w-0">
+                        <p class="font-medium text-primary text-sm truncate">{{ user.name }}</p>
+                        <p class="text-xs text-muted truncate mt-0.5">{{ user.email }}</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line/40">
-                    <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
+                <!-- Badges -->
+                <div class="flex flex-wrap gap-1 px-4 pb-3">
+                    <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                    <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
+                    <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                    <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
+                    <AppBadge v-if="isCurrent(user)" color="accent">{{ t('backend.users.you') }}</AppBadge>
+                </div>
+                <!-- Footer actions -->
+                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
                     <UserRowActions
                         :user="user"
                         :is-dev="isDev"
