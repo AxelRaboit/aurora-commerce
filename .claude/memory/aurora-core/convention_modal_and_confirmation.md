@@ -7,11 +7,16 @@
 `AppModal` (`assets/shared/components/overlay/AppModal.vue`) attend :
 
 - `:show` (Boolean) — visibilité contrôlée par le parent
-- `@close` (event) — émis quand l'utilisateur veut fermer (ESC, clic
-  overlay, bouton X)
+- `v-on:close` (event) — émis quand l'utilisateur veut fermer (ESC, clic overlay, bouton X)
 - `:title` (String, optionnel) — header avec close button automatique
-- `max-width` — `sm` / `md` / `lg`
-- `:bordered="true"` sur `AppModalFooter` quand il suit un formulaire
+- `max-width` — `sm` / `md` / `lg` / `xl` / `2xl` / etc.
+
+**Règle absolue sur les boutons** : dès qu'une modale contient des
+boutons d'action (annuler, confirmer, sauvegarder…), ils vont
+**toujours** dans `<template #footer><AppModalFooter>` — jamais en
+inline à la fin du body. Le slot `#footer` est un footer sticky séparé
+par un `border-t` avec la bonne mise en page responsive
+(`flex-col sm:flex-row sm:justify-end`).
 
 ```vue
 <AppModal
@@ -21,8 +26,11 @@
     v-on:close="editModal.open = false"
 >
     <form class="space-y-4" v-on:submit.prevent="submit">
-        <!-- fields -->
-        <AppModalFooter :bordered="true">
+        <!-- champs du formulaire -->
+    </form>
+
+    <template #footer>
+        <AppModalFooter>
             <AppButton variant="ghost" size="md" v-on:click="editModal.open = false">
                 <X class="w-3.5 h-3.5" :stroke-width="2" />
                 {{ t("shared.common.cancel") }}
@@ -32,12 +40,15 @@
                 {{ t("shared.common.save") }}
             </AppButton>
         </AppModalFooter>
-    </form>
+    </template>
 </AppModal>
 ```
 
 **❌ NE PAS** utiliser `v-model:open` — ça ne marche pas, les modales
 restent fermées sans erreur visible. C'est le piège classique.
+
+**❌ NE PAS** mettre les boutons dans le body (`<div class="flex justify-end gap-2">`) —
+ils doivent être dans `#footer`.
 
 ### 1bis. Variants AppButton pour actions destructives
 
@@ -112,16 +123,19 @@ export function usePlanningDelete(plannings, deletePath) {
     <p class="text-sm text-primary">
         {{ t("backend.plannings.delete_confirm", { name: deletingPlanning?.name ?? "" }) }}
     </p>
-    <AppModalFooter>
-        <AppButton variant="ghost" size="md" v-on:click="deletingPlanning = null">
-            <X class="w-3.5 h-3.5" :stroke-width="2" />
-            {{ t("shared.common.cancel") }}
-        </AppButton>
-        <AppButton variant="danger" size="md" v-on:click="confirmDelete">
-            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-            {{ t("shared.common.delete") }}
-        </AppButton>
-    </AppModalFooter>
+
+    <template #footer>
+        <AppModalFooter>
+            <AppButton variant="ghost" size="md" v-on:click="deletingPlanning = null">
+                <X class="w-3.5 h-3.5" :stroke-width="2" />
+                {{ t("shared.common.cancel") }}
+            </AppButton>
+            <AppButton variant="danger" size="md" v-on:click="confirmDelete">
+                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                {{ t("shared.common.delete") }}
+            </AppButton>
+        </AppModalFooter>
+    </template>
 </AppModal>
 ```
 

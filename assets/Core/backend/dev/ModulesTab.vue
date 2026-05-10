@@ -6,6 +6,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Lock } from "lucide-vue-next";
 import { useModules } from "@core/backend/dev/composables/useModules.js";
 
@@ -84,14 +85,16 @@ onMounted(() => {
                 :error="modules.passwordError.value"
                 v-on:keydown.enter="modules.confirmPassword"
             />
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="modules.showPasswordModal.value = false">
-                    {{ t("shared.common.cancel") }}
-                </AppButton>
-                <AppButton variant="primary" size="md" :loading="modules.verifying.value" v-on:click="modules.confirmPassword">
-                    {{ t("backend.settings.confirmPasswordConfirm") }}
-                </AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="modules.showPasswordModal.value = false">
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="modules.verifying.value" v-on:click="modules.confirmPassword">
+                        {{ t("backend.settings.confirmPasswordConfirm") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>
