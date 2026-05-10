@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -42,7 +42,7 @@ const editForm = ref({
     notes: contact.value.notes ?? "",
 });
 const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
+const { loading: editLoading, request: editRequest } = useRequest();
 
 async function submitEdit() {
     if (!validateEdit({

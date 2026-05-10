@@ -1,5 +1,5 @@
 import { ref, computed, onMounted } from "vue";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 /**
@@ -22,7 +22,7 @@ export function usePeopleSidebar(
     agenciesSelectablePath,
     planningsRef,
 ) {
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     const mode = ref("users");
     const users = ref([]);
@@ -168,7 +168,7 @@ export function usePeopleSidebar(
     }
 
     onMounted(async () => {
-        // Sequential — useApiRequest's loading guard rejects parallel calls,
+        // Sequential — useRequest's loading guard rejects parallel calls,
         // so we await one before starting the next.
         await loadUsers();
         await loadAgencies();

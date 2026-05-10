@@ -33,6 +33,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import PdfThumbnail from "@core/backend/media/components/PdfThumbnail.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
@@ -91,6 +92,7 @@ function dimensions(item) {
         :show="show"
         max-width="6xl"
         no-padding
+        :closeable="false"
         v-on:close="close"
     >
         <div class="flex flex-col h-dvh sm:h-[80vh] sm:max-h-[80vh]">
@@ -103,9 +105,6 @@ function dimensions(item) {
                     <Menu class="w-5 h-5" :stroke-width="2" />
                 </AppIconButton>
                 <h2 class="text-base font-semibold text-primary truncate flex-1">{{ t("shared.media.picker.title") }}</h2>
-                <AppIconButton :title="t('shared.common.close')" v-on:click="close">
-                    <X class="w-5 h-5" :stroke-width="2" />
-                </AppIconButton>
             </header>
 
             <div class="flex flex-1 min-h-0 relative">
@@ -312,6 +311,9 @@ function dimensions(item) {
                                             </div>
                                         </div>
                                     </template>
+                                    <div v-else-if="item.isPdf" class="relative w-full h-full pointer-events-none">
+                                        <PdfThumbnail :url="item.url" />
+                                    </div>
                                     <div v-else class="w-full h-full flex flex-col items-center justify-center text-muted gap-2 p-2">
                                         <component :is="typeIcon(item)" class="w-8 h-8" :stroke-width="1.5" />
                                         <span class="text-[10px] font-mono uppercase tracking-wide">{{ item.mimeType?.split("/")?.[1] ?? "" }}</span>
@@ -355,6 +357,9 @@ function dimensions(item) {
                                 class="w-full h-full object-contain"
                                 preload="metadata"
                             />
+                            <div v-else-if="selected.isPdf" class="relative w-full h-full">
+                                <PdfThumbnail :url="selected.url" />
+                            </div>
                             <component :is="typeIcon(selected)" v-else class="w-12 h-12 text-muted" :stroke-width="1.5" />
                         </div>
 
@@ -431,7 +436,7 @@ function dimensions(item) {
                     class="flex-1 sm:flex-none"
                     v-on:click="confirm"
                 >
-                    {{ multiple ? t("shared.media.picker.addSelected") : t("shared.media.picker.select") }}
+                    <Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ multiple ? t("shared.media.picker.addSelected") : t("shared.media.picker.select") }}
                 </AppButton>
             </footer>
         </div>

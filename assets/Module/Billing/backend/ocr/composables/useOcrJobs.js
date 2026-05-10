@@ -2,7 +2,7 @@ import { onBeforeUnmount, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * One-stop composable for the OCR job list mounted on a Vue ref:
@@ -28,7 +28,7 @@ export function useOcrJobs(
     } = {},
 ) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
     const pendingValidate = ref(null); // job pending confirmation
     const validating = ref(null); // job id currently being validated
 

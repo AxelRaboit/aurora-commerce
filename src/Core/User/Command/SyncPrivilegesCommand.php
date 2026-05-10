@@ -87,23 +87,6 @@ final class SyncPrivilegesCommand extends Command
             $io->success('All user privileges are up to date — nothing to purge.');
         }
 
-        // Report privileges that exist in the registry but no user holds yet
-        $allUserPrivileges = [];
-        foreach ($users as $user) {
-            foreach ($user->getPrivileges() as $p) {
-                $allUserPrivileges[$p] = true;
-            }
-        }
-
-        $unused = array_filter($registered, static fn (string $p): bool => !isset($allUserPrivileges[$p]));
-        if ([] !== $unused) {
-            $io->note(sprintf(
-                '%d privilege(s) not yet assigned to any user: %s',
-                count($unused),
-                implode(', ', $unused),
-            ));
-        }
-
         return Command::SUCCESS;
     }
 }

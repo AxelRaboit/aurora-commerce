@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useMenuItemForm } from "./composables/useMenuItemForm.js";
 import { Search, Check, X, Save, Menu, Pencil } from "lucide-vue-next";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
@@ -217,11 +218,12 @@ function close() { emit("close"); }
             </div>
 
             <AppCheckbox v-model="form.openInNewTab" :label="t('backend.menus.openInNewTab')" />
-
-            <div class="flex justify-end gap-2 pt-3 border-t border-line">
+        </form>
+        <template #footer>
+            <AppModalFooter>
                 <AppButton variant="ghost" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton type="submit" variant="primary" :loading="saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-            </div>
-        </form>
+            </AppModalFooter>
+        </template>
     </AppModal>
 </template>

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { KeyRound } from "lucide-vue-next";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -19,7 +19,7 @@ const password = ref("");
 const passwordInput = ref(null);
 
 const { errors, clearErrors, setErrors } = useForm();
-const { loading, request } = useApiRequest();
+const { loading, request } = useRequest();
 
 onMounted(() => {
     passwordInput.value?.focus();

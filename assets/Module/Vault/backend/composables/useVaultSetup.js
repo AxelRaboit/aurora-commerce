@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@shared/composables/api/useApiRequest.js";
+import { useRequest } from "@shared/composables/http/useRequest.js";
 import { useForm } from "@shared/composables/form/useForm.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { generateSalt } from "@vault/backend/composables/useVaultCrypto.js";
@@ -15,7 +15,7 @@ export function useVaultSetup(setupPath) {
     const { t } = useI18n();
     const masterPassword = ref("");
     const confirmPassword = ref("");
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
     const { errors, validate, clearErrors } = useForm();
 
     async function submit(keepUnlocked, keepDuration) {

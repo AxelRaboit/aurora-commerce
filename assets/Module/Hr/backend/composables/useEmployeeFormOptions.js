@@ -1,5 +1,5 @@
 import { ref, onMounted } from "vue";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useEmployeeFormOptions(
@@ -7,9 +7,9 @@ export function useEmployeeFormOptions(
     agenciesSelectablePath,
     usersSelectablePath,
 ) {
-    const { request: requestServices } = useApiRequest();
-    const { request: requestAgencies } = useApiRequest();
-    const { request: requestUsers } = useApiRequest();
+    const { request: requestServices } = useRequest();
+    const { request: requestAgencies } = useRequest();
+    const { request: requestUsers } = useRequest();
     const serviceOptions = ref([]);
     const agencyOptions = ref([]);
     const userOptions = ref([]);

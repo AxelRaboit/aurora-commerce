@@ -7,6 +7,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { Plus, Save, X, Trash2, Check, UserPlus, Pencil } from "lucide-vue-next";
@@ -195,11 +196,13 @@ onMounted(() => {
                 <AppSelect v-model="users.newUser.value.locale" :label="t('backend.users.locale')">
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="users.showCreateModal.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="users.createLoading.value"><Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.create') }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -236,11 +239,13 @@ onMounted(() => {
                 <AppSelect v-model="users.editUserForm.value.locale" :label="t('backend.users.locale')">
                     <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AppSelect>
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="users.closeEdit"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="users.editLoading.value"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!users.pendingToggleRole.value" max-width="sm" :closeable="false" v-on:close="users.pendingToggleRole.value = null">
@@ -249,10 +254,12 @@ onMounted(() => {
                     ? t('backend.users.revokeDevConfirm', { name: users.pendingToggleRole.value?.name })
                     : t('backend.users.grantDevConfirm', { name: users.pendingToggleRole.value?.name }) }}
             </p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="users.pendingToggleRole.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="users.doToggleRole"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.confirm') }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="users.pendingToggleRole.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" v-on:click="users.doToggleRole"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.confirm') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

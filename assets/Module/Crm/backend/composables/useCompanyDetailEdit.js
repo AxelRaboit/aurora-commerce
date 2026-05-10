@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required, url } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -19,7 +19,7 @@ export function useCompanyDetailEdit(updatePath, company) {
         notes: company.value.notes ?? "",
     });
     const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
-    const { loading: editLoading, request } = useApiRequest();
+    const { loading: editLoading, request } = useRequest();
 
     async function submitEdit() {
         if (

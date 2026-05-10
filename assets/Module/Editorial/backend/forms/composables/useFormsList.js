@@ -1,5 +1,5 @@
 import { onMounted } from "vue";
-import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
 
 export function useFormsList(listPath) {
     const {

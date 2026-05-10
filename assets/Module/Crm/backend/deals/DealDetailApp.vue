@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -38,7 +38,7 @@ const deal = ref({ ...props.deal });
 
 // Stage update directly
 const currentStage = ref(deal.value.stage);
-const { loading: stageLoading, request: stageRequest } = useApiRequest();
+const { loading: stageLoading, request: stageRequest } = useRequest();
 
 async function updateStage(newStage) {
     const data = await stageRequest(props.updateStagePath, { stage: newStage }, HttpMethod.Patch);
@@ -59,7 +59,7 @@ const editForm = ref({
     notes: deal.value.notes ?? "",
 });
 const { errors: editErrors, validate: validateEdit, clearErrors: clearEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
+const { loading: editLoading, request: editRequest } = useRequest();
 
 async function submitEdit() {
     if (!validateEdit({ name: () => required(t("backend.crm.deals.errors.name_required"))(editForm.value.name) })) return;

@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -35,7 +35,7 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
         clearErrors,
         setErrors,
     } = useForm();
-    const { loading: createTaskLoading, request } = useApiRequest();
+    const { loading: createTaskLoading, request } = useRequest();
 
     function openCreateTask(columnId = null) {
         // Default to the first column of the active project when no explicit column was provided.

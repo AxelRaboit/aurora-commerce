@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -45,7 +45,7 @@ export function useListingsCreate(createPath, reset, loadProducts) {
         clearErrors,
         setErrors,
     } = useForm();
-    const { loading: createLoading, request: createRequest } = useApiRequest();
+    const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
         newListing.value = emptyListingForm();

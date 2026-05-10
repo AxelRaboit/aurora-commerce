@@ -20,7 +20,7 @@ backend:
     customUrl: URL personnalisée
     translations: Libellés par langue
     translationsHint: Le libellé par défaut est tiré de la cible. Surcharge-le ici par langue si besoin.
-    translationPlaceholder: Libellé personnalisé (optionnel)
+    translationPlaceholder: Libellé personnalisé
     visibility: Visibilité
     cssClass: Classes CSS
     openInNewTab: Ouvrir dans un nouvel onglet

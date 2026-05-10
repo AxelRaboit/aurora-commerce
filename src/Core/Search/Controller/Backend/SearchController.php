@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Aurora\Core\Search\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Search\Service\SearchResultSorter;
 use Aurora\Core\Search\Service\SearchSnippetBuilder;
-use Aurora\Module\Editorial\Post\Entity\Post;
+use Aurora\Module\Editorial\Post\Entity\PostInterface;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
-use Aurora\Module\Project\Entity\Project;
-use Aurora\Module\Project\Entity\ProjectTask;
+use Aurora\Module\Project\Entity\ProjectInterface;
+use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Repository\ProjectRepository;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +28,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('core.search.view')]
 class SearchController extends AbstractController
 {
+    use JsonResponseTrait;
+
     public function __construct(
         private readonly PostRepository $postRepository,
         private readonly TaxonomyTermRepository $termRepository,
@@ -33,6 +37,7 @@ class SearchController extends AbstractController
         private readonly SearchSnippetBuilder $snippetBuilder,
         private readonly ProjectRepository $projectRepository,
         private readonly ProjectTaskRepository $taskRepository,
+        private readonly SearchResultSorter $searchResultSorter,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -40,19 +45,17 @@ class SearchController extends AbstractController
     {
         $query = mb_trim((string) $request->query->get('q', ''));
         if ('' === $query) {
-            return $this->json(['success' => true, 'posts' => [], 'terms' => [], 'media' => [], 'projects' => [], 'tasks' => []]);
+            return $this->jsonSuccess(['posts' => [], 'terms' => [], 'media' => [], 'projects' => [], 'tasks' => []]);
         }
 
         $defaultLocaleEnum = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
 
         // ── Posts (full-text via tsvector) ──────────────────────────────────
         $postIds = $this->postRepository->fullTextPostIds($query, 10);
-        $posts = [] !== $postIds ? $this->postRepository->findByIds($postIds) : [];
-        $orderById = array_flip($postIds);
-        usort($posts, static fn (Post $a, Post $b): int => ($orderById[$a->getId()] ?? PHP_INT_MAX) <=> ($orderById[$b->getId()] ?? PHP_INT_MAX));
+        $posts = [] !== $postIds ? $this->searchResultSorter->sortByRelevance($this->postRepository->findByIds($postIds), $postIds) : [];
 
         $postsSerialized = array_map(
-            fn (Post $post): array => [
+            fn (PostInterface $post): array => [
                 'id' => $post->getId(),
                 'title' => $post->getTranslation('fr')?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $post->getStatus()->value,
@@ -69,7 +72,7 @@ class SearchController extends AbstractController
 
         // ── Terms ───────────────────────────────────────────────────────────
         $termsSerialized = array_map(
-            fn (TaxonomyTerm $term): array => [
+            fn (TaxonomyTermInterface $term): array => [
                 'id' => $term->getId(),
                 'name' => $term->getTranslation($defaultLocaleEnum)?->getName()
                     ?? ($term->getTranslations()->first() ?: null)?->getName(),
@@ -80,7 +83,7 @@ class SearchController extends AbstractController
 
         // ── Media ───────────────────────────────────────────────────────────
         $mediaSerialized = array_map(
-            static fn (Media $media): array => [
+            static fn (MediaInterface $media): array => [
                 'id' => $media->getId(),
                 'name' => $media->getOriginalName(),
                 'mimeType' => $media->getMimeType(),
@@ -91,7 +94,7 @@ class SearchController extends AbstractController
 
         // ── Projects ────────────────────────────────────────────────────────
         $projectsSerialized = array_map(
-            static fn (Project $project): array => [
+            static fn (ProjectInterface $project): array => [
                 'id' => $project->getId(),
                 'title' => $project->getTitle(),
                 'status' => $project->getStatus()->value,
@@ -102,7 +105,7 @@ class SearchController extends AbstractController
 
         // ── Tasks ────────────────────────────────────────────────────────────
         $tasksSerialized = array_map(
-            static fn (ProjectTask $task): array => [
+            static fn (ProjectTaskInterface $task): array => [
                 'id' => $task->getId(),
                 'title' => $task->getTitle(),
                 'reference' => $task->getReference(),
@@ -112,8 +115,7 @@ class SearchController extends AbstractController
             $this->taskRepository->searchByTitle($query),
         );
 
-        return $this->json([
-            'success' => true,
+        return $this->jsonSuccess([
             'posts' => $postsSerialized,
             'terms' => $termsSerialized,
             'media' => $mediaSerialized,

@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -20,7 +20,7 @@ export function useProductsEdit(updatePath, reset) {
     const editForm = ref(emptyProductForm());
     const editFormImage = makeImageRef(editForm);
     const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
-    const { loading: editLoading, request } = useApiRequest();
+    const { loading: editLoading, request } = useRequest();
 
     function openEdit(product) {
         editingProduct.value = product;

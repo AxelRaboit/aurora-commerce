@@ -60,7 +60,7 @@ final class VaultEntriesController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->vaultUserConfigRepository->findOneByUser($user) instanceof VaultUserConfigInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_FORBIDDEN);
+            return $this->jsonForbidden();
         }
 
         $input = $this->vaultEntryInputFactory->fromArray($this->decodeJson($request));
@@ -83,7 +83,7 @@ final class VaultEntriesController extends AbstractController
 
         $entry = $this->vaultEntryRepository->findOneByUserAndId($user, $id);
         if (!$entry instanceof VaultEntryInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $input = $this->vaultEntryInputFactory->fromArray($this->decodeJson($request));
@@ -106,7 +106,7 @@ final class VaultEntriesController extends AbstractController
 
         $entry = $this->vaultEntryRepository->findOneByUserAndId($user, $id);
         if (!$entry instanceof VaultEntryInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $this->vaultEntryManager->delete($entry);
@@ -122,7 +122,7 @@ final class VaultEntriesController extends AbstractController
 
         $entry = $this->vaultEntryRepository->findOneByUserAndId($user, $id);
         if (!$entry instanceof VaultEntryInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $this->vaultEntryManager->toggleFavorite($entry);
@@ -138,7 +138,7 @@ final class VaultEntriesController extends AbstractController
 
         $entry = $this->vaultEntryRepository->findOneByUserAndId($user, $id);
         if (!$entry instanceof VaultEntryInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $data = $this->decodeJson($request);
@@ -148,7 +148,7 @@ final class VaultEntriesController extends AbstractController
         if (null !== $folderId) {
             $folder = $this->vaultFolderRepository->findOneByUserAndId($user, $folderId);
             if (!$folder instanceof VaultFolderInterface) {
-                return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+                return $this->jsonNotFound();
             }
         }
 

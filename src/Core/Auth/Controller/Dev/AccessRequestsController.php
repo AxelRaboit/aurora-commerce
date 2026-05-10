@@ -52,7 +52,7 @@ final class AccessRequestsController extends AbstractController
     public function approve(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['success' => false], HttpStatusEnum::Conflict->value);
+            return $this->jsonFailure('conflict', HttpStatusEnum::Conflict->value);
         }
 
         $generatedPassword = null;
@@ -76,7 +76,7 @@ final class AccessRequestsController extends AbstractController
     public function reject(AccessRequest $accessRequest): JsonResponse
     {
         if (!$accessRequest->isPending()) {
-            return $this->json(['success' => false], HttpStatusEnum::Conflict->value);
+            return $this->jsonFailure('conflict', HttpStatusEnum::Conflict->value);
         }
 
         $this->accessRequestManager->reject($accessRequest);

@@ -1,9 +1,10 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, FileText, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
@@ -19,6 +20,7 @@ import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
 import MediaQrModal from "@core/backend/media/MediaQrModal.vue";
+import PdfThumbnail from "@core/backend/media/components/PdfThumbnail.vue";
 import MediaCropperModal from "@core/backend/media/MediaCropperModal.vue";
 import { useMediaNavigation } from "@core/backend/media/composables/useMediaNavigation.js";
 import { useMediaFolderTree } from "@core/backend/media/composables/useMediaFolderTree.js";
@@ -391,7 +393,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                 selectedIds.has(item.id) ? 'ring-2 ring-accent-500' : '',
                             ]"
                             draggable="true"
-                            v-on:click="isSelecting ? toggleSelect(item.id) : openEditMedia(item)"
+                            v-on:click="isSelecting ? toggleSelect(item.id) : (previewMedia = item)"
                             v-on:dragstart="onMediaDragStart($event, item)"
                             v-on:dragover="onMediaItemDragOver($event, item)"
                             v-on:dragleave="dragOverMediaId = null"
@@ -422,18 +424,22 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                         </div>
                                     </div>
                                 </template>
+                                <PdfThumbnail v-else-if="item.isPdf" :url="item.url" />
                                 <ImageIcon v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
                                 <div v-if="!item.alt" class="absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-medium bg-rose-500/80 text-white">{{ t("backend.media.missingAlt") }}</div>
                                 <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.preview')" v-on:click.stop="previewMedia = item">
+                                    <AppOverlayIconButton size="sm" variant="light" :title="t('backend.media.preview')" v-on:click.stop="previewMedia = item">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
-                                    </button>
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.copyUrl')" v-on:click.stop="copyUrl(item)">
+                                    </AppOverlayIconButton>
+                                    <AppOverlayIconButton v-if="can('core.media.manage')" size="sm" variant="light" :title="t('shared.common.edit')" v-on:click.stop="openEditMedia(item)">
+                                        <Pencil class="w-4 h-4" :stroke-width="2" />
+                                    </AppOverlayIconButton>
+                                    <AppOverlayIconButton size="sm" variant="light" :title="t('backend.media.copyUrl')" v-on:click.stop="copyUrl(item)">
                                         <Copy class="w-4 h-4" :stroke-width="2" />
-                                    </button>
-                                    <button type="button" class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors" :title="t('backend.media.qrCode')" v-on:click.stop="openQr(item)">
+                                    </AppOverlayIconButton>
+                                    <AppOverlayIconButton size="sm" variant="light" :title="t('backend.media.qrCode')" v-on:click.stop="openQr(item)">
                                         <QrCode class="w-4 h-4" :stroke-width="2" />
-                                    </button>
+                                    </AppOverlayIconButton>
                                 </div>
                             </div>
                             <div class="p-2 space-y-0.5">
@@ -472,12 +478,19 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     <td class="px-3 py-2">
                                         <div class="flex items-center gap-2">
                                             <AppImage
-                                                :src="item.isImage ? (item.thumbnailUrl ?? item.url) : null"
+                                                v-if="item.isImage"
+                                                :src="item.thumbnailUrl ?? item.url"
                                                 :alt="item.alt ?? ''"
                                                 object-fit="cover"
                                                 rounded="rounded"
                                                 class="w-8 h-8 shrink-0"
                                             />
+                                            <div v-else-if="item.isPdf" class="w-8 h-8 shrink-0 flex items-center justify-center bg-red-500/10 rounded">
+                                                <FileText class="w-4 h-4 text-red-400" :stroke-width="1.5" />
+                                            </div>
+                                            <div v-else class="w-8 h-8 shrink-0 flex items-center justify-center bg-surface-2 rounded">
+                                                <Film class="w-4 h-4 text-muted" :stroke-width="1.5" />
+                                            </div>
                                             <div class="min-w-0">
                                                 <div class="truncate font-medium text-primary">{{ item.originalName }}</div>
                                                 <div v-if="searchQuery && item.folderName" class="text-xs text-accent-400/80 flex items-center gap-1">
@@ -490,10 +503,11 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     <td class="px-3 py-2 text-muted hidden sm:table-cell">{{ item.mimeType }}</td>
                                     <td class="px-3 py-2 text-right text-muted hidden md:table-cell">{{ formatSize(item.size) }}</td>
                                     <td class="px-3 py-2 text-right">
-                                        <div class="flex justify-end gap-1" v-on:click.stop>
-                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></button>
-                                            <button type="button" class="p-1 text-muted hover:text-primary rounded transition-colors" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></button>
+                                        <div class="flex justify-end gap-0.5" v-on:click.stop>
+                                            <AppIconButton :title="t('backend.media.preview')" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton v-if="can('core.media.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditMedia(item)"><Pencil class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton :title="t('backend.media.copyUrl')" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton :title="t('backend.media.qrCode')" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
                                         </div>
                                     </td>
                                 </tr>
@@ -571,6 +585,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             preload="metadata"
                         />
                     </div>
+                    <div v-else-if="editingMedia?.isPdf" class="bg-surface-2 rounded-md overflow-hidden" style="height: 360px">
+                        <iframe
+                            :src="editingMedia.url"
+                            class="w-full h-full border-0"
+                            :title="editingMedia.originalName"
+                        />
+                    </div>
                     <div v-else class="bg-surface-2 rounded-md p-8 flex flex-col items-center">
                         <Film class="w-16 h-16 text-muted" :stroke-width="1.5" />
                         <p class="mt-2 text-xs text-muted">{{ editingMedia?.mimeType }}</p>
@@ -629,43 +650,24 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </dl>
                 </div>
 
-                <div class="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-line">
-                    <AppButton
-                        type="submit"
-                        variant="primary"
-                        size="md"
-                        class="w-full sm:w-auto order-1 sm:order-2 sm:ms-auto"
-                        :loading="editSaving"
-                    >
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton v-if="editingMedia?.isImage" variant="secondary" size="md" v-on:click="openCrop(editingMedia)">
+                        <Crop class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.crop") }}
+                    </AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="openQr(editingMedia)">
+                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.qrCode") }}
+                    </AppButton>
+                    <AppButton v-if="can('core.media.manage')" variant="danger" size="md" v-on:click="askDeleteMedia(editingMedia)">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
+                    </AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="closeEditMedia"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="editSaving" v-on:click="submitMediaEdit">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
                     </AppButton>
-                    <AppButton
-                        v-if="editingMedia?.isImage"
-                        variant="secondary"
-                        size="md"
-                        class="w-full sm:w-auto order-2 sm:order-1"
-                        v-on:click="openCrop(editingMedia)"
-                    >
-                        <Crop class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("backend.media.crop") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="can('core.media.manage')"
-                        variant="danger"
-                        size="md"
-                        class="w-full sm:w-auto order-3 sm:order-1"
-                        v-on:click="askDeleteMedia(editingMedia)"
-                    >
-                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.delete") }}
-                    </AppButton>
-                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-2 sm:order-1" v-on:click="openQr(editingMedia)">
-                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("backend.media.qrCode") }}
-                    </AppButton>
-                    <AppButton variant="ghost" size="md" class="w-full sm:w-auto order-4 sm:order-1" v-on:click="closeEditMedia"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -795,7 +797,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.copyUrl") }}
                     </AppButton>
                     <AppButton size="sm" variant="ghost" v-on:click="openQr(previewMedia)">
-                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> QR
+                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.qrCode") }}
                     </AppButton>
                 </div>
             </div>
@@ -815,6 +817,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     class="max-w-full max-h-[70vh] rounded-lg"
                     preload="metadata"
                 />
+                <iframe
+                    v-else-if="previewMedia?.isPdf"
+                    :src="previewMedia.url"
+                    class="w-full rounded-lg border-0"
+                    style="height: 70vh"
+                    :title="previewMedia.originalName"
+                />
                 <div v-else class="flex flex-col items-center gap-3 py-12">
                     <Film class="w-16 h-16 text-muted" :stroke-width="1.5" />
                     <p class="text-sm text-muted">{{ previewMedia?.mimeType }}</p>
@@ -825,6 +834,11 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div class="flex justify-between"><dt>{{ t("backend.media.size") }}</dt><dd>{{ formatSize(previewMedia?.size ?? 0) }}</dd></div>
                 <div v-if="previewMedia?.width" class="flex justify-between"><dt>{{ t("backend.media.dimensions") }}</dt><dd>{{ previewMedia.width }}×{{ previewMedia.height }}</dd></div>
             </dl>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="previewMedia = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <MediaQrModal :media="qrMedia" :closeable="false" v-on:close="qrMedia = null" />

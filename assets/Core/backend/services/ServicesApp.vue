@@ -89,14 +89,16 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                     :required="true"
                 />
                 <slot name="extra-form-fields" :form="editForm" :errors="editModal.errors" :service="editModal.service" />
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-line/40">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal

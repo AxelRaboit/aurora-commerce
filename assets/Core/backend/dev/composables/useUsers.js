@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useForm } from "@/shared/composables/form/useForm.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -68,7 +68,7 @@ export function useUsers(
         setErrors: setCreateErrors,
         clearErrors: clearCreateErrors,
     } = useForm();
-    const { loading: createLoading, request: createRequest } = useApiRequest();
+    const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
         showCreateModal.value = true;
@@ -127,7 +127,7 @@ export function useUsers(
         setErrors: setEditErrors,
         clearErrors: clearEditErrors,
     } = useForm();
-    const { loading: editLoading, request: editRequest } = useApiRequest();
+    const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(user) {
         editingUser.value = user;

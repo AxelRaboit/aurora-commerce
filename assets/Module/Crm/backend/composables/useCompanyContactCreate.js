@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import {
     required,
@@ -28,7 +28,7 @@ export function useCompanyContactCreate(
         clearErrors,
         setErrors,
     } = useForm();
-    const { loading: contactLoading, request } = useApiRequest();
+    const { loading: contactLoading, request } = useRequest();
 
     function openCreateContact() {
         newContact.value = emptyContactForm();

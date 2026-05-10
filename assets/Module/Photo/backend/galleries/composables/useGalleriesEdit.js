@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -16,7 +16,7 @@ export function useGalleriesEdit(props, reload) {
     const editingId = ref(null);
     const editingHasPassword = ref(false);
     const { errors: editErrors, clearErrors, setErrors } = useForm();
-    const { loading: editLoading, request: editRequest } = useApiRequest();
+    const { loading: editLoading, request: editRequest } = useRequest();
 
     function openGallery(g) {
         window.location.href = buildPath(props.editPath, { id: g.id });

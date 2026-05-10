@@ -34,6 +34,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case SeoDefaultDescription = 'seo_default_description';
     case EcommerceLowStockThreshold = 'backend_ecommerce_low_stock_threshold';
     case GedDocumentPrefix = 'backend_ged_document_prefix';
+    case PdfFormDocumentPrefix = 'backend_pdfform_document_prefix';
     case BillingInvoicePrefix = 'backend_billing_invoice_prefix';
     case BillingCreditNotePrefix = 'backend_billing_credit_note_prefix';
     case EcommerceOrderPrefix = 'backend_ecommerce_order_prefix';
@@ -102,6 +103,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoDefaultDescription => 'backend.parameters.seo_default_description.label',
             self::EcommerceLowStockThreshold => 'backend.parameters.ecommerce_low_stock_threshold.label',
             self::GedDocumentPrefix => 'backend.parameters.ged_document_prefix.label',
+            self::PdfFormDocumentPrefix => 'backend.parameters.pdfform_document_prefix.label',
             self::BillingInvoicePrefix => 'backend.parameters.billing_invoice_prefix.label',
             self::BillingCreditNotePrefix => 'backend.parameters.billing_credit_note_prefix.label',
             self::EcommerceOrderPrefix => 'backend.parameters.ecommerce_order_prefix.label',
@@ -175,6 +177,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CrmCompanyPrefix => 'backend.parameters.crm_company_prefix.description',
             self::EcommerceOrderPrefix => 'backend.parameters.ecommerce_order_prefix.description',
             self::GedDocumentPrefix => 'backend.parameters.ged_document_prefix.description',
+            self::PdfFormDocumentPrefix => 'backend.parameters.pdfform_document_prefix.description',
             self::EmailLocale => 'backend.parameters.email_locale.description',
             self::PhotoGalleryPrefix => 'backend.parameters.photo_gallery_prefix.description',
             self::EditorialPostPrefix => 'backend.parameters.editorial_post_prefix.description',
@@ -232,6 +235,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoDefaultDescription => '',
             self::EcommerceLowStockThreshold => '5',
             self::GedDocumentPrefix => 'DOC',
+            self::PdfFormDocumentPrefix => SequencePrefixEnum::PdfFormDocument->value,
             self::BillingInvoicePrefix => SequencePrefixEnum::Invoice->value,
             self::BillingCreditNotePrefix => SequencePrefixEnum::CreditNote->value,
             self::EcommerceOrderPrefix => SequencePrefixEnum::Order->value,
@@ -299,7 +303,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
-            self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix => 'sequences',
+            self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix, self::PdfFormDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
         };

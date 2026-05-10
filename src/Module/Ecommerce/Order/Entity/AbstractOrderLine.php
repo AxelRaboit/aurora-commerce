@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 abstract class AbstractOrderLine implements OrderLineInterface
 {
-    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
     protected ?string $reference = null;
 
     #[ORM\ManyToOne(targetEntity: OrderInterface::class, inversedBy: 'lines')]

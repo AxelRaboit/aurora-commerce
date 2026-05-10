@@ -38,7 +38,7 @@ assets/
     │   ├── nav/
     │   └── overlay/
     ├── composables/
-    │   ├── api/                            ← useApiRequest, etc.
+    │   ├── http/                            ← useRequest, etc.
     │   ├── form/                           ← useForm
     │   ├── format/                         ← useDateFormat
     │   └── list/                           ← useListPage, useUrlSearchSync
@@ -104,7 +104,7 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -114,7 +114,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
 
 export function useAgenciesForm(agencyList, createPath, updatePath, options = {}) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
     const extraFields = options.extraFields ?? {};
 
     const editModal = reactive({ open: false, agency: null, errors: {}, saving: false });
@@ -192,7 +192,7 @@ Cf `aurora-core/Makefile` (target `build` / `dev`) pour les détails.
 - ❌ Composant top-level sans `extraFields` prop ni slots scoped (impossible
   à étendre côté client).
 - ❌ Composables qui font de l'HTTP direct via `fetch()` au lieu d'utiliser
-  `useApiRequest` (rate de gérer toast d'erreur, loading state, etc.).
+  `useRequest` (rate de gérer toast d'erreur, loading state, etc.).
 - ❌ Logique métier dans le composant (calculs complexes, transitions de
   statut). Mettre dans un composable dédié.
 - ❌ Composant naming inconsistant : `AgenciesApp` (plural) vs

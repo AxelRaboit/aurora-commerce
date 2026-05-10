@@ -2,13 +2,13 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Truck, PackageCheck } from "lucide-vue-next";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { OrderStatus } from "@/Module/Ecommerce/shared/enums/orderStatus.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useOrderStatusManagement(updateStatusPath, order, activity) {
     const { t } = useI18n();
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
 
     const availableTransitions = computed(() => {
         const requiresShipping = order.value.requiresShipping ?? true;

@@ -11,6 +11,7 @@ import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { toast } from "vue-sonner";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -277,14 +278,16 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                 <p class="text-sm text-primary">
                     {{ t(trashed ? "backend.posts.forceDeleteConfirm" : "backend.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
                 </p>
-                <div class="flex justify-end gap-2 mt-2">
-                    <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
-                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
-                    </AppButton>
-                    <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
-                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t(trashed ? "backend.posts.forceDelete" : "common.delete") }}
-                    </AppButton>
-                </div>
+                <template #footer>
+                    <AppModalFooter>
+                        <AppButton variant="ghost" size="md" v-on:click="deletePost.pendingDelete.value = null">
+                            <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                        </AppButton>
+                        <AppButton variant="danger" size="md" :loading="deletePost.loading.value" v-on:click="deletePost.submit()">
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t(trashed ? "backend.posts.forceDelete" : "common.delete") }}
+                        </AppButton>
+                    </AppModalFooter>
+                </template>
             </AppModal>
 
             <AppModal
@@ -295,17 +298,17 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                 :icon="Trash2"
                 v-on:close="confirmEmptyTrash = false"
             >
-                <div class="space-y-4">
-                    <p class="text-sm text-primary">{{ t("backend.posts.emptyTrashConfirm") }}</p>
-                    <div class="flex justify-end gap-2">
+                <p class="text-sm text-primary">{{ t("backend.posts.emptyTrashConfirm") }}</p>
+                <template #footer>
+                    <AppModalFooter>
                         <AppButton variant="secondary" size="md" v-on:click="confirmEmptyTrash = false">
                             <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
                         </AppButton>
                         <AppButton variant="danger" size="md" :loading="emptyingTrash" v-on:click="emptyTrash">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.emptyTrash") }}
                         </AppButton>
-                    </div>
-                </div>
+                    </AppModalFooter>
+                </template>
             </AppModal>
         </div>
 

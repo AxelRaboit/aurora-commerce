@@ -27,7 +27,7 @@ abstract class AbstractUser implements CoreUserInterface
 
     public const int MOOD_MESSAGE_MAX_LENGTH = 160;
 
-    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
     #[Groups(['user:read'])]
     protected ?string $reference = null;
 

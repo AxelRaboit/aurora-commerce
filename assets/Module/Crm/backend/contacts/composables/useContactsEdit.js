@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import {
     required,
@@ -18,7 +18,7 @@ export function useContactsEdit(updatePath, reset) {
     const editingContact = ref(null);
     const editForm = ref(emptyContactForm());
     const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
-    const { loading: editLoading, request } = useApiRequest();
+    const { loading: editLoading, request } = useRequest();
 
     function openEdit(contact) {
         editingContact.value = contact;

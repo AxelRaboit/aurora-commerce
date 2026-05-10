@@ -50,7 +50,12 @@ use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
+use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
+use Aurora\Module\Planning\Event\Entity\PlanningEvent;
+use Aurora\Module\Planning\Event\Enum\PlanningEventStatusEnum;
+use Aurora\Module\Planning\Planning\Entity\Planning;
+use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItemComment;
@@ -119,6 +124,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
+        $this->createPdfForm($manager);
+        $this->createHr($manager, $users);
+        $this->createPlanning($manager, $users);
         $this->createProjects($manager, $users, $companies, $contacts);
         $this->createMenuItems($manager, $media);
 
@@ -235,7 +243,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     /** @return Media[] */
     private function createMedia(EntityManagerInterface $em): array
     {
-        $month = new DateTimeImmutable()->format('Y-m');
+        $month = new DateTimeImmutable()->format('Y/m');
         $destDir = $this->uploadDir.'/media/'.$month;
         $this->fs->mkdir($destDir);
 
@@ -1267,6 +1275,187 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
     }
 
+    // ── PDF Forms ─────────────────────────────────────────────────────────────
+
+    private function createPdfForm(EntityManagerInterface $em): void
+    {
+        $month = new DateTimeImmutable()->format('Y/m');
+        $destDir = $this->uploadDir.'/media/'.$month;
+        $this->fs->mkdir($destDir);
+
+        $src = dirname(__DIR__, 3).'/test_files/files/pdfs/pdfform_sample.pdf';
+        $dest = $destDir.'/pdfform-sample.pdf';
+
+        if (file_exists($src)) {
+            $this->fs->copy($src, $dest, true);
+
+            $m = new \Aurora\Core\Media\Entity\Media();
+            $m->setFilename('pdfform-sample.pdf')
+              ->setOriginalName('PDF Form.pdf')
+              ->setMimeType('application/pdf')
+              ->setSize((int) filesize($dest))
+              ->setPath('media/'.$month.'/pdfform-sample.pdf')
+              ->setVariants([]);
+            $em->persist($m);
+        }
+
+        $em->flush();
+    }
+
+    // ── HR ────────────────────────────────────────────────────────────────────
+
+    /** @param User[] $users */
+    private function createHr(EntityManagerInterface $em, array $users): void
+    {
+        $agencies  = $em->getRepository(\Aurora\Core\Agency\Entity\Agency::class)->findAll();
+        $services  = $em->getRepository(\Aurora\Core\Service\Entity\Service::class)->findAll();
+
+        $defs = [
+            ['firstName' => 'Sophie',    'lastName' => 'Martin',    'title' => 'Responsable RH',              'email' => 'sophie.martin@aurora-tech.fr',    'phone' => '+33 6 10 11 12 13', 'hired' => '2019-03-01', 'left' => null,         'svc' => 'Ressources Humaines', 'agc' => 'Siège Social'],
+            ['firstName' => 'Thomas',    'lastName' => 'Dubois',    'title' => 'Développeur Senior PHP',       'email' => 'thomas.dubois@aurora-tech.fr',    'phone' => '+33 6 20 21 22 23', 'hired' => '2020-06-15', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
+            ['firstName' => 'Clara',     'lastName' => 'Lefèvre',   'title' => 'Chef de projet technique',     'email' => 'clara.lefevre@aurora-tech.fr',    'phone' => '+33 6 30 31 32 33', 'hired' => '2018-09-01', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
+            ['firstName' => 'Julien',    'lastName' => 'Moreau',    'title' => 'Commercial Grands Comptes',    'email' => 'julien.moreau@aurora-tech.fr',    'phone' => '+33 6 40 41 42 43', 'hired' => '2021-01-10', 'left' => null,         'svc' => 'Commercial',          'agc' => 'Agence Sud'],
+            ['firstName' => 'Camille',   'lastName' => 'Bernard',   'title' => 'Chargée de communication',    'email' => 'camille.bernard@aurora-tech.fr',  'phone' => '+33 6 50 51 52 53', 'hired' => '2022-04-04', 'left' => null,         'svc' => 'Marketing',           'agc' => 'Siège Social'],
+            ['firstName' => 'Antoine',   'lastName' => 'Petit',     'title' => 'Développeur Full-Stack',       'email' => 'antoine.petit@aurora-tech.fr',    'phone' => '+33 6 60 61 62 63', 'hired' => '2021-09-20', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Est'],
+            ['firstName' => 'Lucie',     'lastName' => 'Girard',    'title' => 'Assistante de direction',      'email' => 'lucie.girard@aurora-tech.fr',     'phone' => '+33 6 70 71 72 73', 'hired' => '2017-11-15', 'left' => null,         'svc' => 'Direction',           'agc' => 'Siège Social'],
+            ['firstName' => 'Marc',      'lastName' => 'Rousseau',  'title' => 'Ingénieur DevOps',             'email' => 'marc.rousseau@aurora-tech.fr',    'phone' => '+33 6 80 81 82 83', 'hired' => '2020-02-01', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Ouest'],
+            ['firstName' => 'Emma',      'lastName' => 'Dupont',    'title' => 'Designer UX/UI',               'email' => 'emma.dupont@aurora-tech.fr',      'phone' => '+33 6 90 91 92 93', 'hired' => '2022-07-18', 'left' => null,         'svc' => 'Marketing',           'agc' => 'Siège Social'],
+            ['firstName' => 'Nicolas',   'lastName' => 'Lambert',   'title' => 'Responsable Commercial',       'email' => 'nicolas.lambert@aurora-tech.fr',  'phone' => '+33 7 00 01 02 03', 'hired' => '2016-05-09', 'left' => null,         'svc' => 'Commercial',          'agc' => 'Agence Sud'],
+            ['firstName' => 'Inès',      'lastName' => 'Fontaine',  'title' => 'Développeuse Backend',         'email' => 'ines.fontaine@aurora-tech.fr',    'phone' => '+33 7 10 11 12 13', 'hired' => '2023-01-09', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
+            ['firstName' => 'Romain',    'lastName' => 'Garnier',   'title' => 'Consultant technique',         'email' => 'romain.garnier@aurora-tech.fr',   'phone' => '+33 7 20 21 22 23', 'hired' => '2019-08-26', 'left' => '2024-06-30', 'svc' => 'Développement',       'agc' => 'Agence Est'],
+            ['firstName' => 'Mathilde',  'lastName' => 'Chevalier', 'title' => 'Chargée de recrutement',       'email' => 'mathilde.chevalier@aurora-tech.fr','phone' => '+33 7 30 31 32 33', 'hired' => '2023-09-04', 'left' => null,         'svc' => 'Ressources Humaines', 'agc' => 'Siège Social'],
+            ['firstName' => 'Pierre',    'lastName' => 'Morel',     'title' => 'Directeur Technique',          'email' => 'pierre.morel@aurora-tech.fr',     'phone' => '+33 7 40 41 42 43', 'hired' => '2015-01-05', 'left' => null,         'svc' => 'Direction',           'agc' => 'Siège Social'],
+            ['firstName' => 'Laura',     'lastName' => 'Simon',     'title' => 'Développeuse Mobile',          'email' => 'laura.simon@aurora-tech.fr',      'phone' => '+33 7 50 51 52 53', 'hired' => '2024-03-11', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Ouest'],
+        ];
+
+        $agencyMap  = [];
+        foreach ($agencies as $a) {
+            $agencyMap[$a->getName()] = $a;
+        }
+        $serviceMap = [];
+        foreach ($services as $s) {
+            $serviceMap[$s->getName()] = $s;
+        }
+
+        foreach ($defs as $i => $def) {
+            $employee = new Employee();
+            $employee->setFirstName($def['firstName'])
+                     ->setLastName($def['lastName'])
+                     ->setJobTitle($def['title'])
+                     ->setWorkEmail($def['email'])
+                     ->setPhone($def['phone'])
+                     ->setHiredAt(new DateTimeImmutable($def['hired']))
+                     ->setLeftAt(null !== $def['left'] ? new DateTimeImmutable($def['left']) : null)
+                     ->setUser($users[$i] ?? null)
+                     ->setService($serviceMap[$def['svc']] ?? null)
+                     ->setAgency($agencyMap[$def['agc']] ?? null);
+            $em->persist($employee);
+        }
+
+        $em->flush();
+    }
+
+    // ── Planning ──────────────────────────────────────────────────────────────
+
+    /** @param User[] $users */
+    private function createPlanning(EntityManagerInterface $em, array $users): void
+    {
+        $admin = $users[0] ?? null;
+        $now   = new DateTimeImmutable();
+
+        // Planning 1 — Équipe Développement (partagé agence)
+        $p1 = new Planning();
+        $p1->setName('Équipe Développement')
+           ->setDescription('Planning de l\'équipe dev : sprints, revues, daily stand-ups.')
+           ->setColor('#3b82f6')
+           ->setTimezone('Europe/Paris')
+           ->setVisibility(PlanningVisibilityEnum::Agency)
+           ->setOwner($admin);
+        $em->persist($p1);
+
+        // Planning 2 — Direction (privé)
+        $p2 = new Planning();
+        $p2->setName('Comités de direction')
+           ->setDescription('Réunions CODIR, board et revues stratégiques.')
+           ->setColor('#8b5cf6')
+           ->setTimezone('Europe/Paris')
+           ->setVisibility(PlanningVisibilityEnum::Private_)
+           ->setOwner($admin);
+        $em->persist($p2);
+
+        // Planning 3 — Congés & absences (public)
+        $p3 = new Planning();
+        $p3->setName('Congés & absences')
+           ->setDescription('Suivi des congés payés, RTT et absences exceptionnelles.')
+           ->setColor('#10b981')
+           ->setTimezone('Europe/Paris')
+           ->setVisibility(PlanningVisibilityEnum::Public_)
+           ->setOwner($admin);
+        $em->persist($p3);
+
+        // Planning 4 — Commercial
+        $p4 = new Planning();
+        $p4->setName('Agenda Commercial')
+           ->setDescription('Rendez-vous clients, démos produit et appels de suivi.')
+           ->setColor('#f59e0b')
+           ->setTimezone('Europe/Paris')
+           ->setVisibility(PlanningVisibilityEnum::Agency)
+           ->setOwner($users[1] ?? $admin);
+        $em->persist($p4);
+
+        $addEvent = static function (
+            EntityManagerInterface $em,
+            Planning $planning,
+            string $title,
+            string $start,
+            string $end,
+            PlanningEventStatusEnum $status = PlanningEventStatusEnum::Confirmed,
+            ?string $location = null,
+            ?string $description = null,
+            bool $allDay = false,
+        ) use ($now): void {
+            $event = new PlanningEvent();
+            $event->setPlanning($planning)
+                  ->setTitle($title)
+                  ->setStartAt(new DateTimeImmutable($start))
+                  ->setEndAt(new DateTimeImmutable($end))
+                  ->setStatus($status)
+                  ->setLocation($location)
+                  ->setDescription($description)
+                  ->setAllDay($allDay);
+            $em->persist($event);
+        };
+
+        // Événements — Développement
+        $addEvent($em, $p1, 'Daily stand-up',             'today 09:00', 'today 09:15', PlanningEventStatusEnum::Confirmed, 'Visio', 'Réunion quotidienne d\'avancement.');
+        $addEvent($em, $p1, 'Sprint review S24',          'this monday 14:00', 'this monday 16:00', PlanningEventStatusEnum::Confirmed, 'Salle Arctique', 'Démonstration des fonctionnalités livrées ce sprint.');
+        $addEvent($em, $p1, 'Sprint planning S25',        'next monday 10:00', 'next monday 12:00', PlanningEventStatusEnum::Confirmed, 'Salle Arctique', 'Planification et estimation du prochain sprint.');
+        $addEvent($em, $p1, 'Atelier architecture API',   $now->modify('+3 days')->format('Y-m-d').' 09:30', $now->modify('+3 days')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle Boréale', 'Revue de la conception des nouveaux endpoints REST.');
+        $addEvent($em, $p1, 'Mise en production v2.4',   $now->modify('+7 days')->format('Y-m-d').' 22:00', $now->modify('+8 days')->format('Y-m-d').' 01:00', PlanningEventStatusEnum::Tentative, null, 'Déploiement Aurora v2.4 en production. Fenêtre de maintenance.');
+        $addEvent($em, $p1, 'Formation Docker interne',  $now->modify('-5 days')->format('Y-m-d').' 14:00', $now->modify('-5 days')->format('Y-m-d').' 17:00', PlanningEventStatusEnum::Confirmed, 'Salle Boréale', 'Formation containerisation pour l\'équipe dev.');
+        $addEvent($em, $p1, 'Rétrospective S23',         $now->modify('-14 days')->format('Y-m-d').' 15:00', $now->modify('-14 days')->format('Y-m-d').' 16:30', PlanningEventStatusEnum::Confirmed, 'Visio', 'Bilan du sprint 23 — points positifs et axes d\'amélioration.');
+
+        // Événements — Direction
+        $addEvent($em, $p2, 'CODIR mensuel — '.date('F Y'),  $now->modify('first day of this month')->format('Y-m-d').' 09:00', $now->modify('first day of this month')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle de direction', 'Revue des KPIs et décisions stratégiques du mois.');
+        $addEvent($em, $p2, 'Revue budgétaire T2 2025',     $now->modify('+10 days')->format('Y-m-d').' 10:00', $now->modify('+10 days')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle de direction', 'Analyse des dépenses et ajustements budgétaires T2.');
+        $addEvent($em, $p2, 'Board Aurora — juin 2025',     $now->modify('+21 days')->format('Y-m-d').' 09:00', $now->modify('+21 days')->format('Y-m-d').' 17:00', PlanningEventStatusEnum::Tentative, 'Paris — Siège', 'Réunion annuelle des actionnaires et présentation des résultats.');
+
+        // Événements — Congés
+        $addEvent($em, $p3, 'Congés Thomas Dubois',    $now->modify('+14 days')->format('Y-m-d'), $now->modify('+21 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
+        $addEvent($em, $p3, 'Congés Clara Lefèvre',    $now->modify('+28 days')->format('Y-m-d'), $now->modify('+35 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
+        $addEvent($em, $p3, 'RTT — Lucie Girard',      $now->modify('+5 days')->format('Y-m-d'),  $now->modify('+5 days')->format('Y-m-d'),  PlanningEventStatusEnum::Confirmed, null, null, true);
+        $addEvent($em, $p3, 'Arrêt maladie Marc Rousseau', $now->modify('-3 days')->format('Y-m-d'), $now->modify('+2 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
+
+        // Événements — Commercial
+        $addEvent($em, $p4, 'Démo Aurora — BioMed France',    $now->modify('+2 days')->format('Y-m-d').' 10:00', $now->modify('+2 days')->format('Y-m-d').' 11:30', PlanningEventStatusEnum::Confirmed, 'Visio Teams', 'Présentation des modules GED et Facturation à BioMed France.');
+        $addEvent($em, $p4, 'Déjeuner client — Retail Connect', $now->modify('+4 days')->format('Y-m-d').' 12:30', $now->modify('+4 days')->format('Y-m-d').' 14:00', PlanningEventStatusEnum::Confirmed, 'Restaurant Le Procope, Paris', 'Suivi commercial et renouvellement contrat 2025.');
+        $addEvent($em, $p4, 'Appel découverte — Novo Pharma',  $now->modify('+6 days')->format('Y-m-d').' 15:00', $now->modify('+6 days')->format('Y-m-d').' 15:45', PlanningEventStatusEnum::Tentative, 'Téléphone', 'Premier contact — présentation Aurora et qualification du besoin.');
+        $addEvent($em, $p4, 'Salon Tech Paris 2025',           $now->modify('+30 days')->format('Y-m-d'), $now->modify('+32 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, 'Paris Expo Porte de Versailles', 'Présence Aurora au salon — stand B42.', true);
+        $addEvent($em, $p4, 'Closing Tech Innovation SARL',    $now->modify('-7 days')->format('Y-m-d').' 14:00', $now->modify('-7 days')->format('Y-m-d').' 15:00', PlanningEventStatusEnum::Confirmed, 'Visio', 'Signature finale du contrat de prestation 2025.');
+
+        $em->flush();
+    }
+
     // ── Projects ──────────────────────────────────────────────────────────────
 
     /**
@@ -1526,12 +1715,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         // collide with PRJ-000001 / TSK-000001 / PRJC-000001.
         $em->flush();
         $connection = $em->getConnection();
-        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_prj START 1 INCREMENT 1 NO CYCLE');
-        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_tsk START 1 INCREMENT 1 NO CYCLE');
-        $connection->executeStatement('CREATE SEQUENCE IF NOT EXISTS seq_prjc START 1 INCREMENT 1 NO CYCLE');
-        $connection->executeStatement("SELECT setval('seq_prj', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 5)::int), 0) FROM core_projects WHERE reference IS NOT NULL), 1))");
-        $connection->executeStatement("SELECT setval('seq_tsk', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 5)::int), 0) FROM core_project_tasks WHERE reference IS NOT NULL), 1))");
-        $connection->executeStatement("SELECT setval('seq_prjc', GREATEST((SELECT COALESCE(MAX(SUBSTRING(reference FROM 6)::int), 0) FROM core_project_columns WHERE reference IS NOT NULL), 1))");
     }
 
     // ── Menus ─────────────────────────────────────────────────────────────────

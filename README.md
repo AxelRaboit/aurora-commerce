@@ -69,11 +69,45 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 
 ### Prérequis
 
-- PHP 8.4+
-- PostgreSQL
-- Node.js 20+
-- Composer
-- pnpm
+**Obligatoires**
+
+| Outil | Version | Notes |
+|-------|---------|-------|
+| PHP | 8.4+ | Extensions : `pdo_pgsql`, `intl`, `ctype`, `iconv` |
+| PostgreSQL | 14+ | Séquences natives utilisées par Doctrine |
+| Node.js | 20+ | |
+| Composer | 2+ | |
+| pnpm | 9+ | |
+| Docker + docker compose | v2+ | Mailpit (SMTP dev) — et docTR si module OCR Billing activé |
+
+**Binaires système optionnels**
+
+| Binaire | Module | Usage | Installation |
+|---------|--------|-------|-------------|
+| `pdftk` | **PDF Forms** | Détection des champs AcroForm et génération de PDFs remplis | `sudo apt install pdftk` (ou `pdftk-java` sur Ubuntu 22+) |
+| `ghostscript` (`gs`) | **PDF Forms** | Aplatissement Unicode-safe des PDFs verrouillés | `sudo apt install ghostscript` |
+| `ssh` (OpenSSH client) | **MountPoint** | Tunnels SSH vers des bases de données distantes | Inclus par défaut sur Linux/macOS |
+| `ollama` | **Billing OCR** | Inférence du modèle vision pour l'extraction de factures | [ollama.ai](https://ollama.ai) — voir [ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md) |
+
+> Les modules dont la dépendance est absente se dégradent proprement : PDF Forms crée les documents en statut *Brouillon*, MountPoint affiche une erreur de connexion, OCR met les jobs en erreur avec un message explicite.
+
+### Services externes (OCR Billing)
+
+Le module OCR du Billing nécessite deux services supplémentaires — **optionnels** si le module n'est pas activé :
+
+- **docTR** (microservice Python, lancé via Docker) — extraction texte/layout des PDF et images
+- **Ollama** + modèle vision (`qwen2.5vl:3b` par défaut) — compréhension structurée des factures
+
+```bash
+# Lancer docTR (Docker requis)
+make docker-up
+
+# Installer Ollama et télécharger le modèle
+curl -fsSL https://ollama.ai/install.sh | sh
+ollama pull qwen2.5vl:3b
+```
+
+→ Documentation complète : [docs/aurora-core/ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md)
 
 ### Mise en place
 

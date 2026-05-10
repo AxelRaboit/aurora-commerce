@@ -14,6 +14,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -234,11 +235,13 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="postTypeModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="postTypeModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -301,11 +304,13 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                     <AppCheckbox v-model="fieldForm.translatable" :label="t('backend.postTypes.fields.translatable')" />
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="fieldModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="fieldModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -317,10 +322,12 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             v-on:close="deletingPostType = null"
         >
             <p class="text-sm text-primary">{{ t("backend.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingPostType = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeletePostType"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingPostType = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeletePostType"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -332,10 +339,12 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             v-on:close="deletingField = null"
         >
             <p class="text-sm text-primary">{{ t("backend.postTypes.fields.deleteConfirm", { label: deletingField?.label }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteField"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteField"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

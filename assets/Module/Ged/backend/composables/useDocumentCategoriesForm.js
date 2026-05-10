@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
@@ -28,7 +28,7 @@ export function useDocumentCategoriesForm(
         clearErrors: clearCreate,
         setErrors: setCreateErrors,
     } = useForm();
-    const { loading: createLoading, request: createRequest } = useApiRequest();
+    const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
         newCategory.value = emptyForm();
@@ -64,7 +64,7 @@ export function useDocumentCategoriesForm(
         clearErrors: clearEdit,
         setErrors: setEditErrors,
     } = useForm();
-    const { loading: editLoading, request: editRequest } = useApiRequest();
+    const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(category) {
         editingCategory.value = category;

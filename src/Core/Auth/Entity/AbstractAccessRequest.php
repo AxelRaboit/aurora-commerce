@@ -17,7 +17,7 @@ abstract class AbstractAccessRequest implements AccessRequestInterface
 {
     use TimestampableTrait;
 
-    #[ORM\Column(length: 32, unique: true, nullable: true)]
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
     #[Groups(['access_request:read'])]
     protected ?string $reference = null;
 

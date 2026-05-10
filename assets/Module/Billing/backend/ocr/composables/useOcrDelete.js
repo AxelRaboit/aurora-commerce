@@ -1,12 +1,12 @@
 import { ref, computed, watch } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 
 export function useOcrDelete({ deletePath, jobs, previews, removePreview }) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     const pendingDelete = ref(null);
     const deleteLoading = ref(false);

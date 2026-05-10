@@ -1,7 +1,7 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@shared/composables/api/useApiRequest.js";
+import { useRequest } from "@shared/composables/http/useRequest.js";
 import { useForm } from "@shared/composables/form/useForm.js";
 import { useDelete } from "@shared/composables/form/useDelete.js";
 import { required } from "@shared/utils/validation/validators.js";
@@ -32,7 +32,7 @@ export function useVaultFolders(
         clearErrors,
         setErrors,
     } = useForm();
-    const { loading: folderSaving, request: folderRequest } = useApiRequest();
+    const { loading: folderSaving, request: folderRequest } = useRequest();
 
     function openCreateFolder() {
         folderModal.editing = null;

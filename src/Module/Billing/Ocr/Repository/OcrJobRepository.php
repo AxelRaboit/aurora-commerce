@@ -9,6 +9,7 @@ use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -35,6 +36,26 @@ class OcrJobRepository extends ResolveTargetEntityRepository
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
+    }
+
+    /**
+     * Jobs stuck in an in-progress status (Extracting or Parsing) whose
+     * startedAt is older than the given threshold — typically due to a worker
+     * crash mid-pipeline.
+     *
+     * @return list<OcrJobInterface>
+     */
+    public function findStuck(int $maxAgeMinutes = 60): array
+    {
+        $cutoff = new DateTimeImmutable(sprintf('-%d minutes', $maxAgeMinutes));
+
+        return $this->createQueryBuilder('j')
+            ->where('j.status IN (:statuses)')
+            ->andWhere('j.startedAt < :cutoff OR (j.startedAt IS NULL AND j.createdAt < :cutoff)')
+            ->setParameter('statuses', [OcrJobStatusEnum::Extracting, OcrJobStatusEnum::Parsing])
+            ->setParameter('cutoff', $cutoff)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

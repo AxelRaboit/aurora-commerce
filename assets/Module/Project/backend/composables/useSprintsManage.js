@@ -3,7 +3,7 @@ import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -27,7 +27,7 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
         clearErrors,
         setErrors,
     } = useForm();
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
 
     function openSprintsModal() {
         editingSprint.value = null;

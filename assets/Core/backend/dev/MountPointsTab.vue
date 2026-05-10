@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -214,15 +215,17 @@ onMounted(() => {
                     </template>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="mp.closeCreate">
                         <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="mp.saving.value">
                         <Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.create") }}
                     </AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Edit modal -->
@@ -329,15 +332,17 @@ onMounted(() => {
                     </template>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" type="button" v-on:click="mp.closeEdit">
                         <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="primary" size="md" type="submit" :loading="mp.saving.value">
                         {{ t("shared.common.save") }}
                     </AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Test connection modal -->
@@ -365,18 +370,19 @@ onMounted(() => {
                     </p>
                 </template>
             </div>
-            <div class="flex justify-between">
-                <AppButton v-if="mp.testModal.value.result" variant="ghost" size="md" v-on:click="mp.retryTest()">
-                    <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.mountPoints.retry") }}
-                </AppButton>
-                <div v-else />
-                <AppButton v-if="mp.testModal.value.testing" variant="ghost" size="md" v-on:click="mp.cancelTest">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
-                </AppButton>
-                <AppButton v-else variant="ghost" size="md" v-on:click="mp.closeTestModal">
-                    {{ t("shared.common.close") }}
-                </AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton v-if="mp.testModal.value.result" variant="ghost" size="md" v-on:click="mp.retryTest()">
+                        <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.mountPoints.retry") }}
+                    </AppButton>
+                    <AppButton v-if="mp.testModal.value.testing" variant="ghost" size="md" v-on:click="mp.cancelTest">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton v-else variant="ghost" size="md" v-on:click="mp.closeTestModal">
+                        {{ t("shared.common.close") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <!-- Delete confirm modal -->
@@ -385,14 +391,16 @@ onMounted(() => {
                 {{ t("backend.mountPoints.deleteConfirm") }}
                 <strong v-if="mp.pendingDelete.value"> « {{ mp.pendingDelete.value.name }} »</strong>
             </p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="mp.showDeleteModal.value = false">
-                    <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
-                </AppButton>
-                <AppButton variant="danger" size="md" v-on:click="mp.doDelete">
-                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
-                </AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="mp.showDeleteModal.value = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="mp.doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

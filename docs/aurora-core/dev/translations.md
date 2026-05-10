@@ -153,6 +153,65 @@ backend:
 
 ---
 
+## Casse des clés — deux styles coexistent (intentionnel)
+
+Le projet utilise **deux styles de casse selon l'origine de la clé** :
+
+### `snake_case` — clés construites par le code machine
+
+Utilisé quand la clé est construite **programmatiquement** à partir d'une valeur
+d'enum ou d'un identifiant système. La casse est imposée par la valeur PHP :
+
+```php
+// PdfTemplateStatusEnum::Draft->value === 'draft'
+public function getLabelKey(): string
+{
+    return 'backend.pdfform.templates.status_'.$this->value; // → status_draft
+}
+```
+
+```yaml
+# ✅ snake_case obligatoire ici — suffixe vient de l'enum
+pdfform:
+  templates:
+    status_draft: Brouillon
+    status_active: Actif
+```
+
+Clés concernées : labels de status (`status_*`), identifiants de nav globaux
+(`pdfform_templates`, `ged_categories`), clés de paramètres (`ged_document_prefix`).
+
+### `camelCase` — clés nommées manuellement dans l'UI
+
+Utilisé pour toutes les clés **écrites explicitement** dans le YAML pour les
+libellés UI, messages, placeholders :
+
+```yaml
+# ✅ camelCase pour les clés UI nommées à la main
+pdfform:
+  templates:
+    searchPlaceholder: Rechercher un template…
+    deleteConfirm: "Supprimer le template « {name} » ?"
+    fieldCount: Champs
+    noFile: Aucun fichier
+```
+
+### Règle de décision
+
+> **La clé contient une valeur d'enum ou un identifiant système ?**
+> → `snake_case` (contraint par le code)
+>
+> **La clé est nommée librement pour l'UI ?**
+> → `camelCase` (convention projet)
+
+Ne pas chercher à uniformiser : forcer tout en `snake_case` obligerait à
+transformer les valeurs d'enum dans `getLabelKey()` (fragile), et forcer tout
+en `camelCase` casserait la correspondance directe avec les valeurs d'enum
+(`status_draft` → `statusDraft` nécessiterait une transformation).
+Le mixte actuel est le seul format sans friction.
+
+---
+
 ## Tests de cohérence
 
 Un test PHPUnit vérifie automatiquement à chaque `make ft` :

@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -137,18 +138,22 @@ onMounted(() => {
 
         <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingApprove.value = null">
             <p class="text-sm text-primary">{{ t('backend.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="primary" size="md" v-on:click="accessRequests.doApproveRequest"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.approve') }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" v-on:click="accessRequests.doApproveRequest"><Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.approve') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal :show="!!accessRequests.pendingReject.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingReject.value = null">
             <p class="text-sm text-primary">{{ t('backend.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="accessRequests.doRejectRequest"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.reject') }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="accessRequests.doRejectRequest"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.reject') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -160,10 +165,12 @@ onMounted(() => {
             v-on:close="accessRequests.confirmPurge.value = false"
         >
             <p class="text-sm text-primary">{{ t('backend.access_requests.purgeConfirm') }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="accessRequests.doPurge"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.purge') }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="accessRequests.doPurge"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.access_requests.purge') }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

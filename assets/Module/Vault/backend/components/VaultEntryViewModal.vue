@@ -3,11 +3,13 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 import AppModal from '@shared/components/overlay/AppModal.vue';
+import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
+import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppLink from '@shared/components/nav/AppLink.vue';
 import { ICONS, getRecordType, PASSWORD_FIELDS, TEXTAREA_FIELDS } from '@vault/backend/utils/recordTypes.js';
 import { useRevealedFields } from '@vault/backend/composables/useRevealedFields.js';
-import { Eye, EyeOff, Copy, Star, ExternalLink } from 'lucide-vue-next';
+import { Eye, EyeOff, Copy, Star, ExternalLink, X } from 'lucide-vue-next';
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -151,6 +153,11 @@ function close() {
                     </div>
                 </div>
             </div>
+        </template>
+        <template #footer>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+            </AppModalFooter>
         </template>
     </AppModal>
 </template>

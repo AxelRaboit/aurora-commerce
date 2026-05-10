@@ -2,7 +2,7 @@ import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
@@ -22,7 +22,7 @@ const DEFAULT_FORM = {
 
 export function useEmployeeForm(createPath, updatePath, options = {}) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
     const { errors, validate, setErrors, clearErrors } = useForm();
     const extraFields = options.extraFields ?? {};
     const onSuccess = options.onSuccess ?? null;

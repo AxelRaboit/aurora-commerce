@@ -52,7 +52,7 @@ class DealsController extends AbstractController
     #[Route('/kanban-columns', name: '_kanban_columns', methods: [HttpMethodEnum::Get->value])]
     public function kanbanColumns(): JsonResponse
     {
-        return $this->json(['columns' => $this->viewBuilder->buildKanbanColumns()]);
+        return $this->jsonSuccess(['columns' => $this->viewBuilder->buildKanbanColumns()]);
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
@@ -90,7 +90,7 @@ class DealsController extends AbstractController
     {
         $stage = DealStageEnum::tryFrom($this->decodeJson($request)['stage'] ?? '');
         if (null === $stage) {
-            return $this->jsonFailure('Invalid stage', 400);
+            return $this->jsonFailure('Invalid stage');
         }
 
         $this->dealManager->changeStage($deal, $stage);

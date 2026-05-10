@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
 
 export function useFormSubmissions(
     submissionsPath,

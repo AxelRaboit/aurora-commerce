@@ -60,6 +60,6 @@ final class ParametersController extends AbstractController
             );
         }
 
-        return $this->json(['key' => $key, 'value' => $value]);
+        return $this->jsonSuccess(['key' => $key, 'value' => $value]);
     }
 }

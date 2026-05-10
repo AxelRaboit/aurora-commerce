@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ProductStatus } from "@/Module/Ecommerce/shared/enums/productStatus.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -56,7 +56,7 @@ const featuredImageValue = computed({
     },
 });
 const { errors: editErrors, validate: validateEdit, setErrors: setEditErrors } = useForm();
-const { loading: editLoading, request: editRequest } = useApiRequest();
+const { loading: editLoading, request: editRequest } = useRequest();
 
 async function submitEdit() {
     if (!validateEdit({

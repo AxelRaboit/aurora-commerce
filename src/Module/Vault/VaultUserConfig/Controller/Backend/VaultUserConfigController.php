@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault\VaultUserConfig\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
@@ -17,7 +18,6 @@ use Aurora\Module\Vault\VaultUserConfig\Serializer\VaultUserConfigSerializerInte
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -43,7 +43,7 @@ final class VaultUserConfigController extends AbstractController
         $user = $this->getUser();
 
         if ($this->vaultUserConfigRepository->findOneByUser($user) instanceof VaultUserConfigInterface) {
-            return new JsonResponse(['success' => false, 'message' => 'vault.already_configured'], Response::HTTP_CONFLICT);
+            return $this->jsonFailure('vault.already_configured', HttpStatusEnum::Conflict->value);
         }
 
         $input = $this->vaultUserConfigInputFactory->fromArray($this->decodeJson($request));
@@ -66,7 +66,7 @@ final class VaultUserConfigController extends AbstractController
 
         $config = $this->vaultUserConfigRepository->findOneByUser($user);
         if (!$config instanceof VaultUserConfigInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $data = $this->decodeJson($request);
@@ -74,7 +74,7 @@ final class VaultUserConfigController extends AbstractController
         $entries = $data['entries'] ?? [];
 
         if ('' === $newSalt || !is_array($entries)) {
-            return new JsonResponse(['success' => false], Response::HTTP_BAD_REQUEST);
+            return $this->jsonFailure('invalid_payload', HttpStatusEnum::BadRequest->value);
         }
 
         $this->vaultUserConfigManager->changeMasterPassword($config, $newSalt, $entries);
@@ -90,7 +90,7 @@ final class VaultUserConfigController extends AbstractController
 
         $config = $this->vaultUserConfigRepository->findOneByUser($user);
         if (!$config instanceof VaultUserConfigInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $this->vaultUserConfigManager->destroyVault($user, $config);

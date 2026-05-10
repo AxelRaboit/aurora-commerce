@@ -3,7 +3,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { usePaginatedFetch } from "@/shared/composables/api/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
 import {
     accessRequestStatusBadge,
     accessRequestStatusBadgeColor,

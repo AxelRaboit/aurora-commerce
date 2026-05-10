@@ -252,10 +252,12 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             :closeable="false"
             v-on:close="deletingTheme = null"
         >
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

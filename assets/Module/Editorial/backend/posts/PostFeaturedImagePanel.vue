@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { ImagePlus, X } from "lucide-vue-next";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
-import { useImageUpload } from "@/shared/composables/api/useImageUpload.js";
+import { useImageUpload } from "@/shared/composables/http/useImageUpload.js";
 import { openMediaPicker } from "@shared/utils/mediaPicker.js";
 import { toast } from "vue-sonner";
 

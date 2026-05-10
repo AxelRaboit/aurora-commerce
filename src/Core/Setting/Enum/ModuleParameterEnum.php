@@ -22,6 +22,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case PlanningEnabled = 'backend_planning_admin';
     case HrEnabled = 'backend_hr_admin';
     case VaultEnabled = 'backend_vault_admin';
+    case PdfFormEnabled = 'backend_pdfform_admin';
 
     // Sub-modules — Billing
     case BillingTiersEnabled = 'backend_billing_tiers';
@@ -69,6 +70,10 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case VaultSafeEnabled = 'backend_vault_safe';
     case VaultPasswordGeneratorEnabled = 'backend_vault_password_generator';
 
+    // Sub-modules — PdfForm
+    case PdfFormTemplatesEnabled = 'backend_pdfform_templates';
+    case PdfFormDocumentsEnabled = 'backend_pdfform_documents';
+
     public function getKey(): string
     {
         return $this->value;
@@ -90,6 +95,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningEnabled => 'backend.modules.planning',
             self::HrEnabled => 'backend.modules.hr',
             self::VaultEnabled => 'backend.modules.vault',
+            self::PdfFormEnabled => 'backend.modules.pdfform',
+            self::PdfFormTemplatesEnabled => 'backend.nav.pdfform_templates',
+            self::PdfFormDocumentsEnabled => 'backend.nav.pdfform_documents',
             self::BillingTiersEnabled => 'backend.nav.tiers',
             self::BillingInvoicesEnabled => 'backend.nav.invoices',
             self::BillingComplianceEnabled => 'backend.nav.ocr_import',
@@ -133,6 +141,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningEnabled => 'backend.modules.planning_description',
             self::HrEnabled => 'backend.modules.hr_description',
             self::VaultEnabled => 'backend.modules.vault_description',
+            self::PdfFormEnabled => 'backend.modules.pdfform_description',
+            self::PdfFormTemplatesEnabled => 'backend.nav.pdfform_templates_description',
+            self::PdfFormDocumentsEnabled => 'backend.nav.pdfform_documents_description',
             self::BillingTiersEnabled => 'backend.nav.tiers_description',
             self::BillingInvoicesEnabled => 'backend.nav.invoices_description',
             self::BillingComplianceEnabled => 'backend.nav.ocr_import_description',
@@ -194,6 +205,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningPlanningsEnabled => self::PlanningEnabled,
             self::ProjectProjectsEnabled => self::ProjectEnabled,
             self::VaultSafeEnabled, self::VaultPasswordGeneratorEnabled => self::VaultEnabled,
+            self::PdfFormTemplatesEnabled, self::PdfFormDocumentsEnabled => self::PdfFormEnabled,
             default => null,
         };
     }
@@ -245,6 +257,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // Vault sub-modules
             self::VaultSafeEnabled => self::VaultEnabled->value,
             self::VaultPasswordGeneratorEnabled => self::VaultEnabled->value,
+            self::PdfFormTemplatesEnabled => self::PdfFormEnabled->value,
+            self::PdfFormDocumentsEnabled => self::PdfFormEnabled->value,
             default => null,
         };
     }
@@ -288,6 +302,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningEnabled => 'planning',
             self::HrEnabled => 'hr',
             self::VaultEnabled => 'vault',
+            self::PdfFormEnabled => 'pdfform',
             default => null,
         };
     }

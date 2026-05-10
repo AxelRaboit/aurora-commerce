@@ -2,11 +2,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function usePlanningDelete(plannings, selectedPlanningId, deletePath) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     const deletingPlanning = ref(null);
 

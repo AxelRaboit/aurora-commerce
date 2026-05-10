@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -27,7 +27,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         setErrors: setCreateErrors,
     } = useForm();
     const { loading: createColumnLoading, request: createRequest } =
-        useApiRequest();
+        useRequest();
 
     function openCreateColumn() {
         newColumn.value = { label: "" };
@@ -67,7 +67,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         clearErrors: clearRenameErrors,
         setErrors: setRenameErrors,
     } = useForm();
-    const { loading: renameLoading, request: renameRequest } = useApiRequest();
+    const { loading: renameLoading, request: renameRequest } = useRequest();
 
     function openRenameColumn(column) {
         editingColumn.value = column;

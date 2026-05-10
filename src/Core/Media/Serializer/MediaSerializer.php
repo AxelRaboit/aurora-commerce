@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Serializer;
 
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Enum\MimeTypeEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -45,6 +46,7 @@ class MediaSerializer implements MediaSerializerInterface
             'folderName' => $media->getFolder()?->getName(),
             'isImage' => $media->isImage(),
             'isVideo' => $media->isVideo(),
+            'isPdf' => $media->getMimeType() === MimeTypeEnum::Pdf->value,
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
             'position' => $media->getPosition(),

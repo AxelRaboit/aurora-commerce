@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * Generic helpers for the {field, value} inline-edit + simple-action JSON
@@ -14,7 +14,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
  * payload. For paginated CRUD lists, prefer `useDelete` / `useListPage`.
  *
  * Returns:
- *   - request               — the underlying `useApiRequest()` if the caller
+ *   - request               — the underlying `useRequest()` if the caller
  *                             needs the raw data (rare).
  *   - submit(url, body, opts) — POST JSON, toast on error, return parsed data
  *                               or null. Default success toast: shared.common.saved.
@@ -25,7 +25,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
  */
 export function useInlineEdit() {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     function resolveErrorKey(data, field = null) {
         if (!data) return "shared.common.error";

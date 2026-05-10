@@ -74,12 +74,10 @@ class MediaController extends AbstractController
         $counts = $this->mediaRepository->countUsages((int) $media->getId());
         $detailed = $this->mediaUsageService->findUsages((int) $media->getId());
 
-        return $this->json([
-            // Legacy keys preserved for back-compat with existing UI panels.
+        return $this->jsonSuccess([
             'directCount' => $counts['directCount'],
             'contentCount' => $counts['contentCount'],
             'total' => $detailed['total'],
-            // New rich payload used by the delete confirmation modal.
             'groups' => $detailed['groups'],
         ]);
     }

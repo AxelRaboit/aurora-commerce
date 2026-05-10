@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -43,7 +43,7 @@ export function useDealsForm(
     const form = reactive(emptyDealForm(extraFields));
 
     const { errors, validate, clearErrors, setErrors } = useForm();
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
 
     function resetForm() {
         Object.assign(form, emptyDealForm(extraFields));

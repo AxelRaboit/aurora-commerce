@@ -45,7 +45,7 @@ export default class PostsListBlock {
         this.#postTypes = config.postTypes ?? [];
         this.#searchUrl = config.searchUrl ?? "/backend/posts/search";
         this.#labels = {
-            title: config.titleLabel ?? "Titre (optionnel)",
+            title: config.titleLabel ?? "Titre",
             postType: config.postTypeLabel ?? "Type de contenu",
             mode: config.modeLabel ?? "Mode",
             modeAuto: config.modeAutoLabel ?? "Liste complète paginée",

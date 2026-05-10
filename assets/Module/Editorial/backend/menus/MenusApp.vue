@@ -113,10 +113,12 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             v-on:close="confirmDeleteMenu = null"
         >
             <p class="text-sm text-primary">{{ t("backend.menus.deleteConfirm", { name: confirmDeleteMenu?.name ?? "" }) }}</p>
-            <div class="flex justify-end gap-2 pt-3">
-                <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" v-on:click="submitDeleteMenu"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" v-on:click="submitDeleteMenu"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -128,10 +130,12 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             v-on:close="confirmDeleteItem = null"
         >
             <p class="text-sm text-primary">{{ t("backend.menus.deleteItemConfirm") }}</p>
-            <div class="flex justify-end gap-2 pt-3">
-                <AppButton variant="ghost" v-on:click="confirmDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" v-on:click="submitDeleteItem"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" v-on:click="confirmDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" v-on:click="submitDeleteItem"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <MenuItemModal

@@ -114,7 +114,7 @@ backend:
       slugPlaceholder: 'ex : ma-belle-chaise'
       product: Produit lié
       selectProduct: Sélectionner un produit…
-      marketingTitle: Titre marketing (optionnel)
+      marketingTitle: Titre marketing
       marketingTitlePlaceholder: Surcharge le nom du produit
       marketingDescription: Description marketing
       marketingDescriptionPlaceholder: 'Description longue, mise en avant des avantages…'

@@ -1,12 +1,12 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useOrderRefund(refundPath, order) {
     const { t } = useI18n();
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
 
     const showModal = ref(false);
     const refundAmount = ref("");

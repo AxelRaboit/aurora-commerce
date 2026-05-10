@@ -17,6 +17,7 @@ import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -331,11 +332,13 @@ const parentOptions = computed(() => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="taxonomyModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -393,11 +396,13 @@ const parentOptions = computed(() => {
                     :rows="2"
                 />
 
-                <div class="flex items-center justify-end gap-2 pt-2">
+            </form>
+            <template #footer>
+                <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="termModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton type="submit" variant="primary" size="md" :loading="termModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
-                </div>
-            </form>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -409,10 +414,12 @@ const parentOptions = computed(() => {
             v-on:close="deletingTaxonomy = null"
         >
             <p class="text-sm text-primary">{{ t("backend.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTaxonomy"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteTaxonomy"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
 
         <AppModal
@@ -424,10 +431,12 @@ const parentOptions = computed(() => {
             v-on:close="deletingTerm = null"
         >
             <p class="text-sm text-primary">{{ t("backend.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
-            <div class="flex justify-end gap-2">
-                <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton variant="danger" size="md" v-on:click="confirmDeleteTerm"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
-            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteTerm"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
         </AppModal>
     </div>
 </template>

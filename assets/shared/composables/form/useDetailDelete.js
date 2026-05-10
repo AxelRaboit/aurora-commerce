@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * Delete-and-redirect flow for detail pages.
@@ -7,7 +7,7 @@ import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
  */
 export function useDetailDelete(deletePath, redirectPath) {
     const showDelete = ref(false);
-    const { loading, request } = useApiRequest();
+    const { loading, request } = useRequest();
 
     async function submit() {
         const data = await request(deletePath, {});

@@ -17,6 +17,7 @@ enum HttpStatusEnum: int
     case UnprocessableEntity = 422;
     case MovedPermanently = 301;
     case Found = 302;
-    case BadGateway = 502;
     case InternalServerError = 500;
+    case BadGateway = 502;
+    case ServiceUnavailable = 503;
 }

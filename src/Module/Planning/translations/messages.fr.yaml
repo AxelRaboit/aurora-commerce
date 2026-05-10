@@ -63,7 +63,7 @@ backend:
       name: Nom
       namePlaceholder: ex. Planning équipe support
       description: Description
-      descriptionPlaceholder: Notes ou objectif du planning (optionnel)
+      descriptionPlaceholder: Notes ou objectif du planning
       color: Couleur
       timezone: Fuseau horaire
       timezonePlaceholder: Europe/Paris
@@ -93,7 +93,7 @@ backend:
       title: Titre
       titlePlaceholder: ex. Réunion équipe, RDV client…
       description: Description
-      descriptionPlaceholder: Détails de l'événement (optionnel)
+      descriptionPlaceholder: Détails de l'événement
       location: Lieu
       locationPlaceholder: Salle, adresse ou lien visio
       startAt: Début

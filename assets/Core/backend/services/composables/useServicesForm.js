@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -17,7 +17,7 @@ export function useServicesForm(
     options = {},
 ) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     const extraFields = options.extraFields ?? {};
 

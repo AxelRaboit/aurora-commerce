@@ -100,6 +100,12 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
+use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
+use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocumentInterface;
+use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplate;
+use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
+use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateField;
+use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
@@ -255,6 +261,9 @@ class AuroraBundle extends AbstractBundle
                     ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
+                    PdfTemplateInterface::class => PdfTemplate::class,
+                    PdfTemplateFieldInterface::class => PdfTemplateField::class,
+                    PdfDocumentInterface::class => PdfDocument::class,
                     VaultEntryInterface::class => VaultEntry::class,
                     VaultFolderInterface::class => VaultFolder::class,
                     VaultUserConfigInterface::class => VaultUserConfig::class,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Scheduler;
 
+use Aurora\Core\Scheduler\Message\CleanTempFilesMessage;
+use Aurora\Module\Billing\Ocr\Message\RecoverStuckOcrJobsMessage;
 use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
 use Aurora\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -29,6 +31,12 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             )
             ->add(
                 RecurringMessage::cron('0 3 * * *', new PurgeTrashedPostsMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('0 * * * *', new CleanTempFilesMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('30 * * * *', new RecoverStuckOcrJobsMessage()),
             );
     }
 }

@@ -22,7 +22,7 @@ class SequenceCounter
 {
     public function __construct(
         #[ORM\Id]
-        #[ORM\Column(length: 30)]
+        #[ORM\Column(length: 64)]
         public readonly string $prefix,
         #[ORM\Id]
         #[ORM\Column(options: ['default' => 0])]

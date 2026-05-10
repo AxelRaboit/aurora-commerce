@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -27,7 +27,7 @@ export function useProductDetailEdit(updatePath, product) {
         validate: validateEdit,
         setErrors: setEditErrors,
     } = useForm();
-    const { loading: editLoading, request: editRequest } = useApiRequest();
+    const { loading: editLoading, request: editRequest } = useRequest();
 
     async function submitEdit() {
         if (

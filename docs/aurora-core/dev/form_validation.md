@@ -198,7 +198,7 @@ async function submitCreate() {
 
     // Envoi serveur
     const data = await request(createPath, form.value);
-    if (!data) return; // useApiRequest a déjà affiché un toast d'erreur réseau
+    if (!data) return; // useRequest a déjà affiché un toast d'erreur réseau
 
     if (!data.success) {
         setErrors(translateServerErrors(t, data.errors));
@@ -214,15 +214,15 @@ async function submitCreate() {
 
 ---
 
-### 3. Fetch — utiliser `useApiRequest`
+### 3. Fetch — utiliser `useRequest`
 
 ```js
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
-const { request, loading } = useApiRequest();
+const { request, loading } = useRequest();
 ```
 
-`useApiRequest` gère automatiquement :
+`useRequest` gère automatiquement :
 - Header `Content-Type: application/json`
 - Whitelist des status 422, 409, 400 (pas de throw sur ces codes)
 - Toast d'erreur réseau sur les autres codes non-2xx
@@ -280,13 +280,13 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 export function useFooCreate(createPath, onCreated) {
     const { t } = useI18n();
     const { errors, validate, setErrors, clearErrors } = useForm();
-    const { request, loading: saving } = useApiRequest();
+    const { request, loading: saving } = useRequest();
 
     const show = ref(false);
     const form = ref({ name: "", status: "draft" });
@@ -329,7 +329,7 @@ export function useFooCreate(createPath, onCreated) {
 export function useFooEdit(updatePath, onUpdated) {
     const { t } = useI18n();
     const { errors, validate, setErrors, clearErrors } = useForm();
-    const { request, loading: saving } = useApiRequest();
+    const { request, loading: saving } = useRequest();
 
     const show = ref(false);
     const editing = ref(null);
@@ -379,7 +379,7 @@ export function useFooEdit(updatePath, onUpdated) {
 ### Frontend
 - [ ] Créer `useFooCreate.js` et/ou `useFooEdit.js`
 - [ ] Utiliser `useForm()` pour les erreurs (jamais `reactive({})` ni refs individuelles)
-- [ ] Utiliser `useApiRequest()` pour les requêtes (jamais `fetch()` direct)
+- [ ] Utiliser `useRequest()` pour les requêtes (jamais `fetch()` direct)
 - [ ] Validation client minimale : `validate({ name: () => required(...)(...) })`
 - [ ] Erreurs serveur : `setErrors(translateServerErrors(t, data.errors))`
 - [ ] Template : `:error="errors.fieldName"` sur chaque composant de formulaire
@@ -393,7 +393,7 @@ export function useFooEdit(updatePath, onUpdated) {
 | `jsonInvalidInput($errors, Response::HTTP_OK)` | `jsonInvalidInput($errors)` |
 | `setErrors(data.errors)` sans traduire | `setErrors(translateServerErrors(t, data.errors))` |
 | `const nameError = ref('')` | `const { errors } = useForm()` |
-| `await fetch(url, {...})` direct | `const { request } = useApiRequest()` |
+| `await fetch(url, {...})` direct | `const { request } = useRequest()` |
 | Messages en clair dans les Constraints | Clés de traduction uniquement |
 | Validation client exhaustive | Uniquement required + email format |
 | `if (!data.success && !data.success)` | `if (!data.success)` |

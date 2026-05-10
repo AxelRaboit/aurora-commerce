@@ -1,10 +1,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Download } from "lucide-vue-next";
+import { Download, X } from "lucide-vue-next";
 import QRCode from "qrcode";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 
 const { t } = useI18n();
 
@@ -46,5 +47,10 @@ watch(
                 <AppButton size="sm" variant="ghost"><Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.downloadQr") }}</AppButton>
             </a>
         </div>
+        <template #footer>
+            <AppModalFooter>
+                <AppButton variant="ghost" size="md" v-on:click="emit('close')"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+            </AppModalFooter>
+        </template>
     </AppModal>
 </template>

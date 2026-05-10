@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useApiRequest } from "@shared/composables/api/useApiRequest.js";
+import { useRequest } from "@shared/composables/http/useRequest.js";
 import { useForm } from "@shared/composables/form/useForm.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { buildPath } from "@shared/utils/http/buildPath.js";
@@ -43,8 +43,8 @@ export function useVaultForm(crypto, props, onSuccess) {
         clearErrors: clearEdit,
         setErrors: setEditErrors,
     } = useForm();
-    const { loading: createLoading, request: createRequest } = useApiRequest();
-    const { loading: editLoading, request: editRequest } = useApiRequest();
+    const { loading: createLoading, request: createRequest } = useRequest();
+    const { loading: editLoading, request: editRequest } = useRequest();
 
     function openCreate() {
         createForm.value = {

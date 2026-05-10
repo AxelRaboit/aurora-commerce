@@ -4,7 +4,7 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { HttpStatus } from "@/shared/utils/http/HttpStatus.js";
 
-export function useApiRequest() {
+export function useRequest() {
     const { t } = useI18n();
     const loading = ref(false);
 

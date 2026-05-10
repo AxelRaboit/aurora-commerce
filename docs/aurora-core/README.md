@@ -6,6 +6,13 @@
 |---|---|
 | [philosophy.md](philosophy.md) | Principes fondateurs, pattern d'extensibilité, système de modules |
 
+## todo.md — Tâches techniques en attente
+
+| Fichier | Contenu |
+|---|---|
+| [todo.md](dev/todo.md) | Tâches techniques identifiées, non encore implémentées (nettoyage fichiers temporaires, médias orphelins, jobs bloqués…) |
+| [scheduler.md](dev/scheduler.md) | Symfony Scheduler — ajouter des tâches récurrentes, convention fichiers temporaires, tâches existantes |
+
 ## dev/ — Guides développeur
 
 | Fichier | Contenu |

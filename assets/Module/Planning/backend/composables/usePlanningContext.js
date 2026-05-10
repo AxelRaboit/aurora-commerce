@@ -1,6 +1,6 @@
 import { ref, computed, watch } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 /**
@@ -10,7 +10,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * date range.
  */
 export function usePlanningContext(initialPlannings, eventsListPath) {
-    const { request } = useApiRequest();
+    const { request } = useRequest();
 
     const plannings = ref([...initialPlannings]);
     const selectedPlanningId = ref(plannings.value[0]?.id ?? null);

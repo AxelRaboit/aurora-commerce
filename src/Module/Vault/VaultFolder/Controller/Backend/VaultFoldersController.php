@@ -17,7 +17,6 @@ use Aurora\Module\Vault\VaultFolder\Serializer\VaultFolderSerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -62,7 +61,7 @@ final class VaultFoldersController extends AbstractController
 
         $folder = $this->vaultFolderRepository->findOneByUserAndId($user, $id);
         if (!$folder instanceof VaultFolderInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $input = $this->vaultFolderInputFactory->fromArray($this->decodeJson($request));
@@ -85,7 +84,7 @@ final class VaultFoldersController extends AbstractController
 
         $folder = $this->vaultFolderRepository->findOneByUserAndId($user, $id);
         if (!$folder instanceof VaultFolderInterface) {
-            return new JsonResponse(['success' => false], Response::HTTP_NOT_FOUND);
+            return $this->jsonNotFound();
         }
 
         $this->vaultFolderManager->delete($folder);

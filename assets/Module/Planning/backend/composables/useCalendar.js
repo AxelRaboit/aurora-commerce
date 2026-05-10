@@ -8,7 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import frLocale from "@fullcalendar/core/locales/fr";
 import enLocale from "@fullcalendar/core/locales/en-gb";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useApiRequest } from "@/shared/composables/api/useApiRequest.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * Wires FullCalendar config, locales and event handlers to the planning
@@ -26,7 +26,7 @@ export function useCalendar({
     onRangeChange,
 }) {
     const { t } = useI18n();
-    const { request } = useApiRequest();
+    const { request } = useRequest();
     const currentLocale = document.documentElement.lang || "fr";
 
     function onEventMount(info) {

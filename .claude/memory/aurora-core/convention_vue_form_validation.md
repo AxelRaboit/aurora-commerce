@@ -58,7 +58,7 @@ Ces patterns ne sont jamais utilisés dans les autres modules.
 
 ## Loading state — reset sur tous les chemins
 
-Quand on gère `loading` manuellement (hors `useApiRequest`), s'assurer qu'il est remis à `false` **aussi bien en cas d'erreur que de succès** via les callbacks :
+Quand on gère `loading` manuellement (hors `useRequest`), s'assurer qu'il est remis à `false` **aussi bien en cas d'erreur que de succès** via les callbacks :
 
 ```js
 // Pattern : émettre des callbacks onError / onSuccess
@@ -69,4 +69,4 @@ emit('unlock', {
 });
 ```
 
-`useApiRequest` gère ça automatiquement via `finally`. Pour les flows custom (ex: unlock vault), utiliser les callbacks ou un try/finally explicite.
+`useRequest` gère ça automatiquement via `finally`. Pour les flows custom (ex: unlock vault), utiliser les callbacks ou un try/finally explicite.
