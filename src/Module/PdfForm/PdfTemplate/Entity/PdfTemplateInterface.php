@@ -7,6 +7,7 @@ namespace Aurora\Module\PdfForm\PdfTemplate\Entity;
 use Aurora\Core\Contract\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Module\PdfForm\Enum\PdfTemplateStatusEnum;
+use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface PdfTemplateInterface extends TimestampableInterface
