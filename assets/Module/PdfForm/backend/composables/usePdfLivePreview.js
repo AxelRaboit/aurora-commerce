@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { PdfFieldType } from "../constants/pdfFieldType.js";
 
 export function usePdfLivePreview() {
     const fieldPositions = ref({});
@@ -52,7 +53,8 @@ export function usePdfLivePreview() {
                 }
 
                 const typeName = pdfField.constructor.name;
-                const isRadioGroup = typeName === "PDFRadioGroup" || isRadio;
+                const isRadioGroup =
+                    typeName === PdfFieldType.RadioGroup || isRadio;
 
                 if (isRadioGroup) {
                     // Récupérer les options et tous les widgets du groupe
