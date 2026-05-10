@@ -164,6 +164,7 @@ vault:
     hide: Masquer
     noFields: Aucune donnée enregistrée.
   fields:
+    usePassword: Utiliser ce mot de passe
     username: Identifiant
     usernamePlaceholder: Nom d'utilisateur ou email
     password: Mot de passe

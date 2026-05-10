@@ -1,0 +1,25 @@
+backend:
+  permissions:
+    names:
+      password_generator:
+        use: Utiliser le générateur de mots de passe
+  modules:
+    password_generator: Générateur de mots de passe
+  nav:
+    password_generator: Générateur de mots de passe
+    password_generator_description: Générez des mots de passe forts et aléatoires
+
+password_generator:
+  title: Générateur de mots de passe
+  description: Créez des mots de passe forts grâce à un générateur cryptographiquement sécurisé.
+  length: Longueur
+  characters: Jeux de caractères
+  uppercase: Majuscules (A-Z)
+  lowercase: Minuscules (a-z)
+  digits: Chiffres (0-9)
+  symbols: "Symboles (!@#$…)"
+  generate: Générer
+  copy: Copier
+  copied: Copié !
+  no_charset: Sélectionnez au moins un jeu de caractères.
+  entropy: "{bits} bits d'entropie"

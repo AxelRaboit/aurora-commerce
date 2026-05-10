@@ -1,0 +1,25 @@
+backend:
+  permissions:
+    names:
+      password_generator:
+        use: Use the password generator
+  modules:
+    password_generator: Password generator
+  nav:
+    password_generator: Password generator
+    password_generator_description: Generate strong, random passwords
+
+password_generator:
+  title: Password generator
+  description: Create strong passwords using a cryptographically secure generator.
+  length: Length
+  characters: Character sets
+  uppercase: Uppercase (A-Z)
+  lowercase: Lowercase (a-z)
+  digits: Digits (0-9)
+  symbols: "Symbols (!@#$…)"
+  generate: Generate
+  copy: Copy
+  copied: Copied!
+  no_charset: Select at least one character set.
+  entropy: "{bits} bits of entropy"

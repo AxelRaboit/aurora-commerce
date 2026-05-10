@@ -10,9 +10,11 @@ import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppSelect from '@shared/components/form/AppSelect.vue';
 import { ICONS, getRecordType, PASSWORD_FIELDS, TEXTAREA_FIELDS } from '@vault/backend/utils/recordTypes.js';
 import { useRevealedFields } from '@vault/backend/composables/useRevealedFields.js';
+import { useVaultPasswordPicker } from '@vault/backend/composables/useVaultPasswordPicker.js';
 import { useVaultFolderOptions } from '@vault/backend/composables/useVaultFolderOptions.js';
 import VaultTypePickerModal from '@vault/backend/components/VaultTypePickerModal.vue';
-import { Save, X, Star, ChevronDown, Eye, EyeOff } from 'lucide-vue-next';
+import VaultPasswordPickerModal from '@vault/backend/components/VaultPasswordPickerModal.vue';
+import { Save, X, Star, ChevronDown, Eye, EyeOff, Wand2 } from 'lucide-vue-next';
 
 const form = defineModel({ type: Object, required: true });
 
@@ -29,6 +31,7 @@ const emit = defineEmits(['close', 'submit', 'type-change']);
 
 const { t } = useI18n();
 const showTypePicker = ref(false);
+const passwordPicker = useVaultPasswordPicker(form);
 const { revealedFields, toggleReveal } = useRevealedFields(() => props.show);
 const { folderOptions } = useVaultFolderOptions(computed(() => props.folders));
 
@@ -105,14 +108,22 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
                                 :label="t('vault.fields.' + field)"
                                 :placeholder="t('vault.fields.' + field + 'Placeholder', field)"
                             />
-                            <AppIconButton
-                                type="button"
-                                color="ghost"
-                                class="absolute right-2 top-7"
-                                v-on:click="toggleReveal(field)"
-                            >
-                                <component :is="revealedFields.has(field) ? EyeOff : Eye" class="w-4 h-4" :stroke-width="1.5" />
-                            </AppIconButton>
+                            <div class="absolute right-2 top-7 flex items-center gap-0.5">
+                                <AppIconButton
+                                    type="button"
+                                    color="accent"
+                                    :title="t('password_generator.title')"
+                                    v-on:click="passwordPicker.open(field)"
+                                >
+                                    <Wand2 class="w-4 h-4" :stroke-width="1.5" />
+                                </AppIconButton>
+                                <AppIconButton
+                                    type="button"
+                                    v-on:click="toggleReveal(field)"
+                                >
+                                    <component :is="revealedFields.has(field) ? EyeOff : Eye" class="w-4 h-4" :stroke-width="1.5" />
+                                </AppIconButton>
+                            </div>
                         </div>
                     </template>
                     <template v-else-if="field === 'notes'">
@@ -147,4 +158,5 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
     </AppModal>
 
     <VaultTypePickerModal :show="showTypePicker" v-on:close="showTypePicker = false" v-on:select="emit('type-change', $event)" />
+    <VaultPasswordPickerModal :show="passwordPicker.show.value" v-on:close="passwordPicker.close()" v-on:use="passwordPicker.apply" />
 </template>

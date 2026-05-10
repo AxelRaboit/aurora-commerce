@@ -40,6 +40,7 @@ final readonly class VaultModule implements ModuleInterface
         return [
             new NavSection('vault', [
                 new NavItem('backend_vault', 'backend.nav.vault', 'vault', descriptionKey: 'backend.nav.vault_description'),
+                new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description'),
             ], priority: 20),
         ];
     }

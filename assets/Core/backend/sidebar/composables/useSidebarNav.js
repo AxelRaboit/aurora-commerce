@@ -32,6 +32,8 @@ import {
     Folder,
     CalendarDays,
     KanbanSquare,
+    KeyRound,
+    Lock,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -65,6 +67,8 @@ const ICON_MAP = {
     folder: Folder,
     "calendar-days": CalendarDays,
     "kanban-square": KanbanSquare,
+    "key-round": KeyRound,
+    vault: Lock,
 };
 
 export function useSidebarNav(navSections, activeRoute) {

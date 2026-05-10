@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import symfonyPlugin from 'vite-plugin-symfony';
 import path from 'path';
+import { aliases } from './aliases.js';
 
 // AURORA_CLIENT_DIR points to a client project's extension dir (e.g.
 // aurora-client/assets/client). When set, aurora's Vite scans that dir for
@@ -21,20 +22,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'assets'),
-            '@core': path.resolve(__dirname, 'assets/Core'),
-            '@editorial': path.resolve(__dirname, 'assets/Module/Editorial'),
-            '@crm': path.resolve(__dirname, 'assets/Module/Crm'),
-            '@erp': path.resolve(__dirname, 'assets/Module/Erp'),
-            '@ecommerce': path.resolve(__dirname, 'assets/Module/Ecommerce'),
-            '@photo': path.resolve(__dirname, 'assets/Module/Photo'),
-            '@billing': path.resolve(__dirname, 'assets/Module/Billing'),
-            '@ged': path.resolve(__dirname, 'assets/Module/Ged'),
-            '@hr': path.resolve(__dirname, 'assets/Module/Hr'),
-            '@planning': path.resolve(__dirname, 'assets/Module/Planning'),
-            '@project': path.resolve(__dirname, 'assets/Module/Project'),
-            '@vault': path.resolve(__dirname, 'assets/Module/Vault'),
-            '@shared': path.resolve(__dirname, 'assets/shared'),
+            ...aliases,
             '@client': CLIENT_DIR,
         },
         // When client Vue files (in @client) import shared packages, Rolldown
