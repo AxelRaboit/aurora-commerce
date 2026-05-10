@@ -99,7 +99,13 @@ const {
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <!-- Create modal -->
-        <AppModal :show="showCreate" :title="t('backend.ged.documents.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.ged.documents.create')"
+            :icon="FileText"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newDoc.title"
@@ -139,7 +145,13 @@ const {
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.title"
@@ -179,7 +191,7 @@ const {
         </AppModal>
 
         <!-- Delete modal -->
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("backend.ged.documents.deleteConfirm", { title: pendingDelete?.title ?? "" }) }}</p>
             <p class="text-sm text-secondary">{{ t("backend.ged.documents.deleteWarning") }}</p>
             <template #footer>

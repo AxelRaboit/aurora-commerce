@@ -17,7 +17,7 @@ import { useGalleryEditConsensus } from "@photo/backend/gallery-edit/composables
 import { useGalleryEditCaption } from "@photo/backend/gallery-edit/composables/useGalleryEditCaption.js";
 import { useGalleryEditReopen } from "@photo/backend/gallery-edit/composables/useGalleryEditReopen.js";
 import { useGalleryEditComments } from "@photo/backend/gallery-edit/composables/useGalleryEditComments.js";
-import { Plus, Trash2, ExternalLink, Heart, GripVertical, Pencil, Check, X, Download, Unlock, Printer, Trash, MessageSquare, UserCheck, ChevronDown, ChevronRight, Mail, Send } from "lucide-vue-next";
+import { Plus, Trash2, ExternalLink, Heart, GripVertical, Pencil, Check, X, Download, Unlock, Printer, Trash, MessageSquare, UserCheck, ChevronDown, ChevronRight, Mail, Send, AlertCircle } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -407,7 +407,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </section>
 
         <!-- Reopen confirmation -->
-        <AppModal :show="showReopenModal" max-width="sm" :title="t('photo.galleries.admin.reopen')" v-on:close="showReopenModal = false">
+        <AppModal
+            :show="showReopenModal"
+            max-width="sm"
+            :title="t('photo.galleries.admin.reopen')"
+            :icon="AlertCircle"
+            :closeable="false"
+            v-on:close="showReopenModal = false"
+        >
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.reopenConfirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -421,7 +428,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Invite delete confirmation -->
-        <AppModal :show="!!pendingInviteDelete" max-width="sm" :title="t('photo.galleries.admin.invites.deleteConfirmTitle')" v-on:close="pendingInviteDelete = null">
+        <AppModal
+            :show="!!pendingInviteDelete"
+            max-width="sm"
+            :title="t('photo.galleries.admin.invites.deleteConfirmTitle')"
+            :icon="Trash2"
+            :closeable="false"
+            v-on:close="pendingInviteDelete = null"
+        >
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.invites.deleteConfirm", { name: pendingInviteDelete?.name }) }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -432,7 +446,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Finalization reopen confirmation -->
-        <AppModal :show="!!pendingFinalizationDelete" max-width="sm" :title="t('photo.galleries.admin.finalizations.reopen')" v-on:close="pendingFinalizationDelete = null">
+        <AppModal
+            :show="!!pendingFinalizationDelete"
+            max-width="sm"
+            :title="t('photo.galleries.admin.finalizations.reopen')"
+            :icon="AlertCircle"
+            :closeable="false"
+            v-on:close="pendingFinalizationDelete = null"
+        >
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.finalizations.reopenConfirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -446,7 +467,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Comment delete confirmation -->
-        <AppModal :show="!!pendingCommentDelete" max-width="sm" :title="t('photo.galleries.admin.comments.delete')" v-on:close="pendingCommentDelete = null">
+        <AppModal
+            :show="!!pendingCommentDelete"
+            max-width="sm"
+            :title="t('photo.galleries.admin.comments.delete')"
+            :icon="Trash2"
+            :closeable="false"
+            v-on:close="pendingCommentDelete = null"
+        >
             <p class="text-sm text-secondary">{{ t("photo.galleries.admin.comments.deleteConfirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -457,7 +485,7 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Single delete confirmation -->
-        <AppModal :show="!!pendingDeleteItem" max-width="sm" v-on:close="pendingDeleteItem = null">
+        <AppModal :show="!!pendingDeleteItem" max-width="sm" :closeable="false" v-on:close="pendingDeleteItem = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemDeleteConfirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -468,7 +496,7 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Bulk delete confirmation -->
-        <AppModal :show="pendingBulkDelete" max-width="sm" v-on:close="pendingBulkDelete = false">
+        <AppModal :show="pendingBulkDelete" max-width="sm" :closeable="false" v-on:close="pendingBulkDelete = false">
             <p class="text-sm text-primary">{{ t("photo.galleries.itemsBulkDeleteConfirm", { count: selected.size }) }}</p>
             <template #footer>
                 <AppModalFooter>

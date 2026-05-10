@@ -14,7 +14,7 @@ import { useVaultPasswordPicker } from '@vault/backend/composables/useVaultPassw
 import { useVaultFolderOptions } from '@vault/backend/composables/useVaultFolderOptions.js';
 import VaultTypePickerModal from '@vault/backend/components/VaultTypePickerModal.vue';
 import VaultPasswordPickerModal from '@vault/backend/components/VaultPasswordPickerModal.vue';
-import { Save, X, Star, ChevronDown, Eye, EyeOff, Wand2 } from 'lucide-vue-next';
+import { Save, X, Star, ChevronDown, Eye, EyeOff, Wand2, Vault as VaultIcon, Pencil } from 'lucide-vue-next';
 
 const form = defineModel({ type: Object, required: true });
 
@@ -39,7 +39,13 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
 </script>
 
 <template>
-    <AppModal :show="show" :title="title || t('vault.entries.' + mode)" :closeable="false" v-on:close="emit('close')">
+    <AppModal
+        :show="show"
+        :title="title || t('vault.entries.' + mode)"
+        :icon="mode === 'edit' ? Pencil : VaultIcon"
+        :closeable="false"
+        v-on:close="emit('close')"
+    >
         <form class="space-y-4" v-on:submit.prevent="emit('submit')">
             <div class="flex items-center gap-3">
                 <AppButton

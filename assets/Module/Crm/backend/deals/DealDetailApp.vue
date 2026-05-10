@@ -127,7 +127,13 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </div>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.deals.edit', { name: deal.name })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.crm.deals.edit', { name: deal.name })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -150,7 +156,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
+        <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
             <template #footer>

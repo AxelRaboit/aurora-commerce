@@ -114,7 +114,7 @@ const TYPE_BADGE = {
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.billing.tiers.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <template #footer>

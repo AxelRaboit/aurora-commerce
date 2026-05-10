@@ -91,7 +91,7 @@ async function save() {
 </script>
 
 <template>
-    <AppModal :show="!!media" max-width="5xl" v-on:close="close">
+    <AppModal :show="!!media" max-width="5xl" :closeable="false" v-on:close="close">
         <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.cropTitle") }} — {{ media?.originalName }}</h3>
         <div style="height: 65vh; width: 100%; overflow: hidden;">
             <img

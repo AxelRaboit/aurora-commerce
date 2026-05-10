@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import { RECORD_TYPES, ICONS } from '@vault/backend/utils/recordTypes.js';
+import { Vault as VaultIcon } from 'lucide-vue-next';
 
 defineProps({
     show: { type: Boolean, default: false },
@@ -12,7 +13,13 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <AppModal :show="show" :title="t('vault.entries.type')" max-width="sm" v-on:close="emit('close')">
+    <AppModal
+        :show="show"
+        :title="t('vault.entries.type')"
+        :icon="VaultIcon"
+        max-width="sm"
+        v-on:close="emit('close')"
+    >
         <div class="grid grid-cols-3 gap-2">
             <button
                 v-for="recordType in RECORD_TYPES"

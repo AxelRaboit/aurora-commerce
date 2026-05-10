@@ -436,7 +436,7 @@ function downloadOne(itemId) {
         </div>
 
         <!-- Identity modal -->
-        <AppModal :show="showIdentityModal" :title="t('photo.frontend.identity.title')" v-on:close="showIdentityModal = false">
+        <AppModal :show="showIdentityModal" :title="t('photo.frontend.identity.title')" :closeable="false" v-on:close="showIdentityModal = false">
             <form class="space-y-4" v-on:submit.prevent="submitIdentity">
                 <p class="text-sm text-muted">{{ t("photo.frontend.identity.intro") }}</p>
                 <AppInput v-model="visitorName" :label="t('photo.frontend.identity.name')" required />
@@ -451,7 +451,7 @@ function downloadOne(itemId) {
         </AppModal>
 
         <!-- Comment modal -->
-        <AppModal :show="showCommentBox" v-on:close="showCommentBox = false">
+        <AppModal :show="showCommentBox" :closeable="false" v-on:close="showCommentBox = false">
             <h3 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                 <MessageSquare class="w-5 h-5 text-accent-500" :stroke-width="2" />
                 {{ t("photo.frontend.comments.add") }}
@@ -496,7 +496,7 @@ function downloadOne(itemId) {
         </AppModal>
 
         <!-- Share my selection modal -->
-        <AppModal :show="showShareModal" :title="t('photo.frontend.share.title')" v-on:close="showShareModal = false">
+        <AppModal :show="showShareModal" :title="t('photo.frontend.share.title')" :closeable="false" v-on:close="showShareModal = false">
             <p class="text-sm text-muted mb-4">{{ t("photo.frontend.share.intro", { count: favoriteTotal }) }}</p>
             <div class="flex items-center gap-2 p-2 rounded-lg bg-surface-2 border border-line">
                 <input
@@ -519,7 +519,7 @@ function downloadOne(itemId) {
         </AppModal>
 
         <!-- Finalize modal -->
-        <AppModal :show="showFinalizeModal" :title="t('photo.frontend.finalize')" v-on:close="showFinalizeModal = false">
+        <AppModal :show="showFinalizeModal" :title="t('photo.frontend.finalize')" :closeable="false" v-on:close="showFinalizeModal = false">
             <form class="space-y-4" v-on:submit.prevent="submitFinalize">
                 <p class="text-sm text-muted">{{ t("photo.frontend.finalizeIntro", { count: favoriteTotal }) }}</p>
                 <AppInput

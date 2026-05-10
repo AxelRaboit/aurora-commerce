@@ -8,7 +8,7 @@ import { useTaxonomySelect } from "@editorial/backend/taxonomies/composables/use
 import { useTaxonomyTree } from "@editorial/backend/taxonomies/composables/useTaxonomyTree.js";
 import { useTaxonomyDelete } from "@editorial/backend/taxonomies/composables/useTaxonomyDelete.js";
 import { useTermDelete } from "@editorial/backend/taxonomies/composables/useTermDelete.js";
-import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, GripVertical, Lock, Save, X, Tag } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -260,6 +260,7 @@ const parentOptions = computed(() => {
             :show="taxonomyModal.open"
             max-width="lg"
             :title="taxonomyModal.editing ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')"
+            :icon="taxonomyModal.editing ? Pencil : Tag"
             :closeable="false"
             v-on:close="taxonomyModal.open = false"
         >
@@ -341,6 +342,7 @@ const parentOptions = computed(() => {
             :show="termModal.open"
             max-width="md"
             :title="termModal.editing ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')"
+            :icon="termModal.editing ? Pencil : Tag"
             :closeable="false"
             v-on:close="termModal.open = false"
         >
@@ -398,7 +400,7 @@ const parentOptions = computed(() => {
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingTaxonomy" max-width="sm" v-on:close="deletingTaxonomy = null">
+        <AppModal :show="!!deletingTaxonomy" max-width="sm" :closeable="false" v-on:close="deletingTaxonomy = null">
             <p class="text-sm text-primary">{{ t("backend.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -406,7 +408,7 @@ const parentOptions = computed(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="!!deletingTerm" max-width="sm" v-on:close="deletingTerm = null">
+        <AppModal :show="!!deletingTerm" max-width="sm" :closeable="false" v-on:close="deletingTerm = null">
             <p class="text-sm text-primary">{{ t("backend.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

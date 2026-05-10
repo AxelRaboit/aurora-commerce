@@ -6,7 +6,7 @@ import { usePostTypeSelect } from "@editorial/backend/post-types/composables/use
 import { usePostTypeModal } from "@editorial/backend/post-types/composables/usePostTypeModal.js";
 import { usePostTypeDelete } from "@editorial/backend/post-types/composables/usePostTypeDelete.js";
 import { usePostTypeFields } from "@editorial/backend/post-types/composables/usePostTypeFields.js";
-import { Plus, Pencil, Trash2, Layers, Lock, GripVertical, Save, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Layers, Lock, GripVertical, Save, X, ClipboardList } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -165,6 +165,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             :show="postTypeModal.open"
             max-width="lg"
             :title="postTypeModal.editing ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')"
+            :icon="postTypeModal.editing ? Pencil : Layers"
             :closeable="false"
             v-on:close="postTypeModal.open = false"
         >
@@ -244,6 +245,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             :show="fieldModal.open"
             max-width="lg"
             :title="fieldModal.editing ? t('backend.postTypes.fields.edit') : t('backend.postTypes.fields.add')"
+            :icon="fieldModal.editing ? Pencil : ClipboardList"
             :closeable="false"
             v-on:close="fieldModal.open = false"
         >
@@ -306,7 +308,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingPostType" max-width="sm" v-on:close="deletingPostType = null">
+        <AppModal :show="!!deletingPostType" max-width="sm" :closeable="false" v-on:close="deletingPostType = null">
             <p class="text-sm text-primary">{{ t("backend.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingPostType = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -314,7 +316,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </div>
         </AppModal>
 
-        <AppModal :show="!!deletingField" max-width="sm" v-on:close="deletingField = null">
+        <AppModal :show="!!deletingField" max-width="sm" :closeable="false" v-on:close="deletingField = null">
             <p class="text-sm text-primary">{{ t("backend.postTypes.fields.deleteConfirm", { label: deletingField?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

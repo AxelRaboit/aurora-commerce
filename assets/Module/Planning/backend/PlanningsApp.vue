@@ -355,6 +355,7 @@ onMounted(() => {
             :show="planningForm.editModal.open"
             max-width="md"
             :title="planningForm.editModal.planning ? t('backend.plannings.edit') : t('backend.plannings.new')"
+            :closeable="false"
             v-on:close="planningForm.editModal.open = false"
         >
             <form class="space-y-4" v-on:submit.prevent="planningForm.submit()">
@@ -407,7 +408,7 @@ onMounted(() => {
         </AppModal>
 
         <!-- Delete planning confirm -->
-        <AppModal :show="!!deletingPlanning" max-width="sm" v-on:close="deletingPlanning = null">
+        <AppModal :show="!!deletingPlanning" max-width="sm" :closeable="false" v-on:close="deletingPlanning = null">
             <p class="text-sm text-primary">
                 {{ t("backend.plannings.delete_confirm", { name: deletingPlanning?.name ?? "" }) }}
             </p>
@@ -431,6 +432,7 @@ onMounted(() => {
             max-width="md"
             :scrollable="false"
             :title="eventForm.editModal.event ? t('backend.planning_events.edit') : t('backend.planning_events.new')"
+            :closeable="false"
             v-on:close="eventForm.editModal.open = false"
         >
             <form class="space-y-4" v-on:submit.prevent="eventForm.submit(selectedPlanningId)">
@@ -531,7 +533,7 @@ onMounted(() => {
         </AppModal>
 
         <!-- Delete event confirm -->
-        <AppModal :show="!!deletingEvent" max-width="sm" v-on:close="deletingEvent = null">
+        <AppModal :show="!!deletingEvent" max-width="sm" :closeable="false" v-on:close="deletingEvent = null">
             <p class="text-sm text-primary">
                 {{ t("backend.planning_events.delete_confirm", { title: deletingEvent?.title ?? "" }) }}
             </p>

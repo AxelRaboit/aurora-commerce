@@ -119,6 +119,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             :show="createModal.open"
             max-width="md"
             :title="t('backend.themes.new')"
+            :icon="Palette"
             :closeable="false"
             v-on:close="createModal.open = false"
         >
@@ -154,6 +155,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             :show="editModal.open"
             max-width="lg"
             :title="t('backend.themes.edit')"
+            :icon="Palette"
             :closeable="false"
             v-on:close="editModal.open = false"
         >
@@ -246,6 +248,7 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             :show="!!deletingTheme"
             max-width="sm"
             :title="t('backend.themes.deleteConfirm', { name: deletingTheme?.name ?? '' })"
+            :icon="Trash2"
             :closeable="false"
             v-on:close="deletingTheme = null"
         >

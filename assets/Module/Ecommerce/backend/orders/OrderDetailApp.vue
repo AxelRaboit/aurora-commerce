@@ -12,7 +12,7 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Ban, Clock, Undo2, X, Check } from "lucide-vue-next";
+import { Ban, Clock, Undo2, X, Check, ShoppingCart } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
@@ -186,7 +186,7 @@ const refund = useOrderRefund(props.refundPath, order);
             </div>
         </div>
 
-        <AppModal :show="!!pendingTransition" max-width="sm" v-on:close="pendingTransition = null">
+        <AppModal :show="!!pendingTransition" max-width="sm" :closeable="false" v-on:close="pendingTransition = null">
             <p class="text-sm text-primary">{{ t('backend.ecommerce.orders.actions.confirm', { label: pendingTransition?.label }) }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -196,7 +196,14 @@ const refund = useOrderRefund(props.refundPath, order);
             </template>
         </AppModal>
 
-        <AppModal :show="refund.showModal.value" max-width="sm" :title="t('backend.ecommerce.orders.refund.title')" v-on:close="refund.close">
+        <AppModal
+            :show="refund.showModal.value"
+            max-width="sm"
+            :title="t('backend.ecommerce.orders.refund.title')"
+            :icon="ShoppingCart"
+            :closeable="false"
+            v-on:close="refund.close"
+        >
             <p class="text-sm text-secondary mb-4">{{ t('backend.ecommerce.orders.refund.hint') }}</p>
             <AppCheckbox v-model="refund.isFullRefund.value" :label="t('backend.ecommerce.orders.refund.full', { total: formattedTotal })" class="mb-3" />
             <AppInput

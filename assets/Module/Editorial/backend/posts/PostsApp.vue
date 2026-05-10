@@ -266,7 +266,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
 
             <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-            <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" v-on:close="deletePost.pendingDelete.value = null">
+            <AppModal :show="!!deletePost.pendingDelete.value" max-width="sm" :closeable="false" v-on:close="deletePost.pendingDelete.value = null">
                 <p class="text-sm text-primary">
                     {{ t(trashed ? "backend.posts.forceDeleteConfirm" : "backend.posts.deleteConfirm", { title: deletePost.pendingDelete.value?.title ?? "?" }) }}
                 </p>
@@ -280,7 +280,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                 </div>
             </AppModal>
 
-            <AppModal :show="confirmEmptyTrash" max-width="sm" v-on:close="confirmEmptyTrash = false">
+            <AppModal :show="confirmEmptyTrash" max-width="sm" :closeable="false" v-on:close="confirmEmptyTrash = false">
                 <div class="space-y-4">
                     <p class="text-sm text-primary">{{ t("backend.posts.emptyTrashConfirm") }}</p>
                     <div class="flex justify-end gap-2">

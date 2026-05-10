@@ -136,7 +136,13 @@ const actionLabel = (action) => {
             </ol>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: contact.fullName })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.crm.contacts.edit', { name: contact.fullName })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
@@ -173,7 +179,7 @@ const actionLabel = (action) => {
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
+        <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: contact.fullName }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
             <template #footer>

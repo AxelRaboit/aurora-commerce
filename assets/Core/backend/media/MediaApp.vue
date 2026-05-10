@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -504,7 +504,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </main>
         </div>
 
-        <AppModal :show="!!editingMedia" max-width="3xl" v-on:close="closeEditMedia">
+        <AppModal :show="!!editingMedia" max-width="3xl" :closeable="false" v-on:close="closeEditMedia">
             <div class="flex items-center justify-between gap-4 mb-1">
                 <h3 class="text-lg font-semibold text-primary truncate">{{ t("backend.media.editMedia") }}</h3>
                 <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
@@ -672,6 +672,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             :show="folderModal.open"
             max-width="md"
             :title="folderModal.editing ? t('backend.media.editFolder') : t('backend.media.createFolder')"
+            :icon="folderModal.editing ? Pencil : Folder"
             :closeable="false"
             v-on:close="folderModal.open = false"
         >
@@ -703,6 +704,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             :show="pendingBulkDelete"
             max-width="sm"
             :title="t('backend.media.bulkDeleteConfirm', { count: selectedIds.size })"
+            :icon="Trash2"
             :closeable="false"
             v-on:close="pendingBulkDelete = false"
         >
@@ -715,7 +717,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingMedia" max-width="md" v-on:close="deletingMedia = null">
+        <AppModal :show="!!deletingMedia" max-width="md" :closeable="false" v-on:close="deletingMedia = null">
             <p class="text-sm text-primary mb-3">{{ t("backend.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
 
             <div v-if="deletingMediaUsageLoading" class="text-xs text-muted italic">{{ t("backend.media.checkingUsage") }}</div>
@@ -761,7 +763,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingFolder" max-width="sm" v-on:close="deletingFolder = null">
+        <AppModal :show="!!deletingFolder" max-width="sm" :closeable="false" v-on:close="deletingFolder = null">
             <p class="text-sm text-primary">{{ t("backend.media.deleteFolderConfirm", { name: deletingFolder?.name }) }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -771,7 +773,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="!!previewMedia" max-width="4xl" v-on:close="previewMedia = null">
+        <AppModal :show="!!previewMedia" max-width="4xl" :closeable="false" v-on:close="previewMedia = null">
             <div class="flex items-start justify-between gap-4 mb-3">
                 <h3 class="text-sm font-medium text-primary truncate">{{ previewMedia?.originalName }}</h3>
                 <div class="flex gap-2 shrink-0">
@@ -811,7 +813,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </dl>
         </AppModal>
 
-        <MediaQrModal :media="qrMedia" v-on:close="qrMedia = null" />
+        <MediaQrModal :media="qrMedia" :closeable="false" v-on:close="qrMedia = null" />
 
         <AppModal :show="openBulkMove" max-width="sm" v-on:close="openBulkMove = false">
             <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.bulkMove", { count: selectedIds.size }) }}</h3>

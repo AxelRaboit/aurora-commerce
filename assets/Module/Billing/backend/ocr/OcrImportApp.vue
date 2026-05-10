@@ -193,7 +193,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             </div>
         </div>
 
-        <AppModal :show="!!logsJob" max-width="lg" v-on:close="logsJob = null">
+        <AppModal :show="!!logsJob" max-width="lg" :closeable="false" v-on:close="logsJob = null">
             <h3 class="text-base font-semibold text-primary mb-3">
                 {{ t('backend.billing.ocr.logsTitle') }} — #{{ logsJob?.id }}
                 <AppBadge :color="logsJob?.statusColor" :spinning="logsJob && !logsJob.isTerminal" class="ml-2">{{ logsJob?.statusLabel }}</AppBadge>
@@ -237,7 +237,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingValidate" max-width="sm" v-on:close="pendingValidate = null">
+        <AppModal :show="!!pendingValidate" max-width="sm" :closeable="false" v-on:close="pendingValidate = null">
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.validateConfirm', { id: pendingValidate?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.ocr.validateHelp') }}</p>
             <template #footer>
@@ -248,7 +248,7 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null; deleteTiersToo = false">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null; deleteTiersToo = false">
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <label v-if="canDeleteTiers" class="flex items-center gap-2 mt-3 text-sm text-secondary cursor-pointer select-none">

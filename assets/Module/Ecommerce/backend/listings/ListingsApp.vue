@@ -19,7 +19,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, Plus, Eye, Save, X } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Eye, Save, X, ShoppingBag } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
@@ -151,7 +151,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.ecommerce.listings.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.ecommerce.listings.create')"
+            :icon="ShoppingBag"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppSelect
                     v-model="newListing.productId"
@@ -194,7 +200,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.slug"
@@ -225,7 +237,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
             <template #footer>

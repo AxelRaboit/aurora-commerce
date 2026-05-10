@@ -367,6 +367,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         :show="showFieldModal"
         max-width="sm"
         :title="editingFieldId !== null ? t('backend.forms.editField') : t('backend.forms.addFieldTitle')"
+        :icon="editingFieldId !== null ? Pencil : ClipboardList"
         :closeable="false"
         v-on:close="showFieldModal = false"
     >
@@ -452,6 +453,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         :show="showDeleteConfirm"
         max-width="sm"
         :title="t('backend.forms.deleteConfirmTitle')"
+        :icon="Trash2"
         :closeable="false"
         v-on:close="showDeleteConfirm = false"
     >
@@ -496,7 +498,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </template>
     </AppModal>
 
-    <AppModal :show="!!pendingDeleteField" max-width="sm" v-on:close="pendingDeleteField = null">
+    <AppModal :show="!!pendingDeleteField" max-width="sm" :closeable="false" v-on:close="pendingDeleteField = null">
         <p class="text-sm text-primary">{{ t('backend.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
         <template #footer>
             <AppModalFooter>

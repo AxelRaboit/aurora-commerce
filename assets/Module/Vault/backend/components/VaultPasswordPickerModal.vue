@@ -7,7 +7,7 @@ import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppToggle from '@shared/components/form/AppToggle.vue';
-import { RefreshCw } from 'lucide-vue-next';
+import { RefreshCw, Lock } from 'lucide-vue-next';
 
 defineProps({ show: { type: Boolean, required: true } });
 const emit = defineEmits(['close', 'use']);
@@ -25,7 +25,13 @@ function usePassword() {
 </script>
 
 <template>
-    <AppModal :show="show" :title="t('password_generator.title')" max-width="sm" v-on:close="emit('close')">
+    <AppModal
+        :show="show"
+        :title="t('password_generator.title')"
+        :icon="Lock"
+        max-width="sm"
+        v-on:close="emit('close')"
+    >
         <div class="space-y-4">
             <div class="rounded-lg border border-line bg-surface-2 px-3 py-2.5 space-y-2">
                 <code class="block font-mono text-sm text-primary break-all select-all">

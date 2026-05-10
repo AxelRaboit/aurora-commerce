@@ -18,7 +18,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, X } from "lucide-vue-next";
+import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, X, TrendingUp } from "lucide-vue-next";
 import { stageBadge, stageBadgeBordered } from "@crm/backend/utils/deals/stageStyles.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -285,6 +285,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
             <AppModal
                 :show="formModal.open"
                 :title="formModal.deal ? t('backend.crm.deals.edit', { name: formModal.deal.name ?? '' }) : t('backend.crm.deals.create')"
+                :icon="formModal.deal ? Pencil : TrendingUp"
+                :closeable="false"
                 v-on:close="formModal.open = false"
             >
                 <form class="space-y-4" v-on:submit.prevent="submit">
@@ -310,7 +312,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 </template>
             </AppModal>
 
-            <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+            <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
                 <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
                 <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
                 <template #footer>

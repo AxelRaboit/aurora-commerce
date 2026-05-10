@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { useMenuItemForm } from "./composables/useMenuItemForm.js";
-import { Search, Check, X, Save } from "lucide-vue-next";
+import { Search, Check, X, Save, Menu, Pencil } from "lucide-vue-next";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -53,6 +53,7 @@ function close() { emit("close"); }
         :show="show"
         max-width="lg"
         :title="editing ? t('backend.menus.editItem') : t('backend.menus.addItem')"
+        :icon="editing ? Pencil : Menu"
         :closeable="false"
         v-on:close="close"
     >

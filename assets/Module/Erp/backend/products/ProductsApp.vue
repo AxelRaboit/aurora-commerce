@@ -18,7 +18,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, Plus, Eye, Save, X } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Eye, Save, X, Package } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -140,7 +140,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.erp.products.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.erp.products.create')"
+            :icon="Package"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newProduct.name"
@@ -198,7 +204,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: editingProduct?.name ?? '' })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.erp.products.edit', { name: editingProduct?.name ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.name" :label="t('backend.erp.products.name')" :error="editErrors.name" required />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -244,7 +256,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.erp.products.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.erp.products.deleteWarning') }}</p>
             <template #footer>

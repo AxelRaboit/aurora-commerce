@@ -19,7 +19,13 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <AppModal :show="show" :title="t('vault.destroy.title')" v-on:close="emit('close')">
+    <AppModal
+        :show="show"
+        :title="t('vault.destroy.title')"
+        :icon="Trash2"
+        :closeable="false"
+        v-on:close="emit('close')"
+    >
         <div class="space-y-4">
             <AppMessage variant="danger">{{ t('vault.destroy.warning') }}</AppMessage>
 

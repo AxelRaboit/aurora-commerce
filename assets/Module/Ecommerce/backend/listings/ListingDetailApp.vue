@@ -156,7 +156,13 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </div>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.ecommerce.listings.edit', { name: listing.displayTitle })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.ecommerce.listings.edit', { name: listing.displayTitle })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.slug" :label="t('backend.ecommerce.listings.slug')" :error="editErrors.slug" required />
                 <AppInput v-model="editForm.marketingTitle" :label="t('backend.ecommerce.listings.marketingTitle')" />
@@ -181,7 +187,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
+        <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
             <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: listing.displayTitle }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
             <template #footer>

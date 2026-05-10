@@ -37,7 +37,7 @@ watch(
 </script>
 
 <template>
-    <AppModal :show="!!media" max-width="sm" v-on:close="emit('close')">
+    <AppModal :show="!!media" max-width="sm" :closeable="false" v-on:close="emit('close')">
         <h3 class="text-sm font-medium text-primary mb-4">{{ t("backend.media.qrCode") }} — {{ media?.originalName }}</h3>
         <div class="flex flex-col items-center gap-4">
             <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-48 h-48 rounded-xl border border-line/60">

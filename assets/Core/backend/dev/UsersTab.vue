@@ -9,7 +9,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Save, X, Trash2, Check } from "lucide-vue-next";
+import { Plus, Save, X, Trash2, Check, UserPlus, Pencil } from "lucide-vue-next";
 import { useUsers } from "@core/backend/dev/composables/useUsers.js";
 import UserBadges from "@core/backend/dev/UserBadges.vue";
 import UserActions from "@core/backend/dev/UserActions.vue";
@@ -158,6 +158,7 @@ onMounted(() => {
             :show="users.showCreateModal.value"
             max-width="md"
             :title="t('backend.users.add')"
+            :icon="UserPlus"
             :closeable="false"
             v-on:close="users.showCreateModal.value = false"
         >
@@ -199,6 +200,7 @@ onMounted(() => {
             :show="users.showEditModal.value"
             max-width="md"
             :title="t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' })"
+            :icon="Pencil"
             :closeable="false"
             v-on:close="users.closeEdit"
         >
@@ -235,7 +237,7 @@ onMounted(() => {
             </form>
         </AppModal>
 
-        <AppModal :show="!!users.pendingToggleRole.value" max-width="sm" v-on:close="users.pendingToggleRole.value = null">
+        <AppModal :show="!!users.pendingToggleRole.value" max-width="sm" :closeable="false" v-on:close="users.pendingToggleRole.value = null">
             <p class="text-sm text-primary">
                 {{ users.pendingToggleRole.value?.isDevRole
                     ? t('backend.users.revokeDevConfirm', { name: users.pendingToggleRole.value?.name })

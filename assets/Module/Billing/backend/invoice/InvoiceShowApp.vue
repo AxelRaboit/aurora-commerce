@@ -12,7 +12,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import InlineField from "@billing/backend/components/InlineField.vue";
-import { Check, Trash2, Plus, FileX, ExternalLink, ScanLine, X } from "lucide-vue-next";
+import { Check, Trash2, Plus, FileX, ExternalLink, ScanLine, X, Receipt } from "lucide-vue-next";
 import { formatCents, formatBpAsPercent } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isImageMimeType, isPdfMimeType } from "@core/utils/enums/media/mimeType.js";
@@ -57,6 +57,7 @@ const { formatDateNumeric } = useDateFormat();
             :show="showCreditNoteModal"
             max-width="sm"
             :title="t('backend.billing.invoices.show.createCreditNote')"
+            :icon="Receipt"
             :closeable="false"
             v-on:close="showCreditNoteModal = false"
         >
@@ -101,7 +102,7 @@ const { formatDateNumeric } = useDateFormat();
             </span>
         </div>
 
-        <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false">
+        <AppModal :show="showDeleteModal" max-width="sm" :closeable="false" v-on:close="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false">
             <p class="text-sm text-primary">{{ t('backend.billing.invoices.deleteConfirm', { number: invoice.number ?? ('#' + invoice.id) }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <div v-if="canDeleteTiers || canDeleteBuyer" class="mt-3 space-y-2">

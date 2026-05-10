@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Save, Pencil, Trash2, X } from "lucide-vue-next";
+import { Plus, Save, Pencil, Trash2, X, Building2 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -76,6 +76,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             :show="editModal.open"
             max-width="sm"
             :title="editModal.service ? t('backend.services.edit_title', { name: editModal.service.name }) : t('backend.services.new')"
+            :icon="editModal.service ? Pencil : Building2"
             :closeable="false"
             v-on:close="editModal.open = false"
         >
@@ -98,7 +99,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingService" max-width="sm" v-on:close="deletingService = null">
+        <AppModal :show="!!deletingService" max-width="sm" :closeable="false" v-on:close="deletingService = null">
             <p class="text-sm text-primary">{{ t("backend.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>

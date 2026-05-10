@@ -11,7 +11,7 @@ import { useMenuEditor } from "@editorial/backend/menus/composables/useMenuEdito
 import { useMenuEditModal } from "@editorial/backend/menus/composables/useMenuEditModal.js";
 import { useMenuDeleteConfirms } from "@editorial/backend/menus/composables/useMenuDeleteConfirms.js";
 import { useMenuItemModal } from "@editorial/backend/menus/composables/useMenuItemModal.js";
-import { Save, X, Trash2 } from "lucide-vue-next";
+import { Save, X, Trash2, Menu } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -80,6 +80,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             :show="menuModal.open"
             max-width="md"
             :title="t('backend.menus.editMenu')"
+            :icon="Menu"
             :closeable="false"
             v-on:close="menuModal.open = false"
         >
@@ -103,7 +104,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             </template>
         </AppModal>
 
-        <AppModal :show="!!confirmDeleteMenu" max-width="sm" v-on:close="confirmDeleteMenu = null">
+        <AppModal :show="!!confirmDeleteMenu" max-width="sm" :closeable="false" v-on:close="confirmDeleteMenu = null">
             <p class="text-sm text-primary">{{ t("backend.menus.deleteConfirm", { name: confirmDeleteMenu?.name ?? "" }) }}</p>
             <div class="flex justify-end gap-2 pt-3">
                 <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -111,7 +112,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             </div>
         </AppModal>
 
-        <AppModal :show="!!confirmDeleteItem" max-width="sm" v-on:close="confirmDeleteItem = null">
+        <AppModal :show="!!confirmDeleteItem" max-width="sm" :closeable="false" v-on:close="confirmDeleteItem = null">
             <p class="text-sm text-primary">{{ t("backend.menus.deleteItemConfirm") }}</p>
             <div class="flex justify-end gap-2 pt-3">
                 <AppButton variant="ghost" v-on:click="confirmDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

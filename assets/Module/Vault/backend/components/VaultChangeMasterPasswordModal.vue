@@ -38,6 +38,7 @@ const title = computed(() => props.step === 3 ? t('vault.change_password.process
         :show="show"
         max-width="sm"
         :title="title"
+        :icon="ShieldCheck"
         :closeable="false"
         v-on:close="emit('close')"
     >

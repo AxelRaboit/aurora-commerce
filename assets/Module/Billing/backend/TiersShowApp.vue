@@ -186,7 +186,7 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
             <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
         </div>
 
-        <AppModal :show="showDeleteModal" max-width="sm" v-on:close="showDeleteModal = false">
+        <AppModal :show="showDeleteModal" max-width="sm" :closeable="false" v-on:close="showDeleteModal = false">
             <p class="text-sm text-primary">{{ t('backend.billing.tiers.deleteConfirm', { name: tiers.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <template #footer>

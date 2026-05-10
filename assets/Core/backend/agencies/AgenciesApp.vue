@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Save, Pencil, Trash2, X } from "lucide-vue-next";
+import { Plus, Save, Pencil, Trash2, X, Building } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -76,6 +76,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             :show="editModal.open"
             max-width="sm"
             :title="editModal.agency ? t('backend.agencies.edit_title', { name: editModal.agency.name }) : t('backend.agencies.new')"
+            :icon="editModal.agency ? Pencil : Building"
             :closeable="false"
             v-on:close="editModal.open = false"
         >
@@ -100,7 +101,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingAgency" max-width="sm" v-on:close="deletingAgency = null">
+        <AppModal :show="!!deletingAgency" max-width="sm" :closeable="false" v-on:close="deletingAgency = null">
             <p class="text-sm text-primary">{{ t("backend.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>

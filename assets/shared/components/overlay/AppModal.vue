@@ -8,9 +8,11 @@ const props = defineProps({
     show: { type: Boolean, default: false },
     maxWidth: { type: String, default: "md" },
     closeable: { type: Boolean, default: true },
-    // When provided, renders a flex header row (title + X close button).
+    // When provided, renders a flex header row (title + optional icon + X close button).
     // Leave empty to manage the header yourself inside the slot.
     title: { type: String, default: null },
+    /** Lucide icon component to display to the left of the title. */
+    icon: { type: [Object, Function], default: null },
     noPadding: { type: Boolean, default: false },
     scrollable: { type: Boolean, default: true },
 });
@@ -111,7 +113,10 @@ const contentClass = computed(() => [
                 >
                     <!-- Header -->
                     <div v-if="title" class="shrink-0 flex items-center justify-between gap-4 px-6 pt-6 pb-2">
-                        <h2 class="text-lg font-semibold text-primary">{{ title }}</h2>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <component :is="icon" v-if="icon" class="w-4 h-4 shrink-0 text-muted" :stroke-width="2" />
+                            <h2 class="text-lg font-semibold text-primary truncate">{{ title }}</h2>
+                        </div>
                         <button
                             v-if="closeable"
                             type="button"
@@ -122,6 +127,7 @@ const contentClass = computed(() => [
                             <X class="w-4 h-4" :stroke-width="2" />
                         </button>
                     </div>
+
 
                     <!-- Scrollable content -->
                     <div :class="contentClass">

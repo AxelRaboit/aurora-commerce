@@ -11,7 +11,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import { Plus, Pencil, Trash2, Save, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Tag } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -78,7 +78,13 @@ const {
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.ged.categories.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.ged.categories.create')"
+            :icon="Tag"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newCategory.name"
@@ -97,7 +103,13 @@ const {
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.ged.categories.edit', { name: editingCategory?.name ?? '' })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.ged.categories.edit', { name: editingCategory?.name ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -116,7 +128,7 @@ const {
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("backend.ged.categories.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
             <p class="text-sm text-secondary">{{ t("backend.ged.categories.deleteWarning") }}</p>
             <template #footer>

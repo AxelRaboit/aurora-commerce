@@ -13,7 +13,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import { Plus, Pencil, Trash2, Eye, Save, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Eye, Save, X, Building2 } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -125,7 +125,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.crm.companies.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('backend.crm.companies.create')"
+            :icon="Building2"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newCompany.name"
@@ -147,7 +153,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.companies.edit', { name: editingCompany?.name ?? '' })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.crm.companies.edit', { name: editingCompany?.name ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -169,7 +181,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
             <template #footer>

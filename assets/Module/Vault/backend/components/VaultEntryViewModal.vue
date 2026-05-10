@@ -58,7 +58,7 @@ function close() {
 </script>
 
 <template>
-    <AppModal :show="show" max-width="sm" v-on:close="close">
+    <AppModal :show="show" max-width="sm" :closeable="false" v-on:close="close">
         <template v-if="entry">
             <div class="space-y-4">
                 <div class="flex items-start gap-3">

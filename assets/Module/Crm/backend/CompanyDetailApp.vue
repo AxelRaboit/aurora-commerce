@@ -14,7 +14,7 @@ import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Pencil, Trash2, Plus, Save, X } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Save, X, Users } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -151,7 +151,13 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </template>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.companies.edit', { name: company.name })" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('backend.crm.companies.edit', { name: company.name })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -184,7 +190,13 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </template>
         </AppModal>
     </div>
-    <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" :closeable="false" v-on:close="showCreateContact = false">
+    <AppModal
+        :show="showCreateContact"
+        :title="t('backend.crm.contacts.create')"
+        :icon="Users"
+        :closeable="false"
+        v-on:close="showCreateContact = false"
+    >
         <form class="space-y-4" v-on:submit.prevent="submitContact">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <AppInput

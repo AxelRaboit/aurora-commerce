@@ -14,7 +14,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { Plus, Eye, Trash2, RotateCcw, Info, X } from "lucide-vue-next";
+import { Plus, Eye, Trash2, RotateCcw, Info, X, ScanLine } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -135,6 +135,7 @@ onMounted(startPolling);
             :show="!!errorJob"
             max-width="md"
             :title="`${t('backend.billing.ocr.errorLog')} — #${errorJob?.id}`"
+            :icon="ScanLine"
             :closeable="false"
             v-on:close="errorJob = null"
         >
@@ -146,7 +147,7 @@ onMounted(startPolling);
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <template #footer>

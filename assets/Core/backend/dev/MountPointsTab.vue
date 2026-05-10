@@ -9,7 +9,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import { Plus, Pencil, Trash2, Wifi, WifiOff, CircleHelp, X, CheckCircle, XCircle, LoaderCircle, RotateCcw } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Wifi, WifiOff, CircleHelp, X, CheckCircle, XCircle, LoaderCircle, RotateCcw, Network } from "lucide-vue-next";
 import { useMountPoints } from "@core/backend/dev/composables/useMountPoints.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
@@ -115,7 +115,9 @@ onMounted(() => {
         <AppModal
             :show="mp.showCreateModal.value"
             :title="t('backend.mountPoints.add')"
+            :icon="Network"
             max-width="4xl"
+            :closeable="false"
             v-on:close="mp.closeCreate"
         >
             <form class="space-y-4" v-on:submit.prevent="mp.submitCreate">
@@ -227,7 +229,9 @@ onMounted(() => {
         <AppModal
             :show="mp.showEditModal.value"
             :title="mp.editingMountPoint.value?.name ?? t('backend.mountPoints.edit')"
+            :icon="Pencil"
             max-width="4xl"
+            :closeable="false"
             v-on:close="mp.closeEdit"
         >
             <form class="space-y-4" v-on:submit.prevent="mp.submitEdit">
@@ -340,7 +344,9 @@ onMounted(() => {
         <AppModal
             :show="mp.testModal.value.show"
             :title="t('backend.mountPoints.testTitle', { name: mp.testModal.value.mountPoint?.name ?? '' })"
+            :icon="Network"
             max-width="sm"
+            :closeable="false"
             v-on:close="mp.testModal.value.testing ? mp.cancelTest() : mp.closeTestModal()"
         >
             <div class="flex flex-col items-center gap-4 py-2">
@@ -374,7 +380,7 @@ onMounted(() => {
         </AppModal>
 
         <!-- Delete confirm modal -->
-        <AppModal :show="mp.showDeleteModal.value" max-width="sm" v-on:close="mp.showDeleteModal.value = false">
+        <AppModal :show="mp.showDeleteModal.value" max-width="sm" :closeable="false" v-on:close="mp.showDeleteModal.value = false">
             <p class="text-sm text-primary">
                 {{ t("backend.mountPoints.deleteConfirm") }}
                 <strong v-if="mp.pendingDelete.value"> « {{ mp.pendingDelete.value.name }} »</strong>

@@ -36,7 +36,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import { Plus, Pencil, Trash2, Activity, X, MessageSquare, CheckSquare, Square, Clock, Paperclip, Tag, Calendar, Bookmark, FileText, Eye, Save, Send, ArrowLeft } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Activity, X, MessageSquare, CheckSquare, Square, Clock, Paperclip, Tag, Calendar, Bookmark, FileText, Eye, Save, Send, ArrowLeft, FolderKanban } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -576,7 +576,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </div>
 
         <!-- Create Project modal -->
-        <AppModal :show="showProjectModal" :title="t('backend.projects.add')" :closeable="false" v-on:close="showProjectModal = false">
+        <AppModal
+            :show="showProjectModal"
+            :title="t('backend.projects.add')"
+            :icon="FolderKanban"
+            :closeable="false"
+            v-on:close="showProjectModal = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="newProject.title"
@@ -642,7 +648,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Edit Project modal -->
-        <AppModal :show="showEditProjectModal" :title="t('shared.common.edit')" :closeable="false" v-on:close="showEditProjectModal = false">
+        <AppModal
+            :show="showEditProjectModal"
+            :title="t('shared.common.edit')"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEditProjectModal = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="editProjectForm.title"
@@ -712,6 +724,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="showCreateTask"
             max-width="2xl"
             :title="t('backend.projects.task.add')"
+            :icon="FolderKanban"
             :closeable="false"
             v-on:close="showCreateTask = false"
         >
@@ -795,6 +808,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="showEditTask"
             max-width="2xl"
             :title="t('shared.common.edit')"
+            :icon="Pencil"
             :closeable="false"
             v-on:close="showEditTask = false"
         >
@@ -1019,7 +1033,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- View Task modal -->
-        <AppModal :show="showViewTask" max-width="7xl" v-on:close="showViewTask = false">
+        <AppModal :show="showViewTask" max-width="7xl" :closeable="false" v-on:close="showViewTask = false">
             <div v-if="editingTask" class="flex gap-6 min-h-0">
                 <!-- Left: task details -->
                 <div class="flex-1 min-w-0 space-y-4">
@@ -1180,6 +1194,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="showCreateColumn"
             max-width="sm"
             :title="t('backend.projects.columns.add')"
+            :icon="FolderKanban"
             :closeable="false"
             v-on:close="showCreateColumn = false"
         >
@@ -1205,6 +1220,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="showRenameColumn"
             max-width="sm"
             :title="t('backend.projects.columns.rename')"
+            :icon="Pencil"
             :closeable="false"
             v-on:close="showRenameColumn = false"
         >
@@ -1242,6 +1258,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="labelsManage.showLabelsModal.value"
             max-width="md"
             :title="t('backend.projects.labels.manage')"
+            :icon="Tag"
             :closeable="false"
             v-on:close="labelsManage.showLabelsModal.value = false"
         >
@@ -1318,6 +1335,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="sprintsManage.showSprintsModal.value"
             max-width="md"
             :title="t('backend.projects.sprints.manage')"
+            :icon="Calendar"
             :closeable="false"
             v-on:close="sprintsManage.showSprintsModal.value = false"
         >
@@ -1398,6 +1416,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :show="savedViews.showSaveModal.value"
             max-width="sm"
             :title="t('backend.projects.savedViews.save')"
+            :icon="Bookmark"
             :closeable="false"
             v-on:close="savedViews.showSaveModal.value = false"
         >

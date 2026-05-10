@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { Plus, Pencil, Trash2, Save, X, Users, Eye } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Users, Eye, UserCheck } from "lucide-vue-next";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -149,7 +149,13 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <!-- View modal -->
-        <AppModal :show="!!viewingEmployee" :title="viewingEmployee?.fullName ?? ''" :closeable="false" v-on:close="viewingEmployee = null">
+        <AppModal
+            :show="!!viewingEmployee"
+            :title="viewingEmployee?.fullName ?? ''"
+            :icon="UserCheck"
+            :closeable="false"
+            v-on:close="viewingEmployee = null"
+        >
             <dl v-if="viewingEmployee" class="space-y-3">
                 <div v-if="viewingEmployee.jobTitle" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
                     <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.jobTitle') }}</dt>
@@ -207,7 +213,13 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </AppModal>
 
         <!-- Edit / Create modal -->
-        <AppModal :show="modalOpen" :title="editingEmployee ? editingEmployee.fullName : t('backend.employees.add')" :closeable="false" v-on:close="closeModal">
+        <AppModal
+            :show="modalOpen"
+            :title="editingEmployee ? editingEmployee.fullName : t('backend.employees.add')"
+            :icon="editingEmployee ? Pencil : UserCheck"
+            :closeable="false"
+            v-on:close="closeModal"
+        >
             <form class="space-y-4" v-on:submit.prevent="submit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -272,7 +284,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </AppModal>
 
         <!-- Delete confirmation modal -->
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t('backend.employees.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.employees.deleteWarning') }}</p>
             <template #footer>

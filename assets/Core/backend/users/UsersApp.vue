@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { UserPlus, Save, Upload, Trash2, X, Send } from "lucide-vue-next";
+import { UserPlus, Save, Upload, Trash2, X, Send, Pencil } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -204,6 +204,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             :show="inviteModal.open"
             max-width="md"
             :title="t('backend.users.invite')"
+            :icon="UserPlus"
             :closeable="false"
             v-on:close="inviteModal.open = false"
         >
@@ -249,7 +250,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             </template>
         </AppModal>
 
-        <AppModal :show="!!viewingUser" max-width="md" v-on:close="viewingUser = null">
+        <AppModal :show="!!viewingUser" max-width="md" :closeable="false" v-on:close="viewingUser = null">
             <div v-if="viewingUser" class="space-y-5">
                 <div class="flex items-center gap-4">
                     <AppAvatar variant="solid" :name="viewingUser.name" :photo-url="viewingUser.profilePhotoUrl ?? ''" :size="64" />
@@ -333,6 +334,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             :show="editModal.open"
             max-width="lg"
             :title="t('backend.users.edit_title', { name: editModal.editing?.name ?? '' })"
+            :icon="Pencil"
             :closeable="false"
             v-on:close="editModal.open = false"
         >
@@ -422,7 +424,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
         </AppModal>
 
         <!-- Privileges modal — dedicated, Dev only -->
-        <AppModal :show="privilegesModal.open" max-width="2xl" v-on:close="privilegesModal.open = false">
+        <AppModal :show="privilegesModal.open" max-width="2xl" :closeable="false" v-on:close="privilegesModal.open = false">
             <div v-if="privilegesModal.user" class="space-y-4">
                 <div class="flex items-center gap-3">
                     <AppAvatar variant="solid" :name="privilegesModal.user.name" :photo-url="privilegesModal.user.profilePhotoUrl ?? ''" :size="40" />
@@ -456,7 +458,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingUser" max-width="sm" v-on:close="deletingUser = null">
+        <AppModal :show="!!deletingUser" max-width="sm" :closeable="false" v-on:close="deletingUser = null">
             <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -466,7 +468,7 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             </template>
         </AppModal>
 
-        <AppModal :show="!!togglingUser" max-width="sm" v-on:close="togglingUser = null">
+        <AppModal :show="!!togglingUser" max-width="sm" :closeable="false" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
                 {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enableConfirm' : 'backend.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
             </p>

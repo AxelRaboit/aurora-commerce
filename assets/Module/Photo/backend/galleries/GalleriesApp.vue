@@ -23,7 +23,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as ImageIcon, User, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as ImageIcon, User, X, Images } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -128,7 +128,13 @@ const onCoverChange = onGalleryCoverChange;
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('photo.galleries.create')" :closeable="false" v-on:close="showCreate = false">
+        <AppModal
+            :show="showCreate"
+            :title="t('photo.galleries.create')"
+            :icon="Images"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"
@@ -252,7 +258,13 @@ const onCoverChange = onGalleryCoverChange;
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" :title="t('photo.galleries.edit')" :closeable="false" v-on:close="showEdit = false">
+        <AppModal
+            :show="showEdit"
+            :title="t('photo.galleries.edit')"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"
@@ -376,7 +388,7 @@ const onCoverChange = onGalleryCoverChange;
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
             <p class="text-sm text-primary">{{ t("photo.galleries.deleteConfirm", { title: pendingDelete?.title ?? '' }) }}</p>
             <template #footer>
                 <AppModalFooter>

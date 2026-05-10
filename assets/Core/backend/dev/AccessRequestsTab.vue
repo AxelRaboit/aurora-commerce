@@ -135,7 +135,7 @@ onMounted(() => {
             v-on:change="accessRequests.goToPage"
         />
 
-        <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" v-on:close="accessRequests.pendingApprove.value = null">
+        <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingApprove.value = null">
             <p class="text-sm text-primary">{{ t('backend.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -143,7 +143,7 @@ onMounted(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="!!accessRequests.pendingReject.value" max-width="sm" v-on:close="accessRequests.pendingReject.value = null">
+        <AppModal :show="!!accessRequests.pendingReject.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingReject.value = null">
             <p class="text-sm text-primary">{{ t('backend.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -151,7 +151,7 @@ onMounted(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="accessRequests.confirmPurge.value" max-width="sm" v-on:close="accessRequests.confirmPurge.value = false">
+        <AppModal :show="accessRequests.confirmPurge.value" max-width="sm" :closeable="false" v-on:close="accessRequests.confirmPurge.value = false">
             <p class="text-sm text-primary">{{ t('backend.access_requests.purgeConfirm') }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
