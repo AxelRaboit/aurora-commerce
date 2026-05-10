@@ -28,13 +28,13 @@ onMounted(() => {
 async function submit() {
     clearErrors();
     if (required("required")(password.value)) {
-        setErrors({ password: t("photo.frontend.unlock.required") });
+        setErrors({ password: "photo.frontend.unlock.required" });
         return;
     }
 
     const data = await request(props.unlockPath, { password: password.value });
     if (!data?.success) {
-        setErrors({ password: t(data?.error ?? "photo.frontend.unlock.invalid") });
+        setErrors({ password: data?.error ?? "photo.frontend.unlock.invalid" });
         passwordInput.value?.focus();
         passwordInput.value?.select();
         return;

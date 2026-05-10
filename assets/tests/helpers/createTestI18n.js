@@ -23,12 +23,37 @@ const baseMessages = {
             save: "Enregistrer",
             confirm: "Confirmer",
             error: "Erreur",
+            deleted: "Supprimé.",
         },
         locales: {
             fr: "Français",
             en: "English",
             es: "Español",
             de: "Deutsch",
+        },
+    },
+    backend: {
+        settings: {
+            saved: "Réglages sauvegardés.",
+            confirmPasswordInvalid: "Mot de passe incorrect.",
+            cascadeLocked: "Activez d'abord « {parent} ».",
+        },
+        projects: {
+            errors: {
+                comment_required: "Le commentaire est requis.",
+                item_label_required: "Le libellé est requis.",
+                time_minutes_invalid: "Durée invalide.",
+            },
+        },
+        ecommerce: {
+            orders: {
+                refund: {
+                    success: "Remboursement effectué.",
+                },
+            },
+            errors: {
+                refund_failed: "Remboursement échoué.",
+            },
         },
     },
 };
