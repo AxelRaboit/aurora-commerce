@@ -67,7 +67,7 @@ backend:
     disable: Disable
     edit: Edit
     namePlaceholder: John Doe
-    emailPlaceholder: "john{'@'}example.com"
+    emailPlaceholder: "john@example.com"
     password: Password
     password_optional: Password (leave empty to keep)
     locale: Language
@@ -109,7 +109,7 @@ backend:
     sent: 'Invitation sent to {email}.'
     description: Send an email invitation to allow someone to join the administration.
     email: Recipient email address
-    emailPlaceholder: "example{'@'}domain.com"
+    emailPlaceholder: "example@domain.com"
     message: Custom message (optional)
     messagePlaceholder: Add a message to accompany the invitation…
     credentialsHint: You can include login credentials in the email.

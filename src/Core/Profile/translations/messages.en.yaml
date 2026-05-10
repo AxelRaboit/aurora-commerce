@@ -32,7 +32,7 @@ backend:
       kanbanView: Kanban view
       namePlaceholder: John Doe
       email: Email address
-      emailPlaceholder: "you{'@'}example.com"
+      emailPlaceholder: "you@example.com"
       saved: Profile updated successfully.
     password:
       title: Change password

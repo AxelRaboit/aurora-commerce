@@ -32,7 +32,7 @@ backend:
       kanbanView: Vue Kanban
       namePlaceholder: Jean Dupont
       email: Adresse e-mail
-      emailPlaceholder: "vous{'@'}exemple.com"
+      emailPlaceholder: "vous@exemple.com"
       saved: Profil mis à jour avec succès.
     password:
       title: Modifier le mot de passe

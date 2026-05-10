@@ -67,7 +67,7 @@ backend:
     disable: Désactiver
     edit: Modifier
     namePlaceholder: Jean Dupont
-    emailPlaceholder: "jean{'@'}exemple.com"
+    emailPlaceholder: "jean@exemple.com"
     password: Mot de passe
     password_optional: Mot de passe (laisser vide pour conserver)
     locale: Langue
@@ -109,7 +109,7 @@ backend:
     sent: 'Invitation envoyée à {email}.'
     description: Envoyez une invitation par e-mail pour permettre à quelqu'un de rejoindre l'espace d'administration.
     email: Adresse e-mail du destinataire
-    emailPlaceholder: "exemple{'@'}domaine.com"
+    emailPlaceholder: "exemple@domaine.com"
     message: Message personnalisé (optionnel)
     messagePlaceholder: Ajoutez un message pour accompagner l'invitation…
     credentialsHint: Vous pouvez inclure des identifiants de connexion dans l'e-mail.

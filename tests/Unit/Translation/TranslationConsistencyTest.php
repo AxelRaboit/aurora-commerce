@@ -161,6 +161,43 @@ final class TranslationConsistencyTest extends TestCase
         }
     }
 
+    /**
+     * Detects pre-escaped {'@'} in YAML source files.
+     * DumpJsTranslationsCommand escapes bare @ → {'@'} automatically.
+     * If a YAML source already contains {'@'}, the command double-escapes it
+     * to {'{'@'}'} which causes a vue-i18n SyntaxError at runtime.
+     *
+     * @param array<string, mixed> $fr
+     * @param array<string, mixed> $en
+     */
+    #[DataProvider('translationPairsProvider')]
+    public function testNoPreEscapedAt(string $module, array $fr, array $en): void
+    {
+        $flatFr = $this->flattenKeys($fr);
+        $flatEn = $this->flattenKeys($en);
+
+        $violationsFr = array_filter($flatFr, static fn (mixed $v): bool => is_string($v) && str_contains($v, "{'@'}"));
+        $violationsEn = array_filter($flatEn, static fn (mixed $v): bool => is_string($v) && str_contains($v, "{'@'}"));
+
+        self::assertEmpty(
+            $violationsFr,
+            sprintf(
+                '[%s] FR YAML contains pre-escaped {\'@\'} — use bare @ instead, DumpJsTranslationsCommand handles escaping: %s',
+                $module,
+                implode(', ', array_keys($violationsFr)),
+            ),
+        );
+
+        self::assertEmpty(
+            $violationsEn,
+            sprintf(
+                '[%s] EN YAML contains pre-escaped {\'@\'} — use bare @ instead, DumpJsTranslationsCommand handles escaping: %s',
+                $module,
+                implode(', ', array_keys($violationsEn)),
+            ),
+        );
+    }
+
     /** @return list<string> */
     private function extractPlaceholders(string $value): array
     {
