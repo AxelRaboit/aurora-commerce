@@ -156,7 +156,14 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
+        <AppModal
+            :show="showDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="showDelete = false"
+        >
             <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
             <template #footer>

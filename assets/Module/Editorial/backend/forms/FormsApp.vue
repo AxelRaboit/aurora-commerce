@@ -498,7 +498,14 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </template>
     </AppModal>
 
-    <AppModal :show="!!pendingDeleteField" max-width="sm" :closeable="false" v-on:close="pendingDeleteField = null">
+    <AppModal
+        :show="!!pendingDeleteField"
+        max-width="sm"
+        :closeable="false"
+        :title="t('shared.common.delete')"
+        :icon="Trash2"
+        v-on:close="pendingDeleteField = null"
+    >
         <p class="text-sm text-primary">{{ t('backend.forms.deleteFieldConfirm', { label: pendingDeleteField ? fieldLabel(pendingDeleteField) : '' }) }}</p>
         <template #footer>
             <AppModalFooter>

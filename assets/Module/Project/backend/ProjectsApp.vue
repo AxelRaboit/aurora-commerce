@@ -1166,7 +1166,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Delete project confirm -->
-        <AppModal :show="!!pendingDeleteProject" max-width="sm" v-on:close="confirmDeleteProject(null)">
+        <AppModal
+            :show="!!pendingDeleteProject"
+            max-width="sm"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="confirmDeleteProject(null)"
+        >
             <p class="text-sm text-primary">{{ t('backend.projects.deleteConfirm', { name: pendingDeleteProject?.title ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.projects.deleteWarning') }}</p>
             <template #footer>

@@ -400,7 +400,14 @@ const parentOptions = computed(() => {
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingTaxonomy" max-width="sm" :closeable="false" v-on:close="deletingTaxonomy = null">
+        <AppModal
+            :show="!!deletingTaxonomy"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingTaxonomy = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.taxonomies.deleteTaxonomyConfirm", { label: translationLabel(deletingTaxonomy, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTaxonomy = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -408,7 +415,14 @@ const parentOptions = computed(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="!!deletingTerm" max-width="sm" :closeable="false" v-on:close="deletingTerm = null">
+        <AppModal
+            :show="!!deletingTerm"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingTerm = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.taxonomies.terms.deleteTermConfirm", { name: termName(deletingTerm, activeLocale) }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTerm = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

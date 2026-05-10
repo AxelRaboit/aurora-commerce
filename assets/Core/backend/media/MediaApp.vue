@@ -717,7 +717,14 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingMedia" max-width="md" :closeable="false" v-on:close="deletingMedia = null">
+        <AppModal
+            :show="!!deletingMedia"
+            max-width="md"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingMedia = null"
+        >
             <p class="text-sm text-primary mb-3">{{ t("backend.media.deleteConfirm", { name: deletingMedia?.originalName }) }}</p>
 
             <div v-if="deletingMediaUsageLoading" class="text-xs text-muted italic">{{ t("backend.media.checkingUsage") }}</div>
@@ -763,7 +770,14 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingFolder" max-width="sm" :closeable="false" v-on:close="deletingFolder = null">
+        <AppModal
+            :show="!!deletingFolder"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingFolder = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.media.deleteFolderConfirm", { name: deletingFolder?.name }) }}</p>
             <template #footer>
                 <AppModalFooter>

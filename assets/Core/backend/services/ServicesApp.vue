@@ -99,7 +99,14 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingService" max-width="sm" :closeable="false" v-on:close="deletingService = null">
+        <AppModal
+            :show="!!deletingService"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingService = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>

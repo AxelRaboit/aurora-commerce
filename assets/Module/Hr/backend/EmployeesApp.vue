@@ -284,7 +284,14 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </AppModal>
 
         <!-- Delete confirmation modal -->
-        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
             <p class="text-sm text-primary">{{ t('backend.employees.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.employees.deleteWarning') }}</p>
             <template #footer>

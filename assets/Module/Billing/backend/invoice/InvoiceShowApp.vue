@@ -102,7 +102,14 @@ const { formatDateNumeric } = useDateFormat();
             </span>
         </div>
 
-        <AppModal :show="showDeleteModal" max-width="sm" :closeable="false" v-on:close="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false">
+        <AppModal
+            :show="showDeleteModal"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="showDeleteModal = false; deleteTiersToo = false; deleteBuyerToo = false"
+        >
             <p class="text-sm text-primary">{{ t('backend.billing.invoices.deleteConfirm', { number: invoice.number ?? ('#' + invoice.id) }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
             <div v-if="canDeleteTiers || canDeleteBuyer" class="mt-3 space-y-2">

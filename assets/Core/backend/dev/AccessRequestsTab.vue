@@ -151,7 +151,14 @@ onMounted(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="accessRequests.confirmPurge.value" max-width="sm" :closeable="false" v-on:close="accessRequests.confirmPurge.value = false">
+        <AppModal
+            :show="accessRequests.confirmPurge.value"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="accessRequests.confirmPurge.value = false"
+        >
             <p class="text-sm text-primary">{{ t('backend.access_requests.purgeConfirm') }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

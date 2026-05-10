@@ -429,7 +429,14 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
             v-on:type-change="vaultForm.onEditTypeChange"
         />
 
-        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
             <p class="text-sm text-primary">{{ t('vault.entries.deleteConfirm', { title: pendingDelete?.title ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('vault.entries.deleteWarning') }}</p>
             <template #footer>
@@ -501,7 +508,14 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingFolderDelete" max-width="sm" :closeable="false" v-on:close="pendingFolderDelete = null">
+        <AppModal
+            :show="!!pendingFolderDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingFolderDelete = null"
+        >
             <p class="text-sm text-primary">{{ t('vault.folders.deleteConfirm', { name: pendingFolderDelete?.name ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('vault.folders.deleteWarning') }}</p>
             <template #footer>

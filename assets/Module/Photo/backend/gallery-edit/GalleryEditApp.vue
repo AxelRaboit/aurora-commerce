@@ -485,7 +485,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Single delete confirmation -->
-        <AppModal :show="!!pendingDeleteItem" max-width="sm" :closeable="false" v-on:close="pendingDeleteItem = null">
+        <AppModal
+            :show="!!pendingDeleteItem"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDeleteItem = null"
+        >
             <p class="text-sm text-primary">{{ t("photo.galleries.itemDeleteConfirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -496,7 +503,14 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
         </AppModal>
 
         <!-- Bulk delete confirmation -->
-        <AppModal :show="pendingBulkDelete" max-width="sm" :closeable="false" v-on:close="pendingBulkDelete = false">
+        <AppModal
+            :show="pendingBulkDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingBulkDelete = false"
+        >
             <p class="text-sm text-primary">{{ t("photo.galleries.itemsBulkDeleteConfirm", { count: selected.size }) }}</p>
             <template #footer>
                 <AppModalFooter>

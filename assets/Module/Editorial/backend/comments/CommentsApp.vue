@@ -267,7 +267,14 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null">
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
             <p class="text-sm text-primary">{{ t('backend.comments.deleteConfirm') }}</p>
             <p class="text-sm text-secondary">{{ t('backend.comments.deleteWarning') }}</p>
             <template #footer>

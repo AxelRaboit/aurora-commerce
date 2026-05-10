@@ -104,7 +104,14 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             </template>
         </AppModal>
 
-        <AppModal :show="!!confirmDeleteMenu" max-width="sm" :closeable="false" v-on:close="confirmDeleteMenu = null">
+        <AppModal
+            :show="!!confirmDeleteMenu"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="confirmDeleteMenu = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.menus.deleteConfirm", { name: confirmDeleteMenu?.name ?? "" }) }}</p>
             <div class="flex justify-end gap-2 pt-3">
                 <AppButton variant="ghost" v-on:click="confirmDeleteMenu = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -112,7 +119,14 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             </div>
         </AppModal>
 
-        <AppModal :show="!!confirmDeleteItem" max-width="sm" :closeable="false" v-on:close="confirmDeleteItem = null">
+        <AppModal
+            :show="!!confirmDeleteItem"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="confirmDeleteItem = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.menus.deleteItemConfirm") }}</p>
             <div class="flex justify-end gap-2 pt-3">
                 <AppButton variant="ghost" v-on:click="confirmDeleteItem = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

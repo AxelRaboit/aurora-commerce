@@ -308,7 +308,14 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </form>
         </AppModal>
 
-        <AppModal :show="!!deletingPostType" max-width="sm" :closeable="false" v-on:close="deletingPostType = null">
+        <AppModal
+            :show="!!deletingPostType"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingPostType = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.postTypes.deleteConfirm", { label: deletingPostType?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingPostType = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
@@ -316,7 +323,14 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </div>
         </AppModal>
 
-        <AppModal :show="!!deletingField" max-width="sm" :closeable="false" v-on:close="deletingField = null">
+        <AppModal
+            :show="!!deletingField"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingField = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.postTypes.fields.deleteConfirm", { label: deletingField?.label }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingField = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

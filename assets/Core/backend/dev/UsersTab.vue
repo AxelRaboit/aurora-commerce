@@ -146,7 +146,13 @@ onMounted(() => {
             </table>
         </div>
 
-        <AppModal :show="!!users.pendingDelete.value" max-width="sm" v-on:close="users.pendingDelete.value = null">
+        <AppModal
+            :show="!!users.pendingDelete.value"
+            max-width="sm"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="users.pendingDelete.value = null"
+        >
             <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', { name: users.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

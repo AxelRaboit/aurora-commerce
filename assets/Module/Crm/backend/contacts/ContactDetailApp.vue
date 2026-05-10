@@ -179,7 +179,14 @@ const actionLabel = (action) => {
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
+        <AppModal
+            :show="showDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="showDelete = false"
+        >
             <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: contact.fullName }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
             <template #footer>

@@ -408,7 +408,14 @@ onMounted(() => {
         </AppModal>
 
         <!-- Delete planning confirm -->
-        <AppModal :show="!!deletingPlanning" max-width="sm" :closeable="false" v-on:close="deletingPlanning = null">
+        <AppModal
+            :show="!!deletingPlanning"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingPlanning = null"
+        >
             <p class="text-sm text-primary">
                 {{ t("backend.plannings.delete_confirm", { name: deletingPlanning?.name ?? "" }) }}
             </p>
@@ -533,7 +540,14 @@ onMounted(() => {
         </AppModal>
 
         <!-- Delete event confirm -->
-        <AppModal :show="!!deletingEvent" max-width="sm" :closeable="false" v-on:close="deletingEvent = null">
+        <AppModal
+            :show="!!deletingEvent"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingEvent = null"
+        >
             <p class="text-sm text-primary">
                 {{ t("backend.planning_events.delete_confirm", { title: deletingEvent?.title ?? "" }) }}
             </p>

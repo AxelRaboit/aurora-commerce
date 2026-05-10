@@ -179,7 +179,13 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </template>
         </AppModal>
 
-        <AppModal :show="showDelete" max-width="sm" v-on:close="showDelete = false">
+        <AppModal
+            :show="showDelete"
+            max-width="sm"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="showDelete = false"
+        >
             <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: company.name }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
             <template #footer>

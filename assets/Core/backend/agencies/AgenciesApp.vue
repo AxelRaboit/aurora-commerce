@@ -101,7 +101,14 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingAgency" max-width="sm" :closeable="false" v-on:close="deletingAgency = null">
+        <AppModal
+            :show="!!deletingAgency"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingAgency = null"
+        >
             <p class="text-sm text-primary">{{ t("backend.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>
