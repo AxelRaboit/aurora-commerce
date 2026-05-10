@@ -326,6 +326,13 @@ create-client: ## Scaffold a new Aurora client project (prompts for project name
 	test -n "$$name" || (echo "❌ Project name cannot be empty" && exit 1) && \
 	bin/create-client "$$name"
 
+# === Claude Memory ===
+sync-claude-memory: ## Sync .claude/memory/aurora-core/ into the global Claude memory for this project
+	@DEST="$(HOME)/.claude/projects/$$(pwd | sed 's|/|-|g')/memory"; \
+	mkdir -p "$$DEST"; \
+	cp .claude/memory/aurora-core/*.md "$$DEST/"; \
+	echo "✅ $$(ls .claude/memory/aurora-core/*.md | wc -l | tr -d ' ') fichiers synchronisés → $$DEST"
+
 # === Setup ===
 setup-env: ## Create .env.local from .env.local.example template
 	@if [ -f .env.local ]; then \
