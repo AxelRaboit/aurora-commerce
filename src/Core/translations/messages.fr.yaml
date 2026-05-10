@@ -683,7 +683,7 @@ backend:
       description: ID d'un post affiché sur la page d'accueil. Vide = liste des derniers articles.
     default_front:
       label: Front par défaut
-      description: 'Slug du front affiché par défaut sur "/". Ex: editorial, tracking.'
+      description: 'Slug du front affiché par défaut sur "/".'
     logo_media_id:
       label: Logo du site
       description: ID du média utilisé comme logo

@@ -682,7 +682,7 @@ backend:
       description: ID of a post displayed on the homepage. Empty = latest posts list.
     default_front:
       label: Default front
-      description: 'Slug of the front displayed by default on “/”. E.g. editorial, tracking.'
+      description: 'Slug of the front displayed by default on “/”.'
     logo_media_id:
       label: Site logo
       description: ID of the media used as the logo
