@@ -25,7 +25,12 @@ export function useModules(
         return parameters.value.filter(
             (parameter) =>
                 parameter.label.toLowerCase().includes(query) ||
-                parameter.key.toLowerCase().includes(query),
+                parameter.key.toLowerCase().includes(query) ||
+                (parameter.subModules ?? []).some(
+                    (sub) =>
+                        sub.label.toLowerCase().includes(query) ||
+                        sub.key.toLowerCase().includes(query),
+                ),
         );
     });
 
@@ -43,6 +48,13 @@ export function useModules(
             fieldValues[parameter.key] = value;
             initialValues[parameter.key] = value;
             parameterByKey[parameter.key] = parameter;
+
+            for (const sub of parameter.subModules ?? []) {
+                const subValue = sub.value ?? "0";
+                fieldValues[sub.key] = subValue;
+                initialValues[sub.key] = subValue;
+                parameterByKey[sub.key] = sub;
+            }
         }
     }
 
@@ -86,11 +98,22 @@ export function useModules(
         }
     }
 
+    function allParameters() {
+        const all = [];
+        for (const param of parameters.value) {
+            all.push(param);
+            for (const sub of param.subModules ?? []) {
+                all.push(sub);
+            }
+        }
+        return all;
+    }
+
     async function save() {
         if (saving.value) return;
         saving.value = true;
 
-        const changed = parameters.value
+        const changed = allParameters()
             .filter(
                 (parameter) =>
                     fieldValues[parameter.key] !== initialValues[parameter.key],

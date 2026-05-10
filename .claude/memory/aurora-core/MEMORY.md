@@ -43,6 +43,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, patterns extension, anti-patterns
 
 ### Décisions architecturales
+- [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : 13 top-level + 24 sous-modules, cascade graph, consommateurs, convention clés sans `_enabled`
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`. Exemple : `UserAgencyServiceUpdatingEvent` + `HrEmployeeSyncListener`
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"

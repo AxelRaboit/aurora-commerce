@@ -7,6 +7,8 @@ namespace Aurora\Core\Setting\Command;
 use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Setting\Entity\SettingInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -44,8 +46,9 @@ class ApplicationParameterCommand extends Command
             $symfonyStyle->note('Mode dry-run — aucun changement ne sera enregistré.');
         }
 
-        $enumCases = ApplicationParameterEnum::cases();
-        $enumKeys = array_map(fn ($enumCase): string => $enumCase->getKey(), $enumCases);
+        /** @var ApplicationParameterEnumInterface[] $enumCases */
+        $enumCases = [...ApplicationParameterEnum::cases(), ...ModuleParameterEnum::cases()];
+        $enumKeys = array_map(fn (ApplicationParameterEnumInterface $enumCase): string => $enumCase->getKey(), $enumCases);
         $existing = [];
 
         foreach ($this->repository->findAll() as $param) {
@@ -66,8 +69,8 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param ApplicationParameterEnum[]      $enumCases
-     * @param array<string, SettingInterface> $existing
+     * @param ApplicationParameterEnumInterface[] $enumCases
+     * @param array<string, SettingInterface>     $existing
      */
     private function createMissing(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
@@ -96,8 +99,8 @@ class ApplicationParameterCommand extends Command
     }
 
     /**
-     * @param ApplicationParameterEnum[]      $enumCases
-     * @param array<string, SettingInterface> $existing
+     * @param ApplicationParameterEnumInterface[] $enumCases
+     * @param array<string, SettingInterface>     $existing
      */
     private function syncMetadata(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {

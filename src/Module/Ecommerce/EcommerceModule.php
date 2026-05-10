@@ -37,7 +37,21 @@ final readonly class EcommerceModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->ecommerceContext->isListingsEnabled()) {
+            $items[] = new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', descriptionKey: 'backend.nav.listings_description');
+        }
+
+        if ($this->ecommerceContext->isOrdersEnabled()) {
+            $items[] = new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', descriptionKey: 'backend.nav.orders_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('ecommerce', $items, priority: 60)];
     }
 
     public function getCatalogNavSections(): array

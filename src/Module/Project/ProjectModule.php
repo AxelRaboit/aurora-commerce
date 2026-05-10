@@ -36,7 +36,17 @@ final readonly class ProjectModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->projectContext->isProjectsEnabled()) {
+            $items[] = new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', descriptionKey: 'backend.nav.projects_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('project', $items, priority: 35)];
     }
 
     public function getCatalogNavSections(): array

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\View;
 
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
@@ -19,12 +20,16 @@ final readonly class ParametersViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function parametersPayload(int $page, ?string $search): array
+    public function parametersPayload(int $page, ?string $search, ?string $group = null): array
     {
-        $result = $this->settingRepository->findPaginated($page, search: $search);
+        $result = $this->settingRepository->findPaginated($page, search: $search, group: $group);
 
         $labelsByKey = [];
         foreach (ApplicationParameterEnum::cases() as $case) {
+            $labelsByKey[$case->getKey()] = $case->getLabel();
+        }
+
+        foreach (ModuleParameterEnum::cases() as $case) {
             $labelsByKey[$case->getKey()] = $case->getLabel();
         }
 
@@ -40,12 +45,18 @@ final readonly class ParametersViewBuilder
             $result['items'],
         );
 
+        $groups = array_values(array_filter(array_unique(
+            array_map(fn ($c): string => $c->getGroup(), ApplicationParameterEnum::cases()),
+        ), fn (string $g): bool => ModuleParameterEnum::MODULE !== $g));
+        sort($groups);
+
         return [
             'success' => true,
             'items' => $items,
             'total' => $result['total'],
             'page' => $result['page'],
             'totalPages' => $result['totalPages'],
+            'groups' => $groups,
         ];
     }
 
@@ -54,12 +65,13 @@ final readonly class ParametersViewBuilder
      *
      * @return array<string, mixed>
      */
-    public function indexView(array $payload, ?string $search): array
+    public function indexView(array $payload, ?string $search, ?string $group): array
     {
         return [
             'tab' => 'parameters',
             'parameters' => $payload,
             'search' => $search ?? '',
+            'group' => $group ?? '',
         ];
     }
 }

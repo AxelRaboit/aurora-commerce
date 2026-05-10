@@ -37,7 +37,25 @@ final readonly class CrmModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->crmContext->isContactsEnabled()) {
+            $items[] = new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', descriptionKey: 'backend.nav.contacts_description');
+        }
+
+        if ($this->crmContext->isCompaniesEnabled()) {
+            $items[] = new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', descriptionKey: 'backend.nav.companies_description');
+        }
+
+        if ($this->crmContext->isDealsEnabled()) {
+            $items[] = new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', descriptionKey: 'backend.nav.deals_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('crm', $items, priority: 40)];
     }
 
     public function getCatalogNavSections(): array

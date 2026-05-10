@@ -45,29 +45,61 @@ onMounted(() => {
             <div
                 v-for="parameter in modules.filteredParameters.value"
                 :key="parameter.key"
-                class="flex items-center justify-between gap-4"
-                :class="{ 'opacity-60': modules.isLocked(parameter) }"
+                class="space-y-3"
             >
-                <div class="min-w-0">
-                    <p class="text-sm font-medium text-primary flex items-center gap-1.5">
-                        {{ parameter.label }}
-                        <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                    </p>
-                    <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
-                    <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
-                    <div v-if="parameter.navItems?.length" class="flex flex-wrap gap-1 mt-1.5">
-                        <span
-                            v-for="item in parameter.navItems"
-                            :key="item.labelKey"
-                            class="inline-flex items-center px-1.5 py-0.5 rounded text-xs text-muted bg-surface-alt border border-line"
-                        >{{ t(item.labelKey) }}</span>
+                <!-- Parent module row -->
+                <div
+                    class="flex items-center justify-between gap-4"
+                    :class="{ 'opacity-60': modules.isLocked(parameter) }"
+                >
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-primary flex items-center gap-1.5">
+                            {{ parameter.label }}
+                            <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                        </p>
+                        <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
+                        <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
+                        <div v-if="parameter.navItems?.length && !parameter.subModules?.length" class="flex flex-wrap gap-1 mt-1.5">
+                            <span
+                                v-for="item in parameter.navItems"
+                                :key="item.labelKey"
+                                class="inline-flex items-center px-1.5 py-0.5 rounded text-xs text-muted bg-surface-alt border border-line"
+                            >{{ t(item.labelKey) }}</span>
+                        </div>
+                    </div>
+                    <AppToggle
+                        :model-value="!modules.isLocked(parameter) && modules.fieldValues[parameter.key] === '1'"
+                        :disabled="modules.isLocked(parameter) || modules.saving.value"
+                        v-on:update:model-value="modules.onToggle(parameter, $event)"
+                    />
+                </div>
+
+                <!-- Sub-modules -->
+                <div
+                    v-if="parameter.subModules?.length"
+                    class="ml-4 pl-4 border-l border-line space-y-3"
+                >
+                    <div
+                        v-for="sub in parameter.subModules"
+                        :key="sub.key"
+                        class="flex items-center justify-between gap-4"
+                        :class="{ 'opacity-60': modules.isLocked(sub) }"
+                    >
+                        <div class="min-w-0">
+                            <p class="text-sm text-primary flex items-center gap-1.5">
+                                {{ sub.label }}
+                                <Lock v-if="modules.isLocked(sub)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                            </p>
+                            <p v-if="sub.description" class="text-xs text-muted mt-0.5">{{ sub.description }}</p>
+                            <p v-if="modules.isLocked(sub)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(sub) }}</p>
+                        </div>
+                        <AppToggle
+                            :model-value="!modules.isLocked(sub) && modules.fieldValues[sub.key] === '1'"
+                            :disabled="modules.isLocked(sub) || modules.saving.value"
+                            v-on:update:model-value="modules.onToggle(sub, $event)"
+                        />
                     </div>
                 </div>
-                <AppToggle
-                    :model-value="!modules.isLocked(parameter) && modules.fieldValues[parameter.key] === '1'"
-                    :disabled="modules.isLocked(parameter) || modules.saving.value"
-                    v-on:update:model-value="modules.onToggle(parameter, $event)"
-                />
             </div>
         </div>
 

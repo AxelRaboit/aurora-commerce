@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\Service;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Repository\SettingRepository;
 
 /**
  * Orchestrates writes to application parameters. Enforces the module
- * dependency graph (defined on ApplicationParameterEnum) on top of the
+ * dependency graph (defined on ModuleParameterEnum) on top of the
  * pure-persistence concerns owned by SettingRepository.
  *
  *  - Refuses enabling a parameter whose parent module is off
@@ -32,16 +32,16 @@ final readonly class SettingsService
      */
     public function set(string $key, ?string $value): void
     {
-        $parameter = ApplicationParameterEnum::tryFrom($key);
+        $moduleParameter = ModuleParameterEnum::tryFrom($key);
 
-        if (null !== $parameter && '1' === $value) {
-            $this->assertParentEnabled($parameter);
+        if (null !== $moduleParameter && '1' === $value) {
+            $this->assertParentEnabled($moduleParameter->getCascadeRequires(), $key);
         }
 
         $writes = [[$key, $value]];
 
-        if (null !== $parameter && '0' === $value) {
-            foreach ($parameter->getCascadeDisableTargets() as $childKey) {
+        if (null !== $moduleParameter && '0' === $value) {
+            foreach ($moduleParameter->getCascadeDisableTargets() as $childKey) {
                 $writes[] = [$childKey, '0'];
             }
         }
@@ -51,20 +51,16 @@ final readonly class SettingsService
         $this->auditLogger->log('core', 'settings.updated', null, null, ['key' => $key, 'value' => $value]);
     }
 
-    private function assertParentEnabled(ApplicationParameterEnum $parameter): void
+    private function assertParentEnabled(?string $parentKey, string $childKey): void
     {
-        $parentKey = $parameter->getCascadeRequires();
         if (null === $parentKey) {
             return;
         }
 
-        $parentEnum = ApplicationParameterEnum::tryFrom($parentKey);
-        $parentValue = null !== $parentEnum
-            ? $this->repository->getOrDefault($parentEnum)
-            : ($this->repository->get($parentKey) ?? '0');
+        $value = $this->repository->get($parentKey, '1');
 
-        if ('1' !== $parentValue) {
-            throw new CascadeViolationException($parameter->value, $parentKey);
+        if ('1' !== $value) {
+            throw new CascadeViolationException($childKey, $parentKey);
         }
     }
 }

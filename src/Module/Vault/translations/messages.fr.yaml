@@ -4,10 +4,10 @@ backend:
       vault:
         use: Utiliser le coffre-fort
   modules:
-    vault: Coffre-fort
+    vault: Outils
   nav:
     sections:
-      vault: Coffre-fort
+      vault: Outils
     vault: Coffre-fort
     vault_description: Gestionnaire de mots de passe chiffré de bout en bout
   audit:

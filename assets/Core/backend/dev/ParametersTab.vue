@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -16,6 +17,7 @@ const props = defineProps({
     parameterUpdatePath: { type: String, required: true },
     initialData: { type: Object, default: null },
     initialSearch: { type: String, default: "" },
+    initialGroup: { type: String, default: "" },
 });
 
 const parameters = useParameters(
@@ -23,6 +25,7 @@ const parameters = useParameters(
     props.parameterUpdatePath,
     props.initialData,
     props.initialSearch,
+    props.initialGroup,
 );
 
 onMounted(() => {
@@ -33,11 +36,20 @@ onMounted(() => {
 <template>
     <div class="space-y-3">
         <p class="text-sm text-secondary">{{ t('backend.parameters.intro') }}</p>
-        <div>
+        <div class="flex gap-2">
             <AppSearchInput
                 v-model="parameters.searchInput.value"
                 :placeholder="t('backend.parameters.searchPlaceholder')"
+                class="flex-1"
                 v-on:search="parameters.performSearch"
+            />
+            <AppMultiselect
+                v-model="parameters.groupFilter.value"
+                :options="[{ value: '', label: t('backend.parameters.allGroups') }, ...(props.initialData?.groups ?? []).map(g => ({ value: g, label: g }))]"
+                :allow-empty="false"
+                :placeholder="t('backend.parameters.allGroups')"
+                class="w-44 shrink-0"
+                v-on:update:model-value="parameters.performGroupFilter()"
             />
         </div>
 

@@ -9,7 +9,7 @@ use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Module\PermissionRegistry;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
@@ -17,7 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class UsersViewBuilder
 {
-    /** @var array<string, ApplicationParameterEnum> module ID → admin-enabled toggle, built from the enum */
+    /** @var array<string, ModuleParameterEnum> module ID → admin-enabled toggle, built from the enum */
     private array $moduleToggles;
 
     public function __construct(
@@ -28,7 +28,7 @@ final readonly class UsersViewBuilder
         private TranslatorInterface $translator,
     ) {
         $toggles = [];
-        foreach (ApplicationParameterEnum::cases() as $case) {
+        foreach (ModuleParameterEnum::cases() as $case) {
             $moduleId = $case->getModuleId();
             if (null !== $moduleId) {
                 $toggles[$moduleId] = $case;

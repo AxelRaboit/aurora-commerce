@@ -9,7 +9,7 @@ use Aurora\Core\Menu\Entity\MenuItemInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Repository\MenuRepository;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
 use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
@@ -141,7 +141,7 @@ final class MenuRenderer
             MenuItemTargetTypeEnum::FrontRegister => $this->urlGenerator->generate('frontend_register', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontAccount => $this->urlGenerator->generate('frontend_account', ['locale' => $locale]),
             MenuItemTargetTypeEnum::FrontLogout => $this->urlGenerator->generate('frontend_logout', ['locale' => $locale]),
-            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ApplicationParameterEnum::EcommerceShopEnabled->value, true)
+            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceShopEnabled->value, true)
                 ? $this->urlGenerator->generate('frontend_shop_index', ['locale' => $locale])
                 : null,
             MenuItemTargetTypeEnum::CustomUrl => $item->getCustomUrl() ?: null,

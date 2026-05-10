@@ -32,7 +32,21 @@ final readonly class VaultModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->vaultContext->isSafeEnabled()) {
+            $items[] = new NavItem('backend_vault', 'backend.nav.vault', 'vault', descriptionKey: 'backend.nav.vault_description');
+        }
+
+        if ($this->vaultContext->isPasswordGeneratorEnabled()) {
+            $items[] = new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('vault', $items, priority: 20)];
     }
 
     public function getCatalogNavSections(): array

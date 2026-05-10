@@ -38,7 +38,39 @@ final readonly class BillingModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->billingContext->isTiersEnabled()) {
+            $items[] = new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', descriptionKey: 'backend.nav.tiers_description');
+        }
+
+        if ($this->billingContext->isInvoicesEnabled()) {
+            $items[] = new NavItem(
+                'backend_billing_invoices',
+                'backend.nav.invoices',
+                'receipt',
+                children: [
+                    new NavItem(
+                        'backend_billing_ocr_import',
+                        'backend.nav.ocr_import',
+                        'scan-line',
+                        activeRoutePrefix: 'backend_billing_ocr_',
+                        descriptionKey: 'backend.nav.ocr_import_description',
+                    ),
+                ],
+                descriptionKey: 'backend.nav.invoices_description',
+            );
+        }
+
+        if ($this->billingContext->isComplianceEnabled()) {
+            $items[] = new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', descriptionKey: 'backend.billing.compliance.description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('billing', $items, priority: 55)];
     }
 
     public function getCatalogNavSections(): array

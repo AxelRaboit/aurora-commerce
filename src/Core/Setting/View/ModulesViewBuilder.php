@@ -6,7 +6,7 @@ namespace Aurora\Core\Setting\View;
 
 use Aurora\Core\Module\ModuleInterface;
 use Aurora\Core\Module\NavSection;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 
 final readonly class ModulesViewBuilder
@@ -25,8 +25,8 @@ final readonly class ModulesViewBuilder
         $catalogByModuleId = $this->buildCatalogByModuleId();
         $parameters = [];
 
-        foreach (ApplicationParameterEnum::cases() as $parameter) {
-            if ('modules' !== $parameter->getGroup()) {
+        foreach (ModuleParameterEnum::cases() as $parameter) {
+            if ($parameter->getParentCase() instanceof ModuleParameterEnum) {
                 continue;
             }
 
@@ -41,6 +41,21 @@ final readonly class ModulesViewBuilder
                 }
             }
 
+            $subModules = [];
+            foreach (ModuleParameterEnum::cases() as $subParameter) {
+                if ($subParameter->getParentCase() !== $parameter) {
+                    continue;
+                }
+
+                $subModules[] = [
+                    'key' => $subParameter->getKey(),
+                    'label' => $subParameter->getLabel(),
+                    'description' => $subParameter->getDescription(),
+                    'value' => $this->settingRepository->get($subParameter->getKey(), $subParameter->getDefaultValue()),
+                    'requires' => $subParameter->getCascadeRequires(),
+                ];
+            }
+
             $parameters[] = [
                 'key' => $parameter->getKey(),
                 'label' => $parameter->getLabel(),
@@ -48,6 +63,7 @@ final readonly class ModulesViewBuilder
                 'value' => $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue()),
                 'requires' => $parameter->getCascadeRequires(),
                 'navItems' => $navItems,
+                'subModules' => $subModules,
             ];
         }
 

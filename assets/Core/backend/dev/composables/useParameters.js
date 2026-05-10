@@ -9,20 +9,29 @@ export function useParameters(
     parameterUpdatePath,
     initialParameters,
     initialSearch,
+    initialGroup,
 ) {
     const { t } = useI18n();
 
     const searchInput = ref(initialSearch ?? "");
+    const groupFilter = ref(initialGroup ?? "");
 
     const { items, page, totalPages, goToPage, reset, load } =
         usePaginatedFetch(
             parametersPath,
-            () => ({ search: searchInput.value || undefined }),
+            () => ({
+                search: searchInput.value || undefined,
+                group: groupFilter.value || undefined,
+            }),
             null,
             initialParameters,
         );
 
     function performSearch() {
+        reset();
+    }
+
+    function performGroupFilter() {
         reset();
     }
 
@@ -73,7 +82,9 @@ export function useParameters(
         load,
         reset,
         searchInput,
+        groupFilter,
         performSearch,
+        performGroupFilter,
         editingKey,
         editingValue,
         editSaving,

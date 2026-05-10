@@ -56,7 +56,6 @@ final readonly class SettingsViewBuilder
                 'type' => $parameter->getType(),
                 'group' => $groupName,
                 'value' => $value,
-                'requires' => $parameter->getCascadeRequires(),
                 'mediaUrl' => 'media' === $parameter->getType() ? $this->resolveMediaUrl($value) : null,
                 'options' => 'select' === $parameter->getType() ? $this->resolveSelectOptions($parameter) : null,
             ];

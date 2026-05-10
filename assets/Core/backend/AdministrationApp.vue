@@ -34,6 +34,7 @@ const props = defineProps({
     modules: { type: Object, default: () => ({}) },
     mountPoints: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
+    group: { type: String, default: "" },
     overviewPath: { type: String, required: true },
     parametersPath: { type: String, required: true },
     parameterUpdatePath: { type: String, required: true },
@@ -127,6 +128,7 @@ function initialDataFor(key) {
                     :parameter-update-path="parameterUpdatePath"
                     :initial-data="initialDataFor('parameters')"
                     :initial-search="search"
+                    :initial-group="group"
                 />
                 <UsersTab
                     v-else-if="tab === 'users'"

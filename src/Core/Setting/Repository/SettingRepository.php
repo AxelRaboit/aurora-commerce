@@ -9,6 +9,7 @@ use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Setting\Entity\SettingInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -107,7 +108,7 @@ class SettingRepository extends ResolveTargetEntityRepository
     /**
      * @return array{items: Setting[], total: int, page: int, totalPages: int}
      */
-    public function findPaginated(int $page, int $limit = 20, ?string $search = null): array
+    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?string $group = null): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->orderBy('s.group', Order::Ascending->value)
@@ -117,6 +118,14 @@ class SettingRepository extends ResolveTargetEntityRepository
         if (null !== $search && '' !== $search) {
             $queryBuilder->andWhere('LOWER(s.key) LIKE :search')->setParameter('search', '%'.mb_strtolower($search).'%');
             $countQueryBuilder->andWhere('LOWER(s.key) LIKE :search')->setParameter('search', '%'.mb_strtolower($search).'%');
+        }
+
+        if (null !== $group && '' !== $group) {
+            $queryBuilder->andWhere('s.group = :group')->setParameter('group', $group);
+            $countQueryBuilder->andWhere('s.group = :group')->setParameter('group', $group);
+        } else {
+            $queryBuilder->andWhere('s.group != :modules')->setParameter('modules', ModuleParameterEnum::MODULE);
+            $countQueryBuilder->andWhere('s.group != :modules')->setParameter('modules', ModuleParameterEnum::MODULE);
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);

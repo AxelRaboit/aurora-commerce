@@ -7,7 +7,7 @@ namespace Aurora\Core\Setting\Controller\Dev;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Service\SettingsService;
@@ -71,9 +71,9 @@ final class ModulesController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $value = isset($data['value']) ? (string) $data['value'] : null;
 
-        $parameter = ApplicationParameterEnum::tryFrom($key);
+        $parameter = ModuleParameterEnum::tryFrom($key);
 
-        if (null === $parameter || 'modules' !== $parameter->getGroup()) {
+        if (null === $parameter) {
             return $this->jsonForbidden();
         }
 

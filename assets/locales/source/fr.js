@@ -180,6 +180,7 @@ export default {
             empty: "Aucun paramètre.",
             saved: "Paramètre enregistré.",
             searchPlaceholder: "Rechercher par clé…",
+            allGroups: "Tous les groupes",
         },
         settings: {
             tabs: {

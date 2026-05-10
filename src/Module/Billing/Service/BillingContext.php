@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Service;
 
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 
-/**
- * Single source of truth for billing module activation.
- *
- * Billing is admin-only (invoices, suppliers, OCR import). It depends on CRM
- * because suppliers reuse the CRM Company concept; the cascade graph in
- * ApplicationParameterEnum enforces this.
- */
 final readonly class BillingContext
 {
     public function __construct(private SettingRepository $settingRepository) {}
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ApplicationParameterEnum::BillingEnabled->value, true);
+        return $this->settingRepository->getBoolean(ModuleParameterEnum::BillingEnabled->value, true);
+    }
+
+    public function isTiersEnabled(): bool
+    {
+        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingTiersEnabled->value, true);
+    }
+
+    public function isInvoicesEnabled(): bool
+    {
+        return $this->isTiersEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingInvoicesEnabled->value, true);
+    }
+
+    public function isComplianceEnabled(): bool
+    {
+        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingComplianceEnabled->value, true);
     }
 }

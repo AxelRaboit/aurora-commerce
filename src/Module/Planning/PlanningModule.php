@@ -38,7 +38,17 @@ final readonly class PlanningModule implements ModuleInterface
             return [];
         }
 
-        return $this->getCatalogNavSections();
+        $items = [];
+
+        if ($this->planningContext->isPlanningsEnabled()) {
+            $items[] = new NavItem('backend_plannings', 'backend.nav.plannings', 'calendar-days', descriptionKey: 'backend.nav.plannings_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('planning', $items, priority: 40)];
     }
 
     public function getCatalogNavSections(): array

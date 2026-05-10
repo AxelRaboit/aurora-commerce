@@ -179,6 +179,7 @@ export default {
             empty: "No parameters.",
             saved: "Parameter saved.",
             searchPlaceholder: "Search by key…",
+            allGroups: "All groups",
         },
         settings: {
             tabs: {

@@ -34,13 +34,14 @@ final class ParametersController extends AbstractController
     #[Route('', name: '')]
     public function index(PaginationRequest $pagination, Request $request): Response
     {
-        $payload = $this->viewBuilder->parametersPayload($pagination->page, $pagination->search);
+        $group = mb_trim((string) $request->query->get('group', '')) ?: null;
+        $payload = $this->viewBuilder->parametersPayload($pagination->page, $pagination->search, $group);
 
         if ('XMLHttpRequest' === $request->headers->get('X-Requested-With')) {
             return $this->json($payload);
         }
 
-        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search, $group));
     }
 
     #[Route('/{key}', name: '_update', methods: [HttpMethodEnum::Patch->value])]
