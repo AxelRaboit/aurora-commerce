@@ -582,7 +582,10 @@ export default {
             emptyTrashDone: "{count} post(s) permanently deleted.",
             tabs: {
                 active: "Active",
+                active_description: "All published, draft and scheduled posts.",
                 trash: "Trash",
+                trash_description:
+                    "Deleted posts. Restorable or permanently purgeable.",
             },
             title: "Title",
             titlePlaceholder: "My title…",
@@ -1153,7 +1156,9 @@ export default {
                 updated: "Deal updated.",
                 deleted: "Deal deleted.",
                 listView: "List view",
+                listView_description: "Deals in a paginated table.",
                 kanbanView: "Kanban view",
+                kanbanView_description: "Deals organised by stage, draggable.",
                 namePlaceholder: "Enterprise Contract",
                 valuePlaceholder: "10 000",
                 add: "Add",

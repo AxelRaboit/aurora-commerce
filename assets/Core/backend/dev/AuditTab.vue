@@ -59,7 +59,7 @@ onMounted(() => {
                             <span v-if="log.data?.name" class="ml-2 text-secondary text-xs truncate">— {{ log.data.name }}</span>
                         </td>
                         <td class="px-4 py-3 hidden sm:table-cell">
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-surface-2 text-secondary">{{ t(`backend.modules.${log.module}`) }}</span>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-surface-2 text-secondary">{{ t(`backend.modules.${log.module}`) }}</span>
                         </td>
                         <td class="px-4 py-3 text-secondary text-xs hidden md:table-cell">
                             <template v-if="log.userName">{{ log.userName }}</template>

@@ -24,6 +24,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
 import { PostStatus } from "@editorial/shared/enums/postStatus.js";
@@ -114,25 +115,33 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
 
     <div v-else class="flex flex-col md:flex-row gap-6">
         <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTab :active="!trashed" v-on:click="setTrashedFilter(false)">
-                <FileText class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("backend.posts.tabs.active") }}
-            </AppTab>
-            <AppTab :active="trashed" color="rose" v-on:click="setTrashedFilter(true)">
-                <Inbox class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("backend.posts.tabs.trash") }}
-            </AppTab>
+            <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="right">
+                <AppTab :active="!trashed" v-on:click="setTrashedFilter(false)">
+                    <FileText class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    {{ t("backend.posts.tabs.active") }}
+                </AppTab>
+            </AppTooltip>
+            <AppTooltip :title="t('backend.posts.tabs.trash')" :description="t('backend.posts.tabs.trash_description')" placement="right">
+                <AppTab :active="trashed" color="rose" v-on:click="setTrashedFilter(true)">
+                    <Inbox class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    {{ t("backend.posts.tabs.trash") }}
+                </AppTab>
+            </AppTooltip>
         </nav>
 
         <div class="flex md:hidden gap-1 flex-wrap w-full">
-            <AppTab :active="!trashed" size="sm" v-on:click="setTrashedFilter(false)">
-                <FileText class="w-4 h-4" :stroke-width="2" />
-                {{ t("backend.posts.tabs.active") }}
-            </AppTab>
-            <AppTab :active="trashed" color="rose" size="sm" v-on:click="setTrashedFilter(true)">
-                <Inbox class="w-4 h-4" :stroke-width="2" />
-                {{ t("backend.posts.tabs.trash") }}
-            </AppTab>
+            <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="bottom">
+                <AppTab :active="!trashed" size="sm" v-on:click="setTrashedFilter(false)">
+                    <FileText class="w-4 h-4" :stroke-width="2" />
+                    {{ t("backend.posts.tabs.active") }}
+                </AppTab>
+            </AppTooltip>
+            <AppTooltip :title="t('backend.posts.tabs.trash')" :description="t('backend.posts.tabs.trash_description')" placement="bottom">
+                <AppTab :active="trashed" color="rose" size="sm" v-on:click="setTrashedFilter(true)">
+                    <Inbox class="w-4 h-4" :stroke-width="2" />
+                    {{ t("backend.posts.tabs.trash") }}
+                </AppTab>
+            </AppTooltip>
         </div>
 
         <div class="flex-1 min-w-0 space-y-4">

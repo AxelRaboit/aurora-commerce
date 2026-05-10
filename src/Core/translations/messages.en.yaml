@@ -437,7 +437,7 @@ backend:
       description: 'Maintenance mode (0 = disabled, 1 = site closed to public)'
     admin_registration_enabled:
       label: Admin registrations open
-      description: Allow registrations via /register (admin interface) — disable after creating the first admin account
+      description: Allow registrations via /register (admin interface). Disable after creating the first admin account.
     admin_access_request_enabled:
       label: Admin access requests open
       description: Allow access requests via /access-request (access request form for the administration)
@@ -464,7 +464,7 @@ backend:
       description: ID of the media used as the favicon
     seo_title_template:
       label: SEO title template
-      description: 'Template for page titles. Use {title} and {siteName}. E.g. {title} — {siteName}'
+      description: 'Template for page titles. Use {title} and {siteName}. E.g. {title} · {siteName}'
     seo_default_description:
       label: Default SEO description
       description: Meta description used when no specific description is defined

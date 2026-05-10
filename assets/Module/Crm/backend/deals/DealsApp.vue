@@ -16,6 +16,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { List, Columns2, Pencil, Trash2, Eye, Plus, Save, X } from "lucide-vue-next";
 import { stageBadge, stageBadgeBordered } from "@crm/backend/utils/deals/stageStyles.js";
@@ -71,25 +72,33 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav v-if="kanbanRoutePath" class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTab :active="view === 'list'" v-on:click="setView('list')">
-                <List class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t('backend.crm.deals.listView') }}
-            </AppTab>
-            <AppTab :active="view === 'kanban'" v-on:click="setView('kanban')">
-                <Columns2 class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t('backend.crm.deals.kanbanView') }}
-            </AppTab>
+            <AppTooltip :title="t('backend.crm.deals.listView')" :description="t('backend.crm.deals.listView_description')" placement="right">
+                <AppTab :active="view === 'list'" v-on:click="setView('list')">
+                    <List class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    {{ t('backend.crm.deals.listView') }}
+                </AppTab>
+            </AppTooltip>
+            <AppTooltip :title="t('backend.crm.deals.kanbanView')" :description="t('backend.crm.deals.kanbanView_description')" placement="right">
+                <AppTab :active="view === 'kanban'" v-on:click="setView('kanban')">
+                    <Columns2 class="w-4 h-4 shrink-0" :stroke-width="2" />
+                    {{ t('backend.crm.deals.kanbanView') }}
+                </AppTab>
+            </AppTooltip>
         </nav>
 
         <div v-if="kanbanRoutePath" class="flex md:hidden gap-1 flex-wrap w-full">
-            <AppTab :active="view === 'list'" size="sm" v-on:click="setView('list')">
-                <List class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.crm.deals.listView') }}
-            </AppTab>
-            <AppTab :active="view === 'kanban'" size="sm" v-on:click="setView('kanban')">
-                <Columns2 class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.crm.deals.kanbanView') }}
-            </AppTab>
+            <AppTooltip :title="t('backend.crm.deals.listView')" :description="t('backend.crm.deals.listView_description')" placement="bottom">
+                <AppTab :active="view === 'list'" size="sm" v-on:click="setView('list')">
+                    <List class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.crm.deals.listView') }}
+                </AppTab>
+            </AppTooltip>
+            <AppTooltip :title="t('backend.crm.deals.kanbanView')" :description="t('backend.crm.deals.kanbanView_description')" placement="bottom">
+                <AppTab :active="view === 'kanban'" size="sm" v-on:click="setView('kanban')">
+                    <Columns2 class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.crm.deals.kanbanView') }}
+                </AppTab>
+            </AppTooltip>
         </div>
 
         <div class="flex-1 min-w-0 space-y-4">
@@ -119,7 +128,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <p class="font-medium text-primary">{{ deal.name }}</p>
                                 <p v-if="deal.contact || deal.company" class="text-xs text-muted mt-0.5">{{ deal.contact?.fullName ?? deal.company?.name }}</p>
                             </div>
-                            <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium shrink-0', stageBadge(deal.stage)]">
+                            <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0', stageBadge(deal.stage)]">
                                 {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
                             </span>
                         </div>
@@ -150,7 +159,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                             <tr v-for="deal in items" :key="deal.id" class="group hover:bg-surface-2/40 transition-colors">
                                 <td class="px-6 py-3 font-medium text-primary">{{ deal.name }}</td>
                                 <td class="px-6 py-3">
-                                    <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', stageBadge(deal.stage)]">
+                                    <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', stageBadge(deal.stage)]">
                                         {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
                                     </span>
                                 </td>

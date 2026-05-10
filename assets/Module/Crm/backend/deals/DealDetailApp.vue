@@ -85,7 +85,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div class="min-w-0">
                     <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ deal.name }}</h2>
-                    <span :class="['inline-flex items-center mt-1 px-2 py-0.5 rounded text-xs font-medium', stageBadge(currentStage)]">
+                    <span :class="['inline-flex items-center mt-1 px-2 py-0.5 rounded-full text-xs font-medium', stageBadge(currentStage)]">
                         {{ t(`backend.crm.deals.stages.${currentStage}`) }}
                     </span>
                 </div>

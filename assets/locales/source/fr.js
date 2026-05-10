@@ -590,7 +590,11 @@ export default {
             emptyTrashDone: "{count} contenu(s) supprimé(s) définitivement.",
             tabs: {
                 active: "Actifs",
+                active_description:
+                    "Tous les contenus publiés, brouillons et planifiés.",
                 trash: "Corbeille",
+                trash_description:
+                    "Contenus supprimés. Restaurables ou à purger définitivement.",
             },
             title: "Titre",
             titlePlaceholder: "Mon titre…",
@@ -1176,7 +1180,10 @@ export default {
                 updated: "Affaire mise à jour.",
                 deleted: "Affaire supprimée.",
                 listView: "Vue liste",
+                listView_description: "Affaires en tableau paginé.",
                 kanbanView: "Vue Kanban",
+                kanbanView_description:
+                    "Affaires organisées par étape, déplaçables.",
                 namePlaceholder: "Contrat Enterprise",
                 valuePlaceholder: "10 000",
                 add: "Ajouter",

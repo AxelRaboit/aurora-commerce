@@ -242,7 +242,7 @@ async function uploadMedia(event) {
                     :key="result.id"
                     class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface border border-line/60"
                 >
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(result.status)">
                         {{ t("backend.stats.postStatus." + result.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
@@ -272,7 +272,7 @@ async function uploadMedia(event) {
                         :key="result.id"
                         v-on:mousedown.prevent="addReference(result)"
                     >
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(result.status)">
                             {{ t("backend.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">

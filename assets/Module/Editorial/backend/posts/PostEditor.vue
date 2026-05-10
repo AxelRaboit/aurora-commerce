@@ -505,7 +505,7 @@ function forceSave() {
                     :key="related.id"
                     class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface border border-line/60"
                 >
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(related.status)">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(related.status)">
                         {{ t("backend.stats.postStatus." + related.status) }}
                     </span>
                     <div class="flex-1 min-w-0">
@@ -535,7 +535,7 @@ function forceSave() {
                         :key="result.id"
                         v-on:mousedown.prevent="addRelatedPost(result)"
                     >
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium" :class="statusBadge(result.status)">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(result.status)">
                             {{ t("backend.stats.postStatus." + result.status) }}
                         </span>
                         <div class="flex-1 min-w-0">
