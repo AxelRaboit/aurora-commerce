@@ -11,7 +11,7 @@ backend:
     you: (You)
     invite: Invite user
     sendInvite: Send invite
-    inviteMessage: Message (optional)
+    inviteMessage: Message
     inviteMessagePlaceholder: Add a message...
     edit_title: 'Edit {name}'
     deleteConfirm: 'Delete {name}?'

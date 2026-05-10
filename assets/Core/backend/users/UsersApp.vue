@@ -198,19 +198,27 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
         <AppModal :show="inviteModal.open" max-width="md" :title="t('backend.users.invite')" v-on:close="inviteModal.open = false">
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
-                <AppInput v-model="inviteForm.name" :label="t('backend.users.name')" :placeholder="t('backend.users.namePlaceholder')" :error="inviteModal.errors.name ?? ''" />
+                <AppInput
+                    v-model="inviteForm.name"
+                    :label="t('backend.users.name')"
+                    :placeholder="t('backend.users.namePlaceholder')"
+                    :error="inviteModal.errors.name ?? ''"
+                    required
+                />
                 <AppInput
                     v-model="inviteForm.email"
                     :label="t('backend.users.email')"
                     type="email"
                     :placeholder="t('backend.users.emailPlaceholder')"
                     :error="inviteModal.errors.email ?? ''"
+                    required
                 />
                 <AppMultiselect
                     v-model="inviteForm.role"
                     :options="roles"
-                    :label="t('backend.users.role')"
+                    :label="t('backend.users.roleLabel')"
                     :error="inviteModal.errors.role ?? ''"
+                    required
                 />
                 <div>
                     <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.users.inviteMessage') }}</label>
@@ -346,10 +354,11 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                     <AppMultiselect
                         v-model="editForm.role"
                         :options="roles"
-                        :label="t('backend.users.role')"
+                        :label="t('backend.users.roleLabel')"
                         :allow-empty="false"
                         :error="editModal.errors.role ?? ''"
                         open-direction="top"
+                        required
                     />
                     <AppMultiselect
                         v-model="editForm.managerId"
