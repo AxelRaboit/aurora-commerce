@@ -20,7 +20,7 @@ backend:
     contacts: Contacts
     contacts_description: Address book of people connected to your business
     companies: Companies
-    companies_description: Records for client, prospect and partner companies
+    companies_description: 'Records for client, prospect and partner companies'
     deals: Deals
     deals_description: Sales pipeline and opportunity tracking
     deals_kanban: Kanban pipeline
@@ -59,9 +59,9 @@ backend:
       name: Name
       namePlaceholder: Company name
       industry: Industry
-      industryPlaceholder: e.g. Software, Consulting…
+      industryPlaceholder: 'e.g. Software, Consulting…'
       website: Website
-      websitePlaceholder: https://example.com
+      websitePlaceholder: 'https://example.com'
       phone: Phone
       phonePlaceholder: +1 555 123 4567
       address: Address
@@ -73,6 +73,8 @@ backend:
       errors:
         name_required: Name is required.
         website_invalid: Invalid website.
+      listView: List view
+      kanbanView: Kanban view
     contacts:
       add: New contact
       create: Create contact
@@ -87,7 +89,7 @@ backend:
       lastName: Last name
       lastNamePlaceholder: Last name
       email: Email
-      emailPlaceholder: contact@example.com
+      emailPlaceholder: 'contact@example.com'
       phone: Phone
       phonePlaceholder: +1 555 123 4567
       company: Company
@@ -100,6 +102,9 @@ backend:
         first_name_required: First name is required.
         last_name_required: Last name is required.
         email_invalid: Invalid email.
+      updated: Contact updated.
+      noContacts: No contacts linked to this company.
+      contactLinked: 'Will be linked to {name}'
     deals:
       add: New deal
       create: Create deal
@@ -128,6 +133,37 @@ backend:
         negotiation: Negotiation
         won: Won
         lost: Lost
+      created: Deal created.
+      deleted: Deal deleted.
+      listView_description: Deals in a paginated table.
+      kanbanView_description: 'Deals organised by stage, draggable.'
+      company: Company
+      noContacts: No contacts linked to this company.
+      contactLinked: 'Will be linked to {name}'
+  agencies:
+    title: Agencies
+    new: New agency
+    empty: No agencies.
+    searchPlaceholder: Search agencies…
+    name: Name
+    namePlaceholder: Agency name
+    edit_title: 'Edit {name}'
+    deleteConfirm: 'Delete agency {name}?'
+    errors:
+      name_required: Name is required.
+      name_too_long: Name cannot exceed 150 characters.
+  services:
+    title: Services
+    new: New service
+    empty: No services.
+    searchPlaceholder: Search services…
+    name: Name
+    namePlaceholder: Service name
+    edit_title: 'Edit {name}'
+    deleteConfirm: 'Delete service {name}?'
+    errors:
+      name_required: Name is required.
+      name_too_long: Name cannot exceed 150 characters.
 crm:
   mail:
     subject_contact_new: New contact created
@@ -135,7 +171,7 @@ crm:
     subject_deal_lost: Deal lost
     contact:
       heading: New contact
-      intro: 'A new contact has been added to the CRM.'
+      intro: A new contact has been added to the CRM.
       name: Name
       email: Email
       phone: Phone

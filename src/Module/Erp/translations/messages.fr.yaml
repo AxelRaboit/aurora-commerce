@@ -9,7 +9,7 @@ backend:
           delete: Supprimer les produits
   modules:
     erp: ERP
-    erp_description: "Active la section ERP dans l'administration (produits). Nécessite le CRM."
+    erp_description: Active la section ERP dans l'administration (produits). Nécessite le CRM.
   audit:
     actions:
       erp:
@@ -21,7 +21,7 @@ backend:
     sections:
       erp: ERP
     products: Produits
-    products_description: Catalogue des produits, références et tarifs
+    products_description: 'Catalogue des produits, références et tarifs'
   erp:
     products:
       status:
@@ -30,3 +30,47 @@ backend:
         archived: Archivé
       errors:
         reference_taken: Cette référence est déjà utilisée.
+        name_required: Le nom est requis.
+        reference_required: La référence est requise.
+        reference_invalid: 'Référence invalide (lettres, chiffres, tirets).'
+        price_invalid: Le prix doit être positif.
+      created: Produit créé.
+      updated: Produit mis à jour.
+      deleted: Produit supprimé.
+      add: Ajouter un produit
+      create: Nouveau produit
+      edit: 'Modifier {name}'
+      empty: Aucun produit.
+      searchPlaceholder: Rechercher par nom ou référence…
+      name: Nom
+      namePlaceholder: 'ex : Chaise ergonomique'
+      reference: Référence
+      referencePlaceholder: 'ex : CHAISE-001'
+      referenceAutoPlaceholder: Auto-générée si vide
+      image: Image
+      chooseImage: Choisir une image
+      stock: Stock disponible
+      stockPlaceholder: Vide = stock non tracké
+      stockUntracked: Non tracké
+      stockOut: Rupture
+      description: Description
+      descriptionPlaceholder: Description libre…
+      price: Prix
+      pricePlaceholder: 'ex : 19,99'
+      currency: Devise
+      statusLabel: Statut
+      typeLabel: Type
+      types:
+        physical: Physique
+        digital: Numérique
+        service: Service
+      deleteConfirm: 'Supprimer {name} ?'
+      deleteWarning: Cette action est irréversible.
+      back: ← Retour à la liste
+    activity:
+      title: Activité
+      empty: Aucune activité.
+      created: Produit créé
+      updated: Produit modifié
+      deleted: Produit supprimé
+      loadMore: Charger plus

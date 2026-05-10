@@ -22,7 +22,10 @@ backend:
           view: Use global search
         media:
           view: View media library
-          manage: Manage media library (upload, delete, folders)
+          manage: 'Manage media library (upload, delete, folders)'
+        menus:
+          manage: Manage menus
+    role: Required role
   notifications:
     title: Notifications
     empty: No notifications.
@@ -39,6 +42,7 @@ backend:
     hr: HR
     planning: Planning
     project: Project
+    core: Core
   audit:
     intro: History of actions performed by administration users.
     module: Module
@@ -56,24 +60,109 @@ backend:
       users:
         photo_uploaded: Profile photo uploaded
         photo_removed: Profile photo removed
+        privileges_updated: Privileges updated
       mount_point:
         created: Mount point created
         updated: Mount point updated
         deleted: Mount point deleted
+      core:
+        auth:
+          login: Login
+          login_failed: Login failed
+          logout: Logout
+        settings:
+          updated: Setting updated
+        menu:
+          created: Menu created
+          updated: Menu updated
+          deleted: Menu deleted
+          item:
+            created: Menu item added
+            updated: Menu item updated
+            deleted: Menu item deleted
+        user:
+          created: User created
+          updated: User updated
+          deleted: User deleted
+          role_updated: Role updated
+          privileges_updated: Privileges updated
+          status_toggled: Status changed
+        front_user:
+          profile_updated: Profile updated
+          account_deleted: Account deleted
+        password_reset:
+          link_requested: Password reset requested
+          completed: Password reset completed
+        access_request:
+          approved: Access request approved
+          rejected: Access request rejected
+      billing:
+        invoice:
+          created: Facture créée
+          updated: Facture modifiée
+          deleted: Facture supprimée
+          validated: Facture validée
+        tiers:
+          created: Tiers créé
+          updated: Tiers modifié
+          deleted: Tiers supprimé
+        ocr:
+          job:
+            created: Import OCR lancé
+            finished: Import OCR terminé
+            retried: Import OCR relancé
+            deleted: Import OCR supprimé
+          invoice:
+            deleted: Facture OCR supprimée
+      ged:
+        document:
+          created: Document créé
+          updated: Document modifié
+          deleted: Document supprimé
+        category:
+          created: Catégorie créée
+          updated: Catégorie modifiée
+          deleted: Catégorie supprimée
   access_requests:
     intro: Manage pending access requests to the administration.
-    approved: Request from {name} approved.
+    approved: 'Request from {name} approved.'
     purged: Processed requests deleted.
-    rejected: Request from {name} rejected.
+    rejected: 'Request from {name} rejected.'
     status_pending: Pending
     status_approved: Approved
     status_rejected: Rejected
+    requester: Requester
+    message: Message
+    status: Status
+    date: Date
+    expires: Expires
+    empty: No access requests.
+    approve: Approve
+    reject: Reject
+    purge: Purge
+    approveConfirm: 'Approve the request from {name}? They will receive an email.'
+    rejectConfirm: 'Reject the request from {name}?'
+    purgeConfirm: Delete all approved and rejected requests? This action cannot be undone.
+    approved_toast: Access request approved.
+    rejected_toast: Access request rejected.
+    purged_toast: Processed requests deleted.
+    searchPlaceholder: 'Search by email, name or message…'
   forms:
     errors:
-      slug_format: The slug can only contain lowercase letters, numbers and hyphens.
+      slug_format: 'The slug can only contain lowercase letters, numbers and hyphens.'
       slug_taken: This slug is already used for this language.
   invitations:
-    sent: Invitation sent to {email}.
+    sent: 'Invitation sent to {email}.'
+    description: Send an email invitation to allow someone to join the administration.
+    email: Recipient email address
+    emailPlaceholder: "example{'@'}domain.com"
+    message: Custom message (optional)
+    messagePlaceholder: Add a message to accompany the invitation…
+    credentialsHint: You can include login credentials in the email.
+    credentialEmail: Login email
+    credentialPassword: Password
+    send: Send invitation
+    sending: Sending…
   media:
     usage:
       postFeatured: Featured image
@@ -82,7 +171,7 @@ backend:
       brandingFavicon: Favicon
       brandingDetail: Branding
     upload: Upload
-    uploaded: "{count} file(s) uploaded"
+    uploaded: '{count} file(s) uploaded'
     empty: No media in this folder
     altWarning: Some media items are missing alternative text
     missingAlt: Missing alt
@@ -101,13 +190,13 @@ backend:
     sortDate: Date
     sortName: Name
     sortSize: Size
-    sortPositionHint: "Custom order (drag and drop)"
+    sortPositionHint: Custom order (drag and drop)
     selected: selected
     selectAll: Select all
     bulkDeleted: Media deleted
     bulkMoved: Media moved
-    bulkDeleteConfirm: "Delete {count} item(s)?"
-    bulkMove: "Move {count} item(s)"
+    bulkDeleteConfirm: 'Delete {count} item(s)?'
+    bulkMove: 'Move {count} item(s)'
     urlCopied: URL copied
     copyUrl: Copy URL
     preview: Preview
@@ -145,9 +234,46 @@ backend:
     errors:
       focal_out_of_range: Focal point must be between 0 and 1.
       folder_name_required: Folder name is required.
-      folder_not_found: Folder {id} not found.
+      folder_not_found: 'Folder {id} not found.'
       folder_self_nested: A folder cannot be moved into itself or one of its subfolders.
-      parent_folder_not_found: Parent folder {id} not found.
+      parent_folder_not_found: 'Parent folder {id} not found.'
+      alt_required: Alternative text is required.
+    folders: Folders
+    subfolders: Subfolders
+    files: Files
+    newFolder: New
+    searchPlaceholder: Search…
+    alt: Alt text
+    altPlaceholder: Describe the image for screen readers…
+    caption: Caption
+    folder: Folder
+    filename: File
+    size: Size
+    dimensions: Dimensions
+    mimeType: Type
+    focalHint: Click the image to set the focal point.
+    resetFocal: Reset
+    deleteConfirm: 'Delete "{name}"? This action is irreversible.'
+    checkingUsage: Checking usage…
+    usageWarning: 'This media is currently used in {count} place(s). Deleting it will break these locations:'
+    deleteAnyway: Delete anyway
+    usageGroups:
+      post:
+        featured: Posts (featured image)
+        content: Posts (inside content)
+      gallery:
+        cover: Galleries (cover)
+        item: Galleries (photos)
+      branding:
+        setting: Branding
+      other: Other
+    bulkDelete: 'Delete selection ({count})'
+    bulkDeleteConfirmDesc: This action is irreversible. The files will be permanently deleted.
+    createFolder: Create folder
+    editFolder: Rename folder
+    folderName: Folder name
+    parentFolder: Parent folder
+    deleteFolderConfirm: 'Delete folder "{name}"? Its content will move to the root.'
   tabs:
     access_requests: Access Requests
     access_requests_description: Pending access requests awaiting approval.
@@ -161,11 +287,11 @@ backend:
     modules: Modules
     modules_description: Enable or disable modules and their features.
     mount_points: Mount Points
-    mount_points_description: Connections to external resources (DB, API, SFTP).
+    mount_points_description: 'Connections to external resources (DB, API, SFTP).'
     permissions: Permissions
     permissions_description: View privileges registered per module.
     users: Users
-    users_description: Manage user accounts, roles and privileges.
+    users_description: 'Manage user accounts, roles and privileges.'
   users:
     intro: Manage administration users and their roles.
     name: Name
@@ -180,8 +306,8 @@ backend:
     sendInvite: Send invite
     inviteMessage: Message (optional)
     inviteMessagePlaceholder: Add a message...
-    edit_title: "Edit {name}"
-    deleteConfirm: "Delete {name}?"
+    edit_title: 'Edit {name}'
+    deleteConfirm: 'Delete {name}?'
     detail:
       type: Type
       locale: Locale
@@ -226,6 +352,48 @@ backend:
       created: User created successfully.
       updated: User updated.
       deleted: User deleted.
+    add: Add user
+    invitationSent: Invitation sent.
+    invitationResent: Invitation resent.
+    resendInvitation: Resend invitation
+    enable: Enable
+    disable: Disable
+    edit: Edit
+    namePlaceholder: John Doe
+    emailPlaceholder: "john{'@'}example.com"
+    password: Password
+    password_optional: Password (leave empty to keep)
+    locale: Language
+    role_dev: Dev
+    role_user: User
+    grant_dev: Grant Dev role
+    revoke_dev: Revoke Dev role
+    grantDevConfirm: 'Grant Dev role to {name}?'
+    revokeDevConfirm: 'Revoke Dev role from {name}?'
+    impersonate: 'Impersonate {name}'
+    impersonateFront: 'View frontend as {name}'
+    disableConfirm: "Disable {name}'s account? They will no longer be able to sign in."
+    enableConfirm: "Re-enable {name}'s account?"
+    view: View profile
+    manager:
+      label: Manager
+      none: No manager
+      subordinates: 'Direct reports ({count})'
+    privileges:
+      title: Privileges
+      save: Save privileges
+      saved: Privileges updated
+      no_dev_target: Cannot assign privileges to a Dev user.
+    photo:
+      upload: Change photo
+      remove: Remove photo
+      hint: 'JPEG, PNG or WebP. 5 MB max.'
+      uploaded: Photo updated.
+      removed: Photo removed.
+      errors:
+        invalid_type: 'Unsupported format. Use JPEG, PNG or WebP.'
+        too_large: The image is too large (5 MB max).
+        missing: No image selected.
   auth:
     access_request:
       already_account: Already have an account?
@@ -239,20 +407,22 @@ backend:
       submit: Send request
       success_toast: Your access request has been sent.
       title: Request access
+      closed_title: Access requests closed
+      closed_desc: Access requests are currently disabled.
     forgot_password:
       back_login: Back to login
       instructions: Enter your email address and we'll send you a link to reset your password.
-      sent: If this address is linked to an account, you will receive an email shortly.
+      sent: 'If this address is linked to an account, you will receive an email shortly.'
       submit: Send reset link
       title: Forgot password
     hero:
-      description: An all-in-one platform to manage content, customers, catalog and shop.
-      feature_1: Content management & SEO
-      feature_2: "CRM: contacts and deals"
-      feature_3: "ERP: products and catalog"
+      description: 'An all-in-one platform to manage content, customers, catalog and shop.'
+      feature_1: 'Content management & SEO'
+      feature_2: 'CRM: contacts and deals'
+      feature_3: 'ERP: products and catalog'
       feature_4: Built-in online store
       heading: Run your business
-      heading_accent: with {siteName}.
+      heading_accent: 'with {siteName}.'
     invitation:
       accept_title: Accept invitation
       confirm_password: Confirm password
@@ -264,12 +434,12 @@ backend:
       password: Password
       set_password: Set your password to activate your account.
       submit: Activate my account
-      success: Your account is active, welcome!
-      welcome: Welcome {name}
+      success: 'Your account is active, welcome!'
+      welcome: 'Welcome {name}'
     login:
-      subtitle: Welcome back, sign in to your workspace.
+      subtitle: 'Welcome back, sign in to your workspace.'
       email: Email
-      email_placeholder: your@email.com
+      email_placeholder: 'your@email.com'
       forgot: Forgot password?
       no_account: No account yet?
       password: Password
@@ -313,7 +483,7 @@ backend:
       title: Reset password
     verify_email:
       title: Email verification
-      success_heading: Email confirmed!
+      success_heading: 'Email confirmed!'
       success_message: Your email address has been verified. You can now sign in.
       error_heading: Invalid or expired link
       error_message: This verification link is invalid or has expired. Please register again.
@@ -321,31 +491,36 @@ backend:
     sections:
       platform: Platform
       dev: Administration
+      core: General
     administration: Developer access
-    administration_description: Technical tools, audit log, access requests and advanced configuration
+    administration_description: 'Technical tools, audit log, access requests and advanced configuration'
     agencies: Agencies
     agencies_description: Manage agencies and their internal services
     dashboard: Dashboard
     dashboard_description: Overview of activity and key metrics
     galleries: Galleries
     media: Media
-    media_description: Centralized library of images, videos and files
+    media_description: 'Centralized library of images, videos and files'
     profile: My profile
     services: Services
     services_description: Define the services offered by your agencies
     settings: Settings
     settings_description: Global application parameters and preferences
     themes: Themes
-    themes_description: Visual customization (colors, logo, favicon)
+    themes_description: 'Visual customization (colors, logo, favicon)'
     users: Users
-    users_description: Manage user accounts, roles and privileges
-    resizeHint: "Drag to resize — double-click to reset"
+    users_description: 'Manage user accounts, roles and privileges'
+    resizeHint: Drag to resize — double-click to reset
     filterNav: Filter menu…
     filterNavEmpty: No items found
+    viewSite: View site
+    logout: Log out
+    lightMode: Light mode
+    darkMode: Dark mode
   search:
     button: Search…
-    placeholder: Search content, media…
-    hint: Type to search across content, terms and media.
+    placeholder: 'Search content, media…'
+    hint: 'Type to search across content, terms and media.'
     empty: No results.
     keys:
       navigate: Navigate
@@ -369,32 +544,84 @@ backend:
       name_required: Name is required.
       password_mismatch: Passwords do not match.
       password_too_short: The password must be at least 8 characters long.
+    photo:
+      title: Profile photo
+      subtitle: Shown in the sidebar and user list.
+    mood:
+      title: Mood
+      subtitle: A short line that captures how you're feeling right now.
+      placeholder: What's on your mind…
+      hint: 160 characters max.
+      saved: Mood updated.
+      errors:
+        too_long: Mood must not exceed 160 characters.
+    locale:
+      title: Language
+      subtitle: Choose the display language of the administration.
+      field: Language
+    info:
+      title: Profile information
+      subtitle: Update your name and email address.
+      name: Full name
+      listView: List view
+      kanbanView: Kanban view
+      namePlaceholder: John Doe
+      email: Email address
+      emailPlaceholder: "you{'@'}example.com"
+      saved: Profile updated successfully.
+    password:
+      title: Change password
+      subtitle: 'Use a long, random password to secure your account.'
+      current: Current password
+      new: New password
+      confirm: Confirm password
+      saved: Password updated successfully.
+      error_current: The current password is incorrect.
+    danger:
+      title: Danger zone
+      description: Deleting your account is irreversible. All your data will be permanently erased.
+      submit: Delete my account
+      confirm: Are you sure you want to delete your account? This action cannot be undone.
   impersonation:
-    banner: You are impersonating {name}
+    banner: 'You are impersonating {name}'
     leave: Leave
   settings:
     tabs:
       general: General
-      general_description: Site name, admin email, public URL.
+      general_description: 'Site name, admin email, public URL.'
       reading: Reading
-      reading_description: Posts per page, homepage, comments.
+      reading_description: 'Posts per page, homepage, comments.'
       localization: Localization
-      localization_description: Language, timezone, date format.
+      localization_description: 'Language, timezone, date format.'
       branding: Branding
-      branding_description: Logo, favicon and visual identity.
+      branding_description: 'Logo, favicon and visual identity.'
       seo: SEO
       seo_description: Title template and default meta description.
       system: System
-      system_description: Maintenance, registrations, access and uploads.
+      system_description: 'Maintenance, registrations, access and uploads.'
       email: Emails
       email_description: Language for outgoing emails.
       sequences: Sequences
       sequences_description: Prefixes for auto-generated references.
       modules: Modules
+      ecommerce: E-commerce
     cascadeLocked: 'Enable “{parent}” first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.
     modulesEmpty: No module found.
+    save: Save
+    saved: Settings saved.
+    modulesSearchPlaceholder: Search a module…
+    confirmPassword: Confirm action
+    confirmPasswordDescription: Confirm your password to enable or disable modules.
+    confirmPasswordPlaceholder: Password…
+    confirmPasswordInvalid: Incorrect password.
+    confirmPasswordConfirm: Confirm
+    browseMedia: Browse media
+    noPageSelected: No page selected — showing the article list by default.
+    searchPost: Search a page…
+    orId: 'or enter ID:'
+    sequenceSearch: Search a sequence…
   parameters:
     site_name:
       label: Site name
@@ -404,7 +631,7 @@ backend:
       description: Short description used as the default meta description
     site_url:
       label: Public site URL
-      description: Absolute URL of the site (no trailing slash), used in emails and the sitemap
+      description: 'Absolute URL of the site (no trailing slash), used in emails and the sitemap'
     admin_email:
       label: Administrator email
       description: Email address of the administrator
@@ -416,16 +643,16 @@ backend:
       description: Number of posts displayed per page on public lists
     max_upload_size_mb:
       label: Max upload size (MB)
-      description: Maximum allowed size for a media upload, in megabytes
+      description: 'Maximum allowed size for a media upload, in megabytes'
     allowed_upload_extensions:
       label: Allowed extensions
       description: 'Comma-separated list of allowed extensions (jpg,png,pdf,…)'
     timezone:
       label: Timezone
-      description: 'PHP timezone (e.g. Europe/Paris)'
+      description: PHP timezone (e.g. Europe/Paris)
     date_format:
       label: Date display format
-      description: 'Date display format (e.g. d/m/Y)'
+      description: Date display format (e.g. d/m/Y)
     comments_enabled:
       label: Comments enabled
       description: 'Comments enabled (0 = disabled, 1 = enabled)'
@@ -449,7 +676,7 @@ backend:
       description: Maximum number of revisions kept per post (oldest are deleted)
     trash_auto_purge_days:
       label: Auto-purge trash (days)
-      description: 'Number of days before permanent deletion of trashed posts (0 = never)'
+      description: Number of days before permanent deletion of trashed posts (0 = never)
     homepage_post_id:
       label: Homepage post ID
       description: ID of a post displayed on the homepage. Empty = latest posts list.
@@ -473,106 +700,279 @@ backend:
       description: “Displays a \”Only X left\” warning on the product page when available stock is less than or equal to this value. Set to 0 to disable.”
     ged_document_prefix:
       label: DMS document reference prefix
-      description: 'Auto-generated DMS document reference prefix (e.g. DOC). Leave empty to disable.'
+      description: Auto-generated DMS document reference prefix (e.g. DOC). Leave empty to disable.
     billing_invoice_prefix:
       label: Invoice number prefix
-      description: 'Auto-generated invoice number prefix upon validation (e.g. INV). Leave empty to disable.'
+      description: Auto-generated invoice number prefix upon validation (e.g. INV). Leave empty to disable.
     billing_credit_note_prefix:
       label: Credit note number prefix
-      description: 'Auto-generated credit note number prefix (e.g. CN). Leave empty to disable.'
+      description: Auto-generated credit note number prefix (e.g. CN). Leave empty to disable.
     ecommerce_order_prefix:
       label: Order number prefix
-      description: 'Auto-generated order number prefix (e.g. ORD). Leave empty to disable.'
+      description: Auto-generated order number prefix (e.g. ORD). Leave empty to disable.
     ecommerce_listing_prefix:
       label: Shop product reference prefix
-      description: 'Auto-generated shop product reference prefix (e.g. LST). Leave empty to disable.'
+      description: Auto-generated shop product reference prefix (e.g. LST). Leave empty to disable.
     erp_product_prefix:
       label: ERP product reference prefix
-      description: 'Auto-generated product reference prefix (e.g. PROD). Leave empty to disable.'
+      description: Auto-generated product reference prefix (e.g. PROD). Leave empty to disable.
     crm_deal_prefix:
       label: CRM deal reference prefix
-      description: 'Auto-generated CRM deal reference prefix (e.g. DEAL). Leave empty to disable.'
+      description: Auto-generated CRM deal reference prefix (e.g. DEAL). Leave empty to disable.
     crm_contact_prefix:
       label: CRM contact reference prefix
-      description: 'Auto-generated CRM contact reference prefix (e.g. CTT). Leave empty to disable.'
+      description: Auto-generated CRM contact reference prefix (e.g. CTT). Leave empty to disable.
     crm_company_prefix:
       label: CRM company reference prefix
-      description: 'Auto-generated CRM company reference prefix (e.g. CPY). Leave empty to disable.'
+      description: Auto-generated CRM company reference prefix (e.g. CPY). Leave empty to disable.
     email_locale:
       label: Forced email locale
       description: 'Language code (fr, en, es, de) to force for all outgoing emails. Empty = use the current request locale.'
     photo_gallery_prefix:
       label: Gallery reference prefix
-      description: 'Auto-generated photo gallery reference prefix (e.g. GAL).'
+      description: Auto-generated photo gallery reference prefix (e.g. GAL).
     editorial_post_prefix:
       label: Post reference prefix
-      description: 'Auto-generated post reference prefix (e.g. ART).'
+      description: Auto-generated post reference prefix (e.g. ART).
     editorial_form_prefix:
       label: Form reference prefix
-      description: 'Auto-generated form reference prefix (e.g. FRM).'
+      description: Auto-generated form reference prefix (e.g. FRM).
     billing_tiers_prefix:
       label: Third-party reference prefix
-      description: 'Auto-generated third-party (supplier/client) reference prefix (e.g. TRS).'
+      description: Auto-generated third-party (supplier/client) reference prefix (e.g. TRS).
     core_user_prefix:
       label: User reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_media_prefix:
       label: Media reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_access_request_prefix:
       label: Access request reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     editorial_form_submission_prefix:
       label: Form submission reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     photo_gallery_item_prefix:
       label: Photo reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     photo_gallery_invite_prefix:
       label: Gallery invite reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     editorial_comment_prefix:
       label: Comment reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_audit_log_prefix:
       label: Audit log prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_reset_password_prefix:
       label: Password reset request prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_media_folder_prefix:
       label: Media folder reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     core_menu_item_prefix:
       label: Menu item reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     billing_ocr_job_prefix:
       label: OCR job reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     ecommerce_cart_prefix:
       label: Cart reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     ecommerce_cart_item_prefix:
       label: Cart item reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     ecommerce_order_line_prefix:
       label: Order line reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     editorial_form_field_prefix:
       label: Form field reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     editorial_taxonomy_term_prefix:
       label: Taxonomy term reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     photo_gallery_finalization_prefix:
       label: Gallery finalization reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     photo_gallery_item_comment_prefix:
       label: Photo comment reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
     photo_gallery_pick_prefix:
       label: Photo pick reference prefix
-      description: 'Auto-generated reference prefix (e.g. XXX). Leave empty to disable.'
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
+    intro: View and edit the application technical parameters.
+    key: Parameter
+    value: Value
+    description: Description
+    empty: No parameters.
+    saved: Parameter saved.
+    searchPlaceholder: Search by key…
+    allGroups: All groups
+  title: Administration
+  stats:
+    posts: Posts
+    media: Media
+    menus: Menus
+    users: Users
+    published: published
+    draft: drafts
+    byType: Posts by type
+    recent: Recent activity
+    postsByMonth: Posts published per month
+    pipeline: pipeline
+    won: Won deals
+    dealsByStage: Deals by stage
+    productsByStatus: Products by status
+    inventory: Inventory
+  mountPoints:
+    intro: 'Manage connections to external resources (databases, APIs, SFTP).'
+    searchPlaceholder: Search a mount point…
+    add: Add mount point
+    edit: Edit
+    empty: No mount points configured.
+    name: Name
+    type: Type
+    host: Host
+    port: Port
+    username: Username
+    password: Password
+    passwordPlaceholder: Leave empty to keep the current password
+    database: Database
+    sshPublicKey: SSH public key
+    sshPublicKeyPlaceholder: ssh-ed25519 AAAA…
+    sshTunnel: SSH tunnel
+    sshTunnelHint: Connect to the database through an SSH tunnel.
+    sshHost: SSH host
+    sshHostPlaceholder: e.g. 72.60.130.238
+    sshPort: SSH port
+    sshUser: SSH user
+    sshUserPlaceholder: e.g. ubuntu
+    sshPrivateKey: SSH private key
+    sshPrivateKeyPlaceholder: "-----BEGIN OPENSSH PRIVATE KEY-----\n…"
+    sshPrivateKeyHint: Leave empty to keep the current key.
+    namePlaceholder: e.g. Production DB
+    hostPlaceholder: e.g. 192.168.1.10 or db.example.com
+    portPlaceholder: e.g. 5432
+    usernamePlaceholder: e.g. aurora_user
+    databasePlaceholder: e.g. aurora_prod
+    config: Advanced config (JSON)
+    test: Test connection
+    testing: Testing…
+    testSuccess: Connection successful.
+    testFailure: Connection failed.
+    testTitle: 'Connection test — {name}'
+    retry: Retry
+    lastTested: Last tested
+    never: Never tested
+    deleteConfirm: Delete this mount point?
+    types:
+      database: Database
+      api: API
+      sftp: SFTP
+    errors:
+      name_required: Name is required.
+      name_too_long: Name must not exceed 100 characters.
+      host_required: Host is required.
+      host_too_long: Host must not exceed 255 characters.
+  menus:
+    title: Menus
+    empty: No menus yet.
+    createMenu: Create menu
+    editMenu: Edit menu
+    name: Name
+    location: Location
+    locationPlaceholder: 'header, footer, sidebar…'
+    description: Description
+    items: Items
+    addItem: Add item
+    itemsEmpty: No items in this menu.
+    selectHint: Select a menu on the left or create a new one.
+    deleteConfirm: 'Delete menu "{name}"? All its items will be removed.'
+    deleteItemConfirm: Delete this menu item?
+    editItem: Edit item
+    targetType: Target type
+    target: Target
+    customUrl: Custom URL
+    translations: Per-language labels
+    translationsHint: Default label is taken from the target. Override per language if needed.
+    translationPlaceholder: Custom label (optional)
+    visibility: Visibility
+    cssClass: CSS classes
+    openInNewTab: Open in a new tab
+    allTypes: All types
+    allTaxonomies: All taxonomies
+    searchPostsPlaceholder: Search a post or page…
+    searchTermsPlaceholder: Search a term…
+    protected: System
+    protectedHint: Essential menu — cannot be deleted.
+    locationLockedHint: Location is locked for system menus.
+    errors:
+      translation_required_for_custom_url: At least one language label is required for a custom URL.
+      menu_protected: This menu is essential and cannot be deleted.
+      location_locked: The location of a system menu cannot be changed.
+      name_required: Name is required.
+      location_format: 'Location must only contain lowercase letters, digits, dashes or underscores.'
+      location_taken: This location is already used by another menu.
+      target_required: A target is required for this item type.
+      custom_url_required: A URL is required.
+      target_type_invalid: Invalid target type.
+      parent_invalid: Invalid parent.
+      parent_cycle: 'Cannot: this would create a cycle in the hierarchy.'
+  themes:
+    title: Themes
+    new: New theme
+    activate: Activate
+    active: Active
+    edit: Edit
+    colors: Colors
+    resetColor: Reset
+    primaryColor: Primary color
+    primaryColorLabel: Accent colour
+    primaryColorHint: 'Used for buttons, links, badges and the logo. The full palette is generated automatically.'
+    sections:
+      general: General
+      header: Header
+      footer: Footer
+    vars:
+      accent: Primary color
+      accentHover: Primary color (hover)
+      bg: Background
+      surface: Surface
+      surface2: Secondary surface
+      primary: Main text
+      secondary: Secondary text
+      muted: Muted text
+      border: Border
+      text: Text
+    headerContent: Content
+    headerModeDefault: Site name
+    headerModeText: Custom text
+    headerModeImage: Media image
+    headerCustomText: Custom text
+    headerLogoMediaId: Media ID
+    footerText: Footer text
+    slugLabel: Slug
+    headerMediaHint: Find the ID in Media → open a media → ID field.
+    headerTextPlaceholder: My site
+    configHint: 'Available variables: --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    configJsonError: The configuration JSON is invalid.
+    deleteConfirm: 'Delete theme "{name}"? This action is irreversible.'
+    cannotDeleteDefault: Cannot delete the default theme.
+    cannotDeleteActive: Cannot delete the active theme.
+    created: Theme created.
+    updated: Theme updated.
+    activated: Theme activated.
+    deleted: Theme deleted.
+    templateCount: '{count} template file(s)'
+    errors:
+      slug_invalid: 'Slug may only contain lowercase letters, numbers, and hyphens.'
+      slug_taken: This slug is already in use.
+      name_required: Name is required.
+  roles:
+    ROLE_USER: User
+    ROLE_ADMIN: Admin
+    ROLE_DEV: Developer
 frontend:
   menu:
     home: Home
@@ -589,7 +989,7 @@ frontend:
     heading: Sign in
     subtitle: Sign in to your personal space.
     email: Email address
-    email_placeholder: you@example.com
+    email_placeholder: 'you@example.com'
     password: Password
     forgot_password: Forgot password?
     remember_me: Remember me
@@ -603,7 +1003,7 @@ frontend:
     name: Full name
     name_placeholder: John Doe
     email: Email address
-    email_placeholder: you@example.com
+    email_placeholder: 'you@example.com'
     password: Password
     submit: Create account
     already_account: Already have an account?
@@ -634,7 +1034,7 @@ frontend:
     success: Your password has been reset. You can now sign in.
   verify_email:
     title: Email verification
-    success_heading: Email confirmed!
+    success_heading: 'Email confirmed!'
     success_message: Your email address has been verified. You can now sign in.
     error_heading: Invalid or expired link
     error_message: This verification link is invalid or has expired. Please register again.
@@ -660,7 +1060,7 @@ frontend:
       subject_role_changed: Your role has changed
       account_deleted_heading: Account deleted
       account_deleted_intro: 'Hello {name}, your account on {siteName} has been deleted.'
-      account_deleted_outro: All data associated with your account has been deleted. If you did not perform this action, contact us immediately.
+      account_deleted_outro: 'All data associated with your account has been deleted. If you did not perform this action, contact us immediately.'
       role_changed_heading: Your role has changed
       role_changed_intro: 'Hello {name}, your role has been updated on {siteName}.'
       role_changed_label: New role
@@ -673,29 +1073,29 @@ shared:
   mail:
     invitation:
       cta: Activate my account
-      expires: This link expires on {date}.
+      expires: 'This link expires on {date}.'
       fallback_intro: 'If the button does not work, copy and paste this link into your browser:'
-      footer_note: If you were not expecting this invitation, you can safely ignore this email.
-      greeting: Hi {name},
-      heading: Invitation to join {siteName}
-      intro: You have been invited to join {siteName}. Click the button below to activate your account and set your password.
+      footer_note: 'If you were not expecting this invitation, you can safely ignore this email.'
+      greeting: 'Hi {name},'
+      heading: 'Invitation to join {siteName}'
+      intro: 'You have been invited to join {siteName}. Click the button below to activate your account and set your password.'
     verify_email:
       cta: Confirm my email
-      expires: This link expires on {date}.
+      expires: 'This link expires on {date}.'
       fallback_intro: 'If the button does not work, copy and paste this link into your browser:'
-      footer_note: If you did not create an account, you can safely ignore this email.
-      greeting: Hi {name},
+      footer_note: 'If you did not create an account, you can safely ignore this email.'
+      greeting: 'Hi {name},'
       heading: Confirm your email address
-      intro: Thanks for signing up at {siteName}. Click the button below to confirm your email address and activate your account.
+      intro: 'Thanks for signing up at {siteName}. Click the button below to confirm your email address and activate your account.'
     reset_password:
       cta: Reset my password
       expires: This link expires in 1 hour.
-      expires_at: This link expires on {date}.
+      expires_at: 'This link expires on {date}.'
       fallback_intro: 'If the button does not work, copy and paste this link into your browser:'
-      footer_note: If you did not request a password reset, you can safely ignore this email.
-      greeting: Hi {name},
+      footer_note: 'If you did not request a password reset, you can safely ignore this email.'
+      greeting: 'Hi {name},'
       heading: Reset your password
-      intro: You requested a password reset on {siteName}. Click the button below to choose a new password.
+      intro: 'You requested a password reset on {siteName}. Click the button below to choose a new password.'
     access_request_admin:
       heading: New access request
       intro: A new access request has been received.
@@ -703,24 +1103,24 @@ shared:
       label_email: Email
       label_message: Message
       cta: View in admin
-      footer_note: This email was sent automatically, please do not reply.
+      footer_note: 'This email was sent automatically, please do not reply.'
     access_request_approved:
       heading: Your request has been approved
-      greeting: Hi {name},
-      intro: Your access request for {siteName} has been approved.
+      greeting: 'Hi {name},'
+      intro: 'Your access request for {siteName} has been approved.'
       credentials_intro: 'An account has been created for you with the following credentials:'
       label_email: Email
       label_password: Password
       password_note: Remember to change your password after your first login.
       existing_account: You can sign in with your existing account.
       cta: Go to admin
-      footer_note: This email was sent automatically, please do not reply.
+      footer_note: 'This email was sent automatically, please do not reply.'
     access_request_rejected:
       heading: Access request not granted
-      greeting: Hi {name},
-      intro: After review, your access request could not be granted.
-      retry: If you think this is a mistake, feel free to submit a new request.
-      footer_note: This email was sent automatically, please do not reply.
+      greeting: 'Hi {name},'
+      intro: 'After review, your access request could not be granted.'
+      retry: 'If you think this is a mistake, feel free to submit a new request.'
+      footer_note: 'This email was sent automatically, please do not reply.'
   errors:
     page_not_found:
       title: Page not found
@@ -732,9 +1132,107 @@ shared:
       back: Back to home
   common:
     pagination: 'Page {page} of {totalPages}'
-    yes: Yes
-    no: No
-    built_with: 'Built with Aurora · © axelraboit'
+    'yes': 'Yes'
+    'no': 'No'
+    built_with: Built with Aurora · © axelraboit
+    save: Save
+    cancel: Cancel
+    delete: Delete
+    edit: Edit
+    create: Create
+    loading: Loading…
+    saving: Saving…
+    confirm: Confirm
+    error: An error occurred.
+    saved: Saved.
+    deleted: Deleted.
+    actions: Actions
+    or: or
+    name: Name
+    description: Description
+    view: View
+    close: Close
+    back: Back
+    expand: Expand
+    collapse: Collapse
+    select_placeholder: Select…
+    no_options: No items available
+    no_result: No results found
+    select_to_pick: Press enter to select
+    select_selected: Selected
+    select_to_remove: Press enter to remove
+    remove: Remove
+    all: All
+    loadMore: Load more
+    send: Send
+    next: Next
   pagination:
     previous: Previous
     next: Next
+    results: '{from} to {to} of {total} results'
+  media:
+    choose: Choose an image
+    change: Change
+    remove: Remove
+    picker:
+      title: Choose a media
+      search: Search by name or alt…
+      allFolders: All media
+      rootFolder: Root
+      empty: No media found
+      select: Select
+      addSelected: Add selection
+      selectedCount: selected
+      in: In
+      items: results
+      dimensions: Dimensions
+      size: Size
+      uploaded: Uploaded
+      folder: Folder
+      alt: Alt text
+      altPlaceholder: Describe the image for screen readers and SEO
+      caption: Caption
+      captionPlaceholder: Caption shown below the image
+      openInLibrary: Open in library
+      upload: Upload
+      dropHere: Drop to upload
+      subfolders: Subfolders
+      files: Files
+    filters:
+      all: All
+      image: Images
+      video: Videos
+      document: Documents
+  password:
+    criteria:
+      length: At least 8 characters
+      uppercase: One uppercase letter
+      number: One number
+      special: One special character
+    errors:
+      too_short: Password must be at least 8 characters.
+      no_uppercase: Password must contain at least one uppercase letter.
+      no_number: Password must contain at least one number.
+      no_special: Password must contain at least one special character.
+  comment:
+    title: Comments
+    form_title: Leave a comment
+    name: Name
+    email: Email
+    content: Comment
+    submit: Submit
+    success: Your comment has been submitted and is awaiting moderation.
+    empty: No comments yet.
+    reply: Reply
+    react: React
+  form:
+    submit: Submit
+    submitting: Sending…
+    success: 'Thank you, your message has been sent!'
+    error: An error occurred. Please try again.
+    selectPlaceholder: Choose…
+  locales:
+    fr: Français
+    en: English
+    es: Español
+    de: Deutsch

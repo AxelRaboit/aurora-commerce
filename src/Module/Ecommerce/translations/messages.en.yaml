@@ -35,7 +35,7 @@ backend:
     listings: Shop
     listings_description: Items listed in the online shop and their stock
     orders: Orders
-    orders_description: Customer orders, statuses and payments
+    orders_description: 'Customer orders, statuses and payments'
   ecommerce:
     orders:
       refund:
@@ -56,11 +56,85 @@ backend:
         delivered: Delivered
         cancelled: Cancelled
         refunded: Refunded
+      title: Order
+      empty: No orders yet.
+      searchPlaceholder: 'Search by number, email or name…'
+      number: Number
+      customer: Customer
+      date: Date
+      status_col: Status
+      total: Total
+      items: item(s)
+      shipping: Shipping
+      fulfillment: Fulfillment
+      no_shipping_required: No shipping required (digital product).
+      notes: Notes
+      product: Product
+      reference: Reference
+      quantity: Quantity
+      subtotal: Subtotal
+      timeline: Timeline
+      no_activity: No activity recorded yet.
+      tabs:
+        all: All
+      actions:
+        title: Actions
+        markShipped: Mark as shipped
+        markDelivered: Mark as delivered
+        markFulfilled: Mark as fulfilled
+        cancel: Cancel order
+        confirm: 'Confirm: {label}?'
+        no_transitions: No transitions available.
+        transition_success: Status updated.
+        you: You
+      activity:
+        created: Order created
+        paid: Payment received
+        shipped: Order shipped
+        delivered: Order delivered
+        cancelled: Order cancelled
     listings:
       errors:
         slug_taken: This slug is already used by another listing.
         product_already_listed: This product already has a shop listing.
         product_not_found: Product not found.
+        product_required: Select a product.
+        slug_required: Slug is required.
+        slug_invalid: 'Invalid slug (lowercase letters, digits, dashes).'
+      created: Listing created.
+      updated: Listing updated.
+      deleted: Listing deleted.
+      add: Add listing
+      create: New listing
+      edit: 'Edit {name}'
+      empty: No listings.
+      searchPlaceholder: 'Search by title, slug or reference…'
+      title: Title
+      slug: Slug
+      slugPlaceholder: e.g. my-beautiful-chair
+      product: Linked product
+      selectProduct: Select a product…
+      marketingTitle: Marketing title (optional)
+      marketingTitlePlaceholder: Override the product name
+      marketingDescription: Marketing description
+      marketingDescriptionPlaceholder: 'Long description, key benefits…'
+      featuredImage: Featured image
+      chooseImage: Choose an image
+      featuredImageHint: Listing-specific marketing image.
+      productImageHint: Inherited from the product.
+      featuredImageOverrideHint: Optional — overrides the product image on the shop page.
+      price: Price
+      visibility: Visibility
+      visible: Visible
+      hidden: Hidden
+      visibleOnShop: Visible on shop
+      seo: SEO
+      seoTitle: SEO title
+      seoDescription: SEO description
+      frontUrl: Public URL
+      linkedProduct: Linked product
+      deleteConfirm: 'Delete listing "{name}"?'
+      deleteWarning: 'The linked product is not deleted, only the shop page.'
 ecommerce:
   mail:
     subject:
@@ -78,7 +152,7 @@ ecommerce:
       cta_view: View my order
     paid:
       subject: Order confirmation
-      heading: Thank you for your order!
+      heading: 'Thank you for your order!'
       greeting: 'Hello {name},'
       intro: 'Your order {number} has been registered at {siteName}. You will find the summary below.'
       support: 'For any question, feel free to reply to this email.'
@@ -147,9 +221,9 @@ frontend:
     country_placeholder: Select a country
     notes: Order notes
     summary: Summary
-    confirm: Confirm & pay
+    confirm: 'Confirm & pay'
     payment: Payment
-    demo_card_hint: "Demo mode — use test card: 4242 4242 4242 4242 · exp. 12/34 · CVC 123"
+    demo_card_hint: 'Demo mode — use test card: 4242 4242 4242 4242 · exp. 12/34 · CVC 123'
     processing: Processing…
     payment_stub: Demo mode — no real payment is processed.
     digital_delivery: Digital delivery
@@ -165,7 +239,7 @@ frontend:
       country_required: Country is required.
   order:
     title: Order
-    thanks: Thank you for your order!
+    thanks: 'Thank you for your order!'
     confirmation_intro: 'Your order %number% has been recorded. A confirmation email will be sent.'
     number: Number
     status: Status

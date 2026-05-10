@@ -22,7 +22,10 @@ backend:
           view: Utiliser la recherche globale
         media:
           view: Voir la médiathèque
-          manage: Gérer la médiathèque (upload, suppression, dossiers)
+          manage: 'Gérer la médiathèque (upload, suppression, dossiers)'
+        menus:
+          manage: Gérer les menus
+    role: Rôle requis
   notifications:
     title: Notifications
     empty: Aucune notification.
@@ -39,6 +42,7 @@ backend:
     hr: RH
     planning: Planning
     project: Projet
+    core: Cœur
   audit:
     intro: Historique des actions effectuées par les utilisateurs de l'administration.
     module: Module
@@ -56,24 +60,109 @@ backend:
       users:
         photo_uploaded: Photo de profil téléversée
         photo_removed: Photo de profil supprimée
+        privileges_updated: Privilèges mis à jour
       mount_point:
         created: Point de montage créé
         updated: Point de montage modifié
         deleted: Point de montage supprimé
+      core:
+        auth:
+          login: Connexion
+          login_failed: Échec de connexion
+          logout: Déconnexion
+        settings:
+          updated: Paramètre modifié
+        menu:
+          created: Menu créé
+          updated: Menu modifié
+          deleted: Menu supprimé
+          item:
+            created: Élément de menu ajouté
+            updated: Élément de menu modifié
+            deleted: Élément de menu supprimé
+        user:
+          created: Utilisateur créé
+          updated: Utilisateur modifié
+          deleted: Utilisateur supprimé
+          role_updated: Rôle mis à jour
+          privileges_updated: Privilèges mis à jour
+          status_toggled: Statut modifié
+        front_user:
+          profile_updated: Profil mis à jour
+          account_deleted: Compte supprimé
+        password_reset:
+          link_requested: Réinitialisation demandée
+          completed: Mot de passe réinitialisé
+        access_request:
+          approved: Demande d'accès approuvée
+          rejected: Demande d'accès rejetée
+      billing:
+        invoice:
+          created: Facture créée
+          updated: Facture modifiée
+          deleted: Facture supprimée
+          validated: Facture validée
+        tiers:
+          created: Tiers créé
+          updated: Tiers modifié
+          deleted: Tiers supprimé
+        ocr:
+          job:
+            created: Import OCR lancé
+            finished: Import OCR terminé
+            retried: Import OCR relancé
+            deleted: Import OCR supprimé
+          invoice:
+            deleted: Facture OCR supprimée
+      ged:
+        document:
+          created: Document créé
+          updated: Document modifié
+          deleted: Document supprimé
+        category:
+          created: Catégorie créée
+          updated: Catégorie modifiée
+          deleted: Catégorie supprimée
   access_requests:
     intro: Gérez les demandes d'accès à l'administration en attente de validation.
-    approved: Demande de {name} approuvée.
+    approved: 'Demande de {name} approuvée.'
     purged: Demandes traitées supprimées.
-    rejected: Demande de {name} rejetée.
+    rejected: 'Demande de {name} rejetée.'
     status_pending: En attente
     status_approved: Approuvée
     status_rejected: Rejetée
+    requester: Demandeur
+    message: Message
+    status: Statut
+    date: Date
+    expires: Expire
+    empty: Aucune demande d'accès.
+    approve: Approuver
+    reject: Rejeter
+    purge: Purger
+    approveConfirm: 'Approuver la demande de {name} ? Un e-mail lui sera envoyé.'
+    rejectConfirm: 'Rejeter la demande de {name} ?'
+    purgeConfirm: Supprimer toutes les demandes approuvées et rejetées ? Cette action est irréversible.
+    approved_toast: Demande d'accès approuvée.
+    rejected_toast: Demande d'accès rejetée.
+    purged_toast: Demandes traitées supprimées.
+    searchPlaceholder: 'Rechercher par e-mail, nom ou message…'
   forms:
     errors:
-      slug_format: Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.
+      slug_format: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
       slug_taken: Ce slug est déjà utilisé pour cette langue.
   invitations:
-    sent: Invitation envoyée à {email}.
+    sent: 'Invitation envoyée à {email}.'
+    description: Envoyez une invitation par e-mail pour permettre à quelqu'un de rejoindre l'espace d'administration.
+    email: Adresse e-mail du destinataire
+    emailPlaceholder: "exemple{'@'}domaine.com"
+    message: Message personnalisé (optionnel)
+    messagePlaceholder: Ajoutez un message pour accompagner l'invitation…
+    credentialsHint: Vous pouvez inclure des identifiants de connexion dans l'e-mail.
+    credentialEmail: Email de connexion
+    credentialPassword: Mot de passe
+    send: Envoyer l'invitation
+    sending: Envoi en cours…
   media:
     usage:
       postFeatured: Image principale
@@ -82,7 +171,7 @@ backend:
       brandingFavicon: Favicon
       brandingDetail: Identité visuelle
     upload: Téléverser
-    uploaded: "{count} fichier(s) téléversé(s)"
+    uploaded: '{count} fichier(s) téléversé(s)'
     uploaded_one: Fichier téléversé
     empty: Aucun média dans ce dossier
     altWarning: Certains médias n'ont pas de texte alternatif
@@ -102,13 +191,13 @@ backend:
     sortDate: Date
     sortName: Nom
     sortSize: Taille
-    sortPositionHint: "Ordre personnalisé (glisser-déposer)"
+    sortPositionHint: Ordre personnalisé (glisser-déposer)
     selected: sélectionné(s)
     selectAll: Tout sélectionner
     bulkDeleted: Médias supprimés
     bulkMoved: Médias déplacés
-    bulkDeleteConfirm: "Supprimer {count} média(s) ?"
-    bulkMove: "Déplacer {count} média(s)"
+    bulkDeleteConfirm: 'Supprimer {count} média(s) ?'
+    bulkMove: 'Déplacer {count} média(s)'
     urlCopied: URL copiée
     copyUrl: Copier l'URL
     preview: Aperçu
@@ -146,27 +235,64 @@ backend:
     errors:
       focal_out_of_range: Le point focal doit être compris entre 0 et 1.
       folder_name_required: Le nom du dossier est requis.
-      folder_not_found: Le dossier {id} est introuvable.
+      folder_not_found: 'Le dossier {id} est introuvable.'
       folder_self_nested: Un dossier ne peut pas être déplacé dans lui-même ou un de ses sous-dossiers.
-      parent_folder_not_found: Le dossier parent {id} est introuvable.
+      parent_folder_not_found: 'Le dossier parent {id} est introuvable.'
+      alt_required: Le texte alternatif est requis.
+    folders: Dossiers
+    subfolders: Sous-dossiers
+    files: Fichiers
+    newFolder: Nouveau
+    searchPlaceholder: Rechercher…
+    alt: Texte alternatif
+    altPlaceholder: Décris l'image pour les lecteurs d'écran…
+    caption: Légende
+    folder: Dossier
+    filename: Fichier
+    size: Taille
+    dimensions: Dimensions
+    mimeType: Type
+    focalHint: Clique sur l'image pour définir le point focal.
+    resetFocal: Réinitialiser
+    deleteConfirm: 'Supprimer « {name} » ? Cette action est irréversible.'
+    checkingUsage: Vérification des utilisations…
+    usageWarning: 'Ce média est actuellement utilisé à {count} endroit(s). Le supprimer cassera ces emplacements :'
+    deleteAnyway: Supprimer quand même
+    usageGroups:
+      post:
+        featured: Articles (image principale)
+        content: Articles (dans le contenu)
+      gallery:
+        cover: Galeries (couverture)
+        item: Galeries (photos)
+      branding:
+        setting: Identité visuelle
+      other: Autres
+    bulkDelete: 'Supprimer la sélection ({count})'
+    bulkDeleteConfirmDesc: Cette action est irréversible. Les fichiers seront définitivement supprimés.
+    createFolder: Créer un dossier
+    editFolder: Renommer le dossier
+    folderName: Nom du dossier
+    parentFolder: Dossier parent
+    deleteFolderConfirm: 'Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.'
   tabs:
     access_requests: Demandes d'accès
-    access_requests_description: "Demandes d'accès en attente d'approbation."
+    access_requests_description: Demandes d'accès en attente d'approbation.
     audit: Audit
-    audit_description: "Historique de toutes les actions effectuées dans l'application."
+    audit_description: Historique de toutes les actions effectuées dans l'application.
     invitations: Invitations
     overview: Vue d'ensemble
-    overview_description: "Indicateurs clés et activité récente."
+    overview_description: Indicateurs clés et activité récente.
     parameters: Paramètres
-    parameters_description: "Paramètres techniques et valeurs de configuration."
+    parameters_description: Paramètres techniques et valeurs de configuration.
     modules: Modules
-    modules_description: "Activer ou désactiver les modules et leurs fonctionnalités."
+    modules_description: Activer ou désactiver les modules et leurs fonctionnalités.
     mount_points: Points de montage
-    mount_points_description: "Connexions vers des ressources externes (BDD, API, SFTP)."
+    mount_points_description: 'Connexions vers des ressources externes (BDD, API, SFTP).'
     permissions: Permissions
-    permissions_description: "Consulter les privilèges enregistrés par module."
+    permissions_description: Consulter les privilèges enregistrés par module.
     users: Utilisateurs
-    users_description: "Gérer les comptes, rôles et privilèges des utilisateurs."
+    users_description: 'Gérer les comptes, rôles et privilèges des utilisateurs.'
   users:
     intro: Gérez les utilisateurs de l'administration et leurs rôles.
     name: Nom
@@ -176,13 +302,13 @@ backend:
     searchPlaceholder: Rechercher un utilisateur…
     allRoles: Tous les rôles
     empty: Aucun utilisateur trouvé
-    you: "(Vous)"
+    you: (Vous)
     invite: Inviter un utilisateur
     sendInvite: Envoyer l'invitation
     inviteMessage: Message (optionnel)
     inviteMessagePlaceholder: Ajouter un message...
-    edit_title: "Modifier {name}"
-    deleteConfirm: "Supprimer {name} ?"
+    edit_title: 'Modifier {name}'
+    deleteConfirm: 'Supprimer {name} ?'
     detail:
       type: Type
       locale: Langue
@@ -227,6 +353,48 @@ backend:
       created: Utilisateur créé avec succès.
       updated: Utilisateur mis à jour.
       deleted: Utilisateur supprimé.
+    add: Ajouter un utilisateur
+    invitationSent: Invitation envoyée.
+    invitationResent: Invitation renvoyée.
+    resendInvitation: Renvoyer l'invitation
+    enable: Réactiver
+    disable: Désactiver
+    edit: Modifier
+    namePlaceholder: Jean Dupont
+    emailPlaceholder: "jean{'@'}exemple.com"
+    password: Mot de passe
+    password_optional: Mot de passe (laisser vide pour conserver)
+    locale: Langue
+    role_dev: Dev
+    role_user: Utilisateur
+    grant_dev: Attribuer le rôle Dev
+    revoke_dev: Retirer le rôle Dev
+    grantDevConfirm: 'Attribuer le rôle Dev à {name} ?'
+    revokeDevConfirm: 'Retirer le rôle Dev de {name} ?'
+    impersonate: 'Se connecter en tant que {name}'
+    impersonateFront: 'Voir le front en tant que {name}'
+    disableConfirm: "Désactiver le compte de {name} ? L'utilisateur ne pourra plus se connecter."
+    enableConfirm: 'Réactiver le compte de {name} ?'
+    view: Voir le profil
+    manager:
+      label: Responsable
+      none: Aucun responsable
+      subordinates: 'Subordonnés ({count})'
+    privileges:
+      title: Privilèges
+      save: Enregistrer les privilèges
+      saved: Privilèges mis à jour
+      no_dev_target: Impossible d'assigner des privilèges à un Dev.
+    photo:
+      upload: Changer la photo
+      remove: Supprimer la photo
+      hint: 'JPEG, PNG ou WebP. 5 Mo max.'
+      uploaded: Photo mise à jour.
+      removed: Photo supprimée.
+      errors:
+        invalid_type: 'Format non supporté. Utilisez JPEG, PNG ou WebP.'
+        too_large: L'image est trop volumineuse (5 Mo max).
+        missing: Aucune image sélectionnée.
   auth:
     access_request:
       already_account: Déjà un compte ?
@@ -240,20 +408,22 @@ backend:
       submit: Envoyer la demande
       success_toast: Votre demande d'accès a été envoyée.
       title: Demander l'accès
+      closed_title: Demandes d'accès fermées
+      closed_desc: Les demandes d'accès sont actuellement désactivées.
     forgot_password:
       back_login: Retour à la connexion
       instructions: Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-      sent: Si cette adresse est associée à un compte, vous recevrez un email sous peu.
+      sent: 'Si cette adresse est associée à un compte, vous recevrez un email sous peu.'
       submit: Envoyer le lien
       title: Mot de passe oublié
     hero:
-      description: Une plateforme tout-en-un pour gérer contenus, clients, catalogue et boutique.
+      description: 'Une plateforme tout-en-un pour gérer contenus, clients, catalogue et boutique.'
       feature_1: Gestion de contenu et SEO
-      feature_2: "CRM : contacts et opportunités"
-      feature_3: "ERP : produits et catalogue"
+      feature_2: 'CRM : contacts et opportunités'
+      feature_3: 'ERP : produits et catalogue'
       feature_4: Boutique e-commerce intégrée
       heading: Pilotez votre activité
-      heading_accent: avec {siteName}.
+      heading_accent: 'avec {siteName}.'
     invitation:
       accept_title: Accepter l'invitation
       confirm_password: Confirmer le mot de passe
@@ -265,12 +435,12 @@ backend:
       password: Mot de passe
       set_password: Définissez votre mot de passe pour activer votre compte.
       submit: Activer mon compte
-      success: Votre compte est activé, bienvenue !
-      welcome: Bienvenue {name}
+      success: 'Votre compte est activé, bienvenue !'
+      welcome: 'Bienvenue {name}'
     login:
-      subtitle: Bon retour, connectez-vous à votre espace.
+      subtitle: 'Bon retour, connectez-vous à votre espace.'
       email: Adresse e-mail
-      email_placeholder: votre@email.com
+      email_placeholder: 'votre@email.com'
       forgot: Mot de passe oublié ?
       no_account: Pas encore de compte ?
       password: Mot de passe
@@ -314,7 +484,7 @@ backend:
       title: Réinitialiser le mot de passe
     verify_email:
       title: Vérification de l'e-mail
-      success_heading: E-mail confirmé !
+      success_heading: 'E-mail confirmé !'
       success_message: Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.
       error_heading: Lien invalide ou expiré
       error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
@@ -322,31 +492,36 @@ backend:
     sections:
       platform: Plateforme
       dev: Administration
+      core: Général
     administration: Accès développeur
-    administration_description: Outils techniques, audit, requêtes d'accès et configuration avancée
+    administration_description: "Outils techniques, audit, requêtes d'accès et configuration avancée"
     agencies: Agences
     agencies_description: Gérer les agences et leurs services internes
     dashboard: Tableau de bord
     dashboard_description: Vue d'ensemble de l'activité et indicateurs clés
     galleries: Galeries
     media: Médias
-    media_description: Bibliothèque centralisée des images, vidéos et fichiers
+    media_description: 'Bibliothèque centralisée des images, vidéos et fichiers'
     profile: Mon profil
     services: Services
     services_description: Définir les services proposés par les agences
     settings: Réglages
     settings_description: Paramètres globaux de l'application et préférences
     themes: Thèmes
-    themes_description: Personnalisation visuelle (couleurs, logo, favicon)
+    themes_description: 'Personnalisation visuelle (couleurs, logo, favicon)'
     users: Utilisateurs
-    users_description: Gérer les comptes, rôles et privilèges
-    resizeHint: "Glisser pour redimensionner — double-clic pour réinitialiser"
+    users_description: 'Gérer les comptes, rôles et privilèges'
+    resizeHint: Glisser pour redimensionner — double-clic pour réinitialiser
     filterNav: Filtrer le menu…
     filterNavEmpty: Aucun élément trouvé
+    viewSite: Voir le site
+    logout: Déconnexion
+    lightMode: Mode clair
+    darkMode: Mode sombre
   search:
     button: Rechercher…
-    placeholder: Rechercher des contenus, médias…
-    hint: Tapez pour rechercher dans les contenus, termes et médias.
+    placeholder: 'Rechercher des contenus, médias…'
+    hint: 'Tapez pour rechercher dans les contenus, termes et médias.'
     empty: Aucun résultat.
     keys:
       navigate: Naviguer
@@ -369,32 +544,85 @@ backend:
       invalid_locale: Langue non supportée.
       name_required: Le nom est requis.
       password_mismatch: Les mots de passe ne correspondent pas.
+      password_too_short: Le mot de passe doit contenir au moins 8 caractères.
+    photo:
+      title: Photo de profil
+      subtitle: Cette image apparaît dans la barre latérale et la liste des utilisateurs.
+    mood:
+      title: Phrase de mood
+      subtitle: Une courte phrase qui décrit votre humeur du moment.
+      placeholder: Ce que vous voulez partager…
+      hint: 160 caractères max.
+      saved: Mood mis à jour.
+      errors:
+        too_long: La phrase ne doit pas dépasser 160 caractères.
+    locale:
+      title: Langue
+      subtitle: Choisissez la langue d'affichage de l'administration.
+      field: Langue
+    info:
+      title: Informations du profil
+      subtitle: Mettez à jour votre nom et adresse e-mail.
+      name: Nom complet
+      listView: Vue liste
+      kanbanView: Vue Kanban
+      namePlaceholder: Jean Dupont
+      email: Adresse e-mail
+      emailPlaceholder: "vous{'@'}exemple.com"
+      saved: Profil mis à jour avec succès.
+    password:
+      title: Modifier le mot de passe
+      subtitle: Utilisez un mot de passe long et aléatoire pour sécuriser votre compte.
+      current: Mot de passe actuel
+      new: Nouveau mot de passe
+      confirm: Confirmer le mot de passe
+      saved: Mot de passe mis à jour avec succès.
+      error_current: Le mot de passe actuel est incorrect.
+    danger:
+      title: Zone de danger
+      description: La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.
+      submit: Supprimer mon compte
+      confirm: Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.
   impersonation:
-    banner: Vous êtes connecté en tant que {name}
+    banner: 'Vous êtes connecté en tant que {name}'
     leave: Quitter
   settings:
     tabs:
       general: Général
-      general_description: "Nom du site, email admin, URL publique."
+      general_description: 'Nom du site, email admin, URL publique.'
       reading: Lecture
       reading_description: "Articles par page, page d'accueil, commentaires."
       localization: Localisation
-      localization_description: "Langue, fuseau horaire, format de date."
+      localization_description: 'Langue, fuseau horaire, format de date.'
       branding: Branding
-      branding_description: "Logo, favicon et identité visuelle."
+      branding_description: 'Logo, favicon et identité visuelle.'
       seo: SEO
-      seo_description: "Template de titre et meta description par défaut."
+      seo_description: Template de titre et meta description par défaut.
       system: Système
-      system_description: "Maintenance, inscriptions, accès et uploads."
+      system_description: 'Maintenance, inscriptions, accès et uploads.'
       email: Emails
-      email_description: "Langue des emails sortants."
+      email_description: Langue des emails sortants.
       sequences: Séquences
-      sequences_description: "Préfixes des références auto-générées."
+      sequences_description: Préfixes des références auto-générées.
       modules: Modules
+      ecommerce: E-commerce
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
-    mediaSquareHint: "Recommandé : image carrée (1:1)."
+    mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
     modulesEmpty: Aucun module trouvé.
+    save: Enregistrer
+    saved: Réglages sauvegardés.
+    modulesSearchPlaceholder: Rechercher un module…
+    confirmPassword: Confirmer l'action
+    confirmPasswordDescription: Confirmez le mot de passe pour activer ou désactiver des modules.
+    confirmPasswordPlaceholder: Mot de passe…
+    confirmPasswordInvalid: Mot de passe incorrect.
+    confirmPasswordConfirm: Confirmer
+    browseMedia: Parcourir les médias
+    noPageSelected: Aucune page sélectionnée — affichage de la liste des articles par défaut.
+    searchPost: Rechercher une page…
+    orId: "ou saisir l'ID :"
+    sequenceSearch: Rechercher une séquence…
   parameters:
     site_name:
       label: Nom du site
@@ -404,18 +632,18 @@ backend:
       description: Courte description utilisée comme meta description par défaut
     site_url:
       label: URL publique du site
-      description: "URL absolue du site (sans slash final), utilisée dans les emails et le sitemap"
+      description: 'URL absolue du site (sans slash final), utilisée dans les emails et le sitemap'
     admin_email:
       label: Email administrateur
-      description: "Adresse email de l'administrateur"
+      description: Adresse email de l'administrateur
     default_locale:
       label: Langue par défaut
       description: 'Code de la langue par défaut (fr, en, es, de)'
     posts_per_page:
       label: Articles par page
-      description: "Nombre d'articles affichés par page sur les listes publiques"
+      description: Nombre d'articles affichés par page sur les listes publiques
     max_upload_size_mb:
-      label: "Taille max d'upload (Mo)"
+      label: Taille max d'upload (Mo)
       description: 'Taille maximale autorisée pour un upload média, en mégaoctets'
     allowed_upload_extensions:
       label: Extensions autorisées
@@ -424,53 +652,53 @@ backend:
       label: Fuseau horaire
       description: 'Fuseau horaire PHP (ex: Europe/Paris)'
     date_format:
-      label: "Format d'affichage des dates"
+      label: Format d'affichage des dates
       description: "Format d'affichage des dates (ex: d/m/Y)"
     comments_enabled:
       label: Commentaires activés
       description: 'Commentaires activés (0 = désactivés, 1 = activés)'
     comment_moderation_enabled:
       label: Modération des commentaires
-      description: "Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)"
+      description: 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)'
     maintenance_mode:
       label: Mode maintenance
       description: 'Mode maintenance (0 = désactivé, 1 = site fermé au public)'
     admin_registration_enabled:
       label: Inscriptions admin ouvertes
-      description: "Autoriser les inscriptions via /register (interface admin). À désactiver après la création du premier compte admin."
+      description: Autoriser les inscriptions via /register (interface admin). À désactiver après la création du premier compte admin.
     admin_access_request_enabled:
-      label: "Demandes d'accès admin ouvertes"
-      description: "Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)"
+      label: Demandes d'accès admin ouvertes
+      description: Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)
     front_registration_enabled:
       label: Inscriptions front ouvertes
       description: 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)'
     post_revisions_limit:
       label: Nombre de révisions gardées par article
-      description: 'Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)'
+      description: Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)
     trash_auto_purge_days:
       label: Purge auto de la corbeille (jours)
-      description: 'Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)'
+      description: Nombre de jours avant suppression définitive des articles en corbeille (0 = jamais)
     homepage_post_id:
-      label: "Page d'accueil (ID du post)"
-      description: "ID d'un post affiché sur la page d'accueil. Vide = liste des derniers articles."
+      label: Page d'accueil (ID du post)
+      description: ID d'un post affiché sur la page d'accueil. Vide = liste des derniers articles.
     default_front:
       label: Front par défaut
-      description: "Slug du front affiché par défaut sur \"/\". Ex: editorial, tracking."
+      description: 'Slug du front affiché par défaut sur "/". Ex: editorial, tracking.'
     logo_media_id:
       label: Logo du site
-      description: 'ID du média utilisé comme logo'
+      description: ID du média utilisé comme logo
     favicon_media_id:
       label: Favicon
-      description: 'ID du média utilisé comme favicon'
+      description: ID du média utilisé comme favicon
     seo_title_template:
       label: Template de titre SEO
       description: 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex. : {title} · {siteName}'
     seo_default_description:
       label: Description SEO par défaut
-      description: "Meta description utilisée quand aucune description spécifique n'est définie"
+      description: Meta description utilisée quand aucune description spécifique n'est définie
     ecommerce_low_stock_threshold:
       label: Seuil de stock bas (e-commerce)
-      description: "Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement."
+      description: Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.
     ged_document_prefix:
       label: Préfixe des références documents GED
       description: 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.'
@@ -478,7 +706,7 @@ backend:
       label: Préfixe des numéros de factures
       description: 'Préfixe du numéro de facture auto-généré à la validation (ex: FAC). Laissez vide pour désactiver.'
     billing_credit_note_prefix:
-      label: "Préfixe des numéros d'avoirs"
+      label: Préfixe des numéros d'avoirs
       description: "Préfixe du numéro d'avoir auto-généré (ex: AV). Laissez vide pour désactiver."
     ecommerce_order_prefix:
       label: Préfixe des numéros de commandes
@@ -505,8 +733,8 @@ backend:
       label: Préfixe des numéros de galeries
       description: 'Préfixe de la référence galerie photo auto-générée (ex: GAL).'
     editorial_post_prefix:
-      label: "Préfixe des numéros d'articles"
-      description: "Préfixe de la référence article auto-générée (ex: ART)."
+      label: Préfixe des numéros d'articles
+      description: 'Préfixe de la référence article auto-générée (ex: ART).'
     editorial_form_prefix:
       label: Préfixe des numéros de formulaires
       description: 'Préfixe de la référence formulaire auto-générée (ex: FRM).'
@@ -520,7 +748,7 @@ backend:
       label: Préfixe des références médias
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_access_request_prefix:
-      label: "Préfixe des références demandes d'accès"
+      label: Préfixe des références demandes d'accès
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     editorial_form_submission_prefix:
       label: Préfixe des numéros de soumissions
@@ -535,7 +763,7 @@ backend:
       label: Préfixe des numéros de commentaires
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_audit_log_prefix:
-      label: "Préfixe des logs d'audit"
+      label: Préfixe des logs d'audit
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_reset_password_prefix:
       label: Préfixe des demandes de réinitialisation de mot de passe
@@ -573,6 +801,179 @@ backend:
     photo_gallery_pick_prefix:
       label: Préfixe des références sélections de photo
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    intro: Consultez et modifiez les paramètres techniques de l'application.
+    key: Paramètre
+    value: Valeur
+    description: Description
+    empty: Aucun paramètre.
+    saved: Paramètre enregistré.
+    searchPlaceholder: Rechercher par clé…
+    allGroups: Tous les groupes
+  title: Administration
+  stats:
+    posts: Articles
+    media: Médias
+    menus: Menus
+    users: Utilisateurs
+    published: publiés
+    draft: brouillons
+    byType: Articles par type
+    recent: Activité récente
+    postsByMonth: Articles publiés par mois
+    pipeline: pipeline
+    won: Affaires gagnées
+    dealsByStage: Affaires par étape
+    productsByStatus: Produits par statut
+    inventory: Inventaire
+  mountPoints:
+    intro: 'Gérez les connexions vers des ressources externes (bases de données, API, SFTP).'
+    searchPlaceholder: Rechercher un point de montage…
+    add: Ajouter un point de montage
+    edit: Modifier
+    empty: Aucun point de montage configuré.
+    name: Nom
+    type: Type
+    host: Hôte
+    port: Port
+    username: Utilisateur
+    password: Mot de passe
+    passwordPlaceholder: Laisser vide pour conserver le mot de passe actuel
+    database: Base de données
+    sshPublicKey: Clé SSH publique
+    sshPublicKeyPlaceholder: ssh-ed25519 AAAA…
+    sshTunnel: Tunnel SSH
+    sshTunnelHint: Se connecter à la base de données via un tunnel SSH.
+    sshHost: Hôte SSH
+    sshHostPlaceholder: 'ex : 72.60.130.238'
+    sshPort: Port SSH
+    sshUser: Utilisateur SSH
+    sshUserPlaceholder: 'ex : ubuntu'
+    sshPrivateKey: Clé privée SSH
+    sshPrivateKeyPlaceholder: "-----BEGIN OPENSSH PRIVATE KEY-----\n…"
+    sshPrivateKeyHint: Laisser vide pour conserver la clé actuelle.
+    namePlaceholder: 'ex : Production DB'
+    hostPlaceholder: 'ex : 192.168.1.10 ou db.example.com'
+    portPlaceholder: 'ex : 5432'
+    usernamePlaceholder: 'ex : aurora_user'
+    databasePlaceholder: 'ex : aurora_prod'
+    config: Config avancée (JSON)
+    test: Tester la connexion
+    testing: Test en cours…
+    testSuccess: Connexion réussie.
+    testFailure: Échec de la connexion.
+    testTitle: 'Test de connexion — {name}'
+    retry: Relancer
+    lastTested: Dernier test
+    never: Jamais testé
+    deleteConfirm: Supprimer ce point de montage ?
+    types:
+      database: Base de données
+      api: API
+      sftp: SFTP
+    errors:
+      name_required: Le nom est requis.
+      name_too_long: Le nom ne doit pas dépasser 100 caractères.
+      host_required: L'hôte est requis.
+      host_too_long: L'hôte ne doit pas dépasser 255 caractères.
+  menus:
+    title: Menus
+    empty: Aucun menu pour le moment.
+    createMenu: Créer un menu
+    editMenu: Modifier le menu
+    name: Nom
+    location: Emplacement
+    locationPlaceholder: 'header, footer, sidebar…'
+    description: Description
+    items: Items
+    addItem: Ajouter un item
+    itemsEmpty: Aucun item dans ce menu.
+    selectHint: Sélectionnez un menu à gauche ou créez-en un nouveau.
+    deleteConfirm: 'Supprimer le menu « {name} » ? Tous ses items seront supprimés.'
+    deleteItemConfirm: Supprimer cet item du menu ?
+    editItem: Modifier l'item
+    targetType: Type de cible
+    target: Cible
+    customUrl: URL personnalisée
+    translations: Libellés par langue
+    translationsHint: Le libellé par défaut est tiré de la cible. Surcharge-le ici par langue si besoin.
+    translationPlaceholder: Libellé personnalisé (optionnel)
+    visibility: Visibilité
+    cssClass: Classes CSS
+    openInNewTab: Ouvrir dans un nouvel onglet
+    allTypes: Tous les types
+    allTaxonomies: Toutes les taxonomies
+    searchPostsPlaceholder: Rechercher un article ou une page…
+    searchTermsPlaceholder: Rechercher un terme…
+    protected: Système
+    protectedHint: Menu essentiel — non supprimable.
+    locationLockedHint: L'emplacement est verrouillé pour les menus système.
+    errors:
+      translation_required_for_custom_url: Au moins un libellé de langue est requis pour une URL personnalisée.
+      menu_protected: Ce menu est essentiel et ne peut pas être supprimé.
+      location_locked: L'emplacement d'un menu système ne peut pas être modifié.
+      name_required: Le nom est requis.
+      location_format: "L'emplacement doit contenir uniquement des lettres minuscules, chiffres, tirets ou underscores."
+      location_taken: Cet emplacement est déjà utilisé par un autre menu.
+      target_required: Une cible est requise pour ce type d'item.
+      custom_url_required: Une URL est requise.
+      target_type_invalid: Type de cible invalide.
+      parent_invalid: Parent invalide.
+      parent_cycle: 'Impossible : cela créerait une boucle dans la hiérarchie.'
+  themes:
+    title: Thèmes
+    new: Nouveau thème
+    activate: Activer
+    active: Actif
+    edit: Modifier
+    colors: Couleurs
+    resetColor: Réinitialiser
+    primaryColor: Couleur principale
+    primaryColorLabel: Couleur d'accent
+    primaryColorHint: 'Sert de base aux boutons, liens, badges et au logo. Toute la palette est dérivée automatiquement.'
+    sections:
+      general: Général
+      header: En-tête
+      footer: Pied de page
+    vars:
+      accent: Couleur principale
+      accentHover: Couleur principale (hover)
+      bg: Fond
+      surface: Surface
+      surface2: Surface secondaire
+      primary: Texte principal
+      secondary: Texte secondaire
+      muted: Texte atténué
+      border: Bordure
+      text: Texte
+    headerContent: Contenu
+    headerModeDefault: Nom du site
+    headerModeText: Texte custom
+    headerModeImage: Image média
+    headerCustomText: Texte personnalisé
+    headerLogoMediaId: ID du média
+    footerText: Texte du pied de page
+    slugLabel: Slug
+    headerMediaHint: Trouvez l'ID dans Médias → ouvrez un média → champ ID.
+    headerTextPlaceholder: Mon site
+    configHint: 'Variables disponibles : --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    configJsonError: Le JSON de configuration est invalide.
+    deleteConfirm: 'Supprimer le thème "{name}" ? Cette action est irréversible.'
+    cannotDeleteDefault: Impossible de supprimer le thème par défaut.
+    cannotDeleteActive: Impossible de supprimer le thème actif.
+    created: Thème créé.
+    updated: Thème mis à jour.
+    activated: Thème activé.
+    deleted: Thème supprimé.
+    templateCount: '{count} fichier(s) de template'
+    errors:
+      slug_invalid: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
+      slug_taken: Ce slug est déjà utilisé.
+      name_required: Le nom est requis.
+  roles:
+    ROLE_USER: Utilisateur
+    ROLE_ADMIN: Administrateur
+    ROLE_DEV: Développeur
 frontend:
   menu:
     home: Accueil
@@ -589,7 +990,7 @@ frontend:
     heading: Connexion
     subtitle: Connectez-vous à votre espace personnel.
     email: Adresse e-mail
-    email_placeholder: vous@exemple.com
+    email_placeholder: 'vous@exemple.com'
     password: Mot de passe
     forgot_password: Mot de passe oublié ?
     remember_me: Se souvenir de moi
@@ -603,7 +1004,7 @@ frontend:
     name: Nom complet
     name_placeholder: Jean Dupont
     email: Adresse e-mail
-    email_placeholder: vous@exemple.com
+    email_placeholder: 'vous@exemple.com'
     password: Mot de passe
     submit: Créer le compte
     already_account: Déjà un compte ?
@@ -618,7 +1019,7 @@ frontend:
     resent_success: L'e-mail de confirmation a été renvoyé.
   verify_email:
     title: Vérification de l'e-mail
-    success_heading: E-mail confirmé !
+    success_heading: 'E-mail confirmé !'
     success_message: Votre adresse e-mail a été vérifiée. Vous pouvez maintenant vous connecter.
     error_heading: Lien invalide ou expiré
     error_message: Ce lien est invalide ou a expiré. Veuillez vous réinscrire.
@@ -660,11 +1061,11 @@ frontend:
       subject_role_changed: Modification de votre rôle
       account_deleted_heading: Compte supprimé
       account_deleted_intro: 'Bonjour {name}, votre compte sur {siteName} a bien été supprimé.'
-      account_deleted_outro: Toutes les données associées à votre compte ont été supprimées. Si vous n'avez pas effectué cette action, contactez-nous immédiatement.
+      account_deleted_outro: "Toutes les données associées à votre compte ont été supprimées. Si vous n'avez pas effectué cette action, contactez-nous immédiatement."
       role_changed_heading: Votre rôle a changé
       role_changed_intro: 'Bonjour {name}, votre rôle a été modifié sur {siteName}.'
       role_changed_label: Nouveau rôle
-      role_changed_outro: 'Si vous n''êtes pas à l''origine de cette modification, contactez votre administrateur.'
+      role_changed_outro: "Si vous n'êtes pas à l'origine de cette modification, contactez votre administrateur."
 shared:
   dropZone:
     cta: Choisir un fichier
@@ -673,29 +1074,29 @@ shared:
   mail:
     invitation:
       cta: Activer mon compte
-      expires: Ce lien expire le {date}.
+      expires: 'Ce lien expire le {date}.'
       fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :'
-      footer_note: Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail.
-      greeting: Bonjour {name},
-      heading: Invitation à rejoindre {siteName}
-      intro: Vous avez été invité à rejoindre {siteName}. Cliquez sur le bouton ci-dessous pour activer votre compte et définir votre mot de passe.
+      footer_note: "Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail."
+      greeting: 'Bonjour {name},'
+      heading: 'Invitation à rejoindre {siteName}'
+      intro: 'Vous avez été invité à rejoindre {siteName}. Cliquez sur le bouton ci-dessous pour activer votre compte et définir votre mot de passe.'
     verify_email:
       cta: Confirmer mon adresse e-mail
-      expires: Ce lien expire le {date}.
+      expires: 'Ce lien expire le {date}.'
       fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :'
-      footer_note: Si vous n'avez pas créé de compte, vous pouvez ignorer cet e-mail.
-      greeting: Bonjour {name},
+      footer_note: "Si vous n'avez pas créé de compte, vous pouvez ignorer cet e-mail."
+      greeting: 'Bonjour {name},'
       heading: Confirmez votre adresse e-mail
-      intro: Merci de vous être inscrit sur {siteName}. Cliquez sur le bouton ci-dessous pour confirmer votre adresse e-mail et activer votre compte.
+      intro: 'Merci de vous être inscrit sur {siteName}. Cliquez sur le bouton ci-dessous pour confirmer votre adresse e-mail et activer votre compte.'
     reset_password:
       cta: Réinitialiser mon mot de passe
       expires: Ce lien expire dans 1 heure.
-      expires_at: Ce lien expire le {date}.
+      expires_at: 'Ce lien expire le {date}.'
       fallback_intro: 'Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :'
-      footer_note: Si vous n'avez pas demandé de réinitialisation, vous pouvez ignorer cet e-mail.
-      greeting: Bonjour {name},
+      footer_note: "Si vous n'avez pas demandé de réinitialisation, vous pouvez ignorer cet e-mail."
+      greeting: 'Bonjour {name},'
       heading: Réinitialisation de votre mot de passe
-      intro: Vous avez demandé à réinitialiser votre mot de passe sur {siteName}. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.
+      intro: 'Vous avez demandé à réinitialiser votre mot de passe sur {siteName}. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.'
     access_request_admin:
       heading: Nouvelle demande d'accès
       intro: Une nouvelle demande d'accès vient d'être reçue.
@@ -703,24 +1104,24 @@ shared:
       label_email: E-mail
       label_message: Message
       cta: Voir dans l'administration
-      footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
+      footer_note: 'Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.'
     access_request_approved:
       heading: Votre demande a été approuvée
-      greeting: Bonjour {name},
-      intro: Votre demande d'accès à {siteName} a été approuvée.
+      greeting: 'Bonjour {name},'
+      intro: "Votre demande d'accès à {siteName} a été approuvée."
       credentials_intro: 'Un compte a été créé pour vous avec les identifiants suivants :'
       label_email: E-mail
       label_password: Mot de passe
       password_note: Pensez à changer votre mot de passe après votre première connexion.
       existing_account: Vous pouvez vous connecter avec votre compte existant.
       cta: Accéder à l'administration
-      footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
+      footer_note: 'Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.'
     access_request_rejected:
       heading: Demande d'accès non accordée
-      greeting: Bonjour {name},
-      intro: Après examen, votre demande d'accès n'a pas pu être accordée.
-      retry: Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à en soumettre une nouvelle.
-      footer_note: Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.
+      greeting: 'Bonjour {name},'
+      intro: "Après examen, votre demande d'accès n'a pas pu être accordée."
+      retry: "Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à en soumettre une nouvelle."
+      footer_note: 'Cet e-mail a été envoyé automatiquement, merci de ne pas y répondre.'
   errors:
     page_not_found:
       title: Page introuvable
@@ -732,9 +1133,107 @@ shared:
       back: Retour à l'accueil
   common:
     pagination: 'Page {page} sur {totalPages}'
-    yes: Oui
-    no: Non
-    built_with: 'Propulsé par Aurora · © axelraboit'
+    'yes': Oui
+    'no': Non
+    built_with: Propulsé par Aurora · © axelraboit
+    save: Enregistrer
+    cancel: Annuler
+    delete: Supprimer
+    edit: Modifier
+    create: Créer
+    loading: Chargement…
+    saving: Enregistrement…
+    confirm: Confirmer
+    error: Une erreur est survenue.
+    saved: Enregistré.
+    deleted: Supprimé.
+    actions: Actions
+    or: ou
+    name: Nom
+    description: Description
+    view: Voir
+    close: Fermer
+    back: Retour
+    expand: Déplier
+    collapse: Replier
+    select_placeholder: Sélectionner…
+    no_options: Aucun élément disponible
+    no_result: Aucun résultat
+    select_to_pick: Appuyez sur Entrée pour sélectionner
+    select_selected: Sélectionné
+    select_to_remove: Appuyez sur Entrée pour retirer
+    remove: Retirer
+    all: Tous
+    loadMore: Charger plus
+    send: Envoyer
+    next: Suivant
   pagination:
     previous: Précédent
     next: Suivant
+    results: '{from} à {to} sur {total} résultats'
+  media:
+    choose: Choisir une image
+    change: Changer
+    remove: Retirer
+    picker:
+      title: Choisir un média
+      search: Rechercher par nom ou alt…
+      allFolders: Tous les médias
+      rootFolder: Racine
+      empty: Aucun média trouvé
+      select: Sélectionner
+      addSelected: Ajouter la sélection
+      selectedCount: sélectionné(s)
+      in: Dans
+      items: résultats
+      dimensions: Dimensions
+      size: Taille
+      uploaded: Mis en ligne
+      folder: Dossier
+      alt: Texte alternatif
+      altPlaceholder: Décrivez l'image pour les lecteurs d'écran et le SEO
+      caption: Légende
+      captionPlaceholder: Légende affichée sous l'image
+      openInLibrary: Ouvrir dans la médiathèque
+      upload: Téléverser
+      dropHere: Déposer pour téléverser
+      subfolders: Sous-dossiers
+      files: Fichiers
+    filters:
+      all: Tous
+      image: Images
+      video: Vidéos
+      document: Documents
+  password:
+    criteria:
+      length: 8 caractères minimum
+      uppercase: Une lettre majuscule
+      number: Un chiffre
+      special: Un caractère spécial
+    errors:
+      too_short: Le mot de passe doit contenir au moins 8 caractères.
+      no_uppercase: Le mot de passe doit contenir au moins une majuscule.
+      no_number: Le mot de passe doit contenir au moins un chiffre.
+      no_special: Le mot de passe doit contenir au moins un caractère spécial.
+  comment:
+    title: Commentaires
+    form_title: Laisser un commentaire
+    name: Nom
+    email: Email
+    content: Commentaire
+    submit: Envoyer
+    success: Votre commentaire a été soumis et est en attente de modération.
+    empty: Aucun commentaire pour le moment.
+    reply: Répondre
+    react: Réagir
+  form:
+    submit: Envoyer
+    submitting: Envoi en cours…
+    success: 'Merci, votre message a bien été envoyé !'
+    error: Une erreur est survenue. Veuillez réessayer.
+    selectPlaceholder: Choisir…
+  locales:
+    fr: Français
+    en: English
+    es: Español
+    de: Deutsch

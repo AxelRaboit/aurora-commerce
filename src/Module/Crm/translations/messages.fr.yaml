@@ -20,7 +20,7 @@ backend:
     contacts: Contacts
     contacts_description: Carnet d'adresses des personnes liées à votre activité
     companies: Entreprises
-    companies_description: Fiches des entreprises clientes, prospects et partenaires
+    companies_description: 'Fiches des entreprises clientes, prospects et partenaires'
     deals: Affaires
     deals_description: Pipeline commercial et suivi des opportunités
     deals_kanban: Pipeline Kanban
@@ -59,20 +59,22 @@ backend:
       name: Nom
       namePlaceholder: Nom de l'entreprise
       industry: Secteur
-      industryPlaceholder: Ex. Logiciel, Conseil…
+      industryPlaceholder: 'Ex. Logiciel, Conseil…'
       website: Site web
-      websitePlaceholder: https://exemple.com
+      websitePlaceholder: 'https://exemple.com'
       phone: Téléphone
       phonePlaceholder: +33 1 23 45 67 89
       address: Adresse
       addressPlaceholder: Adresse complète
       contactLinked: Contact rattaché
       noContacts: Aucun contact rattaché.
-      deleteConfirm: 'Supprimer l''entreprise « {name} » ?'
+      deleteConfirm: "Supprimer l'entreprise « {name} » ?"
       deleteWarning: Cette action est irréversible.
       errors:
         name_required: Le nom est requis.
         website_invalid: Site web invalide.
+      listView: Vue liste
+      kanbanView: Vue Kanban
     contacts:
       add: Nouveau contact
       create: Créer le contact
@@ -87,7 +89,7 @@ backend:
       lastName: Nom
       lastNamePlaceholder: Nom de famille
       email: Email
-      emailPlaceholder: contact@exemple.com
+      emailPlaceholder: 'contact@exemple.com'
       phone: Téléphone
       phonePlaceholder: +33 1 23 45 67 89
       company: Entreprise
@@ -100,6 +102,9 @@ backend:
         first_name_required: Le prénom est requis.
         last_name_required: Le nom est requis.
         email_invalid: Email invalide.
+      updated: Contact mis à jour.
+      noContacts: Aucun contact lié à cette entreprise.
+      contactLinked: 'Sera lié à {name}'
     deals:
       add: Nouvelle affaire
       create: Créer l'affaire
@@ -117,7 +122,7 @@ backend:
       stage: Étape
       contact: Contact
       closingDate: Date de clôture
-      deleteConfirm: 'Supprimer l''affaire « {name} » ?'
+      deleteConfirm: "Supprimer l'affaire « {name} » ?"
       deleteWarning: Cette action est irréversible.
       errors:
         name_required: Le nom est requis.
@@ -128,6 +133,37 @@ backend:
         negotiation: Négociation
         won: Gagné
         lost: Perdu
+      created: Affaire créée.
+      deleted: Affaire supprimée.
+      listView_description: Affaires en tableau paginé.
+      kanbanView_description: 'Affaires organisées par étape, déplaçables.'
+      company: Entreprise
+      noContacts: Aucun contact lié à cette entreprise.
+      contactLinked: 'Sera lié à {name}'
+  agencies:
+    title: Agences
+    new: Nouvelle agence
+    empty: Aucune agence.
+    searchPlaceholder: Rechercher une agence…
+    name: Nom
+    namePlaceholder: Nom de l'agence
+    edit_title: 'Modifier {name}'
+    deleteConfirm: "Supprimer l'agence {name} ?"
+    errors:
+      name_required: Le nom est requis.
+      name_too_long: Le nom ne peut pas dépasser 150 caractères.
+  services:
+    title: Services
+    new: Nouveau service
+    empty: Aucun service.
+    searchPlaceholder: Rechercher un service…
+    name: Nom
+    namePlaceholder: Nom du service
+    edit_title: 'Modifier {name}'
+    deleteConfirm: 'Supprimer le service {name} ?'
+    errors:
+      name_required: Le nom est requis.
+      name_too_long: Le nom ne peut pas dépasser 150 caractères.
 crm:
   mail:
     subject_contact_new: Nouveau contact créé
@@ -135,7 +171,7 @@ crm:
     subject_deal_lost: Deal perdu
     contact:
       heading: Nouveau contact
-      intro: 'Un nouveau contact vient d''être ajouté dans le CRM.'
+      intro: Un nouveau contact vient d'être ajouté dans le CRM.
       name: Nom
       email: Email
       phone: Téléphone
@@ -143,7 +179,7 @@ crm:
     deal:
       heading_won: 🎉 Deal gagné
       heading_lost: Deal perdu
-      intro_won: 'Le deal {name} vient d''être gagné !'
+      intro_won: "Le deal {name} vient d'être gagné !"
       intro_lost: 'Le deal {name} a été marqué comme perdu.'
       name: Nom du deal
       value: Valeur

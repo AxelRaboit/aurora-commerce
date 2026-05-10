@@ -1,12 +1,8 @@
 import { createI18n } from "vue-i18n";
 import { deepMerge } from "@/shared/utils/data/deepMerge.js";
 
-// Manual JS sources (Vue-only keys: admin form labels, validation messages, etc.).
-import frSource from "@/locales/source/fr.js";
-import enSource from "@/locales/source/en.js";
-
 // Generated from translations/messages.{locale}.yaml via `php bin/console app:translations:dump-js`.
-// Shared keys (used in both Twig and Vue) live there — single source of truth on the YAML side.
+// Single source of truth for all Vue + Twig translations.
 import frYaml from "@/locales/generated/fr.json";
 import enYaml from "@/locales/generated/en.json";
 
@@ -21,10 +17,9 @@ const clientEn =
     Object.entries(clientLocales).find(([k]) => k.endsWith("/en.js"))?.[1]
         ?.default ?? {};
 
-// YAML wins on conflict so updates to messages.yaml propagate without touching JS sources.
 // Client wins last so custom modules can override or extend any key.
-const fr = deepMerge(deepMerge(frSource, frYaml), clientFr);
-const en = deepMerge(deepMerge(enSource, enYaml), clientEn);
+const fr = deepMerge(frYaml, clientFr);
+const en = deepMerge(enYaml, clientEn);
 
 export function createAppI18n(locale = "fr") {
     return createI18n({

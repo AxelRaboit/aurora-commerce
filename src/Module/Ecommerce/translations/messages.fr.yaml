@@ -35,7 +35,7 @@ backend:
     listings: Boutique
     listings_description: Articles publiés sur la boutique en ligne et leur stock
     orders: Commandes
-    orders_description: Commandes des clients, statuts et paiements
+    orders_description: 'Commandes des clients, statuts et paiements'
   ecommerce:
     orders:
       refund:
@@ -56,11 +56,85 @@ backend:
         delivered: Livrée
         cancelled: Annulée
         refunded: Remboursée
+      title: Commande
+      empty: Aucune commande pour l'instant.
+      searchPlaceholder: 'Rechercher par numéro, e-mail ou nom…'
+      number: Numéro
+      customer: Client
+      date: Date
+      status_col: Statut
+      total: Total
+      items: article(s)
+      shipping: Livraison
+      fulfillment: Fourniture
+      no_shipping_required: Aucune livraison requise (produit numérique).
+      notes: Notes
+      product: Produit
+      reference: Référence
+      quantity: Quantité
+      subtotal: Sous-total
+      timeline: Historique
+      no_activity: Aucune activité enregistrée.
+      tabs:
+        all: Toutes
+      actions:
+        title: Actions
+        markShipped: Marquer comme expédiée
+        markDelivered: Marquer comme livrée
+        markFulfilled: Marquer comme fournie
+        cancel: Annuler la commande
+        confirm: 'Confirmer : {label} ?'
+        no_transitions: Aucune transition disponible.
+        transition_success: Statut mis à jour.
+        you: Vous
+      activity:
+        created: Commande créée
+        paid: Paiement reçu
+        shipped: Commande expédiée
+        delivered: Commande livrée
+        cancelled: Commande annulée
     listings:
       errors:
         slug_taken: Ce slug est déjà utilisé pour un autre listing.
         product_already_listed: Ce produit a déjà un listing dans la boutique.
         product_not_found: Produit introuvable.
+        product_required: Sélectionne un produit.
+        slug_required: Le slug est requis.
+        slug_invalid: 'Slug invalide (lettres minuscules, chiffres, tirets).'
+      created: Listing créé.
+      updated: Listing mis à jour.
+      deleted: Listing supprimé.
+      add: Ajouter un listing
+      create: Nouveau listing
+      edit: 'Modifier {name}'
+      empty: Aucun listing.
+      searchPlaceholder: 'Rechercher par titre, slug ou référence…'
+      title: Titre
+      slug: Slug
+      slugPlaceholder: 'ex : ma-belle-chaise'
+      product: Produit lié
+      selectProduct: Sélectionner un produit…
+      marketingTitle: Titre marketing (optionnel)
+      marketingTitlePlaceholder: Surcharge le nom du produit
+      marketingDescription: Description marketing
+      marketingDescriptionPlaceholder: 'Description longue, mise en avant des avantages…'
+      featuredImage: Image principale
+      chooseImage: Choisir une image
+      featuredImageHint: Image marketing spécifique au listing.
+      productImageHint: Image héritée du produit.
+      featuredImageOverrideHint: Optionnel — surcharge l'image du produit pour la fiche shop.
+      price: Prix
+      visibility: Visibilité
+      visible: Visible
+      hidden: Masqué
+      visibleOnShop: Visible sur la boutique
+      seo: SEO
+      seoTitle: Titre SEO
+      seoDescription: Description SEO
+      frontUrl: URL publique
+      linkedProduct: Produit lié
+      deleteConfirm: 'Supprimer le listing « {name} » ?'
+      deleteWarning: "Le produit lié n'est pas supprimé, seulement la fiche boutique."
 ecommerce:
   mail:
     subject:
@@ -78,15 +152,15 @@ ecommerce:
       cta_view: Voir ma commande
     paid:
       subject: Confirmation de commande
-      heading: Merci pour votre commande !
+      heading: 'Merci pour votre commande !'
       greeting: 'Bonjour {name},'
       intro: 'Votre commande {number} a bien été enregistrée chez {siteName}. Vous trouverez ci-dessous le récapitulatif.'
-      support: 'Pour toute question, n''hésitez pas à nous contacter en réponse à ce message.'
+      support: "Pour toute question, n'hésitez pas à nous contacter en réponse à ce message."
     shipped:
       subject: Votre commande a été expédiée
       heading: Votre commande est en route
       greeting: 'Bonjour {name},'
-      intro: 'Votre commande {number} vient d''être expédiée.'
+      intro: "Votre commande {number} vient d'être expédiée."
     cancelled:
       subject: Annulation de votre commande
       heading: Commande annulée
@@ -98,7 +172,7 @@ ecommerce:
     admin_new:
       subject: Nouvelle commande payée
       heading: Nouvelle commande
-      intro: 'Une nouvelle commande {number} vient d''être payée.'
+      intro: "Une nouvelle commande {number} vient d'être payée."
       cta: Voir la commande dans l''admin
     refund:
       subject: Remboursement de votre commande
@@ -111,7 +185,7 @@ ecommerce:
       original_total: Total initial
       delay: Le remboursement apparaîtra sur votre compte bancaire sous 5 à 10 jours ouvrés.
       cta: Voir ma commande
-      support: 'Pour toute question, n''hésitez pas à nous contacter en réponse à ce message.'
+      support: "Pour toute question, n'hésitez pas à nous contacter en réponse à ce message."
 frontend:
   shop:
     title: Boutique
@@ -149,7 +223,7 @@ frontend:
     summary: Récapitulatif
     confirm: Confirmer et payer
     payment: Paiement
-    demo_card_hint: "Mode démo — utilisez la carte test : 4242 4242 4242 4242 · exp. 12/34 · CVC 123"
+    demo_card_hint: 'Mode démo — utilisez la carte test : 4242 4242 4242 4242 · exp. 12/34 · CVC 123'
     processing: Traitement en cours…
     payment_stub: Mode démo — aucun paiement réel n'est effectué.
     digital_delivery: Livraison numérique
@@ -165,7 +239,7 @@ frontend:
       country_required: Le pays est requis.
   order:
     title: Commande
-    thanks: Merci pour votre commande !
+    thanks: 'Merci pour votre commande !'
     confirmation_intro: 'Votre commande %number% a bien été enregistrée. Un email de confirmation va vous être envoyé.'
     number: Numéro
     status: Statut
