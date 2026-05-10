@@ -149,7 +149,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
         <!-- View modal -->
-        <AppModal :show="!!viewingEmployee" :title="viewingEmployee?.fullName ?? ''" v-on:close="viewingEmployee = null">
+        <AppModal :show="!!viewingEmployee" :title="viewingEmployee?.fullName ?? ''" :closeable="false" v-on:close="viewingEmployee = null">
             <dl v-if="viewingEmployee" class="space-y-3">
                 <div v-if="viewingEmployee.jobTitle" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
                     <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.jobTitle') }}</dt>
@@ -207,7 +207,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </AppModal>
 
         <!-- Edit / Create modal -->
-        <AppModal :show="modalOpen" :title="editingEmployee ? editingEmployee.fullName : t('backend.employees.add')" v-on:close="closeModal">
+        <AppModal :show="modalOpen" :title="editingEmployee ? editingEmployee.fullName : t('backend.employees.add')" :closeable="false" v-on:close="closeModal">
             <form class="space-y-4" v-on:submit.prevent="submit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

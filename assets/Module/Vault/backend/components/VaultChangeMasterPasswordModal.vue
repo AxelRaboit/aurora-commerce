@@ -34,7 +34,13 @@ const title = computed(() => props.step === 3 ? t('vault.change_password.process
 </script>
 
 <template>
-    <AppModal :show="show" max-width="sm" :title="title" v-on:close="emit('close')">
+    <AppModal
+        :show="show"
+        max-width="sm"
+        :title="title"
+        :closeable="false"
+        v-on:close="emit('close')"
+    >
         <div class="space-y-4">
             <template v-if="step === 1">
                 <p class="text-sm text-secondary">{{ t('vault.change_password.step1_hint') }}</p>

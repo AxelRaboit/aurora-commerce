@@ -151,7 +151,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.ecommerce.listings.create')" v-on:close="showCreate = false">
+        <AppModal :show="showCreate" :title="t('backend.ecommerce.listings.create')" :closeable="false" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppSelect
                     v-model="newListing.productId"
@@ -194,7 +194,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.ecommerce.listings.edit', { name: editingListing?.displayTitle ?? '' })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.slug"

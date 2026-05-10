@@ -154,7 +154,13 @@ onMounted(() => {
             </div>
         </AppModal>
 
-        <AppModal :show="users.showCreateModal.value" max-width="md" :title="t('backend.users.add')" v-on:close="users.showCreateModal.value = false">
+        <AppModal
+            :show="users.showCreateModal.value"
+            max-width="md"
+            :title="t('backend.users.add')"
+            :closeable="false"
+            v-on:close="users.showCreateModal.value = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="users.submitCreate">
                 <AppInput
                     v-model="users.newUser.value.name"
@@ -189,7 +195,13 @@ onMounted(() => {
             </form>
         </AppModal>
 
-        <AppModal :show="users.showEditModal.value" max-width="md" :title="t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' })" v-on:close="users.closeEdit">
+        <AppModal
+            :show="users.showEditModal.value"
+            max-width="md"
+            :title="t('backend.users.edit_title', { name: users.editingUser.value?.name ?? '' })"
+            :closeable="false"
+            v-on:close="users.closeEdit"
+        >
             <form class="space-y-4" v-on:submit.prevent="users.submitEdit">
                 <AppInput
                     v-model="users.editUserForm.value.name"

@@ -200,7 +200,13 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="inviteModal.open" max-width="md" :title="t('backend.users.invite')" v-on:close="inviteModal.open = false">
+        <AppModal
+            :show="inviteModal.open"
+            max-width="md"
+            :title="t('backend.users.invite')"
+            :closeable="false"
+            v-on:close="inviteModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitInvite">
                 <AppInput
                     v-model="inviteForm.name"
@@ -323,7 +329,13 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
             </template>
         </AppModal>
 
-        <AppModal :show="editModal.open" max-width="lg" :title="t('backend.users.edit_title', { name: editModal.editing?.name ?? '' })" v-on:close="editModal.open = false">
+        <AppModal
+            :show="editModal.open"
+            max-width="lg"
+            :title="t('backend.users.edit_title', { name: editModal.editing?.name ?? '' })"
+            :closeable="false"
+            v-on:close="editModal.open = false"
+        >
             <div class="flex items-center gap-4 py-3 border-b border-line/40">
                 <AppAvatar variant="solid" :name="editModal.editing?.name ?? ''" :photo-url="editModal.editing?.profilePhotoUrl ?? ''" :size="56" />
                 <div class="flex flex-col gap-1.5">

@@ -128,7 +128,7 @@ const onCoverChange = onGalleryCoverChange;
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('photo.galleries.create')" v-on:close="showCreate = false">
+        <AppModal :show="showCreate" :title="t('photo.galleries.create')" :closeable="false" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"
@@ -252,7 +252,7 @@ const onCoverChange = onGalleryCoverChange;
         </AppModal>
 
         <!-- Edit modal -->
-        <AppModal :show="showEdit" :title="t('photo.galleries.edit')" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('photo.galleries.edit')" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppImagePickerField
                     :label="t('photo.galleries.fields.coverMedia')"

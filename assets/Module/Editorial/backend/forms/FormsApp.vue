@@ -363,7 +363,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </div>
     </div>
 
-    <AppModal :show="showFieldModal" max-width="sm" :title="editingFieldId !== null ? t('backend.forms.editField') : t('backend.forms.addFieldTitle')" v-on:close="showFieldModal = false">
+    <AppModal
+        :show="showFieldModal"
+        max-width="sm"
+        :title="editingFieldId !== null ? t('backend.forms.editField') : t('backend.forms.addFieldTitle')"
+        :closeable="false"
+        v-on:close="showFieldModal = false"
+    >
         <div class="space-y-4">
             <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldType") }}</label>
@@ -442,7 +448,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </template>
     </AppModal>
 
-    <AppModal :show="showDeleteConfirm" max-width="sm" :title="t('backend.forms.deleteConfirmTitle')" v-on:close="showDeleteConfirm = false">
+    <AppModal
+        :show="showDeleteConfirm"
+        max-width="sm"
+        :title="t('backend.forms.deleteConfirmTitle')"
+        :closeable="false"
+        v-on:close="showDeleteConfirm = false"
+    >
         <p class="text-sm text-secondary">{{ t("backend.forms.deleteConfirmBody", { title: formTitle(selectedForm) }) }}</p>
         <template #footer>
             <AppModalFooter bordered>
@@ -454,7 +466,13 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         </template>
     </AppModal>
 
-    <AppModal :show="!!viewingSubmission" max-width="md" :title="t('backend.forms.viewSubmission')" v-on:close="viewingSubmission = null">
+    <AppModal
+        :show="!!viewingSubmission"
+        max-width="md"
+        :title="t('backend.forms.viewSubmission')"
+        :closeable="false"
+        v-on:close="viewingSubmission = null"
+    >
         <div class="space-y-3">
             <div class="flex flex-col gap-1">
                 <label class="text-xs text-secondary uppercase tracking-wide">{{ t("backend.forms.submittedAt") }}</label>

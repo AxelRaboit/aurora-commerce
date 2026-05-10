@@ -136,7 +136,7 @@ const actionLabel = (action) => {
             </ol>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: contact.fullName })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: contact.fullName })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput

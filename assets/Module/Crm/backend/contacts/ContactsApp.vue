@@ -134,7 +134,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.crm.contacts.create')" v-on:close="showCreate = false">
+        <AppModal :show="showCreate" :title="t('backend.crm.contacts.create')" :closeable="false" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
@@ -171,7 +171,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: editingContact?.fullName ?? '' })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.crm.contacts.edit', { name: editingContact?.fullName ?? '' })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput

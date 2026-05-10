@@ -140,7 +140,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.erp.products.create')" v-on:close="showCreate = false">
+        <AppModal :show="showCreate" :title="t('backend.erp.products.create')" :closeable="false" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newProduct.name"
@@ -198,7 +198,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: editingProduct?.name ?? '' })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: editingProduct?.name ?? '' })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.name" :label="t('backend.erp.products.name')" :error="editErrors.name" required />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

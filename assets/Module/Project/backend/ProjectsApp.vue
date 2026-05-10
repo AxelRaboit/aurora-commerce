@@ -576,7 +576,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </div>
 
         <!-- Create Project modal -->
-        <AppModal :show="showProjectModal" :title="t('backend.projects.add')" v-on:close="showProjectModal = false">
+        <AppModal :show="showProjectModal" :title="t('backend.projects.add')" :closeable="false" v-on:close="showProjectModal = false">
             <div class="space-y-4">
                 <AppInput
                     v-model="newProject.title"
@@ -642,7 +642,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Edit Project modal -->
-        <AppModal :show="showEditProjectModal" :title="t('shared.common.edit')" v-on:close="showEditProjectModal = false">
+        <AppModal :show="showEditProjectModal" :title="t('shared.common.edit')" :closeable="false" v-on:close="showEditProjectModal = false">
             <div class="space-y-4">
                 <AppInput
                     v-model="editProjectForm.title"
@@ -708,7 +708,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Create Task modal -->
-        <AppModal :show="showCreateTask" max-width="2xl" :title="t('backend.projects.task.add')" v-on:close="showCreateTask = false">
+        <AppModal
+            :show="showCreateTask"
+            max-width="2xl"
+            :title="t('backend.projects.task.add')"
+            :closeable="false"
+            v-on:close="showCreateTask = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="newTask.title"
@@ -785,7 +791,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Edit Task modal -->
-        <AppModal :show="showEditTask" max-width="2xl" :title="t('shared.common.edit')" v-on:close="showEditTask = false">
+        <AppModal
+            :show="showEditTask"
+            max-width="2xl"
+            :title="t('shared.common.edit')"
+            :closeable="false"
+            v-on:close="showEditTask = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="editTaskForm.title"
@@ -1164,7 +1176,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Create column modal -->
-        <AppModal :show="showCreateColumn" max-width="sm" :title="t('backend.projects.columns.add')" v-on:close="showCreateColumn = false">
+        <AppModal
+            :show="showCreateColumn"
+            max-width="sm"
+            :title="t('backend.projects.columns.add')"
+            :closeable="false"
+            v-on:close="showCreateColumn = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="newColumn.label"
@@ -1183,7 +1201,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Rename column modal -->
-        <AppModal :show="showRenameColumn" max-width="sm" :title="t('backend.projects.columns.rename')" v-on:close="showRenameColumn = false">
+        <AppModal
+            :show="showRenameColumn"
+            max-width="sm"
+            :title="t('backend.projects.columns.rename')"
+            :closeable="false"
+            v-on:close="showRenameColumn = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="renameForm.label"
@@ -1214,7 +1238,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Labels manager -->
-        <AppModal :show="labelsManage.showLabelsModal.value" max-width="md" :title="t('backend.projects.labels.manage')" v-on:close="labelsManage.showLabelsModal.value = false">
+        <AppModal
+            :show="labelsManage.showLabelsModal.value"
+            max-width="md"
+            :title="t('backend.projects.labels.manage')"
+            :closeable="false"
+            v-on:close="labelsManage.showLabelsModal.value = false"
+        >
             <div class="space-y-4">
                 <ul v-if="(activeProject?.labels ?? []).length" class="space-y-1">
                     <li
@@ -1284,7 +1314,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Sprints manager -->
-        <AppModal :show="sprintsManage.showSprintsModal.value" max-width="md" :title="t('backend.projects.sprints.manage')" v-on:close="sprintsManage.showSprintsModal.value = false">
+        <AppModal
+            :show="sprintsManage.showSprintsModal.value"
+            max-width="md"
+            :title="t('backend.projects.sprints.manage')"
+            :closeable="false"
+            v-on:close="sprintsManage.showSprintsModal.value = false"
+        >
             <div class="space-y-4">
                 <ul v-if="(activeProject?.sprints ?? []).length" class="space-y-1">
                     <li
@@ -1358,7 +1394,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         </AppModal>
 
         <!-- Save view modal -->
-        <AppModal :show="savedViews.showSaveModal.value" max-width="sm" :title="t('backend.projects.savedViews.save')" v-on:close="savedViews.showSaveModal.value = false">
+        <AppModal
+            :show="savedViews.showSaveModal.value"
+            max-width="sm"
+            :title="t('backend.projects.savedViews.save')"
+            :closeable="false"
+            v-on:close="savedViews.showSaveModal.value = false"
+        >
             <div class="space-y-4">
                 <AppInput
                     v-model="savedViews.newViewName.value"

@@ -161,7 +161,13 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </div>
         </main>
 
-        <AppModal :show="postTypeModal.open" max-width="lg" :title="postTypeModal.editing ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')" v-on:close="postTypeModal.open = false">
+        <AppModal
+            :show="postTypeModal.open"
+            max-width="lg"
+            :title="postTypeModal.editing ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')"
+            :closeable="false"
+            v-on:close="postTypeModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitPostType">
                 <AppInput
                     v-model="postTypeForm.slug"
@@ -234,7 +240,13 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             </form>
         </AppModal>
 
-        <AppModal :show="fieldModal.open" max-width="lg" :title="fieldModal.editing ? t('backend.postTypes.fields.edit') : t('backend.postTypes.fields.add')" v-on:close="fieldModal.open = false">
+        <AppModal
+            :show="fieldModal.open"
+            max-width="lg"
+            :title="fieldModal.editing ? t('backend.postTypes.fields.edit') : t('backend.postTypes.fields.add')"
+            :closeable="false"
+            v-on:close="fieldModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitField">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput

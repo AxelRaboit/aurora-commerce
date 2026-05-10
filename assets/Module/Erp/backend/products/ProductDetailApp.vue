@@ -119,7 +119,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             </template>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: product.name })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.erp.products.edit', { name: product.name })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"

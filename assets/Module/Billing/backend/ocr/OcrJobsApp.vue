@@ -131,7 +131,13 @@ onMounted(startPolling);
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="!!errorJob" max-width="md" :title="`${t('backend.billing.ocr.errorLog')} — #${errorJob?.id}`" v-on:close="errorJob = null">
+        <AppModal
+            :show="!!errorJob"
+            max-width="md"
+            :title="`${t('backend.billing.ocr.errorLog')} — #${errorJob?.id}`"
+            :closeable="false"
+            v-on:close="errorJob = null"
+        >
             <pre class="text-xs text-secondary bg-surface-2 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap break-all">{{ errorJob?.error ?? t('backend.billing.ocr.noErrorLog') }}</pre>
             <template #footer>
                 <AppModalFooter>

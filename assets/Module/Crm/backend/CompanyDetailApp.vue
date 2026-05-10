@@ -151,7 +151,7 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </template>
         </div>
 
-        <AppModal :show="showEdit" :title="t('backend.crm.companies.edit', { name: company.name })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.crm.companies.edit', { name: company.name })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -184,7 +184,7 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </template>
         </AppModal>
     </div>
-    <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" v-on:close="showCreateContact = false">
+    <AppModal :show="showCreateContact" :title="t('backend.crm.contacts.create')" :closeable="false" v-on:close="showCreateContact = false">
         <form class="space-y-4" v-on:submit.prevent="submitContact">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <AppInput

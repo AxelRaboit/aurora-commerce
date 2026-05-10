@@ -72,7 +72,13 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             </table>
         </div>
 
-        <AppModal :show="editModal.open" max-width="sm" :title="editModal.service ? t('backend.services.edit_title', { name: editModal.service.name }) : t('backend.services.new')" v-on:close="editModal.open = false">
+        <AppModal
+            :show="editModal.open"
+            max-width="sm"
+            :title="editModal.service ? t('backend.services.edit_title', { name: editModal.service.name }) : t('backend.services.new')"
+            :closeable="false"
+            v-on:close="editModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"

@@ -39,7 +39,7 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
 </script>
 
 <template>
-    <AppModal :show="show" :title="title || t('vault.entries.' + mode)" v-on:close="emit('close')">
+    <AppModal :show="show" :title="title || t('vault.entries.' + mode)" :closeable="false" v-on:close="emit('close')">
         <form class="space-y-4" v-on:submit.prevent="emit('submit')">
             <div class="flex items-center gap-3">
                 <AppButton

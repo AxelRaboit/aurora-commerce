@@ -115,7 +115,13 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             </div>
         </div>
 
-        <AppModal :show="createModal.open" max-width="md" :title="t('backend.themes.new')" v-on:close="createModal.open = false">
+        <AppModal
+            :show="createModal.open"
+            max-width="md"
+            :title="t('backend.themes.new')"
+            :closeable="false"
+            v-on:close="createModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="createForm.name"
@@ -144,7 +150,13 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             </template>
         </AppModal>
 
-        <AppModal :show="editModal.open" max-width="lg" :title="t('backend.themes.edit')" v-on:close="editModal.open = false">
+        <AppModal
+            :show="editModal.open"
+            max-width="lg"
+            :title="t('backend.themes.edit')"
+            :closeable="false"
+            v-on:close="editModal.open = false"
+        >
             <form class="space-y-5" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"
@@ -230,7 +242,13 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
             </template>
         </AppModal>
 
-        <AppModal :show="!!deletingTheme" max-width="sm" :title="t('backend.themes.deleteConfirm', { name: deletingTheme?.name ?? '' })" v-on:close="deletingTheme = null">
+        <AppModal
+            :show="!!deletingTheme"
+            max-width="sm"
+            :title="t('backend.themes.deleteConfirm', { name: deletingTheme?.name ?? '' })"
+            :closeable="false"
+            v-on:close="deletingTheme = null"
+        >
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="deletingTheme = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="confirmDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>

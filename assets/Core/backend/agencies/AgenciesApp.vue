@@ -72,7 +72,13 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             </table>
         </div>
 
-        <AppModal :show="editModal.open" max-width="sm" :title="editModal.agency ? t('backend.agencies.edit_title', { name: editModal.agency.name }) : t('backend.agencies.new')" v-on:close="editModal.open = false">
+        <AppModal
+            :show="editModal.open"
+            max-width="sm"
+            :title="editModal.agency ? t('backend.agencies.edit_title', { name: editModal.agency.name }) : t('backend.agencies.new')"
+            :closeable="false"
+            v-on:close="editModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"

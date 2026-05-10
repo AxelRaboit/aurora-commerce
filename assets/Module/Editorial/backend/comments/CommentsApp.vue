@@ -175,7 +175,13 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="!!viewingComment" max-width="md" :title="t('backend.comments.view')" v-on:close="viewingComment = null">
+        <AppModal
+            :show="!!viewingComment"
+            max-width="md"
+            :title="t('backend.comments.view')"
+            :closeable="false"
+            v-on:close="viewingComment = null"
+        >
             <div class="space-y-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.comments.name') }}</label>
@@ -224,7 +230,13 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
             </template>
         </AppModal>
 
-        <AppModal :show="pendingToggleModeration" max-width="sm" :title="isModerationEnabled ? t('backend.comments.moderationDisableConfirm') : t('backend.comments.moderationEnableConfirm')" v-on:close="pendingToggleModeration = false">
+        <AppModal
+            :show="pendingToggleModeration"
+            max-width="sm"
+            :title="isModerationEnabled ? t('backend.comments.moderationDisableConfirm') : t('backend.comments.moderationEnableConfirm')"
+            :closeable="false"
+            v-on:close="pendingToggleModeration = false"
+        >
             <p class="text-sm text-secondary">
                 {{ isModerationEnabled ? t('backend.comments.moderationDisableConfirmDesc') : t('backend.comments.moderationEnableConfirmDesc') }}
             </p>
@@ -238,7 +250,13 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingSpam" max-width="sm" :title="t('backend.comments.spamConfirm')" v-on:close="pendingSpam = null">
+        <AppModal
+            :show="!!pendingSpam"
+            max-width="sm"
+            :title="t('backend.comments.spamConfirm')"
+            :closeable="false"
+            v-on:close="pendingSpam = null"
+        >
             <p class="text-sm text-secondary">{{ t('backend.comments.spamConfirmDesc') }}</p>
             <template #footer>
                 <AppModalFooter>

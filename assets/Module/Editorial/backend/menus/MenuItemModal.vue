@@ -49,7 +49,13 @@ function close() { emit("close"); }
 </script>
 
 <template>
-    <AppModal :show="show" max-width="lg" :title="editing ? t('backend.menus.editItem') : t('backend.menus.addItem')" v-on:close="close">
+    <AppModal
+        :show="show"
+        max-width="lg"
+        :title="editing ? t('backend.menus.editItem') : t('backend.menus.addItem')"
+        :closeable="false"
+        v-on:close="close"
+    >
         <form class="space-y-4" v-on:submit.prevent="save">
             <AppMultiselect
                 v-model="form.targetType"

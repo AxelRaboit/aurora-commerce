@@ -668,7 +668,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </form>
         </AppModal>
 
-        <AppModal :show="folderModal.open" max-width="md" :title="folderModal.editing ? t('backend.media.editFolder') : t('backend.media.createFolder')" v-on:close="folderModal.open = false">
+        <AppModal
+            :show="folderModal.open"
+            max-width="md"
+            :title="folderModal.editing ? t('backend.media.editFolder') : t('backend.media.createFolder')"
+            :closeable="false"
+            v-on:close="folderModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitFolder">
                 <AppInput
                     v-model="folderForm.name"
@@ -693,7 +699,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <AppModal :show="pendingBulkDelete" max-width="sm" :title="t('backend.media.bulkDeleteConfirm', { count: selectedIds.size })" v-on:close="pendingBulkDelete = false">
+        <AppModal
+            :show="pendingBulkDelete"
+            max-width="sm"
+            :title="t('backend.media.bulkDeleteConfirm', { count: selectedIds.size })"
+            :closeable="false"
+            v-on:close="pendingBulkDelete = false"
+        >
             <p class="text-sm text-secondary">{{ t("backend.media.bulkDeleteConfirmDesc") }}</p>
             <template #footer>
                 <AppModalFooter>

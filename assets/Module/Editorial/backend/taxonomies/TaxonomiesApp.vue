@@ -256,7 +256,13 @@ const parentOptions = computed(() => {
             </div>
         </main>
 
-        <AppModal :show="taxonomyModal.open" max-width="lg" :title="taxonomyModal.editing ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')" v-on:close="taxonomyModal.open = false">
+        <AppModal
+            :show="taxonomyModal.open"
+            max-width="lg"
+            :title="taxonomyModal.editing ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')"
+            :closeable="false"
+            v-on:close="taxonomyModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitTaxonomy">
                 <AppInput
                     v-model="taxonomyForm.slug"
@@ -331,7 +337,13 @@ const parentOptions = computed(() => {
             </form>
         </AppModal>
 
-        <AppModal :show="termModal.open" max-width="md" :title="termModal.editing ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')" v-on:close="termModal.open = false">
+        <AppModal
+            :show="termModal.open"
+            max-width="md"
+            :title="termModal.editing ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')"
+            :closeable="false"
+            v-on:close="termModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitTerm">
                 <div v-if="selected?.hierarchical">
                     <AppMultiselect

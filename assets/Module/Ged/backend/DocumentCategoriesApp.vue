@@ -78,7 +78,7 @@ const {
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
 
-        <AppModal :show="showCreate" :title="t('backend.ged.categories.create')" v-on:close="showCreate = false">
+        <AppModal :show="showCreate" :title="t('backend.ged.categories.create')" :closeable="false" v-on:close="showCreate = false">
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
                 <AppInput
                     v-model="newCategory.name"
@@ -97,7 +97,7 @@ const {
             </template>
         </AppModal>
 
-        <AppModal :show="showEdit" :title="t('backend.ged.categories.edit', { name: editingCategory?.name ?? '' })" v-on:close="showEdit = false">
+        <AppModal :show="showEdit" :title="t('backend.ged.categories.edit', { name: editingCategory?.name ?? '' })" :closeable="false" v-on:close="showEdit = false">
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput
                     v-model="editForm.name"

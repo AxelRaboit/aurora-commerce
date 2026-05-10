@@ -53,7 +53,13 @@ const { formatDateNumeric } = useDateFormat();
 <template>
     <div class="space-y-4">
         <!-- Credit note modal -->
-        <AppModal :show="showCreditNoteModal" max-width="sm" :title="t('backend.billing.invoices.show.createCreditNote')" v-on:close="showCreditNoteModal = false">
+        <AppModal
+            :show="showCreditNoteModal"
+            max-width="sm"
+            :title="t('backend.billing.invoices.show.createCreditNote')"
+            :closeable="false"
+            v-on:close="showCreditNoteModal = false"
+        >
             <p class="text-sm text-secondary mb-4">{{ t('backend.billing.invoices.show.creditNoteHelp') }}</p>
             <textarea
                 v-model="creditNoteReason"

@@ -76,7 +76,13 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             v-on:reorder-children="reorderItems"
         />
 
-        <AppModal :show="menuModal.open" max-width="md" :title="t('backend.menus.editMenu')" v-on:close="menuModal.open = false">
+        <AppModal
+            :show="menuModal.open"
+            max-width="md"
+            :title="t('backend.menus.editMenu')"
+            :closeable="false"
+            v-on:close="menuModal.open = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitMenu">
                 <AppInput v-model="menuForm.name" :label="t('backend.menus.name')" required />
                 <AppInput
