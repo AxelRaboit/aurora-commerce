@@ -190,6 +190,8 @@ patterns, location registries, etc.).
 > suffit pour que Doctrine, Twig et les traductions le découvrent
 > automatiquement. Seul `resolve_target_entities` est à renseigner
 > manuellement pour chaque entité du module.
+> **Doc + commit de référence** : [`docs/aurora-core/dev/add_module.md`](docs/aurora-core/dev/add_module.md)
+> — commit `167aafa` (PasswordGenerator) illustre la checklist complète.
 
 ---
 
