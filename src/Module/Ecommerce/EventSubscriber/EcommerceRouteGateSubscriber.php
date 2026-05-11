@@ -38,7 +38,7 @@ final readonly class EcommerceRouteGateSubscriber implements EventSubscriberInte
 
     public static function getSubscribedEvents(): array
     {
-        return [KernelEvents::REQUEST => ['onKernelRequest', 16]];
+        return [KernelEvents::REQUEST => ['onKernelRequest', 0]];
     }
 
     public function onKernelRequest(RequestEvent $event): void
