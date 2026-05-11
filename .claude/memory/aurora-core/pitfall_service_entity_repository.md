@@ -19,9 +19,9 @@ public function __construct(ManagerRegistry $registry)
 }
 ```
 
-Résultat : même si un client a défini `App\Entity\Agency` avec
+Résultat : même si un client a défini `App\Module\Core\Agency\Entity\Agency` avec
 `resolve_target_entities`, le repo continue de **query la table Aurora**
-(`core_agencies`) et non la table client (`client_agencies`).
+(`core_agencies`) et non la table client (`app_agencies`).
 
 C'est exactement le bug qu'on a découvert sur Agency au début du rollout :
 les agences éditées via l'admin client n'étaient pas trouvées car le repo
@@ -66,7 +66,7 @@ class AgencyRepository extends ResolveTargetEntityRepository
 Avec ce pattern :
 - Si pas de substitution : query `core_agencies` (table Aurora).
 - Si client a substitué via `resolve_target_entities` : query
-  `client_agencies` (ou autre).
+  `app_agencies` (ou autre table préfixée `app_`).
 
 ## État
 

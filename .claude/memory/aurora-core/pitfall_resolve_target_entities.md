@@ -54,18 +54,18 @@ Override le hook + déclarer dans `resolve_target_entities` (pour les
 relations Doctrine — c'est complémentaire) :
 
 ```php
-// App\Manager\AppAgencyManager
-class AppAgencyManager extends \Aurora\…\AgencyManager
+// App\Module\Core\Agency\Manager\AgencyManager
+class AgencyManager extends \Aurora\…\AgencyManager
 {
     protected function createAgency(): AgencyInterface
     {
-        return new \App\Entity\Agency();  // classe étendue
+        return new \App\Module\Core\Agency\Entity\Agency();  // classe étendue
     }
 }
 
-// App\AuroraBundle (pour les relations qui pointent vers Agency)
+// config/packages/doctrine.yaml → resolve_target_entities
 'resolve_target_entities' => [
-    \Aurora\…\AgencyInterface::class => \App\Entity\Agency::class,
+    \Aurora\…\AgencyInterface::class => \App\Module\Core\Agency\Entity\Agency::class,
 ];
 ```
 

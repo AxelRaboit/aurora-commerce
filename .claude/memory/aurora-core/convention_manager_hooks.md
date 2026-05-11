@@ -15,7 +15,7 @@ protected function createOrderLine(): OrderLineInterface { return new OrderLine(
 
 Le client override pour retourner sa classe étendue :
 ```php
-protected function createAgency(): AgencyInterface { return new App\Entity\Agency(); }
+protected function createAgency(): AgencyInterface { return new App\Module\Core\Agency\Entity\Agency(); }
 ```
 
 ### 2. Hydratation — `applyInput(<Name>Interface, <Name>InputInterface): void`
