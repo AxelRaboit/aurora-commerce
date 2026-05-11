@@ -10,14 +10,30 @@ Ce guide-ci se concentre sur **ce que le dev client doit écrire**.
 
 ---
 
-## Vue d'ensemble des 5 couches
+## Structure : tout en module
+
+Tout le code client — y compris les extensions d'entités Aurora — vit sous
+`src/Module/`. Le chemin **miroir** le namespace Aurora :
+
+| Namespace Aurora source | Chemin client |
+|---|---|
+| `Aurora\Core\Agency\…` | `src/Module/Core/Agency/…` |
+| `Aurora\Module\Crm\Deal\…` | `src/Module/Crm/Deal/…` |
+| `Aurora\Module\Billing\Invoice\…` | `src/Module/Billing/Invoice/…` |
+
+Il n'y a **pas** de dossiers plats `src/Entity/`, `src/Dto/`, `src/Manager/`,
+`src/Serializer/`. Un seul mapping Doctrine couvre tout `src/Module/`.
+
+---
+
+## Vue d'ensemble des 5 couches (exemple Agency)
 
 | Couche | Fichier client | Ce qu'on override |
 |---|---|---|
-| 1. Entité | `src/Entity/Agency.php` | Ajoute colonnes, déclare la table client |
-| 2. DTO | `src/Dto/AgencyInput.php` + `AgencyInputFactory.php` | Ajoute propriétés + parsing |
-| 3. Manager | `src/Manager/AgencyManager.php` | Hook `createAgency()` + `applyInput()` |
-| 4. Serializer | `src/Serializer/AgencySerializer.php` | Ajoute champs dans le payload JSON |
+| 1. Entité | `src/Module/Core/Agency/Entity/Agency.php` | Ajoute colonnes, déclare la table client |
+| 2. DTO | `src/Module/Core/Agency/Dto/AgencyInput.php` + `AgencyInputFactory.php` | Ajoute propriétés + parsing |
+| 3. Manager | `src/Module/Core/Agency/Manager/AgencyManager.php` | Hook `createAgency()` + `applyInput()` |
+| 4. Serializer | `src/Module/Core/Agency/Serializer/AgencySerializer.php` | Ajoute champs dans le payload JSON |
 | 5. Vue | `assets/client/Overrides/backend/agencies/AgenciesApp.vue` | Slots `extra-*` |
 
 ---
@@ -28,14 +44,15 @@ Ce guide-ci se concentre sur **ce que le dev client doit écrire**.
 ajouter sa propre séquence PK.
 
 ```php
-// src/Entity/Agency.php
-namespace App\Entity;
+// src/Module/Core/Agency/Entity/Agency.php
+namespace App\Module\Core\Agency\Entity;
 
 use Aurora\Core\Agency\Entity\AbstractAgency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: AgencyRepository::class)]
 #[ORM\Table(name: 'app_agencies')]
 class Agency extends AbstractAgency implements AgencyInterface
 {
@@ -60,7 +77,7 @@ Déclarer la substitution dans `config/packages/doctrine.yaml` :
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
 ```
 
 Générer la migration :
@@ -78,8 +95,8 @@ make migrate     # l'applique
 parser le champ depuis le tableau de données.
 
 ```php
-// src/Dto/AgencyInput.php
-namespace App\Dto;
+// src/Module/Core/Agency/Dto/AgencyInput.php
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -97,8 +114,8 @@ class AgencyInput extends AuroraAgencyInput
 ```
 
 ```php
-// src/Dto/AgencyInputFactory.php
-namespace App\Dto;
+// src/Module/Core/Agency/Dto/AgencyInputFactory.php
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
@@ -130,29 +147,33 @@ Surcharger `createAgency()` pour instancier l'entité cliente, et `applyInput()`
 pour hydrater le champ supplémentaire.
 
 ```php
-// src/Manager/AgencyManager.php
-namespace App\Manager;
+// src/Module/Core/Agency/Manager/AgencyManager.php
+namespace App\Module\Core\Agency\Manager;
 
-use App\Entity\Agency;
+use App\Module\Core\Agency\Dto\AgencyInput;
+use App\Module\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Manager\AgencyManager as AuroraAgencyManager;
 use Aurora\Core\Agency\Manager\AgencyManagerInterface;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]
 class AgencyManager extends AuroraAgencyManager
 {
+    #[Override]
     protected function createAgency(): AgencyInterface
     {
         return new Agency();
     }
 
+    #[Override]
     protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
     {
         parent::applyInput($agency, $input);
 
-        if ($agency instanceof Agency && $input instanceof \App\Dto\AgencyInput) {
+        if ($agency instanceof Agency && $input instanceof AgencyInput) {
             $agency->setCode($input->code);
         }
     }
@@ -169,24 +190,29 @@ class AgencyManager extends AuroraAgencyManager
 Surcharger `serialize()` pour ajouter le champ au payload JSON renvoyé au front.
 
 ```php
-// src/Serializer/AgencySerializer.php
-namespace App\Serializer;
+// src/Module/Core/Agency/Serializer/AgencySerializer.php
+namespace App\Module\Core\Agency\Serializer;
 
-use App\Entity\Agency;
+use App\Module\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
 use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencySerializerInterface::class)]
 class AgencySerializer extends AuroraAgencySerializer
 {
+    #[Override]
     public function serialize(AgencyInterface $agency): array
     {
-        return [
-            ...parent::serialize($agency),
-            'code' => $agency instanceof Agency ? $agency->getCode() : null,
-        ];
+        $data = parent::serialize($agency);
+
+        if ($agency instanceof Agency) {
+            $data['code'] = $agency->getCode();
+        }
+
+        return $data;
     }
 }
 ```
@@ -257,35 +283,15 @@ Créer le template Twig qui charge ce composant à la place de celui d'Aurora :
 
 ---
 
-## Déclarer la substitution dans services.yaml
-
-Vérifier que les services PSR-4 sont enregistrés dans `config/services.yaml` :
-
-```yaml
-App\Entity\:
-    resource: '../src/Entity/'
-
-App\Dto\:
-    resource: '../src/Dto/'
-
-App\Manager\:
-    resource: '../src/Manager/'
-
-App\Serializer\:
-    resource: '../src/Serializer/'
-```
-
----
-
 ## Vérifier que ça fonctionne
 
 ```bash
 # L'alias pointe sur la bonne classe ?
 make sf CMD="debug:container Aurora\Core\Agency\Manager\AgencyManagerInterface"
-# Doit afficher : App\Manager\AgencyManager
+# Doit afficher : App\Module\Core\Agency\Manager\AgencyManager
 
 make sf CMD="debug:container Aurora\Core\Agency\Dto\AgencyInputFactoryInterface"
-# Doit afficher : App\Dto\AgencyInputFactory
+# Doit afficher : App\Module\Core\Agency\Dto\AgencyInputFactory
 
 make cc       # vider le cache si besoin
 make ft       # tests verts
@@ -300,5 +306,4 @@ Voir la liste complète dans
 [`../aurora-core/dev/extending_aurora.md`](../aurora-core/dev/extending_aurora.md)
 (section "Préfixes réservés").
 
-Convention pour les préfixes client : ≥ 4 caractères, suffixe projet,
-ex: `CTRX`, `INTX`, `TRKP`.
+Convention pour les préfixes client : `seq_app_<entity>_id`.

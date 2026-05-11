@@ -33,6 +33,8 @@ client.
 
 ## Index — conventions côté client
 
+- [convention_module_structure.md](convention_module_structure.md) — tout
+  dans `src/Module/` (y compris extensions Aurora), chemin miroir du namespace
 - [convention_table_naming.md](convention_table_naming.md) — préfixer les
   tables `app_` et séquences `seq_app_*` (jamais `core_` ni `client_`)
 

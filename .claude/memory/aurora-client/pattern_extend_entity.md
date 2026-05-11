@@ -4,10 +4,13 @@
 
 Pour ajouter un champ à une entité Aurora (ex: `code` sur `Agency`), 4 étapes :
 
-1. Créer `App\Entity\<Name>` qui étend `Aurora\…\Abstract<Name>` et
-   `implements <Name>Interface`.
+1. Créer `App\Module\<Mirror>\<Name>\Entity\<Name>` qui étend
+   `Aurora\…\Abstract<Name>` et `implements <Name>Interface`.
+   Le chemin miroir reprend le namespace Aurora : une entité de
+   `Aurora\Core\Agency` va dans `src/Module/Core/Agency/Entity/`.
 2. Ajouter les colonnes Doctrine + getters/setters pour les champs custom.
-3. Inscrire dans `App\AuroraBundle::$resolve_target_entities`.
+3. Inscrire dans `config/packages/doctrine.yaml` →
+   `resolve_target_entities`.
 4. Migration Doctrine.
 
 ## Pourquoi
@@ -23,15 +26,18 @@ Pour ajouter un champ à une entité Aurora (ex: `code` sur `Agency`), 4 étapes
 
 ### 1. Entité concrète client
 
+Chemin : `src/Module/Core/Agency/Entity/Agency.php`
+(miroir du namespace Aurora `Aurora\Core\Agency`)
+
 ```php
-namespace App\Entity;
+namespace App\Module\Core\Agency\Entity;
 
 use Aurora\Core\Agency\Entity\AbstractAgency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use App\Repository\AppAgencyRepository;
+use Aurora\Core\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AppAgencyRepository::class)]
+#[ORM\Entity(repositoryClass: AgencyRepository::class)]
 #[ORM\Table(name: 'app_agencies')]
 class Agency extends AbstractAgency implements AgencyInterface
 {
@@ -58,33 +64,19 @@ class Agency extends AbstractAgency implements AgencyInterface
 ```
 
 **Notes** :
-- Sequence client préfixée `seq_app_*` pour éviter les collisions avec
-  `seq_core_*` Aurora.
-- Table préfixée `app_` (ex: `app_agencies`) pour éviter les collisions
-  avec les tables `core_*` Aurora.
-- `protected` sur les propriétés pour que le client puisse étendre encore
-  (rare mais possible).
+- Namespace client : `App\Module\<Mirror>\<Name>\Entity\<Name>`.
+- Sequence préfixée `seq_app_*`, table préfixée `app_`.
+- `protected` pour permettre une éventuelle sous-extension.
 
 ### 2. resolve_target_entities
 
-```php
-// src/AuroraBundle.php
-class AuroraBundle extends Bundle
-{
-    public function build(ContainerBuilder $container): void
-    {
-        parent::build($container);
+Dans `config/packages/doctrine.yaml` (pas dans `AuroraBundle.php`) :
 
-        $container->prependExtensionConfig('doctrine', [
-            'orm' => [
-                'resolve_target_entities' => [
-                    \Aurora\Core\Agency\Entity\AgencyInterface::class => \App\Entity\Agency::class,
-                    // … autres entités étendues
-                ],
-            ],
-        ]);
-    }
-}
+```yaml
+doctrine:
+    orm:
+        resolve_target_entities:
+            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
 ```
 
 ### 3. Migration
