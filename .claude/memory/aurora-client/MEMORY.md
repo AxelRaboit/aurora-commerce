@@ -30,6 +30,9 @@ client.
 - [pattern_add_custom_permissions.md](pattern_add_custom_permissions.md) —
   ajouter des permissions custom via `ModuleInterface` (auto-tag, groupage par
   module id, traduction obligatoire)
+- [pattern_add_module_toggle.md](pattern_add_module_toggle.md) — exposer
+  un module client (ex: Tracking) dans la modale "Accès aux modules par user"
+  via `ModuleToggleProviderInterface::getToggles()`
 
 ## Index — conventions côté client
 

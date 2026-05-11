@@ -48,6 +48,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 ### Décisions architecturales
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : 13 top-level + 24 sous-modules, cascade graph, consommateurs, convention clés sans `_enabled`
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`. Exemple : `UserAgencyServiceUpdatingEvent` + `HrEmployeeSyncListener`
+- [pattern_user_scoped_module_access.md](pattern_user_scoped_module_access.md) — `ModuleAccessChecker` central : global setting + per-user `disabled_modules` JSON + cascade. Tous les `*Context` y routent. Privilege `core.users.modules.manage` (dev+admin)
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`
