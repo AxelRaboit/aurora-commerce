@@ -74,7 +74,7 @@ class AgencyManager extends BaseAgencyManager
 ### 1. Oublier de override `createX()`
 
 Si `createAgency()` n'est pas override, le Manager Aurora fait `new
-\Aurora\…\Agency()` — la classe Aurora, pas `App\Entity\Agency`. Doctrine
+\Aurora\…\Agency()` — la classe Aurora, pas `App\Module\Core\Agency\Entity\Agency`. Doctrine
 persiste la classe Aurora et **les champs custom du client sont perdus
 silencieusement**.
 
@@ -103,7 +103,7 @@ Cf [pitfall_call_parent_apply_input.md](pitfall_call_parent_apply_input.md).
 
 `applyInput()` reçoit `AgencyInterface` + `AgencyInputInterface`. Pour
 accéder aux méthodes du DTO étendu (`$input->getCode()`), faire
-`instanceof App\Dto\AgencyInput`. Sinon PHPStan / l'analyseur statique
+`instanceof AppAgencyInput` (l'alias du `use` dans le même module). Sinon PHPStan / l'analyseur statique
 râle (pas de `getCode()` sur l'interface Aurora).
 
 ## Variante User-style

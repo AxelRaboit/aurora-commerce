@@ -48,7 +48,7 @@ class AgencyInput extends BaseAgencyInput
 **Note** : si le DTO étendu doit être consommé par du code qui type-hint
 `AgencyInputInterface`, on peut soit :
 - Étendre l'interface aussi (`AppAgencyInputInterface extends AgencyInputInterface`)
-- Ou utiliser `instanceof App\Dto\AgencyInput` quand on a besoin de
+- Ou utiliser `instanceof App\Module\Core\Agency\Dto\AgencyInput` quand on a besoin de
   `getCode()`.
 
 ### 2. Factory étendue
