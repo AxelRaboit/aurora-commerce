@@ -41,6 +41,11 @@ l'existence du module (action plateforme).
   `docs/aurora-core/dev/per_user_module_access.md` § 5.
 - Le user-level override ne peut **rien activer** qui ne soit pas déjà ON
   globalement. La cascade est appliquée en interne récursivement.
+- **Sanitization en écriture** : `UserManager::sanitizeDisabledModules()`
+  interroge `ModuleToggleRegistry` (pas l'enum directement) pour valider
+  les clés. C'est ce qui permet aux toggles client (`app_*`) d'être
+  persistés. Si on oublie ça, le save renvoie 200 mais la liste arrive
+  vide en DB.
 - Anti-lockout : `UserManager::updateDisabledModules()` exige
   `canActOn($actor, $target)` quand un actor est passé. Empêche un admin
   de masquer des modules à un dev.
@@ -52,7 +57,6 @@ l'existence du module (action plateforme).
 - VO + Interface : `src/Core/Module/ModuleToggle.php`, `ModuleToggleProviderInterface.php`
 - Helper enum → toggle : `ModuleParameterEnum::toToggle()`
 - Entité : `AbstractUser::$disabledModules` (JSON)
-- Migration : `migrations/Version20260511120000.php`
 - Privilege : `core.users.modules.manage` (déclaré dans `CoreModule`)
 - Controller endpoint : `POST /backend/users/{id}/disabled-modules`
 - UI : `UsersApp.vue` + `useUsersDisabledModules.js` composable

@@ -68,16 +68,16 @@ le module est masqué reçoit un 404 sur les routes du module concerné.
 ### Colonne `disabled_modules` sur `core_users`
 
 ```php
-/** @var list<string> ModuleParameterEnum values masked for this user */
+/** @var list<string> Toggle keys masked for this user (core enum + client toggles) */
 #[ORM\Column(type: 'json', options: ['default' => '[]'])]
 protected array $disabledModules = [];
 ```
 
-Chaque entrée est un `ModuleParameterEnum::value` (ex. `backend_crm_admin`).
-Les valeurs inconnues sont silencieusement filtrées par
-`UserManager::sanitizeDisabledModules()`.
-
-Migration : [`Version20260511120000`](../../../migrations/Version20260511120000.php).
+Chaque entrée est une clé de toggle déclarée dans le `ModuleToggleRegistry`
+(soit un `ModuleParameterEnum::value` ex. `backend_crm_admin`, soit une
+clé client ex. `app_tracking_admin`). Les valeurs non déclarées sont
+silencieusement filtrées par `UserManager::sanitizeDisabledModules()`,
+qui interroge le registry comme source de vérité.
 
 ### Pourquoi JSON et pas une table dédiée ?
 

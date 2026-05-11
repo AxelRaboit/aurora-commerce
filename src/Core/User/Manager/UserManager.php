@@ -9,12 +9,12 @@ use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Auth\Manager\EmailVerificationManagerInterface;
 use Aurora\Core\Auth\Manager\InvitationManagerInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Module\ModuleToggleRegistry;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
@@ -46,6 +46,7 @@ class UserManager implements UserManagerInterface
         protected readonly AgencyRepository $agencyRepository,
         protected readonly ServiceRepository $serviceRepository,
         protected readonly EventDispatcherInterface $eventDispatcher,
+        protected readonly ModuleToggleRegistry $moduleToggleRegistry,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -243,9 +244,11 @@ class UserManager implements UserManagerInterface
     }
 
     /**
-     * Filters the incoming list to known ModuleParameterEnum values, drops
-     * unknowns silently, and deduplicates. Callers are expected to pre-filter
-     * to strings (the controller does so via `array_filter(..., is_string(...))`).
+     * Filters the incoming list to toggles declared by the registry (core
+     * `ModuleParameterEnum` cases + any client module that implements
+     * `ModuleToggleProviderInterface`), drops unknowns silently and
+     * deduplicates. Callers are expected to pre-filter to strings (the
+     * controller does so via `array_filter(..., is_string(...))`).
      *
      * @param list<string> $disabledModules
      *
@@ -253,10 +256,7 @@ class UserManager implements UserManagerInterface
      */
     protected function sanitizeDisabledModules(array $disabledModules): array
     {
-        $known = [];
-        foreach (ModuleParameterEnum::cases() as $case) {
-            $known[$case->value] = true;
-        }
+        $known = $this->moduleToggleRegistry->getAll();
 
         $clean = [];
         foreach ($disabledModules as $entry) {
