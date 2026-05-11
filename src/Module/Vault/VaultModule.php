@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Vault\Service\VaultContext;
 
-final readonly class VaultModule implements ModuleInterface
+final readonly class VaultModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private VaultContext $vaultContext) {}
 
@@ -56,6 +58,15 @@ final readonly class VaultModule implements ModuleInterface
                 new NavItem('backend_vault', 'backend.nav.vault', 'vault', descriptionKey: 'backend.nav.vault_description'),
                 new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description'),
             ], priority: 20),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::VaultEnabled->toToggle(),
+            ModuleParameterEnum::VaultSafeEnabled->toToggle(),
+            ModuleParameterEnum::VaultPasswordGeneratorEnabled->toToggle(),
         ];
     }
 }

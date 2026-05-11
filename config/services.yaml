@@ -99,6 +99,10 @@ services:
         arguments:
             $modules: !tagged_iterator aurora.module
 
+    Aurora\Core\Module\ModuleToggleRegistry:
+        arguments:
+            $modules: !tagged_iterator aurora.module
+
     Aurora\Core\Setting\View\ModulesViewBuilder:
         arguments:
             $modules: !tagged_iterator aurora.module

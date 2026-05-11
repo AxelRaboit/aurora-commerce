@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\PdfForm;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\PdfForm\Service\PdfFormContext;
 
-final readonly class PdfFormModule implements ModuleInterface
+final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private PdfFormContext $pdfFormContext) {}
 
@@ -59,6 +61,15 @@ final readonly class PdfFormModule implements ModuleInterface
                 new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', descriptionKey: 'backend.nav.pdfform_templates_description'),
                 new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', descriptionKey: 'backend.nav.pdfform_documents_description'),
             ], priority: 34),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::PdfFormEnabled->toToggle(),
+            ModuleParameterEnum::PdfFormTemplatesEnabled->toToggle(),
+            ModuleParameterEnum::PdfFormDocumentsEnabled->toToggle(),
         ];
     }
 }

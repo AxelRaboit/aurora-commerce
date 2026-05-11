@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Erp\Service\ErpContext;
 
-final readonly class ErpModule implements ModuleInterface
+final readonly class ErpModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private ErpContext $erpContext) {}
 
@@ -54,6 +56,14 @@ final readonly class ErpModule implements ModuleInterface
             new NavSection('erp', [
                 new NavItem('backend_erp_products', 'backend.nav.products', 'package', descriptionKey: 'backend.nav.products_description'),
             ], priority: 50),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::ErpEnabled->toToggle(),
+            ModuleParameterEnum::ErpProductsEnabled->toToggle(),
         ];
     }
 }

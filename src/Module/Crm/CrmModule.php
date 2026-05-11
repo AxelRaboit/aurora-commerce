@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Crm\Service\CrmContext;
 
-final readonly class CrmModule implements ModuleInterface
+final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private CrmContext $crmContext) {}
 
@@ -66,6 +68,16 @@ final readonly class CrmModule implements ModuleInterface
                 new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', descriptionKey: 'backend.nav.companies_description'),
                 new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', descriptionKey: 'backend.nav.deals_description'),
             ], priority: 40),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::CrmEnabled->toToggle(),
+            ModuleParameterEnum::CrmContactsEnabled->toToggle(),
+            ModuleParameterEnum::CrmCompaniesEnabled->toToggle(),
+            ModuleParameterEnum::CrmDealsEnabled->toToggle(),
         ];
     }
 }

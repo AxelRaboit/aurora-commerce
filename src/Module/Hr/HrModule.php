@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Hr;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Hr\Service\HrContext;
 
-final readonly class HrModule implements ModuleInterface
+final readonly class HrModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private HrContext $hrContext) {}
 
@@ -54,6 +56,14 @@ final readonly class HrModule implements ModuleInterface
             new NavSection('hr', [
                 new NavItem('backend_hr_employees', 'backend.nav.employees', 'users', requiredPrivilege: 'hr.employees.view', descriptionKey: 'backend.nav.employees_description'),
             ], priority: 45),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::HrEnabled->toToggle(),
+            ModuleParameterEnum::HrEmployeesEnabled->toToggle(),
         ];
     }
 }

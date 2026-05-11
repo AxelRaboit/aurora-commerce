@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Project;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Project\Service\ProjectContext;
 
-final readonly class ProjectModule implements ModuleInterface
+final readonly class ProjectModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private ProjectContext $projectContext) {}
 
@@ -55,6 +57,14 @@ final readonly class ProjectModule implements ModuleInterface
             new NavSection('project', [
                 new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', descriptionKey: 'backend.nav.projects_description'),
             ], priority: 35),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::ProjectEnabled->toToggle(),
+            ModuleParameterEnum::ProjectProjectsEnabled->toToggle(),
         ];
     }
 }

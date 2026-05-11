@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\Enum;
 
+use Aurora\Core\Module\ModuleToggle;
+
 enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
 {
     public const MODULE = 'modules';
@@ -283,6 +285,21 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
         }
 
         return array_values(array_unique($targets));
+    }
+
+    /**
+     * Builds a {@see ModuleToggle} value object from this enum case so the
+     * module can declare it via `ModuleToggleProviderInterface::getToggles()`.
+     */
+    public function toToggle(): ModuleToggle
+    {
+        return new ModuleToggle(
+            key: $this->value,
+            labelKey: $this->getLabel(),
+            descriptionKey: $this->getDescription(),
+            parentKey: $this->getCascadeRequires(),
+            moduleId: $this->getModuleId(),
+        );
     }
 
     /**

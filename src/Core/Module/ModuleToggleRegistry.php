@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Core\Module;
+
+/**
+ * Aggregates module toggles declared by all registered modules that
+ * implement {@see ModuleToggleProviderInterface}. Single source of truth
+ * for the cascade graph and the per-user access picker list.
+ *
+ * The same module list as {@see ModuleRegistry} is injected (DI tag), so
+ * any module — core or aurora-client — contributes its toggles by
+ * implementing the provider interface. No central enum to edit.
+ */
+final class ModuleToggleRegistry
+{
+    /** @var array<string, ModuleToggle>|null */
+    private ?array $byKey = null;
+
+    /** @param iterable<ModuleInterface> $modules */
+    public function __construct(private readonly iterable $modules) {}
+
+    /** @return array<string, ModuleToggle> indexed by key */
+    public function getAll(): array
+    {
+        return $this->byKey ??= $this->build();
+    }
+
+    public function get(string $key): ?ModuleToggle
+    {
+        return $this->getAll()[$key] ?? null;
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->getAll()[$key]);
+    }
+
+    /**
+     * Returns toggles that represent the "top-level" entry of a module —
+     * one per module — used by the admin per-user access picker.
+     *
+     * @return list<ModuleToggle>
+     */
+    public function getTopLevel(): array
+    {
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn (ModuleToggle $toggle): bool => $toggle->isTopLevel(),
+        ));
+    }
+
+    /** @return array<string, ModuleToggle> */
+    private function build(): array
+    {
+        $index = [];
+        foreach ($this->modules as $module) {
+            if (!$module instanceof ModuleToggleProviderInterface) {
+                continue;
+            }
+
+            foreach ($module->getToggles() as $toggle) {
+                $index[$toggle->key] = $toggle;
+            }
+        }
+
+        return $index;
+    }
+}

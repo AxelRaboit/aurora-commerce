@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Billing\Service\BillingContext;
 
-final readonly class BillingModule implements ModuleInterface
+final readonly class BillingModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private BillingContext $billingContext) {}
 
@@ -95,6 +97,16 @@ final readonly class BillingModule implements ModuleInterface
                 new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', descriptionKey: 'backend.nav.tiers_description'),
                 new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', descriptionKey: 'backend.billing.compliance.description'),
             ], priority: 55),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::BillingEnabled->toToggle(),
+            ModuleParameterEnum::BillingTiersEnabled->toToggle(),
+            ModuleParameterEnum::BillingInvoicesEnabled->toToggle(),
+            ModuleParameterEnum::BillingComplianceEnabled->toToggle(),
         ];
     }
 }

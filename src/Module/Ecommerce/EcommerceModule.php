@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ecommerce\Service\EcommerceContext;
 
-final readonly class EcommerceModule implements ModuleInterface
+final readonly class EcommerceModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private EcommerceContext $ecommerceContext) {}
 
@@ -61,6 +63,16 @@ final readonly class EcommerceModule implements ModuleInterface
                 new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', descriptionKey: 'backend.nav.listings_description'),
                 new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', descriptionKey: 'backend.nav.orders_description'),
             ], priority: 60),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::EcommerceEnabled->toToggle(),
+            ModuleParameterEnum::EcommerceShopEnabled->toToggle(),
+            ModuleParameterEnum::EcommerceListingsEnabled->toToggle(),
+            ModuleParameterEnum::EcommerceOrdersEnabled->toToggle(),
         ];
     }
 }

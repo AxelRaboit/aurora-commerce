@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Aurora\Module\Planning;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Planning\Service\PlanningContext;
 
-final readonly class PlanningModule implements ModuleInterface
+final readonly class PlanningModule implements ModuleInterface, ModuleToggleProviderInterface
 {
     public function __construct(private PlanningContext $planningContext) {}
 
@@ -57,6 +59,14 @@ final readonly class PlanningModule implements ModuleInterface
             new NavSection('planning', [
                 new NavItem('backend_plannings', 'backend.nav.plannings', 'calendar-days', descriptionKey: 'backend.nav.plannings_description'),
             ], priority: 40),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::PlanningEnabled->toToggle(),
+            ModuleParameterEnum::PlanningPlanningsEnabled->toToggle(),
         ];
     }
 }
