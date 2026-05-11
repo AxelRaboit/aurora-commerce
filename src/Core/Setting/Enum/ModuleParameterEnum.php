@@ -11,6 +11,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public const MODULE = 'modules';
 
     // Top-level modules
+    case GeneralEnabled = 'backend_general_admin';
     case PlatformEnabled = 'backend_platform_admin';
     case EditorialEnabled = 'backend_editorial_admin';
     case CrmEnabled = 'backend_crm_admin';
@@ -26,6 +27,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case HrEnabled = 'backend_hr_admin';
     case VaultEnabled = 'backend_vault_admin';
     case PdfFormEnabled = 'backend_pdfform_admin';
+
+    // Sub-modules — Core
+    case GeneralDashboardEnabled = 'backend_general_dashboard';
 
     // Sub-modules — Platform
     case PlatformMediaEnabled = 'backend_platform_media';
@@ -93,6 +97,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getLabel(): string
     {
         return match ($this) {
+            self::GeneralEnabled => 'backend.modules.general',
+            self::GeneralDashboardEnabled => 'backend.nav.dashboard',
             self::PlatformEnabled => 'backend.modules.platform',
             self::PlatformMediaEnabled => 'backend.nav.media',
             self::PlatformUsersEnabled => 'backend.nav.users',
@@ -146,6 +152,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getDescription(): string
     {
         return match ($this) {
+            self::GeneralEnabled => 'backend.modules.general_description',
+            self::GeneralDashboardEnabled => 'backend.nav.dashboard_description',
             self::PlatformEnabled => 'backend.modules.platform_description',
             self::PlatformMediaEnabled => 'backend.nav.media_description',
             self::PlatformUsersEnabled => 'backend.nav.users_description',
@@ -217,6 +225,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getParentCase(): ?self
     {
         return match ($this) {
+            self::GeneralDashboardEnabled => self::GeneralEnabled,
             self::PlatformMediaEnabled, self::PlatformUsersEnabled, self::PlatformAgenciesEnabled,
             self::PlatformServicesEnabled, self::PlatformSettingsEnabled, self::PlatformThemesEnabled => self::PlatformEnabled,
             self::BillingTiersEnabled, self::BillingInvoicesEnabled, self::BillingComplianceEnabled => self::BillingEnabled,
@@ -249,6 +258,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EcommerceEnabled, self::EcommerceShopEnabled => self::ErpEnabled->value,
             self::BillingEnabled => self::CrmEnabled->value,
             self::PhotoPublicEnabled => self::PhotoEnabled->value,
+            // Core sub-modules
+            self::GeneralDashboardEnabled => self::GeneralEnabled->value,
             // Platform sub-modules
             self::PlatformMediaEnabled,
             self::PlatformUsersEnabled,
@@ -340,6 +351,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getModuleId(): ?string
     {
         return match ($this) {
+            self::GeneralEnabled => 'general',
             self::PlatformEnabled => 'platform',
             self::EditorialEnabled => 'editorial',
             self::CrmEnabled => 'crm',

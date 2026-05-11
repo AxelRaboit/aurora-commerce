@@ -35,5 +35,7 @@ backend:
     planning: Planning
     project: Project
     core: Core
+    general: General
+    general_description: Dashboard and post-login landing page.
     platform: Platform
     platform_description: Technical backend section.

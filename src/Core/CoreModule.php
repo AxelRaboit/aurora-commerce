@@ -9,12 +9,16 @@ use Aurora\Core\Module\ModuleToggleProviderInterface;
 use Aurora\Core\Module\NavItem;
 use Aurora\Core\Module\NavPermission;
 use Aurora\Core\Module\NavSection;
+use Aurora\Core\Service\GeneralContext;
 use Aurora\Core\Service\PlatformContext;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
 final readonly class CoreModule implements ModuleInterface, ModuleToggleProviderInterface
 {
-    public function __construct(private PlatformContext $platformContext) {}
+    public function __construct(
+        private GeneralContext $generalContext,
+        private PlatformContext $platformContext,
+    ) {}
 
     public function getId(): string
     {
@@ -38,11 +42,19 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
 
     public function getNavSections(): array
     {
-        $sections = [
-            new NavSection('core', [
-                new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', descriptionKey: 'backend.nav.dashboard_description'),
-            ], priority: 10),
-        ];
+        $sections = [];
+
+        if ($this->generalContext->isAdminEnabled()) {
+            $generalItems = [];
+
+            if ($this->generalContext->isDashboardEnabled()) {
+                $generalItems[] = new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', descriptionKey: 'backend.nav.dashboard_description');
+            }
+
+            if ([] !== $generalItems) {
+                $sections[] = new NavSection('core', $generalItems, priority: 10);
+            }
+        }
 
         if ($this->platformContext->isAdminEnabled()) {
             $platformItems = [];
@@ -106,6 +118,8 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
     public function getToggles(): array
     {
         return [
+            ModuleParameterEnum::GeneralEnabled->toToggle(),
+            ModuleParameterEnum::GeneralDashboardEnabled->toToggle(),
             ModuleParameterEnum::PlatformEnabled->toToggle(),
             ModuleParameterEnum::PlatformMediaEnabled->toToggle(),
             ModuleParameterEnum::PlatformUsersEnabled->toToggle(),

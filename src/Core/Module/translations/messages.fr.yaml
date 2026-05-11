@@ -35,5 +35,7 @@ backend:
     planning: Planning
     project: Projet
     core: Cœur
+    general: Général
+    general_description: Tableau de bord et page d'accueil après connexion.
     platform: Plateforme
     platform_description: Section technique du back-office.
