@@ -13,6 +13,38 @@ travailler sur `aurora-core` et son écosystème (`aurora-client`).
 >   patterns d'extension côté consommateur, distribués via composer
 >   (lus depuis `vendor/axelraboit/aurora/.claude/memory/aurora-client/`).
 
+> **🧠 Règle d'hygiène mémoire (obligatoire)** :
+> Toujours travailler avec la **mémoire projet versionnée**
+> (`.claude/memory/aurora-core/`, suivie par git, partagée avec l'équipe) —
+> **pas** la mémoire user-level Claude Code (`~/.claude/projects/...`).
+> Cette dernière est personnelle et invisible aux autres devs.
+>
+> À chaque session et **à la fin de chaque tâche significative** (nouvelle
+> feature, refacto, fix non-trivial, décision d'archi), faire ce cycle :
+>
+> 1. **Lire** les mémoires potentiellement concernées par la tâche (ne pas se
+>    limiter au titre dans l'index — ouvrir les fichiers source).
+> 2. **Vérifier la fraîcheur** : si une mémoire affirme l'existence d'un
+>    fichier/classe/flag, le vérifier dans le code courant avant de s'y fier
+>    (cf. la section "Before recommending from memory" de l'auto-memory).
+> 3. **Corriger ou supprimer** les mémoires devenues obsolètes (refacto,
+>    décision changée) — ne pas accumuler de fausse info.
+> 4. **Ajouter** une nouvelle mémoire dès qu'une convention émerge, qu'un
+>    piège est découvert, ou qu'une décision d'archi est prise. Format :
+>    `<type>_<topic>.md` (un fichier par sujet) + une ligne dans
+>    `.claude/memory/aurora-core/MEMORY.md`. Capturer **règle**, **pourquoi**,
+>    **comment l'appliquer** — pas du contenu dérivable du code/git.
+> 5. **Ne pas dupliquer** les docs `docs/aurora-core/dev/*.md` — y pointer
+>    depuis la mémoire si besoin.
+> 6. **Synchroniser** : après tout ajout/modif/suppression dans
+>    `.claude/memory/aurora-core/`, lancer `make sync-claude-memory`. Cette
+>    commande recopie les fichiers vers `~/.claude/projects/.../memory/`
+>    pour que Claude les lise automatiquement à la prochaine session.
+>    Sans ce sync, les nouvelles mémoires n'arrivent pas dans le contexte.
+>
+> Cette boucle est ce qui maintient la cohérence sur le long terme. Faire
+> remonter à l'utilisateur les mémoires modifiées/ajoutées en fin de tâche.
+
 ---
 
 ## 1. Stack et architecture
