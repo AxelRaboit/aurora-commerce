@@ -7,7 +7,7 @@ namespace Aurora\Core\Setting\Controller\Dev;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Service\SettingsService;
@@ -32,6 +32,7 @@ final class ModulesController extends AbstractController
         private readonly SettingsService $settingsManager,
         private readonly ModulesViewBuilder $viewBuilder,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly ModuleToggleRegistry $moduleToggleRegistry,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -71,9 +72,10 @@ final class ModulesController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $value = isset($data['value']) ? (string) $data['value'] : null;
 
-        $parameter = ModuleParameterEnum::tryFrom($key);
-
-        if (null === $parameter) {
+        // Accepts any registered toggle (core ModuleParameterEnum or
+        // client-declared via ModuleToggleProviderInterface). Filtering by
+        // the enum alone would reject `app_tracking_*` and other client keys.
+        if (!$this->moduleToggleRegistry->has($key)) {
             return $this->jsonForbidden();
         }
 
