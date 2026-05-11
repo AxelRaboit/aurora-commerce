@@ -9,7 +9,8 @@ backend:
           delete: Delete listings
         orders:
           view: View orders
-          manage: Manage orders
+          edit: Update order status
+          refund: Refund orders
   modules:
     ecommerce: Ecommerce
     ecommerce_description: 'Enables the Ecommerce section in the admin (listings, orders). Requires ERP.'

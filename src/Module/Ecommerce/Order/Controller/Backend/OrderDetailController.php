@@ -44,7 +44,7 @@ final class OrderDetailController extends AbstractController
     }
 
     #[Route('/status', name: '_status', methods: [HttpMethodEnum::Patch->value])]
-    #[IsGranted('ecommerce.orders.manage')]
+    #[IsGranted('ecommerce.orders.edit')]
     public function updateStatus(Order $order, Request $request): JsonResponse
     {
         $target = OrderStatusEnum::tryFrom((string) ($this->decodeJson($request)['status'] ?? ''));
@@ -71,7 +71,7 @@ final class OrderDetailController extends AbstractController
     }
 
     #[Route('/refund', name: '_refund', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('ecommerce.orders.manage')]
+    #[IsGranted('ecommerce.orders.refund')]
     public function refund(Order $order, Request $request): JsonResponse
     {
         if (!$order->isRefundable()) {

@@ -9,7 +9,8 @@ backend:
           delete: Supprimer les annonces
         orders:
           view: Voir les commandes
-          manage: Gérer les commandes
+          edit: Modifier le statut des commandes
+          refund: Rembourser des commandes
   modules:
     ecommerce: E-commerce
     ecommerce_description: "Active la section E-commerce dans l'administration (listings, commandes). Nécessite l'ERP."

@@ -29,7 +29,8 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
             new NavPermission('ecommerce.listings.edit'),
             new NavPermission('ecommerce.listings.delete'),
             new NavPermission('ecommerce.orders.view'),
-            new NavPermission('ecommerce.orders.manage'),
+            new NavPermission('ecommerce.orders.edit'),
+            new NavPermission('ecommerce.orders.refund'),
         ];
     }
 

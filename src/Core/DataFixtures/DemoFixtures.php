@@ -160,21 +160,50 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'email' => 'jean.martin@aurora.app',
                 'name' => 'Jean Martin',
                 'role' => UserRoleEnum::User,
-                'privileges' => ['crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit', 'crm.companies.manage', 'crm.deals.manage', 'ged.documents.manage', 'ged.categories.manage'],
+                'privileges' => [
+                    // CRM — full sales access
+                    'crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit', 'crm.contacts.delete',
+                    'crm.companies.view', 'crm.companies.create', 'crm.companies.edit', 'crm.companies.delete',
+                    'crm.deals.view', 'crm.deals.create', 'crm.deals.edit', 'crm.deals.delete',
+                    // GED — full document management
+                    'ged.documents.view', 'ged.documents.create', 'ged.documents.edit', 'ged.documents.delete',
+                    'ged.categories.view', 'ged.categories.create', 'ged.categories.edit', 'ged.categories.delete',
+                ],
                 'mood' => 'Commercial senior',
             ],
             [
                 'email' => 'sophie.bernard@aurora.app',
                 'name' => 'Sophie Bernard',
                 'role' => UserRoleEnum::User,
-                'privileges' => ['editorial.posts.view', 'editorial.posts.manage', 'editorial.forms.manage', 'editorial.comments.manage', 'core.media.view', 'core.media.manage'],
+                'privileges' => [
+                    // Editorial — full editorial workflow
+                    'editorial.posts.view', 'editorial.posts.create', 'editorial.posts.edit', 'editorial.posts.delete',
+                    'editorial.menus.view', 'editorial.menus.create', 'editorial.menus.edit', 'editorial.menus.delete',
+                    'editorial.taxonomies.view', 'editorial.taxonomies.create', 'editorial.taxonomies.edit',
+                    'editorial.post_types.view',
+                    'editorial.comments.view', 'editorial.comments.moderate', 'editorial.comments.delete',
+                    'editorial.forms.view', 'editorial.forms.create', 'editorial.forms.edit', 'editorial.forms.delete',
+                    'editorial.sitemap.view', 'editorial.sitemap.regenerate',
+                    // Media library (editors need it)
+                    'core.media.view', 'core.media.manage',
+                ],
                 'mood' => 'Rédactrice en chef ✍️',
             ],
             [
                 'email' => 'thomas.petit@aurora.app',
                 'name' => 'Thomas Petit',
                 'role' => UserRoleEnum::User,
-                'privileges' => ['ecommerce.listings.view', 'ecommerce.listings.create', 'ecommerce.listings.edit', 'ecommerce.orders.view', 'ecommerce.orders.manage', 'billing.invoices.view', 'billing.invoices.create', 'billing.invoices.edit', 'billing.tiers.manage', 'erp.products.view', 'erp.products.create', 'erp.products.edit'],
+                'privileges' => [
+                    // Ecommerce — full sales access (refund stays admin-only)
+                    'ecommerce.listings.view', 'ecommerce.listings.create', 'ecommerce.listings.edit', 'ecommerce.listings.delete',
+                    'ecommerce.orders.view', 'ecommerce.orders.edit',
+                    // Billing — full accounting
+                    'billing.invoices.view', 'billing.invoices.create', 'billing.invoices.edit', 'billing.invoices.delete',
+                    'billing.tiers.view', 'billing.tiers.edit', 'billing.tiers.delete',
+                    'billing.ocr.import',
+                    // ERP products
+                    'erp.products.view', 'erp.products.create', 'erp.products.edit',
+                ],
                 'mood' => 'Responsable boutique & facturation',
             ],
         ];
