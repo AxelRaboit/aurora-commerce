@@ -26,14 +26,14 @@ Override les hooks :
 ### Squelette d'extension
 
 ```php
-namespace App\Manager;
+namespace App\Module\Core\Agency\Manager;
 
 use Aurora\Core\Agency\Manager\AgencyManager as BaseAgencyManager;
 use Aurora\Core\Agency\Manager\AgencyManagerInterface;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use App\Dto\AgencyInput as AppAgencyInput;
-use App\Entity\Agency as AppAgency;
+use App\Module\Core\Agency\Dto\AgencyInput as AppAgencyInput;
+use App\Module\Core\Agency\Entity\Agency as AppAgency;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]

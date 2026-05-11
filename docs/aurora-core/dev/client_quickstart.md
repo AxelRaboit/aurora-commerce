@@ -24,22 +24,28 @@ make start                         # PHP server + Vite dev server
 
 ## Where do I put my code?
 
-The project follows the **Sylius / Symfony convention** : flat,
-responsibility-based folders under `src/`. There is no `Custom/` umbrella —
-overrides live next to the layer they extend.
+Everything lives under `src/Module/`. The path **mirrors the Aurora namespace**
+of the entity or feature being extended or created.
 
-### PHP (under `src/`)
+### PHP (under `src/Module/`)
 
 | I want to… | Drop file at… | How it's wired |
 |---|---|---|
-| Add a page (controller + route) | `src/Controller/MyController.php` | `#[Route]` attribute, scanned automatically |
-| Add a domain service | `src/Service/MyService.php` | autowired |
-| Override an Aurora service | `src/Manager/MyAgencyManager.php` (or `Serializer/`, `Service/`, …) | `#[AsAlias(AuroraInterface::class)]` |
+| Add a domain service | `src/Module/<Name>/Service/MyService.php` | autowired |
+| Override an Aurora service | `src/Module/Core/<Name>/Manager/<Name>Manager.php` | `#[AsAlias(AuroraInterface::class)]` |
 | Decorate an Aurora service | same folder as above | `#[AsDecorator(AuroraService::class)]` |
-| Listen to an Aurora event | `src/EventListener/MyListener.php` | `#[AsEventListener(AuroraEvent::class)]` |
-| Extend an Aurora entity | `src/Entity/MyAgency.php` extending `AbstractAurora<Name>` (reuse Aurora's `repositoryClass`) | `resolve_target_entities` in `config/packages/doctrine.yaml` |
-| Extend an Aurora DTO | `src/Dto/MyInput.php` extending `Aurora\…\<Name>Input` | `#[AsAlias]` on the matching Factory |
-| Build a feature module | `src/Module/<Name>/` mirroring Aurora's module layout | `tags: [aurora.module]` in `services.yaml` |
+| Listen to an Aurora event | `src/Module/<Name>/EventListener/MyListener.php` | `#[AsEventListener(AuroraEvent::class)]` |
+| Extend an Aurora entity | `src/Module/<Mirror>/<Name>/Entity/<Name>.php` extending `Abstract<Name>` | `resolve_target_entities` in `config/packages/doctrine.yaml` |
+| Extend an Aurora DTO | `src/Module/<Mirror>/<Name>/Dto/<Name>Input.php` | `#[AsAlias]` on the matching Factory |
+| Build a new feature module | `src/Module/<Name>/` mirroring Aurora's module layout | `tags: [aurora.module]` in `services.yaml` |
+
+**Mirror rule** — the path matches the Aurora namespace segment:
+
+| Aurora source namespace | Client path |
+|---|---|
+| `Aurora\Core\Agency\…` | `src/Module/Core/Agency/…` |
+| `Aurora\Module\Crm\Deal\…` | `src/Module/Crm/Deal/…` |
+| `Aurora\Module\Billing\Invoice\…` | `src/Module/Billing/Invoice/…` |
 
 ### Templates (`templates/`)
 
@@ -59,9 +65,9 @@ overrides live next to the layer they extend.
 
 | File | Purpose |
 |---|---|
-| `config/services.yaml` | PSR-4 prefix registration + service tags |
-| `config/routes.yaml` | Imports Aurora routes + scans `src/Controller/` and `src/Module/` |
-| `config/packages/doctrine.yaml` | DBAL URL + `App\Entity` mapping + `resolve_target_entities` |
+| `config/services.yaml` | Single `App\Module\:` PSR-4 registration + module tags |
+| `config/routes.yaml` | Imports Aurora routes + scans `src/Module/` |
+| `config/packages/doctrine.yaml` | DBAL URL + `AuroraClient` mapping (`src/Module/`) + `resolve_target_entities` |
 | `config/packages/twig.yaml` | Strict mode in test only — paths come from Aurora |
 | `config/packages/security.yaml` | Firewalls, providers — extend Aurora's defaults |
 
@@ -81,14 +87,14 @@ make migrate
 client-app/
 ├── vendor/axelraboit/aurora/   # Aurora core (read-only)
 ├── src/
-│   ├── Controller/             # App\Controller\*
-│   ├── Entity/                 # App\Entity\*       — entity overrides (extends AbstractAurora<Name>)
-│   ├── Dto/                    # App\Dto\*          — DTO overrides
-│   ├── Manager/                # App\Manager\*      — manager overrides / decorators
-│   ├── Serializer/             # App\Serializer\*   — serializer overrides / decorators
-│   ├── Service/                # App\Service\*      — domain services
-│   ├── EventListener/          # App\EventListener\*
-│   └── Module/<Name>/          # App\Module\<Name>\* — feature module
+│   ├── Module/                 # App\Module\* — ALL client code
+│   │   ├── Core/               #   Extensions of Aurora\Core\* entities
+│   │   │   └── Agency/         #     e.g. src/Module/Core/Agency/{Entity,Dto,Manager,Serializer}
+│   │   ├── Crm/                #   Extensions of Aurora\Module\Crm\* entities
+│   │   ├── <Name>/             #   Client-owned feature modules (same layout as Aurora modules)
+│   │   └── Tracking/           #   Example: client-specific tracking module
+│   ├── Service/                # App\Service\* — cross-module stateless services (rare)
+│   └── EventListener/          # App\EventListener\* — global listeners (rare)
 ├── templates/
 │   ├── Core/                   # Override Aurora's @Core templates (auto-resolved before vendor's)
 │   └── Module/<Name>/          # Module-specific templates

@@ -10,15 +10,13 @@ les extensions, les modules propres au projet, les overrides.
 ```
 aurora-client/
 ├── src/                    # Code PHP client
-│   ├── Entity/             # Entités étendues (surcharge d'entités Aurora)
-│   ├── Dto/                # DTOs étendus + factories
-│   ├── Manager/            # Managers étendus
-│   ├── Serializer/         # Serializers étendus
-│   ├── Controller/         # Controllers propres au client
-│   ├── Service/            # Services stateless propres au client
-│   ├── EventListener/      # Listeners d'événements
-│   └── Module/             # Modules métier propres au client
-│       └── Tracking/       # Exemple : module de suivi de projets
+│   ├── Module/             # TOUT le code client (extensions + modules propres)
+│   │   ├── Core/           #   Extensions d'entités Aurora\Core\*
+│   │   │   └── Agency/     #     e.g. {Entity,Dto,Manager,Serializer}
+│   │   ├── Crm/            #   Extensions d'entités Aurora\Module\Crm\*
+│   │   └── Tracking/       #   Module métier propre au client
+│   ├── Service/            # Services cross-modules stateless (rare)
+│   └── EventListener/      # Listeners globaux (rare)
 ├── assets/client/          # Assets Vue côté client
 │   ├── Module/             # Composants pour les modules client
 │   │   └── Tracking/       # Composants du module Tracking
@@ -57,21 +55,24 @@ personnalisation passe par les points d'extension d'Aurora (héritage,
 
 ## Configuration Doctrine
 
-`config/packages/doctrine.yaml` déclare deux mappings :
+`config/packages/doctrine.yaml` déclare un seul mapping couvrant tout `src/Module/` :
 
 ```yaml
 doctrine:
     orm:
         mappings:
-            AppEntity:     { dir: src/Entity,  prefix: App\Entity }
-            AuroraClient:  { dir: src/Module,  prefix: App\Module }
+            AuroraClient:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Module'
+                prefix: 'App\Module'
+                alias: AuroraClient
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
 ```
 
-- **AppEntity** — entités qui étendent des entités Aurora (ex: `Agency`)
-- **AuroraClient** — modules client complets (ex: `Module/Tracking/`)
-- **resolve_target_entities** — substitue une interface Aurora par l'entité cliente
+- **AuroraClient** — couvre tout `src/Module/` : extensions Aurora ET modules propres au client
+- **resolve_target_entities** — substitue une interface Aurora par l'entité cliente (chemin miroir)
 
 ---
 

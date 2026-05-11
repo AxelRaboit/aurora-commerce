@@ -24,24 +24,21 @@ make aurora-update
 
 ## Project structure
 
-Aurora client projects follow the Sylius / Symfony convention: PSR-4 prefixes
-are flat under `src/` and named after responsibility (Entity, Controller,
-Manager, …) — no `Custom/` umbrella bucket. Feature modules with their own
-controllers, templates and translations live under `src/Module/<Name>/` and
-mirror Aurora's own module layout.
+Aurora client projects follow the module-based structure of aurora-core:
+all code (Aurora extensions and new features alike) lives under `src/Module/`.
+The path **mirrors the Aurora namespace** of the entity or feature being extended.
 
 ```
 client-app/
 ├── vendor/axelraboit/aurora/   # Aurora core (read-only — never edited directly)
 ├── src/
-│   ├── Controller/             # App\Controller\*   — client routes
-│   ├── Entity/                 # App\Entity\*       — entity overrides (extends AbstractAurora<Name>)
-│   ├── Dto/                    # App\Dto\*          — DTO overrides
-│   ├── Manager/                # App\Manager\*      — manager overrides / decorators
-│   ├── Serializer/             # App\Serializer\*   — serializer overrides / decorators
-│   ├── Service/                # App\Service\*      — domain services
-│   ├── EventListener/          # App\EventListener\*
-│   └── Module/<Name>/          # App\Module\<Name>\* — feature module (optional, mirrors Aurora's layout)
+│   ├── Module/                 # App\Module\* — ALL client PHP code
+│   │   ├── Core/               #   Extensions of Aurora\Core\* entities
+│   │   │   └── Agency/         #     Entity/ Dto/ Manager/ Serializer/
+│   │   ├── Crm/                #   Extensions of Aurora\Module\Crm\* entities
+│   │   └── <Name>/             #   Client-owned feature modules
+│   ├── Service/                # App\Service\* — cross-module stateless helpers (rare)
+│   └── EventListener/          # App\EventListener\* — global listeners (rare)
 ├── templates/
 │   ├── Core/                   # Overrides for @Core/... templates (auto-resolved before Aurora's)
 │   └── Module/<Name>/          # Module-specific templates
@@ -81,9 +78,8 @@ No manual wiring required — the three config files are the entire contract.
 
 ### 1. Services
 
-The scaffold registers responsibility-based PSR-4 prefixes in
-`config/services.yaml`. Drop a class under the matching folder and it's
-auto-wired:
+The scaffold registers a single PSR-4 prefix in `config/services.yaml`.
+Drop a class anywhere under `src/Module/` and it's auto-wired:
 
 ```yaml
 services:
@@ -91,15 +87,14 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Module\:
+        resource: '../src/Module/'
+
     App\Service\:
         resource: '../src/Service/'
 
-    App\Manager\:
-        resource: '../src/Manager/'
-
     App\EventListener\:
         resource: '../src/EventListener/'
-    # … and so on for Controller, Entity, Dto, Serializer
 ```
 
 ### 2. Decorating an Aurora service
@@ -181,11 +176,12 @@ To add new templates (not overrides), place them under `templates/Module/<Name>/
 
 ### 6. Custom entities & migrations
 
-The scaffold registers the `App\Entity` Doctrine mapping and the client
-migrations path. Drop your entity under `src/Entity/`:
+The scaffold registers a single `AuroraClient` Doctrine mapping covering all of
+`src/Module/`. Drop your entity under the matching module path:
 
 ```php
-namespace App\Entity;
+// src/Module/Crm/Contract/Entity/Contract.php
+namespace App\Module\Crm\Contract\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -223,8 +219,8 @@ proprement avec Doctrine (étendre la classe concrète exigerait un type
 d'héritage et un discriminator).
 
 ```php
-// src/Entity/Deal.php
-namespace App\Entity;
+// src/Module/Crm/Deal/Entity/Deal.php
+namespace App\Module\Crm\Deal\Entity;
 
 use Aurora\Module\Crm\Deal\Entity\AbstractDeal;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
@@ -256,7 +252,7 @@ class Deal extends AbstractDeal implements DealInterface
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Module\Crm\Deal\Entity\DealInterface: App\Entity\Deal
+            Aurora\Module\Crm\Deal\Entity\DealInterface: App\Module\Crm\Deal\Entity\Deal
 ```
 
 **Repository** — réutilisez `Aurora\...\Repository\<Name>Repository` directement
@@ -270,16 +266,16 @@ créer un repository client que si vous voulez ajouter vos propres méthodes
 de votre entité).
 
 À partir de là, toutes les associations Aurora qui pointent `DealInterface`
-(ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Entity\Deal`.
+(ex: `Project::$crmDeal`) résolvent automatiquement vers `App\Module\Crm\Deal\Entity\Deal`.
 
 **Migration de données** — si la table Aurora `core_deals` contient déjà des
 lignes (fixtures, données de prod) et que les FK Aurora pointent vers son `id`,
-ajoutez à la migration générée un `INSERT INTO app_deals … SELECT … FROM
+ajoutez à la migration générée un `INSERT INTO app_deals … SELECT … FROM core_deals
 core_deals` avant de basculer la contrainte FK. Cf. la migration pilote
 `Version20260508123924` côté aurora-client pour un exemple complet.
 
 **Manager / création** — `DealManager::create()` instancie `new Deal()`
-(la classe Aurora) par défaut. Pour qu'il instancie votre `App\Entity\Deal`,
+(la classe Aurora) par défaut. Pour qu'il instancie votre `App\Module\Crm\Deal\Entity\Deal`,
 étendez `DealManager` ou décorez `DealManagerInterface` (cf. section 2).
 
 ### 6.ter Étendre toute la pile (DTO + Manager + Serializer + Vue)

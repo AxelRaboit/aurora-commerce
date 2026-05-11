@@ -10,19 +10,30 @@ autres entités au fur et à mesure des besoins.
 
 ---
 
+## Structure : chemin miroir du namespace Aurora
+
+Toute extension d'une entité Aurora vit dans `src/Module/` en **miroir** du
+namespace Aurora source :
+
+```
+Aurora\Core\Agency\…  →  src/Module/Core/Agency/…
+```
+
+---
+
 ## Vue d'ensemble — 5 couches à câbler
 
 | Couche | Fichier(s) côté client | Mécanisme |
 |---|---|---|
-| Entité Doctrine | `src/Entity/Agency.php` | `extends AbstractAgency`, table dédiée |
-| DTO d'entrée | `src/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
-| Manager | `src/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
-| Serializer | `src/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
+| Entité Doctrine | `src/Module/Core/Agency/Entity/Agency.php` | `extends AbstractAgency`, table dédiée |
+| DTO d'entrée | `src/Module/Core/Agency/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
+| Manager | `src/Module/Core/Agency/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
+| Serializer | `src/Module/Core/Agency/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
 | Vue + Twig | `assets/client/Overrides/backend/agencies/AgenciesApp.vue` + `templates/Core/backend/agencies/index.html.twig` | slots scoped + override Twig |
 
 ---
 
-## 1. Entité — `App\Entity\Agency`
+## 1. Entité — `App\Module\Core\Agency\Entity\Agency`
 
 **Important** : on étend `AbstractAgency` (le `MappedSuperclass`), **pas** la
 classe concrète `Aurora\Core\Agency\Entity\Agency`. Étendre la classe concrète
@@ -31,8 +42,8 @@ ce qui impose Single ou Joined Table Inheritance — pas ce qu'on veut. Le
 pattern Sylius : chaque app a sa propre table.
 
 ```php
-// aurora-client : src/Entity/Agency.php
-namespace App\Entity;
+// aurora-client : src/Module/Core/Agency/Entity/Agency.php
+namespace App\Module\Core\Agency\Entity;
 
 use Aurora\Core\Agency\Entity\AbstractAgency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
@@ -73,9 +84,7 @@ class Agency extends AbstractAgency implements AgencyInterface
 
 ### 1.1 Doctrine mapping + ResolveTargetEntity
 
-Le scaffold `bin/create-client` génère ces blocs dans
-`config/packages/doctrine.yaml`. Si vous avez un projet plus ancien,
-vérifiez qu'ils sont présents :
+`config/packages/doctrine.yaml` — un seul mapping couvre tout `src/Module/` :
 
 ```yaml
 # config/packages/doctrine.yaml
@@ -84,14 +93,14 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
         mappings:
-            AppEntity:
+            AuroraClient:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: AppEntity
+                dir: '%kernel.project_dir%/src/Module'
+                prefix: 'App\Module'
+                alias: AuroraClient
 ```
 
 > **Pourquoi `repositoryClass: AgencyRepository::class` côté client marche
@@ -107,7 +116,7 @@ doctrine:
 
 À partir de cette config, **toutes** les associations Aurora qui type-hint
 `AgencyInterface` (ex: `User::$agency`) résolvent automatiquement vers votre
-`App\Entity\Agency`.
+`App\Module\Core\Agency\Entity\Agency`.
 
 ### 1.2 Migration — copie des données + bascule des FK
 
@@ -170,24 +179,21 @@ php bin/console doctrine:migrations:migrate
 
 ## 2. DTO d'entrée + Factory
 
-### 2.1 DTO — `App\Dto\AgencyInput`
-
-> **Note de convention** : le namespace est `App\Dto` (camelCase), **pas**
-> `App\DTO`. Les directives `App\Dto\:` du `services.yaml` autoload ce dossier.
+### 2.1 DTO — `App\Module\Core\Agency\Dto\AgencyInput`
 
 ```php
-// aurora-client : src/Dto/AgencyInput.php
-namespace App\Dto;
+// aurora-client : src/Module/Core/Agency/Dto/AgencyInput.php
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class AgencyInput extends AuroraAgencyInput
+class AgencyInput extends AuroraAgencyInput
 {
     public function __construct(
         string $name,
         #[Assert\Length(max: 50, maxMessage: 'Le code dépasse 50 caractères.')]
-        public ?string $code = null,
+        public readonly ?string $code = null,
     ) {
         parent::__construct($name);
     }
@@ -198,15 +204,15 @@ Symfony Validator inspecte les attributs du DTO étendu via réflexion — le
 `Assert\Length` est appliqué automatiquement, pas besoin de re-déclarer le
 `Assert\NotBlank` du parent.
 
-### 2.2 Factory — `App\Dto\AgencyInputFactory`
+### 2.2 Factory — `App\Module\Core\Agency\Dto\AgencyInputFactory`
 
 Le controller `AgenciesController` n'instancie plus directement
 `AgencyInput::fromArray()` — il injecte un `AgencyInputFactoryInterface`.
 On remplace l'alias d'Aurora par le nôtre :
 
 ```php
-// aurora-client : src/Dto/AgencyInputFactory.php
-namespace App\Dto;
+// aurora-client : src/Module/Core/Agency/Dto/AgencyInputFactory.php
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
@@ -227,40 +233,17 @@ class AgencyInputFactory implements AgencyInputFactoryInterface
 ```
 
 `#[AsAlias(AgencyInputFactoryInterface::class)]` écrase l'alias d'Aurora-core
-sur ce même service-id : à la compilation du conteneur, `App\Dto\AgencyInputFactory`
+sur ce même service-id : à la compilation du conteneur, `App\Module\Core\Agency\Dto\AgencyInputFactory`
 gagne, le controller reçoit votre factory.
 
 ### 2.3 Enregistrement — `config/services.yaml`
 
-Le scaffold `bin/create-client` ajoute déjà ces blocs. Sinon :
-
-```yaml
-# config/services.yaml
-services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-
-    App\Controller\:
-        resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
-
-    App\Entity\:
-        resource: '../src/Entity/'
-
-    App\Dto\:
-        resource: '../src/Dto/'
-
-    App\Manager\:
-        resource: '../src/Manager/'
-
-    App\Serializer\:
-        resource: '../src/Serializer/'
-```
+Le mapping `App\Module\:` couvre automatiquement tous les fichiers sous
+`src/Module/`, y compris la factory. Rien à ajouter manuellement.
 
 ---
 
-## 3. Manager — `App\Manager\AgencyManager`
+## 3. Manager — `App\Module\Core\Agency\Manager\AgencyManager`
 
 `resolve_target_entities` n'agit que sur la résolution Doctrine (associations,
 queries) — un `new Agency()` PHP littéral instancie toujours la classe importée.
@@ -273,25 +256,28 @@ Vous override l'un ou l'autre (ou les deux) ; `parent::create()` et
 `parent::update()` continuent de gérer persist + audit log.
 
 ```php
-// aurora-client : src/Manager/AgencyManager.php
-namespace App\Manager;
+// aurora-client : src/Module/Core/Agency/Manager/AgencyManager.php
+namespace App\Module\Core\Agency\Manager;
 
-use App\Dto\AgencyInput;
-use App\Entity\Agency;
+use App\Module\Core\Agency\Dto\AgencyInput;
+use App\Module\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Manager\AgencyManager as AuroraAgencyManager;
 use Aurora\Core\Agency\Manager\AgencyManagerInterface;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]
 class AgencyManager extends AuroraAgencyManager
 {
+    #[Override]
     protected function createAgency(): AgencyInterface
     {
         return new Agency();
     }
 
+    #[Override]
     protected function applyInput(AgencyInterface $agency, AgencyInputInterface $input): void
     {
         parent::applyInput($agency, $input);
@@ -304,26 +290,28 @@ class AgencyManager extends AuroraAgencyManager
 ```
 
 `#[AsAlias(AgencyManagerInterface::class)]` remplace l'alias d'Aurora ;
-le controller injecte votre Manager, qui instancie `App\Entity\Agency`
+le controller injecte votre Manager, qui instancie `App\Module\Core\Agency\Entity\Agency`
 (via `createAgency`) et persiste dans `app_agencies` avec le bon `code`.
 
 ---
 
-## 4. Serializer — `App\Serializer\AgencySerializer`
+## 4. Serializer — `App\Module\Core\Agency\Serializer\AgencySerializer`
 
 ```php
-// aurora-client : src/Serializer/AgencySerializer.php
-namespace App\Serializer;
+// aurora-client : src/Module/Core/Agency/Serializer/AgencySerializer.php
+namespace App\Module\Core\Agency\Serializer;
 
-use App\Entity\Agency;
+use App\Module\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
 use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencySerializerInterface::class)]
 class AgencySerializer extends AuroraAgencySerializer
 {
+    #[Override]
     public function serialize(AgencyInterface $agency): array
     {
         $data = parent::serialize($agency);
@@ -476,7 +464,7 @@ make start                 # PHP server + Vite dev server
 | Couche | Interface / point d'extension côté Aurora | Pattern client |
 |---|---|---|
 | Entité | `AgencyInterface` + `AbstractAgency` | `extends AbstractAgency`, table dédiée |
-| ResolveTargetEntity | mapping interface → concrete dans `doctrine.yaml` | `App\Entity\Agency` |
+| ResolveTargetEntity | mapping interface → concrete dans `doctrine.yaml` | `App\Module\Core\Agency\Entity\Agency` |
 | DTO d'entrée | `AgencyInputInterface` | `extends AgencyInput` |
 | Factory de DTO | `AgencyInputFactoryInterface` | `#[AsAlias]` + nouvelle factory |
 | Manager | `AgencyManagerInterface` + hooks `protected` (`createAgency()`, `applyInput()`) | `#[AsAlias]` + override des hooks |

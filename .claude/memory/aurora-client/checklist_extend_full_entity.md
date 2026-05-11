@@ -7,13 +7,16 @@ voici les étapes ordonnées. Chaque étape pointe vers le pattern détaillé.
 
 → [pattern_extend_entity.md](pattern_extend_entity.md)
 
-- [ ] Créer `App\Entity\<Name>` qui étend `Aurora\…\Abstract<Name>` et
-      `implements <Name>Interface`.
+- [ ] Créer `App\Module\<Mirror>\<Name>\Entity\<Name>` qui étend
+      `Aurora\…\Abstract<Name>` et `implements <Name>Interface`.
+      Le chemin miroir reprend le namespace Aurora :
+      `Aurora\Core\Agency` → `src/Module/Core/Agency/Entity/`.
 - [ ] Ajouter colonnes Doctrine + getters/setters pour les champs custom.
 - [ ] Sequence client : `seq_app_<entity>_id` (préfixe `app_` pour éviter
       collision avec `seq_core_*` Aurora).
-- [ ] Inscrire dans `App\AuroraBundle::$resolve_target_entities`.
-- [ ] Si finder methods custom : créer `App\Repository\App<Name>Repository`
+- [ ] Inscrire dans `config/packages/doctrine.yaml` →
+      `resolve_target_entities`.
+- [ ] Si finder methods custom : créer `App\Module\<Mirror>\<Name>\Repository\App<Name>Repository`
       qui étend Aurora repo, déclarer `repositoryClass` dans l'entité
       → [pattern_extend_repository.md](pattern_extend_repository.md).
 - [ ] Migration Doctrine : `php bin/console doctrine:migrations:diff` +
@@ -34,7 +37,7 @@ voici les étapes ordonnées. Chaque étape pointe vers le pattern détaillé.
 → [pattern_extend_manager.md](pattern_extend_manager.md)
 
 - [ ] Étendre `Aurora\…\<Name>Manager`, `#[AsAlias(<Name>ManagerInterface::class)]`.
-- [ ] **Override `create<X>()`** pour retourner `new App\Entity\<X>()`
+- [ ] **Override `create<X>()`** pour retourner `new App\Module\<Mirror>\<X>\Entity\<X>()`
       (sinon les champs custom sont perdus —
       [pitfall_create_hook_required.md](pitfall_create_hook_required.md)).
 - [ ] Override `applyInput()` avec `parent::applyInput()` AVANT (sinon
@@ -93,7 +96,7 @@ spécifiques que tu veux customiser (avec `parent::xxx()` AVANT).
 
 Si tu étends une entité cascade (ex: `OrderLine` géré par `OrderManager`),
 tu n'as pas de Vue / DTO / Manager dédié à ajouter — juste l'entité
-(étape 1) et override `createOrderLine()` dans ton `App\Manager\OrderManager`
+(étape 1) et override `createOrderLine()` dans ton `App\Module\Ecommerce\Order\Manager\OrderManager`
 étendu.
 
 ### Tu veux ajouter un nouveau finder, pas étendre

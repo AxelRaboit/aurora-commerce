@@ -3,14 +3,14 @@
 ## Symptôme
 
 Tu as :
-- Étendu `Agency` en `App\Entity\Agency` avec un champ `code`.
-- Étendu `AgencyInput` en `App\Dto\AgencyInput` avec `code`.
+- Étendu `Agency` en `App\Module\Core\Agency\Entity\Agency` avec un champ `code`.
+- Étendu `AgencyInput` en `App\Module\Core\Agency\Dto\AgencyInput` avec `code`.
 - Décoré la `AgencyInputFactory`.
 - Override `applyInput()` pour copier `code` du DTO vers l'entité.
 
 Tu crées une nouvelle agence depuis l'admin. Le formulaire envoie `code`,
 le DTO le reçoit, mais... après création, `code` est `null` en base et
-l'entité Doctrine n'est pas un `App\Entity\Agency` mais un `Aurora\…\Agency`.
+l'entité Doctrine n'est pas un `App\Module\Core\Agency\Entity\Agency` mais un `Aurora\…\Agency`.
 
 ## Cause
 
@@ -30,7 +30,7 @@ class AgencyManager extends BaseAgencyManager
 {
     protected function createAgency(): AgencyInterface
     {
-        return new \App\Entity\Agency();  // ✅ classe client
+        return new \App\Module\Core\Agency\Entity\Agency();  // ✅ classe client
     }
 }
 ```
@@ -56,7 +56,7 @@ php bin/console debug:container Aurora\\Core\\Agency\\Manager\\AgencyManagerInte
 Et faire un test :
 
 ```php
-$agency = $manager->create(new App\Dto\AgencyInput(name: 'Test', code: 'X'));
-self::assertInstanceOf(App\Entity\Agency::class, $agency);  // doit passer
+$agency = $manager->create(new App\Module\Core\Agency\Dto\AgencyInput(name: 'Test', code: 'X'));
+self::assertInstanceOf(App\Module\Core\Agency\Entity\Agency::class, $agency);  // doit passer
 self::assertSame('X', $agency->getCode());  // doit passer
 ```

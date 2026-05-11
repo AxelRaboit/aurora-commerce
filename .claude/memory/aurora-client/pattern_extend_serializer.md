@@ -8,12 +8,12 @@ champs custom. Décorer via `#[AsAlias(<Name>SerializerInterface::class)]`.
 ## Comment l'appliquer
 
 ```php
-namespace App\Serializer;
+namespace App\Module\Core\Agency\Serializer;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Serializer\AgencySerializer as BaseAgencySerializer;
 use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
-use App\Entity\Agency as AppAgency;
+use App\Module\Core\Agency\Entity\Agency as AppAgency;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencySerializerInterface::class)]
@@ -67,7 +67,7 @@ public function serialize(AgencyInterface $agency): array
 ### 2. `instanceof` pour les types étendus
 
 Comme pour Manager, le `serialize()` reçoit l'interface Aurora. Pour
-accéder à `getCode()`, vérifier `instanceof App\Entity\Agency`.
+accéder à `getCode()`, vérifier `instanceof AppAgency`.
 
 ## Cas particulier : Serializer avec multiples méthodes publiques
 

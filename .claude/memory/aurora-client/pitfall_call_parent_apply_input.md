@@ -2,7 +2,7 @@
 
 ## Symptôme
 
-Tu as override `applyInput()` sur ton `App\Manager\AgencyManager` pour
+Tu as override `applyInput()` sur ton `App\Module\Core\Agency\Manager\AgencyManager` pour
 hydrater `code`. Tu crées une nouvelle agence : `code` est bien copié,
 mais `name` reste vide et tous les autres champs Aurora sont `null`.
 

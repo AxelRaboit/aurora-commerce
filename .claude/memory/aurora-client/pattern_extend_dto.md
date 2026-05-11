@@ -22,7 +22,7 @@ Pour ajouter un champ au DTO d'entrée (ex: `code` sur `AgencyInput`), 2 étapes
 ### 1. DTO étendu
 
 ```php
-namespace App\Dto;
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInput as BaseAgencyInput;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
@@ -54,7 +54,7 @@ class AgencyInput extends BaseAgencyInput
 ### 2. Factory étendue
 
 ```php
-namespace App\Dto;
+namespace App\Module\Core\Agency\Dto;
 
 use Aurora\Core\Agency\Dto\AgencyInputFactory as BaseAgencyInputFactory;
 use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
