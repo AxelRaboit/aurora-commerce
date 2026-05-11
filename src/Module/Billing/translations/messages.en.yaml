@@ -9,7 +9,8 @@ backend:
           delete: Delete invoices
         tiers:
           view: View third-parties
-          manage: Manage third-parties
+          edit: Edit third-parties
+          delete: Delete third-parties
         ocr:
           import: Import invoices via OCR
   modules:

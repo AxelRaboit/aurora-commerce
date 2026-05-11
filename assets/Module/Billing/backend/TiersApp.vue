@@ -102,7 +102,7 @@ const TYPE_BADGE = {
                                 <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: tiers.id })">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="can('billing.tiers.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
+                                <AppIconButton v-if="can('billing.tiers.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

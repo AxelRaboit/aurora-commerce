@@ -9,7 +9,8 @@ backend:
           delete: Supprimer les factures
         tiers:
           view: Voir les tiers
-          manage: Gérer les tiers
+          edit: Modifier les tiers
+          delete: Supprimer les tiers
         ocr:
           import: Importer des factures par OCR
   modules:

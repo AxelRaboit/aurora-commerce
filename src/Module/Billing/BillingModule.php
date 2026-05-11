@@ -29,7 +29,8 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
             new NavPermission('billing.invoices.edit'),
             new NavPermission('billing.invoices.delete'),
             new NavPermission('billing.tiers.view'),
-            new NavPermission('billing.tiers.manage'),
+            new NavPermission('billing.tiers.edit'),
+            new NavPermission('billing.tiers.delete'),
             new NavPermission('billing.ocr.import'),
         ];
     }

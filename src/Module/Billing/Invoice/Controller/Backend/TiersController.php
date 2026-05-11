@@ -60,7 +60,7 @@ final class TiersController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('billing.tiers.manage')]
+    #[IsGranted('billing.tiers.edit')]
     public function update(Tiers $tiers, Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);
@@ -78,7 +78,7 @@ final class TiersController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('billing.tiers.manage')]
+    #[IsGranted('billing.tiers.delete')]
     public function delete(Tiers $tiers): JsonResponse
     {
         try {
