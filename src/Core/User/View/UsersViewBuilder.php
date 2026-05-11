@@ -6,6 +6,7 @@ namespace Aurora\Core\User\View;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Core\Module\ModuleToggle;
 use Aurora\Core\Module\ModuleToggleRegistry;
 use Aurora\Core\Module\PermissionRegistry;
 use Aurora\Core\Service\Entity\ServiceInterface;
@@ -87,22 +88,19 @@ final readonly class UsersViewBuilder
             $this->serviceRepository->findAllAlphabetical(),
         );
 
-        // Top-level modules currently enabled globally — surfaced to the per-user
-        // disabled-modules picker. Children inherit cascade automatically.
-        // Source = ModuleToggleRegistry, so aurora-client modules can plug
-        // their own top-level toggles without patching this builder.
+        // Modules currently enabled globally — surfaced to the per-user
+        // disabled-modules picker as a hierarchical tree
+        // (top-level → sub-modules, recursive). Source = ModuleToggleRegistry,
+        // so aurora-client modules can plug their own toggles without
+        // patching this builder. Sub-toggles whose global setting is OFF are
+        // filtered out — they cannot be enabled per-user.
         $modulesForAccess = [];
         foreach ($this->moduleToggleRegistry->getTopLevel() as $toggle) {
             if (!$this->settingRepository->getBoolean($toggle->key, true)) {
                 continue;
             }
 
-            $modulesForAccess[] = [
-                'key' => $toggle->key,
-                'moduleId' => $toggle->moduleId,
-                'label' => $translator->trans($toggle->labelKey),
-                'description' => $translator->trans($toggle->descriptionKey),
-            ];
+            $modulesForAccess[] = $this->buildToggleNode($toggle);
         }
 
         return [
@@ -114,6 +112,33 @@ final readonly class UsersViewBuilder
             'canManageDisabledModules' => $canManageDisabledModules,
             'agencies' => $agencies,
             'services' => $services,
+        ];
+    }
+
+    /**
+     * Builds the hierarchical payload for a single toggle (top-level or sub-),
+     * including its enabled children recursively. Sub-toggles whose global
+     * setting is OFF are filtered out — they cannot be enabled per-user.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildToggleNode(ModuleToggle $toggle): array
+    {
+        $children = [];
+        foreach ($this->moduleToggleRegistry->getChildrenOf($toggle->key) as $child) {
+            if (!$this->settingRepository->getBoolean($child->key, true)) {
+                continue;
+            }
+
+            $children[] = $this->buildToggleNode($child);
+        }
+
+        return [
+            'key' => $toggle->key,
+            'moduleId' => $toggle->moduleId,
+            'label' => $this->translator->trans($toggle->labelKey),
+            'description' => $this->translator->trans($toggle->descriptionKey),
+            'children' => $children,
         ];
     }
 }

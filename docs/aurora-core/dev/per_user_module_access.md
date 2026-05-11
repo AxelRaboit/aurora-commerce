@@ -118,10 +118,17 @@ quand toutes ces conditions sont remplies :
 - l'actor peut agir sur la cible (`canAct`)
 - la cible n'est pas un Dev (`!user.isDev`)
 
-Le clic ouvre une modale avec une checkbox par **module top-level**. Les
-sous-modules ne sont pas exposés (cascade s'occupe d'eux). Si tu as besoin
-de granularité sub-module, la persistance le supporte — il suffit d'enrichir
-`UsersViewBuilder::indexView()` pour exposer les sub-modules.
+Le clic ouvre une modale avec une **arborescence** de checkboxes :
+- au niveau racine, un toggle par module top-level (CRM, Vault, …) ;
+- en-dessous, indentés sur la gauche, les sous-modules (Contacts, Deals,
+  Tiers, …) — gérables individuellement.
+
+Sémantique :
+- décocher un parent grise visuellement tous ses enfants (cascade) et
+  rend la modification d'un enfant inopérante côté serveur (la cascade
+  est de toute façon appliquée par `ModuleAccessChecker`) ;
+- un enfant peut être désactivé sans toucher au parent (granularité
+  fine — ex: laisser CRM mais cacher Deals).
 
 ### Sémantique des checkboxes
 
@@ -185,8 +192,9 @@ ou `UsersViewBuilder`.
 
 ### Substituer la liste de modules exposés
 
-Override `UsersViewBuilder` côté client si tu veux exposer les sub-modules,
-ou ajouter une logique de tri / regroupement personnalisée.
+Override `UsersViewBuilder` côté client si tu veux ajouter une logique
+de tri / regroupement personnalisée. Les sous-modules sont déjà exposés
+par défaut (cf. `buildToggleNode()`).
 
 ### Ajouter un « critical module » (futur)
 

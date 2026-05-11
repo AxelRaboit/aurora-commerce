@@ -16,6 +16,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import UserRowActions from "@core/backend/users/UserRowActions.vue";
+import ModuleAccessNode from "@core/backend/users/ModuleAccessNode.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useUsersSearch } from "@core/backend/users/composables/useUsersSearch.js";
 import { useUsersInvite } from "@core/backend/users/composables/useUsersInvite.js";
@@ -478,15 +479,14 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                     </div>
                 </div>
                 <p class="text-xs text-muted">{{ t('backend.users.modules.hint') }}</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <AppCheckbox
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <ModuleAccessNode
                         v-for="entry in modulesForAccess"
                         :key="entry.key"
-                        :model-value="!pendingDisabledModules.includes(entry.key)"
-                        v-on:update:model-value="toggleModule(entry.key)"
-                    >
-                        <span class="text-xs">{{ entry.label }}</span>
-                    </AppCheckbox>
+                        :node="entry"
+                        :disabled-keys="pendingDisabledModules"
+                        v-on:toggle="toggleModule"
+                    />
                 </div>
             </div>
             <template #footer>

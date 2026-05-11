@@ -51,6 +51,20 @@ final class ModuleToggleRegistry
         ));
     }
 
+    /**
+     * Returns the toggles whose `parentKey` matches the given key (one level
+     * only — callers recurse if they need the full subtree).
+     *
+     * @return list<ModuleToggle>
+     */
+    public function getChildrenOf(string $parentKey): array
+    {
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn (ModuleToggle $toggle): bool => $toggle->parentKey === $parentKey,
+        ));
+    }
+
     /** @return array<string, ModuleToggle> */
     private function build(): array
     {
