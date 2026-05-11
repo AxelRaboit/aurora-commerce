@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Menu\Entity\Menu;
@@ -12,6 +13,7 @@ use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\User\Entity\User;
@@ -250,16 +252,24 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             'Marketing',
         ];
 
+        // Resolve concrete classes via Doctrine metadata so clients that
+        // substitute Agency/Service through resolve_target_entities still
+        // get the right class — `new Agency()` would bypass the mapping.
+        /** @var class-string<Agency> $agencyClass */
+        $agencyClass = $em->getClassMetadata(AgencyInterface::class)->getName();
+        /** @var class-string<Service> $serviceClass */
+        $serviceClass = $em->getClassMetadata(ServiceInterface::class)->getName();
+
         $agencies = [];
         foreach ($agencyDefs as $name) {
-            $agency = new Agency()->setName($name);
+            $agency = new $agencyClass()->setName($name);
             $em->persist($agency);
             $agencies[] = $agency;
         }
 
         $services = [];
         foreach ($serviceDefs as $name) {
-            $service = new Service()->setName($name);
+            $service = new $serviceClass()->setName($name);
             $em->persist($service);
             $services[] = $service;
         }
