@@ -24,8 +24,8 @@ final class EditorialContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialBackend->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialBackend->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialBackend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialBackend->value => false])->isBackendEnabled());
     }
 
     public function testIsPostsEnabled(): void

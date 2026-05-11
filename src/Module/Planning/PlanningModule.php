@@ -36,7 +36,7 @@ final readonly class PlanningModule implements ModuleInterface, ModuleToggleProv
 
     public function getNavSections(): array
     {
-        if (!$this->planningContext->isAdminEnabled()) {
+        if (!$this->planningContext->isBackendEnabled()) {
             return [];
         }
 

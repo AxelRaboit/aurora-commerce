@@ -36,7 +36,7 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
 
     public function getNavSections(): array
     {
-        if (!$this->pdfFormContext->isAdminEnabled()) {
+        if (!$this->pdfFormContext->isBackendEnabled()) {
             return [];
         }
 

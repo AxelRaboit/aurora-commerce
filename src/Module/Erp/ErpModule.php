@@ -33,7 +33,7 @@ final readonly class ErpModule implements ModuleInterface, ModuleToggleProviderI
 
     public function getNavSections(): array
     {
-        if (!$this->erpContext->isAdminEnabled()) {
+        if (!$this->erpContext->isBackendEnabled()) {
             return [];
         }
 

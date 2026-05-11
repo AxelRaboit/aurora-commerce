@@ -49,7 +49,7 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
     {
         $sections = [];
 
-        if ($this->generalContext->isAdminEnabled()) {
+        if ($this->generalContext->isBackendEnabled()) {
             $generalItems = [];
 
             if ($this->generalContext->isDashboardEnabled()) {
@@ -61,7 +61,7 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
             }
         }
 
-        if ($this->platformContext->isAdminEnabled()) {
+        if ($this->platformContext->isBackendEnabled()) {
             $platformItems = [];
 
             if ($this->platformContext->isMediaEnabled()) {

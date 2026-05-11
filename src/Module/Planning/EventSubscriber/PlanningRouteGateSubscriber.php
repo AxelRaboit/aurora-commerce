@@ -35,7 +35,7 @@ final readonly class PlanningRouteGateSubscriber implements EventSubscriberInter
             return;
         }
 
-        if (!$this->planningContext->isAdminEnabled()) {
+        if (!$this->planningContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

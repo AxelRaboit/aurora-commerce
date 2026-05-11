@@ -1,6 +1,6 @@
 ---
 name: Per-front enable/disable via FrontendInterface + Registry
-description: Chaque front (Editorial, Tracking, EcommerceShop, etc.) peut être désactivé indépendamment ; cascade vers /backend si tous off
+description: Chaque front (Editorial, Tracking, EcommerceFrontend, etc.) peut être désactivé indépendamment ; cascade vers /backend si tous off
 type: project
 ---
 
@@ -17,10 +17,10 @@ Chaque "front" (site public servi par Aurora) implémente
   appartiennent (utilisée par le route gate)
 
 **Le toggle d'un front est SÉPARÉ du toggle de son admin module.**
-Ex : `EditorialEnabled` = backend admin Editorial activé ; `EditorialFrontEnabled` =
-site public Editorial servi. C'est `EditorialFrontEnabled` qui est
+Ex : `EditorialBackend` = backend admin Editorial activé ; `EditorialFrontend` =
+site public Editorial servi. C'est `EditorialFrontend` qui est
 retourné par `EditorialFrontend::getModuleSettingKey()`. Le sub-toggle
-front a son parent en cascade (`requires = EditorialEnabled`), donc
+front a son parent en cascade (`requires = EditorialBackend`), donc
 désactiver l'admin désactive aussi le front.
 
 ## Pourquoi

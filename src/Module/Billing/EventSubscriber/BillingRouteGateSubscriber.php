@@ -35,7 +35,7 @@ final readonly class BillingRouteGateSubscriber implements EventSubscriberInterf
             return;
         }
 
-        if (!$this->billingContext->isAdminEnabled()) {
+        if (!$this->billingContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

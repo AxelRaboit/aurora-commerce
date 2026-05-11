@@ -24,8 +24,8 @@ final class VaultContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultBackend->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultBackend->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultBackend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultBackend->value => false])->isBackendEnabled());
     }
 
     public function testIsSafeEnabled(): void

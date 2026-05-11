@@ -35,7 +35,7 @@ final readonly class HrRouteGateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->hrContext->isAdminEnabled()) {
+        if (!$this->hrContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

@@ -24,8 +24,8 @@ final class PhotoContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoBackend->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoBackend->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoBackend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoBackend->value => false])->isBackendEnabled());
     }
 
     public function testIsFrontEnabled(): void

@@ -22,7 +22,7 @@ final readonly class PlatformContext
 {
     public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
 
-    public function isAdminEnabled(): bool
+    public function isBackendEnabled(): bool
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformBackend);
     }

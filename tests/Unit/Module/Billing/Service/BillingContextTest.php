@@ -25,13 +25,13 @@ final class BillingContextTest extends TestCase
     public function testIsAdminEnabledTrue(): void
     {
         $context = $this->makeContext([ModuleParameterEnum::BillingBackend->value => true]);
-        self::assertTrue($context->isAdminEnabled());
+        self::assertTrue($context->isBackendEnabled());
     }
 
     public function testIsAdminEnabledFalse(): void
     {
         $context = $this->makeContext([ModuleParameterEnum::BillingBackend->value => false]);
-        self::assertFalse($context->isAdminEnabled());
+        self::assertFalse($context->isBackendEnabled());
     }
 
     public function testIsTiersEnabledDelegatesToChecker(): void

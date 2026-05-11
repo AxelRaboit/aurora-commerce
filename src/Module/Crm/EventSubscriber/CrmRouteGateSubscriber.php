@@ -36,7 +36,7 @@ final readonly class CrmRouteGateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->crmContext->isAdminEnabled()) {
+        if (!$this->crmContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

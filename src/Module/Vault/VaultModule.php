@@ -30,7 +30,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
 
     public function getNavSections(): array
     {
-        if (!$this->vaultContext->isAdminEnabled()) {
+        if (!$this->vaultContext->isBackendEnabled()) {
             return [];
         }
 

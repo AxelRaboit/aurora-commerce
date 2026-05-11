@@ -24,8 +24,8 @@ final class PdfFormContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => false])->isBackendEnabled());
     }
 
     public function testIsTemplatesEnabled(): void

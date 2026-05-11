@@ -34,7 +34,7 @@ final readonly class ProjectModule implements ModuleInterface, ModuleToggleProvi
 
     public function getNavSections(): array
     {
-        if (!$this->projectContext->isAdminEnabled()) {
+        if (!$this->projectContext->isBackendEnabled()) {
             return [];
         }
 

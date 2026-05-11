@@ -36,7 +36,7 @@ final readonly class ErpRouteGateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->erpContext->isAdminEnabled()) {
+        if (!$this->erpContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

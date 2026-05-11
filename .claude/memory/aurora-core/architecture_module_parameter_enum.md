@@ -19,8 +19,8 @@ Parameters (`SettingRepository::findPaginated` l'exclut par défaut).
 ## Structure
 
 - **13 top-level cases** : un par module. Valeurs string sans `_enabled`
-  (ex: `backend_crm_admin`). Incluant `EcommerceShopEnabled = 'backend_ecommerce_front'`
-  et `PhotoPublicEnabled = 'photo_front'` (variantes front).
+  (ex: `modules_crm_backend`). Incluant `EcommerceFrontend = 'modules_ecommerce_frontend'`
+  et `PhotoFrontend = 'modules_photo_frontend'` (variantes front).
 - **24 sous-modules** : un par feature. Valeurs sans `_enabled`
   (ex: `backend_crm_contacts`). Billing ×3, CRM ×3, Ecommerce ×2, Editorial ×7,
   GED ×2, ERP ×1, HR ×1, Photo ×1, Planning ×1, Project ×1, Vault ×2.
@@ -35,14 +35,14 @@ Parameters (`SettingRepository::findPaginated` l'exclut par défaut).
 ## Dépendances inter-module (top-level)
 
 ```
-EditorialEnabled   — indépendant
-CrmEnabled         — indépendant
-ErpEnabled         — requires CrmEnabled
-EcommerceEnabled   — requires ErpEnabled
-EcommerceShopEnabled — requires ErpEnabled
-BillingEnabled     — requires CrmEnabled
-PhotoEnabled       — indépendant
-PhotoPublicEnabled — requires PhotoEnabled
+EditorialBackend   — indépendant
+CrmBackend         — indépendant
+ErpBackend         — requires CrmBackend
+EcommerceEnabled   — requires ErpBackend
+EcommerceFrontend — requires ErpBackend
+BillingEnabled     — requires CrmBackend
+PhotoBackend       — indépendant
+PhotoFrontend — requires PhotoBackend
 GedEnabled         — indépendant
 ProjectEnabled     — indépendant
 PlanningEnabled    — indépendant
@@ -53,9 +53,9 @@ VaultEnabled       — indépendant ("Module Outils" — coffre-fort + générat
 ## Dépendances intra-module (sous-modules)
 
 - Billing : Invoices → Tiers → BillingEnabled ; Compliance → BillingEnabled
-- CRM : Deals → Contacts → CrmEnabled ; Companies → CrmEnabled
+- CRM : Deals → Contacts → CrmBackend ; Companies → CrmBackend
 - Ecommerce : Orders → Listings → EcommerceEnabled
-- Editorial : Taxonomies → PostTypes → EditorialEnabled ; Comments, Sitemap → Posts → EditorialEnabled
+- Editorial : Taxonomies → PostTypes → EditorialBackend ; Comments, Sitemap → Posts → EditorialBackend
 - Tous les autres sous-modules → leur parent directement
 
 ## Consommateurs clés
@@ -68,7 +68,7 @@ VaultEnabled       — indépendant ("Module Outils" — coffre-fort + générat
 | `ApplicationParameterCommand` | sync BDD — fusionne les deux enums |
 | `UsersViewBuilder` | moduleToggles par `getModuleId()` |
 | `SettingRepository::findPaginated` | exclut groupe 'modules' par défaut |
-| `*Context.php` (11 fichiers) | `isAdminEnabled()` + méthodes sous-modules |
+| `*Context.php` (11 fichiers) | `isBackendEnabled()` + méthodes sous-modules |
 | `*Module.php` (11 fichiers) | `getNavSections()` filtre par context |
 
 ## How to apply

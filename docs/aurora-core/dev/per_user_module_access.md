@@ -15,7 +15,7 @@ Les deux couches sont consultées via un **service central**
 applique aussi le **cascade graph** existant (`getCascadeRequires()`).
 
 > **Important** : un user-level override ne peut **rien activer** qui ne soit
-> pas déjà ON globalement. Si Dev désactive `CrmEnabled`, aucun admin ne peut
+> pas déjà ON globalement. Si Dev désactive `CrmBackend`, aucun admin ne peut
 > le ré-activer pour un user spécifique.
 
 ---
@@ -57,7 +57,7 @@ applique aussi le **cascade graph** existant (`getCascadeRequires()`).
 
 ### Conséquence pour `RouteGateSubscriber`
 
-Les `XxxRouteGateSubscriber` consomment déjà `XxxContext::isAdminEnabled()`.
+Les `XxxRouteGateSubscriber` consomment déjà `XxxContext::isBackendEnabled()`.
 Ils deviennent automatiquement user-aware sans changement — un user dont
 le module est masqué reçoit un 404 sur les routes du module concerné.
 
@@ -74,8 +74,8 @@ protected array $disabledModules = [];
 ```
 
 Chaque entrée est une clé de toggle déclarée dans le `ModuleToggleRegistry`
-(soit un `ModuleParameterEnum::value` ex. `backend_crm_admin`, soit une
-clé client ex. `app_tracking_admin`). Les valeurs non déclarées sont
+(soit un `ModuleParameterEnum::value` ex. `modules_crm_backend`, soit une
+clé client ex. `app_tracking_backend`). Les valeurs non déclarées sont
 silencieusement filtrées par `UserManager::sanitizeDisabledModules()`,
 qui interroge le registry comme source de vérité.
 

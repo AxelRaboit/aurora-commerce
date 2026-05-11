@@ -52,7 +52,7 @@ final readonly class EcommerceRouteGateSubscriber implements EventSubscriberInte
             return;
         }
 
-        if ($this->matchesAny($route, self::ADMIN_PREFIXES) && !$this->ecommerceContext->isAdminEnabled()) {
+        if ($this->matchesAny($route, self::ADMIN_PREFIXES) && !$this->ecommerceContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
 

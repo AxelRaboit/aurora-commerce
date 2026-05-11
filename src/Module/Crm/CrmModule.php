@@ -41,7 +41,7 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
 
     public function getNavSections(): array
     {
-        if (!$this->crmContext->isAdminEnabled()) {
+        if (!$this->crmContext->isBackendEnabled()) {
             return [];
         }
 

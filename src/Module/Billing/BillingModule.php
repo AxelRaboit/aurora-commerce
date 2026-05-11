@@ -37,7 +37,7 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
 
     public function getNavSections(): array
     {
-        if (!$this->billingContext->isAdminEnabled()) {
+        if (!$this->billingContext->isBackendEnabled()) {
             return [];
         }
 

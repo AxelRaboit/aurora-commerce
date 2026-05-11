@@ -37,7 +37,7 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
 
     public function getNavSections(): array
     {
-        if (!$this->gedContext->isAdminEnabled()) {
+        if (!$this->gedContext->isBackendEnabled()) {
             return [];
         }
 

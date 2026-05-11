@@ -36,7 +36,7 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
 
     public function getNavSections(): array
     {
-        if (!$this->ecommerceContext->isAdminEnabled()) {
+        if (!$this->ecommerceContext->isBackendEnabled()) {
             return [];
         }
 

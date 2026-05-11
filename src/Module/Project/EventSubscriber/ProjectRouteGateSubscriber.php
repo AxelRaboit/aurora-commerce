@@ -35,7 +35,7 @@ final readonly class ProjectRouteGateSubscriber implements EventSubscriberInterf
             return;
         }
 
-        if (!$this->projectContext->isAdminEnabled()) {
+        if (!$this->projectContext->isBackendEnabled()) {
             throw new NotFoundHttpException();
         }
     }

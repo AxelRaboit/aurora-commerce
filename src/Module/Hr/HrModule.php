@@ -33,7 +33,7 @@ final readonly class HrModule implements ModuleInterface, ModuleToggleProviderIn
 
     public function getNavSections(): array
     {
-        if (!$this->hrContext->isAdminEnabled()) {
+        if (!$this->hrContext->isBackendEnabled()) {
             return [];
         }
 
