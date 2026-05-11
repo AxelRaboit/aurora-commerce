@@ -3,10 +3,15 @@ backend:
     names:
       ged:
         documents:
-          manage: Gérer les documents (upload, édition)
+          view: Voir les documents
+          create: Créer des documents
+          edit: Modifier les documents
           delete: Supprimer les documents
         categories:
-          manage: Gérer les catégories de documents
+          view: Voir les catégories
+          create: Créer des catégories
+          edit: Modifier les catégories
+          delete: Supprimer les catégories
   modules:
     ged: GED
     ged_description: "Active la section GED dans l'administration."

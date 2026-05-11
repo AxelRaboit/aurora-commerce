@@ -3,10 +3,15 @@ backend:
     names:
       ged:
         documents:
-          manage: Manage documents (upload, edit)
+          view: View documents
+          create: Create documents
+          edit: Edit documents
           delete: Delete documents
         categories:
-          manage: Manage document categories
+          view: View categories
+          create: Create categories
+          edit: Edit categories
+          delete: Delete categories
   modules:
     ged: DMS
     ged_description: 'Enables the DMS section in the admin.'

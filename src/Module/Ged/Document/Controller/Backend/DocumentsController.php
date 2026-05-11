@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/ged/documents', name: 'backend_ged_documents')]
-#[IsGranted('ged.documents.manage')]
+#[IsGranted('ged.documents.view')]
 final class DocumentsController extends AbstractController
 {
     use JsonRequestTrait;
@@ -49,6 +49,7 @@ final class DocumentsController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -63,6 +64,7 @@ final class DocumentsController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.edit')]
     public function update(Document $document, Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -77,6 +79,7 @@ final class DocumentsController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.delete')]
     public function delete(Document $document): JsonResponse
     {
         $this->manager->delete($document);

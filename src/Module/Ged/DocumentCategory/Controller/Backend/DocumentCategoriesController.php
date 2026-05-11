@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/ged/categories', name: 'backend_ged_categories')]
-#[IsGranted('ged.documents.manage')]
+#[IsGranted('ged.categories.view')]
 final class DocumentCategoriesController extends AbstractController
 {
     use JsonRequestTrait;
@@ -49,6 +49,7 @@ final class DocumentCategoriesController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.categories.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -63,6 +64,7 @@ final class DocumentCategoriesController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.categories.edit')]
     public function update(DocumentCategory $category, Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -77,6 +79,7 @@ final class DocumentCategoriesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.categories.delete')]
     public function delete(DocumentCategory $category): JsonResponse
     {
         $this->manager->delete($category);
