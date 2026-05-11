@@ -35,3 +35,5 @@ backend:
     planning: Planning
     project: Projet
     core: Cœur
+    platform: Plateforme
+    platform_description: Section technique du back-office.

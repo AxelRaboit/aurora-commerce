@@ -35,3 +35,5 @@ backend:
     planning: Planning
     project: Project
     core: Core
+    platform: Platform
+    platform_description: Technical backend section.
