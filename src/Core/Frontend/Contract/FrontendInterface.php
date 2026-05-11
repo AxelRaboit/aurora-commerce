@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Frontend\Contract;
 
-use Aurora\Core\Frontend\EventSubscriber\FrontendRouteGateSubscriber;
-
 interface FrontendInterface
 {
     public function getSlug(): string;

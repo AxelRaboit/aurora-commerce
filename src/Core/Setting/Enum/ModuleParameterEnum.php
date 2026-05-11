@@ -17,9 +17,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case CrmEnabled = 'backend_crm_admin';
     case ErpEnabled = 'backend_erp_admin';
     case EcommerceEnabled = 'backend_ecommerce_admin';
-    case EcommerceShopEnabled = 'backend_ecommerce_front';
-    case PhotoEnabled = 'photo_admin';
-    case PhotoPublicEnabled = 'photo_front';
+    case EcommerceShopEnabled = 'backend_ecommerce_frontend';
+    case PhotoEnabled = 'backend_photo_admin';
+    case PhotoPublicEnabled = 'backend_photo_frontend';
     case BillingEnabled = 'backend_billing_admin';
     case GedEnabled = 'backend_ged_admin';
     case ProjectEnabled = 'backend_project_admin';
@@ -54,7 +54,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case EcommerceOrdersEnabled = 'backend_ecommerce_orders';
 
     // Sub-modules — Editorial
-    case EditorialFrontEnabled = 'front_editorial';
+    case EditorialFrontEnabled = 'backend_editorial_frontend';
     case EditorialPostsEnabled = 'backend_editorial_posts';
     case EditorialMenusEnabled = 'backend_editorial_menus';
     case EditorialPostTypesEnabled = 'backend_editorial_post_types';
