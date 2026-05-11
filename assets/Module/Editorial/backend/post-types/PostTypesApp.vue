@@ -52,7 +52,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.title") }}</h2>
-                <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreatePostType">
+                <AppButton v-if="can('editorial.post_types.create')" variant="primary" size="md" v-on:click="openCreatePostType">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("backend.postTypes.add") }}
                 </AppButton>
@@ -93,12 +93,12 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton v-if="can('editorial.post_types.manage')" variant="ghost" size="md" v-on:click="openEditPostType(selected)">
+                            <AppButton v-if="can('editorial.post_types.edit')" variant="ghost" size="md" v-on:click="openEditPostType(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
                             <AppButton
-                                v-if="!selected.isBuiltIn && can('editorial.post_types.manage')"
+                                v-if="!selected.isBuiltIn && can('editorial.post_types.delete')"
                                 variant="danger"
                                 size="md"
                                 v-on:click="deletingPostType = selected"
@@ -113,7 +113,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.fields.title") }}</h4>
-                        <AppButton v-if="can('editorial.post_types.manage')" variant="primary" size="md" v-on:click="openCreateField">
+                        <AppButton v-if="can('editorial.post_types.edit')" variant="primary" size="md" v-on:click="openCreateField">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("backend.postTypes.fields.add") }}
                         </AppButton>
@@ -149,10 +149,10 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             <AppBadge v-if="field.required" color="rose">{{ t("backend.postTypes.fields.required") }}</AppBadge>
                             <AppBadge v-if="field.translatable" color="sky">{{ t("backend.postTypes.fields.translatable") }}</AppBadge>
                             <div class="flex items-center gap-0.5">
-                                <AppIconButton v-if="can('editorial.post_types.manage')" color="accent" v-on:click="openEditField(field)">
+                                <AppIconButton v-if="can('editorial.post_types.edit')" color="accent" v-on:click="openEditField(field)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="can('editorial.post_types.manage')" color="rose" v-on:click="deletingField = field">
+                                <AppIconButton v-if="can('editorial.post_types.edit')" color="rose" v-on:click="deletingField = field">
                                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                             </div>

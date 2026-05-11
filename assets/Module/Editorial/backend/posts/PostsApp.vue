@@ -153,7 +153,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     v-on:search="onSearch"
                 />
                 <AppButton
-                    v-if="!trashed && can('editorial.posts.manage')"
+                    v-if="!trashed && can('editorial.posts.create')"
                     variant="primary"
                     size="md"
                     class="w-full sm:w-auto"
@@ -194,7 +194,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <AppIconButton color="sky" v-on:click="openPreview(post)">
                                 <Eye class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="!trashed && can('editorial.posts.manage')" color="accent" v-on:click="openEdit(post)">
+                            <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
                                 <Pencil class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
@@ -249,7 +249,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                                     <AppIconButton color="sky" v-on:click="openPreview(post)">
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
-                                    <AppIconButton v-if="!trashed && can('editorial.posts.manage')" color="accent" v-on:click="openEdit(post)">
+                                    <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
                                         <Pencil class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
                                     <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">

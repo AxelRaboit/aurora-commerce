@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/menus', name: 'backend_menus')]
-#[IsGranted('editorial.menus.manage')]
+#[IsGranted('editorial.menus.view')]
 class MenusController extends AbstractController
 {
     use JsonRequestTrait;
@@ -68,6 +68,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.create')]
     public function createMenu(): JsonResponse
     {
         // Menu creation is reserved to the aurora:menus:sync command — admins
@@ -82,6 +83,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.edit')]
     public function updateMenu(Menu $menu, Request $request): JsonResponse
     {
         $input = $this->menuInputFactory->fromArray($this->decodeJson($request));
@@ -100,6 +102,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.delete')]
     public function deleteMenu(Menu $menu): JsonResponse
     {
         try {
@@ -114,6 +117,7 @@ class MenusController extends AbstractController
     // ── Items CRUD ────────────────────────────────────────────────────────────
 
     #[Route('/{id}/items/create', name: '_items_create', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.edit')]
     public function createItem(Menu $menu, Request $request): JsonResponse
     {
         $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
@@ -131,6 +135,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/items/{id}/update', name: '_items_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.edit')]
     public function updateItem(MenuItem $item, Request $request): JsonResponse
     {
         $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
@@ -148,6 +153,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/items/{id}/delete', name: '_items_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.edit')]
     public function deleteItem(MenuItem $item): JsonResponse
     {
         $menu = $item->getMenu();
@@ -157,6 +163,7 @@ class MenusController extends AbstractController
     }
 
     #[Route('/{id}/items/reorder', name: '_items_reorder', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('editorial.menus.edit')]
     public function reorderItems(Menu $menu, Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);

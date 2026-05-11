@@ -137,7 +137,7 @@ const parentOptions = computed(() => {
         <aside class="lg:w-72 shrink-0 space-y-2">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.title") }}</h2>
-                <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTaxonomy">
+                <AppButton v-if="can('editorial.taxonomies.create')" variant="primary" size="md" v-on:click="openCreateTaxonomy">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("backend.taxonomies.addTaxonomy") }}
                 </AppButton>
@@ -181,12 +181,12 @@ const parentOptions = computed(() => {
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton v-if="can('editorial.taxonomies.manage')" variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
+                            <AppButton v-if="can('editorial.taxonomies.edit')" variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
                             <AppButton
-                                v-if="!selected.isBuiltIn && can('editorial.taxonomies.manage')"
+                                v-if="!selected.isBuiltIn && can('editorial.taxonomies.delete')"
                                 variant="danger"
                                 size="md"
                                 v-on:click="deletingTaxonomy = selected"
@@ -214,7 +214,7 @@ const parentOptions = computed(() => {
                                     {{ locale.toUpperCase() }}
                                 </AppTab>
                             </div>
-                            <AppButton v-if="can('editorial.taxonomies.manage')" variant="primary" size="md" v-on:click="openCreateTerm()">
+                            <AppButton v-if="can('editorial.taxonomies.edit')" variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("backend.taxonomies.terms.addTerm") }}
                             </AppButton>

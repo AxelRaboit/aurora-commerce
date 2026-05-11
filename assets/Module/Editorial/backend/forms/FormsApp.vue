@@ -77,7 +77,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <div class="lg:w-72 shrink-0 flex flex-col gap-3">
             <AppButton
-                v-if="can('editorial.forms.manage')"
+                v-if="can('editorial.forms.create')"
                 variant="primary"
                 size="md"
                 class="w-full justify-center"
@@ -120,7 +120,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                 </div>
                 <div class="flex items-center gap-2">
                     <AppButton
-                        v-if="!isCreating && can('editorial.forms.manage')"
+                        v-if="!isCreating && can('editorial.forms.edit')"
                         variant="danger"
                         size="md"
                         v-on:click="showDeleteConfirm = true"
@@ -272,7 +272,7 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             <div v-if="activeTab === 'fields'" class="p-5 flex flex-col gap-4 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between">
                     <p class="text-sm text-secondary">{{ t("backend.forms.fieldsHint") }}</p>
-                    <AppButton v-if="can('editorial.forms.manage')" variant="secondary" size="md" v-on:click="openAddField">
+                    <AppButton v-if="can('editorial.forms.edit')" variant="secondary" size="md" v-on:click="openAddField">
                         <Plus class="w-4 h-4" :stroke-width="2" />
                         {{ t("backend.forms.addField") }}
                     </AppButton>
@@ -303,10 +303,10 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                                 <AppBadge color="accent">{{ fieldTypeLabel(field.type) }}</AppBadge>
                             </div>
                         </div>
-                        <AppIconButton v-if="can('editorial.forms.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
+                        <AppIconButton v-if="can('editorial.forms.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditField(field)">
                             <Pencil class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
-                        <AppIconButton v-if="can('editorial.forms.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
+                        <AppIconButton v-if="can('editorial.forms.edit')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteField(field)">
                             <Trash2 class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
                     </div>
