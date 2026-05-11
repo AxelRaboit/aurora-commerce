@@ -8,6 +8,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { Lock } from "lucide-vue-next";
 import { useModules } from "@core/backend/dev/composables/useModules.js";
 
@@ -56,6 +57,9 @@ onMounted(() => {
                     <div class="min-w-0">
                         <p class="text-sm font-medium text-primary flex items-center gap-1.5">
                             {{ parameter.label }}
+                            <AppBadge v-if="parameter.type" :color="parameter.type === 'frontend' ? 'emerald' : 'slate'">
+                                {{ t(`backend.settings.moduleType.${parameter.type}`) }}
+                            </AppBadge>
                             <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                         </p>
                         <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
@@ -89,6 +93,9 @@ onMounted(() => {
                         <div class="min-w-0">
                             <p class="text-sm text-primary flex items-center gap-1.5">
                                 {{ sub.label }}
+                                <AppBadge v-if="sub.type" :color="sub.type === 'frontend' ? 'emerald' : 'slate'">
+                                    {{ t(`backend.settings.moduleType.${sub.type}`) }}
+                                </AppBadge>
                                 <Lock v-if="modules.isLocked(sub)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                             </p>
                             <p v-if="sub.description" class="text-xs text-muted mt-0.5">{{ sub.description }}</p>

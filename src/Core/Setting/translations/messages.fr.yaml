@@ -23,6 +23,9 @@ backend:
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
     modulesEmpty: Aucun module trouvé.
+    moduleType:
+      backend: Backend
+      frontend: Frontend
     save: Enregistrer
     saved: Réglages sauvegardés.
     modulesSearchPlaceholder: Rechercher un module…

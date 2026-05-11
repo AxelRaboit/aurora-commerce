@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\View;
 
 use Aurora\Core\Module\ModuleInterface;
+use Aurora\Core\Module\ModuleToggleTypeEnum;
 use Aurora\Core\Module\NavSection;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -55,6 +56,7 @@ final readonly class ModulesViewBuilder
                     'description' => $this->translator->trans($subParameter->getDescription()),
                     'value' => $this->settingRepository->get($subParameter->getKey(), $subParameter->getDefaultValue()),
                     'requires' => $subParameter->getCascadeRequires(),
+                    'type' => ModuleToggleTypeEnum::fromKey($subParameter->getKey())->value,
                 ];
             }
 
@@ -66,6 +68,7 @@ final readonly class ModulesViewBuilder
                 'requires' => $parameter->getCascadeRequires(),
                 'navItems' => $navItems,
                 'subModules' => $subModules,
+                'type' => ModuleToggleTypeEnum::fromKey($parameter->getKey())->value,
             ];
         }
 

@@ -23,6 +23,9 @@ backend:
     mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.
     modulesEmpty: No module found.
+    moduleType:
+      backend: Backend
+      frontend: Frontend
     save: Save
     saved: Settings saved.
     modulesSearchPlaceholder: Search a module…
