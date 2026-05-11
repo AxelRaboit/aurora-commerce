@@ -41,7 +41,7 @@ final readonly class ProjectModule implements ModuleInterface, ModuleToggleProvi
         $items = [];
 
         if ($this->projectContext->isProjectsEnabled()) {
-            $items[] = new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', descriptionKey: 'backend.nav.projects_description');
+            $items[] = new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', requiredPrivilege: 'project.projects.view', descriptionKey: 'backend.nav.projects_description');
         }
 
         if ([] === $items) {
@@ -55,7 +55,7 @@ final readonly class ProjectModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavSection('project', [
-                new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', descriptionKey: 'backend.nav.projects_description'),
+                new NavItem('backend_projects', 'backend.nav.projects', 'folder-kanban', requiredPrivilege: 'project.projects.view', descriptionKey: 'backend.nav.projects_description'),
             ], priority: 35),
         ];
     }
