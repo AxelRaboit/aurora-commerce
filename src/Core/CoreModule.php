@@ -28,15 +28,20 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.media.view'),
-            new NavPermission('core.media.manage'),
+            // Général
+            new NavPermission('general.dashboard.view', group: 'general'),
+            // Plateforme — declared by CoreModule but surfaced under the
+            // "platform" section in the privileges modal via the group override.
+            new NavPermission('core.media.view', group: 'platform'),
+            new NavPermission('core.media.manage', group: 'platform'),
+            new NavPermission('core.users.manage', group: 'platform'),
+            new NavPermission('core.users.modules.manage', group: 'platform'),
+            new NavPermission('core.agencies.manage', group: 'platform'),
+            new NavPermission('core.services.manage', group: 'platform'),
+            new NavPermission('core.settings.manage', group: 'platform'),
+            new NavPermission('core.themes.manage', group: 'platform'),
+            // Cross-cutting (no specific UI section — left under module's own group)
             new NavPermission('core.search.view'),
-            new NavPermission('core.users.manage'),
-            new NavPermission('core.users.modules.manage'),
-            new NavPermission('core.agencies.manage'),
-            new NavPermission('core.services.manage'),
-            new NavPermission('core.settings.manage'),
-            new NavPermission('core.themes.manage'),
         ];
     }
 
@@ -48,7 +53,7 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
             $generalItems = [];
 
             if ($this->generalContext->isDashboardEnabled()) {
-                $generalItems[] = new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', descriptionKey: 'backend.nav.dashboard_description');
+                $generalItems[] = new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', requiredPrivilege: 'general.dashboard.view', descriptionKey: 'backend.nav.dashboard_description');
             }
 
             if ([] !== $generalItems) {
@@ -99,7 +104,7 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
     {
         return [
             new NavSection('core', [
-                new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', descriptionKey: 'backend.nav.dashboard_description'),
+                new NavItem('backend_dashboard', 'backend.nav.dashboard', 'layout-dashboard', requiredPrivilege: 'general.dashboard.view', descriptionKey: 'backend.nav.dashboard_description'),
             ], priority: 10),
             new NavSection('platform', [
                 new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'core.media.view', descriptionKey: 'backend.nav.media_description'),

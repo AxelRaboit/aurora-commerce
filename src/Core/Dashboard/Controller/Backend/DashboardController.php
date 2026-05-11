@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend', name: 'backend_')]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('general.dashboard.view')]
 class DashboardController extends AbstractController
 {
     public function __construct(private readonly DashboardViewBuilder $viewBuilder) {}

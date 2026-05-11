@@ -19,6 +19,32 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class UsersViewBuilder
 {
+    /**
+     * Display priority per module/group id (lower = first). Mirrors the
+     * NavSection priorities used by the sidebar, so the Privileges modal
+     * and Module-Access modal show modules in the same order users see
+     * in the left menu. Unknown ids default to {@see self::UNKNOWN_PRIORITY}
+     * which places them at the end of the list (typical for client modules).
+     */
+    private const array MODULE_PRIORITY = [
+        'general' => 10,
+        'platform' => 20,
+        'vault' => 20,
+        'editorial' => 30,
+        'pdfform' => 34,
+        'ged' => 35,
+        'project' => 35,
+        'crm' => 40,
+        'planning' => 40,
+        'hr' => 45,
+        'erp' => 50,
+        'billing' => 55,
+        'ecommerce' => 60,
+        'photo' => 70,
+    ];
+
+    private const int UNKNOWN_PRIORITY = 500;
+
     /** @var array<string, ModuleParameterEnum> module ID → admin-enabled toggle, built from the enum */
     private array $moduleToggles;
 
@@ -78,6 +104,8 @@ final readonly class UsersViewBuilder
             ];
         }
 
+        usort($privilegesByModule, fn (array $a, array $b): int => $this->priorityFor($a['module']) <=> $this->priorityFor($b['module']));
+
         $agencies = array_map(
             static fn (AgencyInterface $agency): array => ['value' => (string) $agency->getId(), 'label' => $agency->getName()],
             $this->agencyRepository->findAllAlphabetical(),
@@ -103,6 +131,8 @@ final readonly class UsersViewBuilder
             $modulesForAccess[] = $this->buildToggleNode($toggle);
         }
 
+        usort($modulesForAccess, fn (array $a, array $b): int => $this->priorityFor((string) $a['moduleId']) <=> $this->priorityFor((string) $b['moduleId']));
+
         return [
             'roles' => $roles,
             'isDev' => $isDev,
@@ -113,6 +143,11 @@ final readonly class UsersViewBuilder
             'agencies' => $agencies,
             'services' => $services,
         ];
+    }
+
+    private function priorityFor(string $moduleId): int
+    {
+        return self::MODULE_PRIORITY[$moduleId] ?? self::UNKNOWN_PRIORITY;
     }
 
     /**

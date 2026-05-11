@@ -7,6 +7,9 @@ backend:
     name: Permission
     key: Clé technique
     names:
+      general:
+        dashboard:
+          view: Accéder au tableau de bord
       core:
         users:
           manage: Gérer les utilisateurs

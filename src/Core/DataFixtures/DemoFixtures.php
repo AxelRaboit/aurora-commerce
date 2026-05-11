@@ -161,6 +161,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'name' => 'Jean Martin',
                 'role' => UserRoleEnum::User,
                 'privileges' => [
+                    'general.dashboard.view',
                     // CRM — full sales access
                     'crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit', 'crm.contacts.delete',
                     'crm.companies.view', 'crm.companies.create', 'crm.companies.edit', 'crm.companies.delete',
@@ -176,6 +177,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'name' => 'Sophie Bernard',
                 'role' => UserRoleEnum::User,
                 'privileges' => [
+                    'general.dashboard.view',
                     // Editorial — full editorial workflow
                     'editorial.posts.view', 'editorial.posts.create', 'editorial.posts.edit', 'editorial.posts.delete',
                     'editorial.menus.view', 'editorial.menus.create', 'editorial.menus.edit', 'editorial.menus.delete',
@@ -194,6 +196,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'name' => 'Thomas Petit',
                 'role' => UserRoleEnum::User,
                 'privileges' => [
+                    'general.dashboard.view',
                     // Ecommerce — full sales access (refund stays admin-only)
                     'ecommerce.listings.view', 'ecommerce.listings.create', 'ecommerce.listings.edit', 'ecommerce.listings.delete',
                     'ecommerce.orders.view', 'ecommerce.orders.edit',

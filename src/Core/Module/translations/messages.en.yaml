@@ -7,6 +7,9 @@ backend:
     name: Permission
     key: Technical key
     names:
+      general:
+        dashboard:
+          view: Access the dashboard
       core:
         users:
           manage: Manage users

@@ -21,7 +21,13 @@ final class PermissionRegistry
 
             foreach ($module->getPermissions() as $permission) {
                 $this->permissions[] = $permission->name;
-                $this->byModule[$moduleId][] = $permission->name;
+                // Permission can opt into a different display group via
+                // NavPermission::$group — used to surface a permission
+                // declared by one module under another section in the
+                // privileges modal (e.g. core.media.* shown under platform).
+                $group = $permission->group ?? $moduleId;
+                $this->byModule[$group] ??= [];
+                $this->byModule[$group][] = $permission->name;
             }
         }
 
