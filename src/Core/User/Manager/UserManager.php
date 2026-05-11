@@ -9,7 +9,7 @@ use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Auth\Manager\EmailVerificationManagerInterface;
 use Aurora\Core\Auth\Manager\InvitationManagerInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
-use Aurora\Core\Module\ModuleToggleRegistry;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Service\Entity\ServiceInterface;

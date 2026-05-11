@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\Enum;
 
-use Aurora\Core\Module\ModuleToggle;
+use Aurora\Core\Module\Toggle\ModuleToggle;
 
 enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
 {

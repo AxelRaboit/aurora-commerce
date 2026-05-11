@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Toggle;
 
 /**
  * Declarative description of a single module toggle (one row in core_settings,

@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Service;
 
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Nav\NavItem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 

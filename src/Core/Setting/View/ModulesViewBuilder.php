@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\View;
 
-use Aurora\Core\Module\ModuleInterface;
-use Aurora\Core\Module\ModuleToggleTypeEnum;
-use Aurora\Core\Module\NavSection;
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Enum\ModuleToggleTypeEnum;
+use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;

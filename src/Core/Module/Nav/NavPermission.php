@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Nav;
 
 final readonly class NavPermission
 {

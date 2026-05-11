@@ -104,6 +104,34 @@ src/Module/Editorial/Post/
 └── View/{PostsViewBuilder,PostTypesViewBuilder}.php
 ```
 
+## Cas particulier : `src/Core/Module/` (infrastructure transversale)
+
+Ce dossier n'est PAS une entité métier, mais l'**infrastructure du système
+de modules** (registry, voter, toggles, nav). Il ne suit donc pas la
+convention `Entity/Manager/...` mais une organisation par **rôle technique** :
+
+```
+src/Core/Module/
+├── Contract/         ← Interfaces (ModuleInterface, ModuleToggleProviderInterface)
+├── Controller/Dev/   ← PermissionsController (admin UI)
+├── Enum/             ← ModuleToggleTypeEnum (Backend/Frontend)
+├── Nav/              ← NavItem, NavSection, NavPermission (value objects nav)
+├── Security/         ← ModulePermissionVoter
+├── Service/          ← ModuleAccessChecker, ModuleRegistry, PermissionRegistry
+├── Toggle/           ← ModuleToggle (VO) + ModuleToggleRegistry
+└── View/             ← PermissionsViewBuilder
+```
+
+**Pourquoi** : 12 fichiers initialement au root → audit a montré que la
+convention Entity-based ne s'applique pas (pas d'entité Doctrine ici). On
+groupe par responsabilité : `Contract/` pour les interfaces, `Nav/` pour
+les VO de navigation, `Toggle/` pour la machinerie d'activation, etc.
+
+**Comment l'appliquer** : si tu ajoutes un nouveau composant à
+`src/Core/Module/`, range-le par rôle (un nouveau voter → `Security/`, un
+nouvel event → `Event/`, un nouveau service → `Service/`). Ne crée pas
+un fichier au root.
+
 ## Anti-patterns
 
 - ❌ Mélanger plusieurs entités dans un même dossier (ex:

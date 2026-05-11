@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Module\View;
 
-use Aurora\Core\Module\PermissionRegistry;
+use Aurora\Core\Module\Service\PermissionRegistry;
 
 /**
  * Builds the Twig payload for the dev permissions dashboard tab. Wraps the

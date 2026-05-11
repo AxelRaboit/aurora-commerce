@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Toggle;
+
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 
 /**
  * Aggregates module toggles declared by all registered modules that

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Security;
 
+use Aurora\Core\Module\Service\PermissionRegistry;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

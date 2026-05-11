@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Service;
+
+use Aurora\Core\Module\Contract\ModuleInterface;
 
 final class PermissionRegistry
 {

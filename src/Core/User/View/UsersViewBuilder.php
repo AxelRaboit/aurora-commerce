@@ -6,9 +6,9 @@ namespace Aurora\Core\User\View;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Module\ModuleToggle;
-use Aurora\Core\Module\ModuleToggleRegistry;
-use Aurora\Core\Module\PermissionRegistry;
+use Aurora\Core\Module\Service\PermissionRegistry;
+use Aurora\Core\Module\Toggle\ModuleToggle;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;

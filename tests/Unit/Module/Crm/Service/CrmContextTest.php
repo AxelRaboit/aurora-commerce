@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Crm\Service;
 
-use Aurora\Core\Module\ModuleAccessChecker;
+use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Crm\Service\CrmContext;
 use PHPUnit\Framework\TestCase;

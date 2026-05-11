@@ -27,7 +27,7 @@ services:
     # Auto-tag every menu location provider so the MenuLocationRegistry collects them.
     # Auto-tag every sequence prefix provider so the conflict listener validates uniqueness at boot.
     _instanceof:
-        Aurora\Core\Module\ModuleInterface:
+        Aurora\Core\Module\Contract\ModuleInterface:
             tags: [aurora.module]
         Aurora\Core\Media\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
@@ -91,15 +91,15 @@ services:
         arguments:
             $auroraDir: '%kernel.project_dir%'
 
-    Aurora\Core\Module\ModuleRegistry:
+    Aurora\Core\Module\Service\ModuleRegistry:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Module\PermissionRegistry:
+    Aurora\Core\Module\Service\PermissionRegistry:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Module\ModuleToggleRegistry:
+    Aurora\Core\Module\Toggle\ModuleToggleRegistry:
         arguments:
             $modules: !tagged_iterator aurora.module
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\PdfForm\Service;
 
-use Aurora\Core\Module\ModuleAccessChecker;
+use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\PdfForm\Service\PdfFormContext;
 use PHPUnit\Framework\TestCase;

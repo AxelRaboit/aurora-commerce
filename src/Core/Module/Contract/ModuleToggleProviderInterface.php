@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Contract;
+
+use Aurora\Core\Module\Toggle\ModuleToggle;
 
 /**
  * Optional companion interface for {@see ModuleInterface}: lets a module

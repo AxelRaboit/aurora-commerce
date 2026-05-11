@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module;
 
-use Aurora\Core\Module\ModuleInterface;
-use Aurora\Core\Module\ModuleToggle;
-use Aurora\Core\Module\ModuleToggleProviderInterface;
-use Aurora\Core\Module\ModuleToggleRegistry;
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Toggle\ModuleToggle;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleToggleRegistryTest extends TestCase

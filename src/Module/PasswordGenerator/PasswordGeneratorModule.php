@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PasswordGenerator;
 
-use Aurora\Core\Module\ModuleInterface;
-use Aurora\Core\Module\NavPermission;
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Nav\NavPermission;
 
 final readonly class PasswordGeneratorModule implements ModuleInterface
 {

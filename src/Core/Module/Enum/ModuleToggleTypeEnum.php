@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Module;
+namespace Aurora\Core\Module\Enum;
 
 /**
  * Classification d'un toggle de {@see ModuleParameterEnum} selon ce

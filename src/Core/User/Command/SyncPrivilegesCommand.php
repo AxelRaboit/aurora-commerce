@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Command;
 
-use Aurora\Core\Module\PermissionRegistry;
+use Aurora\Core\Module\Service\PermissionRegistry;
 use Aurora\Core\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
