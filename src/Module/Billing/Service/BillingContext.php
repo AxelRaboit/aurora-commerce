@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 
 final readonly class BillingContext
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ModuleParameterEnum::BillingEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingEnabled);
     }
 
     public function isTiersEnabled(): bool
     {
-        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingTiersEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingTiersEnabled);
     }
 
     public function isInvoicesEnabled(): bool
     {
-        return $this->isTiersEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingInvoicesEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingInvoicesEnabled);
     }
 
     public function isComplianceEnabled(): bool
     {
-        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::BillingComplianceEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingComplianceEnabled);
     }
 }

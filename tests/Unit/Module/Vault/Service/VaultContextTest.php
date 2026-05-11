@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Vault\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Vault\Service\VaultContext;
 use PHPUnit\Framework\TestCase;
 
 final class VaultContextTest extends TestCase
 {
+    /** @param array<string, bool> $values */
     private function makeContext(array $values): VaultContext
     {
-        $repository = $this->createStub(SettingRepository::class);
-        $repository->method('getBoolean')->willReturnCallback(
-            static fn (string $key, bool $default): bool => array_key_exists($key, $values)
-                ? $values[$key]
-                : $default,
+        $checker = $this->createStub(ModuleAccessChecker::class);
+        $checker->method('isEnabled')->willReturnCallback(
+            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
         );
 
-        return new VaultContext($repository);
+        return new VaultContext($checker);
     }
 
     public function testIsAdminEnabled(): void
@@ -31,31 +30,13 @@ final class VaultContextTest extends TestCase
 
     public function testIsSafeEnabled(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::VaultEnabled->value => true,
-            ModuleParameterEnum::VaultSafeEnabled->value => true,
-        ]);
-        self::assertTrue($context->isSafeEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::VaultEnabled->value => false,
-            ModuleParameterEnum::VaultSafeEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isSafeEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultSafeEnabled->value => true])->isSafeEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultSafeEnabled->value => false])->isSafeEnabled());
     }
 
     public function testIsPasswordGeneratorEnabled(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::VaultEnabled->value => true,
-            ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => true,
-        ]);
-        self::assertTrue($context->isPasswordGeneratorEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::VaultEnabled->value => false,
-            ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isPasswordGeneratorEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => true])->isPasswordGeneratorEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => false])->isPasswordGeneratorEnabled());
     }
 }

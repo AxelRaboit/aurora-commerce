@@ -64,6 +64,7 @@ class UserSerializer implements UserSerializerInterface
             'serviceId' => $user->getService()?->getId(),
             'serviceName' => $user->getService()?->getName(),
             'privileges' => $user->getPrivileges(),
+            'disabledModules' => $user->getDisabledModules(),
             'invitedAt' => $user->getInvitedAt()?->format(DATE_ATOM),
             'createdAt' => $user->getCreatedAt()->format(DATE_ATOM),
         ];

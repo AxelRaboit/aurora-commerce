@@ -6,6 +6,7 @@ namespace Aurora\Core\User\View;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Core\Module\ModuleToggleRegistry;
 use Aurora\Core\Module\PermissionRegistry;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
@@ -26,6 +27,7 @@ final readonly class UsersViewBuilder
         private AgencyRepository $agencyRepository,
         private ServiceRepository $serviceRepository,
         private TranslatorInterface $translator,
+        private ModuleToggleRegistry $moduleToggleRegistry,
     ) {
         $toggles = [];
         foreach (ModuleParameterEnum::cases() as $case) {
@@ -41,7 +43,7 @@ final readonly class UsersViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function indexView(bool $isDev, ?User $currentUser): array
+    public function indexView(bool $isDev, ?User $currentUser, bool $canManageDisabledModules = false): array
     {
         $selectableRoles = $isDev
             ? [UserRoleEnum::Dev, ...UserRoleEnum::selectableForAdmin()]
@@ -85,11 +87,31 @@ final readonly class UsersViewBuilder
             $this->serviceRepository->findAllAlphabetical(),
         );
 
+        // Top-level modules currently enabled globally — surfaced to the per-user
+        // disabled-modules picker. Children inherit cascade automatically.
+        // Source = ModuleToggleRegistry, so aurora-client modules can plug
+        // their own top-level toggles without patching this builder.
+        $modulesForAccess = [];
+        foreach ($this->moduleToggleRegistry->getTopLevel() as $toggle) {
+            if (!$this->settingRepository->getBoolean($toggle->key, true)) {
+                continue;
+            }
+
+            $modulesForAccess[] = [
+                'key' => $toggle->key,
+                'moduleId' => $toggle->moduleId,
+                'label' => $translator->trans($toggle->labelKey),
+                'description' => $translator->trans($toggle->descriptionKey),
+            ];
+        }
+
         return [
             'roles' => $roles,
             'isDev' => $isDev,
             'currentUserPriority' => $currentUserPriority,
             'privilegesByModule' => $privilegesByModule,
+            'modulesForAccess' => $modulesForAccess,
+            'canManageDisabledModules' => $canManageDisabledModules,
             'agencies' => $agencies,
             'services' => $services,
         ];

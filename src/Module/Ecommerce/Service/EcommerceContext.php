@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 
 final readonly class EcommerceContext
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceEnabled);
     }
 
     public function isFrontEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceShopEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceShopEnabled);
     }
 
     public function isListingsEnabled(): bool
     {
-        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceListingsEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceListingsEnabled);
     }
 
     public function isOrdersEnabled(): bool
     {
-        return $this->isListingsEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceOrdersEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceOrdersEnabled);
     }
 }

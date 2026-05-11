@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Planning\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Planning\Service\PlanningContext;
 use PHPUnit\Framework\TestCase;
 
 final class PlanningContextTest extends TestCase
 {
+    /** @param array<string, bool> $values */
     private function makeContext(array $values): PlanningContext
     {
-        $repository = $this->createStub(SettingRepository::class);
-        $repository->method('getBoolean')->willReturnCallback(
-            static fn (string $key, bool $default): bool => array_key_exists($key, $values)
-                ? $values[$key]
-                : $default,
+        $checker = $this->createStub(ModuleAccessChecker::class);
+        $checker->method('isEnabled')->willReturnCallback(
+            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
         );
 
-        return new PlanningContext($repository);
+        return new PlanningContext($checker);
     }
 
     public function testIsAdminEnabled(): void
@@ -31,16 +30,7 @@ final class PlanningContextTest extends TestCase
 
     public function testIsPlanningsEnabled(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::PlanningEnabled->value => true,
-            ModuleParameterEnum::PlanningPlanningsEnabled->value => true,
-        ]);
-        self::assertTrue($context->isPlanningsEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::PlanningEnabled->value => false,
-            ModuleParameterEnum::PlanningPlanningsEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isPlanningsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PlanningPlanningsEnabled->value => true])->isPlanningsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PlanningPlanningsEnabled->value => false])->isPlanningsEnabled());
     }
 }

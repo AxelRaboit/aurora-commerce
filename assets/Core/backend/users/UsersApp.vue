@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { UserPlus, Save, Upload, Trash2, X, Send, Pencil } from "lucide-vue-next";
+import { UserPlus, Save, Upload, Trash2, X, Send, Pencil, LayoutGrid } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -22,6 +22,7 @@ import { useUsersInvite } from "@core/backend/users/composables/useUsersInvite.j
 import { useUsersEdit } from "@core/backend/users/composables/useUsersEdit.js";
 import { useUsersActions } from "@core/backend/users/composables/useUsersActions.js";
 import { useUsersPrivileges } from "@core/backend/users/composables/useUsersPrivileges.js";
+import { useUsersDisabledModules } from "@core/backend/users/composables/useUsersDisabledModules.js";
 
 const { t } = useI18n();
 const { formatDate, formatDateShort } = useDateFormat();
@@ -32,6 +33,9 @@ const props = defineProps({
     currentUserPriority: { type: Number, default: 0 },
     privilegesByModule: { type: Array, default: () => [] },
     privilegesPath: { type: String, default: "" },
+    modulesForAccess: { type: Array, default: () => [] },
+    canManageDisabledModules: { type: Boolean, default: false },
+    disabledModulesPath: { type: String, default: "" },
     agencies: { type: Array, default: () => [] },
     services: { type: Array, default: () => [] },
     listPath: { type: String, required: true },
@@ -67,6 +71,7 @@ function openViewWithPrivileges(user) {
 }
 
 const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, savePrivileges } = useUsersPrivileges(props, fetchUsers);
+const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveModules } = useUsersDisabledModules(props, fetchUsers);
 
 </script>
 
@@ -120,12 +125,14 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                         :can-act="canActOn(user)"
                         :can-edit="canEditUser(user)"
                         :has-privileges="privilegesByModule.length > 0"
+                        :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
                         :impersonate-path="impersonatePath"
                         :impersonate-front-path="impersonateFrontPath"
                         v-on:view="openViewWithPrivileges"
                         v-on:resend="resendInvitation"
                         v-on:edit="openEdit"
                         v-on:privileges="openPrivileges"
+                        v-on:modules="openModules"
                         v-on:toggle-disabled="askToggleDisabled"
                         v-on:delete="deletingUser = $event"
                     />
@@ -182,12 +189,14 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                                     :can-act="canActOn(user)"
                                     :can-edit="canEditUser(user)"
                                     :has-privileges="privilegesByModule.length > 0"
+                                    :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
                                     :impersonate-path="impersonatePath"
                                     :impersonate-front-path="impersonateFrontPath"
                                     v-on:view="openViewWithPrivileges"
                                     v-on:resend="resendInvitation"
                                     v-on:edit="openEdit"
                                     v-on:privileges="openPrivileges"
+                                    v-on:modules="openModules"
                                     v-on:toggle-disabled="askToggleDisabled"
                                     v-on:delete="deletingUser = $event"
                                 />
@@ -451,6 +460,39 @@ const { privilegesModal, pendingPrivileges, togglePrivilege, openPrivileges, sav
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="privilegesModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                     <AppButton variant="primary" size="md" :loading="privilegesModal.saving" v-on:click="savePrivileges">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.save') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Per-user module access modal — gated by core.users.modules.manage -->
+        <AppModal :show="modulesModal.open" max-width="2xl" :closeable="false" v-on:close="modulesModal.open = false">
+            <div v-if="modulesModal.user" class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <AppAvatar variant="solid" :name="modulesModal.user.name" :photo-url="modulesModal.user.profilePhotoUrl ?? ''" :size="40" />
+                    <div>
+                        <h3 class="text-base font-semibold text-primary">{{ modulesModal.user.name }}</h3>
+                        <p class="text-xs text-muted">{{ t('backend.users.modules.title') }}</p>
+                    </div>
+                </div>
+                <p class="text-xs text-muted">{{ t('backend.users.modules.hint') }}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <AppCheckbox
+                        v-for="entry in modulesForAccess"
+                        :key="entry.key"
+                        :model-value="!pendingDisabledModules.includes(entry.key)"
+                        v-on:update:model-value="toggleModule(entry.key)"
+                    >
+                        <span class="text-xs">{{ entry.label }}</span>
+                    </AppCheckbox>
+                </div>
+            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="modulesModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="modulesModal.saving" v-on:click="saveModules">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
                     </AppButton>

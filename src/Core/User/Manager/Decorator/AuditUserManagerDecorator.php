@@ -174,6 +174,17 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         ]);
     }
 
+    public function updateDisabledModules(User $user, array $disabledModules, ?User $actor = null): void
+    {
+        $this->inner->updateDisabledModules($user, $disabledModules, $actor);
+
+        $this->auditLogger->log('core', 'user.disabled_modules_updated', 'User', $user->getId(), [
+            'name' => $user->getName(),
+            'disabledModules' => $user->getDisabledModules(),
+            'actorId' => $actor?->getId(),
+        ]);
+    }
+
     public function canActOn(User $actor, User $target): bool
     {
         return $this->inner->canActOn($actor, $target);

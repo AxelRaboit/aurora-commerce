@@ -53,6 +53,7 @@ backend:
       manager_self: A user cannot be their own manager.
       manager_not_found: The selected manager does not exist.
       manager_cycle: This assignment would create a reporting loop.
+      cannot_manage_target: You cannot edit the access of a user with a higher rank.
     newPassword: New password
     newPasswordPlaceholder: Leave empty to keep current
     toast:
@@ -91,6 +92,10 @@ backend:
       save: Save privileges
       saved: Privileges updated
       no_dev_target: Cannot assign privileges to a Dev user.
+    modules:
+      title: Module access
+      hint: Uncheck the modules to hide from this user. Disabling a parent module automatically hides its sub-modules.
+      saved: Module access updated.
     photo:
       upload: Change photo
       remove: Remove photo

@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ged\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ged\Service\GedContext;
 use PHPUnit\Framework\TestCase;
 
 final class GedContextTest extends TestCase
 {
+    /** @param array<string, bool> $values */
     private function makeContext(array $values): GedContext
     {
-        $repository = $this->createStub(SettingRepository::class);
-        $repository->method('getBoolean')->willReturnCallback(
-            static fn (string $key, bool $default): bool => array_key_exists($key, $values)
-                ? $values[$key]
-                : $default,
+        $checker = $this->createStub(ModuleAccessChecker::class);
+        $checker->method('isEnabled')->willReturnCallback(
+            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
         );
 
-        return new GedContext($repository);
+        return new GedContext($checker);
     }
 
     public function testIsAdminEnabled(): void
@@ -31,31 +30,13 @@ final class GedContextTest extends TestCase
 
     public function testIsDocumentsEnabled(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::GedEnabled->value => true,
-            ModuleParameterEnum::GedDocumentsEnabled->value => true,
-        ]);
-        self::assertTrue($context->isDocumentsEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::GedEnabled->value => false,
-            ModuleParameterEnum::GedDocumentsEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isDocumentsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::GedDocumentsEnabled->value => true])->isDocumentsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::GedDocumentsEnabled->value => false])->isDocumentsEnabled());
     }
 
     public function testIsCategoriesEnabled(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::GedEnabled->value => true,
-            ModuleParameterEnum::GedCategoriesEnabled->value => true,
-        ]);
-        self::assertTrue($context->isCategoriesEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::GedEnabled->value => false,
-            ModuleParameterEnum::GedCategoriesEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isCategoriesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::GedCategoriesEnabled->value => true])->isCategoriesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::GedCategoriesEnabled->value => false])->isCategoriesEnabled());
     }
 }

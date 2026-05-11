@@ -49,6 +49,11 @@ abstract class AbstractUser implements CoreUserInterface
     #[Groups(['user:read'])]
     protected array $privileges = [];
 
+    /** @var list<string> ModuleParameterEnum values masked for this user (admin/dev-managed). */
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    #[Groups(['user:read'])]
+    protected array $disabledModules = [];
+
     #[ORM\Column]
     protected string $password;
 
@@ -356,6 +361,18 @@ abstract class AbstractUser implements CoreUserInterface
     public function hasPrivilege(string $privilege): bool
     {
         return in_array($privilege, $this->privileges, true);
+    }
+
+    public function getDisabledModules(): array
+    {
+        return $this->disabledModules;
+    }
+
+    public function setDisabledModules(array $disabledModules): static
+    {
+        $this->disabledModules = array_values(array_unique($disabledModules));
+
+        return $this;
     }
 
     public function eraseCredentials(): void {}

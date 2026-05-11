@@ -53,6 +53,7 @@ backend:
       manager_self: Un utilisateur ne peut pas être son propre responsable.
       manager_not_found: Le responsable sélectionné n'existe pas.
       manager_cycle: Cette assignation créerait une boucle hiérarchique.
+      cannot_manage_target: Vous ne pouvez pas modifier les accès d'un utilisateur de rang supérieur.
     newPassword: Nouveau mot de passe
     newPasswordPlaceholder: Laisser vide pour ne pas modifier
     toast:
@@ -91,6 +92,10 @@ backend:
       save: Enregistrer les privilèges
       saved: Privilèges mis à jour
       no_dev_target: Impossible d'assigner des privilèges à un Dev.
+    modules:
+      title: Accès aux modules
+      hint: Décochez les modules à masquer pour cet utilisateur. Désactiver un module parent masque automatiquement ses sous-modules.
+      saved: Accès aux modules mis à jour.
     photo:
       upload: Changer la photo
       remove: Supprimer la photo

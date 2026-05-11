@@ -39,6 +39,21 @@ interface UserManagerInterface
     /** @param list<string> $privileges */
     public function updatePrivileges(User $user, array $privileges): void;
 
+    /**
+     * Replaces the per-user module access mask. Each value must be a valid
+     * ModuleParameterEnum::value; unknown values are silently filtered.
+     *
+     * SECURITY: callers reachable from HTTP MUST pass the authenticated user
+     * as `$actor`. When `$actor` is non-null, the actor's rank must be ≥ the
+     * target user's rank (enforced via `canActOn`). `$actor = null` is
+     * reserved for internal / system flows (e.g. fixtures, CLI, migrations)
+     * where authorization is already guaranteed upstream — never default
+     * `$actor` to null in a controller action.
+     *
+     * @param list<string> $disabledModules
+     */
+    public function updateDisabledModules(User $user, array $disabledModules, ?User $actor = null): void;
+
     public function delete(User $user): void;
 
     public function isPasswordValid(User $user, string $plainPassword): bool;

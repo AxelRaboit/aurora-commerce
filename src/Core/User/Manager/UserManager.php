@@ -14,6 +14,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Service\Entity\ServiceInterface;
 use Aurora\Core\Service\Repository\ServiceRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
@@ -226,6 +227,45 @@ class UserManager implements UserManagerInterface
     {
         $user->setPrivileges($privileges);
         $this->entityManager->flush();
+    }
+
+    /** @param list<string> $disabledModules */
+    public function updateDisabledModules(User $user, array $disabledModules, ?User $actor = null): void
+    {
+        if ($actor instanceof User && !$this->canActOn($actor, $user)) {
+            throw new InvalidArgumentException('backend.users.errors.cannot_manage_target');
+        }
+
+        $sanitized = $this->sanitizeDisabledModules($disabledModules);
+
+        $user->setDisabledModules($sanitized);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Filters the incoming list to known ModuleParameterEnum values, drops
+     * unknowns silently, and deduplicates. Callers are expected to pre-filter
+     * to strings (the controller does so via `array_filter(..., is_string(...))`).
+     *
+     * @param list<string> $disabledModules
+     *
+     * @return list<string>
+     */
+    protected function sanitizeDisabledModules(array $disabledModules): array
+    {
+        $known = [];
+        foreach (ModuleParameterEnum::cases() as $case) {
+            $known[$case->value] = true;
+        }
+
+        $clean = [];
+        foreach ($disabledModules as $entry) {
+            if (isset($known[$entry])) {
+                $clean[$entry] = true;
+            }
+        }
+
+        return array_keys($clean);
     }
 
     public function delete(User $user): void

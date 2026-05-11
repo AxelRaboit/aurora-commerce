@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Crm\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Service\CrmContext;
 use PHPUnit\Framework\TestCase;
 
 final class CrmContextTest extends TestCase
 {
+    /** @param array<string, bool> $values mapping ModuleParameterEnum::value => isEnabled() outcome */
     private function makeContext(array $values): CrmContext
     {
-        $repository = $this->createStub(SettingRepository::class);
-        $repository->method('getBoolean')->willReturnCallback(
-            static fn (string $key, bool $default): bool => array_key_exists($key, $values)
-                ? $values[$key]
-                : $default,
+        $checker = $this->createStub(ModuleAccessChecker::class);
+        $checker->method('isEnabled')->willReturnCallback(
+            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
         );
 
-        return new CrmContext($repository);
+        return new CrmContext($checker);
     }
 
     public function testIsAdminEnabled(): void
@@ -29,50 +28,21 @@ final class CrmContextTest extends TestCase
         self::assertFalse($this->makeContext([ModuleParameterEnum::CrmEnabled->value => false])->isAdminEnabled());
     }
 
-    public function testIsContactsEnabled(): void
+    public function testIsContactsEnabledDelegatesToChecker(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => true,
-            ModuleParameterEnum::CrmContactsEnabled->value => true,
-        ]);
-        self::assertTrue($context->isContactsEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => false,
-            ModuleParameterEnum::CrmContactsEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isContactsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmContactsEnabled->value => true])->isContactsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmContactsEnabled->value => false])->isContactsEnabled());
     }
 
-    public function testIsCompaniesEnabled(): void
+    public function testIsCompaniesEnabledDelegatesToChecker(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => true,
-            ModuleParameterEnum::CrmCompaniesEnabled->value => true,
-        ]);
-        self::assertTrue($context->isCompaniesEnabled());
-
-        $contextAdminOff = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => false,
-            ModuleParameterEnum::CrmCompaniesEnabled->value => true,
-        ]);
-        self::assertFalse($contextAdminOff->isCompaniesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmCompaniesEnabled->value => true])->isCompaniesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmCompaniesEnabled->value => false])->isCompaniesEnabled());
     }
 
-    public function testIsDealsEnabledRequiresContacts(): void
+    public function testIsDealsEnabledDelegatesToChecker(): void
     {
-        $context = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => true,
-            ModuleParameterEnum::CrmContactsEnabled->value => true,
-            ModuleParameterEnum::CrmDealsEnabled->value => true,
-        ]);
-        self::assertTrue($context->isDealsEnabled());
-
-        $contextContactsOff = $this->makeContext([
-            ModuleParameterEnum::CrmEnabled->value => true,
-            ModuleParameterEnum::CrmContactsEnabled->value => false,
-            ModuleParameterEnum::CrmDealsEnabled->value => true,
-        ]);
-        self::assertFalse($contextContactsOff->isDealsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmDealsEnabled->value => true])->isDealsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmDealsEnabled->value => false])->isDealsEnabled());
     }
 }

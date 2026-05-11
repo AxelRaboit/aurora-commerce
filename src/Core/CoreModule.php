@@ -23,6 +23,7 @@ final class CoreModule implements ModuleInterface
             new NavPermission('core.media.manage'),
             new NavPermission('core.search.view'),
             new NavPermission('core.users.manage'),
+            new NavPermission('core.users.modules.manage'),
             new NavPermission('core.agencies.manage'),
             new NavPermission('core.services.manage'),
             new NavPermission('core.settings.manage'),

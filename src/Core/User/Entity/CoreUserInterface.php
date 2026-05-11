@@ -110,6 +110,12 @@ interface CoreUserInterface extends UserInterface, PasswordAuthenticatedUserInte
 
     public function hasPrivilege(string $privilege): bool;
 
+    /** @return list<string> ModuleParameterEnum values masked for this user */
+    public function getDisabledModules(): array;
+
+    /** @param list<string> $disabledModules */
+    public function setDisabledModules(array $disabledModules): static;
+
     public function getAgency(): ?AgencyInterface;
 
     public function setAgency(?AgencyInterface $agency): static;

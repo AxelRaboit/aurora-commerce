@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Vault\Service;
 
+use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
 
 final readonly class VaultContext
 {
-    public function __construct(private SettingRepository $settingRepository) {}
+    public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
 
     public function isAdminEnabled(): bool
     {
-        return $this->settingRepository->getBoolean(ModuleParameterEnum::VaultEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultEnabled);
     }
 
     public function isSafeEnabled(): bool
     {
-        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::VaultSafeEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultSafeEnabled);
     }
 
     public function isPasswordGeneratorEnabled(): bool
     {
-        return $this->isAdminEnabled() && $this->settingRepository->getBoolean(ModuleParameterEnum::VaultPasswordGeneratorEnabled->value, true);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultPasswordGeneratorEnabled);
     }
 }

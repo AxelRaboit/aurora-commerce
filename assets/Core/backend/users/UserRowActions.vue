@@ -1,5 +1,5 @@
 <script setup>
-import { Eye, Mail, Pencil, Trash2, Power, LogIn, ShieldCheck } from "lucide-vue-next";
+import { Eye, Mail, Pencil, Trash2, Power, LogIn, ShieldCheck, LayoutGrid } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -12,11 +12,12 @@ const props = defineProps({
     canAct: { type: Boolean, required: true },
     canEdit: { type: Boolean, default: false },
     hasPrivileges: { type: Boolean, default: false },
+    canManageDisabledModules: { type: Boolean, default: false },
     impersonatePath: { type: String, default: "" },
     impersonateFrontPath: { type: String, default: "" },
 });
 
-const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabled", "delete"]);
+const emit = defineEmits(["view", "resend", "edit", "privileges", "modules", "toggle-disabled", "delete"]);
 </script>
 
 <template>
@@ -67,6 +68,14 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "toggle-disabl
             v-on:click="emit('privileges', user)"
         >
             <ShieldCheck class="w-4 h-4" :stroke-width="2" />
+        </AppIconButton>
+        <AppIconButton
+            v-if="canManageDisabledModules && canAct && !user.isDev"
+            color="accent"
+            :title="t('backend.users.modules.title')"
+            v-on:click="emit('modules', user)"
+        >
+            <LayoutGrid class="w-4 h-4" :stroke-width="2" />
         </AppIconButton>
         <AppIconButton
             v-if="canAct"

@@ -10,6 +10,8 @@ backend:
       core:
         users:
           manage: Manage users
+          modules:
+            manage: Manage user module access
         agencies:
           manage: Manage agencies
         services:
