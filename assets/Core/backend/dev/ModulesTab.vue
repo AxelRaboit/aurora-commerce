@@ -9,8 +9,9 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import { Lock } from "lucide-vue-next";
+import { Lock, ChevronDown } from "lucide-vue-next";
 import { useModules } from "@core/backend/dev/composables/useModules.js";
+import { useCollapsibleSections } from "@core/backend/dev/composables/useCollapsibleSections.js";
 
 const { t } = useI18n();
 
@@ -28,6 +29,8 @@ const modules = useModules(
     props.initialData,
 );
 
+const sections = useCollapsibleSections();
+
 onMounted(() => {
     if (!modules.parameters.value.length) modules.load();
 });
@@ -41,72 +44,82 @@ onMounted(() => {
             :placeholder="t('backend.settings.modulesSearchPlaceholder')"
         />
 
-        <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
-            <AppNoData v-if="!modules.filteredParameters.value.length" :message="t('backend.settings.modulesEmpty')" />
+        <AppNoData v-if="!modules.filteredParameters.value.length" :message="t('backend.settings.modulesEmpty')" />
 
+        <div
+            v-for="parameter in modules.filteredParameters.value"
+            :key="parameter.key"
+            class="bg-surface border border-line rounded-xl overflow-hidden"
+        >
+            <!-- Parent module header (clickable to collapse/expand) -->
             <div
-                v-for="parameter in modules.filteredParameters.value"
-                :key="parameter.key"
-                class="space-y-3"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2 transition-colors cursor-pointer select-none"
+                :class="{ 'opacity-60': modules.isLocked(parameter) }"
+                v-on:click="parameter.subModules?.length && sections.toggle(parameter.key)"
             >
-                <!-- Parent module row -->
-                <div
-                    class="flex items-center justify-between gap-4"
-                    :class="{ 'opacity-60': modules.isLocked(parameter) }"
-                >
-                    <div class="min-w-0">
-                        <p class="text-sm font-medium text-primary flex items-center gap-1.5">
-                            {{ parameter.label }}
-                            <AppBadge v-if="parameter.type" :color="parameter.type === 'frontend' ? 'emerald' : 'slate'">
-                                {{ t(`backend.settings.moduleType.${parameter.type}`) }}
-                            </AppBadge>
-                            <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                        </p>
-                        <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
-                        <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
-                        <div v-if="parameter.navItems?.length && !parameter.subModules?.length" class="flex flex-wrap gap-1 mt-1.5">
-                            <span
-                                v-for="item in parameter.navItems"
-                                :key="item.labelKey"
-                                class="inline-flex items-center px-1.5 py-0.5 rounded text-xs text-muted bg-surface-alt border border-line"
-                            >{{ t(item.labelKey) }}</span>
-                        </div>
+                <ChevronDown
+                    v-if="parameter.subModules?.length"
+                    class="w-4 h-4 text-muted transition-transform shrink-0"
+                    :class="{ '-rotate-90': !sections.isExpanded(parameter.key) }"
+                    :stroke-width="2"
+                />
+                <span v-else class="w-4 shrink-0" />
+
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-primary flex items-center gap-1.5 flex-wrap">
+                        {{ parameter.label }}
+                        <AppBadge v-if="parameter.type" :color="parameter.type === 'frontend' ? 'emerald' : 'slate'">
+                            {{ t(`backend.settings.moduleType.${parameter.type}`) }}
+                        </AppBadge>
+                        <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                    </p>
+                    <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
+                    <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
+                    <div v-if="parameter.navItems?.length && !parameter.subModules?.length" class="flex flex-wrap gap-1 mt-1.5">
+                        <span
+                            v-for="item in parameter.navItems"
+                            :key="item.labelKey"
+                            class="inline-flex items-center px-1.5 py-0.5 rounded text-xs text-muted bg-surface-alt border border-line"
+                        >{{ t(item.labelKey) }}</span>
                     </div>
+                </div>
+
+                <div class="shrink-0" v-on:click.stop>
                     <AppToggle
                         :model-value="!modules.isLocked(parameter) && modules.fieldValues[parameter.key] === '1'"
                         :disabled="modules.isLocked(parameter) || modules.saving.value"
                         v-on:update:model-value="modules.onToggle(parameter, $event)"
                     />
                 </div>
+            </div>
 
-                <!-- Sub-modules -->
+            <!-- Sub-modules (collapsible) -->
+            <div
+                v-if="parameter.subModules?.length && sections.isExpanded(parameter.key)"
+                class="border-t border-line bg-surface-alt/30 divide-y divide-line/40"
+            >
                 <div
-                    v-if="parameter.subModules?.length"
-                    class="ml-4 pl-4 border-l border-line space-y-3"
+                    v-for="sub in parameter.subModules"
+                    :key="sub.key"
+                    class="flex items-center gap-3 pl-11 pr-4 py-2.5 hover:bg-surface-2 transition-colors"
+                    :class="{ 'opacity-60': modules.isLocked(sub) }"
                 >
-                    <div
-                        v-for="sub in parameter.subModules"
-                        :key="sub.key"
-                        class="flex items-center justify-between gap-4"
-                        :class="{ 'opacity-60': modules.isLocked(sub) }"
-                    >
-                        <div class="min-w-0">
-                            <p class="text-sm text-primary flex items-center gap-1.5">
-                                {{ sub.label }}
-                                <AppBadge v-if="sub.type" :color="sub.type === 'frontend' ? 'emerald' : 'slate'">
-                                    {{ t(`backend.settings.moduleType.${sub.type}`) }}
-                                </AppBadge>
-                                <Lock v-if="modules.isLocked(sub)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                            </p>
-                            <p v-if="sub.description" class="text-xs text-muted mt-0.5">{{ sub.description }}</p>
-                            <p v-if="modules.isLocked(sub)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(sub) }}</p>
-                        </div>
-                        <AppToggle
-                            :model-value="!modules.isLocked(sub) && modules.fieldValues[sub.key] === '1'"
-                            :disabled="modules.isLocked(sub) || modules.saving.value"
-                            v-on:update:model-value="modules.onToggle(sub, $event)"
-                        />
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-primary flex items-center gap-1.5 flex-wrap">
+                            {{ sub.label }}
+                            <AppBadge v-if="sub.type" :color="sub.type === 'frontend' ? 'emerald' : 'slate'">
+                                {{ t(`backend.settings.moduleType.${sub.type}`) }}
+                            </AppBadge>
+                            <Lock v-if="modules.isLocked(sub)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                        </p>
+                        <p v-if="sub.description" class="text-xs text-muted mt-0.5">{{ sub.description }}</p>
+                        <p v-if="modules.isLocked(sub)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(sub) }}</p>
                     </div>
+                    <AppToggle
+                        :model-value="!modules.isLocked(sub) && modules.fieldValues[sub.key] === '1'"
+                        :disabled="modules.isLocked(sub) || modules.saving.value"
+                        v-on:update:model-value="modules.onToggle(sub, $event)"
+                    />
                 </div>
             </div>
         </div>
