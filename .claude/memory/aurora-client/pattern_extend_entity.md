@@ -32,13 +32,13 @@ use App\Repository\AppAgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AppAgencyRepository::class)]
-#[ORM\Table(name: 'client_agencies')]
+#[ORM\Table(name: 'app_agencies')]
 class Agency extends AbstractAgency implements AgencyInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_client_agency_id', initialValue: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_app_agency_id', initialValue: 1)]
     protected ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -58,9 +58,10 @@ class Agency extends AbstractAgency implements AgencyInterface
 ```
 
 **Notes** :
-- Sequence client préfixée `seq_client_*` (ou autre namespace) pour éviter
-  les collisions avec `seq_core_*` Aurora.
-- Table `client_agencies` (préfixe différent de `core_agencies` Aurora).
+- Sequence client préfixée `seq_app_*` pour éviter les collisions avec
+  `seq_core_*` Aurora.
+- Table préfixée `app_` (ex: `app_agencies`) pour éviter les collisions
+  avec les tables `core_*` Aurora.
 - `protected` sur les propriétés pour que le client puisse étendre encore
   (rare mais possible).
 

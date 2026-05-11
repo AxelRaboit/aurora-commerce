@@ -31,6 +31,11 @@ client.
   ajouter des permissions custom via `ModuleInterface` (auto-tag, groupage par
   module id, traduction obligatoire)
 
+## Index — conventions côté client
+
+- [convention_table_naming.md](convention_table_naming.md) — préfixer les
+  tables `app_` et séquences `seq_app_*` (jamais `core_` ni `client_`)
+
 ## Index — pièges côté client
 
 - [pitfall_create_hook_required.md](pitfall_create_hook_required.md) —

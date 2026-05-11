@@ -40,12 +40,12 @@ use Aurora\Core\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
-#[ORM\Table(name: 'client_agencies')]
+#[ORM\Table(name: 'app_agencies')]
 class Agency extends AbstractAgency implements AgencyInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_client_agency_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_app_agency_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -99,7 +99,7 @@ doctrine:
 > `Aurora\Core\Repository\ResolveTargetEntityRepository`, qui résout l'entité
 > via `getClassMetadata(<Interface>::class)` à la construction. Donc une
 > seule instance de repo, mais elle querie automatiquement votre table
-> `client_agencies` dès que `resolve_target_entities` route l'interface vers
+> `app_agencies` dès que `resolve_target_entities` route l'interface vers
 > votre classe. Pas besoin de redéclarer un repository côté client (sauf si
 > vous voulez ajouter vos propres méthodes — auquel cas étendez
 > `Aurora\Core\Agency\Repository\AgencyRepository` et déclarez-le dans
@@ -127,29 +127,29 @@ final class Version20260508123924 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add client_agencies table extending Aurora Core Agency with code field';
+        return 'Add app_agencies table extending Aurora Core Agency with code field';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE SEQUENCE seq_client_agency_id INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE client_agencies (id INT NOT NULL, name VARCHAR(150) NOT NULL, code VARCHAR(50) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE SEQUENCE seq_app_agency_id INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE app_agencies (id INT NOT NULL, name VARCHAR(150) NOT NULL, code VARCHAR(50) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY (id))');
 
         // Copy existing rows from core_agencies so user FKs stay valid after the switch.
-        $this->addSql('INSERT INTO client_agencies (id, name, created_at, updated_at) SELECT id, name, created_at, updated_at FROM core_agencies');
-        $this->addSql("SELECT setval('seq_client_agency_id', GREATEST((SELECT COALESCE(MAX(id), 0) FROM client_agencies), 1))");
+        $this->addSql('INSERT INTO app_agencies (id, name, created_at, updated_at) SELECT id, name, created_at, updated_at FROM core_agencies');
+        $this->addSql("SELECT setval('seq_app_agency_id', GREATEST((SELECT COALESCE(MAX(id), 0) FROM app_agencies), 1))");
 
-        // Repoint the User → Agency FK to client_agencies.
+        // Repoint the User → Agency FK to app_agencies.
         $this->addSql('ALTER TABLE core_users DROP CONSTRAINT fk_42028409cdeadb2a');
-        $this->addSql('ALTER TABLE core_users ADD CONSTRAINT FK_42028409CDEADB2A FOREIGN KEY (agency_id) REFERENCES client_agencies (id) ON DELETE SET NULL NOT DEFERRABLE');
+        $this->addSql('ALTER TABLE core_users ADD CONSTRAINT FK_42028409CDEADB2A FOREIGN KEY (agency_id) REFERENCES app_agencies (id) ON DELETE SET NULL NOT DEFERRABLE');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE core_users DROP CONSTRAINT FK_42028409CDEADB2A');
         $this->addSql('ALTER TABLE core_users ADD CONSTRAINT fk_42028409cdeadb2a FOREIGN KEY (agency_id) REFERENCES core_agencies (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('DROP TABLE client_agencies');
-        $this->addSql('DROP SEQUENCE seq_client_agency_id CASCADE');
+        $this->addSql('DROP TABLE app_agencies');
+        $this->addSql('DROP SEQUENCE seq_app_agency_id CASCADE');
     }
 }
 ```
@@ -162,7 +162,7 @@ la migration. Le diff Doctrine les trouve toutes.
 ```bash
 php bin/console doctrine:migrations:diff --namespace=ClientMigrations
 # Nettoyer le fichier généré (lignes seq_log, seq_prj, messenger_messages, etc.)
-# Ajouter le INSERT INTO client_agencies … SELECT … FROM core_agencies
+# Ajouter le INSERT INTO app_agencies … SELECT … FROM core_agencies
 php bin/console doctrine:migrations:migrate
 ```
 
@@ -305,7 +305,7 @@ class AgencyManager extends AuroraAgencyManager
 
 `#[AsAlias(AgencyManagerInterface::class)]` remplace l'alias d'Aurora ;
 le controller injecte votre Manager, qui instancie `App\Entity\Agency`
-(via `createAgency`) et persiste dans `client_agencies` avec le bon `code`.
+(via `createAgency`) et persiste dans `app_agencies` avec le bon `code`.
 
 ---
 

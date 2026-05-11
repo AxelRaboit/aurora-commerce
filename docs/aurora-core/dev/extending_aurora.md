@@ -190,7 +190,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'client_contracts')]
+#[ORM\Table(name: 'app_contracts')]
 class Contract
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
@@ -232,12 +232,12 @@ use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DealRepository::class)]
-#[ORM\Table(name: 'client_deals')]
+#[ORM\Table(name: 'app_deals')]
 class Deal extends AbstractDeal implements DealInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_client_deal_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_app_deal_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -274,7 +274,7 @@ de votre entité).
 
 **Migration de données** — si la table Aurora `core_deals` contient déjà des
 lignes (fixtures, données de prod) et que les FK Aurora pointent vers son `id`,
-ajoutez à la migration générée un `INSERT INTO client_deals … SELECT … FROM
+ajoutez à la migration générée un `INSERT INTO app_deals … SELECT … FROM
 core_deals` avant de basculer la contrainte FK. Cf. la migration pilote
 `Version20260508123924` côté aurora-client pour un exemple complet.
 

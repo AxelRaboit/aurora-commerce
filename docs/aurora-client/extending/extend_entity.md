@@ -36,12 +36,12 @@ use Aurora\Core\Agency\Entity\AgencyInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'client_agencies')]
+#[ORM\Table(name: 'app_agencies')]
 class Agency extends AbstractAgency implements AgencyInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_client_agency_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_app_agency_id', allocationSize: 1)]
     #[ORM\Column]
     private ?int $id = null;
 

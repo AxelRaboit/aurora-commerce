@@ -10,8 +10,8 @@ voici les étapes ordonnées. Chaque étape pointe vers le pattern détaillé.
 - [ ] Créer `App\Entity\<Name>` qui étend `Aurora\…\Abstract<Name>` et
       `implements <Name>Interface`.
 - [ ] Ajouter colonnes Doctrine + getters/setters pour les champs custom.
-- [ ] Sequence client : `seq_client_<entity>_id` (préfixe différent
-      d'Aurora pour éviter collision).
+- [ ] Sequence client : `seq_app_<entity>_id` (préfixe `app_` pour éviter
+      collision avec `seq_core_*` Aurora).
 - [ ] Inscrire dans `App\AuroraBundle::$resolve_target_entities`.
 - [ ] Si finder methods custom : créer `App\Repository\App<Name>Repository`
       qui étend Aurora repo, déclarer `repositoryClass` dans l'entité
