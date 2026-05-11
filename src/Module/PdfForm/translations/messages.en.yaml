@@ -3,9 +3,12 @@ backend:
     names:
       pdfform:
         templates:
-          manage: Manage PDF templates (create, edit)
+          view: View PDF templates
+          create: Create PDF templates
+          edit: Edit PDF templates
           delete: Delete PDF templates
         documents:
+          view: View generated PDF documents
           generate: Generate filled PDF documents
           delete: Delete generated PDF documents
   modules:

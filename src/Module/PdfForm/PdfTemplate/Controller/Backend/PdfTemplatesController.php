@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/pdfform/templates', name: 'backend_pdfform_templates')]
-#[IsGranted('pdfform.templates.manage')]
+#[IsGranted('pdfform.templates.view')]
 final class PdfTemplatesController extends AbstractController
 {
     use JsonRequestTrait;
@@ -53,6 +53,7 @@ final class PdfTemplatesController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('pdfform.templates.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -67,6 +68,7 @@ final class PdfTemplatesController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('pdfform.templates.edit')]
     public function update(PdfTemplateInterface $template, Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));
@@ -90,6 +92,7 @@ final class PdfTemplatesController extends AbstractController
     }
 
     #[Route('/{id}/detect-fields', name: '_detect_fields', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('pdfform.templates.edit')]
     public function detectFields(PdfTemplateInterface $template): JsonResponse
     {
         try {

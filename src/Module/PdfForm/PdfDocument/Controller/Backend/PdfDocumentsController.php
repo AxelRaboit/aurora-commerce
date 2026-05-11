@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/pdfform/documents', name: 'backend_pdfform_documents')]
-#[IsGranted('pdfform.documents.generate')]
+#[IsGranted('pdfform.documents.view')]
 final class PdfDocumentsController extends AbstractController
 {
     use JsonRequestTrait;
@@ -51,6 +51,7 @@ final class PdfDocumentsController extends AbstractController
     }
 
     #[Route('/generate', name: '_generate', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('pdfform.documents.generate')]
     public function generate(Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray($this->decodeJson($request));

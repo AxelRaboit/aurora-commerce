@@ -50,7 +50,7 @@ const {
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.pdfform.templates.searchPlaceholder')" v-on:search="onSearch" />
             <AppButton
-                v-if="can('pdfform.templates.manage')"
+                v-if="can('pdfform.templates.create')"
                 variant="primary"
                 size="md"
                 class="w-full sm:w-auto"
@@ -87,8 +87,8 @@ const {
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="can('pdfform.templates.manage')" color="sky" :title="t('backend.pdfform.templates.detectFields')" v-on:click="openFields(tpl)"><ScanSearch class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('pdfform.templates.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tpl)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('pdfform.templates.edit')" color="sky" :title="t('backend.pdfform.templates.detectFields')" v-on:click="openFields(tpl)"><ScanSearch class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('pdfform.templates.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tpl)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('pdfform.templates.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tpl)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>

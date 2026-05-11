@@ -24,8 +24,11 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
     public function getPermissions(): array
     {
         return [
-            new NavPermission('pdfform.templates.manage'),
+            new NavPermission('pdfform.templates.view'),
+            new NavPermission('pdfform.templates.create'),
+            new NavPermission('pdfform.templates.edit'),
             new NavPermission('pdfform.templates.delete'),
+            new NavPermission('pdfform.documents.view'),
             new NavPermission('pdfform.documents.generate'),
             new NavPermission('pdfform.documents.delete'),
         ];
@@ -40,11 +43,11 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
         $items = [];
 
         if ($this->pdfFormContext->isTemplatesEnabled()) {
-            $items[] = new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.manage', descriptionKey: 'backend.nav.pdfform_templates_description');
+            $items[] = new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.view', descriptionKey: 'backend.nav.pdfform_templates_description');
         }
 
         if ($this->pdfFormContext->isDocumentsEnabled()) {
-            $items[] = new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.generate', descriptionKey: 'backend.nav.pdfform_documents_description');
+            $items[] = new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.view', descriptionKey: 'backend.nav.pdfform_documents_description');
         }
 
         if ([] === $items) {
@@ -58,8 +61,8 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavSection('pdfform', [
-                new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.manage', descriptionKey: 'backend.nav.pdfform_templates_description'),
-                new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.generate', descriptionKey: 'backend.nav.pdfform_documents_description'),
+                new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.view', descriptionKey: 'backend.nav.pdfform_templates_description'),
+                new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.view', descriptionKey: 'backend.nav.pdfform_documents_description'),
             ], priority: 34),
         ];
     }

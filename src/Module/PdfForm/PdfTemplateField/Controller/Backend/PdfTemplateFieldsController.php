@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/pdfform/template-fields', name: 'backend_pdfform_template_fields')]
-#[IsGranted('pdfform.templates.manage')]
+#[IsGranted('pdfform.templates.edit')]
 final class PdfTemplateFieldsController extends AbstractController
 {
     use JsonRequestTrait;
