@@ -54,6 +54,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case EcommerceOrdersEnabled = 'backend_ecommerce_orders';
 
     // Sub-modules — Editorial
+    case EditorialFrontEnabled = 'front_editorial';
     case EditorialPostsEnabled = 'backend_editorial_posts';
     case EditorialMenusEnabled = 'backend_editorial_menus';
     case EditorialPostTypesEnabled = 'backend_editorial_post_types';
@@ -130,6 +131,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::CrmDealsEnabled => 'backend.nav.deals',
             self::EcommerceListingsEnabled => 'backend.nav.listings',
             self::EcommerceOrdersEnabled => 'backend.nav.orders',
+            self::EditorialFrontEnabled => 'backend.modules.editorial_front',
             self::EditorialPostsEnabled => 'backend.nav.posts',
             self::EditorialMenusEnabled => 'backend.nav.menus',
             self::EditorialPostTypesEnabled => 'backend.nav.postTypes',
@@ -185,6 +187,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::CrmDealsEnabled => 'backend.nav.deals_description',
             self::EcommerceListingsEnabled => 'backend.nav.listings_description',
             self::EcommerceOrdersEnabled => 'backend.nav.orders_description',
+            self::EditorialFrontEnabled => 'backend.modules.editorial_front_description',
             self::EditorialPostsEnabled => 'backend.nav.posts_description',
             self::EditorialMenusEnabled => 'backend.nav.menus_description',
             self::EditorialPostTypesEnabled => 'backend.nav.postTypes_description',
@@ -231,6 +234,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::BillingTiersEnabled, self::BillingInvoicesEnabled, self::BillingComplianceEnabled => self::BillingEnabled,
             self::CrmContactsEnabled, self::CrmCompaniesEnabled, self::CrmDealsEnabled => self::CrmEnabled,
             self::EcommerceListingsEnabled, self::EcommerceOrdersEnabled => self::EcommerceEnabled,
+            self::EditorialFrontEnabled,
             self::EditorialPostsEnabled, self::EditorialMenusEnabled, self::EditorialPostTypesEnabled,
             self::EditorialTaxonomiesEnabled, self::EditorialCommentsEnabled, self::EditorialFormsEnabled,
             self::EditorialSitemapEnabled => self::EditorialEnabled,
@@ -279,6 +283,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EcommerceListingsEnabled => self::EcommerceEnabled->value,
             self::EcommerceOrdersEnabled => self::EcommerceListingsEnabled->value,
             // Editorial sub-modules
+            self::EditorialFrontEnabled => self::EditorialEnabled->value,
             self::EditorialPostsEnabled => self::EditorialEnabled->value,
             self::EditorialMenusEnabled => self::EditorialEnabled->value,
             self::EditorialPostTypesEnabled => self::EditorialEnabled->value,

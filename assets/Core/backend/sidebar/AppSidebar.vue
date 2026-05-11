@@ -34,6 +34,7 @@ const props = defineProps({
     activeRoute: { type: String, default: "" },
     logoutCsrf: { type: String, default: "" },
     frontPath: { type: String, default: "/" },
+    hasEnabledFronts: { type: Boolean, default: true },
     profilePath: { type: String, default: "/backend/profile" },
     logoutPath: { type: String, default: "/logout" },
     mailpitUrl: { type: String, default: "" },
@@ -124,7 +125,7 @@ function openSearchFromMobile() {
             </div>
         </div>
 
-        <div class="px-3 py-2 border-b border-line shrink-0">
+        <div v-if="hasEnabledFronts" class="px-3 py-2 border-b border-line shrink-0">
             <AppNavLink
                 :href="frontPath"
                 target="_blank"
@@ -375,7 +376,13 @@ function openSearchFromMobile() {
                     <Search class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <span class="flex-1 text-left">{{ t("backend.search.button") }}</span>
                 </button>
-                <a :href="frontPath" target="_blank" rel="noopener" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+                <a
+                    v-if="hasEnabledFronts"
+                    :href="frontPath"
+                    target="_blank"
+                    rel="noopener"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                >
                     <Globe class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("backend.nav.viewSite") }}
                 </a>

@@ -41,6 +41,7 @@
         activeRoute: app.request.attributes.get('_route'),
         logoutCsrf: csrf_token('logout'),
         frontPath: path('frontend_root'),
+        hasEnabledFronts: has_enabled_fronts(),
         profilePath: path('backend_profile'),
         logoutPath: path('backend_logout'),
         locale: app.request.locale,
