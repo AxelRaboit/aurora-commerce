@@ -123,15 +123,15 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::GeneralEnabled->toToggle(),
-            ModuleParameterEnum::GeneralDashboardEnabled->toToggle(),
-            ModuleParameterEnum::PlatformEnabled->toToggle(),
-            ModuleParameterEnum::PlatformMediaEnabled->toToggle(),
-            ModuleParameterEnum::PlatformUsersEnabled->toToggle(),
-            ModuleParameterEnum::PlatformAgenciesEnabled->toToggle(),
-            ModuleParameterEnum::PlatformServicesEnabled->toToggle(),
-            ModuleParameterEnum::PlatformSettingsEnabled->toToggle(),
-            ModuleParameterEnum::PlatformThemesEnabled->toToggle(),
+            ModuleParameterEnum::GeneralBackend->toToggle(),
+            ModuleParameterEnum::GeneralDashboard->toToggle(),
+            ModuleParameterEnum::PlatformBackend->toToggle(),
+            ModuleParameterEnum::PlatformMedia->toToggle(),
+            ModuleParameterEnum::PlatformUsers->toToggle(),
+            ModuleParameterEnum::PlatformAgencies->toToggle(),
+            ModuleParameterEnum::PlatformServices->toToggle(),
+            ModuleParameterEnum::PlatformSettings->toToggle(),
+            ModuleParameterEnum::PlatformThemes->toToggle(),
         ];
     }
 }

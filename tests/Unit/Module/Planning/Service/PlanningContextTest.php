@@ -24,13 +24,13 @@ final class PlanningContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PlanningEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PlanningEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PlanningBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PlanningBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsPlanningsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PlanningPlanningsEnabled->value => true])->isPlanningsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PlanningPlanningsEnabled->value => false])->isPlanningsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PlanningPlannings->value => true])->isPlanningsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PlanningPlannings->value => false])->isPlanningsEnabled());
     }
 }

@@ -24,13 +24,13 @@ final class HrContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::HrEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::HrEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::HrBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::HrBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsEmployeesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::HrEmployeesEnabled->value => true])->isEmployeesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::HrEmployeesEnabled->value => false])->isEmployeesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::HrEmployees->value => true])->isEmployeesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::HrEmployees->value => false])->isEmployeesEnabled());
     }
 }

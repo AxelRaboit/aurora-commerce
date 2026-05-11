@@ -19,7 +19,8 @@ backend:
           delete: Supprimer les opportunités
   modules:
     crm: CRM
-    crm_description: "Active la section CRM dans l'administration (contacts, entreprises, affaires)."
+    crm_backend: CRM
+    crm_backend_description: "Active la section CRM dans l'administration (contacts, entreprises, affaires)."
   nav:
     sections:
       crm: CRM

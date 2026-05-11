@@ -24,13 +24,13 @@ final class ErpContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsProductsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpProductsEnabled->value => true])->isProductsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpProductsEnabled->value => false])->isProductsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpProducts->value => true])->isProductsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpProducts->value => false])->isProductsEnabled());
     }
 }

@@ -13,16 +13,16 @@ final readonly class PdfFormContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormBackend);
     }
 
     public function isTemplatesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormTemplatesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormTemplates);
     }
 
     public function isDocumentsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormDocumentsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PdfFormDocuments);
     }
 }

@@ -24,49 +24,49 @@ final class EditorialContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsPostsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialPostsEnabled->value => true])->isPostsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialPostsEnabled->value => false])->isPostsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialPosts->value => true])->isPostsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialPosts->value => false])->isPostsEnabled());
     }
 
     public function testIsMenusEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialMenusEnabled->value => true])->isMenusEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialMenusEnabled->value => false])->isMenusEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialMenus->value => true])->isMenusEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialMenus->value => false])->isMenusEnabled());
     }
 
     public function testIsPostTypesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialPostTypesEnabled->value => true])->isPostTypesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialPostTypesEnabled->value => false])->isPostTypesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialPostTypes->value => true])->isPostTypesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialPostTypes->value => false])->isPostTypesEnabled());
     }
 
     public function testIsTaxonomiesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialTaxonomiesEnabled->value => true])->isTaxonomiesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialTaxonomiesEnabled->value => false])->isTaxonomiesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialTaxonomies->value => true])->isTaxonomiesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialTaxonomies->value => false])->isTaxonomiesEnabled());
     }
 
     public function testIsCommentsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialCommentsEnabled->value => true])->isCommentsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialCommentsEnabled->value => false])->isCommentsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialComments->value => true])->isCommentsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialComments->value => false])->isCommentsEnabled());
     }
 
     public function testIsFormsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialFormsEnabled->value => true])->isFormsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialFormsEnabled->value => false])->isFormsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialForms->value => true])->isFormsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialForms->value => false])->isFormsEnabled());
     }
 
     public function testIsSitemapEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialSitemapEnabled->value => true])->isSitemapEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialSitemapEnabled->value => false])->isSitemapEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EditorialSitemap->value => true])->isSitemapEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EditorialSitemap->value => false])->isSitemapEnabled());
     }
 }

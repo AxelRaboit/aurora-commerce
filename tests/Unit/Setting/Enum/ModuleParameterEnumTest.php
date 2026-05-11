@@ -11,24 +11,24 @@ final class ModuleParameterEnumTest extends TestCase
 {
     public function testGetKeyReturnsStringValue(): void
     {
-        self::assertSame('backend_billing_admin', ModuleParameterEnum::BillingEnabled->getKey());
-        self::assertSame('backend_vault_admin', ModuleParameterEnum::VaultEnabled->getKey());
-        self::assertSame('backend_crm_admin', ModuleParameterEnum::CrmEnabled->getKey());
+        self::assertSame('modules_billing_backend', ModuleParameterEnum::BillingBackend->getKey());
+        self::assertSame('modules_vault_backend', ModuleParameterEnum::VaultBackend->getKey());
+        self::assertSame('modules_crm_backend', ModuleParameterEnum::CrmBackend->getKey());
     }
 
     public function testGetLabelReturnsTranslationKey(): void
     {
-        self::assertSame('backend.modules.billing', ModuleParameterEnum::BillingEnabled->getLabel());
-        self::assertSame('backend.modules.vault', ModuleParameterEnum::VaultEnabled->getLabel());
-        self::assertSame('backend.nav.tiers', ModuleParameterEnum::BillingTiersEnabled->getLabel());
-        self::assertSame('backend.nav.invoices', ModuleParameterEnum::BillingInvoicesEnabled->getLabel());
+        self::assertSame('backend.modules.billing_backend', ModuleParameterEnum::BillingBackend->getLabel());
+        self::assertSame('backend.modules.vault_backend', ModuleParameterEnum::VaultBackend->getLabel());
+        self::assertSame('backend.nav.tiers', ModuleParameterEnum::BillingTiers->getLabel());
+        self::assertSame('backend.nav.invoices', ModuleParameterEnum::BillingInvoices->getLabel());
     }
 
     public function testGetDescriptionReturnsTranslationKey(): void
     {
-        self::assertSame('backend.modules.billing_description', ModuleParameterEnum::BillingEnabled->getDescription());
-        self::assertSame('backend.modules.vault_description', ModuleParameterEnum::VaultEnabled->getDescription());
-        self::assertSame('backend.nav.tiers_description', ModuleParameterEnum::BillingTiersEnabled->getDescription());
+        self::assertSame('backend.modules.billing_backend_description', ModuleParameterEnum::BillingBackend->getDescription());
+        self::assertSame('backend.modules.vault_backend_description', ModuleParameterEnum::VaultBackend->getDescription());
+        self::assertSame('backend.nav.tiers_description', ModuleParameterEnum::BillingTiers->getDescription());
     }
 
     public function testGetDefaultValueIsOneForAllCases(): void
@@ -54,111 +54,111 @@ final class ModuleParameterEnumTest extends TestCase
 
     public function testGetCascadeRequiresInterModuleDependencies(): void
     {
-        self::assertSame(ModuleParameterEnum::CrmEnabled->value, ModuleParameterEnum::ErpEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::ErpEnabled->value, ModuleParameterEnum::EcommerceEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::CrmEnabled->value, ModuleParameterEnum::BillingEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::PhotoEnabled->value, ModuleParameterEnum::PhotoPublicEnabled->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::CrmBackend->value, ModuleParameterEnum::ErpBackend->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::ErpBackend->value, ModuleParameterEnum::EcommerceBackend->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::CrmBackend->value, ModuleParameterEnum::BillingBackend->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::PhotoBackend->value, ModuleParameterEnum::PhotoFrontend->getCascadeRequires());
     }
 
     public function testGetCascadeRequiresIntraModuleDependencies(): void
     {
-        self::assertSame(ModuleParameterEnum::BillingTiersEnabled->value, ModuleParameterEnum::BillingInvoicesEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::CrmContactsEnabled->value, ModuleParameterEnum::CrmDealsEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::EcommerceListingsEnabled->value, ModuleParameterEnum::EcommerceOrdersEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::EditorialPostTypesEnabled->value, ModuleParameterEnum::EditorialTaxonomiesEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::EditorialPostsEnabled->value, ModuleParameterEnum::EditorialCommentsEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::EditorialPostsEnabled->value, ModuleParameterEnum::EditorialSitemapEnabled->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::VaultEnabled->value, ModuleParameterEnum::VaultSafeEnabled->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::BillingTiers->value, ModuleParameterEnum::BillingInvoices->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::CrmContacts->value, ModuleParameterEnum::CrmDeals->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::EcommerceListings->value, ModuleParameterEnum::EcommerceOrders->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::EditorialPostTypes->value, ModuleParameterEnum::EditorialTaxonomies->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::EditorialPosts->value, ModuleParameterEnum::EditorialComments->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::EditorialPosts->value, ModuleParameterEnum::EditorialSitemap->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::VaultBackend->value, ModuleParameterEnum::VaultSafe->getCascadeRequires());
     }
 
     public function testGetCascadeRequiresNullForTopLevelWithoutDependency(): void
     {
-        self::assertNull(ModuleParameterEnum::EditorialEnabled->getCascadeRequires());
-        self::assertNull(ModuleParameterEnum::CrmEnabled->getCascadeRequires());
-        self::assertNull(ModuleParameterEnum::GedEnabled->getCascadeRequires());
-        self::assertNull(ModuleParameterEnum::HrEnabled->getCascadeRequires());
-        self::assertNull(ModuleParameterEnum::PlanningEnabled->getCascadeRequires());
-        self::assertNull(ModuleParameterEnum::ProjectEnabled->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::EditorialBackend->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::CrmBackend->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::GedBackend->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::HrBackend->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::PlanningBackend->getCascadeRequires());
+        self::assertNull(ModuleParameterEnum::ProjectBackend->getCascadeRequires());
     }
 
     public function testGetCascadeDisableTargetsCrmEnabled(): void
     {
-        $targets = ModuleParameterEnum::CrmEnabled->getCascadeDisableTargets();
+        $targets = ModuleParameterEnum::CrmBackend->getCascadeDisableTargets();
 
-        self::assertContains(ModuleParameterEnum::ErpEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EcommerceEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EcommerceShopEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingTiersEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingInvoicesEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingComplianceEnabled->value, $targets);
+        self::assertContains(ModuleParameterEnum::ErpBackend->value, $targets);
+        self::assertContains(ModuleParameterEnum::EcommerceBackend->value, $targets);
+        self::assertContains(ModuleParameterEnum::EcommerceFrontend->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingBackend->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingTiers->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingInvoices->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingCompliance->value, $targets);
     }
 
     public function testGetCascadeDisableTargetsBillingEnabled(): void
     {
-        $targets = ModuleParameterEnum::BillingEnabled->getCascadeDisableTargets();
+        $targets = ModuleParameterEnum::BillingBackend->getCascadeDisableTargets();
 
-        self::assertContains(ModuleParameterEnum::BillingTiersEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingInvoicesEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::BillingComplianceEnabled->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingTiers->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingInvoices->value, $targets);
+        self::assertContains(ModuleParameterEnum::BillingCompliance->value, $targets);
     }
 
     public function testGetCascadeDisableTargetsVaultEnabled(): void
     {
-        $targets = ModuleParameterEnum::VaultEnabled->getCascadeDisableTargets();
+        $targets = ModuleParameterEnum::VaultBackend->getCascadeDisableTargets();
 
-        self::assertContains(ModuleParameterEnum::VaultSafeEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::VaultPasswordGeneratorEnabled->value, $targets);
+        self::assertContains(ModuleParameterEnum::VaultSafe->value, $targets);
+        self::assertContains(ModuleParameterEnum::VaultPasswordGenerator->value, $targets);
     }
 
     public function testGetCascadeDisableTargetsEditorialEnabled(): void
     {
-        $targets = ModuleParameterEnum::EditorialEnabled->getCascadeDisableTargets();
+        $targets = ModuleParameterEnum::EditorialBackend->getCascadeDisableTargets();
 
-        self::assertContains(ModuleParameterEnum::EditorialPostsEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialMenusEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialPostTypesEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialTaxonomiesEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialCommentsEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialFormsEnabled->value, $targets);
-        self::assertContains(ModuleParameterEnum::EditorialSitemapEnabled->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialPosts->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialMenus->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialPostTypes->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialTaxonomies->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialComments->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialForms->value, $targets);
+        self::assertContains(ModuleParameterEnum::EditorialSitemap->value, $targets);
     }
 
     public function testGetParentCaseForTopLevelReturnsNull(): void
     {
-        self::assertNull(ModuleParameterEnum::BillingEnabled->getParentCase());
-        self::assertNull(ModuleParameterEnum::CrmEnabled->getParentCase());
-        self::assertNull(ModuleParameterEnum::EditorialEnabled->getParentCase());
-        self::assertNull(ModuleParameterEnum::VaultEnabled->getParentCase());
+        self::assertNull(ModuleParameterEnum::BillingBackend->getParentCase());
+        self::assertNull(ModuleParameterEnum::CrmBackend->getParentCase());
+        self::assertNull(ModuleParameterEnum::EditorialBackend->getParentCase());
+        self::assertNull(ModuleParameterEnum::VaultBackend->getParentCase());
     }
 
     public function testGetParentCaseForSubModules(): void
     {
-        self::assertSame(ModuleParameterEnum::BillingEnabled, ModuleParameterEnum::BillingInvoicesEnabled->getParentCase());
-        self::assertSame(ModuleParameterEnum::CrmEnabled, ModuleParameterEnum::CrmDealsEnabled->getParentCase());
-        self::assertSame(ModuleParameterEnum::EditorialEnabled, ModuleParameterEnum::EditorialTaxonomiesEnabled->getParentCase());
-        self::assertSame(ModuleParameterEnum::VaultEnabled, ModuleParameterEnum::VaultSafeEnabled->getParentCase());
-        self::assertSame(ModuleParameterEnum::VaultEnabled, ModuleParameterEnum::VaultPasswordGeneratorEnabled->getParentCase());
+        self::assertSame(ModuleParameterEnum::BillingBackend, ModuleParameterEnum::BillingInvoices->getParentCase());
+        self::assertSame(ModuleParameterEnum::CrmBackend, ModuleParameterEnum::CrmDeals->getParentCase());
+        self::assertSame(ModuleParameterEnum::EditorialBackend, ModuleParameterEnum::EditorialTaxonomies->getParentCase());
+        self::assertSame(ModuleParameterEnum::VaultBackend, ModuleParameterEnum::VaultSafe->getParentCase());
+        self::assertSame(ModuleParameterEnum::VaultBackend, ModuleParameterEnum::VaultPasswordGenerator->getParentCase());
     }
 
     public function testGetModuleIdForTopLevelEnabledCases(): void
     {
-        self::assertSame('vault', ModuleParameterEnum::VaultEnabled->getModuleId());
-        self::assertSame('billing', ModuleParameterEnum::BillingEnabled->getModuleId());
-        self::assertSame('crm', ModuleParameterEnum::CrmEnabled->getModuleId());
-        self::assertSame('editorial', ModuleParameterEnum::EditorialEnabled->getModuleId());
-        self::assertSame('erp', ModuleParameterEnum::ErpEnabled->getModuleId());
-        self::assertSame('ecommerce', ModuleParameterEnum::EcommerceEnabled->getModuleId());
-        self::assertSame('photo', ModuleParameterEnum::PhotoEnabled->getModuleId());
+        self::assertSame('vault', ModuleParameterEnum::VaultBackend->getModuleId());
+        self::assertSame('billing', ModuleParameterEnum::BillingBackend->getModuleId());
+        self::assertSame('crm', ModuleParameterEnum::CrmBackend->getModuleId());
+        self::assertSame('editorial', ModuleParameterEnum::EditorialBackend->getModuleId());
+        self::assertSame('erp', ModuleParameterEnum::ErpBackend->getModuleId());
+        self::assertSame('ecommerce', ModuleParameterEnum::EcommerceBackend->getModuleId());
+        self::assertSame('photo', ModuleParameterEnum::PhotoBackend->getModuleId());
     }
 
     public function testGetModuleIdReturnsNullForSubModules(): void
     {
-        self::assertNull(ModuleParameterEnum::BillingInvoicesEnabled->getModuleId());
-        self::assertNull(ModuleParameterEnum::CrmDealsEnabled->getModuleId());
-        self::assertNull(ModuleParameterEnum::VaultSafeEnabled->getModuleId());
-        self::assertNull(ModuleParameterEnum::EditorialPostsEnabled->getModuleId());
-        self::assertNull(ModuleParameterEnum::EcommerceShopEnabled->getModuleId());
-        self::assertNull(ModuleParameterEnum::PhotoPublicEnabled->getModuleId());
+        self::assertNull(ModuleParameterEnum::BillingInvoices->getModuleId());
+        self::assertNull(ModuleParameterEnum::CrmDeals->getModuleId());
+        self::assertNull(ModuleParameterEnum::VaultSafe->getModuleId());
+        self::assertNull(ModuleParameterEnum::EditorialPosts->getModuleId());
+        self::assertNull(ModuleParameterEnum::EcommerceFrontend->getModuleId());
+        self::assertNull(ModuleParameterEnum::PhotoFrontend->getModuleId());
     }
 }

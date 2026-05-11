@@ -13,7 +13,8 @@ backend:
           delete: Delete generated PDF documents
   modules:
     pdfform: PDF Forms
-    pdfform_description: "Enables fillable PDF template management and document generation."
+    pdfform_backend: PDF Forms
+    pdfform_backend_description: "Enables fillable PDF template management and document generation."
   nav:
     sections:
       pdfform: PDF Forms

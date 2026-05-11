@@ -129,7 +129,7 @@ final class ModulesViewBuilderTest extends TestCase
 
         $billingParam = null;
         foreach ($payload['parameters'] as $parameter) {
-            if ($parameter['key'] === ModuleParameterEnum::BillingEnabled->value) {
+            if ($parameter['key'] === ModuleParameterEnum::BillingBackend->value) {
                 $billingParam = $parameter;
                 break;
             }
@@ -139,9 +139,9 @@ final class ModulesViewBuilderTest extends TestCase
         self::assertIsArray($billingParam['subModules']);
 
         $subKeys = array_column($billingParam['subModules'], 'key');
-        self::assertContains(ModuleParameterEnum::BillingTiersEnabled->value, $subKeys);
-        self::assertContains(ModuleParameterEnum::BillingInvoicesEnabled->value, $subKeys);
-        self::assertContains(ModuleParameterEnum::BillingComplianceEnabled->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::BillingTiers->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::BillingInvoices->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::BillingCompliance->value, $subKeys);
     }
 
     public function testEachSubModuleHasRequiredKeys(): void
@@ -167,7 +167,7 @@ final class ModulesViewBuilderTest extends TestCase
 
         $billingParam = null;
         foreach ($payload['parameters'] as $parameter) {
-            if ($parameter['key'] === ModuleParameterEnum::BillingEnabled->value) {
+            if ($parameter['key'] === ModuleParameterEnum::BillingBackend->value) {
                 $billingParam = $parameter;
                 break;
             }
@@ -177,14 +177,14 @@ final class ModulesViewBuilderTest extends TestCase
 
         $invoicesSub = null;
         foreach ($billingParam['subModules'] as $sub) {
-            if ($sub['key'] === ModuleParameterEnum::BillingInvoicesEnabled->value) {
+            if ($sub['key'] === ModuleParameterEnum::BillingInvoices->value) {
                 $invoicesSub = $sub;
                 break;
             }
         }
 
         self::assertNotNull($invoicesSub);
-        self::assertSame(ModuleParameterEnum::BillingTiersEnabled->value, $invoicesSub['requires']);
+        self::assertSame(ModuleParameterEnum::BillingTiers->value, $invoicesSub['requires']);
     }
 
     public function testIndexViewReturnsTabbedStructure(): void

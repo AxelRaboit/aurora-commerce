@@ -24,13 +24,13 @@ final class ProjectContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsProjectsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectProjectsEnabled->value => true])->isProjectsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectProjectsEnabled->value => false])->isProjectsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectProjects->value => true])->isProjectsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectProjects->value => false])->isProjectsEnabled());
     }
 }

@@ -64,9 +64,9 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::VaultEnabled->toToggle(),
-            ModuleParameterEnum::VaultSafeEnabled->toToggle(),
-            ModuleParameterEnum::VaultPasswordGeneratorEnabled->toToggle(),
+            ModuleParameterEnum::VaultBackend->toToggle(),
+            ModuleParameterEnum::VaultSafe->toToggle(),
+            ModuleParameterEnum::VaultPasswordGenerator->toToggle(),
         ];
     }
 }

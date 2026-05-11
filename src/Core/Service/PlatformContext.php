@@ -24,36 +24,36 @@ final readonly class PlatformContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformBackend);
     }
 
     public function isMediaEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformMediaEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformMedia);
     }
 
     public function isUsersEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformUsersEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformUsers);
     }
 
     public function isAgenciesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformAgenciesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformAgencies);
     }
 
     public function isServicesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformServicesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformServices);
     }
 
     public function isSettingsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformSettingsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformSettings);
     }
 
     public function isThemesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformThemesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlatformThemes);
     }
 }

@@ -13,11 +13,11 @@ final readonly class ErpContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpBackend);
     }
 
     public function isProductsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpProductsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpProducts);
     }
 }

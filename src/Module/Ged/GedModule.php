@@ -71,9 +71,9 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::GedEnabled->toToggle(),
-            ModuleParameterEnum::GedDocumentsEnabled->toToggle(),
-            ModuleParameterEnum::GedCategoriesEnabled->toToggle(),
+            ModuleParameterEnum::GedBackend->toToggle(),
+            ModuleParameterEnum::GedDocuments->toToggle(),
+            ModuleParameterEnum::GedCategories->toToggle(),
         ];
     }
 }

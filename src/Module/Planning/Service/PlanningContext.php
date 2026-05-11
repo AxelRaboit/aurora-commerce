@@ -13,11 +13,11 @@ final readonly class PlanningContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlanningEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlanningBackend);
     }
 
     public function isPlanningsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlanningPlanningsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PlanningPlannings);
     }
 }

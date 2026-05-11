@@ -13,16 +13,16 @@ final readonly class VaultContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultBackend);
     }
 
     public function isSafeEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultSafeEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultSafe);
     }
 
     public function isPasswordGeneratorEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultPasswordGeneratorEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::VaultPasswordGenerator);
     }
 }

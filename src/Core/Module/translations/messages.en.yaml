@@ -39,6 +39,8 @@ backend:
     project: Project
     core: Core
     general: General
-    general_description: Dashboard and post-login landing page.
+    general_backend: General
+    general_backend_description: Dashboard and post-login landing page.
     platform: Platform
-    platform_description: Technical backend section.
+    platform_backend: Platform
+    platform_backend_description: Technical backend section.

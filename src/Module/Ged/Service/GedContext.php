@@ -13,16 +13,16 @@ final readonly class GedContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedBackend);
     }
 
     public function isDocumentsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedDocumentsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedDocuments);
     }
 
     public function isCategoriesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedCategoriesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedCategories);
     }
 }

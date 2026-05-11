@@ -70,9 +70,9 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::PdfFormEnabled->toToggle(),
-            ModuleParameterEnum::PdfFormTemplatesEnabled->toToggle(),
-            ModuleParameterEnum::PdfFormDocumentsEnabled->toToggle(),
+            ModuleParameterEnum::PdfFormBackend->toToggle(),
+            ModuleParameterEnum::PdfFormTemplates->toToggle(),
+            ModuleParameterEnum::PdfFormDocuments->toToggle(),
         ];
     }
 }

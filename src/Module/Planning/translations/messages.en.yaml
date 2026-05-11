@@ -13,7 +13,8 @@ backend:
           delete: Delete planning events
   modules:
     planning: Planning
-    planning_description: 'Enables the Planning section in the admin.'
+    planning_backend: Planning
+    planning_backend_description: 'Enables the Planning section in the admin.'
   nav:
     plannings: Plannings
     plannings_description: Calendars and events linked to system entities

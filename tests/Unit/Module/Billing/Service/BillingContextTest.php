@@ -24,46 +24,46 @@ final class BillingContextTest extends TestCase
 
     public function testIsAdminEnabledTrue(): void
     {
-        $context = $this->makeContext([ModuleParameterEnum::BillingEnabled->value => true]);
+        $context = $this->makeContext([ModuleParameterEnum::BillingBackend->value => true]);
         self::assertTrue($context->isAdminEnabled());
     }
 
     public function testIsAdminEnabledFalse(): void
     {
-        $context = $this->makeContext([ModuleParameterEnum::BillingEnabled->value => false]);
+        $context = $this->makeContext([ModuleParameterEnum::BillingBackend->value => false]);
         self::assertFalse($context->isAdminEnabled());
     }
 
     public function testIsTiersEnabledDelegatesToChecker(): void
     {
         self::assertTrue($this->makeContext([
-            ModuleParameterEnum::BillingTiersEnabled->value => true,
+            ModuleParameterEnum::BillingTiers->value => true,
         ])->isTiersEnabled());
 
         self::assertFalse($this->makeContext([
-            ModuleParameterEnum::BillingTiersEnabled->value => false,
+            ModuleParameterEnum::BillingTiers->value => false,
         ])->isTiersEnabled());
     }
 
     public function testIsInvoicesEnabledDelegatesToChecker(): void
     {
         self::assertTrue($this->makeContext([
-            ModuleParameterEnum::BillingInvoicesEnabled->value => true,
+            ModuleParameterEnum::BillingInvoices->value => true,
         ])->isInvoicesEnabled());
 
         self::assertFalse($this->makeContext([
-            ModuleParameterEnum::BillingInvoicesEnabled->value => false,
+            ModuleParameterEnum::BillingInvoices->value => false,
         ])->isInvoicesEnabled());
     }
 
     public function testIsComplianceEnabledDelegatesToChecker(): void
     {
         self::assertTrue($this->makeContext([
-            ModuleParameterEnum::BillingComplianceEnabled->value => true,
+            ModuleParameterEnum::BillingCompliance->value => true,
         ])->isComplianceEnabled());
 
         self::assertFalse($this->makeContext([
-            ModuleParameterEnum::BillingComplianceEnabled->value => false,
+            ModuleParameterEnum::BillingCompliance->value => false,
         ])->isComplianceEnabled());
     }
 }

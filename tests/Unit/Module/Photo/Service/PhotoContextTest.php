@@ -24,19 +24,19 @@ final class PhotoContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsFrontEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoPublicEnabled->value => true])->isFrontEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoPublicEnabled->value => false])->isFrontEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoFrontend->value => true])->isFrontEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoFrontend->value => false])->isFrontEnabled());
     }
 
     public function testIsGalleriesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoGalleriesEnabled->value => true])->isGalleriesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoGalleriesEnabled->value => false])->isGalleriesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoGalleries->value => true])->isGalleriesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoGalleries->value => false])->isGalleriesEnabled());
     }
 }

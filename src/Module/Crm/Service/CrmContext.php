@@ -13,21 +13,21 @@ final readonly class CrmContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmBackend);
     }
 
     public function isContactsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmContactsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmContacts);
     }
 
     public function isCompaniesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmCompaniesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmCompanies);
     }
 
     public function isDealsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmDealsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::CrmDeals);
     }
 }

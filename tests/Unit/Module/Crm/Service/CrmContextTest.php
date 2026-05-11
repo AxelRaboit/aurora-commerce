@@ -24,25 +24,25 @@ final class CrmContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsContactsEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmContactsEnabled->value => true])->isContactsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmContactsEnabled->value => false])->isContactsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmContacts->value => true])->isContactsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmContacts->value => false])->isContactsEnabled());
     }
 
     public function testIsCompaniesEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmCompaniesEnabled->value => true])->isCompaniesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmCompaniesEnabled->value => false])->isCompaniesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmCompanies->value => true])->isCompaniesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmCompanies->value => false])->isCompaniesEnabled());
     }
 
     public function testIsDealsEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmDealsEnabled->value => true])->isDealsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmDealsEnabled->value => false])->isDealsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::CrmDeals->value => true])->isDealsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::CrmDeals->value => false])->isDealsEnabled());
     }
 }

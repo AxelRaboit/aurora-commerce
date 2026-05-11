@@ -65,8 +65,8 @@ final readonly class PlanningModule implements ModuleInterface, ModuleToggleProv
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::PlanningEnabled->toToggle(),
-            ModuleParameterEnum::PlanningPlanningsEnabled->toToggle(),
+            ModuleParameterEnum::PlanningBackend->toToggle(),
+            ModuleParameterEnum::PlanningPlannings->toToggle(),
         ];
     }
 }

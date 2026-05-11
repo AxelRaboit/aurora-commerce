@@ -62,8 +62,8 @@ final readonly class HrModule implements ModuleInterface, ModuleToggleProviderIn
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::HrEnabled->toToggle(),
-            ModuleParameterEnum::HrEmployeesEnabled->toToggle(),
+            ModuleParameterEnum::HrBackend->toToggle(),
+            ModuleParameterEnum::HrEmployees->toToggle(),
         ];
     }
 }

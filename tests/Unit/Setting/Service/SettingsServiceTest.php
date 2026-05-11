@@ -30,7 +30,7 @@ final class SettingsServiceTest extends TestCase
         $repository->expects(self::once())->method('saveMany');
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::ErpEnabled->value, '1');
+        $service->set(ModuleParameterEnum::ErpBackend->value, '1');
     }
 
     public function testSetModuleParameterWithParentDisabledThrowsCascadeViolation(): void
@@ -43,7 +43,7 @@ final class SettingsServiceTest extends TestCase
         $service = $this->makeService($repository, $auditLogger);
 
         $this->expectException(CascadeViolationException::class);
-        $service->set(ModuleParameterEnum::ErpEnabled->value, '1');
+        $service->set(ModuleParameterEnum::ErpBackend->value, '1');
     }
 
     public function testSetModuleParameterToZeroCascadesChildren(): void
@@ -61,12 +61,12 @@ final class SettingsServiceTest extends TestCase
             }));
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::VaultEnabled->value, '0');
+        $service->set(ModuleParameterEnum::VaultBackend->value, '0');
 
         $keys = array_column($capturedWrites, 0);
-        self::assertContains(ModuleParameterEnum::VaultEnabled->value, $keys);
-        self::assertContains(ModuleParameterEnum::VaultSafeEnabled->value, $keys);
-        self::assertContains(ModuleParameterEnum::VaultPasswordGeneratorEnabled->value, $keys);
+        self::assertContains(ModuleParameterEnum::VaultBackend->value, $keys);
+        self::assertContains(ModuleParameterEnum::VaultSafe->value, $keys);
+        self::assertContains(ModuleParameterEnum::VaultPasswordGenerator->value, $keys);
 
         foreach ($capturedWrites as [$key, $value]) {
             self::assertSame('0', $value);
@@ -100,11 +100,11 @@ final class SettingsServiceTest extends TestCase
                 'settings.updated',
                 null,
                 null,
-                ['key' => ModuleParameterEnum::CrmEnabled->value, 'value' => '1'],
+                ['key' => ModuleParameterEnum::CrmBackend->value, 'value' => '1'],
             );
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::CrmEnabled->value, '1');
+        $service->set(ModuleParameterEnum::CrmBackend->value, '1');
     }
 
     public function testSetUnknownKeyPersistsWithoutCascade(): void

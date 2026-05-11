@@ -13,9 +13,10 @@ backend:
           refund: Refund orders
   modules:
     ecommerce: Ecommerce
-    ecommerce_description: 'Enables the Ecommerce section in the admin (listings, orders). Requires ERP.'
-    ecommerce_shop: Public shop
-    ecommerce_shop_description: 'Enables the shop on the public site (catalog, cart, checkout). Requires the Ecommerce module.'
+    ecommerce_backend: Ecommerce
+    ecommerce_backend_description: 'Enables the Ecommerce section in the admin (listings, orders). Requires ERP.'
+    ecommerce_frontend: Public shop
+    ecommerce_frontend_description: 'Enables the shop on the public site (catalog, cart, checkout). Requires the Ecommerce module.'
   audit:
     actions:
       ecommerce:

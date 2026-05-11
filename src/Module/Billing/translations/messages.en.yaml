@@ -15,7 +15,8 @@ backend:
           import: Import invoices via OCR
   modules:
     billing: Billing
-    billing_description: 'Enables the Billing section in the admin. Requires CRM.'
+    billing_backend: Billing
+    billing_backend_description: 'Enables the Billing section in the admin. Requires CRM.'
   nav:
     invoices: Invoices
     invoices_description: Customer and supplier invoices (creation, payment, archive)

@@ -70,10 +70,10 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::EcommerceEnabled->toToggle(),
-            ModuleParameterEnum::EcommerceShopEnabled->toToggle(),
-            ModuleParameterEnum::EcommerceListingsEnabled->toToggle(),
-            ModuleParameterEnum::EcommerceOrdersEnabled->toToggle(),
+            ModuleParameterEnum::EcommerceBackend->toToggle(),
+            ModuleParameterEnum::EcommerceFrontend->toToggle(),
+            ModuleParameterEnum::EcommerceListings->toToggle(),
+            ModuleParameterEnum::EcommerceOrders->toToggle(),
         ];
     }
 }

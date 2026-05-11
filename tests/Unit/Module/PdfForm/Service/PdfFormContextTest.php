@@ -24,19 +24,19 @@ final class PdfFormContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsTemplatesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormTemplatesEnabled->value => true])->isTemplatesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormTemplatesEnabled->value => false])->isTemplatesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormTemplates->value => true])->isTemplatesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormTemplates->value => false])->isTemplatesEnabled());
     }
 
     public function testIsDocumentsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormDocumentsEnabled->value => true])->isDocumentsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormDocumentsEnabled->value => false])->isDocumentsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::PdfFormDocuments->value => true])->isDocumentsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::PdfFormDocuments->value => false])->isDocumentsEnabled());
     }
 }

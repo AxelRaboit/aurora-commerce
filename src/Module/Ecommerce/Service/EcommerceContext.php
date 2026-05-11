@@ -13,21 +13,21 @@ final readonly class EcommerceContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceBackend);
     }
 
     public function isFrontEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceShopEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceFrontend);
     }
 
     public function isListingsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceListingsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceListings);
     }
 
     public function isOrdersEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceOrdersEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceOrders);
     }
 }

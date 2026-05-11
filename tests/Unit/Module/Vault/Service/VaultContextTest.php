@@ -24,19 +24,19 @@ final class VaultContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsSafeEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultSafeEnabled->value => true])->isSafeEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultSafeEnabled->value => false])->isSafeEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultSafe->value => true])->isSafeEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultSafe->value => false])->isSafeEnabled());
     }
 
     public function testIsPasswordGeneratorEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => true])->isPasswordGeneratorEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultPasswordGeneratorEnabled->value => false])->isPasswordGeneratorEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::VaultPasswordGenerator->value => true])->isPasswordGeneratorEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::VaultPasswordGenerator->value => false])->isPasswordGeneratorEnabled());
     }
 }

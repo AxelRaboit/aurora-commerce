@@ -24,19 +24,19 @@ final class GedContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::GedEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::GedEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::GedBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::GedBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsDocumentsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::GedDocumentsEnabled->value => true])->isDocumentsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::GedDocumentsEnabled->value => false])->isDocumentsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::GedDocuments->value => true])->isDocumentsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::GedDocuments->value => false])->isDocumentsEnabled());
     }
 
     public function testIsCategoriesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::GedCategoriesEnabled->value => true])->isCategoriesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::GedCategoriesEnabled->value => false])->isCategoriesEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::GedCategories->value => true])->isCategoriesEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::GedCategories->value => false])->isCategoriesEnabled());
     }
 }

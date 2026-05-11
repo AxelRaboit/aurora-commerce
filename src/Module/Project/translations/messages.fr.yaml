@@ -14,7 +14,8 @@ backend:
     taskCommented: '%name% a commenté : %content%'
   modules:
     project: Projet
-    project_description: "Active la section Projet dans l'administration."
+    project_backend: Projet
+    project_backend_description: "Active la section Projet dans l'administration."
   nav:
     sections:
       project: Projet

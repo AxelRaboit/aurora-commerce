@@ -13,7 +13,8 @@ backend:
           delete: Supprimer des documents PDF générés
   modules:
     pdfform: PDF Formulaires
-    pdfform_description: "Active la gestion de templates PDF fillables et la génération de documents."
+    pdfform_backend: PDF Formulaires
+    pdfform_backend_description: "Active la gestion de templates PDF fillables et la génération de documents."
   nav:
     sections:
       pdfform: PDF Formulaires

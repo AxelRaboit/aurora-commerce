@@ -80,10 +80,10 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::CrmEnabled->toToggle(),
-            ModuleParameterEnum::CrmContactsEnabled->toToggle(),
-            ModuleParameterEnum::CrmCompaniesEnabled->toToggle(),
-            ModuleParameterEnum::CrmDealsEnabled->toToggle(),
+            ModuleParameterEnum::CrmBackend->toToggle(),
+            ModuleParameterEnum::CrmContacts->toToggle(),
+            ModuleParameterEnum::CrmCompanies->toToggle(),
+            ModuleParameterEnum::CrmDeals->toToggle(),
         ];
     }
 }

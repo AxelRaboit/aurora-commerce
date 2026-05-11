@@ -24,25 +24,25 @@ final class EcommerceContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceEnabled->value => true])->isAdminEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceEnabled->value => false])->isAdminEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceBackend->value => true])->isAdminEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceBackend->value => false])->isAdminEnabled());
     }
 
     public function testIsFrontEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceShopEnabled->value => true])->isFrontEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceShopEnabled->value => false])->isFrontEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceFrontend->value => true])->isFrontEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceFrontend->value => false])->isFrontEnabled());
     }
 
     public function testIsListingsEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceListingsEnabled->value => true])->isListingsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceListingsEnabled->value => false])->isListingsEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceListings->value => true])->isListingsEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceListings->value => false])->isListingsEnabled());
     }
 
     public function testIsOrdersEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceOrdersEnabled->value => true])->isOrdersEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceOrdersEnabled->value => false])->isOrdersEnabled());
+        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceOrders->value => true])->isOrdersEnabled());
+        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceOrders->value => false])->isOrdersEnabled());
     }
 }

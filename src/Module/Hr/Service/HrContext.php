@@ -13,11 +13,11 @@ final readonly class HrContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrBackend);
     }
 
     public function isEmployeesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrEmployeesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrEmployees);
     }
 }

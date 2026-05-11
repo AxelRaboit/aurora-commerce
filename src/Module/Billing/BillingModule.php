@@ -107,10 +107,10 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::BillingEnabled->toToggle(),
-            ModuleParameterEnum::BillingTiersEnabled->toToggle(),
-            ModuleParameterEnum::BillingInvoicesEnabled->toToggle(),
-            ModuleParameterEnum::BillingComplianceEnabled->toToggle(),
+            ModuleParameterEnum::BillingBackend->toToggle(),
+            ModuleParameterEnum::BillingTiers->toToggle(),
+            ModuleParameterEnum::BillingInvoices->toToggle(),
+            ModuleParameterEnum::BillingCompliance->toToggle(),
         ];
     }
 }

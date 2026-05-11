@@ -63,8 +63,8 @@ final readonly class ProjectModule implements ModuleInterface, ModuleToggleProvi
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::ProjectEnabled->toToggle(),
-            ModuleParameterEnum::ProjectProjectsEnabled->toToggle(),
+            ModuleParameterEnum::ProjectBackend->toToggle(),
+            ModuleParameterEnum::ProjectProjects->toToggle(),
         ];
     }
 }

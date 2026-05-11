@@ -13,11 +13,11 @@ final readonly class ProjectContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectBackend);
     }
 
     public function isProjectsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectProjectsEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectProjects);
     }
 }

@@ -5,7 +5,8 @@ backend:
         use: Use the vault
   modules:
     vault: Tools
-    vault_description: 'Enables utility tools.'
+    vault_backend: Tools
+    vault_backend_description: 'Enables utility tools.'
   nav:
     sections:
       vault: Tools

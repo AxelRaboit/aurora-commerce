@@ -9,7 +9,8 @@ backend:
           delete: Supprimer les produits
   modules:
     erp: ERP
-    erp_description: Active la section ERP dans l'administration (produits). Nécessite le CRM.
+    erp_backend: ERP
+    erp_backend_description: Active la section ERP dans l'administration (produits). Nécessite le CRM.
   audit:
     actions:
       erp:

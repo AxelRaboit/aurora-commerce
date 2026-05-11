@@ -23,11 +23,11 @@ final readonly class GeneralContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GeneralEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GeneralBackend);
     }
 
     public function isDashboardEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GeneralDashboardEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GeneralDashboard);
     }
 }

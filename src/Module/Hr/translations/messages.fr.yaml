@@ -9,7 +9,8 @@ backend:
           delete: Supprimer les employés
   modules:
     hr: RH
-    hr_description: "Active la section RH dans l'administration."
+    hr_backend: RH
+    hr_backend_description: "Active la section RH dans l'administration."
   nav:
     sections:
       hr: RH

@@ -144,7 +144,7 @@ final class MenuRenderer
             // Public front menu rendered without an authenticated user: only the
             // GLOBAL toggle is consulted here, deliberately bypassing the per-user
             // ModuleAccessChecker layer (no user context to apply overrides to).
-            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceShopEnabled->value, true)
+            MenuItemTargetTypeEnum::FrontShop => $this->settingRepository->getBoolean(ModuleParameterEnum::EcommerceFrontend->value, true)
                 ? $this->urlGenerator->generate('frontend_shop_index', ['locale' => $locale])
                 : null,
             MenuItemTargetTypeEnum::CustomUrl => $item->getCustomUrl() ?: null,

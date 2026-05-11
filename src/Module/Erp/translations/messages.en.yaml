@@ -9,7 +9,8 @@ backend:
           delete: Delete products
   modules:
     erp: ERP
-    erp_description: Enables the ERP section in the admin (products). Requires CRM.
+    erp_backend: ERP
+    erp_backend_description: Enables the ERP section in the admin (products). Requires CRM.
   audit:
     actions:
       erp:

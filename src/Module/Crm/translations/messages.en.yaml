@@ -19,7 +19,8 @@ backend:
           delete: Delete deals
   modules:
     crm: CRM
-    crm_description: 'Enables the CRM section in the admin (contacts, companies, deals).'
+    crm_backend: CRM
+    crm_backend_description: 'Enables the CRM section in the admin (contacts, companies, deals).'
   nav:
     sections:
       crm: CRM

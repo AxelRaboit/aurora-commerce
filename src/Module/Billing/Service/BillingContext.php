@@ -13,21 +13,21 @@ final readonly class BillingContext
 
     public function isAdminEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingBackend);
     }
 
     public function isTiersEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingTiersEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingTiers);
     }
 
     public function isInvoicesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingInvoicesEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingInvoices);
     }
 
     public function isComplianceEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingComplianceEnabled);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingCompliance);
     }
 }

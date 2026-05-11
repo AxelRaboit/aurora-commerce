@@ -10,85 +10,87 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
 {
     public const MODULE = 'modules';
 
-    // Top-level modules
-    case GeneralEnabled = 'backend_general_admin';
-    case PlatformEnabled = 'backend_platform_admin';
-    case EditorialEnabled = 'backend_editorial_admin';
-    case CrmEnabled = 'backend_crm_admin';
-    case ErpEnabled = 'backend_erp_admin';
-    case EcommerceEnabled = 'backend_ecommerce_admin';
-    case EcommerceShopEnabled = 'backend_ecommerce_frontend';
-    case PhotoEnabled = 'backend_photo_admin';
-    case PhotoPublicEnabled = 'backend_photo_frontend';
-    case BillingEnabled = 'backend_billing_admin';
-    case GedEnabled = 'backend_ged_admin';
-    case ProjectEnabled = 'backend_project_admin';
-    case PlanningEnabled = 'backend_planning_admin';
-    case HrEnabled = 'backend_hr_admin';
-    case VaultEnabled = 'backend_vault_admin';
-    case PdfFormEnabled = 'backend_pdfform_admin';
+    // Top-level modules — backend (admin UI)
+    case GeneralBackend = 'modules_general_backend';
+    case PlatformBackend = 'modules_platform_backend';
+    case EditorialBackend = 'modules_editorial_backend';
+    case CrmBackend = 'modules_crm_backend';
+    case ErpBackend = 'modules_erp_backend';
+    case EcommerceBackend = 'modules_ecommerce_backend';
+    case PhotoBackend = 'modules_photo_backend';
+    case BillingBackend = 'modules_billing_backend';
+    case GedBackend = 'modules_ged_backend';
+    case ProjectBackend = 'modules_project_backend';
+    case PlanningBackend = 'modules_planning_backend';
+    case HrBackend = 'modules_hr_backend';
+    case VaultBackend = 'modules_vault_backend';
+    case PdfFormBackend = 'modules_pdfform_backend';
+
+    // Top-level modules — frontend (public site)
+    case EcommerceFrontend = 'modules_ecommerce_frontend';
+    case PhotoFrontend = 'modules_photo_frontend';
+    case EditorialFrontend = 'modules_editorial_frontend';
 
     // Sub-modules — Core
-    case GeneralDashboardEnabled = 'backend_general_dashboard';
+    case GeneralDashboard = 'modules_general_dashboard';
 
     // Sub-modules — Platform
-    case PlatformMediaEnabled = 'backend_platform_media';
-    case PlatformUsersEnabled = 'backend_platform_users';
-    case PlatformAgenciesEnabled = 'backend_platform_agencies';
-    case PlatformServicesEnabled = 'backend_platform_services';
-    case PlatformSettingsEnabled = 'backend_platform_settings';
-    case PlatformThemesEnabled = 'backend_platform_themes';
+    case PlatformMedia = 'modules_platform_media';
+    case PlatformUsers = 'modules_platform_users';
+    case PlatformAgencies = 'modules_platform_agencies';
+    case PlatformServices = 'modules_platform_services';
+    case PlatformSettings = 'modules_platform_settings';
+    case PlatformThemes = 'modules_platform_themes';
 
     // Sub-modules — Billing
-    case BillingTiersEnabled = 'backend_billing_tiers';
-    case BillingInvoicesEnabled = 'backend_billing_invoices';
-    case BillingComplianceEnabled = 'backend_billing_compliance';
+    case BillingTiers = 'modules_billing_tiers';
+    case BillingInvoices = 'modules_billing_invoices';
+    case BillingCompliance = 'modules_billing_compliance';
 
     // Sub-modules — CRM
-    case CrmContactsEnabled = 'backend_crm_contacts';
-    case CrmCompaniesEnabled = 'backend_crm_companies';
-    case CrmDealsEnabled = 'backend_crm_deals';
+    case CrmContacts = 'modules_crm_contacts';
+    case CrmCompanies = 'modules_crm_companies';
+    case CrmDeals = 'modules_crm_deals';
 
     // Sub-modules — Ecommerce
-    case EcommerceListingsEnabled = 'backend_ecommerce_listings';
-    case EcommerceOrdersEnabled = 'backend_ecommerce_orders';
+    case EcommerceListings = 'modules_ecommerce_listings';
+    case EcommerceOrders = 'modules_ecommerce_orders';
 
     // Sub-modules — Editorial
-    case EditorialFrontEnabled = 'backend_editorial_frontend';
-    case EditorialPostsEnabled = 'backend_editorial_posts';
-    case EditorialMenusEnabled = 'backend_editorial_menus';
-    case EditorialPostTypesEnabled = 'backend_editorial_post_types';
-    case EditorialTaxonomiesEnabled = 'backend_editorial_taxonomies';
-    case EditorialCommentsEnabled = 'backend_editorial_comments';
-    case EditorialFormsEnabled = 'backend_editorial_forms';
-    case EditorialSitemapEnabled = 'backend_editorial_sitemap';
+    case EditorialPosts = 'modules_editorial_posts';
+    case EditorialMenus = 'modules_editorial_menus';
+    case EditorialPostTypes = 'modules_editorial_post_types';
+    case EditorialTaxonomies = 'modules_editorial_taxonomies';
+    case EditorialComments = 'modules_editorial_comments';
+    case EditorialForms = 'modules_editorial_forms';
+    case EditorialSitemap = 'modules_editorial_sitemap';
 
     // Sub-modules — GED
-    case GedDocumentsEnabled = 'backend_ged_documents';
-    case GedCategoriesEnabled = 'backend_ged_categories';
+    case GedDocuments = 'modules_ged_documents';
+    case GedCategories = 'modules_ged_categories';
 
     // Sub-modules — ERP
-    case ErpProductsEnabled = 'backend_erp_products';
+    case ErpProducts = 'modules_erp_products';
 
     // Sub-modules — HR
-    case HrEmployeesEnabled = 'backend_hr_employees';
+    case HrEmployees = 'modules_hr_employees';
 
     // Sub-modules — Photo
-    case PhotoGalleriesEnabled = 'backend_photo_galleries';
+    case PhotoGalleries = 'modules_photo_galleries';
 
     // Sub-modules — Planning
-    case PlanningPlanningsEnabled = 'backend_planning_plannings';
+    case PlanningPlannings = 'modules_planning_plannings';
 
     // Sub-modules — Project
-    case ProjectProjectsEnabled = 'backend_project_projects';
+    case ProjectProjects = 'modules_project_projects';
 
     // Sub-modules — Vault
-    case VaultSafeEnabled = 'backend_vault_safe';
-    case VaultPasswordGeneratorEnabled = 'backend_vault_password_generator';
+    case VaultSafe = 'modules_vault_safe';
+    case VaultPasswordGenerator = 'modules_vault_password_generator';
 
     // Sub-modules — PdfForm
-    case PdfFormTemplatesEnabled = 'backend_pdfform_templates';
-    case PdfFormDocumentsEnabled = 'backend_pdfform_documents';
+    case PdfFormTemplates = 'modules_pdfform_templates';
+    case PdfFormDocuments = 'modules_pdfform_documents';
 
     public function getKey(): string
     {
@@ -98,112 +100,112 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getLabel(): string
     {
         return match ($this) {
-            self::GeneralEnabled => 'backend.modules.general',
-            self::GeneralDashboardEnabled => 'backend.nav.dashboard',
-            self::PlatformEnabled => 'backend.modules.platform',
-            self::PlatformMediaEnabled => 'backend.nav.media',
-            self::PlatformUsersEnabled => 'backend.nav.users',
-            self::PlatformAgenciesEnabled => 'backend.nav.agencies',
-            self::PlatformServicesEnabled => 'backend.nav.services',
-            self::PlatformSettingsEnabled => 'backend.nav.settings',
-            self::PlatformThemesEnabled => 'backend.nav.themes',
-            self::EditorialEnabled => 'backend.modules.editorial',
-            self::CrmEnabled => 'backend.modules.crm',
-            self::ErpEnabled => 'backend.modules.erp',
-            self::EcommerceEnabled => 'backend.modules.ecommerce',
-            self::EcommerceShopEnabled => 'backend.modules.ecommerce_shop',
-            self::PhotoEnabled => 'backend.modules.photo',
-            self::PhotoPublicEnabled => 'backend.modules.photo_public',
-            self::BillingEnabled => 'backend.modules.billing',
-            self::GedEnabled => 'backend.modules.ged',
-            self::ProjectEnabled => 'backend.modules.project',
-            self::PlanningEnabled => 'backend.modules.planning',
-            self::HrEnabled => 'backend.modules.hr',
-            self::VaultEnabled => 'backend.modules.vault',
-            self::PdfFormEnabled => 'backend.modules.pdfform',
-            self::PdfFormTemplatesEnabled => 'backend.nav.pdfform_templates',
-            self::PdfFormDocumentsEnabled => 'backend.nav.pdfform_documents',
-            self::BillingTiersEnabled => 'backend.nav.tiers',
-            self::BillingInvoicesEnabled => 'backend.nav.invoices',
-            self::BillingComplianceEnabled => 'backend.nav.ocr_import',
-            self::CrmContactsEnabled => 'backend.nav.contacts',
-            self::CrmCompaniesEnabled => 'backend.nav.companies',
-            self::CrmDealsEnabled => 'backend.nav.deals',
-            self::EcommerceListingsEnabled => 'backend.nav.listings',
-            self::EcommerceOrdersEnabled => 'backend.nav.orders',
-            self::EditorialFrontEnabled => 'backend.modules.editorial_front',
-            self::EditorialPostsEnabled => 'backend.nav.posts',
-            self::EditorialMenusEnabled => 'backend.nav.menus',
-            self::EditorialPostTypesEnabled => 'backend.nav.postTypes',
-            self::EditorialTaxonomiesEnabled => 'backend.nav.taxonomies',
-            self::EditorialCommentsEnabled => 'backend.nav.comments',
-            self::EditorialFormsEnabled => 'backend.nav.forms',
-            self::EditorialSitemapEnabled => 'backend.nav.sitemap',
-            self::GedDocumentsEnabled => 'backend.nav.documents',
-            self::GedCategoriesEnabled => 'backend.nav.ged_categories',
-            self::ErpProductsEnabled => 'backend.nav.products',
-            self::HrEmployeesEnabled => 'backend.nav.employees',
-            self::PhotoGalleriesEnabled => 'backend.nav.galleries',
-            self::PlanningPlanningsEnabled => 'backend.nav.plannings',
-            self::ProjectProjectsEnabled => 'backend.nav.projects',
-            self::VaultSafeEnabled => 'backend.nav.vault',
-            self::VaultPasswordGeneratorEnabled => 'backend.nav.password_generator',
+            self::GeneralBackend => 'backend.modules.general_backend',
+            self::GeneralDashboard => 'backend.nav.dashboard',
+            self::PlatformBackend => 'backend.modules.platform_backend',
+            self::PlatformMedia => 'backend.nav.media',
+            self::PlatformUsers => 'backend.nav.users',
+            self::PlatformAgencies => 'backend.nav.agencies',
+            self::PlatformServices => 'backend.nav.services',
+            self::PlatformSettings => 'backend.nav.settings',
+            self::PlatformThemes => 'backend.nav.themes',
+            self::EditorialBackend => 'backend.modules.editorial_backend',
+            self::CrmBackend => 'backend.modules.crm_backend',
+            self::ErpBackend => 'backend.modules.erp_backend',
+            self::EcommerceBackend => 'backend.modules.ecommerce_backend',
+            self::EcommerceFrontend => 'backend.modules.ecommerce_frontend',
+            self::PhotoBackend => 'backend.modules.photo_backend',
+            self::PhotoFrontend => 'backend.modules.photo_frontend',
+            self::BillingBackend => 'backend.modules.billing_backend',
+            self::GedBackend => 'backend.modules.ged_backend',
+            self::ProjectBackend => 'backend.modules.project_backend',
+            self::PlanningBackend => 'backend.modules.planning_backend',
+            self::HrBackend => 'backend.modules.hr_backend',
+            self::VaultBackend => 'backend.modules.vault_backend',
+            self::PdfFormBackend => 'backend.modules.pdfform_backend',
+            self::PdfFormTemplates => 'backend.nav.pdfform_templates',
+            self::PdfFormDocuments => 'backend.nav.pdfform_documents',
+            self::BillingTiers => 'backend.nav.tiers',
+            self::BillingInvoices => 'backend.nav.invoices',
+            self::BillingCompliance => 'backend.nav.ocr_import',
+            self::CrmContacts => 'backend.nav.contacts',
+            self::CrmCompanies => 'backend.nav.companies',
+            self::CrmDeals => 'backend.nav.deals',
+            self::EcommerceListings => 'backend.nav.listings',
+            self::EcommerceOrders => 'backend.nav.orders',
+            self::EditorialFrontend => 'backend.modules.editorial_frontend',
+            self::EditorialPosts => 'backend.nav.posts',
+            self::EditorialMenus => 'backend.nav.menus',
+            self::EditorialPostTypes => 'backend.nav.postTypes',
+            self::EditorialTaxonomies => 'backend.nav.taxonomies',
+            self::EditorialComments => 'backend.nav.comments',
+            self::EditorialForms => 'backend.nav.forms',
+            self::EditorialSitemap => 'backend.nav.sitemap',
+            self::GedDocuments => 'backend.nav.documents',
+            self::GedCategories => 'backend.nav.ged_categories',
+            self::ErpProducts => 'backend.nav.products',
+            self::HrEmployees => 'backend.nav.employees',
+            self::PhotoGalleries => 'backend.nav.galleries',
+            self::PlanningPlannings => 'backend.nav.plannings',
+            self::ProjectProjects => 'backend.nav.projects',
+            self::VaultSafe => 'backend.nav.vault',
+            self::VaultPasswordGenerator => 'backend.nav.password_generator',
         };
     }
 
     public function getDescription(): string
     {
         return match ($this) {
-            self::GeneralEnabled => 'backend.modules.general_description',
-            self::GeneralDashboardEnabled => 'backend.nav.dashboard_description',
-            self::PlatformEnabled => 'backend.modules.platform_description',
-            self::PlatformMediaEnabled => 'backend.nav.media_description',
-            self::PlatformUsersEnabled => 'backend.nav.users_description',
-            self::PlatformAgenciesEnabled => 'backend.nav.agencies_description',
-            self::PlatformServicesEnabled => 'backend.nav.services_description',
-            self::PlatformSettingsEnabled => 'backend.nav.settings_description',
-            self::PlatformThemesEnabled => 'backend.nav.themes_description',
-            self::EditorialEnabled => 'backend.modules.editorial_description',
-            self::CrmEnabled => 'backend.modules.crm_description',
-            self::ErpEnabled => 'backend.modules.erp_description',
-            self::EcommerceEnabled => 'backend.modules.ecommerce_description',
-            self::EcommerceShopEnabled => 'backend.modules.ecommerce_shop_description',
-            self::PhotoEnabled => 'backend.modules.photo_description',
-            self::PhotoPublicEnabled => 'backend.modules.photo_public_description',
-            self::BillingEnabled => 'backend.modules.billing_description',
-            self::GedEnabled => 'backend.modules.ged_description',
-            self::ProjectEnabled => 'backend.modules.project_description',
-            self::PlanningEnabled => 'backend.modules.planning_description',
-            self::HrEnabled => 'backend.modules.hr_description',
-            self::VaultEnabled => 'backend.modules.vault_description',
-            self::PdfFormEnabled => 'backend.modules.pdfform_description',
-            self::PdfFormTemplatesEnabled => 'backend.nav.pdfform_templates_description',
-            self::PdfFormDocumentsEnabled => 'backend.nav.pdfform_documents_description',
-            self::BillingTiersEnabled => 'backend.nav.tiers_description',
-            self::BillingInvoicesEnabled => 'backend.nav.invoices_description',
-            self::BillingComplianceEnabled => 'backend.nav.ocr_import_description',
-            self::CrmContactsEnabled => 'backend.nav.contacts_description',
-            self::CrmCompaniesEnabled => 'backend.nav.companies_description',
-            self::CrmDealsEnabled => 'backend.nav.deals_description',
-            self::EcommerceListingsEnabled => 'backend.nav.listings_description',
-            self::EcommerceOrdersEnabled => 'backend.nav.orders_description',
-            self::EditorialFrontEnabled => 'backend.modules.editorial_front_description',
-            self::EditorialPostsEnabled => 'backend.nav.posts_description',
-            self::EditorialMenusEnabled => 'backend.nav.menus_description',
-            self::EditorialPostTypesEnabled => 'backend.nav.postTypes_description',
-            self::EditorialTaxonomiesEnabled => 'backend.nav.taxonomies_description',
-            self::EditorialCommentsEnabled => 'backend.nav.comments_description',
-            self::EditorialFormsEnabled => 'backend.nav.forms_description',
-            self::EditorialSitemapEnabled => 'backend.nav.sitemap_description',
-            self::GedDocumentsEnabled => 'backend.nav.documents_description',
-            self::GedCategoriesEnabled => 'backend.nav.ged_categories_description',
-            self::ErpProductsEnabled => 'backend.nav.products_description',
-            self::HrEmployeesEnabled => 'backend.nav.employees_description',
-            self::PhotoGalleriesEnabled => 'backend.nav.galleries_description',
-            self::PlanningPlanningsEnabled => 'backend.nav.plannings_description',
-            self::ProjectProjectsEnabled => 'backend.nav.projects_description',
-            self::VaultSafeEnabled => 'backend.nav.vault_description',
-            self::VaultPasswordGeneratorEnabled => 'backend.nav.password_generator_description',
+            self::GeneralBackend => 'backend.modules.general_backend_description',
+            self::GeneralDashboard => 'backend.nav.dashboard_description',
+            self::PlatformBackend => 'backend.modules.platform_backend_description',
+            self::PlatformMedia => 'backend.nav.media_description',
+            self::PlatformUsers => 'backend.nav.users_description',
+            self::PlatformAgencies => 'backend.nav.agencies_description',
+            self::PlatformServices => 'backend.nav.services_description',
+            self::PlatformSettings => 'backend.nav.settings_description',
+            self::PlatformThemes => 'backend.nav.themes_description',
+            self::EditorialBackend => 'backend.modules.editorial_backend_description',
+            self::CrmBackend => 'backend.modules.crm_backend_description',
+            self::ErpBackend => 'backend.modules.erp_backend_description',
+            self::EcommerceBackend => 'backend.modules.ecommerce_backend_description',
+            self::EcommerceFrontend => 'backend.modules.ecommerce_shop_description',
+            self::PhotoBackend => 'backend.modules.photo_backend_description',
+            self::PhotoFrontend => 'backend.modules.photo_public_description',
+            self::BillingBackend => 'backend.modules.billing_backend_description',
+            self::GedBackend => 'backend.modules.ged_backend_description',
+            self::ProjectBackend => 'backend.modules.project_backend_description',
+            self::PlanningBackend => 'backend.modules.planning_backend_description',
+            self::HrBackend => 'backend.modules.hr_backend_description',
+            self::VaultBackend => 'backend.modules.vault_backend_description',
+            self::PdfFormBackend => 'backend.modules.pdfform_backend_description',
+            self::PdfFormTemplates => 'backend.nav.pdfform_templates_description',
+            self::PdfFormDocuments => 'backend.nav.pdfform_documents_description',
+            self::BillingTiers => 'backend.nav.tiers_description',
+            self::BillingInvoices => 'backend.nav.invoices_description',
+            self::BillingCompliance => 'backend.nav.ocr_import_description',
+            self::CrmContacts => 'backend.nav.contacts_description',
+            self::CrmCompanies => 'backend.nav.companies_description',
+            self::CrmDeals => 'backend.nav.deals_description',
+            self::EcommerceListings => 'backend.nav.listings_description',
+            self::EcommerceOrders => 'backend.nav.orders_description',
+            self::EditorialFrontend => 'backend.modules.editorial_front_description',
+            self::EditorialPosts => 'backend.nav.posts_description',
+            self::EditorialMenus => 'backend.nav.menus_description',
+            self::EditorialPostTypes => 'backend.nav.postTypes_description',
+            self::EditorialTaxonomies => 'backend.nav.taxonomies_description',
+            self::EditorialComments => 'backend.nav.comments_description',
+            self::EditorialForms => 'backend.nav.forms_description',
+            self::EditorialSitemap => 'backend.nav.sitemap_description',
+            self::GedDocuments => 'backend.nav.documents_description',
+            self::GedCategories => 'backend.nav.ged_categories_description',
+            self::ErpProducts => 'backend.nav.products_description',
+            self::HrEmployees => 'backend.nav.employees_description',
+            self::PhotoGalleries => 'backend.nav.galleries_description',
+            self::PlanningPlannings => 'backend.nav.plannings_description',
+            self::ProjectProjects => 'backend.nav.projects_description',
+            self::VaultSafe => 'backend.nav.vault_description',
+            self::VaultPasswordGenerator => 'backend.nav.password_generator_description',
         };
     }
 
@@ -228,24 +230,24 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getParentCase(): ?self
     {
         return match ($this) {
-            self::GeneralDashboardEnabled => self::GeneralEnabled,
-            self::PlatformMediaEnabled, self::PlatformUsersEnabled, self::PlatformAgenciesEnabled,
-            self::PlatformServicesEnabled, self::PlatformSettingsEnabled, self::PlatformThemesEnabled => self::PlatformEnabled,
-            self::BillingTiersEnabled, self::BillingInvoicesEnabled, self::BillingComplianceEnabled => self::BillingEnabled,
-            self::CrmContactsEnabled, self::CrmCompaniesEnabled, self::CrmDealsEnabled => self::CrmEnabled,
-            self::EcommerceListingsEnabled, self::EcommerceOrdersEnabled => self::EcommerceEnabled,
-            self::EditorialFrontEnabled,
-            self::EditorialPostsEnabled, self::EditorialMenusEnabled, self::EditorialPostTypesEnabled,
-            self::EditorialTaxonomiesEnabled, self::EditorialCommentsEnabled, self::EditorialFormsEnabled,
-            self::EditorialSitemapEnabled => self::EditorialEnabled,
-            self::GedDocumentsEnabled, self::GedCategoriesEnabled => self::GedEnabled,
-            self::ErpProductsEnabled => self::ErpEnabled,
-            self::HrEmployeesEnabled => self::HrEnabled,
-            self::PhotoGalleriesEnabled => self::PhotoEnabled,
-            self::PlanningPlanningsEnabled => self::PlanningEnabled,
-            self::ProjectProjectsEnabled => self::ProjectEnabled,
-            self::VaultSafeEnabled, self::VaultPasswordGeneratorEnabled => self::VaultEnabled,
-            self::PdfFormTemplatesEnabled, self::PdfFormDocumentsEnabled => self::PdfFormEnabled,
+            self::GeneralDashboard => self::GeneralBackend,
+            self::PlatformMedia, self::PlatformUsers, self::PlatformAgencies,
+            self::PlatformServices, self::PlatformSettings, self::PlatformThemes => self::PlatformBackend,
+            self::BillingTiers, self::BillingInvoices, self::BillingCompliance => self::BillingBackend,
+            self::CrmContacts, self::CrmCompanies, self::CrmDeals => self::CrmBackend,
+            self::EcommerceListings, self::EcommerceOrders => self::EcommerceBackend,
+            self::EditorialFrontend,
+            self::EditorialPosts, self::EditorialMenus, self::EditorialPostTypes,
+            self::EditorialTaxonomies, self::EditorialComments, self::EditorialForms,
+            self::EditorialSitemap => self::EditorialBackend,
+            self::GedDocuments, self::GedCategories => self::GedBackend,
+            self::ErpProducts => self::ErpBackend,
+            self::HrEmployees => self::HrBackend,
+            self::PhotoGalleries => self::PhotoBackend,
+            self::PlanningPlannings => self::PlanningBackend,
+            self::ProjectProjects => self::ProjectBackend,
+            self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
+            self::PdfFormTemplates, self::PdfFormDocuments => self::PdfFormBackend,
             default => null,
         };
     }
@@ -258,57 +260,57 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             // Top-level inter-module dependencies
-            self::ErpEnabled => self::CrmEnabled->value,
-            self::EcommerceEnabled, self::EcommerceShopEnabled => self::ErpEnabled->value,
-            self::BillingEnabled => self::CrmEnabled->value,
-            self::PhotoPublicEnabled => self::PhotoEnabled->value,
+            self::ErpBackend => self::CrmBackend->value,
+            self::EcommerceBackend, self::EcommerceFrontend => self::ErpBackend->value,
+            self::BillingBackend => self::CrmBackend->value,
+            self::PhotoFrontend => self::PhotoBackend->value,
             // Core sub-modules
-            self::GeneralDashboardEnabled => self::GeneralEnabled->value,
+            self::GeneralDashboard => self::GeneralBackend->value,
             // Platform sub-modules
-            self::PlatformMediaEnabled,
-            self::PlatformUsersEnabled,
-            self::PlatformAgenciesEnabled,
-            self::PlatformServicesEnabled,
-            self::PlatformSettingsEnabled,
-            self::PlatformThemesEnabled => self::PlatformEnabled->value,
+            self::PlatformMedia,
+            self::PlatformUsers,
+            self::PlatformAgencies,
+            self::PlatformServices,
+            self::PlatformSettings,
+            self::PlatformThemes => self::PlatformBackend->value,
             // Billing sub-modules
-            self::BillingTiersEnabled => self::BillingEnabled->value,
-            self::BillingInvoicesEnabled => self::BillingTiersEnabled->value,
-            self::BillingComplianceEnabled => self::BillingEnabled->value,
+            self::BillingTiers => self::BillingBackend->value,
+            self::BillingInvoices => self::BillingTiers->value,
+            self::BillingCompliance => self::BillingBackend->value,
             // CRM sub-modules
-            self::CrmContactsEnabled => self::CrmEnabled->value,
-            self::CrmCompaniesEnabled => self::CrmEnabled->value,
-            self::CrmDealsEnabled => self::CrmContactsEnabled->value,
+            self::CrmContacts => self::CrmBackend->value,
+            self::CrmCompanies => self::CrmBackend->value,
+            self::CrmDeals => self::CrmContacts->value,
             // Ecommerce sub-modules
-            self::EcommerceListingsEnabled => self::EcommerceEnabled->value,
-            self::EcommerceOrdersEnabled => self::EcommerceListingsEnabled->value,
+            self::EcommerceListings => self::EcommerceBackend->value,
+            self::EcommerceOrders => self::EcommerceListings->value,
             // Editorial sub-modules
-            self::EditorialFrontEnabled => self::EditorialEnabled->value,
-            self::EditorialPostsEnabled => self::EditorialEnabled->value,
-            self::EditorialMenusEnabled => self::EditorialEnabled->value,
-            self::EditorialPostTypesEnabled => self::EditorialEnabled->value,
-            self::EditorialTaxonomiesEnabled => self::EditorialPostTypesEnabled->value,
-            self::EditorialCommentsEnabled => self::EditorialPostsEnabled->value,
-            self::EditorialFormsEnabled => self::EditorialEnabled->value,
-            self::EditorialSitemapEnabled => self::EditorialPostsEnabled->value,
+            self::EditorialFrontend => self::EditorialBackend->value,
+            self::EditorialPosts => self::EditorialBackend->value,
+            self::EditorialMenus => self::EditorialBackend->value,
+            self::EditorialPostTypes => self::EditorialBackend->value,
+            self::EditorialTaxonomies => self::EditorialPostTypes->value,
+            self::EditorialComments => self::EditorialPosts->value,
+            self::EditorialForms => self::EditorialBackend->value,
+            self::EditorialSitemap => self::EditorialPosts->value,
             // GED sub-modules
-            self::GedDocumentsEnabled => self::GedEnabled->value,
-            self::GedCategoriesEnabled => self::GedEnabled->value,
+            self::GedDocuments => self::GedBackend->value,
+            self::GedCategories => self::GedBackend->value,
             // ERP sub-modules
-            self::ErpProductsEnabled => self::ErpEnabled->value,
+            self::ErpProducts => self::ErpBackend->value,
             // HR sub-modules
-            self::HrEmployeesEnabled => self::HrEnabled->value,
+            self::HrEmployees => self::HrBackend->value,
             // Photo sub-modules
-            self::PhotoGalleriesEnabled => self::PhotoEnabled->value,
+            self::PhotoGalleries => self::PhotoBackend->value,
             // Planning sub-modules
-            self::PlanningPlanningsEnabled => self::PlanningEnabled->value,
+            self::PlanningPlannings => self::PlanningBackend->value,
             // Project sub-modules
-            self::ProjectProjectsEnabled => self::ProjectEnabled->value,
+            self::ProjectProjects => self::ProjectBackend->value,
             // Vault sub-modules
-            self::VaultSafeEnabled => self::VaultEnabled->value,
-            self::VaultPasswordGeneratorEnabled => self::VaultEnabled->value,
-            self::PdfFormTemplatesEnabled => self::PdfFormEnabled->value,
-            self::PdfFormDocumentsEnabled => self::PdfFormEnabled->value,
+            self::VaultSafe => self::VaultBackend->value,
+            self::VaultPasswordGenerator => self::VaultBackend->value,
+            self::PdfFormTemplates => self::PdfFormBackend->value,
+            self::PdfFormDocuments => self::PdfFormBackend->value,
             default => null,
         };
     }
@@ -356,20 +358,20 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     public function getModuleId(): ?string
     {
         return match ($this) {
-            self::GeneralEnabled => 'general',
-            self::PlatformEnabled => 'platform',
-            self::EditorialEnabled => 'editorial',
-            self::CrmEnabled => 'crm',
-            self::ErpEnabled => 'erp',
-            self::EcommerceEnabled => 'ecommerce',
-            self::PhotoEnabled => 'photo',
-            self::BillingEnabled => 'billing',
-            self::GedEnabled => 'ged',
-            self::ProjectEnabled => 'project',
-            self::PlanningEnabled => 'planning',
-            self::HrEnabled => 'hr',
-            self::VaultEnabled => 'vault',
-            self::PdfFormEnabled => 'pdfform',
+            self::GeneralBackend => 'general',
+            self::PlatformBackend => 'platform',
+            self::EditorialBackend => 'editorial',
+            self::CrmBackend => 'crm',
+            self::ErpBackend => 'erp',
+            self::EcommerceBackend => 'ecommerce',
+            self::PhotoBackend => 'photo',
+            self::BillingBackend => 'billing',
+            self::GedBackend => 'ged',
+            self::ProjectBackend => 'project',
+            self::PlanningBackend => 'planning',
+            self::HrBackend => 'hr',
+            self::VaultBackend => 'vault',
+            self::PdfFormBackend => 'pdfform',
             default => null,
         };
     }

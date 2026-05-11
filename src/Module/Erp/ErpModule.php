@@ -62,8 +62,8 @@ final readonly class ErpModule implements ModuleInterface, ModuleToggleProviderI
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::ErpEnabled->toToggle(),
-            ModuleParameterEnum::ErpProductsEnabled->toToggle(),
+            ModuleParameterEnum::ErpBackend->toToggle(),
+            ModuleParameterEnum::ErpProducts->toToggle(),
         ];
     }
 }

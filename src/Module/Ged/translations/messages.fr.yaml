@@ -14,7 +14,8 @@ backend:
           delete: Supprimer les catégories
   modules:
     ged: GED
-    ged_description: "Active la section GED dans l'administration."
+    ged_backend: GED
+    ged_backend_description: "Active la section GED dans l'administration."
   nav:
     sections:
       ged: GED
