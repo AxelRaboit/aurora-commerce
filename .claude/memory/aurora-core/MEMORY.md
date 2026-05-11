@@ -22,6 +22,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` (format nested) en FR + EN dans le YAML du module
 - [convention_privilege_gating.md](convention_privilege_gating.md) — gate les actions à 2 endroits : `#[IsGranted]` côté serveur (autorité) **et** `v-if="can(...)"` côté Vue (UX). Jamais l'un sans l'autre
 - [convention_privilege_granularity.md](convention_privilege_granularity.md) — toujours décomposer en `view/create/edit/delete` plutôt qu'un `manage` fourre-tout. Permet des profils de droits fins pour `ROLE_USER`
+- [convention_navpermission_group.md](convention_navpermission_group.md) — `NavPermission(..., group: 'platform')` surface une permission sous une section différente du module qui la déclare. Utilisé quand un seul module (ex: `CoreModule`) regroupe des perms appartenant à plusieurs sections d'UI
 - [convention_breadcrumb_section.md](convention_breadcrumb_section.md) — premier fil de breadcrumb = `backend.nav.sections.<moduleId>|trans` (appliqué sur 31 templates)
 
 ### Conventions Vue / JS / Frontend
@@ -49,6 +50,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : 13 top-level + 24 sous-modules, cascade graph, consommateurs, convention clés sans `_enabled`
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`. Exemple : `UserAgencyServiceUpdatingEvent` + `HrEmployeeSyncListener`
 - [pattern_user_scoped_module_access.md](pattern_user_scoped_module_access.md) — `ModuleAccessChecker` central : global setting + per-user `disabled_modules` JSON + cascade. Tous les `*Context` y routent. Privilege `core.users.modules.manage` (dev+admin)
+- [pattern_frontend_toggle.md](pattern_frontend_toggle.md) — chaque front (`FrontendInterface`) a son toggle dédié (séparé du toggle admin). `FrontendRouteGateSubscriber` 404 les routes désactivées. `/` redirige vers `/backend` si tous off → cascade `/backend/profile` si Dashboard masqué
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`
@@ -62,6 +64,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [pitfall_module_translations_two_registrations.md](pitfall_module_translations_two_registrations.md) — nouveau module : seul `resolve_target_entities` dans `AuroraBundle.php` est manuel. Mappings Doctrine, Twig namespaces, translator paths et DumpJsTranslations sont tous auto-découverts par glob.
 - [pitfall_sequence_generator_naming.md](pitfall_sequence_generator_naming.md) — `app_seq_*` = séquences métier (SequenceGenerator), `seq_core_*_id` = PKs Doctrine. Ne pas confondre. `schema_filter` dans doctrine.yaml exclut `app_seq_*` des diffs
 - [pitfall_yaml_duplicate_keys.md](pitfall_yaml_duplicate_keys.md) — clé YAML dupliquée (scalar + mapping même niveau) : silencieuse en PHP, fatale pour `DumpJsTranslationsCommand` et le build Vue
+- [pitfall_route_gate_priority.md](pitfall_route_gate_priority.md) — `*RouteGateSubscriber` priorité < 8 obligatoire (firewall = priorité 8). Sinon `Security::getUser()` retourne null et per-user gating silencieusement no-op. Convention : priorité 0
 
 ### Process / méthode
 - [process_make_ft_before_commit.md](process_make_ft_before_commit.md) — **toujours** `make ft` (fix + test) avant chaque commit, résoudre tous les problèmes
