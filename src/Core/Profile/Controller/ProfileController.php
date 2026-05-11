@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/backend/profile', name: 'backend_profile')]
-#[IsGranted(UserRoleEnum::Admin->value)]
+#[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
 {
     use JsonRequestTrait;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Service;
 
-use Aurora\Core\EventSubscriber\GeneralRouteGateSubscriber;
 use Aurora\Core\Module\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
