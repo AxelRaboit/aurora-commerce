@@ -40,11 +40,11 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
         $items = [];
 
         if ($this->pdfFormContext->isTemplatesEnabled()) {
-            $items[] = new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', descriptionKey: 'backend.nav.pdfform_templates_description');
+            $items[] = new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.manage', descriptionKey: 'backend.nav.pdfform_templates_description');
         }
 
         if ($this->pdfFormContext->isDocumentsEnabled()) {
-            $items[] = new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', descriptionKey: 'backend.nav.pdfform_documents_description');
+            $items[] = new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.generate', descriptionKey: 'backend.nav.pdfform_documents_description');
         }
 
         if ([] === $items) {
@@ -58,8 +58,8 @@ final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavSection('pdfform', [
-                new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', descriptionKey: 'backend.nav.pdfform_templates_description'),
-                new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', descriptionKey: 'backend.nav.pdfform_documents_description'),
+                new NavItem('backend_pdfform_templates', 'backend.nav.pdfform_templates', 'file-text', requiredPrivilege: 'pdfform.templates.manage', descriptionKey: 'backend.nav.pdfform_templates_description'),
+                new NavItem('backend_pdfform_documents', 'backend.nav.pdfform_documents', 'file-output', requiredPrivilege: 'pdfform.documents.generate', descriptionKey: 'backend.nav.pdfform_documents_description'),
             ], priority: 34),
         ];
     }

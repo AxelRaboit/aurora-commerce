@@ -47,6 +47,37 @@ grep -rn "#\[Route" src/Core/ src/Module/ --include="*.php" -A2 \
 Toute route admin (`/backend/...`) doit être suivie d'un `IsGranted`
 explicite.
 
+## 1bis. Sidebar : `requiredPrivilege` sur les `NavItem`
+
+Aussi obligatoire. Sans ça, **un user sans la perm voit l'entrée dans
+le sidebar**, clique, se prend `Access Denied`. Friction inutile :
+si la route est gated par `IsGranted('x.y.z')`, son `NavItem` doit
+déclarer `requiredPrivilege: 'x.y.z'`.
+
+```php
+// XxxModule::getNavSections()
+new NavItem(
+    'backend_billing_tiers',
+    'backend.nav.tiers',
+    'users',
+    requiredPrivilege: 'billing.tiers.view',          // ← obligatoire
+    descriptionKey: 'backend.nav.tiers_description',
+)
+```
+
+`ModuleRegistry::resolveItem()` filtre déjà via la perm — il suffit
+de la déclarer. Pareil sur `getCatalogNavSections()` (la catalogue
+dev panel doit refléter le même gating). Si l'`IsGranted` classe-level
+du controller est `mod.entity.view`, c'est cette même clé qu'on met
+sur le `NavItem`.
+
+**Audit** :
+```bash
+# NavItems sans requiredPrivilege dans tous les modules
+grep -E "new NavItem\(" src/Module/*/[A-Z]*Module.php \
+  | grep -v "requiredPrivilege" | head -30
+```
+
 ## 2. Frontend : `can()` via `usePrivileges`
 
 ```vue

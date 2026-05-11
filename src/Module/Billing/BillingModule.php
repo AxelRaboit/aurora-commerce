@@ -43,7 +43,7 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
         $items = [];
 
         if ($this->billingContext->isTiersEnabled()) {
-            $items[] = new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', descriptionKey: 'backend.nav.tiers_description');
+            $items[] = new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', requiredPrivilege: 'billing.tiers.view', descriptionKey: 'backend.nav.tiers_description');
         }
 
         if ($this->billingContext->isInvoicesEnabled()) {
@@ -51,11 +51,13 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
                 'backend_billing_invoices',
                 'backend.nav.invoices',
                 'receipt',
+                requiredPrivilege: 'billing.invoices.view',
                 children: [
                     new NavItem(
                         'backend_billing_ocr_import',
                         'backend.nav.ocr_import',
                         'scan-line',
+                        requiredPrivilege: 'billing.ocr.import',
                         activeRoutePrefix: 'backend_billing_ocr_',
                         descriptionKey: 'backend.nav.ocr_import_description',
                     ),
@@ -65,7 +67,7 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
         }
 
         if ($this->billingContext->isComplianceEnabled()) {
-            $items[] = new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', descriptionKey: 'backend.billing.compliance.description');
+            $items[] = new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', requiredPrivilege: 'billing.invoices.view', descriptionKey: 'backend.billing.compliance.description');
         }
 
         if ([] === $items) {
@@ -83,6 +85,7 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
                     'backend_billing_invoices',
                     'backend.nav.invoices',
                     'receipt',
+                    requiredPrivilege: 'billing.invoices.view',
                     children: [
                         new NavItem(
                             'backend_billing_ocr_import',
@@ -94,8 +97,8 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
                     ],
                     descriptionKey: 'backend.nav.invoices_description',
                 ),
-                new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', descriptionKey: 'backend.nav.tiers_description'),
-                new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', descriptionKey: 'backend.billing.compliance.description'),
+                new NavItem('backend_billing_tiers', 'backend.nav.tiers', 'users', requiredPrivilege: 'billing.tiers.view', descriptionKey: 'backend.nav.tiers_description'),
+                new NavItem('backend_billing_compliance', 'backend.billing.compliance.title', 'shield-check', requiredPrivilege: 'billing.invoices.view', descriptionKey: 'backend.billing.compliance.description'),
             ], priority: 55),
         ];
     }

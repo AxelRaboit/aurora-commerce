@@ -42,15 +42,15 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
         $items = [];
 
         if ($this->crmContext->isContactsEnabled()) {
-            $items[] = new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', descriptionKey: 'backend.nav.contacts_description');
+            $items[] = new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contacts_description');
         }
 
         if ($this->crmContext->isCompaniesEnabled()) {
-            $items[] = new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', descriptionKey: 'backend.nav.companies_description');
+            $items[] = new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', requiredPrivilege: 'crm.companies.manage', descriptionKey: 'backend.nav.companies_description');
         }
 
         if ($this->crmContext->isDealsEnabled()) {
-            $items[] = new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', descriptionKey: 'backend.nav.deals_description');
+            $items[] = new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', requiredPrivilege: 'crm.deals.manage', descriptionKey: 'backend.nav.deals_description');
         }
 
         if ([] === $items) {
@@ -64,9 +64,9 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
     {
         return [
             new NavSection('crm', [
-                new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', descriptionKey: 'backend.nav.contacts_description'),
-                new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', descriptionKey: 'backend.nav.companies_description'),
-                new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', descriptionKey: 'backend.nav.deals_description'),
+                new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contacts_description'),
+                new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', requiredPrivilege: 'crm.companies.manage', descriptionKey: 'backend.nav.companies_description'),
+                new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', requiredPrivilege: 'crm.deals.manage', descriptionKey: 'backend.nav.deals_description'),
             ], priority: 40),
         ];
     }

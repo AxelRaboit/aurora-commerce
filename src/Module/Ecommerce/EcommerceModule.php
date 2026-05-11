@@ -42,11 +42,11 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
         $items = [];
 
         if ($this->ecommerceContext->isListingsEnabled()) {
-            $items[] = new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', descriptionKey: 'backend.nav.listings_description');
+            $items[] = new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listings_description');
         }
 
         if ($this->ecommerceContext->isOrdersEnabled()) {
-            $items[] = new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', descriptionKey: 'backend.nav.orders_description');
+            $items[] = new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', requiredPrivilege: 'ecommerce.orders.view', descriptionKey: 'backend.nav.orders_description');
         }
 
         if ([] === $items) {
@@ -60,8 +60,8 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
     {
         return [
             new NavSection('ecommerce', [
-                new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', descriptionKey: 'backend.nav.listings_description'),
-                new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', descriptionKey: 'backend.nav.orders_description'),
+                new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listings_description'),
+                new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', requiredPrivilege: 'ecommerce.orders.view', descriptionKey: 'backend.nav.orders_description'),
             ], priority: 60),
         ];
     }

@@ -37,7 +37,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
         $items = [];
 
         if ($this->vaultContext->isSafeEnabled()) {
-            $items[] = new NavItem('backend_vault', 'backend.nav.vault', 'vault', descriptionKey: 'backend.nav.vault_description');
+            $items[] = new NavItem('backend_vault', 'backend.nav.vault', 'vault', requiredPrivilege: 'vault.use', descriptionKey: 'backend.nav.vault_description');
         }
 
         if ($this->vaultContext->isPasswordGeneratorEnabled()) {
@@ -55,7 +55,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
     {
         return [
             new NavSection('vault', [
-                new NavItem('backend_vault', 'backend.nav.vault', 'vault', descriptionKey: 'backend.nav.vault_description'),
+                new NavItem('backend_vault', 'backend.nav.vault', 'vault', requiredPrivilege: 'vault.use', descriptionKey: 'backend.nav.vault_description'),
                 new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description'),
             ], priority: 20),
         ];

@@ -40,7 +40,7 @@ final readonly class ErpModule implements ModuleInterface, ModuleToggleProviderI
         $items = [];
 
         if ($this->erpContext->isProductsEnabled()) {
-            $items[] = new NavItem('backend_erp_products', 'backend.nav.products', 'package', descriptionKey: 'backend.nav.products_description');
+            $items[] = new NavItem('backend_erp_products', 'backend.nav.products', 'package', requiredPrivilege: 'erp.products.view', descriptionKey: 'backend.nav.products_description');
         }
 
         if ([] === $items) {
@@ -54,7 +54,7 @@ final readonly class ErpModule implements ModuleInterface, ModuleToggleProviderI
     {
         return [
             new NavSection('erp', [
-                new NavItem('backend_erp_products', 'backend.nav.products', 'package', descriptionKey: 'backend.nav.products_description'),
+                new NavItem('backend_erp_products', 'backend.nav.products', 'package', requiredPrivilege: 'erp.products.view', descriptionKey: 'backend.nav.products_description'),
             ], priority: 50),
         ];
     }
