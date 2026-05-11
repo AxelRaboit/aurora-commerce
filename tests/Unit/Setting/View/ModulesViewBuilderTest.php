@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\View;
 
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Toggle\ModuleToggle;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Setting\View\ModulesViewBuilder;
@@ -19,7 +23,47 @@ final class ModulesViewBuilderTest extends TestCase
         TranslatorInterface $translator,
         iterable $modules = [],
     ): ModulesViewBuilder {
-        return new ModulesViewBuilder($repository, $modules, $translator);
+        // Build a registry from every core ModuleParameterEnum case, matching
+        // what CoreModule + the per-module ::getToggles() declarations do at
+        // runtime — so the view builder sees the same toggle universe.
+        $toggles = array_map(
+            static fn (ModuleParameterEnum $case): ModuleToggle => $case->toToggle(),
+            ModuleParameterEnum::cases(),
+        );
+
+        $toggleProvider = new class($toggles) implements ModuleInterface, ModuleToggleProviderInterface {
+            /** @param list<ModuleToggle> $toggles */
+            public function __construct(private readonly array $toggles) {}
+
+            public function getId(): string
+            {
+                return 'core';
+            }
+
+            public function getNavSections(): array
+            {
+                return [];
+            }
+
+            public function getCatalogNavSections(): array
+            {
+                return [];
+            }
+
+            public function getPermissions(): array
+            {
+                return [];
+            }
+
+            public function getToggles(): array
+            {
+                return $this->toggles;
+            }
+        };
+
+        $registry = new ModuleToggleRegistry([$toggleProvider]);
+
+        return new ModulesViewBuilder($repository, $modules, $translator, $registry);
     }
 
     private function stubRepository(string $defaultValue = '1'): SettingRepository
