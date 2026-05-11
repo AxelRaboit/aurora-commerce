@@ -111,7 +111,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                         v-on:search="onSearch"
                     />
                     <AppButton
-                        v-if="can('crm.deals.manage')"
+                        v-if="can('crm.deals.create')"
                         variant="primary"
                         size="md"
                         class="w-full sm:w-auto"
@@ -136,8 +136,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                             <span class="text-xs text-secondary font-medium">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</span>
                             <div class="flex items-center gap-0.5">
                                 <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.deals.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.deals.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </div>
                     </div>
@@ -169,8 +169,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
                                         <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton v-if="can('crm.deals.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton v-if="can('crm.deals.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
                                 </td>
                             </tr>

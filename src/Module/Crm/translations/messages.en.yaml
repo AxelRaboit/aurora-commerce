@@ -8,9 +8,15 @@ backend:
           edit: Edit contacts
           delete: Delete contacts
         companies:
-          manage: Manage companies
+          view: View companies
+          create: Create companies
+          edit: Edit companies
+          delete: Delete companies
         deals:
-          manage: Manage deals
+          view: View deals
+          create: Create deals
+          edit: Edit deals
+          delete: Delete deals
   modules:
     crm: CRM
     crm_description: 'Enables the CRM section in the admin (contacts, companies, deals).'

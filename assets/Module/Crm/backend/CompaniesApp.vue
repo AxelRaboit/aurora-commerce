@@ -49,7 +49,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-on:search="onSearch"
             />
             <AppButton
-                v-if="can('crm.companies.manage')"
+                v-if="can('crm.companies.create')"
                 variant="primary"
                 size="md"
                 class="w-full sm:w-auto"
@@ -72,8 +72,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <span v-else class="text-xs text-muted">—</span>
                     <div class="flex items-center gap-0.5">
                         <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.companies.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.companies.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
             </div>
@@ -110,8 +110,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.companies.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.companies.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
                         </td>
                     </tr>

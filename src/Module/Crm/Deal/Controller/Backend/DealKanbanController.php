@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/crm/deals/kanban', name: 'backend_crm_deals_kanban', methods: [HttpMethodEnum::Get->value])]
-#[IsGranted('crm.deals.manage')]
+#[IsGranted('crm.deals.view')]
 final class DealKanbanController extends AbstractController
 {
     public function __construct(

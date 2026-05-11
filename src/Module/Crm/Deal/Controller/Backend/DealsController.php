@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/crm/deals', name: 'backend_crm_deals')]
-#[IsGranted('crm.deals.manage')]
+#[IsGranted('crm.deals.view')]
 class DealsController extends AbstractController
 {
     use JsonRequestTrait;
@@ -56,6 +56,7 @@ class DealsController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.deals.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->dealInputFactory->fromArray($this->decodeJson($request));
@@ -71,6 +72,7 @@ class DealsController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.deals.edit')]
     public function update(DealInterface $deal, Request $request): JsonResponse
     {
         $input = $this->dealInputFactory->fromArray($this->decodeJson($request));
@@ -86,6 +88,7 @@ class DealsController extends AbstractController
     }
 
     #[Route('/{id}/stage', name: '_stage', methods: [HttpMethodEnum::Patch->value])]
+    #[IsGranted('crm.deals.edit')]
     public function updateStage(DealInterface $deal, Request $request): JsonResponse
     {
         $stage = DealStageEnum::tryFrom($this->decodeJson($request)['stage'] ?? '');
@@ -99,6 +102,7 @@ class DealsController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.deals.delete')]
     public function delete(DealInterface $deal): JsonResponse
     {
         $this->dealManager->delete($deal);

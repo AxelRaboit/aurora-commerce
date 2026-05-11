@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/crm/companies', name: 'backend_crm_companies')]
-#[IsGranted('crm.companies.manage')]
+#[IsGranted('crm.companies.view')]
 final class CompaniesController extends AbstractController
 {
     use JsonRequestTrait;
@@ -49,6 +49,7 @@ final class CompaniesController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.companies.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->companyInputFactory->fromArray($this->decodeJson($request));
@@ -64,6 +65,7 @@ final class CompaniesController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.companies.edit')]
     public function update(Company $company, Request $request): JsonResponse
     {
         $input = $this->companyInputFactory->fromArray($this->decodeJson($request));
@@ -79,6 +81,7 @@ final class CompaniesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('crm.companies.delete')]
     public function delete(Company $company): JsonResponse
     {
         $this->companyManager->delete($company);

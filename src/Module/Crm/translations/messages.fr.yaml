@@ -8,9 +8,15 @@ backend:
           edit: Modifier les contacts
           delete: Supprimer les contacts
         companies:
-          manage: Gérer les sociétés
+          view: Voir les sociétés
+          create: Créer des sociétés
+          edit: Modifier les sociétés
+          delete: Supprimer les sociétés
         deals:
-          manage: Gérer les opportunités
+          view: Voir les opportunités
+          create: Créer des opportunités
+          edit: Modifier les opportunités
+          delete: Supprimer les opportunités
   modules:
     crm: CRM
     crm_description: "Active la section CRM dans l'administration (contacts, entreprises, affaires)."

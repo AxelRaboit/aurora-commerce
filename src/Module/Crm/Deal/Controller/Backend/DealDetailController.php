@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/crm/deals/{id}', name: 'backend_crm_deals_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
-#[IsGranted('crm.deals.manage')]
+#[IsGranted('crm.deals.view')]
 final class DealDetailController extends AbstractController
 {
     public function __construct(private readonly DealDetailViewBuilder $viewBuilder) {}
