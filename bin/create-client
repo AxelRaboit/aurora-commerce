@@ -59,12 +59,8 @@ echo ""
 # ---------------------------------------------------------------------------
 
 info "Creating directory structure..."
-mkdir -p "$DEST"/{bin,public,src/{Controller,Entity,Dto,Manager,Serializer,Service,EventListener},templates/Core,config/packages,config/routes,migrations,assets/client/{Module,Overrides}}
-touch "$DEST/src/Controller/.gitkeep"
-touch "$DEST/src/Entity/.gitkeep"
-touch "$DEST/src/Dto/.gitkeep"
-touch "$DEST/src/Manager/.gitkeep"
-touch "$DEST/src/Serializer/.gitkeep"
+mkdir -p "$DEST"/{bin,public,src/{Module,Service,EventListener},templates/Core,config/packages,config/routes,migrations,assets/client/{Module,Overrides}}
+touch "$DEST/src/Module/.gitkeep"
 touch "$DEST/src/Service/.gitkeep"
 touch "$DEST/src/EventListener/.gitkeep"
 touch "$DEST/templates/Core/.gitkeep"
@@ -288,28 +284,27 @@ done
 # security.yaml — full copy (references Aurora\ classes which are available via the bundle)
 cp "$AURORA_DIR/config/packages/security.yaml" "$DEST/config/packages/security.yaml"
 
-# doctrine.yaml — DBAL + ORM mapping for App\Entity
-# Aurora's own ORM mappings (App\Module\..., src/Module) are registered by
-# AuroraBundle::prependExtension. This file only declares the client-specific
-# App\Entity namespace and a placeholder for resolve_target_entities.
+# doctrine.yaml — DBAL + ORM mapping for App\Module
+# All client code (including Aurora extensions) lives under src/Module/.
+# The path mirrors the Aurora namespace: Aurora\Core\Agency → src/Module/Core/Agency/.
+# Add resolve_target_entities entries as you extend Aurora entities.
 cat > "$DEST/config/packages/doctrine.yaml" <<EOF
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         profiling_collect_backtrace: '%kernel.debug%'
     orm:
-        # Map Aurora Core entity interfaces to your concrete subclasses.
-        # Uncomment and adapt as you start extending entities under src/Entity/.
+        # Map Aurora entity interfaces to your concrete subclasses.
         # Example:
         # resolve_target_entities:
-        #     Aurora\Core\Agency\Entity\AgencyInterface: App\Entity\Agency
+        #     Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
         mappings:
-            AppEntity:
+            AuroraClient:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: AppEntity
+                dir: '%kernel.project_dir%/src/Module'
+                prefix: 'App\Module'
+                alias: AuroraClient
 
 when@test:
     doctrine:
@@ -404,26 +399,12 @@ services:
         autowire: true
         autoconfigure: true
 
-    # Responsibility-based PSR-4 prefixes (Sylius / Symfony convention).
-    # Modules with their own bundle-like structure live under App\Module\<Name>.
-    # Aurora extension layers (Entity / Dto / Manager / Serializer) sit flat
-    # under src/. Use #[AsAlias(<Interface>)] to replace an Aurora default
-    # service, or #[AsDecorator] to wrap it.
-    App\Controller\:
-        resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
-
-    App\Entity\:
-        resource: '../src/Entity/'
-
-    App\Dto\:
-        resource: '../src/Dto/'
-
-    App\Manager\:
-        resource: '../src/Manager/'
-
-    App\Serializer\:
-        resource: '../src/Serializer/'
+    # All client code lives under src/Module/ (mirrors aurora-core structure).
+    # Aurora extensions go in the module that mirrors their namespace,
+    # e.g. src/Module/Core/Agency/ for an Agency extension.
+    # Use #[AsAlias(<Interface>)] to replace an Aurora default service.
+    App\Module\:
+        resource: '../src/Module/'
 
     App\Service\:
         resource: '../src/Service/'
