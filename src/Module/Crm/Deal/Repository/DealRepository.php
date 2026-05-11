@@ -73,7 +73,7 @@ class DealRepository extends ResolveTargetEntityRepository
         return (float) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /** @return list<Deal> */
+    /** @return list<DealInterface> */
     public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder('d')

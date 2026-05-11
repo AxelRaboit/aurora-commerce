@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
+use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
@@ -40,7 +40,7 @@ final readonly class TiersViewBuilder
         ];
     }
 
-    public function showView(Tiers $tiers): array
+    public function showView(TiersInterface $tiers): array
     {
         $firstPage = $this->invoiceRepository->findPaginated(1, 20, null, null, $tiers->getId());
 

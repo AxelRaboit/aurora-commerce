@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Serializer;
 
-use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 
 interface OrderSerializerInterface
 {
@@ -13,8 +13,8 @@ interface OrderSerializerInterface
      *
      * @return array<string, mixed>
      */
-    public function serializeForList(Order $order): array;
+    public function serializeForList(OrderInterface $order): array;
 
     /** @return array<string, mixed> */
-    public function serialize(Order $order): array;
+    public function serialize(OrderInterface $order): array;
 }

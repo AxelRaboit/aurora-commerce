@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Contact\View;
 
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Audit\Serializer\AuditLogSerializer;
-use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -26,7 +26,7 @@ final readonly class ContactDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Contact $contact): array
+    public function showView(ContactInterface $contact): array
     {
         $activityResult = $this->auditLogRepository->findPaginatedForEntity('Contact', $contact->getId(), 1, 20);
         $activity = array_map($this->auditLogSerializer->serialize(...), $activityResult['items']);

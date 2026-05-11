@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Serializer;
 
-use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 class OrderSerializer implements OrderSerializerInterface
 {
     /** Compact projection for admin list rows — no lines, no addresses. */
-    public function serializeForList(Order $order): array
+    public function serializeForList(OrderInterface $order): array
     {
         $currency = $order->getCurrency();
         $totalCents = $order->getTotalCents();
@@ -35,7 +35,7 @@ class OrderSerializer implements OrderSerializerInterface
         ];
     }
 
-    public function serialize(Order $order): array
+    public function serialize(OrderInterface $order): array
     {
         $currency = $order->getCurrency();
         $totalCents = $order->getTotalCents();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Company\View;
 
-use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Company\Serializer\CompanySerializerInterface;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
@@ -26,7 +26,7 @@ final readonly class CompanyDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Company $company): array
+    public function showView(CompanyInterface $company): array
     {
         $contactResult = $this->contactRepository->findPaginated(1, 50, companyId: $company->getId());
         $contacts = array_map($this->contactSerializer->serialize(...), $contactResult['items']);

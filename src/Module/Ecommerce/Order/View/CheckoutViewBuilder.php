@@ -9,7 +9,7 @@ use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
-use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 
 /**
@@ -48,7 +48,7 @@ final readonly class CheckoutViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Order $order, string $locale): array
+    public function showView(OrderInterface $order, string $locale): array
     {
         return [
             'order' => $this->orderSerializer->serialize($order),

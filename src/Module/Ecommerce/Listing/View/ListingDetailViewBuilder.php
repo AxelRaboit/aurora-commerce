@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\View;
 
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,7 +21,7 @@ final readonly class ListingDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Listing $listing): array
+    public function showView(ListingInterface $listing): array
     {
         return [
             'listing' => $this->listingSerializer->serialize($listing),

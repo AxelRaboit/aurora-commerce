@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp\Product\View;
 
 use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Serializer\ProductActivitySerializer;
 use Aurora\Module\Erp\Product\Serializer\ProductSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,7 +25,7 @@ final readonly class ProductDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Product $product): array
+    public function showView(ProductInterface $product): array
     {
         $result = $this->auditLogRepository->findPaginatedForEntity('Product', (int) $product->getId(), 1, 10);
 

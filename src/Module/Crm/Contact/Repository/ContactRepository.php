@@ -49,7 +49,7 @@ class ContactRepository extends ResolveTargetEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
-    /** @return list<Contact> */
+    /** @return list<ContactInterface> */
     public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder('c')

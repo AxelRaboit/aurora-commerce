@@ -6,6 +6,7 @@ namespace Aurora\Module\Billing\Invoice\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
+use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
@@ -59,7 +60,7 @@ final readonly class InvoicesViewBuilder
     }
 
     /** @return array<string, mixed> */
-    public function showView(Invoice $invoice): array
+    public function showView(InvoiceInterface $invoice): array
     {
         return [
             'invoice' => $this->invoiceSerializer->serializeDetail($invoice),

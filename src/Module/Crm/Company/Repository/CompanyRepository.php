@@ -35,7 +35,7 @@ class CompanyRepository extends ResolveTargetEntityRepository
         return $this->paginate($qb, $countQb, $page, $limit);
     }
 
-    /** @return list<Company> */
+    /** @return list<CompanyInterface> */
     public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder('c')

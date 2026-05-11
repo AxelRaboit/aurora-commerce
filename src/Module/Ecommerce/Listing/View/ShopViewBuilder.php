@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Listing\View;
 
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeContext;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;
 
@@ -46,7 +46,7 @@ final readonly class ShopViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Listing $listing, string $locale): array
+    public function showView(ListingInterface $listing, string $locale): array
     {
         return [
             'listing' => $this->listingSerializer->serialize($listing),

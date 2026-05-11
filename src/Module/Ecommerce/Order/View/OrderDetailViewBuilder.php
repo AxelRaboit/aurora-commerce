@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Order\View;
 
 use Aurora\Core\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Audit\Serializer\AuditLogSerializer;
-use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -25,7 +25,7 @@ final readonly class OrderDetailViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function showView(Order $order): array
+    public function showView(OrderInterface $order): array
     {
         $activityResult = $this->auditLogRepository->findPaginatedForEntity('Order', $order->getId(), 1, 50);
 
