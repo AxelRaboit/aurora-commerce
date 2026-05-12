@@ -34,8 +34,8 @@ export function useDocumentFolderDragDrop(movePath, reorderPath, onSuccess) {
         const rect = event.currentTarget.getBoundingClientRect();
         const y = event.clientY - rect.top;
         const ratio = y / rect.height;
-        if (ratio < 0.3) return "before";
-        if (ratio > 0.7) return "after";
+        if (ratio < 0.4) return "before";
+        if (ratio > 0.6) return "after";
         return "into";
     }
 
@@ -60,7 +60,9 @@ export function useDocumentFolderDragDrop(movePath, reorderPath, onSuccess) {
 
     async function onDrop(event, targetFolder, flatTree) {
         event.preventDefault();
-        const zone = dropTarget.value?.zone ?? "into";
+        // Recalculate zone from the drop event position rather than relying on the
+        // last dragover state which may have been cleared by a dragLeave race.
+        const zone = getZone(event);
         dropTarget.value = null;
 
         const draggedId = draggingId.value;
