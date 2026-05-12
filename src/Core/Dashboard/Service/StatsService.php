@@ -109,22 +109,25 @@ final readonly class StatsService
      */
     private function getPostStats(): array
     {
+        $countByType = $this->postRepository->countGroupedByPostType();
         $byType = [];
         foreach ($this->postTypeRepository->findAll() as $type) {
             $byType[] = [
                 'slug' => $type->getSlug(),
                 'label' => $type->getLabel(),
-                'count' => $this->postRepository->count(['postType' => $type]),
+                'count' => $countByType[$type->getId()] ?? 0,
             ];
         }
 
+        $byStatus = $this->postRepository->countGroupedByStatus();
+
         return [
             'total' => $this->postRepository->count([]),
-            'published' => $this->postRepository->count(['status' => PostStatusEnum::Published, 'deletedAt' => null]),
-            'draft' => $this->postRepository->count(['status' => PostStatusEnum::Draft, 'deletedAt' => null]),
-            'pendingReview' => $this->postRepository->count(['status' => PostStatusEnum::PendingReview, 'deletedAt' => null]),
-            'scheduled' => $this->postRepository->count(['status' => PostStatusEnum::Scheduled, 'deletedAt' => null]),
-            'archived' => $this->postRepository->count(['status' => PostStatusEnum::Archived, 'deletedAt' => null]),
+            'published' => $byStatus[PostStatusEnum::Published->value] ?? 0,
+            'draft' => $byStatus[PostStatusEnum::Draft->value] ?? 0,
+            'pendingReview' => $byStatus[PostStatusEnum::PendingReview->value] ?? 0,
+            'scheduled' => $byStatus[PostStatusEnum::Scheduled->value] ?? 0,
+            'archived' => $byStatus[PostStatusEnum::Archived->value] ?? 0,
             'trashed' => $this->postRepository->countTrashed(),
             'byType' => $byType,
         ];
