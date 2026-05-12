@@ -20,6 +20,22 @@ class MenuRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, Menu::class, MenuInterface::class);
     }
 
+    /**
+     * Loads all menus with their items so MenuSerializer::serialize can call
+     * count() without firing one query per menu.
+     *
+     * @return list<MenuInterface>
+     */
+    public function findAllForIndex(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.items', 'i')
+            ->addSelect('i')
+            ->orderBy('m.name', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByLocation(string $location): ?MenuInterface
     {
         return $this->findOneBy(['location' => $location]);

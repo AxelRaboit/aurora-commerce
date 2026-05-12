@@ -32,7 +32,7 @@ final readonly class MenusViewBuilder
     {
         $menus = array_map(
             $this->menuSerializer->serialize(...),
-            $this->menuRepository->findAll(),
+            $this->menuRepository->findAllForIndex(),
         );
 
         return [
