@@ -100,6 +100,10 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
+use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
+use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
@@ -261,6 +265,8 @@ class AuroraBundle extends AbstractBundle
                     ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
+                    DocumentTagInterface::class => DocumentTag::class,
+                    DocumentFolderInterface::class => DocumentFolder::class,
                     PdfTemplateInterface::class => PdfTemplate::class,
                     PdfTemplateFieldInterface::class => PdfTemplateField::class,
                     PdfDocumentInterface::class => PdfDocument::class,

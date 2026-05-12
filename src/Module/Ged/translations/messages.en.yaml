@@ -12,10 +12,18 @@ backend:
           create: Create categories
           edit: Edit categories
           delete: Delete categories
+        tags:
+          manage: Manage tags
+        folders:
+          manage: Manage folders
   modules:
     ged: DMS
     ged_backend: DMS
     ged_backend_description: 'Enables the DMS section in the admin.'
+    ged_tags: DMS Tags
+    ged_tags_description: 'Enables document tag management.'
+    ged_folders: DMS Folders
+    ged_folders_description: 'Enables document folder management.'
   nav:
     sections:
       ged: DMS
@@ -23,6 +31,10 @@ backend:
     documents_description: Document library (contracts, HR, finance, marketing…)
     ged_categories: Categories
     ged_categories_description: Organize documents by category
+    ged_tags: Tags
+    ged_tags_description: Manage document tags
+    ged_folders: Folders
+    ged_folders_description: Organize documents by folder
   ged:
     documents:
       reference: Reference
@@ -66,5 +78,37 @@ backend:
       deleteWarning: Linked documents will not be deleted.
       namePlaceholder: Category name…
       descriptionPlaceholder: Optional description…
+      errors:
+        name_required: Name is required
+    tags:
+      name: Name
+      color: Color
+      add: New tag
+      create: Create a tag
+      edit: "Edit tag {name}"
+      created: Tag created successfully
+      updated: Tag updated
+      deleted: Tag deleted
+      empty: No tags yet
+      deleteConfirm: "Are you sure you want to delete tag « {name} »?"
+      deleteWarning: Linked documents will not be deleted.
+      namePlaceholder: Tag name…
+      errors:
+        name_required: Name is required
+    folders:
+      name: Name
+      parent: Parent folder
+      position: Position
+      add: New folder
+      create: Create a folder
+      edit: "Edit folder {name}"
+      created: Folder created successfully
+      updated: Folder updated
+      deleted: Folder deleted
+      empty: No folders yet
+      deleteConfirm: "Are you sure you want to delete folder « {name} »?"
+      deleteWarning: Linked documents will not be deleted.
+      namePlaceholder: Folder name…
+      noParent: None (root)
       errors:
         name_required: Name is required

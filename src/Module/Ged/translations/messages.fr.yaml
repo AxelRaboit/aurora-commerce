@@ -12,10 +12,18 @@ backend:
           create: Créer des catégories
           edit: Modifier les catégories
           delete: Supprimer les catégories
+        tags:
+          manage: Gérer les étiquettes
+        folders:
+          manage: Gérer les dossiers
   modules:
     ged: GED
     ged_backend: GED
     ged_backend_description: "Active la section GED dans l'administration."
+    ged_tags: Étiquettes GED
+    ged_tags_description: "Active la gestion des étiquettes de documents."
+    ged_folders: Dossiers GED
+    ged_folders_description: "Active la gestion des dossiers de documents."
   nav:
     sections:
       ged: GED
@@ -23,6 +31,10 @@ backend:
     documents_description: Bibliothèque de documents (contrats, RH, finance, marketing…)
     ged_categories: Catégories
     ged_categories_description: Organiser les documents par catégorie
+    ged_tags: Étiquettes
+    ged_tags_description: Gérer les étiquettes de documents
+    ged_folders: Dossiers
+    ged_folders_description: Organiser les documents par dossier
   ged:
     documents:
       reference: Référence
@@ -66,5 +78,37 @@ backend:
       deleteWarning: Les documents liés ne seront pas supprimés.
       namePlaceholder: Nom de la catégorie…
       descriptionPlaceholder: Description optionnelle…
+      errors:
+        name_required: Le nom est obligatoire
+    tags:
+      name: Nom
+      color: Couleur
+      add: Nouvelle étiquette
+      create: Créer une étiquette
+      edit: "Modifier l'étiquette {name}"
+      created: Étiquette créée avec succès
+      updated: Étiquette mise à jour
+      deleted: Étiquette supprimée
+      empty: Aucune étiquette pour le moment
+      deleteConfirm: "Êtes-vous sûr de vouloir supprimer l'étiquette « {name} » ?"
+      deleteWarning: Les documents liés ne seront pas supprimés.
+      namePlaceholder: Nom de l'étiquette…
+      errors:
+        name_required: Le nom est obligatoire
+    folders:
+      name: Nom
+      parent: Dossier parent
+      position: Position
+      add: Nouveau dossier
+      create: Créer un dossier
+      edit: "Modifier le dossier {name}"
+      created: Dossier créé avec succès
+      updated: Dossier mis à jour
+      deleted: Dossier supprimé
+      empty: Aucun dossier pour le moment
+      deleteConfirm: "Êtes-vous sûr de vouloir supprimer le dossier « {name} » ?"
+      deleteWarning: Les documents liés ne seront pas supprimés.
+      namePlaceholder: Nom du dossier…
+      noParent: Aucun (racine)
       errors:
         name_required: Le nom est obligatoire

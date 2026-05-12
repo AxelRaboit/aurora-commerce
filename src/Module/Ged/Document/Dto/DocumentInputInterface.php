@@ -17,4 +17,9 @@ interface DocumentInputInterface
     public function getCategoryId(): ?int;
 
     public function getFileId(): ?int;
+
+    /** @return int[] */
+    public function getTagIds(): array;
+
+    public function getFolderId(): ?int;
 }

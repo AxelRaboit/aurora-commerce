@@ -7,7 +7,11 @@ namespace Aurora\Module\Ged\Document\Entity;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
+use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,6 +41,18 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?MediaInterface $file = null;
+
+    /** @var Collection<int, DocumentTagInterface> */
+    protected Collection $tags;
+
+    #[ORM\ManyToOne(targetEntity: DocumentFolderInterface::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    protected ?DocumentFolderInterface $folder = null;
+
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
 
     public function getReference(): ?string
     {
@@ -106,6 +122,46 @@ abstract class AbstractDocument implements DocumentInterface
     public function setFile(?MediaInterface $file): static
     {
         $this->file = $file;
+
+        return $this;
+    }
+
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(DocumentTagInterface $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(DocumentTagInterface $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function clearTags(): static
+    {
+        $this->tags->clear();
+
+        return $this;
+    }
+
+    public function getFolder(): ?DocumentFolderInterface
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(?DocumentFolderInterface $folder): static
+    {
+        $this->folder = $folder;
 
         return $this;
     }

@@ -25,4 +25,14 @@ final readonly class GedContext
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedCategories);
     }
+
+    public function isTagsEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedTags);
+    }
+
+    public function isFoldersEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedFolders);
+    }
 }

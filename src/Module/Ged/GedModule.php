@@ -32,6 +32,8 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
             new NavPermission('ged.categories.create'),
             new NavPermission('ged.categories.edit'),
             new NavPermission('ged.categories.delete'),
+            new NavPermission('ged.tags.manage'),
+            new NavPermission('ged.folders.manage'),
         ];
     }
 
@@ -51,6 +53,14 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
             $items[] = new NavItem('backend_ged_categories', 'backend.nav.ged_categories', 'tags', requiredPrivilege: 'ged.categories.view', descriptionKey: 'backend.nav.ged_categories_description');
         }
 
+        if ($this->gedContext->isTagsEnabled()) {
+            $items[] = new NavItem('backend_ged_tags', 'backend.nav.ged_tags', 'tag', requiredPrivilege: 'ged.tags.manage', descriptionKey: 'backend.nav.ged_tags_description');
+        }
+
+        if ($this->gedContext->isFoldersEnabled()) {
+            $items[] = new NavItem('backend_ged_folders', 'backend.nav.ged_folders', 'folder', requiredPrivilege: 'ged.folders.manage', descriptionKey: 'backend.nav.ged_folders_description');
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -64,6 +74,8 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
             new NavSection('ged', [
                 new NavItem('backend_ged_documents', 'backend.nav.documents', 'folder-open', requiredPrivilege: 'ged.documents.view', descriptionKey: 'backend.nav.documents_description'),
                 new NavItem('backend_ged_categories', 'backend.nav.ged_categories', 'tags', requiredPrivilege: 'ged.categories.view', descriptionKey: 'backend.nav.ged_categories_description'),
+                new NavItem('backend_ged_tags', 'backend.nav.ged_tags', 'tag', requiredPrivilege: 'ged.tags.manage', descriptionKey: 'backend.nav.ged_tags_description'),
+                new NavItem('backend_ged_folders', 'backend.nav.ged_folders', 'folder', requiredPrivilege: 'ged.folders.manage', descriptionKey: 'backend.nav.ged_folders_description'),
             ], priority: 35),
         ];
     }
@@ -74,6 +86,8 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
             ModuleParameterEnum::GedBackend->toToggle(),
             ModuleParameterEnum::GedDocuments->toToggle(),
             ModuleParameterEnum::GedCategories->toToggle(),
+            ModuleParameterEnum::GedTags->toToggle(),
+            ModuleParameterEnum::GedFolders->toToggle(),
         ];
     }
 }

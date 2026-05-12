@@ -21,6 +21,8 @@ class DocumentSerializer implements DocumentSerializerInterface
         $file = $document->getFile();
         $category = $document->getCategory();
 
+        $folder = $document->getFolder();
+
         return [
             'id' => $document->getId(),
             'reference' => $document->getReference(),
@@ -35,6 +37,10 @@ class DocumentSerializer implements DocumentSerializerInterface
             'fileUrl' => $file?->getPublicUrl(),
             'fileMime' => $file?->getMimeType(),
             'fileSize' => $file?->getSize(),
+            'tagIds' => $document->getTags()->map(static fn ($tag): ?int => $tag->getId())->toArray(),
+            'tags' => $document->getTags()->map(static fn ($tag): array => ['id' => $tag->getId(), 'name' => $tag->getName(), 'color' => $tag->getColor()])->toArray(),
+            'folderId' => $folder?->getId(),
+            'folderName' => $folder?->getName(),
             'createdAt' => $document->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $document->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

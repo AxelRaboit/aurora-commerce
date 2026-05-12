@@ -68,6 +68,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     // Sub-modules — GED
     case GedDocuments = 'modules_ged_documents';
     case GedCategories = 'modules_ged_categories';
+    case GedTags = 'modules_ged_tags';
+    case GedFolders = 'modules_ged_folders';
 
     // Sub-modules — ERP
     case ErpProducts = 'modules_erp_products';
@@ -143,6 +145,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EditorialSitemap => 'backend.nav.sitemap',
             self::GedDocuments => 'backend.nav.documents',
             self::GedCategories => 'backend.nav.ged_categories',
+            self::GedTags => 'backend.nav.ged_tags',
+            self::GedFolders => 'backend.nav.ged_folders',
             self::ErpProducts => 'backend.nav.products',
             self::HrEmployees => 'backend.nav.employees',
             self::PhotoGalleries => 'backend.nav.galleries',
@@ -199,6 +203,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EditorialSitemap => 'backend.nav.sitemap_description',
             self::GedDocuments => 'backend.nav.documents_description',
             self::GedCategories => 'backend.nav.ged_categories_description',
+            self::GedTags => 'backend.nav.ged_tags_description',
+            self::GedFolders => 'backend.nav.ged_folders_description',
             self::ErpProducts => 'backend.nav.products_description',
             self::HrEmployees => 'backend.nav.employees_description',
             self::PhotoGalleries => 'backend.nav.galleries_description',
@@ -240,7 +246,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EditorialPosts, self::EditorialMenus, self::EditorialPostTypes,
             self::EditorialTaxonomies, self::EditorialComments, self::EditorialForms,
             self::EditorialSitemap => self::EditorialBackend,
-            self::GedDocuments, self::GedCategories => self::GedBackend,
+            self::GedDocuments, self::GedCategories, self::GedTags, self::GedFolders => self::GedBackend,
             self::ErpProducts => self::ErpBackend,
             self::HrEmployees => self::HrBackend,
             self::PhotoGalleries => self::PhotoBackend,
@@ -296,6 +302,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // GED sub-modules
             self::GedDocuments => self::GedBackend->value,
             self::GedCategories => self::GedBackend->value,
+            self::GedTags => self::GedBackend->value,
+            self::GedFolders => self::GedBackend->value,
             // ERP sub-modules
             self::ErpProducts => self::ErpBackend->value,
             // HR sub-modules

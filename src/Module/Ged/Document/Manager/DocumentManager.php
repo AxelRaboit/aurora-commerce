@@ -12,6 +12,9 @@ use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
+use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
+use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
+use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -24,6 +27,8 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly MediaRepository $mediaRepository,
         protected readonly SequenceGenerator $sequenceGenerator,
         protected readonly AuditLogger $auditLogger,
+        protected readonly DocumentTagRepository $tagRepository,
+        protected readonly DocumentFolderRepository $folderRepository,
     ) {}
 
     public function create(DocumentInputInterface $input): DocumentInterface
@@ -67,6 +72,16 @@ class DocumentManager implements DocumentManagerInterface
         $document->setStatus($input->getStatus());
         $document->setCategory(null !== $input->getCategoryId() ? $this->categoryRepository->find($input->getCategoryId()) : null);
         $document->setFile(null !== $input->getFileId() ? $this->mediaRepository->find($input->getFileId()) : null);
+
+        $document->clearTags();
+        foreach ($input->getTagIds() as $tagId) {
+            $tag = $this->tagRepository->find($tagId);
+            if ($tag instanceof DocumentTagInterface) {
+                $document->addTag($tag);
+            }
+        }
+
+        $document->setFolder(null !== $input->getFolderId() ? $this->folderRepository->find($input->getFolderId()) : null);
     }
 
     protected function auditCreated(DocumentInterface $document): void

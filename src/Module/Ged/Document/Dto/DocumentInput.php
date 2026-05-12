@@ -17,6 +17,8 @@ class DocumentInput implements DocumentInputInterface
         public readonly DocumentStatusEnum $status = DocumentStatusEnum::Draft,
         public readonly ?int $categoryId = null,
         public readonly ?int $fileId = null,
+        public readonly array $tagIds = [],
+        public readonly ?int $folderId = null,
     ) {}
 
     public function getTitle(): string
@@ -42,5 +44,15 @@ class DocumentInput implements DocumentInputInterface
     public function getFileId(): ?int
     {
         return $this->fileId;
+    }
+
+    public function getTagIds(): array
+    {
+        return $this->tagIds;
+    }
+
+    public function getFolderId(): ?int
+    {
+        return $this->folderId;
     }
 }
