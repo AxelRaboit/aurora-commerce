@@ -77,7 +77,13 @@ function isPdf(mimeType) {
                 <AppButton v-if="can('ged.documents.edit')" variant="secondary" size="md" v-on:click="openEditDoc">
                     <Pencil class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.edit") }}
                 </AppButton>
-                <AppButton v-if="doc.fileUrl" variant="secondary" size="md" :href="doc.fileUrl" download>
+                <AppButton
+                    v-if="doc.fileUrl"
+                    variant="secondary"
+                    size="md"
+                    :href="doc.fileUrl"
+                    download
+                >
                     <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
                 </AppButton>
                 <AppButton v-if="can('ged.documents.delete')" variant="danger" size="md" v-on:click="handleDelete">

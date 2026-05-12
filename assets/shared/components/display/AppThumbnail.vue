@@ -20,7 +20,13 @@ const sizes = {
         class="shrink-0 rounded border border-line bg-surface-2 overflow-hidden"
         :class="sizes[size] ?? sizes.sm"
     >
-        <AppImage v-if="src" :src="src" :alt="alt" object-fit="cover" :fallback-icon="false" />
+        <AppImage
+            v-if="src"
+            :src="src"
+            :alt="alt"
+            object-fit="cover"
+            :fallback-icon="false"
+        />
         <slot v-else />
     </div>
 </template>
