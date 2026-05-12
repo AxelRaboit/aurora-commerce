@@ -18,7 +18,14 @@ export function useDocumentFolderTree(items) {
     }
 
     const flatTree = computed(() =>
-        flattenFolders(buildFolderTree(items.value), 0, collapsedIds.value),
+        flattenFolders(
+            buildFolderTree(
+                items.value,
+                (a, b) => a.position - b.position || a.name.localeCompare(b.name),
+            ),
+            0,
+            collapsedIds.value,
+        ),
     );
 
     return { flatTree, collapsedIds, toggleCollapse };
