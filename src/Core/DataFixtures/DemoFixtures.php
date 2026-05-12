@@ -51,6 +51,8 @@ use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
+use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
@@ -171,6 +173,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     // GED — full document management
                     'ged.documents.view', 'ged.documents.create', 'ged.documents.edit', 'ged.documents.delete',
                     'ged.categories.view', 'ged.categories.create', 'ged.categories.edit', 'ged.categories.delete',
+                    'ged.tags.manage', 'ged.folders.manage',
                 ],
                 'mood' => 'Commercial senior',
             ],
@@ -1272,6 +1275,47 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     private function createGed(EntityManagerInterface $em, array $media): void
     {
+        // ── Tags ──────────────────────────────────────────────────────────────
+        $tagDefs = [
+            ['name' => 'Confidentiel',  'color' => '#ef4444'],
+            ['name' => 'À valider',     'color' => '#f59e0b'],
+            ['name' => 'Signé',         'color' => '#10b981'],
+            ['name' => 'Archivé',       'color' => '#6b7280'],
+            ['name' => 'RGPD',          'color' => '#3b82f6'],
+            ['name' => 'ISO 27001',     'color' => '#8b5cf6'],
+        ];
+        $tags = [];
+        foreach ($tagDefs as $def) {
+            $tag = new DocumentTag();
+            $tag->setName($def['name'])->setColor($def['color']);
+            $em->persist($tag);
+            $tags[] = $tag;
+        }
+        // aliases: 0=Confidentiel, 1=À valider, 2=Signé, 3=Archivé, 4=RGPD, 5=ISO 27001
+
+        // ── Folders ───────────────────────────────────────────────────────────
+        $folderDefs = [
+            ['name' => 'Aurora Tech',    'parent' => null, 'position' => 0],
+            ['name' => 'Clients',        'parent' => null, 'position' => 1],
+            ['name' => 'Internes',       'parent' => null, 'position' => 2],
+            ['name' => 'Contrats',       'parent' => 1,    'position' => 0],
+            ['name' => 'Présentations',  'parent' => 1,    'position' => 1],
+            ['name' => 'RH',             'parent' => 2,    'position' => 0],
+            ['name' => 'Finance',        'parent' => 2,    'position' => 1],
+        ];
+        $folders = [];
+        foreach ($folderDefs as $def) {
+            $folder = new DocumentFolder();
+            $folder->setName($def['name'])->setPosition($def['position']);
+            if (null !== $def['parent']) {
+                $folder->setParent($folders[$def['parent']]);
+            }
+            $em->persist($folder);
+            $folders[] = $folder;
+        }
+        // aliases: 0=Aurora Tech, 1=Clients, 2=Internes, 3=Contrats, 4=Présentations, 5=RH, 6=Finance
+
+        // ── Categories ────────────────────────────────────────────────────────
         $catDefs = [
             ['name' => 'Contrats Clients',         'slug' => 'contrats-clients',       'desc' => 'Contrats signés avec nos clients et partenaires commerciaux.'],
             ['name' => 'Documentation Technique',  'slug' => 'doc-technique',          'desc' => 'Guides d\'installation, spécifications et manuels techniques.'],
@@ -1288,27 +1332,33 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $categories[] = $c;
         }
 
+        // ── Documents (cat, folder, tags) ─────────────────────────────────────
         $docDefs = [
-            ['title' => 'Contrat Tech Innovation SARL 2025',           'cat' => 0, 'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'file' => 5],
-            ['title' => 'Contrat BioMed France — Maintenance 2025',    'cat' => 0, 'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de maintenance et support niveau 2 pour la suite Aurora.', 'file' => null],
-            ['title' => 'Avenant Contrat Retail Connect — Jan 2025',   'cat' => 0, 'status' => DocumentStatusEnum::Draft,     'desc' => 'Avenant tarifaire en cours de négociation pour le renouvellement 2025.', 'file' => null],
-            ['title' => "Guide d'installation Aurora v2.0",            'cat' => 1, 'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'file' => null],
-            ['title' => 'API Aurora — Documentation Développeur v2.1', 'cat' => 1, 'status' => DocumentStatusEnum::Published, 'desc' => 'Référence complète de l\'API REST Aurora : endpoints, authentification, exemples.', 'file' => null],
-            ['title' => 'Architecture Technique Aurora — Whitepaper',  'cat' => 1, 'status' => DocumentStatusEnum::Archived,  'desc' => 'Document d\'architecture technique v1.x (archivé, remplacé par la version 2.x).', 'file' => null],
-            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 4, 'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'file' => null],
-            ['title' => 'Budget Prévisionnel 2025 — Aurora Tech',      'cat' => 4, 'status' => DocumentStatusEnum::Published, 'desc' => 'Budget prévisionnel approuvé par le comité de direction le 10 janvier 2025.', 'file' => null],
-            ['title' => 'Charte Graphique Aurora — Brand Guidelines',  'cat' => 2, 'status' => DocumentStatusEnum::Published, 'desc' => 'Couleurs, typographies, logos et règles d\'utilisation de la marque Aurora.', 'file' => 0],
-            ['title' => 'Kit Presse Aurora Tech Day 2025',             'cat' => 2, 'status' => DocumentStatusEnum::Published, 'desc' => 'Communiqué de presse, visuels HD et biographies intervenants.', 'file' => null],
-            ['title' => 'Fiche de Poste — Développeur Full Stack',     'cat' => 3, 'status' => DocumentStatusEnum::Published, 'desc' => 'Description du poste, compétences requises et processus de recrutement.', 'file' => null],
-            ['title' => 'Politique de Télétravail — Aurora Tech',      'cat' => 3, 'status' => DocumentStatusEnum::Published, 'desc' => 'Règles et procédures applicables au travail à distance.', 'file' => null],
-            ['title' => 'Certification ISO 27001 — Audit 2024',        'cat' => 5, 'status' => DocumentStatusEnum::Published, 'desc' => 'Rapport d\'audit de conformité ISO 27001 réalisé en novembre 2024.', 'file' => null],
+            // title                                                          cat  folder  tags        status                              desc                                                                                       file
+            ['title' => 'Contrat Tech Innovation SARL 2025',           'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'file' => 5],
+            ['title' => 'Contrat BioMed France — Maintenance 2025',    'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de maintenance et support niveau 2 pour la suite Aurora.', 'file' => null],
+            ['title' => 'Avenant Contrat Retail Connect — Jan 2025',   'cat' => 0, 'folder' => 3, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Avenant tarifaire en cours de négociation pour le renouvellement 2025.', 'file' => null],
+            ['title' => "Guide d'installation Aurora v2.0",            'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'file' => null],
+            ['title' => 'API Aurora — Documentation Développeur v2.1', 'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Référence complète de l\'API REST Aurora : endpoints, authentification, exemples.', 'file' => null],
+            ['title' => 'Architecture Technique Aurora — Whitepaper',  'cat' => 1, 'folder' => 0, 'tags' => [3],        'status' => DocumentStatusEnum::Archived,  'desc' => 'Document d\'architecture technique v1.x (archivé, remplacé par la version 2.x).', 'file' => null],
+            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 4, 'folder' => 6, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'file' => null],
+            ['title' => 'Budget Prévisionnel 2025 — Aurora Tech',      'cat' => 4, 'folder' => 6, 'tags' => [0],        'status' => DocumentStatusEnum::Published, 'desc' => 'Budget prévisionnel approuvé par le comité de direction le 10 janvier 2025.', 'file' => null],
+            ['title' => 'Charte Graphique Aurora — Brand Guidelines',  'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Couleurs, typographies, logos et règles d\'utilisation de la marque Aurora.', 'file' => 0],
+            ['title' => 'Kit Presse Aurora Tech Day 2025',             'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Communiqué de presse, visuels HD et biographies intervenants.', 'file' => null],
+            ['title' => 'Fiche de Poste — Développeur Full Stack',     'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Description du poste, compétences requises et processus de recrutement.', 'file' => null],
+            ['title' => 'Politique de Télétravail — Aurora Tech',      'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Règles et procédures applicables au travail à distance.', 'file' => null],
+            ['title' => 'Certification ISO 27001 — Audit 2024',        'cat' => 5, 'folder' => 2, 'tags' => [5, 0],    'status' => DocumentStatusEnum::Published, 'desc' => 'Rapport d\'audit de conformité ISO 27001 réalisé en novembre 2024.', 'file' => null],
         ];
         foreach ($docDefs as $def) {
             $d = new Document();
             $d->setTitle($def['title'])
               ->setDescription($def['desc'])
               ->setStatus($def['status'])
-              ->setCategory($categories[$def['cat']]);
+              ->setCategory($categories[$def['cat']])
+              ->setFolder($folders[$def['folder']]);
+            foreach ($def['tags'] as $tagIndex) {
+                $d->addTag($tags[$tagIndex]);
+            }
             if (null !== $def['file'] && isset($media[$def['file']])) {
                 $d->setFile($media[$def['file']]);
             }
