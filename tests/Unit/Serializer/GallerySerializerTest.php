@@ -18,6 +18,7 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryFinalizationRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryInviteRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryItemCommentRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
+use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use Aurora\Module\Photo\Gallery\Serializer\GallerySerializer;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -32,6 +33,7 @@ final class GallerySerializerTest extends TestCase
     private GalleryItemCommentRepository $commentRepository;
     private GalleryFinalizationRepository $finalizationRepository;
     private GalleryInviteRepository $inviteRepository;
+    private GalleryRepository $galleryRepository;
     private GallerySerializer $serializer;
 
     protected function setUp(): void
@@ -44,11 +46,14 @@ final class GallerySerializerTest extends TestCase
         $this->finalizationRepository->method('countForGallery')->willReturn(0);
         $this->inviteRepository = $this->createStub(GalleryInviteRepository::class);
         $this->inviteRepository->method('findAllForGallery')->willReturn([]);
+        $this->galleryRepository = $this->createStub(GalleryRepository::class);
+        $this->galleryRepository->method('countItemsByGalleries')->willReturn([]);
         $this->serializer = new GallerySerializer(
             $this->pickRepository,
             $this->commentRepository,
             $this->finalizationRepository,
             $this->inviteRepository,
+            $this->galleryRepository,
         );
     }
 
@@ -337,7 +342,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -378,7 +383,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([$invite]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -406,7 +411,7 @@ final class GallerySerializerTest extends TestCase
         $finalizations->method('findAllForGallery')->willReturn([$finalization]);
         $finalizations->method('countForGallery')->willReturn(1);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
 
         $rows = $serializer->serializeInvites($gallery);
 
