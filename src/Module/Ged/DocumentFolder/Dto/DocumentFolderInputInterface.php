@@ -9,6 +9,4 @@ interface DocumentFolderInputInterface
     public function getName(): string;
 
     public function getParentId(): ?int;
-
-    public function getPosition(): int;
 }

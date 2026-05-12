@@ -38,6 +38,11 @@ shared:
     no_result: Aucun résultat
     select_to_pick: Appuyez sur Entrée pour sélectionner
     select_selected: Sélectionné
+    download: Télécharger
+    dates: Dates
+    created: Créé le
+    updated: Modifié le
+    reset: Réinitialiser
     select_to_remove: Appuyez sur Entrée pour retirer
     remove: Retirer
     all: Tous

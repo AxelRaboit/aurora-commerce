@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/ged/documents', name: 'backend_ged_documents')]
@@ -34,6 +35,7 @@ final class DocumentsController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly DocumentsViewBuilder $viewBuilder,
         private readonly DocumentInputFactoryInterface $inputFactory,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,6 +52,18 @@ final class DocumentsController extends AbstractController
         $folderId = $request->query->getInt('folderId') ?: null;
 
         return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId));
+    }
+
+    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
+    public function show(Document $document): Response
+    {
+        return $this->render('@Ged/backend/documents/show.html.twig', [
+            'document' => $this->serializer->serialize($document),
+            'backPath' => $this->urlGenerator->generate('backend_ged_documents'),
+            'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => $document->getId()]),
+            'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => $document->getId()]),
+            'listPath' => $this->urlGenerator->generate('backend_ged_documents'),
+        ]);
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]

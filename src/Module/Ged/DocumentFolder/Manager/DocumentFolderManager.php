@@ -57,7 +57,6 @@ class DocumentFolderManager implements DocumentFolderManagerInterface
     protected function applyInput(DocumentFolderInterface $folder, DocumentFolderInputInterface $input): void
     {
         $folder->setName($input->getName());
-        $folder->setPosition($input->getPosition());
         $folder->setParent(null !== $input->getParentId() ? $this->folderRepository->find($input->getParentId()) : null);
     }
 

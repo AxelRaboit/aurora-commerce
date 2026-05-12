@@ -13,7 +13,6 @@ class DocumentFolderInput implements DocumentFolderInputInterface
         #[Assert\Length(max: 150)]
         public readonly string $name = '',
         public readonly ?int $parentId = null,
-        public readonly int $position = 0,
     ) {}
 
     public function getName(): string
@@ -24,10 +23,5 @@ class DocumentFolderInput implements DocumentFolderInputInterface
     public function getParentId(): ?int
     {
         return $this->parentId;
-    }
-
-    public function getPosition(): int
-    {
-        return $this->position;
     }
 }

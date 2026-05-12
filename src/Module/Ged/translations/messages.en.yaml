@@ -53,6 +53,7 @@ backend:
       empty: No documents yet
       deleteConfirm: "Are you sure you want to delete document « {title} »?"
       deleteWarning: This action cannot be undone.
+      backToList: Back to documents
       noCategory: No category
       tags: Tags
       noTags: No tags

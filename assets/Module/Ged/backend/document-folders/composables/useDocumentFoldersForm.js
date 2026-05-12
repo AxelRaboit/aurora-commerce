@@ -9,7 +9,7 @@ import { required } from "@/shared/utils/validation/validators.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 function emptyForm() {
-    return { name: "", parentId: null, position: 0 };
+    return { name: "", parentId: null };
 }
 
 export function useDocumentFoldersForm(
@@ -77,7 +77,6 @@ export function useDocumentFoldersForm(
         editForm.value = {
             name: folder.name,
             parentId: folder.parentId ?? null,
-            position: folder.position ?? 0,
         };
         clearEdit();
         showEdit.value = true;

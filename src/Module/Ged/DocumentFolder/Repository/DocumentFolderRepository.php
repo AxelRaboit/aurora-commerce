@@ -22,8 +22,7 @@ class DocumentFolderRepository extends ResolveTargetEntityRepository
     public function findAllOrdered(): array
     {
         return $this->createQueryBuilder('f')
-            ->orderBy('f.position', Order::Ascending->value)
-            ->addOrderBy('f.name', Order::Ascending->value)
+            ->orderBy('f.name', Order::Ascending->value)
             ->getQuery()
             ->getResult();
     }
@@ -33,8 +32,7 @@ class DocumentFolderRepository extends ResolveTargetEntityRepository
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.parent IS NULL')
-            ->orderBy('f.position', Order::Ascending->value)
-            ->addOrderBy('f.name', Order::Ascending->value)
+            ->orderBy('f.name', Order::Ascending->value)
             ->getQuery()
             ->getResult();
     }

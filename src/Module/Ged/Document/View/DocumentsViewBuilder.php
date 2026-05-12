@@ -53,6 +53,7 @@ final readonly class DocumentsViewBuilder
             'folders' => $folders,
             'search' => $pagination->search ?? '',
             'createPath' => $this->urlGenerator->generate('backend_ged_documents_create'),
+            'showPath' => $this->urlGenerator->generate('backend_ged_documents_show', ['id' => '__id__']),
             'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => '__id__']),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents_list'),

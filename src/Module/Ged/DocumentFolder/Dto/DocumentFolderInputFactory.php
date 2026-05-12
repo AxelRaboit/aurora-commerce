@@ -16,7 +16,6 @@ class DocumentFolderInputFactory implements DocumentFolderInputFactoryInterface
         return new DocumentFolderInput(
             name: Str::trimFromArray($data, 'name'),
             parentId: empty($data['parentId']) ? null : (int) $data['parentId'],
-            position: isset($data['position']) ? (int) $data['position'] : 0,
         );
     }
 }

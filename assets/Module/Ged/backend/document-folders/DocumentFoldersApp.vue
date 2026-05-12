@@ -5,7 +5,7 @@ import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentFoldersForm } from "./composables/useDocumentFoldersForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -53,7 +53,6 @@ const parentOptions = computed(() => [
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.folders.name") }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.folders.parent") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.folders.position") }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -66,7 +65,6 @@ const parentOptions = computed(() => [
                         <td class="px-6 py-3 text-muted hidden md:table-cell">
                             {{ items.find((f) => f.id === folder.parentId)?.name ?? '—' }}
                         </td>
-                        <td class="px-6 py-3 text-muted hidden lg:table-cell">{{ folder.position }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton v-if="can('ged.folders.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(folder)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -96,16 +94,11 @@ const parentOptions = computed(() => [
                     :error="createErrors.name"
                     required
                 />
-                <AppSelect
+                <AppMultiselect
                     v-model="newFolder.parentId"
                     :label="t('backend.ged.folders.parent')"
                     :options="parentOptions"
-                />
-                <AppInput
-                    v-model.number="newFolder.position"
-                    :label="t('backend.ged.folders.position')"
-                    type="number"
-                    placeholder="0"
+                    :allow-empty="true"
                 />
             </form>
             <template #footer>
@@ -131,16 +124,11 @@ const parentOptions = computed(() => [
                     :error="editErrors.name"
                     required
                 />
-                <AppSelect
+                <AppMultiselect
                     v-model="editForm.parentId"
                     :label="t('backend.ged.folders.parent')"
                     :options="parentOptions.filter((opt) => opt.value !== editingFolder?.id)"
-                />
-                <AppInput
-                    v-model.number="editForm.position"
-                    :label="t('backend.ged.folders.position')"
-                    type="number"
-                    placeholder="0"
+                    :allow-empty="true"
                 />
             </form>
             <template #footer>

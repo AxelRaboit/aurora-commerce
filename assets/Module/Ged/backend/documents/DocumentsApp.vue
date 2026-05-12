@@ -17,16 +17,21 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
-import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X, Folder } from "lucide-vue-next";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useFileSize } from "@/shared/composables/format/useFileSize.js";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, X, Folder, Download } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
+const { formatDate } = useDateFormat();
+const { formatSize } = useFileSize();
 const props = defineProps({
     documents: { type: Object, default: () => ({}) },
     categories: { type: Array, default: () => [] },
     tags: { type: Array, default: () => [] },
     folders: { type: Array, default: () => [] },
     search: { type: String, default: "" },
+    showPath: { type: String, default: "" },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -37,6 +42,19 @@ const props = defineProps({
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
 const tagOptions = props.tags.map((tag) => ({ value: tag.id, label: tag.name }));
 const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }));
+
+// ── Detail modal ─────────────────────────────────────────────────────────────
+const viewingDoc = ref(null);
+
+function viewDoc(doc) {
+    viewingDoc.value = doc;
+}
+
+function openEditFromDetail() {
+    const doc = viewingDoc.value;
+    viewingDoc.value = null;
+    openEdit(doc);
+}
 
 // ── Filters ──────────────────────────────────────────────────────────────────
 const filterCategoryId = ref(null);
@@ -86,29 +104,32 @@ const {
 
         <!-- Filters -->
         <div v-if="categories.length || tags.length || folders.length" class="flex flex-wrap gap-2">
-            <AppSelect
+            <AppMultiselect
                 v-if="categories.length"
                 v-model="filterCategoryId"
                 :options="categoryOptions"
+                :allow-empty="true"
                 :placeholder="t('backend.ged.documents.filterByCategory')"
-                class="min-w-40"
-                v-on:change="applyFilter"
+                class="min-w-44"
+                v-on:update:model-value="applyFilter"
             />
-            <AppSelect
+            <AppMultiselect
                 v-if="tags.length"
                 v-model="filterTagId"
                 :options="tagOptions"
+                :allow-empty="true"
                 :placeholder="t('backend.ged.documents.filterByTag')"
-                class="min-w-40"
-                v-on:change="applyFilter"
+                class="min-w-44"
+                v-on:update:model-value="applyFilter"
             />
-            <AppSelect
+            <AppMultiselect
                 v-if="folders.length"
                 v-model="filterFolderId"
                 :options="folderOptions"
+                :allow-empty="true"
                 :placeholder="t('backend.ged.documents.filterByFolder')"
-                class="min-w-40"
-                v-on:change="applyFilter"
+                class="min-w-44"
+                v-on:update:model-value="applyFilter"
             />
             <button
                 v-if="filterCategoryId || filterTagId || filterFolderId"
@@ -160,6 +181,7 @@ const {
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
@@ -179,6 +201,7 @@ const {
             :title="t('backend.ged.documents.create')"
             :icon="FileText"
             :closeable="false"
+            :scrollable="false"
             v-on:close="showCreate = false"
         >
             <div class="space-y-4">
@@ -206,11 +229,12 @@ const {
                     :allow-empty="true"
                     :placeholder="t('backend.ged.documents.noTags')"
                 />
-                <AppSelect
+                <AppMultiselect
                     v-if="folders.length"
                     v-model="newDoc.folderId"
                     :label="t('backend.ged.documents.folder')"
                     :options="folderOptions"
+                    :allow-empty="true"
                     :placeholder="t('backend.ged.documents.noFolder')"
                 />
                 <AppMultiselect
@@ -241,6 +265,7 @@ const {
             :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })"
             :icon="Pencil"
             :closeable="false"
+            :scrollable="false"
             v-on:close="showEdit = false"
         >
             <div class="space-y-4">
@@ -268,11 +293,12 @@ const {
                     :allow-empty="true"
                     :placeholder="t('backend.ged.documents.noTags')"
                 />
-                <AppSelect
+                <AppMultiselect
                     v-if="folders.length"
                     v-model="editForm.folderId"
                     :label="t('backend.ged.documents.folder')"
                     :options="folderOptions"
+                    :allow-empty="true"
                     :placeholder="t('backend.ged.documents.noFolder')"
                 />
                 <AppMultiselect
@@ -312,6 +338,89 @@ const {
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                     <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}</AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Detail modal -->
+        <AppModal
+            :show="!!viewingDoc"
+            :title="viewingDoc?.title ?? ''"
+            :icon="FileText"
+            :closeable="false"
+            v-on:close="viewingDoc = null"
+        >
+            <template v-if="viewingDoc">
+                <div class="space-y-4">
+                    <!-- Status + reference -->
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <AppBadge :color="DOCUMENT_STATUS_BADGE[viewingDoc.status]">{{ viewingDoc.statusLabel }}</AppBadge>
+                        <span v-if="viewingDoc.reference" class="text-xs text-muted font-mono">{{ viewingDoc.reference }}</span>
+                    </div>
+
+                    <!-- Description -->
+                    <p v-if="viewingDoc.description" class="text-sm text-secondary leading-relaxed">{{ viewingDoc.description }}</p>
+
+                    <!-- Metadata -->
+                    <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                        <div v-if="viewingDoc.categoryName">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.category") }}</dt>
+                            <dd class="text-primary">{{ viewingDoc.categoryName }}</dd>
+                        </div>
+                        <div v-if="viewingDoc.folderName">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.folder") }}</dt>
+                            <dd class="text-primary flex items-center gap-1"><Folder class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" /> {{ viewingDoc.folderName }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.created") }}</dt>
+                            <dd class="text-secondary">{{ formatDate(viewingDoc.createdAt) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.updated") }}</dt>
+                            <dd class="text-secondary">{{ formatDate(viewingDoc.updatedAt) }}</dd>
+                        </div>
+                    </dl>
+
+                    <!-- Tags -->
+                    <div v-if="viewingDoc.tags?.length" class="flex flex-wrap gap-1.5">
+                        <span
+                            v-for="tag in viewingDoc.tags"
+                            :key="tag.id"
+                            class="inline-flex items-center text-xs px-2 py-0.5 rounded-full border"
+                            :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
+                        >{{ tag.name }}</span>
+                    </div>
+
+                    <!-- File -->
+                    <div v-if="viewingDoc.fileUrl" class="rounded-lg border border-line overflow-hidden">
+                        <img
+                            v-if="viewingDoc.fileMime?.startsWith('image/')"
+                            :src="viewingDoc.fileUrl"
+                            :alt="viewingDoc.fileName"
+                            class="w-full max-h-64 object-contain bg-surface-2"
+                        >
+                        <iframe
+                            v-else-if="viewingDoc.fileMime === 'application/pdf'"
+                            :src="viewingDoc.fileUrl"
+                            class="w-full h-64"
+                            :title="viewingDoc.fileName"
+                        />
+                        <div v-else class="flex items-center gap-3 px-4 py-3 bg-surface-2">
+                            <FileText class="w-6 h-6 text-muted shrink-0" :stroke-width="1.5" />
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-primary truncate">{{ viewingDoc.fileName }}</p>
+                                <p v-if="viewingDoc.fileSize" class="text-xs text-muted">{{ formatSize(viewingDoc.fileSize) }}</p>
+                            </div>
+                            <a :href="viewingDoc.fileUrl" target="_blank" download class="text-xs text-accent hover:underline flex items-center gap-1 shrink-0">
+                                <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="viewingDoc = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
