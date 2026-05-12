@@ -14,7 +14,7 @@ class CartSerializer implements CartSerializerInterface
 {
     public function serialize(?CartInterface $cart): array
     {
-        if (null === $cart) {
+        if (!$cart instanceof CartInterface) {
             return [];
         }
 

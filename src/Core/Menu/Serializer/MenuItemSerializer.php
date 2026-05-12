@@ -12,15 +12,17 @@ use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class MenuItemSerializer
+#[AsAlias(MenuItemSerializerInterface::class)]
+class MenuItemSerializer implements MenuItemSerializerInterface
 {
     public function __construct(
-        private PostRepository $postRepository,
-        private TaxonomyTermRepository $termRepository,
-        private PostTypeRepository $postTypeRepository,
-        private TranslatorInterface $translator,
+        private readonly PostRepository $postRepository,
+        private readonly TaxonomyTermRepository $termRepository,
+        private readonly PostTypeRepository $postTypeRepository,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     /**

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Serializer;
 
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class TiersSerializer
+#[AsAlias(TiersSerializerInterface::class)]
+class TiersSerializer implements TiersSerializerInterface
 {
     public function serialize(TiersInterface $tiers): array
     {

@@ -6,8 +6,10 @@ namespace Aurora\Core\Notification\Serializer;
 
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class NotificationSerializer
+#[AsAlias(NotificationSerializerInterface::class)]
+class NotificationSerializer implements NotificationSerializerInterface
 {
     /** @return array<string, mixed> */
     public function serialize(NotificationInterface $notification): array

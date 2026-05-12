@@ -7,7 +7,7 @@ namespace Aurora\Module\Erp\Product\Serializer;
 use Aurora\Core\Audit\Entity\AuditLog;
 use DateTimeInterface;
 
-final class ProductActivitySerializer
+class ProductActivitySerializer
 {
     /**
      * @param array{items: array<int, AuditLog>, total: int, page: int, totalPages: int} $result

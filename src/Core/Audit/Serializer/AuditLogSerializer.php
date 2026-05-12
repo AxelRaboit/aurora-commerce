@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Audit\Serializer;
 
-use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Audit\Entity\AuditLogInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class AuditLogSerializer
+#[AsAlias(AuditLogSerializerInterface::class)]
+class AuditLogSerializer implements AuditLogSerializerInterface
 {
     /** @return array<string, mixed> */
-    public function serialize(AuditLog $log): array
+    public function serialize(AuditLogInterface $log): array
     {
         return [
             'id' => $log->getId(),

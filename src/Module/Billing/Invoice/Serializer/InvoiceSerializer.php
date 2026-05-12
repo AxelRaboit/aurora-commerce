@@ -11,14 +11,16 @@ use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class InvoiceSerializer
+#[AsAlias(InvoiceSerializerInterface::class)]
+class InvoiceSerializer implements InvoiceSerializerInterface
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private TiersSerializer $tiersSerializer,
-        private InvoiceRepository $invoiceRepository,
+        private readonly TranslatorInterface $translator,
+        private readonly TiersSerializer $tiersSerializer,
+        private readonly InvoiceRepository $invoiceRepository,
     ) {}
 
     public function serialize(InvoiceInterface $invoice): array
