@@ -1,8 +1,8 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaDragDrop(
     props,
@@ -12,6 +12,9 @@ export function useMediaDragDrop(
     reorderEnabled,
 ) {
     const { t } = useI18n();
+    const { request: reorderRequest } = useRequest();
+    const { request: moveMediaRequest } = useRequest();
+    const { request: moveFolderRequest } = useRequest();
 
     const dragOverFolderId = ref(null);
     const dragOverMediaId = ref(null);
@@ -72,15 +75,7 @@ export function useMediaDragDrop(
     }
 
     async function reorderMedia(ids) {
-        try {
-            await fetch(props.reorderPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ids }),
-            });
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await reorderRequest(props.reorderPath, { ids }, { noGuard: true });
     }
 
     async function onMediaItemDrop(event, targetItem) {
@@ -105,59 +100,43 @@ export function useMediaDragDrop(
     }
 
     async function moveMedia(mediaId, folderId) {
-        try {
-            const response = await fetch(
-                buildPath(props.movePath, { id: mediaId }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ folderId }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            if (folderId !== currentFolderId.value)
-                media.value = media.value.filter((m) => m.id !== mediaId);
-            else {
-                const idx = media.value.findIndex((m) => m.id === mediaId);
-                if (idx !== -1) media.value[idx] = data.media;
-            }
-            toast.success(t("backend.media.moved"));
-        } catch {
+        const data = await moveMediaRequest(
+            buildPath(props.movePath, { id: mediaId }),
+            { folderId },
+        );
+        if (!data) return;
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        if (folderId !== currentFolderId.value)
+            media.value = media.value.filter((m) => m.id !== mediaId);
+        else {
+            const idx = media.value.findIndex((m) => m.id === mediaId);
+            if (idx !== -1) media.value[idx] = data.media;
+        }
+        toast.success(t("backend.media.moved"));
     }
 
     async function moveFolder(folderId, newParentId) {
         if (folderId === newParentId) return;
         const folder = folders.value.find((f) => f.id === folderId);
         if (!folder) return;
-        try {
-            const response = await fetch(
-                buildPath(props.folderEditPath, { id: folderId }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        name: folder.name,
-                        parentId: newParentId,
-                    }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success) {
-                toast.error(data.errors?.parentId ?? t("shared.common.error"));
-                return;
-            }
-            const idx = folders.value.findIndex((f) => f.id === folderId);
-            if (idx !== -1) folders.value[idx] = data.folder;
-            toast.success(t("backend.media.moved"));
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await moveFolderRequest(
+            buildPath(props.folderEditPath, { id: folderId }),
+            {
+                name: folder.name,
+                parentId: newParentId,
+            },
+        );
+        if (!data) return;
+        if (!data.success) {
+            toast.error(data.errors?.parentId ?? t("shared.common.error"));
+            return;
         }
+        const idx = folders.value.findIndex((f) => f.id === folderId);
+        if (idx !== -1) folders.value[idx] = data.folder;
+        toast.success(t("backend.media.moved"));
     }
 
     async function onFolderDrop(event, targetFolderId) {

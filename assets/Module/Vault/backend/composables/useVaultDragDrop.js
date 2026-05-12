@@ -1,15 +1,17 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@shared/utils/http/httpMethod.js";
 import { buildPath } from "@shared/utils/http/buildPath.js";
 import { getDescendantIds } from "@vault/backend/composables/useVaultTree.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 const ENTRY_TYPE = "application/x-aurora-vault-entry";
 const FOLDER_TYPE = "application/x-aurora-vault-folder";
 
 export function useVaultDragDrop(props, entries, folders, currentFolderId) {
     const { t } = useI18n();
+    const { request: moveEntryRequest } = useRequest();
+    const { request: moveFolderRequest } = useRequest();
 
     const dragOverFolderId = ref(null);
     const rootDragOver = ref(false);
@@ -52,27 +54,18 @@ export function useVaultDragDrop(props, entries, folders, currentFolderId) {
     }
 
     async function moveEntry(entryId, targetFolderId) {
-        try {
-            const response = await fetch(
-                buildPath(props.moveEntryPath, { id: entryId }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ folderId: targetFolderId }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-
-            const idx = entries.value.findIndex((e) => e.id === entryId);
-            if (idx !== -1) entries.value[idx] = data.entry;
-            toast.success(t("vault.entries.moved"));
-        } catch {
+        const data = await moveEntryRequest(
+            buildPath(props.moveEntryPath, { id: entryId }),
+            { folderId: targetFolderId },
+        );
+        if (!data) return;
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        const idx = entries.value.findIndex((e) => e.id === entryId);
+        if (idx !== -1) entries.value[idx] = data.entry;
+        toast.success(t("vault.entries.moved"));
     }
 
     async function moveFolder(folderId, newParentId) {
@@ -83,35 +76,26 @@ export function useVaultDragDrop(props, entries, folders, currentFolderId) {
         const folder = folders.value.find((f) => f.id === folderId);
         if (!folder) return;
 
-        try {
-            const response = await fetch(
-                buildPath(props.updateFolderPath, { id: folderId }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        name: folder.name,
-                        color: folder.color,
-                        position: folder.position,
-                        parentId: newParentId,
-                    }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-
-            const idx = folders.value.findIndex((f) => f.id === folderId);
-            if (idx !== -1) folders.value[idx] = data.folder;
-
-            if (currentFolderId.value === folderId)
-                currentFolderId.value = newParentId;
-            toast.success(t("vault.folders.moved"));
-        } catch {
+        const data = await moveFolderRequest(
+            buildPath(props.updateFolderPath, { id: folderId }),
+            {
+                name: folder.name,
+                color: folder.color,
+                position: folder.position,
+                parentId: newParentId,
+            },
+        );
+        if (!data) return;
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        const idx = folders.value.findIndex((f) => f.id === folderId);
+        if (idx !== -1) folders.value[idx] = data.folder;
+
+        if (currentFolderId.value === folderId)
+            currentFolderId.value = newParentId;
+        toast.success(t("vault.folders.moved"));
     }
 
     async function onFolderDrop(event, targetFolderId) {

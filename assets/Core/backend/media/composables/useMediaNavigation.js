@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 function mediaUrl(base, folderId, search, all = false) {
     const url = new URL(base, window.location.origin);
@@ -11,7 +11,7 @@ function mediaUrl(base, folderId, search, all = false) {
 }
 
 export function useMediaNavigation(props, clearSelection) {
-    const { t } = useI18n();
+    const { request } = useRequest();
 
     const media = ref([...props.media]);
     const folders = ref([...props.folders]);
@@ -30,19 +30,22 @@ export function useMediaNavigation(props, clearSelection) {
         navAbort = new AbortController();
         mediaLoading.value = true;
         try {
-            const res = await fetch(
-                mediaUrl(props.listPath, folderId, search, all),
-                { signal: navAbort.signal },
+            const data = await request(
+                mediaUrl(props.listPath, folderId, search, all).toString(),
+                null,
+                {
+                    method: HttpMethod.Get,
+                    signal: navAbort.signal,
+                    noGuard: true,
+                },
             );
-            const data = await res.json();
+            if (!data) return;
             media.value = data.items ?? [];
             folders.value = data.folders ?? folders.value;
             currentFolderId.value = folderId ?? null;
             allMediaView.value = all;
             searchQuery.value = search;
             clearSelection();
-        } catch (e) {
-            if (e.name !== "AbortError") toast.error(t("shared.common.error"));
         } finally {
             mediaLoading.value = false;
         }
@@ -76,26 +79,21 @@ export function useMediaNavigation(props, clearSelection) {
 
     async function focusMediaFromQuery(openEditMedia) {
         if (!initialFocusId) return;
-        try {
-            const response = await fetch(
-                `/backend/media/${initialFocusId}/info`,
-                { headers: { Accept: "application/json" } },
-            );
-            if (!response.ok) return;
-            const data = await response.json();
-            const item = data?.media;
-            if (!item) return;
-            openEditMedia(item);
-            if ((item.folderId ?? null) !== currentFolderId.value) {
-                currentFolderId.value = item.folderId ?? null;
-                try {
-                    await loadMedia(currentFolderId.value, searchQuery.value);
-                } catch {
-                    /* ignore */
-                }
+        const data = await request(
+            `/backend/media/${initialFocusId}/info`,
+            null,
+            { method: "GET", noGuard: true },
+        );
+        const item = data?.media;
+        if (!item) return;
+        openEditMedia(item);
+        if ((item.folderId ?? null) !== currentFolderId.value) {
+            currentFolderId.value = item.folderId ?? null;
+            try {
+                await loadMedia(currentFolderId.value, searchQuery.value);
+            } catch {
+                /* ignore */
             }
-        } catch {
-            /* ignore */
         }
     }
 

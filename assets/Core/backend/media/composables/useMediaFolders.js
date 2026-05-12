@@ -1,8 +1,8 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaFolders(
     props,
@@ -13,6 +13,8 @@ export function useMediaFolders(
     navigateTo,
 ) {
     const { t } = useI18n();
+    const { request: folderSubmitRequest } = useRequest();
+    const { request: folderDeleteRequest } = useRequest();
 
     const folderModal = reactive({
         open: false,
@@ -47,12 +49,8 @@ export function useMediaFolders(
                       id: folderModal.editing.id,
                   })
                 : props.folderCreatePath;
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(folderForm),
-            });
-            const data = await response.json();
+            const data = await folderSubmitRequest(url, { ...folderForm });
+            if (!data) return;
             if (!data.success) {
                 folderModal.errors = data.errors ?? {};
                 return;
@@ -67,8 +65,6 @@ export function useMediaFolders(
             }
             toast.success(t("shared.common.saved"));
             folderModal.open = false;
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             folderModal.saving = false;
         }
@@ -80,11 +76,10 @@ export function useMediaFolders(
         const folder = deletingFolder.value;
         if (!folder) return;
         try {
-            const response = await fetch(
+            const data = await folderDeleteRequest(
                 buildPath(props.folderDeletePath, { id: folder.id }),
-                { method: HttpMethod.Post },
             );
-            const data = await response.json();
+            if (!data) return;
             if (!data.success) {
                 toast.error(t("shared.common.error"));
                 return;
@@ -95,8 +90,6 @@ export function useMediaFolders(
                 return;
             }
             toast.success(t("shared.common.deleted"));
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             deletingFolder.value = null;
         }

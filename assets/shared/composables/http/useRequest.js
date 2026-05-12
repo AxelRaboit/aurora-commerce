@@ -40,12 +40,16 @@ export function useRequest() {
             if (signal) fetchOptions.signal = signal;
 
             if (rawBody !== null) {
+                fetchOptions.headers = { Accept: "application/json" };
                 fetchOptions.body = rawBody;
             } else if (body !== null) {
-                fetchOptions.headers = { "Content-Type": "application/json" };
+                fetchOptions.headers = {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                };
                 fetchOptions.body = JSON.stringify(body);
             } else {
-                fetchOptions.headers = { "Content-Type": "application/json" };
+                fetchOptions.headers = { Accept: "application/json" };
             }
 
             const response = await fetch(url, fetchOptions);

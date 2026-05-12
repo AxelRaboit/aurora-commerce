@@ -16,11 +16,12 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
+import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, X, Folder, Download } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -39,6 +40,7 @@ const props = defineProps({
     deletePath: { type: String, required: true },
     listPath: { type: String, required: true },
     mediaPickerPath: { type: String, default: "" },
+    mediaUploadPath: { type: String, default: "" },
 });
 
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
@@ -71,10 +73,10 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 
 const {
     statusOptions,
-    showCreate, newDoc, showMediaPickerCreate, createErrors, createLoading, openCreate, onFilePickedCreate, submitCreate,
-    showEdit, editingDoc, editForm, showMediaPickerEdit, editErrors, editLoading, openEdit, onFilePickedEdit, submitEdit,
+    showCreate, newDoc, showMediaPickerCreate, uploadingCreate, createErrors, createLoading, openCreate, onFilePickedCreate, onLocalFileCreate, submitCreate,
+    showEdit, editingDoc, editForm, showMediaPickerEdit, uploadingEdit, editErrors, editLoading, openEdit, onFilePickedEdit, onLocalFileEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
-} = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset);
+} = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset, props.mediaUploadPath);
 </script>
 
 <template>
@@ -149,6 +151,7 @@ const {
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.file") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t("backend.ged.documents.preview") }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -179,6 +182,23 @@ const {
                             <span v-if="doc.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ doc.fileName }}</span>
                             <span v-else class="text-muted text-xs">—</span>
                         </td>
+                        <td class="px-6 py-3 hidden xl:table-cell">
+                            <template v-if="doc.fileUrl">
+                                <img
+                                    v-if="doc.fileMime?.startsWith('image/')"
+                                    :src="doc.fileUrl"
+                                    :alt="doc.fileName"
+                                    class="h-10 w-16 object-cover rounded border border-line"
+                                >
+                                <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
+                                    <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
+                                </div>
+                                <div v-else class="flex items-center gap-1.5 text-xs text-muted">
+                                    <FileText class="w-5 h-5 shrink-0" :stroke-width="1.5" /> {{ doc.fileMime ?? '—' }}
+                                </div>
+                            </template>
+                            <span v-else class="text-muted text-xs">—</span>
+                        </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -188,7 +208,7 @@ const {
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5"><AppNoData :message="t('backend.ged.documents.empty')" /></td>
+                        <td :colspan="6"><AppNoData :message="t('backend.ged.documents.empty')" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -243,10 +263,23 @@ const {
                     :allow-empty="false"
                     :searchable="false"
                 />
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 flex-wrap">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerCreate = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
+                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLibrary") }}
                     </AppButton>
+                    <AppFileInput v-on:change="onLocalFileCreate">
+                        <template #default="{ trigger }">
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                type="button"
+                                :loading="uploadingCreate"
+                                v-on:click="trigger"
+                            >
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLocal") }}
+                            </AppButton>
+                        </template>
+                    </AppFileInput>
                     <span v-if="newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.fileName }}</span>
                 </div>
             </div>
@@ -306,10 +339,23 @@ const {
                     :allow-empty="false"
                     :searchable="false"
                 />
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 flex-wrap">
                     <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerEdit = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
+                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLibrary") }}
                     </AppButton>
+                    <AppFileInput v-on:change="onLocalFileEdit">
+                        <template #default="{ trigger }">
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                type="button"
+                                :loading="uploadingEdit"
+                                v-on:click="trigger"
+                            >
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLocal") }}
+                            </AppButton>
+                        </template>
+                    </AppFileInput>
                     <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
                 </div>
             </div>

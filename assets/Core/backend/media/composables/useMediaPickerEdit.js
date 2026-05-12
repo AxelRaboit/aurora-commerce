@@ -1,14 +1,14 @@
 import { ref, watch } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaPickerEdit({ editPath, items, selected }) {
     const { t } = useI18n();
+    const { loading: editSaving, request } = useRequest();
     const editAlt = ref("");
     const editCaption = ref("");
-    const editSaving = ref(false);
     const editSaved = ref(false);
     let savedTimer = null;
 
@@ -26,36 +26,26 @@ export function useMediaPickerEdit({ editPath, items, selected }) {
             editCaption.value === (item.caption ?? "")
         )
             return;
-        editSaving.value = true;
-        try {
-            const url = buildPath(editPath, { id: item.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    alt: editAlt.value,
-                    caption: editCaption.value,
-                    focalX: item.focalX ?? null,
-                    focalY: item.focalY ?? null,
-                    folderId: item.folderId ?? null,
-                }),
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (!data.success) throw new Error();
-            const index = items.value.findIndex((m) => m.id === item.id);
-            if (index !== -1) items.value[index] = data.media;
-            selected.value = data.media;
-            editSaved.value = true;
-            if (savedTimer) clearTimeout(savedTimer);
-            savedTimer = setTimeout(() => {
-                editSaved.value = false;
-            }, 2000);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            editSaving.value = false;
+        const url = buildPath(editPath, { id: item.id });
+        const data = await request(url, {
+            alt: editAlt.value,
+            caption: editCaption.value,
+            focalX: item.focalX ?? null,
+            focalY: item.focalY ?? null,
+            folderId: item.folderId ?? null,
+        });
+        if (!data || !data.success) {
+            if (data !== null) toast.error(t("shared.common.error"));
+            return;
         }
+        const index = items.value.findIndex((m) => m.id === item.id);
+        if (index !== -1) items.value[index] = data.media;
+        selected.value = data.media;
+        editSaved.value = true;
+        if (savedTimer) clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => {
+            editSaved.value = false;
+        }, 2000);
     }
 
     return { editAlt, editCaption, editSaving, editSaved, saveEdit };

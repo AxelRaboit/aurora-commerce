@@ -5,6 +5,7 @@ import { useForm } from "@shared/composables/form/useForm.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { generateSalt } from "@vault/backend/composables/useVaultCrypto.js";
 import { useVaultCrypto } from "@vault/backend/composables/useVaultCrypto.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useVaultChangeMasterPassword(
     changePath,
@@ -23,6 +24,7 @@ export function useVaultChangeMasterPassword(
     const progress = ref(0);
 
     const { errors, validate, clearErrors, setErrors } = useForm();
+    const { request } = useRequest();
 
     const tempCrypto = useVaultCrypto();
 
@@ -109,15 +111,15 @@ export function useVaultChangeMasterPassword(
                 progress.value = Math.round(((i + 1) / total) * 100);
             }
 
-            const response = await fetch(changePath, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    argon2Salt: newSalt,
-                    entries: reEncryptedEntries,
-                }),
+            const data = await request(changePath, {
+                argon2Salt: newSalt,
+                entries: reEncryptedEntries,
             });
-            const data = await response.json();
+
+            if (!data) {
+                step.value = 2;
+                return;
+            }
 
             if (!data.success) {
                 toast.error(t("shared.common.error"));

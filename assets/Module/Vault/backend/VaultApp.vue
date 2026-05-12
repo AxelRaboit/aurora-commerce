@@ -273,8 +273,9 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                 :key="folder.id"
                                 class="rounded-lg border border-line bg-surface overflow-hidden"
                             >
-                                <button
-                                    type="button"
+                                <AppButton
+                                    variant="ghost"
+                                    size="none"
                                     class="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-2 transition-colors text-left"
                                     v-on:click="toggleFolderExpanded(folder.id)"
                                 >
@@ -290,7 +291,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                     </span>
                                     <ChevronDown v-if="expandedFolderIds.has(folder.id)" class="w-4 h-4 text-muted shrink-0 ml-1" :stroke-width="2" />
                                     <ChevronRight v-else class="w-4 h-4 text-muted shrink-0 ml-1" :stroke-width="2" />
-                                </button>
+                                </AppButton>
                                 <div v-if="expandedFolderIds.has(folder.id)" class="border-t border-line/60">
                                     <div v-if="entriesInFolder(folder.id).length" class="divide-y divide-line/40">
                                         <VaultEntryRow
@@ -341,8 +342,9 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                 :key="folder.id"
                                 class="rounded-lg border border-line bg-surface overflow-hidden"
                             >
-                                <button
-                                    type="button"
+                                <AppButton
+                                    variant="ghost"
+                                    size="none"
                                     class="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-2 transition-colors text-left"
                                     v-on:click="toggleFolderExpanded(folder.id)"
                                 >
@@ -361,7 +363,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                     </span>
                                     <ChevronDown v-if="expandedFolderIds.has(folder.id)" class="w-4 h-4 text-muted shrink-0 ml-1" :stroke-width="2" />
                                     <ChevronRight v-else class="w-4 h-4 text-muted shrink-0 ml-1" :stroke-width="2" />
-                                </button>
+                                </AppButton>
 
                                 <div v-if="expandedFolderIds.has(folder.id)" class="border-t border-line/60">
                                     <div v-if="entriesInFolder(folder.id).length" class="divide-y divide-line/40">

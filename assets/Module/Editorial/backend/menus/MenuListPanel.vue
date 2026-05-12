@@ -4,6 +4,7 @@ import { Menu as MenuIcon } from "lucide-vue-next";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -23,11 +24,12 @@ defineEmits(["select"]);
 
         <ul v-else class="space-y-1">
             <li v-for="menu in menus" :key="menu.id">
-                <button
-                    type="button"
+                <AppButton
+                    variant="ghost"
+                    size="none"
                     class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors"
                     :class="selectedId === menu.id
-                        ? 'bg-accent-600 text-white'
+                        ? 'bg-accent-600 text-white hover:bg-accent-700'
                         : 'hover:bg-surface-2 text-primary'"
                     v-on:click="$emit('select', menu)"
                 >
@@ -39,7 +41,7 @@ defineEmits(["select"]);
                     <AppBadge :color="selectedId === menu.id ? 'gray' : 'accent'" class="shrink-0">
                         {{ menu.itemCount }}
                     </AppBadge>
-                </button>
+                </AppButton>
             </li>
         </ul>
     </aside>

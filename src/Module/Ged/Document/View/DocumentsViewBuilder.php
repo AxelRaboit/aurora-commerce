@@ -60,6 +60,7 @@ final readonly class DocumentsViewBuilder
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => '__id__']),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents_list'),
             'mediaPickerPath' => $this->urlGenerator->generate('backend_media_list'),
+            'mediaUploadPath' => $this->urlGenerator->generate('backend_media_upload'),
         ];
     }
 

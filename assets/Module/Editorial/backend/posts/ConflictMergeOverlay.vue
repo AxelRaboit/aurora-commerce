@@ -137,12 +137,13 @@ function apply() {
                 </div>
 
                 <div v-if="locales.length > 1" class="flex gap-1 px-6 py-2 border-b border-line bg-surface-2 shrink-0 overflow-x-auto scrollbar-thin">
-                    <button
+                    <AppButton
                         v-for="locale in locales"
                         :key="locale"
-                        type="button"
+                        variant="ghost"
+                        size="none"
                         class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors shrink-0"
-                        :class="activeLocale === locale ? 'bg-accent-600 text-white' : 'text-secondary hover:bg-surface-3'"
+                        :class="activeLocale === locale ? 'bg-accent-600 text-white hover:bg-accent-700' : 'text-secondary hover:bg-surface-3'"
                         v-on:click="activeLocale = locale"
                     >
                         {{ t("shared.locales." + locale) }}
@@ -153,7 +154,7 @@ function apply() {
                         >
                             {{ unresolvedBadgeFor(locale) > 0 ? unresolvedBadgeFor(locale) : conflictBadgeFor(locale) }}
                         </span>
-                    </button>
+                    </AppButton>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 px-6 py-2 border-b border-line bg-surface shrink-0 text-xs">

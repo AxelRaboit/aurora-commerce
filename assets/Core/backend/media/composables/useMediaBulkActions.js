@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaBulkActions(
     props,
@@ -18,57 +18,49 @@ export function useMediaBulkActions(
     }
 
     const pendingBulkDelete = ref(false);
-    const bulkDeleteLoading = ref(false);
+    const { loading: bulkDeleteLoading, request: bulkDeleteRequest } =
+        useRequest();
 
     async function doBulkDelete() {
         if (!selectedIds.value.size) return;
-        bulkDeleteLoading.value = true;
-        try {
-            const res = await fetch(props.bulkDeletePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ids: [...selectedIds.value] }),
-            });
-            if (!(await res.json()).success) throw new Error();
-            media.value = media.value.filter(
-                (m) => !selectedIds.value.has(m.id),
-            );
-            clearSelection();
-            pendingBulkDelete.value = false;
-            toast.success(t("backend.media.bulkDeleted"));
-        } catch {
+        const res = await bulkDeleteRequest(props.bulkDeletePath, {
+            ids: [...selectedIds.value],
+        });
+        if (!res) return;
+        if (!res.success) {
             toast.error(t("shared.common.error"));
-        } finally {
-            bulkDeleteLoading.value = false;
+            return;
         }
+        media.value = media.value.filter((m) => !selectedIds.value.has(m.id));
+        clearSelection();
+        pendingBulkDelete.value = false;
+        toast.success(t("backend.media.bulkDeleted"));
     }
 
     const bulkMoveTargetId = ref(null);
     const openBulkMove = ref(false);
 
+    const { request: bulkMoveRequest } = useRequest();
+
     async function bulkMove() {
         if (!selectedIds.value.size) return;
-        try {
-            const res = await fetch(props.bulkMovePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ids: [...selectedIds.value],
-                    folderId: bulkMoveTargetId.value,
-                }),
-            });
-            if (!(await res.json()).success) throw new Error();
-            if (bulkMoveTargetId.value !== currentFolderId.value) {
-                media.value = media.value.filter(
-                    (m) => !selectedIds.value.has(m.id),
-                );
-            }
-            clearSelection();
-            bulkMoveTargetId.value = null;
-            toast.success(t("backend.media.bulkMoved"));
-        } catch {
+        const res = await bulkMoveRequest(props.bulkMovePath, {
+            ids: [...selectedIds.value],
+            folderId: bulkMoveTargetId.value,
+        });
+        if (!res) return;
+        if (!res.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        if (bulkMoveTargetId.value !== currentFolderId.value) {
+            media.value = media.value.filter(
+                (m) => !selectedIds.value.has(m.id),
+            );
+        }
+        clearSelection();
+        bulkMoveTargetId.value = null;
+        toast.success(t("backend.media.bulkMoved"));
     }
 
     return {

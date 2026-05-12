@@ -1,13 +1,15 @@
 import { ref, reactive, watch } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { PostFieldType } from "@editorial/shared/enums/postFieldType.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function usePostTypeFields(props, selected, replacePostType) {
     const { t } = useI18n();
+    const { request: deleteFieldRequest } = useRequest();
+    const { request: reorderRequest } = useRequest();
     const {
         modal: fieldModal,
         openCreate: fieldModalCreate,
@@ -115,16 +117,14 @@ export function usePostTypeFields(props, selected, replacePostType) {
                 id: selected.value.id,
                 fieldId: field.id,
             });
-            const response = await fetch(url, { method: HttpMethod.Post });
-            const data = await response.json();
+            const data = await deleteFieldRequest(url);
+            if (!data) return;
             if (!data.success) {
                 toast.error(t("shared.common.error"));
                 return;
             }
             replacePostType(data.postType);
             toast.success(t("shared.common.deleted"));
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             deletingField.value = null;
         }
@@ -143,23 +143,13 @@ export function usePostTypeFields(props, selected, replacePostType) {
 
     async function persistFieldOrder() {
         if (!selected.value) return;
-        try {
-            const response = await fetch(
-                buildPath(props.fieldReorderPath, { id: selected.value.id }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        orderedIds: orderedFields.value.map((f) => f.id),
-                    }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success) toast.error(t("shared.common.error"));
-            else replacePostType(data.postType);
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await reorderRequest(
+            buildPath(props.fieldReorderPath, { id: selected.value.id }),
+            { orderedIds: orderedFields.value.map((f) => f.id) },
+        );
+        if (!data) return;
+        if (!data.success) toast.error(t("shared.common.error"));
+        else replacePostType(data.postType);
     }
 
     return {

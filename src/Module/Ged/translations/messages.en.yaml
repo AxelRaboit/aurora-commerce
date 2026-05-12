@@ -66,7 +66,10 @@ backend:
       filterByCategory: Filter by category
       filterByTag: Filter by tag
       filterByFolder: Filter by folder
+      preview: Preview
       chooseFile: Choose a file
+      chooseFileLibrary: Media library
+      chooseFileLocal: From your computer
       titlePlaceholder: Document title…
       descriptionPlaceholder: Optional description…
       status_draft: Draft

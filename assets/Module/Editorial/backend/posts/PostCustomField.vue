@@ -4,6 +4,7 @@ import { computed, ref, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { X, ImagePlus, Upload } from "lucide-vue-next";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
@@ -44,27 +45,21 @@ const referenceIds = computed(() => {
 const resolved = ref([]);
 const search = ref("");
 const results = ref([]);
-const loading = ref(false);
 const open = ref(false);
+
+const { loading, request: searchRequest } = useRequest();
+const { request: resolveRequest } = useRequest();
 
 watch(search, useDebounce(runSearch, 200));
 
 async function runSearch() {
-    loading.value = true;
-    try {
-        const url = new URL("/backend/posts/search", window.location.origin);
-        if (search.value) url.searchParams.set("q", search.value);
-        if (props.field.options?.postTypeId) url.searchParams.set("postTypeId", String(props.field.options.postTypeId));
-        const response = await fetch(url);
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        const exclude = new Set(referenceIds.value);
-        results.value = (data.results ?? []).filter((r) => !exclude.has(r.id));
-    } catch {
-        results.value = [];
-    } finally {
-        loading.value = false;
-    }
+    const url = new URL("/backend/posts/search", window.location.origin);
+    if (search.value) url.searchParams.set("q", search.value);
+    if (props.field.options?.postTypeId) url.searchParams.set("postTypeId", String(props.field.options.postTypeId));
+    const data = await searchRequest(url.toString(), null, { method: HttpMethod.Get, noGuard: true });
+    if (!data) { results.value = []; return; }
+    const exclude = new Set(referenceIds.value);
+    results.value = (data.results ?? []).filter((r) => !exclude.has(r.id));
 }
 
 async function resolveMissingIds() {
@@ -75,16 +70,14 @@ async function resolveMissingIds() {
         resolved.value = resolved.value.filter((r) => referenceIds.value.includes(r.id));
         return;
     }
-    try {
-        const url = new URL("/backend/posts/search", window.location.origin);
-        url.searchParams.set("ids", missing.join(","));
-        const response = await fetch(url);
-        if (!response.ok) return;
-        const data = await response.json();
+    const url = new URL("/backend/posts/search", window.location.origin);
+    url.searchParams.set("ids", missing.join(","));
+    const data = await resolveRequest(url.toString(), null, { method: HttpMethod.Get, noGuard: true });
+    if (data) {
         for (const result of data.results ?? []) {
             if (!alreadyResolved.has(result.id)) resolved.value.push(result);
         }
-    } catch {}
+    }
     resolved.value = resolved.value.filter((r) => referenceIds.value.includes(r.id));
 }
 

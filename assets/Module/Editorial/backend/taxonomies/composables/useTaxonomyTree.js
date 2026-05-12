@@ -1,8 +1,8 @@
 import { ref, reactive, computed, watch, nextTick } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useTaxonomyTree(
     selected,
@@ -14,6 +14,7 @@ export function useTaxonomyTree(
     termName,
 ) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     function buildTree(terms) {
         const byId = new Map(
@@ -65,22 +66,13 @@ export function useTaxonomyTree(
     async function persistTreeOrder() {
         if (!selected.value) return;
         const entries = flattenTreeForReorder(tree.value);
-        try {
-            const response = await fetch(
-                buildPath(termReorderPath, { id: selected.value.id }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ entries }),
-                },
-            );
-            const data = await response.json();
-            if (!data.success)
-                toast.error(data.error ?? t("shared.common.error"));
-            else replaceTaxonomy(data.taxonomy);
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(
+            buildPath(termReorderPath, { id: selected.value.id }),
+            { entries },
+        );
+        if (!data) return;
+        if (!data.success) toast.error(data.error ?? t("shared.common.error"));
+        else replaceTaxonomy(data.taxonomy);
     }
 
     function onDragEnd() {

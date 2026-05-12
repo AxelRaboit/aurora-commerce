@@ -1,7 +1,7 @@
 import { ref, unref } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * Manages optimistic-locking state for an edited post: tracks the version
@@ -14,8 +14,6 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
  * @param {{ showPath: import("vue").MaybeRef<string>, postId: import("vue").MaybeRef<number|null> }} config
  */
 export function useConflictResolution({ showPath, postId }) {
-    const { t } = useI18n();
-
     const version = ref(null);
     const baseTranslations = ref({});
 
@@ -23,6 +21,8 @@ export function useConflictResolution({ showPath, postId }) {
     const remoteLoading = ref(false);
     const showMerge = ref(false);
     const mergeRemoteTranslations = ref(null);
+
+    const { request } = useRequest();
 
     function resolvePath() {
         const id = unref(postId);
@@ -39,12 +39,11 @@ export function useConflictResolution({ showPath, postId }) {
         if (!url) return null;
         remoteLoading.value = true;
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data.success) return data.post;
-        } catch {
-            toast.error(t("shared.common.error"));
+            const data = await request(url, null, {
+                method: HttpMethod.Get,
+                noGuard: true,
+            });
+            if (data?.success) return data.post;
         } finally {
             remoteLoading.value = false;
         }

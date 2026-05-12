@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Check } from "lucide-vue-next";
 import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
 import { MergeKind } from "@/shared/utils/data/mergeBlocks.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -90,22 +91,24 @@ function renderBlock(block) {
             </div>
             <div v-if="canFlip" class="flex items-center justify-end gap-2 px-3 py-1.5 bg-surface-2 border-t border-line text-xs">
                 <span class="text-muted">{{ t("backend.posts.merge.use") }}</span>
-                <button
-                    type="button"
-                    class="px-2 py-0.5 rounded font-medium transition-colors"
-                    :class="entry.resolution === 'local' ? 'bg-accent-600 text-white' : 'text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-950/50'"
+                <AppButton
+                    variant="ghost"
+                    size="sm"
+                    class="font-medium"
+                    :class="entry.resolution === 'local' ? 'bg-accent-600 text-white hover:bg-accent-700' : 'text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-950/50'"
                     v-on:click="emit('resolve', 'local')"
                 >
                     {{ t("backend.posts.merge.yours") }}
-                </button>
-                <button
-                    type="button"
-                    class="px-2 py-0.5 rounded font-medium transition-colors"
-                    :class="entry.resolution === 'remote' ? 'bg-sky-600 text-white' : 'text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/50'"
+                </AppButton>
+                <AppButton
+                    variant="ghost"
+                    size="sm"
+                    class="font-medium"
+                    :class="entry.resolution === 'remote' ? 'bg-sky-600 text-white hover:bg-sky-700' : 'text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/50'"
                     v-on:click="emit('resolve', 'remote')"
                 >
                     {{ t("backend.posts.merge.theirs") }}
-                </button>
+                </AppButton>
             </div>
         </div>
     </div>

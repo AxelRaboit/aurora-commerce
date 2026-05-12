@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -37,6 +38,10 @@ export function useMediaEdit(props, media) {
     const cropMedia = ref(null);
     const qrMedia = ref(null);
 
+    const { request: historyRequest } = useRequest();
+    const { request: usageRequest } = useRequest();
+    const { request: editRequest } = useRequest();
+
     function openEditMedia(item) {
         editingMedia.value = item;
         editTab.value = "edit";
@@ -68,13 +73,12 @@ export function useMediaEdit(props, media) {
         if (!editingMedia.value || historyLoading.value) return;
         historyLoading.value = true;
         try {
-            const res = await fetch(
+            const data = await historyRequest(
                 `/backend/media/${editingMedia.value.id}/history`,
+                null,
+                { method: HttpMethod.Get, noGuard: true },
             );
-            const data = await res.json();
-            mediaHistory.value = data.items ?? [];
-        } catch {
-            /* ignore */
+            mediaHistory.value = data?.items ?? [];
         } finally {
             historyLoading.value = false;
         }
@@ -82,14 +86,12 @@ export function useMediaEdit(props, media) {
 
     async function loadUsage() {
         if (!editingMedia.value) return;
-        try {
-            const res = await fetch(
-                `/backend/media/${editingMedia.value.id}/usage`,
-            );
-            mediaUsage.value = await res.json();
-        } catch {
-            /* ignore */
-        }
+        const data = await usageRequest(
+            `/backend/media/${editingMedia.value.id}/usage`,
+            null,
+            { method: HttpMethod.Get, noGuard: true },
+        );
+        if (data) mediaUsage.value = data;
     }
 
     function openHistoryTab() {
@@ -105,12 +107,8 @@ export function useMediaEdit(props, media) {
             const url = buildPath(props.editPath, {
                 id: editingMedia.value.id,
             });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(editForm),
-            });
-            const data = await response.json();
+            const data = await editRequest(url, editForm, { noGuard: true });
+            if (!data) return;
             if (!data.success) {
                 editErrors.value = data.errors ?? {};
                 return;
@@ -119,8 +117,6 @@ export function useMediaEdit(props, media) {
             if (index !== -1) media.value[index] = data.media;
             toast.success(t("shared.common.saved"));
             closeEditMedia();
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             editSaving.value = false;
         }

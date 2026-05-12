@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
 import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const props = defineProps({
     node: { type: Object, required: true },
@@ -28,21 +29,23 @@ const hasChildren = computed(() => localChildren.value.length > 0);
 <template>
     <div class="border border-line rounded-md bg-surface">
         <div class="flex items-center gap-1 px-2 py-1.5">
-            <button
+            <AppButton
                 v-if="hierarchical"
-                type="button"
+                variant="ghost"
+                size="none"
                 class="drag-handle cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
                 :title="'drag'"
             >
                 <GripVertical class="w-4 h-4" :stroke-width="2" />
-            </button>
-            <button
+            </AppButton>
+            <AppButton
                 v-else
-                type="button"
+                variant="ghost"
+                size="none"
                 class="drag-handle cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
             >
                 <GripVertical class="w-4 h-4" :stroke-width="2" />
-            </button>
+            </AppButton>
 
             <AppIconButton
                 v-if="hierarchical && hasChildren"

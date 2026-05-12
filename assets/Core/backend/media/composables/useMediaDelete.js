@@ -1,11 +1,12 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaDelete(props, media, editingMedia) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const deletingMedia = ref(null);
     const deletingMediaUsage = ref(null);
@@ -15,27 +16,22 @@ export function useMediaDelete(props, media, editingMedia) {
         deletingMedia.value = item;
         deletingMediaUsage.value = null;
         deletingMediaUsageLoading.value = true;
-        try {
-            const response = await fetch(`/backend/media/${item.id}/usage`, {
-                headers: { Accept: "application/json" },
-            });
-            if (response.ok) deletingMediaUsage.value = await response.json();
-        } catch {
-            /* surfaced as no-usage in modal */
-        } finally {
-            deletingMediaUsageLoading.value = false;
-        }
+        const data = await request(`/backend/media/${item.id}/usage`, null, {
+            method: "GET",
+            noGuard: true,
+        });
+        if (data) deletingMediaUsage.value = data;
+        deletingMediaUsageLoading.value = false;
     }
 
     async function confirmDeleteMedia() {
         const item = deletingMedia.value;
         if (!item) return;
         try {
-            const response = await fetch(
+            const data = await request(
                 buildPath(props.deletePath, { id: item.id }),
-                { method: HttpMethod.Post },
             );
-            const data = await response.json();
+            if (!data) return;
             if (!data.success) {
                 toast.error(t("shared.common.error"));
                 return;
@@ -43,8 +39,6 @@ export function useMediaDelete(props, media, editingMedia) {
             media.value = media.value.filter((m) => m.id !== item.id);
             toast.success(t("shared.common.deleted"));
             if (editingMedia.value?.id === item.id) editingMedia.value = null;
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             deletingMedia.value = null;
         }

@@ -83,18 +83,19 @@ const { requestClose } = useBackButtonClose({
                         {{ post?.title ?? "…" }}
                     </span>
                     <div v-if="post && availableLocales.length" class="flex gap-1">
-                        <button
+                        <AppButton
                             v-for="locale in availableLocales"
                             :key="locale"
-                            type="button"
+                            variant="ghost"
+                            size="none"
                             class="px-2.5 py-1 text-xs font-medium rounded transition-colors"
                             :class="activeLocale === locale
-                                ? 'bg-accent-600 text-white'
+                                ? 'bg-accent-600 text-white hover:bg-accent-700'
                                 : 'text-secondary hover:bg-surface-2'"
                             v-on:click="activeLocale = locale"
                         >
                             {{ t("shared.locales." + locale) }}
-                        </button>
+                        </AppButton>
                     </div>
                     <a
                         v-if="publicUrl"

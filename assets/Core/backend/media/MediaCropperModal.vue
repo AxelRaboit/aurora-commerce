@@ -6,12 +6,13 @@ import { Save, X } from "lucide-vue-next";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 const { t } = useI18n();
+const { loading: saving, request } = useRequest();
 
 const props = defineProps({
     media: { type: Object, default: null },
@@ -21,7 +22,6 @@ const props = defineProps({
 const emit = defineEmits(["close", "cropped"]);
 
 const SNAP_THRESHOLD = 12;
-const saving = ref(false);
 const imageEl = ref(null);
 let cropper = null;
 
@@ -63,31 +63,18 @@ function snapToEdges() {
 function close() {
     cropper?.destroy();
     cropper = null;
-    saving.value = false;
     emit("close");
 }
 
 async function save() {
     if (!cropper || !props.media) return;
-    saving.value = true;
-    try {
-        const d = cropper.getData(true);
-        const url = buildPath(props.cropPath, { id: props.media.id });
-        const res = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ x: d.x, y: d.y, width: d.width, height: d.height }),
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error();
-        emit("cropped", data.media);
-        toast.success(t("backend.media.cropped"));
-        close();
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        saving.value = false;
-    }
+    const d = cropper.getData(true);
+    const url = buildPath(props.cropPath, { id: props.media.id });
+    const data = await request(url, { x: d.x, y: d.y, width: d.width, height: d.height });
+    if (!data || !data.success) return;
+    emit("cropped", data.media);
+    toast.success(t("backend.media.cropped"));
+    close();
 }
 </script>
 

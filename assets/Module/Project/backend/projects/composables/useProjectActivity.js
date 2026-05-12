@@ -1,9 +1,12 @@
 import { ref, watch } from "vue";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useProjectActivity(activityPath, activeProject) {
     const { t } = useI18n();
+    const { request } = useRequest();
     const entries = ref([]);
     const loading = ref(false);
     const showActivity = ref(false);
@@ -16,11 +19,11 @@ export function useProjectActivity(activityPath, activeProject) {
         loading.value = true;
         try {
             const url = buildPath(activityPath, { id: activeProject.value.id });
-            const response = await fetch(url, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
+            const data = await request(url, null, {
+                method: HttpMethod.Get,
+                noGuard: true,
             });
-            const data = await response.json();
-            if (data.success) {
+            if (data?.success) {
                 entries.value = data.entries ?? [];
             }
         } finally {

@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppChart from "@/shared/components/display/AppChart.vue";
 import { ExternalLink, RefreshCw, Globe, Layers, FileText, Tags, EyeOff } from "lucide-vue-next";
@@ -16,9 +16,9 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
+const { loading: refreshing, request } = useRequest();
 
 const stats = ref({ ...props.stats });
-const refreshing = ref(false);
 
 const sections = [
     { key: "home", icon: Globe },
@@ -72,20 +72,13 @@ const localeOptions = {
 };
 
 async function regenerate() {
-    refreshing.value = true;
-    try {
-        const response = await fetch(props.invalidatePath, { method: HttpMethod.Post });
-        const result = await response.json();
-        if (result.success) {
-            stats.value = result.stats;
-            toast.success(t("backend.sitemap.regenerated"));
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
+    const result = await request(props.invalidatePath);
+    if (!result) return;
+    if (result.success) {
+        stats.value = result.stats;
+        toast.success(t("backend.sitemap.regenerated"));
+    } else {
         toast.error(t("shared.common.error"));
-    } finally {
-        refreshing.value = false;
     }
 }
 </script>

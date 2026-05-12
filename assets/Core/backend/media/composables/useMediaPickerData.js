@@ -4,8 +4,10 @@ import {
     flattenFolders,
 } from "@core/backend/media/utils/folderTree.js";
 import { MediaTypeFilter } from "@core/utils/enums/media/mediaTypeFilter.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { Files, Image as ImageIcon, Film, FileText } from "lucide-vue-next";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useMediaPickerData({
     listPath,
@@ -15,6 +17,7 @@ export function useMediaPickerData({
     selected,
 }) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const items = ref([]);
     const folders = ref([]);
@@ -107,12 +110,12 @@ export function useMediaPickerData({
             if (currentFolderId.value)
                 url.searchParams.set("folderId", String(currentFolderId.value));
             else if (allMediaView.value) url.searchParams.set("all", "1");
-            const response = await fetch(url, {
+            const data = await request(url.toString(), null, {
+                method: HttpMethod.Get,
                 signal: abortCtrl.signal,
-                headers: { Accept: "application/json" },
+                noGuard: true,
             });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
+            if (!data) return;
             items.value = data.items ?? [];
             folders.value = data.folders ?? folders.value;
             if (
@@ -120,8 +123,6 @@ export function useMediaPickerData({
                 !items.value.some((m) => m.id === selected.value.id)
             )
                 selected.value = null;
-        } catch (e) {
-            if (e.name !== "AbortError") items.value = [];
         } finally {
             loading.value = false;
         }

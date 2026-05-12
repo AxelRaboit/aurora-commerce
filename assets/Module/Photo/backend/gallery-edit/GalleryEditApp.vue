@@ -10,6 +10,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import { useGalleryInvites } from "@photo/backend/galleries/composables/useGalleryInvites.js";
 import { useGalleryFinalizations } from "@photo/backend/galleries/composables/useGalleryFinalizations.js";
 import { useGalleryEditItems } from "@photo/backend/gallery-edit/composables/useGalleryEditItems.js";
@@ -127,16 +128,12 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
 
         <!-- Bulk actions bar -->
         <div v-if="items.length > 0" class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-surface border border-line">
-            <label class="inline-flex items-center gap-2 text-sm text-primary cursor-pointer select-none">
-                <input type="checkbox" :checked="allSelected" class="w-4 h-4" v-on:change="toggleSelectAll">
-                <span>{{ t("photo.galleries.selectAll") }}</span>
+            <AppCheckbox :model-value="allSelected" v-on:update:model-value="toggleSelectAll">
+                {{ t("photo.galleries.selectAll") }}
                 <span v-if="selected.size > 0" class="text-muted">({{ selected.size }})</span>
-            </label>
+            </AppCheckbox>
             <div class="flex items-center gap-2">
-                <label v-if="visitorCount > 0" class="inline-flex items-center gap-2 text-xs text-muted cursor-pointer select-none">
-                    <input v-model="sortByConsensus" type="checkbox" class="w-4 h-4">
-                    <span>{{ t("photo.galleries.admin.sortByConsensus") }}</span>
-                </label>
+                <AppCheckbox v-if="visitorCount > 0" v-model="sortByConsensus" :label="t('photo.galleries.admin.sortByConsensus')" />
                 <AppButton
                     v-if="selected.size > 0"
                     variant="danger"
@@ -204,14 +201,12 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
                 </div>
                 <div class="p-2 text-xs">
                     <template v-if="editingCaptionId === item.id">
-                        <input
+                        <AppInput
                             v-model="editingCaptionDraft"
-                            type="text"
-                            class="w-full px-2 py-1 rounded bg-surface-2 border border-line text-primary"
                             :placeholder="t('photo.galleries.captionPlaceholder')"
                             v-on:keyup.enter="saveCaption(item)"
                             v-on:keyup.escape="cancelCaption"
-                        >
+                        />
                         <div class="flex justify-end gap-1 mt-1">
                             <AppIconButton size="xs" :title="t('shared.common.save')" v-on:click="saveCaption(item)">
                                 <Check class="w-3.5 h-3.5" :stroke-width="2" />
@@ -221,10 +216,16 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
                             </AppIconButton>
                         </div>
                     </template>
-                    <button v-else type="button" class="w-full text-left text-muted hover:text-primary truncate flex items-center gap-1" v-on:click="startCaption(item)">
+                    <AppButton
+                        v-else
+                        variant="ghost"
+                        size="none"
+                        class="w-full text-left text-muted hover:text-primary truncate flex items-center gap-1"
+                        v-on:click="startCaption(item)"
+                    >
                         <Pencil class="w-3 h-3 shrink-0 opacity-50" :stroke-width="2" />
                         <span class="truncate">{{ item.caption || t("photo.galleries.captionPlaceholder") }}</span>
-                    </button>
+                    </AppButton>
                 </div>
             </div>
         </div>

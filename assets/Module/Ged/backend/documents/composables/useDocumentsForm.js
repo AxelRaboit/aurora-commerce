@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
@@ -27,7 +28,13 @@ function emptyForm() {
     };
 }
 
-export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
+export function useDocumentsForm(
+    createPath,
+    updatePath,
+    deletePath,
+    reset,
+    mediaUploadPath = "",
+) {
     const { t } = useI18n();
 
     const statusOptions = [
@@ -45,6 +52,7 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
     const showCreate = ref(false);
     const newDoc = ref(emptyForm());
     const showMediaPickerCreate = ref(false);
+    const uploadingCreate = ref(false);
     const {
         errors: createErrors,
         validate: validateCreate,
@@ -62,6 +70,30 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
         newDoc.value.fileId = media.id;
         newDoc.value.fileName = media.fileName;
         showMediaPickerCreate.value = false;
+    }
+    async function onLocalFileCreate(file) {
+        if (!mediaUploadPath || !file) return;
+        uploadingCreate.value = true;
+        try {
+            const body = new FormData();
+            body.append("image", file);
+            const response = await fetch(mediaUploadPath, {
+                method: HttpMethod.Post,
+                body,
+            });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            if (data.success && data.media) {
+                newDoc.value.fileId = data.media.id;
+                newDoc.value.fileName = data.media.fileName;
+            } else {
+                toast.error(t("shared.common.error"));
+            }
+        } catch {
+            toast.error(t("shared.common.error"));
+        } finally {
+            uploadingCreate.value = false;
+        }
     }
 
     async function submitCreate() {
@@ -87,6 +119,7 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
     const editingDoc = ref(null);
     const editForm = ref(emptyForm());
     const showMediaPickerEdit = ref(false);
+    const uploadingEdit = ref(false);
     const {
         errors: editErrors,
         validate: validateEdit,
@@ -114,6 +147,30 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
         editForm.value.fileId = media.id;
         editForm.value.fileName = media.fileName;
         showMediaPickerEdit.value = false;
+    }
+    async function onLocalFileEdit(file) {
+        if (!mediaUploadPath || !file) return;
+        uploadingEdit.value = true;
+        try {
+            const body = new FormData();
+            body.append("image", file);
+            const response = await fetch(mediaUploadPath, {
+                method: HttpMethod.Post,
+                body,
+            });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            if (data.success && data.media) {
+                editForm.value.fileId = data.media.id;
+                editForm.value.fileName = data.media.fileName;
+            } else {
+                toast.error(t("shared.common.error"));
+            }
+        } catch {
+            toast.error(t("shared.common.error"));
+        } finally {
+            uploadingEdit.value = false;
+        }
     }
 
     async function submitEdit() {
@@ -148,19 +205,23 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
         showCreate,
         newDoc,
         showMediaPickerCreate,
+        uploadingCreate,
         createErrors,
         createLoading,
         openCreate,
         onFilePickedCreate,
+        onLocalFileCreate,
         submitCreate,
         showEdit,
         editingDoc,
         editForm,
         showMediaPickerEdit,
+        uploadingEdit,
         editErrors,
         editLoading,
         openEdit,
         onFilePickedEdit,
+        onLocalFileEdit,
         submitEdit,
         pendingDelete,
         deleteLoading,

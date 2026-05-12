@@ -87,15 +87,16 @@ function close() { emit("close"); }
                 </div>
                 <div v-else class="relative">
                     <div class="relative">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" :stroke-width="2" />
-                        <input
+                        <AppInput
                             v-model="pickerQuery"
-                            type="text"
                             :placeholder="t('backend.menus.searchPostsPlaceholder')"
-                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
                         >
+                            <template #prefix>
+                                <Search class="w-4 h-4 text-muted" :stroke-width="2" />
+                            </template>
+                        </AppInput>
                     </div>
                     <div v-if="pickerOpen && pickerResults.length" class="absolute left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface border border-line rounded-md shadow-lg z-10">
                         <AppListItemButton
@@ -131,15 +132,16 @@ function close() { emit("close"); }
                 </div>
                 <div v-else class="relative">
                     <div class="relative">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" :stroke-width="2" />
-                        <input
+                        <AppInput
                             v-model="pickerQuery"
-                            type="text"
                             :placeholder="t('backend.menus.searchTermsPlaceholder')"
-                            class="w-full pl-9 pr-3 py-2 rounded-md border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500"
                             v-on:input="debouncedSearch"
                             v-on:focus="onPickerFocus"
                         >
+                            <template #prefix>
+                                <Search class="w-4 h-4 text-muted" :stroke-width="2" />
+                            </template>
+                        </AppInput>
                     </div>
                     <div v-if="pickerOpen && pickerResults.length" class="absolute left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface border border-line rounded-md shadow-lg z-10">
                         <AppListItemButton

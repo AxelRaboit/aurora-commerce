@@ -60,6 +60,7 @@ export function usePdfTemplatesForm(
         setErrors: setCreateErrors,
     } = useForm();
     const { loading: createLoading, request: createRequest } = useRequest();
+    const { request: detectAfterCreateRequest } = useRequest();
 
     function openCreate() {
         newTemplate.value = emptyForm();
@@ -95,12 +96,8 @@ export function usePdfTemplatesForm(
                 const path = buildPath(detectFieldsPath, {
                     id: data.template.id,
                 });
-                const detection = await fetch(path, {
-                    method: "POST",
-                    headers: { "X-Requested-With": "XMLHttpRequest" },
-                });
-                const detectionData = await detection.json();
-                if (detectionData.success) {
+                const detectionData = await detectAfterCreateRequest(path);
+                if (detectionData?.success) {
                     const count = detectionData.template?.fields?.length ?? 0;
                     toast.success(
                         count > 0
@@ -111,7 +108,7 @@ export function usePdfTemplatesForm(
                             : t("backend.pdfform.templates.detectFieldsEmpty"),
                     );
                     reset();
-                } else {
+                } else if (detectionData) {
                     toast.error(
                         detectionData.error ??
                             t("backend.pdfform.pdftk.unavailable"),
@@ -198,7 +195,7 @@ export function usePdfTemplatesForm(
     // ── Detect fields ─────────────────────────────────────────────────────────
     const showFields = ref(false);
     const fieldsTemplate = ref(null);
-    const detectLoading = ref(false);
+    const { loading: detectLoading, request: detectRequest } = useRequest();
     const editingField = ref(null);
     const fieldForm = ref({});
     const showEditField = ref(false);
@@ -229,38 +226,28 @@ export function usePdfTemplatesForm(
 
     async function detectFields() {
         if (!fieldsTemplate.value) return;
-        detectLoading.value = true;
-        try {
-            const path = buildPath(detectFieldsPath, {
-                id: fieldsTemplate.value.id,
-            });
-            const res = await fetch(path, {
-                method: "POST",
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            const data = await res.json();
-            if (data.success) {
-                // Forcer un nouvel objet pour garantir la réactivité Vue
-                fieldsTemplate.value = {
-                    ...(data.template ?? {}),
-                    fields: data.template?.fields ?? [],
-                };
-                const count = fieldsTemplate.value.fields.length;
-                toast.success(
-                    count > 0
-                        ? t("backend.pdfform.templates.detectFieldsSuccess", {
-                              count,
-                          })
-                        : t("backend.pdfform.templates.detectFieldsEmpty"),
-                );
-                reset(); // Recharge la liste pour mettre à jour le compteur "Champs"
-            } else {
-                toast.error(
-                    data.error ?? t("backend.pdfform.pdftk.unavailable"),
-                );
-            }
-        } finally {
-            detectLoading.value = false;
+        const path = buildPath(detectFieldsPath, {
+            id: fieldsTemplate.value.id,
+        });
+        const data = await detectRequest(path);
+        if (!data) return;
+        if (data.success) {
+            // Forcer un nouvel objet pour garantir la réactivité Vue
+            fieldsTemplate.value = {
+                ...(data.template ?? {}),
+                fields: data.template?.fields ?? [],
+            };
+            const count = fieldsTemplate.value.fields.length;
+            toast.success(
+                count > 0
+                    ? t("backend.pdfform.templates.detectFieldsSuccess", {
+                          count,
+                      })
+                    : t("backend.pdfform.templates.detectFieldsEmpty"),
+            );
+            reset(); // Recharge la liste pour mettre à jour le compteur "Champs"
+        } else {
+            toast.error(data.error ?? t("backend.pdfform.pdftk.unavailable"));
         }
     }
 

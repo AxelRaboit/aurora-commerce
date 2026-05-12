@@ -3,6 +3,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function usePostsTrash(props, removePost, setTrashedFilter) {
     const { t } = useI18n();
@@ -10,22 +11,21 @@ export function usePostsTrash(props, removePost, setTrashedFilter) {
     const emptyingTrash = ref(false);
     const confirmEmptyTrash = ref(false);
 
+    const { request: emptyTrashRequest } = useRequest();
+    const { request: restoreRequest } = useRequest();
+
     async function emptyTrash() {
         if (!props.emptyTrashPath) return;
         emptyingTrash.value = true;
         try {
-            const response = await fetch(props.emptyTrashPath, {
-                method: HttpMethod.Post,
-            });
-            const data = await response.json();
+            const data = await emptyTrashRequest(props.emptyTrashPath);
+            if (!data) return;
             if (data.success) {
                 toast.success(
                     t("backend.posts.emptyTrashDone", { count: data.count }),
                 );
                 setTrashedFilter(true);
             } else toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             emptyingTrash.value = false;
             confirmEmptyTrash.value = false;
@@ -33,19 +33,13 @@ export function usePostsTrash(props, removePost, setTrashedFilter) {
     }
 
     async function restorePost(post) {
-        try {
-            const response = await fetch(
-                buildPath(props.restorePath, { id: post.id }),
-                { method: HttpMethod.Post },
-            );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data.success) {
-                removePost(post.id);
-                toast.success(t("backend.posts.restored"));
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await restoreRequest(
+            buildPath(props.restorePath, { id: post.id }),
+        );
+        if (!data) return;
+        if (data.success) {
+            removePost(post.id);
+            toast.success(t("backend.posts.restored"));
         }
     }
 
