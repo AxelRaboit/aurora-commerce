@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('hr/backend/EmployeesApp', {
+<div {{ vue_component('hr/backend/employees/EmployeesApp', {
     initialData: employees,
     search: search,
     listPath: path('backend_hr_employees_list'),

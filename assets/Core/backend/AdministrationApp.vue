@@ -4,13 +4,13 @@ import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.j
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import DashboardOverview from "@core/backend/dashboard/DashboardOverview.vue";
-import ParametersTab from "@core/backend/dev/ParametersTab.vue";
-import UsersTab from "@core/backend/dev/UsersTab.vue";
-import AccessRequestsTab from "@core/backend/dev/AccessRequestsTab.vue";
-import AuditTab from "@core/backend/dev/AuditTab.vue";
-import PermissionsTab from "@core/backend/dev/PermissionsTab.vue";
-import ModulesTab from "@core/backend/dev/ModulesTab.vue";
-import MountPointsTab from "@core/backend/dev/MountPointsTab.vue";
+import ParametersTab from "@core/backend/dev/parameters/ParametersTab.vue";
+import UsersTab from "@core/backend/dev/users/UsersTab.vue";
+import AccessRequestsTab from "@core/backend/dev/access-requests/AccessRequestsTab.vue";
+import AuditTab from "@core/backend/dev/audit/AuditTab.vue";
+import PermissionsTab from "@core/backend/dev/permissions/PermissionsTab.vue";
+import ModulesTab from "@core/backend/dev/modules/ModulesTab.vue";
+import MountPointsTab from "@core/backend/dev/mount-points/MountPointsTab.vue";
 import {
     LayoutDashboard,
     Sliders,

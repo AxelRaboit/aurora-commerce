@@ -45,6 +45,28 @@ assets/
     └── utils/                              ← buildPath, httpMethod, validation, …
 ```
 
+### Compartimentage en sous-dossiers feature
+
+Dès qu'un dossier `backend/` (ou `Core/backend/<section>/`) contient plusieurs features distinctes (≥ 2 `*App.vue` ou ≥ 8 fichiers), chaque feature obtient son propre sous-dossier :
+
+```
+<module>/backend/<feature>/
+  <Feature>App.vue
+  composables/
+    useXxx.js
+  components/        ← si plusieurs composants internes
+```
+
+Règles :
+- Nom en `kebab-case` (ex: `document-categories/`, `mount-points/`)
+- Même sous-dossier pour la liste ET le détail (ex: `invoices/InvoicesApp.vue` + `InvoiceShowApp.vue`)
+- Le `vue_component('module/backend/<feature>/<Name>App', ...)` dans le Twig reflète le chemin
+- Imports cross-feature : chemins relatifs remontants (`../events/composables/useEventForm.js`)
+- `shared/`, `components/`, `utils/`, `constants/` à la **racine** du module (cross-cutting)
+- Modules single-feature ≤ 6 fichiers : pas de sous-dossier (ex: `PasswordGenerator/backend/`)
+
+Voir [`convention_assets_subfolder_layout.md`](convention_assets_subfolder_layout.md) pour la table complète des modules.
+
 ### Règle de placement dans un module
 
 Un fichier va dans `backend/`, `frontend/` ou `shared/` selon **qui l'importe** :

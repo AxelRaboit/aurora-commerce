@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('project/backend/ProjectsApp', {
+<div {{ vue_component('project/backend/projects/ProjectsApp', {
     listPath: path('backend_projects_list'),
     createPath: path('backend_projects_create'),
     showPath: path('backend_projects_show', {id: '__id__'}),

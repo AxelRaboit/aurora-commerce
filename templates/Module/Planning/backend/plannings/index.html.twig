@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('planning/backend/PlanningsApp', {
+<div {{ vue_component('planning/backend/plannings/PlanningsApp', {
     plannings: plannings,
     createPath: path('backend_plannings_create'),
     updatePath: path('backend_plannings_update', {id: '__id__'}),

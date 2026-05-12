@@ -45,6 +45,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [structure_view_builder.md](structure_view_builder.md) — `<Plural>ViewBuilder` pour les payloads Twig admin
 - [structure_templates.md](structure_templates.md) — namespaces Twig, override automatique, conventions de naming
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, patterns extension, anti-patterns
+- [convention_assets_subfolder_layout.md](convention_assets_subfolder_layout.md) — compartimentage feature-subfolder dans assets/Module/<M>/backend/ (quand, comment, exceptions)
 
 ### Décisions architecturales
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : 13 top-level + 24 sous-modules, cascade graph, consommateurs, convention clés sans `_enabled`

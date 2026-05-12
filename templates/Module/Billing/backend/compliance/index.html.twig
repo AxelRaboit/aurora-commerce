@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('billing/backend/ComplianceApp', {
+<div {{ vue_component('billing/backend/compliance/ComplianceApp', {
     reportPath: path('backend_billing_compliance_report'),
     invoicesPath: path('backend_billing_invoices'),
     showPath: path('backend_billing_invoices_show', {id: '__id__'}),

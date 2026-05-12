@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import { useModules } from "@core/backend/dev/composables/useModules.js";
+import { useModules } from "@core/backend/dev/modules/composables/useModules.js";
 
 const MODULES_PATH = "/backend/dev/modules";
 const UPDATE_PATH = "/backend/dev/modules/__key__";
