@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentFoldersForm } from "./composables/useDocumentFoldersForm.js";
+import { buildFolderTree, flattenFolders } from "@/shared/utils/tree/folderTree.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
@@ -10,7 +11,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import { Plus, Pencil, Trash2, Save, X, Folder } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Folder, ChevronRight } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -32,6 +33,19 @@ const parentOptions = computed(() => [
     { value: null, label: t("backend.ged.folders.noParent") },
     ...items.value.map((folder) => ({ value: folder.id, label: folder.name })),
 ]);
+
+const collapsedIds = ref(new Set());
+
+function toggleCollapse(id) {
+    const next = new Set(collapsedIds.value);
+    if (next.has(id)) { next.delete(id); } else { next.add(id); }
+    collapsedIds.value = next;
+}
+
+const flatTree = computed(() => {
+    const tree = buildFolderTree(items.value);
+    return flattenFolders(tree, 0, collapsedIds.value);
+});
 </script>
 
 <template>
@@ -47,36 +61,44 @@ const parentOptions = computed(() => [
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.folders.name") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.folders.parent") }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="folder in items" :key="folder.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3 font-medium text-primary flex items-center gap-2">
-                            <Folder class="w-4 h-4 text-muted flex-shrink-0" :stroke-width="1.5" />
-                            {{ folder.name }}
-                        </td>
-                        <td class="px-6 py-3 text-muted hidden md:table-cell">
-                            {{ items.find((f) => f.id === folder.parentId)?.name ?? '—' }}
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="can('ged.folders.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(folder)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ged.folders.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(folder)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="4"><AppNoData :message="t('backend.ged.folders.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="bg-surface border border-line rounded-lg overflow-hidden">
+            <div v-if="!items?.length" class="px-6 py-4">
+                <AppNoData :message="t('backend.ged.folders.empty')" />
+            </div>
+            <div v-else class="divide-y divide-line/40">
+                <div
+                    v-for="node in flatTree"
+                    :key="node.id"
+                    class="group flex items-center gap-1 pr-3 hover:bg-surface-2/40 transition-colors"
+                    :style="{ paddingLeft: `${0.75 + node.depth * 1.25}rem` }"
+                >
+                    <!-- Collapse toggle -->
+                    <button
+                        v-if="node.childCount"
+                        type="button"
+                        class="shrink-0 p-0.5 text-muted hover:text-primary transition-colors"
+                        v-on:click="toggleCollapse(node.id)"
+                    >
+                        <ChevronRight
+                            class="w-3.5 h-3.5 transition-transform duration-150"
+                            :class="collapsedIds.has(node.id) ? '' : 'rotate-90'"
+                            :stroke-width="2"
+                        />
+                    </button>
+                    <span v-else class="w-4 shrink-0" />
+
+                    <Folder class="w-4 h-4 text-muted shrink-0" :stroke-width="1.5" />
+
+                    <span class="flex-1 py-3 text-sm font-medium text-primary truncate">{{ node.name }}</span>
+
+                    <span v-if="node.childCount" class="text-xs text-muted tabular-nums shrink-0">{{ node.childCount }}</span>
+
+                    <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                        <AppIconButton v-if="can('ged.folders.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(node)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('ged.folders.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(node)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <AppModal
@@ -84,6 +106,7 @@ const parentOptions = computed(() => [
             :title="t('backend.ged.folders.create')"
             :icon="Folder"
             :closeable="false"
+            :scrollable="false"
             v-on:close="showCreate = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -114,6 +137,7 @@ const parentOptions = computed(() => [
             :title="t('backend.ged.folders.edit', { name: editingFolder?.name ?? '' })"
             :icon="Pencil"
             :closeable="false"
+            :scrollable="false"
             v-on:close="showEdit = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
