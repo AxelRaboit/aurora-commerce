@@ -54,6 +54,13 @@ backend:
       deleteConfirm: "Are you sure you want to delete document « {title} »?"
       deleteWarning: This action cannot be undone.
       noCategory: No category
+      tags: Tags
+      noTags: No tags
+      folder: Folder
+      noFolder: No folder
+      filterByCategory: Filter by category
+      filterByTag: Filter by tag
+      filterByFolder: Filter by folder
       chooseFile: Choose a file
       titlePlaceholder: Document title…
       descriptionPlaceholder: Optional description…

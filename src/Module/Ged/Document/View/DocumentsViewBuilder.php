@@ -60,9 +60,19 @@ final readonly class DocumentsViewBuilder
         ];
     }
 
-    public function buildListPayload(PaginationRequest $pagination): array
-    {
-        $result = $this->documentRepository->findPaginated($pagination->page, search: $pagination->search);
+    public function buildListPayload(
+        PaginationRequest $pagination,
+        ?int $categoryId = null,
+        ?int $tagId = null,
+        ?int $folderId = null,
+    ): array {
+        $result = $this->documentRepository->findPaginated(
+            $pagination->page,
+            search: $pagination->search,
+            categoryId: $categoryId,
+            tagId: $tagId,
+            folderId: $folderId,
+        );
 
         return [
             'success' => true,

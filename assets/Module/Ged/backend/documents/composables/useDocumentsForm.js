@@ -20,6 +20,8 @@ function emptyForm() {
         description: "",
         status: "draft",
         categoryId: null,
+        tagIds: [],
+        folderId: null,
         fileId: null,
         fileName: null,
     };
@@ -100,6 +102,8 @@ export function useDocumentsForm(createPath, updatePath, deletePath, reset) {
             description: doc.description ?? "",
             status: doc.status,
             categoryId: doc.categoryId ?? null,
+            tagIds: doc.tagIds ?? [],
+            folderId: doc.folderId ?? null,
             fileId: doc.fileId,
             fileName: doc.fileName,
         };

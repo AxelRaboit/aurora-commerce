@@ -1,11 +1,14 @@
 <script setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentsForm, DOCUMENT_STATUS_BADGE } from "./composables/useDocumentsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -14,13 +17,15 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
-import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X, Folder } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
 const props = defineProps({
     documents: { type: Object, default: () => ({}) },
     categories: { type: Array, default: () => [] },
+    tags: { type: Array, default: () => [] },
+    folders: { type: Array, default: () => [] },
     search: { type: String, default: "" },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
@@ -30,9 +35,29 @@ const props = defineProps({
 });
 
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
+const tagOptions = props.tags.map((tag) => ({ value: tag.id, label: tag.name }));
+const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }));
+
+// ── Filters ──────────────────────────────────────────────────────────────────
+const filterCategoryId = ref(null);
+const filterTagId = ref(null);
+const filterFolderId = ref(null);
+
+function applyFilter() {
+    reset();
+}
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
-    props.listPath, { initialSearch: props.search, initialData: props.documents },
+    props.listPath,
+    {
+        initialSearch: props.search,
+        initialData: props.documents,
+        extraParams: () => ({
+            categoryId: filterCategoryId.value || undefined,
+            tagId: filterTagId.value || undefined,
+            folderId: filterFolderId.value || undefined,
+        }),
+    },
 );
 
 const {
@@ -45,6 +70,7 @@ const {
 
 <template>
     <div class="space-y-4">
+        <!-- Search + add -->
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.documents.searchPlaceholder')" v-on:search="onSearch" />
             <AppButton
@@ -56,6 +82,42 @@ const {
             >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.documents.add") }}
             </AppButton>
+        </div>
+
+        <!-- Filters -->
+        <div v-if="categories.length || tags.length || folders.length" class="flex flex-wrap gap-2">
+            <AppSelect
+                v-if="categories.length"
+                v-model="filterCategoryId"
+                :options="categoryOptions"
+                :placeholder="t('backend.ged.documents.filterByCategory')"
+                class="min-w-40"
+                v-on:change="applyFilter"
+            />
+            <AppSelect
+                v-if="tags.length"
+                v-model="filterTagId"
+                :options="tagOptions"
+                :placeholder="t('backend.ged.documents.filterByTag')"
+                class="min-w-40"
+                v-on:change="applyFilter"
+            />
+            <AppSelect
+                v-if="folders.length"
+                v-model="filterFolderId"
+                :options="folderOptions"
+                :placeholder="t('backend.ged.documents.filterByFolder')"
+                class="min-w-40"
+                v-on:change="applyFilter"
+            />
+            <button
+                v-if="filterCategoryId || filterTagId || filterFolderId"
+                type="button"
+                class="text-xs text-muted hover:text-primary transition flex items-center gap-1"
+                v-on:click="filterCategoryId = null; filterTagId = null; filterFolderId = null; applyFilter()"
+            >
+                <X class="w-3 h-3" :stroke-width="2" /> {{ t("shared.common.reset") }}
+            </button>
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
@@ -73,7 +135,20 @@ const {
                     <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <p class="font-medium text-primary">{{ doc.title }}</p>
-                            <p v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</p>
+                            <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                <span v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</span>
+                                <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
+                                    <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
+                                </span>
+                                <span
+                                    v-for="tag in doc.tags"
+                                    :key="tag.id"
+                                    class="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-full border border-line/60"
+                                    :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
+                                >
+                                    {{ tag.name }}
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
                         <td class="px-6 py-3 hidden lg:table-cell">
@@ -106,7 +181,7 @@ const {
             :closeable="false"
             v-on:close="showCreate = false"
         >
-            <form class="space-y-4" v-on:submit.prevent="submitCreate">
+            <div class="space-y-4">
                 <AppInput
                     v-model="newDoc.title"
                     :label="t('backend.ged.documents.title')"
@@ -123,6 +198,22 @@ const {
                     :placeholder="t('backend.ged.documents.noCategory')"
                 />
                 <AppMultiselect
+                    v-if="tags.length"
+                    v-model="newDoc.tagIds"
+                    :label="t('backend.ged.documents.tags')"
+                    :options="tagOptions"
+                    :multiple="true"
+                    :allow-empty="true"
+                    :placeholder="t('backend.ged.documents.noTags')"
+                />
+                <AppSelect
+                    v-if="folders.length"
+                    v-model="newDoc.folderId"
+                    :label="t('backend.ged.documents.folder')"
+                    :options="folderOptions"
+                    :placeholder="t('backend.ged.documents.noFolder')"
+                />
+                <AppMultiselect
                     v-model="newDoc.status"
                     :label="t('backend.ged.documents.status')"
                     :options="statusOptions"
@@ -135,11 +226,11 @@ const {
                     </AppButton>
                     <span v-if="newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.fileName }}</span>
                 </div>
-            </form>
+            </div>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="createLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="createLoading" v-on:click="submitCreate"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -152,7 +243,7 @@ const {
             :closeable="false"
             v-on:close="showEdit = false"
         >
-            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+            <div class="space-y-4">
                 <AppInput
                     v-model="editForm.title"
                     :label="t('backend.ged.documents.title')"
@@ -169,6 +260,22 @@ const {
                     :placeholder="t('backend.ged.documents.noCategory')"
                 />
                 <AppMultiselect
+                    v-if="tags.length"
+                    v-model="editForm.tagIds"
+                    :label="t('backend.ged.documents.tags')"
+                    :options="tagOptions"
+                    :multiple="true"
+                    :allow-empty="true"
+                    :placeholder="t('backend.ged.documents.noTags')"
+                />
+                <AppSelect
+                    v-if="folders.length"
+                    v-model="editForm.folderId"
+                    :label="t('backend.ged.documents.folder')"
+                    :options="folderOptions"
+                    :placeholder="t('backend.ged.documents.noFolder')"
+                />
+                <AppMultiselect
                     v-model="editForm.status"
                     :label="t('backend.ged.documents.status')"
                     :options="statusOptions"
@@ -181,11 +288,11 @@ const {
                     </AppButton>
                     <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
                 </div>
-            </form>
+            </div>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="editLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton variant="ghost" size="md" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="editLoading" v-on:click="submitEdit"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>

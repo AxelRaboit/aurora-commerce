@@ -43,9 +43,13 @@ final class DocumentsController extends AbstractController
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
-    public function list(PaginationRequest $pagination): JsonResponse
+    public function list(Request $request, PaginationRequest $pagination): JsonResponse
     {
-        return $this->json($this->viewBuilder->buildListPayload($pagination));
+        $categoryId = $request->query->getInt('categoryId') ?: null;
+        $tagId = $request->query->getInt('tagId') ?: null;
+        $folderId = $request->query->getInt('folderId') ?: null;
+
+        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId));
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]

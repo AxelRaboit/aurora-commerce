@@ -77,7 +77,7 @@ function clear() {
                 placeholder="#3b82f6"
                 maxlength="7"
                 v-on:input="onHexInput"
-            />
+            >
             <button
                 v-if="modelValue"
                 type="button"

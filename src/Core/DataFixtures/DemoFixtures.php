@@ -1291,6 +1291,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $em->persist($tag);
             $tags[] = $tag;
         }
+
         // aliases: 0=Confidentiel, 1=À valider, 2=Signé, 3=Archivé, 4=RGPD, 5=ISO 27001
 
         // ── Folders ───────────────────────────────────────────────────────────
@@ -1310,9 +1311,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (null !== $def['parent']) {
                 $folder->setParent($folders[$def['parent']]);
             }
+
             $em->persist($folder);
             $folders[] = $folder;
         }
+
         // aliases: 0=Aurora Tech, 1=Clients, 2=Internes, 3=Contrats, 4=Présentations, 5=RH, 6=Finance
 
         // ── Categories ────────────────────────────────────────────────────────
@@ -1359,6 +1362,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             foreach ($def['tags'] as $tagIndex) {
                 $d->addTag($tags[$tagIndex]);
             }
+
             if (null !== $def['file'] && isset($media[$def['file']])) {
                 $d->setFile($media[$def['file']]);
             }

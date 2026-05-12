@@ -21,12 +21,19 @@ class DocumentRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, Document::class, DocumentInterface::class);
     }
 
-    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?int $categoryId = null): array
-    {
+    public function findPaginated(
+        int $page,
+        int $limit = 20,
+        ?string $search = null,
+        ?int $categoryId = null,
+        ?int $tagId = null,
+        ?int $folderId = null,
+    ): array {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.category', 'c')
             ->leftJoin('d.file', 'f')
-            ->addSelect('c', 'f')
+            ->leftJoin('d.folder', 'folder')
+            ->addSelect('c', 'f', 'folder')
             ->orderBy('d.createdAt', Order::Descending->value);
         $countQb = $this->createQueryBuilder('d')->select('COUNT(d.id)');
 
@@ -41,6 +48,42 @@ class DocumentRepository extends ResolveTargetEntityRepository
             $countQb->andWhere('d.category = :cat')->setParameter('cat', $categoryId);
         }
 
-        return $this->paginate($qb, $countQb, $page, $limit);
+        if (null !== $tagId) {
+            $qb->innerJoin('d.tags', 'tagFilter')->andWhere('tagFilter.id = :tagId')->setParameter('tagId', $tagId);
+            $countQb->innerJoin('d.tags', 'tagFilter')->andWhere('tagFilter.id = :tagId')->setParameter('tagId', $tagId);
+        }
+
+        if (null !== $folderId) {
+            $qb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
+            $countQb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
+        }
+
+        $result = $this->paginate($qb, $countQb, $page, $limit);
+        $this->hydrateDocumentTags($result['items']);
+
+        return $result;
+    }
+
+    /**
+     * Batch-loads the tags collection for a page of documents to avoid N+1
+     * (ManyToMany cannot be joined alongside a LIMIT query).
+     *
+     * @param list<Document> $documents
+     */
+    private function hydrateDocumentTags(array $documents): void
+    {
+        if ([] === $documents) {
+            return;
+        }
+
+        $ids = array_map(static fn (Document $document): int => $document->getId(), $documents);
+
+        $this->createQueryBuilder('d')
+            ->leftJoin('d.tags', 'tag')
+            ->addSelect('tag')
+            ->where('d.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
     }
 }

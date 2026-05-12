@@ -54,6 +54,13 @@ backend:
       deleteConfirm: "Êtes-vous sûr de vouloir supprimer le document « {title} » ?"
       deleteWarning: Cette action est irréversible.
       noCategory: Sans catégorie
+      tags: Étiquettes
+      noTags: Aucune étiquette
+      folder: Dossier
+      noFolder: Aucun dossier
+      filterByCategory: Filtrer par catégorie
+      filterByTag: Filtrer par étiquette
+      filterByFolder: Filtrer par dossier
       chooseFile: Choisir un fichier
       titlePlaceholder: Titre du document…
       descriptionPlaceholder: Description optionnelle…
