@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -117,6 +117,13 @@ export function useDocumentFoldersForm(
 
     return {
         items,
+        parentOptions: computed(() => [
+            { value: null, label: t("backend.ged.folders.noParent") },
+            ...items.value.map((folder) => ({
+                value: folder.id,
+                label: folder.name,
+            })),
+        ]),
         showCreate,
         newFolder,
         createErrors,

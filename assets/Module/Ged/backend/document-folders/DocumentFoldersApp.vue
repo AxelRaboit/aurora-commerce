@@ -1,5 +1,4 @@
 <script setup>
-import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentFoldersForm } from "./composables/useDocumentFoldersForm.js";
@@ -27,25 +26,13 @@ const props = defineProps({
 });
 
 const {
-    items,
+    items, parentOptions,
     showCreate, newFolder, createErrors, createLoading, openCreate, submitCreate,
     showEdit, editingFolder, editForm, editErrors, editLoading, openEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
 } = useDocumentFoldersForm(props.folders, props.createPath, props.updatePath, props.deletePath);
 
-const parentOptions = computed(() => [
-    { value: null, label: t("backend.ged.folders.noParent") },
-    ...items.value.map((folder) => ({ value: folder.id, label: folder.name })),
-]);
-
-const { flatTree, collapsedIds, toggleCollapse } = useDocumentFolderTree(items);
-
-const folderSearch = ref("");
-const filteredTree = computed(() => {
-    const q = folderSearch.value.trim().toLowerCase();
-    if (!q) return flatTree.value;
-    return flatTree.value.filter((node) => node.name.toLowerCase().includes(q));
-});
+const { flatTree, filteredTree, search: folderSearch, collapsedIds, toggleCollapse } = useDocumentFolderTree(items);
 
 const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
     useDocumentFolderDragDrop(props.movePath, props.reorderPath, (updatedFolders) => {
