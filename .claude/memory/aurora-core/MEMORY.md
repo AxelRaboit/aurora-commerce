@@ -26,6 +26,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [convention_breadcrumb_section.md](convention_breadcrumb_section.md) — premier fil de breadcrumb = `backend.nav.sections.<moduleId>|trans` (appliqué sur 31 templates)
 
 ### Conventions Vue / JS / Frontend
+- [convention_mobile_card_layout.md](convention_mobile_card_layout.md) — `sm:hidden` cards + `hidden sm:block` table ; footer actions ; bouton full-width mobile ; logique search dans le composable
 - [convention_vue_form_validation.md](convention_vue_form_validation.md) — `useForm` + `required()` + `:error` ; `useI18n()` dans le composable ; reset loading sur tous les chemins
 - [convention_form_components.md](convention_form_components.md) — toujours `App*` au lieu de `<button>`/`<input>`/`<select>` brut, placeholders obligatoires, `AppDatePicker` (jamais `type="date"` natif)
 - [convention_vue_directives.md](convention_vue_directives.md) — toujours `v-on:click` (jamais `@click`), `:` shorthand OK pour `v-bind`
