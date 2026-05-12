@@ -67,7 +67,7 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
                     v-for="node in filteredTree"
                     :key="node.id"
                     draggable="true"
-                    class="group relative flex items-center gap-1 pr-3 transition-colors cursor-grab active:cursor-grabbing select-none"
+                    class="group relative flex items-center gap-1.5 pr-3 transition-colors cursor-grab active:cursor-grabbing select-none"
                     :class="{
                         'opacity-40': draggingId === node.id,
                         'bg-surface-2/40': dropTarget?.id === node.id && dropTarget?.zone === 'into',
