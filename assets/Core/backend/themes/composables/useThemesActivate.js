@@ -1,28 +1,25 @@
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useThemesActivate(themeList, activatePath) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     async function activateTheme(theme) {
-        try {
-            const url = buildPath(activatePath, { id: theme.id });
-            const response = await fetch(url, { method: HttpMethod.Post });
-            const data = await response.json();
-            if (!data.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            themeList.value = themeList.value.map((item) => ({
-                ...item,
-                active: item.id === theme.id,
-            }));
-            toast.success(t("backend.themes.activated"));
-        } catch {
+        const url = buildPath(activatePath, { id: theme.id });
+        const data = await request(url);
+        if (!data) return;
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        themeList.value = themeList.value.map((item) => ({
+            ...item,
+            active: item.id === theme.id,
+        }));
+        toast.success(t("backend.themes.activated"));
     }
 
     return { activateTheme };

@@ -7,6 +7,8 @@ import {
     nextTick,
 } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 // ── Recent pages ─────────────────────────────────────────────────────────────
 
@@ -41,6 +43,8 @@ function itemKey(kind, item) {
 
 export function useBackendSearch({ searchPath, navItems, currentRoute }) {
     // ── State ─────────────────────────────────────────────────────────────────
+
+    const { request } = useRequest();
 
     const searchOpen = ref(false);
     const searchQuery = ref("");
@@ -120,25 +124,20 @@ export function useBackendSearch({ searchPath, navItems, currentRoute }) {
         try {
             const url = new URL(searchPath, window.location.origin);
             url.searchParams.set("q", trimmed);
-            const response = await fetch(url);
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            apiResults.value = {
-                posts: data.posts ?? [],
-                terms: data.terms ?? [],
-                media: data.media ?? [],
-                projects: data.projects ?? [],
-                tasks: data.tasks ?? [],
-            };
-            searchHighlightedIndex.value = 0;
-        } catch {
-            apiResults.value = {
-                posts: [],
-                terms: [],
-                media: [],
-                projects: [],
-                tasks: [],
-            };
+            const data = await request(url.toString(), null, {
+                method: HttpMethod.Get,
+                noGuard: true,
+            });
+            if (data) {
+                apiResults.value = {
+                    posts: data.posts ?? [],
+                    terms: data.terms ?? [],
+                    media: data.media ?? [],
+                    projects: data.projects ?? [],
+                    tasks: data.tasks ?? [],
+                };
+                searchHighlightedIndex.value = 0;
+            }
         } finally {
             searchLoading.value = false;
         }

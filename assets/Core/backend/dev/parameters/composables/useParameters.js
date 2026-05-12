@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useParameters(
     parametersPath,
@@ -37,7 +38,7 @@ export function useParameters(
 
     const editingKey = ref(null);
     const editingValue = ref("");
-    const editSaving = ref(false);
+    const { loading: editSaving, request } = useRequest();
 
     function startEdit(param) {
         editingKey.value = param.key;
@@ -50,27 +51,19 @@ export function useParameters(
     }
 
     async function saveEdit(param) {
-        if (editSaving.value) return;
-        editSaving.value = true;
-        try {
-            const url = parameterUpdatePath.replace(
-                "__key__",
-                encodeURIComponent(param.key),
-            );
-            const response = await fetch(url, {
-                method: HttpMethod.Patch,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ value: editingValue.value }),
-            });
-            if (response.ok) {
-                param.value = editingValue.value || null;
-                editingKey.value = null;
-                toast.success(t("backend.parameters.saved"));
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } finally {
-            editSaving.value = false;
+        const url = parameterUpdatePath.replace(
+            "__key__",
+            encodeURIComponent(param.key),
+        );
+        const data = await request(
+            url,
+            { value: editingValue.value },
+            HttpMethod.Patch,
+        );
+        if (data !== null) {
+            param.value = editingValue.value || null;
+            editingKey.value = null;
+            toast.success(t("backend.parameters.saved"));
         }
     }
 

@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
@@ -19,8 +20,12 @@ export function useMountPoints(
     const mountPoints = ref(initialData?.mountPoints ?? []);
     const types = ref(initialData?.types ?? []);
     const searchInput = ref("");
-    const loading = ref(false);
     const saving = ref(false);
+
+    const { loading, request: loadRequest } = useRequest();
+    const { request: createRequest } = useRequest();
+    const { request: editRequest } = useRequest();
+    const { request: deleteRequest } = useRequest();
 
     const testModal = ref({
         show: false,
@@ -77,18 +82,10 @@ export function useMountPoints(
     });
 
     async function load() {
-        loading.value = true;
-        try {
-            const response = await fetch(mountPointsPath, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            const data = await response.json();
+        const data = await loadRequest(mountPointsPath, null, HttpMethod.Get);
+        if (data) {
             mountPoints.value = data.mountPoints ?? [];
             types.value = data.types ?? [];
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
         }
     }
 
@@ -140,28 +137,23 @@ export function useMountPoints(
         if (!validateCreate(formValidationRules(createForm.value))) return;
 
         saving.value = true;
-        try {
-            const response = await fetch(mountPointCreatePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(buildPayload(createForm.value)),
-            });
-            const data = await response.json();
+        const data = await createRequest(
+            mountPointCreatePath,
+            buildPayload(createForm.value),
+        );
+        saving.value = false;
 
-            if (!data.success) {
-                setCreateErrors(translateServerErrors(t, data.errors));
-                return;
-            }
+        if (!data) return;
 
-            mountPoints.value.push(data.mountPoint);
-            mountPoints.value.sort((a, b) => a.name.localeCompare(b.name));
-            showCreateModal.value = false;
-            toast.success(t("shared.common.saved"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            saving.value = false;
+        if (!data.success) {
+            setCreateErrors(translateServerErrors(t, data.errors));
+            return;
         }
+
+        mountPoints.value.push(data.mountPoint);
+        mountPoints.value.sort((a, b) => a.name.localeCompare(b.name));
+        showCreateModal.value = false;
+        toast.success(t("shared.common.saved"));
     }
 
     function openEdit(mountPoint) {
@@ -202,32 +194,28 @@ export function useMountPoints(
             editingMountPoint.value.id,
         );
 
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Patch,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(buildPayload(editForm.value)),
-            });
-            const data = await response.json();
+        const data = await editRequest(
+            url,
+            buildPayload(editForm.value),
+            HttpMethod.Patch,
+        );
+        saving.value = false;
 
-            if (!data.success) {
-                setEditErrors(translateServerErrors(t, data.errors));
-                return;
-            }
+        if (!data) return;
 
-            const index = mountPoints.value.findIndex(
-                (mountPoint) => mountPoint.id === data.mountPoint.id,
-            );
-            if (index !== -1) mountPoints.value[index] = data.mountPoint;
-            mountPoints.value.sort((a, b) => a.name.localeCompare(b.name));
-            showEditModal.value = false;
-            editingMountPoint.value = null;
-            toast.success(t("shared.common.saved"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            saving.value = false;
+        if (!data.success) {
+            setEditErrors(translateServerErrors(t, data.errors));
+            return;
         }
+
+        const index = mountPoints.value.findIndex(
+            (mountPoint) => mountPoint.id === data.mountPoint.id,
+        );
+        if (index !== -1) mountPoints.value[index] = data.mountPoint;
+        mountPoints.value.sort((a, b) => a.name.localeCompare(b.name));
+        showEditModal.value = false;
+        editingMountPoint.value = null;
+        toast.success(t("shared.common.saved"));
     }
 
     function confirmDelete(mountPoint) {
@@ -242,24 +230,21 @@ export function useMountPoints(
             "__id__",
             pendingDelete.value.id,
         );
-        try {
-            const response = await fetch(url, { method: HttpMethod.Delete });
-            const data = await response.json();
+        const data = await deleteRequest(url, null, HttpMethod.Delete);
 
-            if (!data.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
+        if (!data) return;
 
-            mountPoints.value = mountPoints.value.filter(
-                (mountPoint) => mountPoint.id !== pendingDelete.value.id,
-            );
-            showDeleteModal.value = false;
-            pendingDelete.value = null;
-            toast.success(t("shared.common.deleted"));
-        } catch {
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+
+        mountPoints.value = mountPoints.value.filter(
+            (mountPoint) => mountPoint.id !== pendingDelete.value.id,
+        );
+        showDeleteModal.value = false;
+        pendingDelete.value = null;
+        toast.success(t("shared.common.deleted"));
     }
 
     function openTestModal(mountPoint) {

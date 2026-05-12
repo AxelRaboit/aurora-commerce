@@ -1,8 +1,8 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 const POLL_INTERVAL_MS = 30_000; // 30s — light enough not to hammer.
 
@@ -15,7 +15,7 @@ let refCount = 0;
 let pollTimer = null;
 
 export function useNotifications(paths) {
-    const { t } = useI18n();
+    useI18n();
 
     if (!sharedState) {
         sharedState = {
@@ -26,64 +26,36 @@ export function useNotifications(paths) {
     }
     const { entries, unreadCount, open } = sharedState;
 
+    const { request } = useRequest();
+
     async function load() {
-        try {
-            const response = await fetch(paths.list, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            if (!response.ok) return;
-            const data = await response.json();
-            if (data.success) {
-                entries.value = data.entries ?? [];
-                unreadCount.value = data.unreadCount ?? 0;
-            }
-        } catch {
-            // silent — notifications are non-critical
+        const data = await request(paths.list, null, HttpMethod.Get);
+        if (data?.success) {
+            entries.value = data.entries ?? [];
+            unreadCount.value = data.unreadCount ?? 0;
         }
     }
 
     async function markRead(notification) {
         const url = buildPath(paths.markRead, { id: notification.id });
-        try {
-            await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            await load();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await request(url);
+        await load();
     }
 
     async function markAllRead() {
-        try {
-            await fetch(paths.markAllRead, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            await load();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await request(paths.markAllRead);
+        await load();
     }
 
     async function deleteOne(notification) {
         const url = buildPath(paths.deletePath, { id: notification.id });
-        try {
-            await fetch(url, { method: HttpMethod.Delete });
-            await load();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await request(url, null, HttpMethod.Delete);
+        await load();
     }
 
     async function deleteAll() {
-        try {
-            await fetch(paths.deleteAllPath, { method: HttpMethod.Delete });
-            await load();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await request(paths.deleteAllPath, null, HttpMethod.Delete);
+        await load();
     }
 
     function toggle() {

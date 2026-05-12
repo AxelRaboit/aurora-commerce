@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -22,6 +22,8 @@ export function useThemesCreate(themeList, createPath, options = {}) {
         ),
     });
 
+    const { request } = useRequest();
+
     function openCreate() {
         createModal.errors = {};
         createForm.name = "";
@@ -36,25 +38,16 @@ export function useThemesCreate(themeList, createPath, options = {}) {
     async function submitCreate() {
         createModal.saving = true;
         createModal.errors = {};
-        try {
-            const response = await fetch(createPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(createForm),
-            });
-            const data = await response.json();
-            if (!data.success) {
-                createModal.errors = data.errors ?? {};
-                return;
-            }
-            themeList.value.push(data.theme);
-            createModal.open = false;
-            toast.success(t("backend.themes.created"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            createModal.saving = false;
+        const data = await request(createPath, createForm);
+        createModal.saving = false;
+        if (!data) return;
+        if (!data.success) {
+            createModal.errors = data.errors ?? {};
+            return;
         }
+        themeList.value.push(data.theme);
+        createModal.open = false;
+        toast.success(t("backend.themes.created"));
     }
 
     return { createModal, createForm, openCreate, submitCreate };

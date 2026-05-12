@@ -1,8 +1,8 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 const DEFAULTS = {
     "--th-accent": "#6366f1",
@@ -145,6 +145,8 @@ export function useThemesEdit(themeList, updatePath, options = {}) {
         return result;
     });
 
+    const { request } = useRequest();
+
     function openEdit(theme) {
         editModal.editing = theme;
         editModal.errors = {};
@@ -180,39 +182,27 @@ export function useThemesEdit(themeList, updatePath, options = {}) {
         if (!editModal.editing) return;
         editModal.saving = true;
         editModal.errors = {};
-        try {
-            const url = buildPath(updatePath, { id: editModal.editing.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...Object.fromEntries(
-                        Object.keys(extraFields).map((key) => [
-                            key,
-                            editForm[key],
-                        ]),
-                    ),
-                    name: editForm.name,
-                    description: editForm.description,
-                    config: configFromColors.value,
-                }),
-            });
-            const data = await response.json();
-            if (!data.success) {
-                editModal.errors = data.errors ?? {};
-                return;
-            }
-            const index = themeList.value.findIndex(
-                (item) => item.id === editModal.editing.id,
-            );
-            if (index !== -1) themeList.value[index] = data.theme;
-            editModal.open = false;
-            toast.success(t("backend.themes.updated"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            editModal.saving = false;
+        const url = buildPath(updatePath, { id: editModal.editing.id });
+        const data = await request(url, {
+            ...Object.fromEntries(
+                Object.keys(extraFields).map((key) => [key, editForm[key]]),
+            ),
+            name: editForm.name,
+            description: editForm.description,
+            config: configFromColors.value,
+        });
+        editModal.saving = false;
+        if (!data) return;
+        if (!data.success) {
+            editModal.errors = data.errors ?? {};
+            return;
         }
+        const index = themeList.value.findIndex(
+            (item) => item.id === editModal.editing.id,
+        );
+        if (index !== -1) themeList.value[index] = data.theme;
+        editModal.open = false;
+        toast.success(t("backend.themes.updated"));
     }
 
     return {

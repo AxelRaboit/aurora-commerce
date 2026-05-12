@@ -1,4 +1,6 @@
 import { reactive, onMounted } from "vue";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 
 export function useSettingsPostPicker(
@@ -12,22 +14,21 @@ export function useSettingsPostPicker(
     const postPickerResults = reactive({});
     const postPickerOpen = reactive({});
     const postPickerSearchAbort = {};
+    const { request } = useRequest();
 
     async function resolvePostLabel(key) {
         const id = fieldValues[key];
         if (!id || !postSearchPath) return;
-        try {
-            const response = await fetch(`${postSearchPath}?ids=${id}`);
-            const json = await response.json();
-            const post = json.results?.[0];
-            if (post)
-                postPickerLabels[key] = {
-                    id: post.id,
-                    title: post.title ?? `#${post.id}`,
-                };
-        } catch {
-            /* ignore */
-        }
+        const json = await request(`${postSearchPath}?ids=${id}`, null, {
+            method: HttpMethod.Get,
+            noGuard: true,
+        });
+        const post = json?.results?.[0];
+        if (post)
+            postPickerLabels[key] = {
+                id: post.id,
+                title: post.title ?? `#${post.id}`,
+            };
     }
 
     async function searchPosts(key, query) {
@@ -39,19 +40,18 @@ export function useSettingsPostPicker(
             return;
         }
         postPickerSearchAbort[key] = new AbortController();
-        try {
-            const response = await fetch(
-                `${postSearchPath}?q=${encodeURIComponent(query)}`,
-                {
-                    signal: postPickerSearchAbort[key].signal,
-                },
-            );
-            const json = await response.json();
-            postPickerResults[key] = json.results ?? [];
-            postPickerOpen[key] = true;
-        } catch (error) {
-            if (error.name !== "AbortError") postPickerOpen[key] = false;
-        }
+        const json = await request(
+            `${postSearchPath}?q=${encodeURIComponent(query)}`,
+            null,
+            {
+                method: HttpMethod.Get,
+                signal: postPickerSearchAbort[key].signal,
+                noGuard: true,
+            },
+        );
+        if (json === null) return;
+        postPickerResults[key] = json.results ?? [];
+        postPickerOpen[key] = true;
     }
 
     function selectPost(key, post) {

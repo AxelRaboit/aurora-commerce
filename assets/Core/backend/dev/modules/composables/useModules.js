@@ -2,6 +2,7 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 
 export function useModules(
@@ -42,6 +43,8 @@ export function useModules(
     const verifying = ref(false);
     const pendingToggle = ref(null);
 
+    const { request: loadRequest } = useRequest();
+
     function init(params) {
         for (const parameter of params) {
             const value = parameter.value ?? "0";
@@ -61,12 +64,11 @@ export function useModules(
     init(parameters.value);
 
     async function load() {
-        const response = await fetch(modulesPath, {
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
-        const data = await response.json();
-        parameters.value = data.parameters ?? [];
-        init(parameters.value);
+        const data = await loadRequest(modulesPath, null, HttpMethod.Get);
+        if (data) {
+            parameters.value = data.parameters ?? [];
+            init(parameters.value);
+        }
     }
 
     function isLocked(parameter) {

@@ -1,12 +1,13 @@
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { SettingErrorCode } from "@core/utils/enums/settings/settingErrorCode.js";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 
 export function useSettingsForm(groups, availableGroups, updatePath) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const fieldValues = reactive({});
     const initialValues = {};
@@ -91,16 +92,11 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
 
         try {
             for (const parameter of changed) {
-                const response = await fetch(updatePath, {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        key: parameter.key,
-                        value: fieldValues[parameter.key],
-                    }),
-                });
-
-                const result = await response.json();
+                const result = await request(
+                    updatePath,
+                    { key: parameter.key, value: fieldValues[parameter.key] },
+                    { noGuard: true },
+                );
 
                 if (!result.success) {
                     if (result.error === SettingErrorCode.CascadeViolation) {

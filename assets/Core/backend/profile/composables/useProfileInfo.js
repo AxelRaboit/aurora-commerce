@@ -1,8 +1,8 @@
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useForm } from "@/shared/composables/form/useForm.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import {
     required,
     email,
@@ -20,7 +20,7 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
 
     const infoName = ref(initialName);
     const infoEmail = ref(initialEmail);
-    const infoLoading = ref(false);
+    const { loading: infoLoading, request } = useRequest();
 
     async function saveInfo() {
         const isValid = validateInfo({
@@ -37,25 +37,16 @@ export function useProfileInfo(updatePath, initialName, initialEmail) {
 
         if (!isValid) return;
 
-        infoLoading.value = true;
-        try {
-            const response = await fetch(updatePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: infoName.value,
-                    email: infoEmail.value,
-                }),
-            });
-            const data = await response.json();
-            if (data.success) {
-                clearInfoErrors();
-                toast.success(t("backend.profile.info.saved"));
-            } else {
-                setInfoErrors(data.errors ?? {});
-            }
-        } finally {
-            infoLoading.value = false;
+        const data = await request(updatePath, {
+            name: infoName.value,
+            email: infoEmail.value,
+        });
+        if (!data) return;
+        if (data.success) {
+            clearInfoErrors();
+            toast.success(t("backend.profile.info.saved"));
+        } else {
+            setInfoErrors(data.errors ?? {});
         }
     }
 

@@ -1,9 +1,9 @@
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import {
     accessRequestStatusBadge,
     accessRequestStatusBadgeColor,
@@ -56,7 +56,7 @@ export function useAccessRequests(
     const pendingApprove = ref(null);
     const pendingReject = ref(null);
     const confirmPurge = ref(false);
-    const acting = ref(false);
+    const { loading: acting, request } = useRequest();
 
     function openApproveModal(accessRequest) {
         pendingApprove.value = accessRequest;
@@ -64,87 +64,48 @@ export function useAccessRequests(
 
     async function doApproveRequest() {
         if (!pendingApprove.value || acting.value) return;
-        acting.value = true;
-        try {
-            const url = buildPath(approvePath, { id: pendingApprove.value.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    "X-CSRF-Token": csrfToken,
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            });
-            const data = await response.json();
-            if (data.success) {
-                toast.success(
-                    data.message ?? t("backend.access_requests.approved_toast"),
-                );
-                pendingApprove.value = null;
-                await reset();
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const url = buildPath(approvePath, { id: pendingApprove.value.id });
+        const data = await request(url);
+        if (!data) return;
+        if (data.success) {
+            toast.success(
+                data.message ?? t("backend.access_requests.approved_toast"),
+            );
+            pendingApprove.value = null;
+            await reset();
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            acting.value = false;
         }
     }
 
     async function doRejectRequest() {
         if (!pendingReject.value || acting.value) return;
-        acting.value = true;
-        try {
-            const url = buildPath(rejectPath, { id: pendingReject.value.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    "X-CSRF-Token": csrfToken,
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            });
-            const data = await response.json();
-            if (data.success) {
-                toast.success(
-                    data.message ?? t("backend.access_requests.rejected_toast"),
-                );
-                pendingReject.value = null;
-                await reset();
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const url = buildPath(rejectPath, { id: pendingReject.value.id });
+        const data = await request(url);
+        if (!data) return;
+        if (data.success) {
+            toast.success(
+                data.message ?? t("backend.access_requests.rejected_toast"),
+            );
+            pendingReject.value = null;
+            await reset();
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            acting.value = false;
         }
     }
 
     async function doPurge() {
         if (acting.value) return;
-        acting.value = true;
-        try {
-            const response = await fetch(purgePath, {
-                method: HttpMethod.Post,
-                headers: {
-                    "X-CSRF-Token": csrfToken,
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            });
-            const data = await response.json();
-            if (data.success) {
-                toast.success(
-                    data.message ?? t("backend.access_requests.purged_toast"),
-                );
-                confirmPurge.value = false;
-                await reset();
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(purgePath);
+        if (!data) return;
+        if (data.success) {
+            toast.success(
+                data.message ?? t("backend.access_requests.purged_toast"),
+            );
+            confirmPurge.value = false;
+            await reset();
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            acting.value = false;
         }
     }
 

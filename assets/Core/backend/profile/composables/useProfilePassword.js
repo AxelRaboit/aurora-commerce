@@ -1,8 +1,8 @@
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useForm } from "@/shared/composables/form/useForm.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { passwordValidator } from "@/shared/utils/validation/passwordRules.js";
 
@@ -18,7 +18,7 @@ export function useProfilePassword(passwordPath) {
     const currentPassword = ref("");
     const newPassword = ref("");
     const confirmPassword = ref("");
-    const passwordLoading = ref(false);
+    const { loading: passwordLoading, request } = useRequest();
 
     async function savePassword() {
         const isValid = validatePassword({
@@ -39,29 +39,20 @@ export function useProfilePassword(passwordPath) {
 
         if (!isValid) return;
 
-        passwordLoading.value = true;
-        try {
-            const response = await fetch(passwordPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    current_password: currentPassword.value,
-                    password: newPassword.value,
-                    password_confirmation: confirmPassword.value,
-                }),
-            });
-            const data = await response.json();
-            if (data.success) {
-                clearPasswordErrors();
-                toast.success(t("backend.profile.password.saved"));
-                currentPassword.value = "";
-                newPassword.value = "";
-                confirmPassword.value = "";
-            } else {
-                setPasswordErrors(data.errors ?? {});
-            }
-        } finally {
-            passwordLoading.value = false;
+        const data = await request(passwordPath, {
+            current_password: currentPassword.value,
+            password: newPassword.value,
+            password_confirmation: confirmPassword.value,
+        });
+        if (!data) return;
+        if (data.success) {
+            clearPasswordErrors();
+            toast.success(t("backend.profile.password.saved"));
+            currentPassword.value = "";
+            newPassword.value = "";
+            confirmPassword.value = "";
+        } else {
+            setPasswordErrors(data.errors ?? {});
         }
     }
 

@@ -4,20 +4,51 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { HttpStatus } from "@/shared/utils/http/HttpStatus.js";
 
+/**
+ * Generic HTTP composable.
+ *
+ * request(url, body?, methodOrOpts?)
+ *
+ * The third argument accepts either a method string (backward-compatible)
+ * or an options object:
+ *   { method, signal, noGuard, rawBody }
+ *
+ * Options:
+ *   method    — HTTP method string (default: POST)
+ *   signal    — AbortSignal for cancellation; aborted requests are silently ignored
+ *   noGuard   — skip the loading guard so sequential calls in a loop work
+ *   rawBody   — pass a non-JSON body (FormData, Blob…); Content-Type is omitted
+ */
 export function useRequest() {
     const { t } = useI18n();
     const loading = ref(false);
 
-    async function request(url, body = null, method = HttpMethod.Post) {
-        if (loading.value) return null;
-        loading.value = true;
+    async function request(url, body = null, methodOrOpts = HttpMethod.Post) {
+        const isOpts =
+            methodOrOpts !== null && typeof methodOrOpts === "object";
+        const method = isOpts
+            ? (methodOrOpts.method ?? HttpMethod.Post)
+            : methodOrOpts;
+        const signal = isOpts ? (methodOrOpts.signal ?? null) : null;
+        const noGuard = isOpts ? (methodOrOpts.noGuard ?? false) : false;
+        const rawBody = isOpts ? (methodOrOpts.rawBody ?? null) : null;
+
+        if (!noGuard && loading.value) return null;
+        if (!noGuard) loading.value = true;
         try {
-            const options = {
-                method,
-                headers: { "Content-Type": "application/json" },
-            };
-            if (body !== null) options.body = JSON.stringify(body);
-            const response = await fetch(url, options);
+            const fetchOptions = { method };
+            if (signal) fetchOptions.signal = signal;
+
+            if (rawBody !== null) {
+                fetchOptions.body = rawBody;
+            } else if (body !== null) {
+                fetchOptions.headers = { "Content-Type": "application/json" };
+                fetchOptions.body = JSON.stringify(body);
+            } else {
+                fetchOptions.headers = { "Content-Type": "application/json" };
+            }
+
+            const response = await fetch(url, fetchOptions);
             if (
                 !response.ok &&
                 response.status !== HttpStatus.UnprocessableEntity &&
@@ -26,11 +57,12 @@ export function useRequest() {
             )
                 throw new Error(`HTTP ${response.status}`);
             return await response.json();
-        } catch {
+        } catch (err) {
+            if (err?.name === "AbortError") return null;
             toast.error(t("shared.common.error"));
             return null;
         } finally {
-            loading.value = false;
+            if (!noGuard) loading.value = false;
         }
     }
 

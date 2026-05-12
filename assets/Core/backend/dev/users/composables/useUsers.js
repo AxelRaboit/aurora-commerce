@@ -1,10 +1,10 @@
 import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
-import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import {
     required,
@@ -31,23 +31,15 @@ export function useUsers(
     const parsedUsers = computed(() => usersData.value ?? { items: [] });
 
     const searchInput = ref(initialSearch);
-    const loading = ref(false);
+    const { loading, request: loadRequest } = useRequest();
 
     async function load() {
-        loading.value = true;
-        try {
-            const url = new URL(usersPath, window.location.origin);
-            if (searchInput.value)
-                url.searchParams.set("search", searchInput.value);
-            const response = await fetch(url, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            if (!response.ok) throw new Error();
-            usersData.value = await response.json();
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const url = new URL(usersPath, window.location.origin);
+        if (searchInput.value)
+            url.searchParams.set("search", searchInput.value);
+        const data = await loadRequest(url.toString(), null, HttpMethod.Get);
+        if (data !== null) {
+            usersData.value = data;
         }
     }
 
