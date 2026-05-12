@@ -69,6 +69,8 @@ class InvoiceRepository extends ResolveTargetEntityRepository
     ): array {
         $queryBuilder = $this->createQueryBuilder('i')
             ->leftJoin('i.tiers', 's')->addSelect('s')
+            ->leftJoin('i.creditNote', 'cn')->addSelect('cn')
+            ->leftJoin('i.cancelledInvoice', 'ca')->addSelect('ca')
             ->addSelect('CASE WHEN i.status = :priorityStatus THEN 0 ELSE 1 END AS HIDDEN status_priority')
             ->setParameter('priorityStatus', InvoiceStatusEnum::NeedsReview)
             ->orderBy('status_priority', Order::Ascending->value)
