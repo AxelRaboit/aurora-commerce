@@ -59,6 +59,7 @@ backend:
       noTags: Aucune étiquette
       folder: Dossier
       noFolder: Aucun dossier
+      versions: Historique des versions
       filterByStatus: Filtrer par statut
       filterByCategory: Filtrer par catégorie
       filterByTag: Filtrer par étiquette

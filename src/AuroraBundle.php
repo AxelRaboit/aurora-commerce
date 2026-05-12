@@ -98,6 +98,8 @@ use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentVersion;
+use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
@@ -264,6 +266,7 @@ class AuroraBundle extends AbstractBundle
                     OrderLineInterface::class => OrderLine::class,
                     ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
+                    DocumentVersionInterface::class => DocumentVersion::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
                     DocumentTagInterface::class => DocumentTag::class,
                     DocumentFolderInterface::class => DocumentFolder::class,

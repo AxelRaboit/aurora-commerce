@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Ged\Document\Entity;
+
+use Aurora\Core\Media\Entity\MediaInterface;
+use DateTimeImmutable;
+
+interface DocumentVersionInterface
+{
+    public function getId(): ?int;
+
+    public function getDocument(): DocumentInterface;
+
+    public function getFile(): MediaInterface;
+
+    public function getVersionNumber(): int;
+
+    public function getCreatedAt(): DateTimeImmutable;
+
+    public function getNote(): ?string;
+
+    public function setNote(?string $note): static;
+}

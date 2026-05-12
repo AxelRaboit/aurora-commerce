@@ -59,6 +59,7 @@ backend:
       noTags: No tags
       folder: Folder
       noFolder: No folder
+      versions: Version history
       filterByStatus: Filter by status
       filterByCategory: Filter by category
       filterByTag: Filter by tag

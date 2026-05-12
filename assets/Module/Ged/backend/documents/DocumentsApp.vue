@@ -19,6 +19,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, X, Folder, Download } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -32,6 +33,7 @@ const props = defineProps({
     folders: { type: Array, default: () => [] },
     search: { type: String, default: "" },
     showPath: { type: String, default: "" },
+    versionsPath: { type: String, default: "" },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -45,9 +47,18 @@ const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }))
 
 // ── Detail modal ─────────────────────────────────────────────────────────────
 const viewingDoc = ref(null);
+const viewingDocVersions = ref([]);
 
-function viewDoc(doc) {
+async function viewDoc(doc) {
     viewingDoc.value = doc;
+    viewingDocVersions.value = [];
+    if (props.versionsPath) {
+        const url = buildPath(props.versionsPath, { id: doc.id });
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then((r) => r.json())
+            .then((data) => { if (data.success) viewingDocVersions.value = data.versions ?? []; })
+            .catch(() => {});
+    }
 }
 
 function openEditFromDetail() {
@@ -398,6 +409,26 @@ const {
                             class="inline-flex items-center text-xs px-2 py-0.5 rounded-full border"
                             :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
                         >{{ tag.name }}</span>
+                    </div>
+
+                    <!-- Version history -->
+                    <div v-if="viewingDocVersions.length > 1" class="space-y-2">
+                        <p class="text-xs text-muted uppercase tracking-wide">{{ t("backend.ged.documents.versions") }}</p>
+                        <div class="divide-y divide-line/40 rounded-lg border border-line overflow-hidden">
+                            <div
+                                v-for="version in viewingDocVersions"
+                                :key="version.id"
+                                class="flex items-center gap-3 px-3 py-2 text-sm"
+                                :class="version.versionNumber === viewingDocVersions[0].versionNumber ? 'bg-accent/5' : 'bg-surface'"
+                            >
+                                <span class="shrink-0 text-xs font-mono font-medium px-1.5 py-0.5 rounded bg-surface-2 text-secondary">v{{ version.versionNumber }}</span>
+                                <span class="flex-1 truncate text-primary text-xs">{{ version.fileName }}</span>
+                                <span class="text-xs text-muted shrink-0">{{ formatDate(version.createdAt) }}</span>
+                                <a :href="version.fileUrl" target="_blank" download class="shrink-0 text-xs text-accent hover:underline flex items-center gap-0.5">
+                                    <Download class="w-3 h-3" :stroke-width="2" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- File -->

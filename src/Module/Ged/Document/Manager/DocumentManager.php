@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\Document\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentVersion;
+use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
@@ -29,6 +32,7 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly AuditLogger $auditLogger,
         protected readonly DocumentTagRepository $tagRepository,
         protected readonly DocumentFolderRepository $folderRepository,
+        protected readonly DocumentVersionRepository $versionRepository,
     ) {}
 
     public function create(DocumentInputInterface $input): DocumentInterface
@@ -39,6 +43,10 @@ class DocumentManager implements DocumentManagerInterface
         $this->entityManager->persist($document);
         $this->entityManager->flush();
 
+        if ($document->getFile() instanceof MediaInterface) {
+            $this->recordVersion($document);
+        }
+
         $this->auditCreated($document);
 
         return $document;
@@ -46,8 +54,16 @@ class DocumentManager implements DocumentManagerInterface
 
     public function update(DocumentInterface $document, DocumentInputInterface $input): void
     {
+        $newFileId = $input->getFileId();
+        $currentFileId = $document->getFile()?->getId();
+        $fileChanged = null !== $newFileId && $newFileId !== $currentFileId;
+
         $this->applyInput($document, $input);
         $this->entityManager->flush();
+
+        if ($fileChanged) {
+            $this->recordVersion($document);
+        }
 
         $this->auditUpdated($document);
     }
@@ -63,6 +79,16 @@ class DocumentManager implements DocumentManagerInterface
     protected function createDocument(): DocumentInterface
     {
         return new Document();
+    }
+
+    protected function recordVersion(DocumentInterface $document): void
+    {
+        $version = new DocumentVersion();
+        $version->setDocument($document)
+            ->setFile($document->getFile())
+            ->setVersionNumber($this->versionRepository->getNextVersionNumber($document));
+        $this->entityManager->persist($version);
+        $this->entityManager->flush();
     }
 
     protected function applyInput(DocumentInterface $document, DocumentInputInterface $input): void

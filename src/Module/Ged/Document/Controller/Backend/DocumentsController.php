@@ -12,7 +12,9 @@ use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ged\Document\Dto\DocumentInputFactoryInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
+use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializer;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +39,8 @@ final class DocumentsController extends AbstractController
         private readonly DocumentsViewBuilder $viewBuilder,
         private readonly DocumentInputFactoryInterface $inputFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly DocumentVersionRepository $versionRepository,
+        private readonly DocumentVersionSerializer $versionSerializer,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -66,6 +70,17 @@ final class DocumentsController extends AbstractController
             'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => $document->getId()]),
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => $document->getId()]),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents'),
+        ]);
+    }
+
+    #[Route('/{id}/versions', name: '_versions', methods: [HttpMethodEnum::Get->value])]
+    public function versions(Document $document): JsonResponse
+    {
+        $versions = $this->versionRepository->findByDocument($document);
+
+        return $this->json([
+            'success' => true,
+            'versions' => array_map($this->versionSerializer->serialize(...), $versions),
         ]);
     }
 
