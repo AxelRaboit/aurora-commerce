@@ -53,6 +53,7 @@ function onSelect(value) {
             :allow-empty="allowEmpty"
             :open-direction="openDirection"
             :placeholder="placeholder || t('shared.common.select_placeholder')"
+            :use-teleport="true"
             select-label=""
             selected-label=""
             deselect-label=""
