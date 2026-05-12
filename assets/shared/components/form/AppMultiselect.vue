@@ -69,8 +69,9 @@ function onSelect(value) {
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
-<style scoped>
-:deep(.multiselect__tags) {
+<style>
+/* Global (not scoped) — dropdown is teleported to <body>, outside the component's DOM scope */
+.multiselect__tags {
     background-color: var(--color-surface);
     border-color: var(--color-line);
     color: var(--color-primary);
@@ -79,50 +80,50 @@ function onSelect(value) {
     padding: 6px 40px 0 8px;
     font-size: 0.875rem;
 }
-:deep(.multiselect__single),
-:deep(.multiselect__input) {
+.multiselect__single,
+.multiselect__input {
     background-color: var(--color-surface);
     color: var(--color-primary);
     font-size: 0.875rem;
     margin-bottom: 4px;
     padding: 0 0 0 4px;
 }
-:deep(.multiselect__placeholder) {
+.multiselect__placeholder {
     color: var(--color-muted);
     font-size: 0.875rem;
     margin-bottom: 4px;
     padding: 0 0 0 4px;
 }
-:deep(.multiselect__content-wrapper) {
+.multiselect__content-wrapper {
     background-color: var(--color-surface);
     border-color: var(--color-line);
 }
-:deep(.multiselect__option) {
+.multiselect__option {
     color: var(--color-primary);
     font-size: 0.875rem;
     background-color: var(--color-surface);
 }
-:deep(.multiselect__option--highlight) {
+.multiselect__option--highlight {
     background: #4f46e5;
     color: #fff;
 }
-:deep(.multiselect__option--selected) {
+.multiselect__option--selected {
     background: var(--color-surface-2);
     color: var(--color-primary);
     font-weight: 600;
 }
-:deep(.multiselect__option--selected.multiselect__option--highlight) {
+.multiselect__option--selected.multiselect__option--highlight {
     background: #4338ca;
     color: #fff;
 }
-:deep(.multiselect__tag) {
+.multiselect__tag {
     background: #4f46e5;
 }
-:deep(.multiselect--active .multiselect__tags) {
+.multiselect--active .multiselect__tags {
     border-color: #6366f1;
     box-shadow: 0 0 0 1px #6366f1;
 }
-:deep(.multiselect--error .multiselect__tags) {
+.multiselect--error .multiselect__tags {
     border-color: rgb(239 68 68);
 }
 </style>
