@@ -18,6 +18,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 import { Pencil, Trash2, Plus, Eye, Save, X, Package } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
@@ -84,10 +85,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <tr v-for="product in items" :key="product.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <AppImage v-if="product.image" :src="product.image.url" :alt="product.image.alt ?? product.name" object-fit="cover" />
-                                    <span v-else class="text-muted text-xs">—</span>
-                                </div>
+                                <AppThumbnail :src="product.image?.url" :alt="product.image?.alt ?? product.name">
+                                    <span class="text-muted text-xs">—</span>
+                                </AppThumbnail>
                                 <span class="font-medium text-primary truncate">{{ product.name }}</span>
                             </div>
                         </td>

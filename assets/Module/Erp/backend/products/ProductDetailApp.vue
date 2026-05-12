@@ -16,6 +16,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppLoadMore from "@/shared/components/nav/AppLoadMore.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 import { Pencil, Trash2, Package, Save, X } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
@@ -53,12 +54,11 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
                     <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                        <div v-if="product.image" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shrink-0">
-                            <AppImage :src="product.image.url" :alt="product.image.alt ?? product.name" object-fit="cover" />
-                        </div>
-                        <div v-else class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-accent-600/20 text-accent-400 flex items-center justify-center shrink-0">
-                            <Package class="w-5 h-5 sm:w-6 sm:h-6" :stroke-width="2" />
-                        </div>
+                        <AppThumbnail :src="product.image?.url" :alt="product.image?.alt ?? product.name" size="md">
+                            <div class="w-full h-full bg-accent-600/20 text-accent-400 flex items-center justify-center">
+                                <Package class="w-5 h-5" :stroke-width="2" />
+                            </div>
+                        </AppThumbnail>
                         <div class="min-w-0">
                             <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ product.name }}</h2>
                             <p class="text-xs font-mono text-muted mt-0.5 break-all">{{ product.reference }}</p>

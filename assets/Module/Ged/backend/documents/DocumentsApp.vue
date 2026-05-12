@@ -23,6 +23,7 @@ import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
+import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -185,12 +186,12 @@ const {
                         </td>
                         <td class="px-6 py-3 hidden xl:table-cell">
                             <template v-if="doc.fileUrl">
-                                <img
+                                <AppThumbnail
                                     v-if="doc.fileMime?.startsWith('image/')"
                                     :src="doc.fileUrl"
                                     :alt="doc.fileName"
-                                    class="h-10 w-16 object-cover rounded border border-line"
-                                >
+                                    size="landscape"
+                                />
                                 <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
                                     <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
                                 </div>
