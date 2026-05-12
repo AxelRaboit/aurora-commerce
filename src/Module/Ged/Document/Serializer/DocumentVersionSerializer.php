@@ -6,8 +6,10 @@ namespace Aurora\Module\Ged\Document\Serializer;
 
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use DateTimeInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-class DocumentVersionSerializer
+#[AsAlias(DocumentVersionSerializerInterface::class)]
+class DocumentVersionSerializer implements DocumentVersionSerializerInterface
 {
     public function serialize(DocumentVersionInterface $version): array
     {

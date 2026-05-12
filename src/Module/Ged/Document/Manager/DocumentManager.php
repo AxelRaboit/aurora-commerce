@@ -13,6 +13,7 @@ use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
+use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
@@ -81,9 +82,14 @@ class DocumentManager implements DocumentManagerInterface
         return new Document();
     }
 
+    protected function createDocumentVersion(): DocumentVersionInterface
+    {
+        return new DocumentVersion();
+    }
+
     protected function recordVersion(DocumentInterface $document): void
     {
-        $version = new DocumentVersion();
+        $version = $this->createDocumentVersion();
         $version->setDocument($document)
             ->setFile($document->getFile())
             ->setVersionNumber($this->versionRepository->getNextVersionNumber($document));

@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentFolder\Entity;
 
+use Aurora\Core\Trait\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class AbstractDocumentFolder implements DocumentFolderInterface
 {
+    use TimestampableTrait;
+
     #[ORM\Column(length: 150)]
     protected string $name;
 

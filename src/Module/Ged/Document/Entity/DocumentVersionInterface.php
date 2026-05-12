@@ -13,9 +13,15 @@ interface DocumentVersionInterface
 
     public function getDocument(): DocumentInterface;
 
+    public function setDocument(DocumentInterface $document): static;
+
     public function getFile(): MediaInterface;
 
+    public function setFile(MediaInterface $file): static;
+
     public function getVersionNumber(): int;
+
+    public function setVersionNumber(int $versionNumber): static;
 
     public function getCreatedAt(): DateTimeImmutable;
 

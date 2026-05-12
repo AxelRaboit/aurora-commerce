@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 /**
  * Handles drag-and-drop reordering and reparenting of folder nodes.
@@ -17,6 +16,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  */
 export function useDocumentFolderDragDrop(movePath, reorderPath, onSuccess) {
     const { t } = useI18n();
+    const { request: doRequest } = useRequest();
 
     const draggingId = ref(null);
     const dropTarget = ref(null); // { id, zone: 'before'|'into'|'after' }
@@ -79,21 +79,8 @@ export function useDocumentFolderDragDrop(movePath, reorderPath, onSuccess) {
 
     async function reparent(draggedId, newParentId) {
         const url = buildPath(movePath, { id: draggedId });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ parentId: newParentId }),
-            });
-            const data = await response.json();
-            if (data.success) {
-                onSuccess(data.folders ?? []);
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await doRequest(url, { parentId: newParentId });
+        if (data?.success) onSuccess(data.folders ?? []);
     }
 
     async function reorderSiblings(draggedId, targetFolder, zone, flatTree) {
@@ -115,21 +102,8 @@ export function useDocumentFolderDragDrop(movePath, reorderPath, onSuccess) {
         const insertIdx = zone === "before" ? targetIdx : targetIdx + 1;
         filtered.splice(insertIdx, 0, draggedId);
 
-        try {
-            const response = await fetch(reorderPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ids: filtered }),
-            });
-            const data = await response.json();
-            if (data.success) {
-                onSuccess(data.folders ?? []);
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await doRequest(reorderPath, { ids: filtered });
+        if (data?.success) onSuccess(data.folders ?? []);
     }
 
     return {

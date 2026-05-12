@@ -24,6 +24,8 @@ backend:
     ged_tags_description: "Active la gestion des étiquettes de documents."
     ged_folders: Dossiers GED
     ged_folders_description: "Active la gestion des dossiers de documents."
+    ged_frontend: Bibliothèque publique GED
+    ged_frontend_description: Expose les documents publiés sur le site public.
   nav:
     sections:
       ged: GED
@@ -128,6 +130,3 @@ ged:
     documents:
       title: Bibliothèque de documents
       empty: Aucun document disponible pour le moment.
-  modules:
-    ged_frontend: Bibliothèque publique GED
-    ged_frontend_description: Expose les documents publiés sur le site public.

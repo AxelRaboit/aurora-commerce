@@ -107,10 +107,10 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
                     <GripVertical class="w-3.5 h-3.5 text-muted/40 group-hover:text-muted shrink-0 transition-colors" :stroke-width="2" />
 
                     <!-- Collapse toggle -->
-                    <button
+                    <AppIconButton
                         v-if="node.childCount"
-                        type="button"
-                        class="shrink-0 p-0.5 text-muted hover:text-primary transition-colors"
+                        color="default"
+                        class="shrink-0"
                         v-on:click.stop="toggleCollapse(node.id)"
                     >
                         <ChevronRight
@@ -118,7 +118,7 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
                             :class="collapsedIds.has(node.id) ? '' : 'rotate-90'"
                             :stroke-width="2"
                         />
-                    </button>
+                    </AppIconButton>
                     <span v-else class="w-4 shrink-0" />
 
                     <Folder

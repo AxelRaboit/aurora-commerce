@@ -14,7 +14,7 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
-use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializer;
+use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializerInterface;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +40,7 @@ final class DocumentsController extends AbstractController
         private readonly DocumentInputFactoryInterface $inputFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly DocumentVersionRepository $versionRepository,
-        private readonly DocumentVersionSerializer $versionSerializer,
+        private readonly DocumentVersionSerializerInterface $versionSerializer,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]

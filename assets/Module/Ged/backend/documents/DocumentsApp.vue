@@ -131,14 +131,14 @@ const {
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
-            <button
+            <AppButton
                 v-if="hasActiveFilter"
-                type="button"
-                class="text-xs text-muted hover:text-primary transition flex items-center gap-1"
+                variant="ghost"
+                size="sm"
                 v-on:click="resetFilters"
             >
                 <X class="w-3 h-3" :stroke-width="2" /> {{ t("shared.common.reset") }}
-            </button>
+            </AppButton>
         </div>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">

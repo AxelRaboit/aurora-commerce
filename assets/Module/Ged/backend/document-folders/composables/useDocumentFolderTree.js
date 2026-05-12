@@ -21,7 +21,8 @@ export function useDocumentFolderTree(items) {
         flattenFolders(
             buildFolderTree(
                 items.value,
-                (a, b) => a.position - b.position || a.name.localeCompare(b.name),
+                (a, b) =>
+                    a.position - b.position || a.name.localeCompare(b.name),
             ),
             0,
             collapsedIds.value,

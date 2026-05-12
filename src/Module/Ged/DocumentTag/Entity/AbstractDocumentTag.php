@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentTag\Entity;
 
+use Aurora\Core\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class AbstractDocumentTag implements DocumentTagInterface
 {
+    use TimestampableTrait;
+
     #[ORM\Column(length: 100)]
     protected string $name;
 

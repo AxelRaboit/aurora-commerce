@@ -24,6 +24,8 @@ backend:
     ged_tags_description: 'Enables document tag management.'
     ged_folders: DMS Folders
     ged_folders_description: 'Enables document folder management.'
+    ged_frontend: GED Public Library
+    ged_frontend_description: Exposes published documents on the public site.
   nav:
     sections:
       ged: DMS
@@ -128,6 +130,3 @@ ged:
     documents:
       title: Document Library
       empty: No documents available at the moment.
-  modules:
-    ged_frontend: GED Public Library
-    ged_frontend_description: Exposes published documents on the public site.
