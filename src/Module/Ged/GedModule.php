@@ -88,6 +88,7 @@ final readonly class GedModule implements ModuleInterface, ModuleToggleProviderI
             ModuleParameterEnum::GedCategories->toToggle(),
             ModuleParameterEnum::GedTags->toToggle(),
             ModuleParameterEnum::GedFolders->toToggle(),
+            ModuleParameterEnum::GedFrontend->toToggle(),
         ];
     }
 }

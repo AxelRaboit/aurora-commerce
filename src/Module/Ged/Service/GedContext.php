@@ -35,4 +35,9 @@ final readonly class GedContext
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedFolders);
     }
+
+    public function isFrontendEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::GedFrontend);
+    }
 }

@@ -121,3 +121,11 @@ backend:
       noParent: Aucun (racine)
       errors:
         name_required: Le nom est obligatoire
+ged:
+  frontend:
+    documents:
+      title: Bibliothèque de documents
+      empty: Aucun document disponible pour le moment.
+  modules:
+    ged_frontend: Bibliothèque publique GED
+    ged_frontend_description: Expose les documents publiés sur le site public.
