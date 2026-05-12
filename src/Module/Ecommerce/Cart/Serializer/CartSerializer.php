@@ -7,11 +7,17 @@ namespace Aurora\Module\Ecommerce\Cart\Serializer;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
-final readonly class CartSerializer
+#[AsAlias(CartSerializerInterface::class)]
+class CartSerializer implements CartSerializerInterface
 {
-    public function serialize(CartInterface $cart): array
+    public function serialize(?CartInterface $cart): array
     {
+        if (null === $cart) {
+            return [];
+        }
+
         $currency = CurrencyEnum::EUR;
         $items = [];
         foreach ($cart->getItems() as $item) {
