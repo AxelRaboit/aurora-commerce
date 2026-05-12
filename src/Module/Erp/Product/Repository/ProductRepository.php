@@ -26,7 +26,10 @@ class ProductRepository extends ResolveTargetEntityRepository
 
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?ProductStatusEnum $status = null): array
     {
-        $qb = $this->createQueryBuilder('p')->orderBy('p.name', Order::Ascending->value);
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.image', 'img')
+            ->addSelect('img')
+            ->orderBy('p.name', Order::Ascending->value);
         $countQb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
 
         if (null !== $search && '' !== $search) {
