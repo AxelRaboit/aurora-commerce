@@ -38,10 +38,7 @@ describe("useDocumentFolderTree — toggleCollapse", () => {
 
 describe("useDocumentFolderTree — flatTree", () => {
     it("returns flat list of all folders", () => {
-        const items = ref([
-            makeFolder(1, "Alpha"),
-            makeFolder(2, "Beta"),
-        ]);
+        const items = ref([makeFolder(1, "Alpha"), makeFolder(2, "Beta")]);
         const { flatTree } = useDocumentFolderTree(items);
         expect(flatTree.value).toHaveLength(2);
     });
@@ -61,10 +58,7 @@ describe("useDocumentFolderTree — flatTree", () => {
     });
 
     it("excludes children of collapsed folder", () => {
-        const items = ref([
-            makeFolder(1, "Parent"),
-            makeFolder(2, "Child", 1),
-        ]);
+        const items = ref([makeFolder(1, "Parent"), makeFolder(2, "Child", 1)]);
         const { flatTree, toggleCollapse } = useDocumentFolderTree(items);
         toggleCollapse(1);
         const ids = flatTree.value.map((n) => n.id);
@@ -72,10 +66,7 @@ describe("useDocumentFolderTree — flatTree", () => {
     });
 
     it("includes children when parent is not collapsed", () => {
-        const items = ref([
-            makeFolder(1, "Parent"),
-            makeFolder(2, "Child", 1),
-        ]);
+        const items = ref([makeFolder(1, "Parent"), makeFolder(2, "Child", 1)]);
         const { flatTree } = useDocumentFolderTree(items);
         expect(flatTree.value.map((n) => n.id)).toContain(2);
     });

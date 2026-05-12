@@ -20,7 +20,9 @@ describe("useDocumentFilters — initial state", () => {
 
 describe("useDocumentFilters — hasActiveFilter", () => {
     it("becomes true when categoryId is set", () => {
-        const { filterCategoryId, hasActiveFilter } = useDocumentFilters(vi.fn());
+        const { filterCategoryId, hasActiveFilter } = useDocumentFilters(
+            vi.fn(),
+        );
         filterCategoryId.value = 3;
         expect(hasActiveFilter.value).toBe(true);
     });
@@ -44,7 +46,8 @@ describe("useDocumentFilters — hasActiveFilter", () => {
     });
 
     it("returns to false after all filters are cleared", () => {
-        const { filterCategoryId, filterStatus, hasActiveFilter } = useDocumentFilters(vi.fn());
+        const { filterCategoryId, filterStatus, hasActiveFilter } =
+            useDocumentFilters(vi.fn());
         filterCategoryId.value = 1;
         filterStatus.value = "draft";
         filterCategoryId.value = null;
@@ -64,8 +67,13 @@ describe("useDocumentFilters — extraParams", () => {
     });
 
     it("includes set filter values", () => {
-        const { filterCategoryId, filterTagId, filterFolderId, filterStatus, extraParams } =
-            useDocumentFilters(vi.fn());
+        const {
+            filterCategoryId,
+            filterTagId,
+            filterFolderId,
+            filterStatus,
+            extraParams,
+        } = useDocumentFilters(vi.fn());
 
         filterCategoryId.value = 2;
         filterTagId.value = 5;
@@ -97,8 +105,13 @@ describe("useDocumentFilters — applyFilter / resetFilters", () => {
 
     it("resetFilters clears all filter values", () => {
         const reload = vi.fn();
-        const { filterCategoryId, filterTagId, filterFolderId, filterStatus, resetFilters } =
-            useDocumentFilters(reload);
+        const {
+            filterCategoryId,
+            filterTagId,
+            filterFolderId,
+            filterStatus,
+            resetFilters,
+        } = useDocumentFilters(reload);
 
         filterCategoryId.value = 1;
         filterTagId.value = 2;

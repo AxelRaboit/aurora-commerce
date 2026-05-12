@@ -7,7 +7,6 @@ namespace Aurora\Tests\Unit\Module\Ged\DocumentCategory\Serializer;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializer;
 use DateTimeImmutable;
-use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 
 final class DocumentCategorySerializerTest extends TestCase

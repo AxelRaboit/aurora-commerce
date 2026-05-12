@@ -16,7 +16,12 @@ function makeFolder(id, name, parentId = null) {
 
 function makeDragEvent(overrides = {}) {
     return {
-        dataTransfer: { effectAllowed: null, dropEffect: null, setData: vi.fn(), getData: vi.fn() },
+        dataTransfer: {
+            effectAllowed: null,
+            dropEffect: null,
+            setData: vi.fn(),
+            getData: vi.fn(),
+        },
         preventDefault: vi.fn(),
         ...overrides,
     };
@@ -24,7 +29,9 @@ function makeDragEvent(overrides = {}) {
 
 function makeDragOverEvent(ratioY = 0.5, overrides = {}) {
     return {
-        currentTarget: { getBoundingClientRect: () => ({ top: 0, height: 100 }) },
+        currentTarget: {
+            getBoundingClientRect: () => ({ top: 0, height: 100 }),
+        },
         clientY: ratioY * 100,
         preventDefault: vi.fn(),
         dataTransfer: { dropEffect: null },
@@ -66,21 +73,24 @@ describe("useDocumentFolderDragDrop — onDragStart", () => {
 
 describe("useDocumentFolderDragDrop — getZone (via onDragOver dropTarget)", () => {
     it("zone is 'before' when cursor is in top 40%", () => {
-        const { draggingId, dropTarget, onDragStart, onDragOver } = mountDragDrop();
+        const { draggingId, dropTarget, onDragStart, onDragOver } =
+            mountDragDrop();
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
         onDragOver(makeDragOverEvent(0.2), makeFolder(2, "B"));
         expect(dropTarget.value?.zone).toBe("before");
     });
 
     it("zone is 'into' when cursor is in middle 40%", () => {
-        const { draggingId, dropTarget, onDragStart, onDragOver } = mountDragDrop();
+        const { draggingId, dropTarget, onDragStart, onDragOver } =
+            mountDragDrop();
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
         onDragOver(makeDragOverEvent(0.5), makeFolder(2, "B"));
         expect(dropTarget.value?.zone).toBe("into");
     });
 
     it("zone is 'after' when cursor is in bottom 30%", () => {
-        const { draggingId, dropTarget, onDragStart, onDragOver } = mountDragDrop();
+        const { draggingId, dropTarget, onDragStart, onDragOver } =
+            mountDragDrop();
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
         onDragOver(makeDragOverEvent(0.85), makeFolder(2, "B"));
         expect(dropTarget.value?.zone).toBe("after");
@@ -105,7 +115,8 @@ describe("useDocumentFolderDragDrop — onDragOver", () => {
 
 describe("useDocumentFolderDragDrop — onDragEnd", () => {
     it("resets draggingId and dropTarget", () => {
-        const { draggingId, dropTarget, onDragStart, onDragOver, onDragEnd } = mountDragDrop();
+        const { draggingId, dropTarget, onDragStart, onDragOver, onDragEnd } =
+            mountDragDrop();
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
         onDragOver(makeDragOverEvent(0.5), makeFolder(2, "B"));
         onDragEnd();
@@ -162,28 +173,40 @@ describe("useDocumentFolderDragDrop — onDrop", () => {
     it("calls onSuccess callback after successful reparent", async () => {
         const onSuccess = vi.fn();
         const updatedFolders = [makeFolder(1, "A"), makeFolder(2, "B")];
-        vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-            ok: true,
-            json: async () => ({ success: true, folders: updatedFolders }),
-        }));
+        vi.stubGlobal(
+            "fetch",
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true, folders: updatedFolders }),
+            }),
+        );
 
         const { onDragStart, onDrop } = mountDragDrop(onSuccess);
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
-        await onDrop(makeDragOverEvent(0.5), makeFolder(2, "B"), [makeFolder(1, "A"), makeFolder(2, "B")]);
+        await onDrop(makeDragOverEvent(0.5), makeFolder(2, "B"), [
+            makeFolder(1, "A"),
+            makeFolder(2, "B"),
+        ]);
 
         expect(onSuccess).toHaveBeenCalledWith(updatedFolders);
     });
 
     it("does not call onSuccess when server returns success: false", async () => {
         const onSuccess = vi.fn();
-        vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-            ok: true,
-            json: async () => ({ success: false }),
-        }));
+        vi.stubGlobal(
+            "fetch",
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: false }),
+            }),
+        );
 
         const { onDragStart, onDrop } = mountDragDrop(onSuccess);
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
-        await onDrop(makeDragOverEvent(0.5), makeFolder(2, "B"), [makeFolder(1, "A"), makeFolder(2, "B")]);
+        await onDrop(makeDragOverEvent(0.5), makeFolder(2, "B"), [
+            makeFolder(1, "A"),
+            makeFolder(2, "B"),
+        ]);
 
         expect(onSuccess).not.toHaveBeenCalled();
     });
@@ -195,7 +218,9 @@ describe("useDocumentFolderDragDrop — onDrop", () => {
 
         const { onDragStart, onDrop } = mountDragDrop(onSuccess);
         onDragStart(makeDragEvent(), makeFolder(1, "A"));
-        await onDrop(makeDragOverEvent(0.5), makeFolder(1, "A"), [makeFolder(1, "A")]);
+        await onDrop(makeDragOverEvent(0.5), makeFolder(1, "A"), [
+            makeFolder(1, "A"),
+        ]);
 
         expect(fetchMock).not.toHaveBeenCalled();
     });
@@ -204,10 +229,16 @@ describe("useDocumentFolderDragDrop — onDrop", () => {
 describe("useDocumentFolderDragDrop — reorderSiblings insert position", () => {
     it("inserts dragged folder before target when zone is 'before'", async () => {
         let capturedBody;
-        vi.stubGlobal("fetch", vi.fn().mockImplementation(async (url, opts) => {
-            capturedBody = JSON.parse(opts.body);
-            return { ok: true, json: async () => ({ success: true, folders: [] }) };
-        }));
+        vi.stubGlobal(
+            "fetch",
+            vi.fn().mockImplementation(async (url, opts) => {
+                capturedBody = JSON.parse(opts.body);
+                return {
+                    ok: true,
+                    json: async () => ({ success: true, folders: [] }),
+                };
+            }),
+        );
 
         const { onDragStart, onDrop } = mountDragDrop();
         const folderA = makeFolder(1, "A", null);
@@ -224,10 +255,16 @@ describe("useDocumentFolderDragDrop — reorderSiblings insert position", () => 
 
     it("inserts dragged folder after target when zone is 'after'", async () => {
         let capturedBody;
-        vi.stubGlobal("fetch", vi.fn().mockImplementation(async (url, opts) => {
-            capturedBody = JSON.parse(opts.body);
-            return { ok: true, json: async () => ({ success: true, folders: [] }) };
-        }));
+        vi.stubGlobal(
+            "fetch",
+            vi.fn().mockImplementation(async (url, opts) => {
+                capturedBody = JSON.parse(opts.body);
+                return {
+                    ok: true,
+                    json: async () => ({ success: true, folders: [] }),
+                };
+            }),
+        );
 
         const { onDragStart, onDrop } = mountDragDrop();
         const folderA = makeFolder(1, "A", null);

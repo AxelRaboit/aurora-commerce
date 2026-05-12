@@ -199,7 +199,9 @@ const {
                         :title="t('shared.common.download')"
                         :href="doc.fileUrl"
                         download
-                    ><Download class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    >
+                        <Download class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
                     <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                 </div>
