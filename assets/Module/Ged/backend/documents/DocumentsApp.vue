@@ -212,7 +212,6 @@ const {
             :title="t('backend.ged.documents.create')"
             :icon="FileText"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showCreate = false"
         >
             <div class="space-y-4">
@@ -276,7 +275,6 @@ const {
             :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })"
             :icon="Pencil"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showEdit = false"
         >
             <div class="space-y-4">

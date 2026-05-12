@@ -437,7 +437,6 @@ onMounted(() => {
         <AppModal
             :show="eventForm.editModal.open"
             max-width="md"
-            :scrollable="false"
             :title="eventForm.editModal.event ? t('backend.planning_events.edit') : t('backend.planning_events.new')"
             :closeable="false"
             v-on:close="eventForm.editModal.open = false"

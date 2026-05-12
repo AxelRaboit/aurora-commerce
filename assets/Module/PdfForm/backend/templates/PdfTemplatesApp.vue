@@ -107,7 +107,6 @@ const {
             :title="t('backend.pdfform.templates.create')"
             :icon="FileText"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showCreate = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -163,7 +162,6 @@ const {
             :title="t('backend.pdfform.templates.edit', { name: editingTemplate?.name ?? '' })"
             :icon="Pencil"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showEdit = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
@@ -278,7 +276,6 @@ const {
             :title="t('backend.pdfform.fields.editField', { label: editingField?.label ?? '' })"
             :icon="Settings"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showEditField = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitFieldEdit">

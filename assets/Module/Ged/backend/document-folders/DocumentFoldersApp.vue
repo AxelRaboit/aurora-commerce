@@ -106,7 +106,6 @@ const flatTree = computed(() => {
             :title="t('backend.ged.folders.create')"
             :icon="Folder"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showCreate = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitCreate">
@@ -137,7 +136,6 @@ const flatTree = computed(() => {
             :title="t('backend.ged.folders.edit', { name: editingFolder?.name ?? '' })"
             :icon="Pencil"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showEdit = false"
         >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">

@@ -581,7 +581,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :title="t('backend.projects.add')"
             :icon="FolderKanban"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showProjectModal = false"
         >
             <div class="space-y-4">
@@ -654,7 +653,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :title="t('shared.common.edit')"
             :icon="Pencil"
             :closeable="false"
-            :scrollable="false"
             v-on:close="showEditProjectModal = false"
         >
             <div class="space-y-4">
@@ -727,7 +725,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             max-width="2xl"
             :title="t('backend.projects.task.add')"
             :icon="FolderKanban"
-            :scrollable="false"
             :closeable="false"
             v-on:close="showCreateTask = false"
         >
@@ -812,7 +809,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             max-width="2xl"
             :title="t('shared.common.edit')"
             :icon="Pencil"
-            :scrollable="false"
             :closeable="false"
             v-on:close="showEditTask = false"
         >
