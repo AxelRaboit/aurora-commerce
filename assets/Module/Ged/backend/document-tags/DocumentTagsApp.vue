@@ -4,6 +4,7 @@ import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentTagsForm } from "./composables/useDocumentTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -85,10 +86,9 @@ const {
                     :error="createErrors.name"
                     required
                 />
-                <AppInput
+                <AppColorPicker
                     v-model="newTag.color"
                     :label="t('backend.ged.tags.color')"
-                    placeholder="#3b82f6"
                 />
             </form>
             <template #footer>
@@ -114,10 +114,9 @@ const {
                     :error="editErrors.name"
                     required
                 />
-                <AppInput
+                <AppColorPicker
                     v-model="editForm.color"
                     :label="t('backend.ged.tags.color')"
-                    placeholder="#3b82f6"
                 />
             </form>
             <template #footer>
