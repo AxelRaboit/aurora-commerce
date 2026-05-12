@@ -119,6 +119,7 @@ backend:
       deleteConfirm: "Are you sure you want to delete folder « {name} »?"
       deleteWarning: Linked documents will not be deleted.
       namePlaceholder: Folder name…
+      searchPlaceholder: Search a folder…
       noParent: None (root)
       errors:
         name_required: Name is required

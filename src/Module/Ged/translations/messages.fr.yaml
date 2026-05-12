@@ -119,6 +119,7 @@ backend:
       deleteConfirm: "Êtes-vous sûr de vouloir supprimer le dossier « {name} » ?"
       deleteWarning: Les documents liés ne seront pas supprimés.
       namePlaceholder: Nom du dossier…
+      searchPlaceholder: Rechercher un dossier…
       noParent: Aucun (racine)
       errors:
         name_required: Le nom est obligatoire

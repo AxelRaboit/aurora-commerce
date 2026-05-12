@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -19,7 +18,8 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useDocumentFilters } from "./composables/useDocumentFilters.js";
+import { useDocumentDetail } from "./composables/useDocumentDetail.js";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, X, Folder, Download } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -46,48 +46,26 @@ const tagOptions = props.tags.map((tag) => ({ value: tag.id, label: tag.name }))
 const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }));
 
 // ── Detail modal ─────────────────────────────────────────────────────────────
-const viewingDoc = ref(null);
-const viewingDocVersions = ref([]);
-
-async function viewDoc(doc) {
-    viewingDoc.value = doc;
-    viewingDocVersions.value = [];
-    if (props.versionsPath) {
-        const url = buildPath(props.versionsPath, { id: doc.id });
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then((r) => r.json())
-            .then((data) => { if (data.success) viewingDocVersions.value = data.versions ?? []; })
-            .catch(() => {});
-    }
-}
+const { viewingDoc, viewingDocVersions, viewDoc, closeDetail } = useDocumentDetail(props.versionsPath);
 
 function openEditFromDetail() {
     const doc = viewingDoc.value;
-    viewingDoc.value = null;
+    closeDetail();
     openEdit(doc);
 }
 
 // ── Filters ──────────────────────────────────────────────────────────────────
-const filterCategoryId = ref(null);
-const filterTagId = ref(null);
-const filterFolderId = ref(null);
-const filterStatus = ref(null);
-
-function applyFilter() {
-    reset();
-}
+const {
+    filterCategoryId, filterTagId, filterFolderId, filterStatus,
+    hasActiveFilter, extraParams, applyFilter, resetFilters,
+} = useDocumentFilters(() => reset());
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
         initialData: props.documents,
-        extraParams: () => ({
-            categoryId: filterCategoryId.value || undefined,
-            tagId: filterTagId.value || undefined,
-            folderId: filterFolderId.value || undefined,
-            status: filterStatus.value || undefined,
-        }),
+        extraParams,
     },
 );
 
@@ -154,10 +132,10 @@ const {
                 v-on:update:model-value="applyFilter"
             />
             <button
-                v-if="filterCategoryId || filterTagId || filterFolderId || filterStatus"
+                v-if="hasActiveFilter"
                 type="button"
                 class="text-xs text-muted hover:text-primary transition flex items-center gap-1"
-                v-on:click="filterCategoryId = null; filterTagId = null; filterFolderId = null; filterStatus = null; applyFilter()"
+                v-on:click="resetFilters"
             >
                 <X class="w-3 h-3" :stroke-width="2" /> {{ t("shared.common.reset") }}
             </button>

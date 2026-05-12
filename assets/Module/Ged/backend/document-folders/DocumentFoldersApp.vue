@@ -1,17 +1,19 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentFoldersForm } from "./composables/useDocumentFoldersForm.js";
-import { buildFolderTree, flattenFolders } from "@/shared/utils/tree/folderTree.js";
+import { useDocumentFolderTree } from "./composables/useDocumentFolderTree.js";
+import { useDocumentFolderDragDrop } from "./composables/useDocumentFolderDragDrop.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import { Plus, Pencil, Trash2, Save, X, Folder, ChevronRight } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Folder, ChevronRight, GripVertical } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -20,6 +22,8 @@ const props = defineProps({
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    movePath: { type: String, default: "" },
+    reorderPath: { type: String, default: "" },
 });
 
 const {
@@ -34,27 +38,33 @@ const parentOptions = computed(() => [
     ...items.value.map((folder) => ({ value: folder.id, label: folder.name })),
 ]);
 
-const collapsedIds = ref(new Set());
+const { flatTree, collapsedIds, toggleCollapse } = useDocumentFolderTree(items);
 
-function toggleCollapse(id) {
-    const next = new Set(collapsedIds.value);
-    if (next.has(id)) { next.delete(id); } else { next.add(id); }
-    collapsedIds.value = next;
-}
-
-const flatTree = computed(() => {
-    const tree = buildFolderTree(items.value);
-    return flattenFolders(tree, 0, collapsedIds.value);
+const folderSearch = ref("");
+const filteredTree = computed(() => {
+    const q = folderSearch.value.trim().toLowerCase();
+    if (!q) return flatTree.value;
+    return flatTree.value.filter((node) => node.name.toLowerCase().includes(q));
 });
+
+const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
+    useDocumentFolderDragDrop(props.movePath, props.reorderPath, (updatedFolders) => {
+        items.value = updatedFolders;
+    });
 </script>
 
 <template>
     <div class="space-y-4">
-        <div class="flex justify-end">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+            <AppSearchInput
+                v-model="folderSearch"
+                :placeholder="t('backend.ged.folders.searchPlaceholder')"
+            />
             <AppButton
                 v-if="can('ged.folders.manage')"
                 variant="primary"
                 size="md"
+                class="w-full sm:w-auto"
                 v-on:click="openCreate"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.folders.add") }}
@@ -67,17 +77,41 @@ const flatTree = computed(() => {
             </div>
             <div v-else class="divide-y divide-line/40">
                 <div
-                    v-for="node in flatTree"
+                    v-for="node in filteredTree"
                     :key="node.id"
-                    class="group flex items-center gap-1 pr-3 hover:bg-surface-2/40 transition-colors"
+                    draggable="true"
+                    class="group relative flex items-center gap-1 pr-3 transition-colors cursor-grab active:cursor-grabbing select-none"
+                    :class="{
+                        'opacity-40': draggingId === node.id,
+                        'bg-surface-2/40': dropTarget?.id === node.id && dropTarget?.zone === 'into',
+                        'hover:bg-surface-2/40': draggingId !== node.id,
+                    }"
                     :style="{ paddingLeft: `${0.75 + node.depth * 1.25}rem` }"
+                    v-on:dragstart="onDragStart($event, node)"
+                    v-on:dragover="onDragOver($event, node)"
+                    v-on:dragleave="onDragLeave"
+                    v-on:dragend="onDragEnd"
+                    v-on:drop="onDrop($event, node, flatTree)"
                 >
+                    <!-- Drop indicator lines -->
+                    <div
+                        v-if="dropTarget?.id === node.id && dropTarget?.zone === 'before'"
+                        class="absolute top-0 left-0 right-0 h-0.5 bg-accent rounded-full pointer-events-none"
+                    />
+                    <div
+                        v-if="dropTarget?.id === node.id && dropTarget?.zone === 'after'"
+                        class="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full pointer-events-none"
+                    />
+
+                    <!-- Drag handle -->
+                    <GripVertical class="w-3.5 h-3.5 text-muted/40 group-hover:text-muted shrink-0 transition-colors" :stroke-width="2" />
+
                     <!-- Collapse toggle -->
                     <button
                         v-if="node.childCount"
                         type="button"
                         class="shrink-0 p-0.5 text-muted hover:text-primary transition-colors"
-                        v-on:click="toggleCollapse(node.id)"
+                        v-on:click.stop="toggleCollapse(node.id)"
                     >
                         <ChevronRight
                             class="w-3.5 h-3.5 transition-transform duration-150"
@@ -87,15 +121,19 @@ const flatTree = computed(() => {
                     </button>
                     <span v-else class="w-4 shrink-0" />
 
-                    <Folder class="w-4 h-4 text-muted shrink-0" :stroke-width="1.5" />
+                    <Folder
+                        class="w-4 h-4 shrink-0 transition-colors"
+                        :class="dropTarget?.id === node.id && dropTarget?.zone === 'into' ? 'text-accent' : 'text-muted'"
+                        :stroke-width="1.5"
+                    />
 
                     <span class="flex-1 py-3 text-sm font-medium text-primary truncate">{{ node.name }}</span>
 
                     <span v-if="node.childCount" class="text-xs text-muted tabular-nums shrink-0">{{ node.childCount }}</span>
 
                     <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                        <AppIconButton v-if="can('ged.folders.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(node)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('ged.folders.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(node)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('ged.folders.manage')" color="accent" :title="t('shared.common.edit')" v-on:click.stop="openEdit(node)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('ged.folders.manage')" color="rose" :title="t('shared.common.delete')" v-on:click.stop="confirmDelete(node)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
                 </div>
             </div>

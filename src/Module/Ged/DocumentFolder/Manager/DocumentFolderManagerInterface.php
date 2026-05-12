@@ -14,4 +14,9 @@ interface DocumentFolderManagerInterface
     public function update(DocumentFolderInterface $folder, DocumentFolderInputInterface $input): void;
 
     public function delete(DocumentFolderInterface $folder): void;
+
+    public function move(DocumentFolderInterface $folder, ?DocumentFolderInterface $newParent): void;
+
+    /** @param list<int> $orderedIds */
+    public function reorder(array $orderedIds): void;
 }

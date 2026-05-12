@@ -49,6 +49,34 @@ class DocumentFolderManager implements DocumentFolderManagerInterface
         $this->entityManager->flush();
     }
 
+    /**
+     * Moves a folder to a new parent (or root if null).
+     * Automatically appends it at the end of the new parent's children.
+     */
+    public function move(DocumentFolderInterface $folder, ?DocumentFolderInterface $newParent): void
+    {
+        $folder->setParent($newParent);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Persists a new position order for a set of sibling folders.
+     * Receives an ordered list of IDs; assigns position 0, 1, 2, ….
+     *
+     * @param list<int> $orderedIds
+     */
+    public function reorder(array $orderedIds): void
+    {
+        foreach ($orderedIds as $position => $folderId) {
+            $folder = $this->folderRepository->find($folderId);
+            if ($folder instanceof DocumentFolderInterface) {
+                $folder->setPosition($position);
+            }
+        }
+
+        $this->entityManager->flush();
+    }
+
     protected function createDocumentFolder(): DocumentFolderInterface
     {
         return new DocumentFolder();

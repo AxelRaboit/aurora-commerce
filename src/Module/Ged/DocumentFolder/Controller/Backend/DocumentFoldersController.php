@@ -47,6 +47,8 @@ final class DocumentFoldersController extends AbstractController
             'createPath' => $this->urlGenerator->generate('backend_ged_folders_create'),
             'updatePath' => $this->urlGenerator->generate('backend_ged_folders_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_ged_folders_delete', ['id' => '__id__']),
+            'movePath' => $this->urlGenerator->generate('backend_ged_folders_move', ['id' => '__id__']),
+            'reorderPath' => $this->urlGenerator->generate('backend_ged_folders_reorder'),
         ]);
     }
 
@@ -83,7 +85,30 @@ final class DocumentFoldersController extends AbstractController
     {
         $this->manager->delete($folder);
 
-        return $this->jsonSuccess();
+        return $this->jsonSuccess(['folders' => $this->allFolders()]);
+    }
+
+    #[Route('/{id}/move', name: '_move', methods: [HttpMethodEnum::Post->value])]
+    public function move(DocumentFolder $folder, Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $parentId = $data['parentId'] ?? null;
+        $newParent = null !== $parentId ? $this->folderRepository->find((int) $parentId) : null;
+
+        $this->manager->move($folder, $newParent);
+
+        return $this->jsonSuccess(['folders' => $this->allFolders()]);
+    }
+
+    #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
+    public function reorder(Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $orderedIds = array_map(intval(...), $data['ids'] ?? []);
+
+        $this->manager->reorder($orderedIds);
+
+        return $this->jsonSuccess(['folders' => $this->allFolders()]);
     }
 
     private function allFolders(): array
