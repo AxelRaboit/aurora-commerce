@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -25,6 +25,13 @@ export function useDocumentTagsForm(
     function applyUpdatedList(data) {
         if (Array.isArray(data?.tags)) items.value = data.tags;
     }
+
+    const search = ref("");
+    const filteredItems = computed(() => {
+        const q = search.value.trim().toLowerCase();
+        if (!q) return items.value;
+        return items.value.filter((tag) => tag.name.toLowerCase().includes(q));
+    });
 
     const showCreate = ref(false);
     const newTag = ref(emptyForm());
@@ -117,6 +124,8 @@ export function useDocumentTagsForm(
 
     return {
         items,
+        search,
+        filteredItems,
         showCreate,
         newTag,
         createErrors,

@@ -145,7 +145,69 @@ const {
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!items?.length" :message="t('backend.ged.documents.empty')" />
+            <div v-for="doc in items" :key="doc.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                <div class="flex items-start gap-3 p-4">
+                    <!-- Thumbnail or file icon -->
+                    <div class="shrink-0 mt-0.5">
+                        <AppThumbnail
+                            v-if="doc.fileMime?.startsWith('image/')"
+                            :src="doc.fileUrl"
+                            :alt="doc.fileName"
+                            size="sm"
+                        />
+                        <div v-else-if="doc.fileMime === 'application/pdf'" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                            <FileText class="w-4 h-4 text-rose-400" :stroke-width="1.5" />
+                        </div>
+                        <div v-else-if="doc.fileUrl" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                            <Paperclip class="w-4 h-4 text-muted" :stroke-width="1.5" />
+                        </div>
+                        <div v-else class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                            <FileText class="w-4 h-4 text-muted" :stroke-width="1.5" />
+                        </div>
+                    </div>
+                    <!-- Content -->
+                    <div class="min-w-0 flex-1">
+                        <p class="font-medium text-primary text-sm truncate">{{ doc.title }}</p>
+                        <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+                            <span v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</span>
+                            <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
+                                <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
+                            <span v-if="doc.categoryName" class="text-xs text-muted">{{ doc.categoryName }}</span>
+                        </div>
+                        <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 mt-1.5">
+                            <span
+                                v-for="tag in doc.tags"
+                                :key="tag.id"
+                                class="inline-flex items-center text-xs px-1.5 py-0.5 rounded-full border border-line/60"
+                                :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
+                            >{{ tag.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                    <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton
+                        v-if="doc.fileUrl"
+                        color="default"
+                        :title="t('shared.common.download')"
+                        :href="doc.fileUrl"
+                        download
+                    ><Download class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">

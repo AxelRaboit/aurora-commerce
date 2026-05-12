@@ -98,6 +98,7 @@ backend:
     tags:
       name: Nom
       color: Couleur
+      searchPlaceholder: Rechercher une étiquette…
       add: Nouvelle étiquette
       create: Créer une étiquette
       edit: "Modifier l'étiquette {name}"

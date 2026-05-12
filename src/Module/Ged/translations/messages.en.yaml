@@ -98,6 +98,7 @@ backend:
     tags:
       name: Name
       color: Color
+      searchPlaceholder: Search a tag…
       add: New tag
       create: Create a tag
       edit: "Edit tag {name}"

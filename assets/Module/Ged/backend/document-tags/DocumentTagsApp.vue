@@ -4,6 +4,7 @@ import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentTagsForm } from "./composables/useDocumentTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -22,6 +23,8 @@ const props = defineProps({
 
 const {
     items,
+    search: tagSearch,
+    filteredItems,
     showCreate, newTag, createErrors, createLoading, openCreate, submitCreate,
     showEdit, editingTag, editForm, editErrors, editLoading, openEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
@@ -30,18 +33,39 @@ const {
 
 <template>
     <div class="space-y-4">
-        <div class="flex justify-end">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+            <AppSearchInput v-model="tagSearch" :placeholder="t('backend.ged.tags.searchPlaceholder')" />
             <AppButton
                 v-if="can('ged.tags.manage')"
                 variant="primary"
                 size="md"
+                class="w-full sm:w-auto"
                 v-on:click="openCreate"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.tags.add") }}
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!filteredItems.length" :message="t('backend.ged.tags.empty')" />
+            <div v-for="tag in filteredItems" :key="tag.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                <div class="flex items-center gap-3 px-4 py-3">
+                    <span v-if="tag.color" class="inline-block w-3 h-3 rounded-full shrink-0" :style="{ backgroundColor: tag.color }" />
+                    <div class="min-w-0">
+                        <p class="font-medium text-primary text-sm truncate">{{ tag.name }}</p>
+                        <p v-if="tag.color" class="text-xs text-muted font-mono mt-0.5">{{ tag.color }}</p>
+                    </div>
+                </div>
+                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                    <AppIconButton v-if="can('ged.tags.manage')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tag)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton v-if="can('ged.tags.manage')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tag)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
@@ -51,7 +75,7 @@ const {
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
-                    <tr v-for="tag in items" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
+                    <tr v-for="tag in filteredItems" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3 font-medium text-primary flex items-center gap-2">
                             <span v-if="tag.color" class="inline-block w-3 h-3 rounded-full" :style="{ backgroundColor: tag.color }" />
                             {{ tag.name }}
@@ -64,7 +88,7 @@ const {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="!items?.length">
+                    <tr v-if="!filteredItems.length">
                         <td :colspan="3"><AppNoData :message="t('backend.ged.tags.empty')" /></td>
                     </tr>
                 </tbody>

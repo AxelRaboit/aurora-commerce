@@ -50,7 +50,23 @@ const {
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+        <!-- Mobile cards -->
+        <div class="sm:hidden space-y-2">
+            <AppNoData v-if="!items?.length" :message="t('backend.ged.categories.empty')" />
+            <div v-for="cat in items" :key="cat.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                <div class="px-4 py-3">
+                    <p class="font-medium text-primary text-sm">{{ cat.name }}</p>
+                    <p class="text-xs text-muted font-mono mt-0.5">{{ cat.slug }}</p>
+                </div>
+                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                    <AppIconButton v-if="can('ged.categories.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton v-if="can('ged.categories.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
