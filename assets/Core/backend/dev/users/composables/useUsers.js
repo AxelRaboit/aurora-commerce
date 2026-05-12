@@ -11,8 +11,9 @@ import {
     email,
     compose,
 } from "@/shared/utils/validation/validators.js";
+import { Locale } from "@/shared/utils/lang.js";
 
-const DEFAULT_LOCALE = "fr";
+const DEFAULT_LOCALE = Locale.Fr;
 
 export function useUsers(
     usersPath,
