@@ -76,6 +76,9 @@ function isPdf(mimeType) {
                 <AppButton v-if="can('ged.documents.edit')" variant="secondary" size="md" v-on:click="openEditDoc">
                     <Pencil class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.edit") }}
                 </AppButton>
+                <AppButton v-if="doc.fileUrl" variant="secondary" size="md" :href="doc.fileUrl" download>
+                    <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
+                </AppButton>
                 <AppButton v-if="can('ged.documents.delete')" variant="danger" size="md" v-on:click="handleDelete">
                     <Trash2 class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.delete") }}
                 </AppButton>
@@ -131,18 +134,30 @@ function isPdf(mimeType) {
             <!-- File -->
             <div v-if="doc.fileUrl" class="px-6 py-4">
                 <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t("backend.ged.documents.file") }}</p>
-                <img
-                    v-if="isImage(doc.fileMime)"
-                    :src="doc.fileUrl"
-                    :alt="doc.fileName"
-                    class="max-h-80 rounded-lg border border-line object-contain"
-                >
-                <iframe
-                    v-else-if="isPdf(doc.fileMime)"
-                    :src="doc.fileUrl"
-                    class="w-full h-96 rounded-lg border border-line"
-                    :title="doc.fileName"
-                />
+                <template v-if="isImage(doc.fileMime)">
+                    <img
+                        :src="doc.fileUrl"
+                        :alt="doc.fileName"
+                        class="max-h-80 rounded-lg border border-line object-contain"
+                    >
+                    <div class="flex justify-end mt-2">
+                        <a :href="doc.fileUrl" download class="flex items-center gap-1.5 text-sm text-accent hover:underline">
+                            <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
+                        </a>
+                    </div>
+                </template>
+                <template v-else-if="isPdf(doc.fileMime)">
+                    <iframe
+                        :src="doc.fileUrl"
+                        class="w-full h-96 rounded-lg border border-line"
+                        :title="doc.fileName"
+                    />
+                    <div class="flex justify-end mt-2">
+                        <a :href="doc.fileUrl" download class="flex items-center gap-1.5 text-sm text-accent hover:underline">
+                            <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
+                        </a>
+                    </div>
+                </template>
                 <div v-else class="flex items-center gap-3 p-3 bg-surface-2 rounded-lg border border-line">
                     <FileText class="w-8 h-8 text-muted shrink-0" :stroke-width="1.5" />
                     <div class="flex-1 min-w-0">

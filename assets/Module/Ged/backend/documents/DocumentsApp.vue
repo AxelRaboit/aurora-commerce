@@ -202,6 +202,7 @@ const {
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
                                 <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="doc.fileUrl" color="default" :title="t('shared.common.download')" :href="doc.fileUrl" download><Download class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
@@ -457,18 +458,30 @@ const {
 
                     <!-- File -->
                     <div v-if="viewingDoc.fileUrl" class="rounded-lg border border-line overflow-hidden">
-                        <img
-                            v-if="viewingDoc.fileMime?.startsWith('image/')"
-                            :src="viewingDoc.fileUrl"
-                            :alt="viewingDoc.fileName"
-                            class="w-full max-h-64 object-contain bg-surface-2"
-                        >
-                        <iframe
-                            v-else-if="viewingDoc.fileMime === 'application/pdf'"
-                            :src="viewingDoc.fileUrl"
-                            class="w-full h-64"
-                            :title="viewingDoc.fileName"
-                        />
+                        <template v-if="viewingDoc.fileMime?.startsWith('image/')">
+                            <img
+                                :src="viewingDoc.fileUrl"
+                                :alt="viewingDoc.fileName"
+                                class="w-full max-h-64 object-contain bg-surface-2"
+                            >
+                            <div class="flex justify-end px-3 py-2 border-t border-line bg-surface">
+                                <a :href="viewingDoc.fileUrl" download class="flex items-center gap-1 text-xs text-accent hover:underline">
+                                    <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
+                                </a>
+                            </div>
+                        </template>
+                        <template v-else-if="viewingDoc.fileMime === 'application/pdf'">
+                            <iframe
+                                :src="viewingDoc.fileUrl"
+                                class="w-full h-64"
+                                :title="viewingDoc.fileName"
+                            />
+                            <div class="flex justify-end px-3 py-2 border-t border-line bg-surface">
+                                <a :href="viewingDoc.fileUrl" download class="flex items-center gap-1 text-xs text-accent hover:underline">
+                                    <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
+                                </a>
+                            </div>
+                        </template>
                         <div v-else class="flex items-center gap-3 px-4 py-3 bg-surface-2">
                             <FileText class="w-6 h-6 text-muted shrink-0" :stroke-width="1.5" />
                             <div class="flex-1 min-w-0">
@@ -485,6 +498,7 @@ const {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingDoc = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+                    <AppButton v-if="viewingDoc?.fileUrl" variant="secondary" size="md" :href="viewingDoc.fileUrl" download><Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
