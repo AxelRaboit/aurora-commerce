@@ -42,6 +42,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [structure_controller.md](structure_controller.md) — Controllers Backend/Front, routes, type-hints, traits utiles
 - [structure_manager_vs_service.md](structure_manager_vs_service.md) — quand mettre dans `Manager/` vs `Service/`
 - [structure_repository.md](structure_repository.md) — `ResolveTargetEntityRepository` pattern, finders
+- [convention_repository_eager_loading.md](convention_repository_eager_loading.md) — nommer les méthodes de repo anti-N+1 : `findAllForIndex`, `findAllWith*`, `hydrate*Collections` batch post-pagination
 - [structure_view_builder.md](structure_view_builder.md) — `<Plural>ViewBuilder` pour les payloads Twig admin
 - [structure_templates.md](structure_templates.md) — namespaces Twig, override automatique, conventions de naming
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, patterns extension, anti-patterns
