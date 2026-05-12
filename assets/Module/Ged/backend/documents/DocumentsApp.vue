@@ -22,6 +22,7 @@ import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download } from "lucide-vue-next";
+import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -459,11 +460,7 @@ const {
                     <!-- File -->
                     <div v-if="viewingDoc.fileUrl" class="rounded-lg border border-line overflow-hidden">
                         <template v-if="viewingDoc.fileMime?.startsWith('image/')">
-                            <img
-                                :src="viewingDoc.fileUrl"
-                                :alt="viewingDoc.fileName"
-                                class="w-full max-h-64 object-contain bg-surface-2"
-                            >
+                            <AppImagePreview :src="viewingDoc.fileUrl" :alt="viewingDoc.fileName" full />
                             <div class="flex justify-end px-3 py-2 border-t border-line bg-surface">
                                 <a :href="viewingDoc.fileUrl" download class="flex items-center gap-1 text-xs text-accent hover:underline">
                                     <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}

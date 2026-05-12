@@ -14,6 +14,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { Pencil, Trash2, ArrowLeft, Download, FileText, Folder, Tag, Save, X, Paperclip } from "lucide-vue-next";
+import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -135,11 +136,7 @@ function isPdf(mimeType) {
             <div v-if="doc.fileUrl" class="px-6 py-4">
                 <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t("backend.ged.documents.file") }}</p>
                 <template v-if="isImage(doc.fileMime)">
-                    <img
-                        :src="doc.fileUrl"
-                        :alt="doc.fileName"
-                        class="max-h-80 rounded-lg border border-line object-contain"
-                    >
+                    <AppImagePreview :src="doc.fileUrl" :alt="doc.fileName" size="lg" />
                     <div class="flex justify-end mt-2">
                         <a :href="doc.fileUrl" download class="flex items-center gap-1.5 text-sm text-accent hover:underline">
                             <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
