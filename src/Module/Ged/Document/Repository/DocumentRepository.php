@@ -8,6 +8,7 @@ use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,6 +29,7 @@ class DocumentRepository extends ResolveTargetEntityRepository
         ?int $categoryId = null,
         ?int $tagId = null,
         ?int $folderId = null,
+        ?DocumentStatusEnum $status = null,
     ): array {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.category', 'c')
@@ -56,6 +58,11 @@ class DocumentRepository extends ResolveTargetEntityRepository
         if (null !== $folderId) {
             $qb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
             $countQb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
+        }
+
+        if ($status instanceof DocumentStatusEnum) {
+            $qb->andWhere('d.status = :status')->setParameter('status', $status);
+            $countQb->andWhere('d.status = :status')->setParameter('status', $status);
         }
 
         $result = $this->paginate($qb, $countQb, $page, $limit);

@@ -13,6 +13,7 @@ use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentFolder\Serializer\DocumentFolderSerializerInterface;
 use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
 use Aurora\Module\Ged\DocumentTag\Serializer\DocumentTagSerializerInterface;
+use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class DocumentsViewBuilder
@@ -66,6 +67,7 @@ final readonly class DocumentsViewBuilder
         ?int $categoryId = null,
         ?int $tagId = null,
         ?int $folderId = null,
+        ?DocumentStatusEnum $status = null,
     ): array {
         $result = $this->documentRepository->findPaginated(
             $pagination->page,
@@ -73,6 +75,7 @@ final readonly class DocumentsViewBuilder
             categoryId: $categoryId,
             tagId: $tagId,
             folderId: $folderId,
+            status: $status,
         );
 
         return [

@@ -14,6 +14,7 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
+use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,8 +51,10 @@ final class DocumentsController extends AbstractController
         $categoryId = $request->query->getInt('categoryId') ?: null;
         $tagId = $request->query->getInt('tagId') ?: null;
         $folderId = $request->query->getInt('folderId') ?: null;
+        $statusValue = $request->query->getString('status');
+        $status = '' !== $statusValue ? DocumentStatusEnum::tryFrom($statusValue) : null;
 
-        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId));
+        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId, $status));
     }
 
     #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]

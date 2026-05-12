@@ -60,6 +60,7 @@ function openEditFromDetail() {
 const filterCategoryId = ref(null);
 const filterTagId = ref(null);
 const filterFolderId = ref(null);
+const filterStatus = ref(null);
 
 function applyFilter() {
     reset();
@@ -74,6 +75,7 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
             categoryId: filterCategoryId.value || undefined,
             tagId: filterTagId.value || undefined,
             folderId: filterFolderId.value || undefined,
+            status: filterStatus.value || undefined,
         }),
     },
 );
@@ -131,11 +133,20 @@ const {
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
+            <AppMultiselect
+                v-model="filterStatus"
+                :options="statusOptions"
+                :allow-empty="true"
+                :searchable="false"
+                :placeholder="t('backend.ged.documents.filterByStatus')"
+                class="min-w-44"
+                v-on:update:model-value="applyFilter"
+            />
             <button
-                v-if="filterCategoryId || filterTagId || filterFolderId"
+                v-if="filterCategoryId || filterTagId || filterFolderId || filterStatus"
                 type="button"
                 class="text-xs text-muted hover:text-primary transition flex items-center gap-1"
-                v-on:click="filterCategoryId = null; filterTagId = null; filterFolderId = null; applyFilter()"
+                v-on:click="filterCategoryId = null; filterTagId = null; filterFolderId = null; filterStatus = null; applyFilter()"
             >
                 <X class="w-3 h-3" :stroke-width="2" /> {{ t("shared.common.reset") }}
             </button>
