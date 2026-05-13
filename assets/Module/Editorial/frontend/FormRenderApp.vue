@@ -103,16 +103,24 @@ const { submitting, submitted, handleSubmit } =
                     </div>
 
                     <div v-else-if="field.type === 'checkbox'">
-                        <AppFieldLabel :label="field.label" :required="field.required" />
-                        <div class="mt-1.5 space-y-1.5">
-                            <AppCheckbox
-                                v-for="option in field.options"
-                                :key="option"
-                                :label="option"
-                                :model-value="isChecked(field.id, option)"
-                                v-on:update:model-value="toggleCheckbox(field.id, option)"
-                            />
-                        </div>
+                        <AppCheckbox
+                            v-if="!field.options?.length"
+                            v-model="formData[field.id]"
+                        >
+                            {{ field.label }}<span v-if="field.required" class="ml-0.5 text-rose-400">*</span>
+                        </AppCheckbox>
+                        <template v-else>
+                            <AppFieldLabel :label="field.label" :required="field.required" />
+                            <div class="mt-1.5 space-y-1.5">
+                                <AppCheckbox
+                                    v-for="option in field.options"
+                                    :key="option"
+                                    :label="option"
+                                    :model-value="isChecked(field.id, option)"
+                                    v-on:update:model-value="toggleCheckbox(field.id, option)"
+                                />
+                            </div>
+                        </template>
                         <p v-if="errors[field.id]" class="mt-1 text-xs text-rose-400">{{ errors[field.id] }}</p>
                     </div>
 

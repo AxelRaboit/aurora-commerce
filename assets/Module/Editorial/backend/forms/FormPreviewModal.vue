@@ -72,7 +72,11 @@ function resetPreview() {
     Object.keys(errors).forEach((k) => delete errors[k]);
     Object.keys(formData).forEach((k) => delete formData[k]);
     for (const field of previewFields.value) {
-        formData[field.id] = field.type === FormFieldType.Checkbox ? [] : "";
+        if (field.type === FormFieldType.Checkbox) {
+            formData[field.id] = field.options?.length ? [] : false;
+        } else {
+            formData[field.id] = "";
+        }
     }
 }
 
@@ -124,7 +128,11 @@ function validateStep(fields) {
     let valid = true;
     for (const field of fields) {
         const value = formData[field.id];
-        const isEmpty = Array.isArray(value) ? value.length === 0 : String(value ?? "").trim() === "";
+        const isEmpty = value === false
+            ? true
+            : Array.isArray(value)
+                ? value.length === 0
+                : String(value ?? "").trim() === "";
         if (field.required && isEmpty) {
             errors[field.id] = t("shared.form.fieldRequired");
             valid = false;
@@ -246,16 +254,24 @@ function toggleCheckbox(fieldId, option) {
                         </div>
 
                         <div v-else-if="field.type === 'checkbox'">
-                            <AppFieldLabel :label="field.label || '—'" :required="field.required" />
-                            <div class="mt-1.5 space-y-1.5">
-                                <AppCheckbox
-                                    v-for="opt in field.options"
-                                    :key="opt"
-                                    :label="opt"
-                                    :model-value="isChecked(field.id, opt)"
-                                    v-on:update:model-value="toggleCheckbox(field.id, opt)"
-                                />
-                            </div>
+                            <AppCheckbox
+                                v-if="!field.options?.length"
+                                v-model="formData[field.id]"
+                            >
+                                {{ field.label || '—' }}<span v-if="field.required" class="ml-0.5 text-rose-400">*</span>
+                            </AppCheckbox>
+                            <template v-else>
+                                <AppFieldLabel :label="field.label || '—'" :required="field.required" />
+                                <div class="mt-1.5 space-y-1.5">
+                                    <AppCheckbox
+                                        v-for="opt in field.options"
+                                        :key="opt"
+                                        :label="opt"
+                                        :model-value="isChecked(field.id, opt)"
+                                        v-on:update:model-value="toggleCheckbox(field.id, opt)"
+                                    />
+                                </div>
+                            </template>
                             <p v-if="errors[field.id]" class="mt-1 text-xs text-rose-400">{{ errors[field.id] }}</p>
                         </div>
 

@@ -2,11 +2,12 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { openMediaPicker } from "@/shared/utils/mediaPicker.js";
 
 export function useGalleryEditItems(props, initialItems) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const items = ref([...initialItems]);
     const selected = ref(new Set());
@@ -43,24 +44,16 @@ export function useGalleryEditItems(props, initialItems) {
             multiple: true,
         });
         if (!Array.isArray(picked) || picked.length === 0) return;
-        try {
-            const response = await fetch(props.itemsAddPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ mediaIds: picked.map((m) => m.id) }),
-            });
-            const data = await response.json();
-            if (!data?.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            items.value = data.items ?? items.value;
-            toast.success(
-                t("photo.galleries.itemsAdded", { count: data.added }),
-            );
-        } catch {
+        const data = await request(props.itemsAddPath, { mediaIds: picked.map((m) => m.id) });
+        if (!data) return;
+        if (!data.success) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        items.value = data.items ?? items.value;
+        toast.success(
+            t("photo.galleries.itemsAdded", { count: data.added }),
+        );
     }
 
     // ── Single delete ─────────────────────────────────────────────────────────
@@ -75,25 +68,17 @@ export function useGalleryEditItems(props, initialItems) {
         if (!pendingDeleteItem.value || deleteOneLoading.value) return;
         deleteOneLoading.value = true;
         const item = pendingDeleteItem.value;
-        try {
-            const response = await fetch(
-                buildPath(props.itemsDeletePath, { id: item.id }),
-                { method: HttpMethod.Post },
-            );
-            const data = await response.json();
-            if (data?.success) {
-                items.value = items.value.filter((i) => i.id !== item.id);
-                selected.value.delete(item.id);
-                selected.value = new Set(selected.value);
-                pendingDeleteItem.value = null;
-                toast.success(t("photo.galleries.itemsDeleted", { count: 1 }));
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(buildPath(props.itemsDeletePath, { id: item.id }));
+        deleteOneLoading.value = false;
+        if (!data) return;
+        if (data.success) {
+            items.value = items.value.filter((i) => i.id !== item.id);
+            selected.value.delete(item.id);
+            selected.value = new Set(selected.value);
+            pendingDeleteItem.value = null;
+            toast.success(t("photo.galleries.itemsDeleted", { count: 1 }));
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            deleteOneLoading.value = false;
         }
     }
 
@@ -114,29 +99,20 @@ export function useGalleryEditItems(props, initialItems) {
             return;
         }
         bulkDeleteLoading.value = true;
-        try {
-            const response = await fetch(props.itemsBulkDeletePath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ itemIds: ids }),
-            });
-            const data = await response.json();
-            if (data?.success) {
-                items.value = items.value.filter(
-                    (i) => !selected.value.has(i.id),
-                );
-                selected.value = new Set();
-                pendingBulkDelete.value = false;
-                toast.success(
-                    t("photo.galleries.itemsDeleted", { count: data.deleted }),
-                );
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(props.itemsBulkDeletePath, { itemIds: ids });
+        bulkDeleteLoading.value = false;
+        if (!data) return;
+        if (data.success) {
+            items.value = items.value.filter(
+                (i) => !selected.value.has(i.id),
+            );
+            selected.value = new Set();
+            pendingBulkDelete.value = false;
+            toast.success(
+                t("photo.galleries.itemsDeleted", { count: data.deleted }),
+            );
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            bulkDeleteLoading.value = false;
         }
     }
 
@@ -161,15 +137,7 @@ export function useGalleryEditItems(props, initialItems) {
         reordered.splice(targetIndex, 0, moved);
         items.value = reordered;
         draggingIndex = null;
-        try {
-            await fetch(props.itemsReorderPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ itemIds: reordered.map((i) => i.id) }),
-            });
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await request(props.itemsReorderPath, { itemIds: reordered.map((i) => i.id) });
     }
 
     return {

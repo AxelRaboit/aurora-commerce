@@ -1,5 +1,4 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";
@@ -12,10 +11,13 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
+const { request } = useRequest();
 
 const props = defineProps({
     postId: { type: Number, required: true },
@@ -45,53 +47,32 @@ watch(
 
 async function fetchRevisions() {
     loadingList.value = true;
-    try {
-        const response = await fetch(`/backend/posts/${props.postId}/revisions`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        revisions.value = data.revisions ?? [];
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        loadingList.value = false;
-    }
+    const data = await request(`/backend/posts/${props.postId}/revisions`, null, { method: HttpMethod.Get, noGuard: true });
+    loadingList.value = false;
+    if (!data) return;
+    revisions.value = data.revisions ?? [];
 }
 
 async function selectRevision(revision) {
     selectedRevision.value = null;
     loadingSelected.value = true;
-    try {
-        const response = await fetch(`/backend/posts/${props.postId}/revisions/${revision.id}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        selectedRevision.value = data.revision ?? null;
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        loadingSelected.value = false;
-    }
+    const data = await request(`/backend/posts/${props.postId}/revisions/${revision.id}`, null, { method: HttpMethod.Get, noGuard: true });
+    loadingSelected.value = false;
+    if (!data) return;
+    selectedRevision.value = data.revision ?? null;
 }
 
 async function restore() {
     if (!selectedRevision.value) return;
     restoring.value = true;
-    try {
-        const response = await fetch(`/backend/posts/${props.postId}/revisions/${selectedRevision.value.id}/restore`, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (data.success) {
-            toast.success(t("backend.posts.revisions.restored"));
-            emit("restored");
-        } else {
-            toast.error(t("shared.common.error"));
-        }
-    } catch {
+    const data = await request(`/backend/posts/${props.postId}/revisions/${selectedRevision.value.id}/restore`);
+    restoring.value = false;
+    if (!data) return;
+    if (data.success) {
+        toast.success(t("backend.posts.revisions.restored"));
+        emit("restored");
+    } else {
         toast.error(t("shared.common.error"));
-    } finally {
-        restoring.value = false;
     }
 }
 

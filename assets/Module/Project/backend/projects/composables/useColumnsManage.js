@@ -1,8 +1,7 @@
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
@@ -68,6 +67,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         handleErrors: handleRenameErrors,
     } = useServerErrors();
     const { loading: renameLoading, request: renameRequest } = useRequest();
+    const { request: deleteRequest } = useRequest();
 
     function openRenameColumn(column) {
         editingColumn.value = column;
@@ -111,25 +111,17 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
     async function doDeleteColumn() {
         if (!pendingDeleteColumn.value) return;
         deleteColumnLoading.value = true;
-        try {
-            const url = buildPath(paths.delete, {
-                columnId: pendingDeleteColumn.value.id,
-            });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            const data = await response.json();
-            if (data.success) {
-                pendingDeleteColumn.value = null;
-                await reloadDetail();
-            } else {
-                toast.error(translateServerErrors(t, data.errors)._global ?? t("shared.common.error"));
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            deleteColumnLoading.value = false;
+        const url = buildPath(paths.delete, {
+            columnId: pendingDeleteColumn.value.id,
+        });
+        const data = await deleteRequest(url);
+        deleteColumnLoading.value = false;
+        if (!data) return;
+        if (data.success) {
+            pendingDeleteColumn.value = null;
+            await reloadDetail();
+        } else {
+            toast.error(translateServerErrors(t, data.errors)._global ?? t("shared.common.error"));
         }
     }
 
@@ -150,16 +142,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         if (!activeProject.value) return;
         const orderedIds = orderedColumns.value.map((column) => column.id);
         const url = buildPath(paths.reorder, { id: activeProject.value.id });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderedIds }),
-            });
-            if (!response.ok) throw new Error();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        await deleteRequest(url, { orderedIds }, { noGuard: true });
     }
 
     return {

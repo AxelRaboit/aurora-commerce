@@ -1,8 +1,8 @@
 import { ref, computed } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
 
 export const KIND = {
     Favorite: "favorite",
@@ -48,56 +48,50 @@ export function useGalleryPicks({
         return picked.value[kind]?.has(Number(id)) ?? false;
     }
 
+    const { request: requestToggle } = useFrontendRequest();
+
     async function sendToggle(
         itemId,
         kind,
         { name = null, email = null } = {},
     ) {
-        try {
-            const response = await fetch(buildPath(pickPath, { id: itemId }), {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, kind }),
-            });
-            if (response.status === 422) {
-                const data = await response.json().catch(() => null);
-                if (data?.error === "identity_required") {
-                    pendingPick.value = { itemId, kind };
-                    showIdentityModal.value = true;
-                    identityKnown.value = false;
-                    return;
-                }
-            }
-            if (response.status === 409) {
-                const data = await response.json().catch(() => null);
-                if (data?.error === "max_picks_reached") {
-                    toast.error(
-                        t("photo.galleries.errors.max_picks_reached", {
-                            limit: data.limit,
-                        }),
-                    );
-                    return;
-                }
-                if (data?.error === "finalized") {
-                    finalized.value = true;
-                    toast.info(t("photo.frontend.alreadyFinalized"));
-                    return;
-                }
-            }
-            const data = await response.json();
-            if (!data?.success) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            const set = picked.value[kind];
-            if (data.picked) set.add(Number(itemId));
-            else set.delete(Number(itemId));
-            picked.value = { ...picked.value, [kind]: new Set(set) };
-            if (typeof data.favoriteCount === "number")
-                favoriteTotal.value = data.favoriteCount;
-        } catch {
+        const data = await requestToggle(
+            buildPath(pickPath, { id: itemId }),
+            { name, email, kind },
+        );
+        if (!data) {
             toast.error(t("shared.common.error"));
+            return;
         }
+        if (data?.error === "identity_required") {
+            pendingPick.value = { itemId, kind };
+            showIdentityModal.value = true;
+            identityKnown.value = false;
+            return;
+        }
+        if (data?.error === "max_picks_reached") {
+            toast.error(
+                t("photo.galleries.errors.max_picks_reached", {
+                    limit: data.limit,
+                }),
+            );
+            return;
+        }
+        if (data?.error === "finalized") {
+            finalized.value = true;
+            toast.info(t("photo.frontend.alreadyFinalized"));
+            return;
+        }
+        if (!data?.success) {
+            toast.error(t("shared.common.error"));
+            return;
+        }
+        const set = picked.value[kind];
+        if (data.picked) set.add(Number(itemId));
+        else set.delete(Number(itemId));
+        picked.value = { ...picked.value, [kind]: new Set(set) };
+        if (typeof data.favoriteCount === "number")
+            favoriteTotal.value = data.favoriteCount;
     }
 
     async function togglePick(itemId, kind = KIND.Favorite) {

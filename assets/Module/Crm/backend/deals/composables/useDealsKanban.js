@@ -3,9 +3,11 @@ import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { toast } from "vue-sonner";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 export function useDealsKanban(props) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const localColumns = ref(
         props.kanbanColumns
@@ -25,22 +27,14 @@ export function useDealsKanban(props) {
         if (!force && kanbanColumnsLoaded.value) return;
         if (!props.kanbanColumnsPath) return;
         kanbanLoading.value = true;
-        try {
-            const response = await fetch(props.kanbanColumnsPath, {
-                headers: { Accept: "application/json" },
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            const columns = data.columns ?? {};
-            localColumns.value = Object.fromEntries(
-                props.stages.map((s) => [s, [...(columns[s] ?? [])]]),
-            );
-            kanbanColumnsLoaded.value = true;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            kanbanLoading.value = false;
-        }
+        const data = await request(props.kanbanColumnsPath, null, HttpMethod.Get);
+        kanbanLoading.value = false;
+        if (!data) return;
+        const columns = data.columns ?? {};
+        localColumns.value = Object.fromEntries(
+            props.stages.map((s) => [s, [...(columns[s] ?? [])]]),
+        );
+        kanbanColumnsLoaded.value = true;
     }
 
     const totalByStage = computed(() =>
@@ -50,18 +44,8 @@ export function useDealsKanban(props) {
     );
 
     async function patchStage(dealId, stage) {
-        try {
-            const url = buildPath(props.updateStagePath, { id: dealId });
-            const response = await fetch(url, {
-                method: HttpMethod.Patch,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ stage }),
-            });
-            if (!response.ok) return null;
-            return await response.json();
-        } catch {
-            return null;
-        }
+        const url = buildPath(props.updateStagePath, { id: dealId });
+        return await request(url, { stage }, { method: HttpMethod.Patch, noGuard: true });
     }
 
     async function updateStageForDeal(deal, newStage) {

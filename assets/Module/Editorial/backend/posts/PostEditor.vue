@@ -25,6 +25,8 @@ import PostFeaturedImagePanel from "./PostFeaturedImagePanel.vue";
 import PostTemplatesOverlay from "./PostTemplatesOverlay.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import { usePostSave } from "./composables/usePostSave.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { useRelatedSearch } from "./composables/useRelatedSearch.js";
 import { applyPostData } from "./utils/applyPostData.js";
@@ -37,6 +39,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
+const { request: getRequest } = useRequest();
 
 const props = defineProps({
     postId: { type: Number, default: null },
@@ -180,26 +183,20 @@ const sideState = {
 onMounted(async () => {
     if (!props.postId) return;
     fetching.value = true;
-    try {
-        const response = await fetch(buildPath(props.showPath, { id: props.postId }));
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (data.success) {
-            applyPostData(data.post, form, sideState);
-            setRelatedPosts(data.post.relatedPosts ?? []);
-            // Hydrate client-registered extra fields from the loaded post.
-            for (const [key, def] of Object.entries(props.extraFields ?? {})) {
-                form[key] = def.fromEntity ? def.fromEntity(data.post) : (data.post[key] ?? def.default);
-            }
-            snapshotBase(form.translations);
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
+    const data = await getRequest(buildPath(props.showPath, { id: props.postId }), null, HttpMethod.Get);
+    fetching.value = false;
+    if (!data) {
         emit("back");
-    } finally {
-        fetching.value = false;
-        nextTick(() => { isDirty.value = false; });
+    } else if (data.success) {
+        applyPostData(data.post, form, sideState);
+        setRelatedPosts(data.post.relatedPosts ?? []);
+        // Hydrate client-registered extra fields from the loaded post.
+        for (const [key, def] of Object.entries(props.extraFields ?? {})) {
+            form[key] = def.fromEntity ? def.fromEntity(data.post) : (data.post[key] ?? def.default);
+        }
+        snapshotBase(form.translations);
     }
+    nextTick(() => { isDirty.value = false; });
 });
 
 function toggleTerm(termId) {
@@ -267,24 +264,19 @@ const editorKey     = ref(0);
 
 async function reloadAfterRestore() {
     showRevisions.value = false;
-    try {
-        const response = await fetch(buildPath(props.showPath, { id: props.postId }));
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (data.success) {
-            applyPostData(data.post, form, sideState);
-            setRelatedPosts(data.post.relatedPosts ?? []);
-            snapshotBase(form.translations);
-            if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
-                await nextTick();
-                await renderEditorBlocks(form.translations[activeLocale.value].blocks);
-            } else {
-                editorKey.value++;
-            }
-            nextTick(() => { isDirty.value = false; });
+    const data = await getRequest(buildPath(props.showPath, { id: props.postId }), null, HttpMethod.Get);
+    if (!data) return;
+    if (data.success) {
+        applyPostData(data.post, form, sideState);
+        setRelatedPosts(data.post.relatedPosts ?? []);
+        snapshotBase(form.translations);
+        if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
+            await nextTick();
+            await renderEditorBlocks(form.translations[activeLocale.value].blocks);
+        } else {
+            editorKey.value++;
         }
-    } catch {
-        toast.error(t("shared.common.error"));
+        nextTick(() => { isDirty.value = false; });
     }
 }
 

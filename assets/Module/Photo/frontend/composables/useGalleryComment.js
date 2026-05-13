@@ -1,9 +1,9 @@
 import { ref } from "vue";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
 
 // showCommentBox and commentDraft are passed in as refs (shared with useGalleryLightbox)
 export function useGalleryComment({
@@ -17,8 +17,8 @@ export function useGalleryComment({
     identityKnown,
 }) {
     const { t } = useI18n();
+    const { loading: commentSending, request: requestComment } = useFrontendRequest();
 
-    const commentSending = ref(false);
     const commentNameError = ref("");
     const commentEmailError = ref("");
 
@@ -41,37 +41,25 @@ export function useGalleryComment({
             return;
         }
         const itemId = displayedItems.value[lightboxIndex.value].id;
-        commentSending.value = true;
-        try {
-            const response = await fetch(
-                buildPath(commentPath, { id: itemId }),
-                {
-                    method: HttpMethod.Post,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        content: commentDraft.value,
-                        name: visitorName.value,
-                        email: visitorEmail.value,
-                    }),
-                },
-            );
-            const data = await response.json();
-            if (!data?.success) {
-                const errors = translateServerErrors(t, data?.errors);
-                if (errors.visitorEmail)
-                    commentEmailError.value = errors.visitorEmail;
-                else toast.error(t("shared.common.error"));
-                return;
-            }
-            identityKnown.value = true;
-            toast.success(t("photo.frontend.comments.sent"));
-            commentDraft.value = "";
-            showCommentBox.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            commentSending.value = false;
+        const data = await requestComment(
+            buildPath(commentPath, { id: itemId }),
+            {
+                content: commentDraft.value,
+                name: visitorName.value,
+                email: visitorEmail.value,
+            },
+        );
+        if (!data?.success) {
+            const errors = translateServerErrors(t, data?.errors);
+            if (errors.visitorEmail)
+                commentEmailError.value = errors.visitorEmail;
+            else toast.error(t("shared.common.error"));
+            return;
         }
+        identityKnown.value = true;
+        toast.success(t("photo.frontend.comments.sent"));
+        commentDraft.value = "";
+        showCommentBox.value = false;
     }
 
     return {

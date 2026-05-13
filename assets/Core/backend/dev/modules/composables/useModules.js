@@ -44,6 +44,8 @@ export function useModules(
     const pendingToggle = ref(null);
 
     const { request: loadRequest } = useRequest();
+    const { request: patchRequest } = useRequest();
+    const { request: verifyRequest } = useRequest();
 
     function init(params) {
         for (const parameter of params) {
@@ -124,18 +126,13 @@ export function useModules(
 
         try {
             for (const parameter of changed) {
-                const response = await fetch(
+                const result = await patchRequest(
                     moduleUpdatePath.replace("__key__", parameter.key),
-                    {
-                        method: HttpMethod.Patch,
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            value: fieldValues[parameter.key],
-                        }),
-                    },
+                    { value: fieldValues[parameter.key] },
+                    { method: HttpMethod.Patch, noGuard: true },
                 );
 
-                const result = await response.json();
+                if (!result) return;
 
                 if (!result.success) {
                     if (result.error === SettingErrorCode.CascadeViolation) {
@@ -155,8 +152,6 @@ export function useModules(
             }
 
             toast.success(t("backend.settings.saved"));
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             saving.value = false;
         }
@@ -177,25 +172,12 @@ export function useModules(
     async function confirmPassword() {
         passwordError.value = "";
         verifying.value = true;
+        const result = await verifyRequest(moduleVerifyPasswordPath, { password: password.value });
+        verifying.value = false;
 
-        try {
-            const response = await fetch(moduleVerifyPasswordPath, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password: password.value }),
-            });
-
-            if (!response.ok) {
-                passwordError.value = t(
-                    "backend.settings.confirmPasswordInvalid",
-                );
-                return;
-            }
-        } catch {
+        if (!result) {
             passwordError.value = t("backend.settings.confirmPasswordInvalid");
             return;
-        } finally {
-            verifying.value = false;
         }
 
         passwordVerified.value = true;

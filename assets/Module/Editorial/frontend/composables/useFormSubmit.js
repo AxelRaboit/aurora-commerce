@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useFormRequest } from "@editorial/frontend/composables/useFormRequest.js";
+import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
 
 export function useFormSubmit(
     submitPath,
@@ -13,7 +13,7 @@ export function useFormSubmit(
     currentStep,
     validateStep,
 ) {
-    const { submitting, submit } = useFormRequest();
+    const { loading: submitting, request } = useFrontendRequest();
     const submitted = ref(false);
 
     async function handleSubmit() {
@@ -25,7 +25,7 @@ export function useFormSubmit(
             payload[field.id] = formData[field.id];
         }
 
-        const data = await submit(submitPath, payload);
+        const data = await request(submitPath, payload);
         if (!data) return;
 
         if (data.success) {

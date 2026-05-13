@@ -5,7 +5,11 @@ export function useFormData(fields) {
     const formData = reactive({});
 
     for (const field of fields) {
-        formData[field.id] = field.type === FormFieldType.Checkbox ? [] : "";
+        if (field.type === FormFieldType.Checkbox) {
+            formData[field.id] = field.options?.length ? [] : false;
+        } else {
+            formData[field.id] = "";
+        }
     }
 
     function isChecked(fieldId, option) {

@@ -2,11 +2,12 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { CommentStatus } from "@/Module/Editorial/shared/enums/commentStatus.js";
 
 export function useCommentModeration(paths, initialStats, onRefresh) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const localStats = ref({ ...initialStats });
     const isModerationEnabled = ref(paths.moderationEnabled);
@@ -20,19 +21,13 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
     const deleteLoading = ref(false);
 
     async function moderateComment(comment, path, successKey, statsUpdate) {
-        try {
-            const response = await fetch(buildPath(path, { id: comment.id }), {
-                method: HttpMethod.Post,
-            });
-            const data = await response.json();
-            if (data.success) {
-                toast.success(t(successKey));
-                statsUpdate(comment.status);
-                onRefresh();
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(buildPath(path, { id: comment.id }));
+        if (!data) return;
+        if (data.success) {
+            toast.success(t(successKey));
+            statsUpdate(comment.status);
+            onRefresh();
+        } else {
             toast.error(t("shared.common.error"));
         }
     }
@@ -107,63 +102,48 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
         if (!pendingDelete.value || deleteLoading.value) return;
         deleteLoading.value = true;
         const comment = pendingDelete.value;
-        try {
-            const response = await fetch(
-                buildPath(paths.delete, { id: comment.id }),
-                { method: HttpMethod.Post },
-            );
-            const data = await response.json();
-            if (data.success) {
-                toast.success(t("shared.common.deleted"));
-                if (comment.status === CommentStatus.Pending)
-                    localStats.value.pending = Math.max(
-                        0,
-                        localStats.value.pending - 1,
-                    );
-                else if (comment.status === CommentStatus.Approved)
-                    localStats.value.approved = Math.max(
-                        0,
-                        localStats.value.approved - 1,
-                    );
-                else if (comment.status === CommentStatus.Spam)
-                    localStats.value.spam = Math.max(
-                        0,
-                        localStats.value.spam - 1,
-                    );
-                pendingDelete.value = null;
-                onRefresh();
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(buildPath(paths.delete, { id: comment.id }));
+        deleteLoading.value = false;
+        if (!data) return;
+        if (data.success) {
+            toast.success(t("shared.common.deleted"));
+            if (comment.status === CommentStatus.Pending)
+                localStats.value.pending = Math.max(
+                    0,
+                    localStats.value.pending - 1,
+                );
+            else if (comment.status === CommentStatus.Approved)
+                localStats.value.approved = Math.max(
+                    0,
+                    localStats.value.approved - 1,
+                );
+            else if (comment.status === CommentStatus.Spam)
+                localStats.value.spam = Math.max(
+                    0,
+                    localStats.value.spam - 1,
+                );
+            pendingDelete.value = null;
+            onRefresh();
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            deleteLoading.value = false;
         }
     }
 
     async function doToggleModeration() {
         toggleModerationLoading.value = true;
-        try {
-            const response = await fetch(paths.toggleModeration, {
-                method: HttpMethod.Post,
-            });
-            const data = await response.json();
-            if (data.success) {
-                isModerationEnabled.value = data.moderationEnabled;
-                toast.success(
-                    data.moderationEnabled
-                        ? t("backend.comments.moderationEnabled")
-                        : t("backend.comments.moderationDisabled"),
-                );
-                pendingToggleModeration.value = false;
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const data = await request(paths.toggleModeration);
+        toggleModerationLoading.value = false;
+        if (!data) return;
+        if (data.success) {
+            isModerationEnabled.value = data.moderationEnabled;
+            toast.success(
+                data.moderationEnabled
+                    ? t("backend.comments.moderationEnabled")
+                    : t("backend.comments.moderationDisabled"),
+            );
+            pendingToggleModeration.value = false;
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            toggleModerationLoading.value = false;
         }
     }
 

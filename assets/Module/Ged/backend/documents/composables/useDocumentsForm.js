@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
@@ -34,6 +34,7 @@ export function useDocumentsForm(
     mediaUploadPath = "",
 ) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const statusOptions = [
         { value: "draft", label: t("backend.ged.documents.status_draft") },
@@ -81,25 +82,16 @@ export function useDocumentsForm(
     async function onLocalFileCreate(file) {
         if (!mediaUploadPath || !file) return;
         uploadingCreate.value = true;
-        try {
-            const body = new FormData();
-            body.append("image", file);
-            const response = await fetch(mediaUploadPath, {
-                method: HttpMethod.Post,
-                body,
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (data.success && data.media) {
-                newDoc.value.fileId = data.media.id;
-                newDoc.value.fileName = data.media.fileName;
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const rawBody = new FormData();
+        rawBody.append("image", file);
+        const data = await request(mediaUploadPath, null, { rawBody });
+        uploadingCreate.value = false;
+        if (!data) return;
+        if (data.success && data.media) {
+            newDoc.value.fileId = data.media.id;
+            newDoc.value.fileName = data.media.fileName;
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            uploadingCreate.value = false;
         }
     }
 
@@ -148,25 +140,16 @@ export function useDocumentsForm(
     async function onLocalFileEdit(file) {
         if (!mediaUploadPath || !file) return;
         uploadingEdit.value = true;
-        try {
-            const body = new FormData();
-            body.append("image", file);
-            const response = await fetch(mediaUploadPath, {
-                method: HttpMethod.Post,
-                body,
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (data.success && data.media) {
-                editForm.value.fileId = data.media.id;
-                editForm.value.fileName = data.media.fileName;
-            } else {
-                toast.error(t("shared.common.error"));
-            }
-        } catch {
+        const rawBody = new FormData();
+        rawBody.append("image", file);
+        const data = await request(mediaUploadPath, null, { rawBody });
+        uploadingEdit.value = false;
+        if (!data) return;
+        if (data.success && data.media) {
+            editForm.value.fileId = data.media.id;
+            editForm.value.fileName = data.media.fileName;
+        } else {
             toast.error(t("shared.common.error"));
-        } finally {
-            uploadingEdit.value = false;
         }
     }
 

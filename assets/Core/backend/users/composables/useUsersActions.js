@@ -1,45 +1,33 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { UserStatus } from "@core/utils/enums/user/userStatus.js";
 
 export function useUsersActions(props, fetchUsers) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     // ── View ─────────────────────────────────────────────────────────────────
     const viewingUser = ref(null);
 
     async function openView(user) {
         viewingUser.value = { ...user, subordinates: [], subordinatesCount: 0 };
-        try {
-            const response = await fetch(
-                buildPath(props.showPath, { id: user.id }),
-            );
-            const data = await response.json();
-            if (data.success && viewingUser.value?.id === user.id)
-                viewingUser.value = data.user;
-        } catch {
-            /* fail silent — row data already visible */
-        }
+        const data = await request(buildPath(props.showPath, { id: user.id }), null, { method: HttpMethod.Get, noGuard: true });
+        if (data?.success && viewingUser.value?.id === user.id)
+            viewingUser.value = data.user;
     }
 
     // ── Resend invitation ─────────────────────────────────────────────────────
     async function resendInvitation(user) {
-        try {
-            const response = await fetch(
-                buildPath(props.resendInvitationPath, { id: user.id }),
-                { method: HttpMethod.Post },
-            );
-            const data = await response.json();
-            if (data.success) {
-                toast.success(t("backend.users.invitationResent"));
-                fetchUsers();
-            } else toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(buildPath(props.resendInvitationPath, { id: user.id }));
+        if (!data) return;
+        if (data.success) {
+            toast.success(t("backend.users.invitationResent"));
+            fetchUsers();
+        } else toast.error(t("shared.common.error"));
     }
 
     // ── Toggle disabled ───────────────────────────────────────────────────────
@@ -52,21 +40,13 @@ export function useUsersActions(props, fetchUsers) {
     async function confirmToggleDisabled() {
         const user = togglingUser.value;
         if (!user) return;
-        try {
-            const response = await fetch(
-                buildPath(props.toggleDisabledPath, { id: user.id }),
-                { method: HttpMethod.Post },
-            );
-            const data = await response.json();
-            if (data.success) {
-                toast.success(t("shared.common.saved"));
-                fetchUsers();
-            } else toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            togglingUser.value = null;
-        }
+        const data = await request(buildPath(props.toggleDisabledPath, { id: user.id }));
+        togglingUser.value = null;
+        if (!data) return;
+        if (data.success) {
+            toast.success(t("shared.common.saved"));
+            fetchUsers();
+        } else toast.error(t("shared.common.error"));
     }
 
     // ── Delete ────────────────────────────────────────────────────────────────
@@ -75,21 +55,13 @@ export function useUsersActions(props, fetchUsers) {
     async function confirmDelete() {
         const user = deletingUser.value;
         if (!user) return;
-        try {
-            const response = await fetch(
-                buildPath(props.deletePath, { id: user.id }),
-                { method: HttpMethod.Post },
-            );
-            const data = await response.json();
-            if (data.success) {
-                toast.success(t("shared.common.deleted"));
-                fetchUsers();
-            } else toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            deletingUser.value = null;
-        }
+        const data = await request(buildPath(props.deletePath, { id: user.id }));
+        deletingUser.value = null;
+        if (!data) return;
+        if (data.success) {
+            toast.success(t("shared.common.deleted"));
+            fetchUsers();
+        } else toast.error(t("shared.common.error"));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

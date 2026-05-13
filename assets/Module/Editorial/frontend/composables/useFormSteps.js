@@ -28,9 +28,11 @@ export function useFormSteps(steps, visibleFields, formData, errors) {
         let valid = true;
         for (const field of fields) {
             const value = formData[field.id];
-            const isEmpty = Array.isArray(value)
-                ? value.length === 0
-                : String(value ?? "").trim() === "";
+            const isEmpty = value === false
+                ? true
+                : Array.isArray(value)
+                    ? value.length === 0
+                    : String(value ?? "").trim() === "";
             if (field.required && isEmpty) {
                 errors[field.id] = t("shared.form.fieldRequired");
                 valid = false;

@@ -2,7 +2,7 @@ import { ref, watch } from "vue";
 import { toast } from "vue-sonner";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
@@ -13,6 +13,7 @@ import { required } from "@/shared/utils/validation/validators.js";
  */
 export function useTaskExtras(paths, editingTask, reloadDetail) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const {
         errors: commentErrors,
@@ -51,37 +52,20 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
             taskId: editingTask.value.id,
         });
         commentLoading.value = true;
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content }),
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (!data.success) throw new Error();
-            newCommentContent.value = "";
-            clearCommentErrors();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            commentLoading.value = false;
-        }
+        const data = await request(url, { content });
+        commentLoading.value = false;
+        if (!data) return;
+        if (!data.success) return;
+        newCommentContent.value = "";
+        clearCommentErrors();
+        await reloadDetail();
     }
 
     async function deleteComment(comment) {
         const url = buildPath(paths.commentDelete, { commentId: comment.id });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            if (!response.ok) throw new Error();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(url);
+        if (!data) return;
+        await reloadDetail();
     }
 
     // ── Checklist ────────────────────────────────────────────────────────────
@@ -107,17 +91,9 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
         const url = buildPath(paths.itemsReplace, {
             taskId: editingTask.value.id,
         });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ items: payload }),
-            });
-            if (!response.ok) throw new Error();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(url, { items: payload });
+        if (!data) return;
+        await reloadDetail();
     }
 
     function addItem() {
@@ -176,45 +152,28 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
             taskId: editingTask.value.id,
         });
         timeLoading.value = true;
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newTimeEntry.value),
-            });
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            if (!data.success) {
-                if (data.errors?.minutes) toast.error(t(data.errors.minutes));
-                else toast.error(t("shared.common.error"));
-                return;
-            }
-            newTimeEntry.value = {
-                minutes: "",
-                note: "",
-                loggedAt: new Date().toISOString().slice(0, 10),
-            };
-            clearTimeErrors();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            timeLoading.value = false;
+        const data = await request(url, newTimeEntry.value);
+        timeLoading.value = false;
+        if (!data) return;
+        if (!data.success) {
+            if (data.errors?.minutes) toast.error(t(data.errors.minutes));
+            else toast.error(t("shared.common.error"));
+            return;
         }
+        newTimeEntry.value = {
+            minutes: "",
+            note: "",
+            loggedAt: new Date().toISOString().slice(0, 10),
+        };
+        clearTimeErrors();
+        await reloadDetail();
     }
 
     async function deleteTimeEntry(entry) {
         const url = buildPath(paths.timeEntryDelete, { entryId: entry.id });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            if (!response.ok) throw new Error();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(url);
+        if (!data) return;
+        await reloadDetail();
     }
 
     // ── Attachments ──────────────────────────────────────────────────────────
@@ -224,17 +183,9 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
         const url = buildPath(paths.attachmentsAttach, {
             taskId: editingTask.value.id,
         });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ mediaIds }),
-            });
-            if (!response.ok) throw new Error();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(url, { mediaIds });
+        if (!data) return;
+        await reloadDetail();
     }
 
     async function detachMedia(media) {
@@ -243,16 +194,9 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
             taskId: editingTask.value.id,
             mediaId: media.id,
         });
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-            });
-            if (!response.ok) throw new Error();
-            await reloadDetail();
-        } catch {
-            toast.error(t("shared.common.error"));
-        }
+        const data = await request(url);
+        if (!data) return;
+        await reloadDetail();
     }
 
     return {

@@ -1,6 +1,6 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -9,6 +9,7 @@ import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -20,30 +21,26 @@ const props = defineProps({
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
 
+const { loading, request: requestList } = useFrontendRequest();
+const { loading: submitting, request: requestSubmit } = useFrontendRequest();
+const { request: requestReact } = useFrontendRequest();
+
 const roots = ref([]);
 const replies = ref({});
 const reactionEmojis = ref({});
-const loading = ref(true);
 const successMessage = ref("");
 let successTimeout = null;
 const errors = ref({});
-const submitting = ref(false);
 const replyOpenFor = ref(null);
 const form = reactive({ authorName: "", authorEmail: "", content: "" });
 const mainForm = reactive({ authorName: "", authorEmail: "", content: "" });
 
 async function fetchComments() {
-    loading.value = true;
-    try {
-        const response = await fetch(props.listPath);
-        const data = await response.json();
-        if (data.success) {
-            roots.value = data.roots;
-            replies.value = data.replies;
-            reactionEmojis.value = data.reactionEmojis;
-        }
-    } finally {
-        loading.value = false;
+    const data = await requestList(props.listPath, null, HttpMethod.Get);
+    if (data?.success) {
+        roots.value = data.roots;
+        replies.value = data.replies;
+        reactionEmojis.value = data.reactionEmojis;
     }
 }
 
@@ -64,57 +61,40 @@ function openReply(commentId) {
 }
 
 async function submitComment(parentId, activeForm) {
-    submitting.value = true;
     errors.value = {};
-    try {
-        const response = await fetch(props.submitPath, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                authorName: activeForm.authorName,
-                authorEmail: activeForm.authorEmail,
-                content: activeForm.content,
-                parent_id: parentId ?? 0,
-            }),
-        });
-        const data = await response.json();
-        if (!data.success) {
-            errors.value = translateServerErrors(t, data.errors);
-            return;
-        }
-        activeForm.authorName = "";
-        activeForm.authorEmail = "";
-        activeForm.content = "";
-        replyOpenFor.value = null;
-        successMessage.value = t("shared.comment.success");
-        await fetchComments();
-        clearTimeout(successTimeout);
-        successTimeout = setTimeout(() => { successMessage.value = ""; }, 5000);
-    } finally {
-        submitting.value = false;
+    const data = await requestSubmit(props.submitPath, {
+        authorName: activeForm.authorName,
+        authorEmail: activeForm.authorEmail,
+        content: activeForm.content,
+        parent_id: parentId ?? 0,
+    });
+    if (!data?.success) {
+        errors.value = translateServerErrors(t, data?.errors);
+        return;
     }
+    activeForm.authorName = "";
+    activeForm.authorEmail = "";
+    activeForm.content = "";
+    replyOpenFor.value = null;
+    successMessage.value = t("shared.comment.success");
+    await fetchComments();
+    clearTimeout(successTimeout);
+    successTimeout = setTimeout(() => { successMessage.value = ""; }, 5000);
 }
 
 async function react(commentId, type) {
     const url = buildPath(props.reactPathTemplate, { commentId });
-    try {
-        const response = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type }),
-        });
-        const data = await response.json();
-        if (!data.success) return;
-        const update = (list) => list.map((c) =>
-            c.id === commentId ? { ...c, reactionCounts: data.counts } : c
-        );
-        roots.value = update(roots.value);
-        const updated = {};
-        for (const [rootId, list] of Object.entries(replies.value)) {
-            updated[rootId] = update(list);
-        }
-        replies.value = updated;
-    } catch {}
+    const data = await requestReact(url, { type });
+    if (!data?.success) return;
+    const update = (list) => list.map((c) =>
+        c.id === commentId ? { ...c, reactionCounts: data.counts } : c
+    );
+    roots.value = update(roots.value);
+    const updated = {};
+    for (const [rootId, list] of Object.entries(replies.value)) {
+        updated[rootId] = update(list);
+    }
+    replies.value = updated;
 }
 
 function formatDate(iso) {
