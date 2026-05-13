@@ -23,6 +23,7 @@ import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
 import PostTaxonomiesPanel from "@editorial/backend/posts/PostTaxonomiesPanel.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -44,8 +45,9 @@ const props = defineProps({
     taxonomies: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     trashed: { type: Boolean, default: false },
-    postTypeId: { type: Number, default: null },
+    postTypeIds: { type: Array, default: () => [] },
     termIds: { type: Array, default: () => [] },
+    statuses: { type: Array, default: () => [] },
     createPath: { type: String, required: true },
     showPath: { type: String, required: true },
     previewPath: { type: String, required: true },
@@ -63,56 +65,79 @@ const parsedLocales    = props.locales ?? DEFAULT_LOCALES;
 const defaultLocale    = parsedLocales[0] ?? "fr";
 
 // --- Filter state ---
-const selectedPostTypeId = ref(props.postTypeId ?? null);
-const selectedTermIds    = ref([...(props.termIds ?? [])]);
+const selectedPostTypeIds = ref([...(props.postTypeIds ?? [])]);
+const selectedTermIds     = ref([...(props.termIds ?? [])]);
+const selectedStatuses    = ref([...(props.statuses ?? [])]);
 
-const hasActiveFilters = computed(() => selectedPostTypeId.value !== null || selectedTermIds.value.length > 0);
+const hasActiveFilters = computed(
+    () => selectedPostTypeIds.value.length > 0 || selectedStatuses.value.length > 0 || selectedTermIds.value.length > 0,
+);
 
 function syncFiltersToUrl() {
     const url = new URL(window.location.href);
-    if (selectedPostTypeId.value) {
-        url.searchParams.set("postTypeId", String(selectedPostTypeId.value));
-    } else {
-        url.searchParams.delete("postTypeId");
-    }
+    url.searchParams.delete("postTypeIds");
+    selectedPostTypeIds.value.forEach((id) => url.searchParams.append("postTypeIds", String(id)));
+    url.searchParams.delete("statuses");
+    selectedStatuses.value.forEach((s) => url.searchParams.append("statuses", s));
     url.searchParams.delete("termIds");
     selectedTermIds.value.forEach((id) => url.searchParams.append("termIds", String(id)));
     history.replaceState(history.state, "", url);
 }
 
-function setPostTypeFilter(id) {
-    selectedPostTypeId.value = selectedPostTypeId.value === id ? null : id;
+function onPostTypeFilterChange(values) {
+    selectedPostTypeIds.value = values ?? [];
     selectedTermIds.value = [];
+    syncFiltersToUrl();
+    performSearch();
+}
+
+function onStatusFilterChange(values) {
+    selectedStatuses.value = values ?? [];
     syncFiltersToUrl();
     performSearch();
 }
 
 function toggleTerm(id) {
     const index = selectedTermIds.value.indexOf(id);
-    if (index === -1) {
-        selectedTermIds.value = [...selectedTermIds.value, id];
-    } else {
-        selectedTermIds.value = selectedTermIds.value.filter((t) => t !== id);
-    }
+    selectedTermIds.value = index === -1
+        ? [...selectedTermIds.value, id]
+        : selectedTermIds.value.filter((t) => t !== id);
     syncFiltersToUrl();
     performSearch();
 }
 
 function clearFilters() {
-    selectedPostTypeId.value = null;
-    selectedTermIds.value = [];
+    selectedPostTypeIds.value = [];
+    selectedStatuses.value    = [];
+    selectedTermIds.value     = [];
     syncFiltersToUrl();
     performSearch();
 }
 
-// --- Taxonomy terms filtered by selected postType ---
+// --- Options for the filter selects ---
+const postTypeOptions = computed(() =>
+    parsedPostTypes.map((pt) => ({ value: pt.id, label: pt.label })),
+);
+
+const statusOptions = computed(() => [
+    { value: "draft",          label: t("backend.posts.statusOptions.draft") },
+    { value: "pending_review", label: t("backend.posts.statusOptions.pending_review") },
+    { value: "scheduled",      label: t("backend.posts.statusOptions.scheduled") },
+    { value: "published",      label: t("backend.posts.statusOptions.published") },
+    { value: "archived",       label: t("backend.posts.statusOptions.archived") },
+]);
+
+// --- Taxonomy terms filtered by selected postTypes ---
 const visibleTaxonomies = computed(() => {
-    if (!selectedPostTypeId.value || !parsedTaxonomies.length) {
+    if (!selectedPostTypeIds.value.length || !parsedTaxonomies.length) {
         return parsedTaxonomies;
     }
-    const postType = parsedPostTypes.find((pt) => pt.id === selectedPostTypeId.value);
-    if (!postType?.taxonomyIds?.length) return parsedTaxonomies;
-    return parsedTaxonomies.filter((tax) => postType.taxonomyIds.includes(tax.id));
+    const taxIds = new Set(
+        parsedPostTypes
+            .filter((pt) => selectedPostTypeIds.value.includes(pt.id))
+            .flatMap((pt) => pt.taxonomyIds ?? []),
+    );
+    return parsedTaxonomies.filter((tax) => taxIds.has(tax.id));
 });
 
 // --- List ---
@@ -132,8 +157,9 @@ const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
 const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
     usePostList(props.postsPath, props.posts, props.search, () => ({
         ...(trashed.value ? { trashed: "1" } : {}),
-        ...(selectedPostTypeId.value ? { postTypeId: selectedPostTypeId.value } : {}),
-        ...(selectedTermIds.value.length ? Object.fromEntries(selectedTermIds.value.map((id, i) => [`termIds[${i}]`, id])) : {}),
+        ...Object.fromEntries(selectedPostTypeIds.value.map((id, i) => [`postTypeIds[${i}]`, id])),
+        ...Object.fromEntries(selectedStatuses.value.map((s, i) => [`statuses[${i}]`, s])),
+        ...Object.fromEntries(selectedTermIds.value.map((id, i) => [`termIds[${i}]`, id])),
     }));
 
 const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
@@ -209,21 +235,6 @@ function postTermLabels(post) {
             </div>
 
             <template v-if="!trashed">
-                <div v-if="parsedPostTypes.length > 1" class="flex flex-col gap-1">
-                    <p class="text-xs font-medium text-muted uppercase tracking-wide px-2 mb-0.5">{{ t('backend.posts.filterByType') }}</p>
-                    <button
-                        v-for="postType in parsedPostTypes"
-                        :key="postType.id"
-                        class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm transition-colors text-left"
-                        :class="selectedPostTypeId === postType.id
-                            ? 'bg-accent-600/15 text-accent-400 font-medium'
-                            : 'text-secondary hover:bg-surface-2 hover:text-primary'"
-                        v-on:click="setPostTypeFilter(postType.id)"
-                    >
-                        <span class="truncate">{{ postType.label }}</span>
-                    </button>
-                </div>
-
                 <div v-if="visibleTaxonomies.length" class="flex flex-col gap-3">
                     <p class="text-xs font-medium text-muted uppercase tracking-wide px-2">{{ t('backend.posts.filterByTerm') }}</p>
                     <PostTaxonomiesPanel
@@ -261,29 +272,6 @@ function postTermLabels(post) {
                     {{ t("backend.posts.tabs.trash") }}
                 </AppTab>
             </AppTooltip>
-        </div>
-
-        <!-- Mobile: postType chips (if multiple types) -->
-        <div v-if="!trashed && parsedPostTypes.length > 1" class="flex md:hidden gap-1.5 flex-wrap">
-            <button
-                v-for="postType in parsedPostTypes"
-                :key="postType.id"
-                class="px-3 py-1 rounded-full text-xs font-medium border transition-colors"
-                :class="selectedPostTypeId === postType.id
-                    ? 'bg-accent-600 border-accent-600 text-white'
-                    : 'bg-surface-2 border-line text-secondary hover:border-accent-400 hover:text-primary'"
-                v-on:click="setPostTypeFilter(postType.id)"
-            >
-                {{ postType.label }}
-            </button>
-            <button
-                v-if="hasActiveFilters"
-                class="px-3 py-1 rounded-full text-xs font-medium border border-rose-500/40 text-rose-400 hover:bg-rose-500/10 transition-colors"
-                v-on:click="clearFilters"
-            >
-                <X class="w-3 h-3 inline -mt-0.5" :stroke-width="2" />
-                {{ t('backend.posts.clearFilters') }}
-            </button>
         </div>
 
         <div class="flex-1 min-w-0 space-y-4">
@@ -334,6 +322,38 @@ function postTermLabels(post) {
                         {{ t("backend.posts.emptyTrash") }}
                     </AppButton>
                 </div>
+            </div>
+
+            <div v-if="!trashed" class="flex flex-wrap gap-2 items-end">
+                <AppMultiselect
+                    v-if="postTypeOptions.length > 1"
+                    :model-value="selectedPostTypeIds"
+                    :options="postTypeOptions"
+                    :multiple="true"
+                    :allow-empty="true"
+                    :searchable="false"
+                    :placeholder="t('backend.posts.filterByType')"
+                    class="min-w-40 flex-1 sm:flex-none"
+                    v-on:update:model-value="onPostTypeFilterChange"
+                />
+                <AppMultiselect
+                    :model-value="selectedStatuses"
+                    :options="statusOptions"
+                    :multiple="true"
+                    :allow-empty="true"
+                    :searchable="false"
+                    :placeholder="t('backend.posts.filterByStatus')"
+                    class="min-w-40 flex-1 sm:flex-none"
+                    v-on:update:model-value="onStatusFilterChange"
+                />
+                <button
+                    v-if="hasActiveFilters"
+                    class="flex items-center gap-1.5 px-2 py-1 text-xs text-muted hover:text-rose-400 transition-colors self-center"
+                    v-on:click="clearFilters"
+                >
+                    <X class="w-3 h-3" :stroke-width="2" />
+                    {{ t('backend.posts.clearFilters') }}
+                </button>
             </div>
 
             <div class="sm:hidden space-y-2">
