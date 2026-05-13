@@ -57,7 +57,18 @@ Priorisées : les 3 premières bloquent un usage réel, les suivantes sont impor
 
 ## Autres TODOs
 
-*(à compléter au fur et à mesure)*
+### Sidebar — alias visuel des sections nav
+
+- [ ] **Permettre de renommer visuellement les sections de la sidemenu** (général, plateforme, outils, editorial…) sans toucher au backend.
+  - **Contexte** : aujourd'hui les labels viennent de `backend.nav.sections.<sectionId>` (i18n YAML par module). L'utilisateur veut pouvoir override le label affiché — par exemple renommer "Outils" en "Abc" — au niveau **présentation uniquement**. L'ID backend (`sectionId`) reste inchangé pour ne casser ni les permissions, ni `convention_navpermission_group.md`, ni les références code.
+  - **Direction d'implémentation** :
+    - Scope à décider : **par-user** (préférence personnelle, stockée dans `UserPreferences` ou JSON sur User) vs **global app** (config admin, ex: `ApplicationParameterEnum::NAV_SECTION_ALIASES`).
+    - Stockage : map `{ sectionId: aliasLabel }` (alias vide = fallback sur le label i18n par défaut).
+    - UI : panneau de config dans `/backend/profile` (si per-user) ou `/backend/dev/parameters` (si global), avec liste des sections existantes + champ texte par section.
+    - Côté front : dans `useSidebarNav.js` ligne ~111, remplacer `t(\`backend.nav.sections.\${section.id}\`)` par un helper qui check d'abord l'alias puis fallback sur la traduction.
+  - **Points d'attention** :
+    - La recherche backend (`backend.search.sections.*` dans `AppSidebar.vue`) utilise des clés différentes — vérifier le scope (probablement à exclure de l'alias).
+    - Les breadcrumbs utilisent `backend.nav.sections.<moduleId>` (cf. `convention_breadcrumb_section.md`) — décider si l'alias s'applique aussi ou non.
 
 ---
 
