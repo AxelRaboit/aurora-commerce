@@ -134,7 +134,7 @@ class UserManager implements UserManagerInterface
         $this->sendVerificationEmail($user);
     }
 
-    public function update(User $user, string $name, string $email, array $navSectionAliases = []): void
+    public function update(User $user, string $name, string $email): void
     {
         if ($this->isEmailTaken($email, $user)) {
             throw new InvalidArgumentException('backend.users.errors.email_taken');
@@ -142,7 +142,6 @@ class UserManager implements UserManagerInterface
 
         $user->setName($name);
         $user->setEmail($email);
-        $user->setNavSectionAliases($navSectionAliases);
 
         $this->entityManager->flush();
     }
