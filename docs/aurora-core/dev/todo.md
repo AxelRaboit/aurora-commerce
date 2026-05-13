@@ -70,6 +70,33 @@ Priorisées : les 3 premières bloquent un usage réel, les suivantes sont impor
     - La recherche backend (`backend.search.sections.*` dans `AppSidebar.vue`) utilise des clés différentes — vérifier le scope (probablement à exclure de l'alias).
     - Les breadcrumbs utilisent `backend.nav.sections.<moduleId>` (cf. `convention_breadcrumb_section.md`) — décider si l'alias s'applique aussi ou non.
 
+### CRM — Différenciation des contacts (`source` + `tags`)
+
+- [ ] **Ajouter `source` et `tags` sur l'entité Contact** — tracer l'origine et permettre la segmentation métier.
+  - **Contexte** : les contacts arrivent de plusieurs modules (création manuelle, soumission de formulaire, commande Ecommerce à venir). Sans distinction, le CRM est une liste plate impossible à segmenter.
+  - **`source` (enum, automatique)** : `manual` | `form` | `order` — posé par le système au moment de la création, jamais modifiable par l'utilisateur. Permet de filtrer "contacts issus des formulaires" etc.
+  - **`tags` (array JSON, manuel)** : étiquettes libres (`prospect`, `client`, `partenaire`, `newsletter`…) — posé par l'utilisateur dans le backend, ou pré-rempli par les listeners lors de la création automatique.
+  - **Direction d'implémentation** :
+    - Créer `src/Module/Crm/Contact/Enum/ContactSourceEnum.php` (`Manual`, `Form`, `Order`)
+    - Ajouter `$source` (nullable, `ContactSourceEnum`) et `$tags` (`array`, default `[]`) dans `AbstractContact` + `ContactInterface`
+    - Mettre à jour `ContactInput` / `ContactInputFactory` / `ContactManager` / `ContactSerializer`
+    - `FormSubmissionCrmSyncListener` : setter `source: ContactSourceEnum::Form` + tag `newsletter` (ou le slug du form ?)
+    - `OrderCrmSyncListener` (futur) : setter `source: ContactSourceEnum::Order` + tag `client`
+    - UI backend : afficher `source` en badge read-only, `tags` en champ éditable (chip input)
+    - Migration Doctrine
+  - **Pointeur code** : `AbstractContact`, `FormSubmissionCrmSyncListener`
+
+### CRM — Sync commandes Ecommerce → Contact
+
+- [ ] **Créer `OrderCrmSyncListener`** — synchroniser l'acheteur d'une commande vers un Contact CRM, en opt-in.
+  - **Contexte** : `FormSubmissionCrmSyncListener` crée déjà des contacts depuis les soumissions de formulaires. Les commandes Ecommerce ne font pas de même, alors que l'acheteur est un prospect/client réel (pertinent en B2B). En B2C pur, ce sync peut polluer le CRM → le rendre désactivable.
+  - **Direction d'implémentation** :
+    - Vérifier que `OrderCreatedEvent` existe ; sinon le créer et le dispatcher dans `OrderManager::create()`
+    - Créer `src/Module/Crm/Listener/OrderCrmSyncListener.php` — même structure que `FormSubmissionCrmSyncListener` : trouver ou créer le contact par email, enrichir prénom / nom / téléphone si manquants
+    - Ajouter un paramètre `crm.sync_orders` dans `ModuleParameterEnum` (opt-in, désactivable pour les usages B2C)
+    - Conditionner le listener sur ce paramètre via lecture du setting au début du handler
+  - **Pointeur code** : `src/Module/Crm/Listener/FormSubmissionCrmSyncListener.php` (modèle à suivre)
+
 ---
 
 ## Convention
