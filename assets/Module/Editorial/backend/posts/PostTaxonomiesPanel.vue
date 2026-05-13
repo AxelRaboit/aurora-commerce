@@ -103,7 +103,7 @@ function filteredTerms(taxonomy) {
                     :placeholder="t('backend.posts.searchTerms')"
                     class="w-full pl-6 pr-2 py-1 text-xs bg-surface-2 border border-line/60 rounded-md text-primary placeholder:text-muted focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
                     v-on:click.stop
-                />
+                >
             </div>
 
             <div class="max-h-52 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
