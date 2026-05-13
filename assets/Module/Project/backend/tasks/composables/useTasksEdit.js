@@ -2,8 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { emptyTaskForm } from "./useTasksCreate.js";
 
@@ -14,13 +13,22 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
     const showViewTask = ref(false);
     const editingTask = ref(null);
     const editTaskForm = ref(emptyTaskForm());
-    const {
-        errors: editTaskErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: editTaskLoading, request } = useRequest();
+
+    const { errors: editTaskErrors, loading: editTaskLoading, submit: submitEditTask, clearErrors } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("backend.projects.errors.title_required"))(
+                    editTaskForm.value.title,
+                ),
+        }),
+        url: () => buildPath(taskUpdatePath, { taskId: editingTask.value.id }),
+        body: () => editTaskForm.value,
+        onSuccess: async () => {
+            showEditTask.value = false;
+            toast.success(t("backend.projects.toast.taskUpdated"));
+            await reloadDetail();
+        },
+    });
 
     function openViewTask(task) {
         editingTask.value = task;
@@ -45,30 +53,6 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
         };
         clearErrors();
         showEditTask.value = true;
-    }
-
-    async function submitEditTask() {
-        if (
-            !validate({
-                title: () =>
-                    required(t("backend.projects.errors.title_required"))(
-                        editTaskForm.value.title,
-                    ),
-            })
-        )
-            return;
-        const url = buildPath(taskUpdatePath, {
-            taskId: editingTask.value.id,
-        });
-        const data = await request(url, editTaskForm.value);
-        if (!data) return;
-        if (data.success) {
-            showEditTask.value = false;
-            toast.success(t("backend.projects.toast.taskUpdated"));
-            await reloadDetail();
-        } else {
-            handleErrors(data.errors);
-        }
     }
 
     return {

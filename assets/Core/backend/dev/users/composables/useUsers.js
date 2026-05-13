@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
 import {
@@ -54,27 +54,9 @@ export function useUsers(
         password: "",
         locale: DEFAULT_LOCALE,
     });
-    const {
-        errors: createErrors,
-        validate: validateCreate,
-        handleErrors: handleCreateErrors,
-        clearErrors: clearCreateErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request: createRequest } = useRequest();
 
-    function openCreate() {
-        showCreateModal.value = true;
-        newUser.value = {
-            name: "",
-            email: "",
-            password: "",
-            locale: DEFAULT_LOCALE,
-        };
-        clearCreateErrors();
-    }
-
-    async function submitCreate() {
-        const isValid = validateCreate({
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreateErrors } = useFormAction({
+        rules: () => ({
             name: () =>
                 required(t("backend.profile.errors.name_required"))(
                     newUser.value.name,
@@ -92,17 +74,23 @@ export function useUsers(
                     return t("backend.profile.errors.password_too_short");
                 return null;
             },
-        });
-
-        if (!isValid) return;
-
-        const data = await createRequest(userCreatePath, newUser.value);
-        if (!data) return;
-        if (data.success) {
+        }),
+        url: () => userCreatePath,
+        body: () => newUser.value,
+        onSuccess: () => {
             window.location.reload();
-        } else {
-            handleCreateErrors(data.errors);
-        }
+        },
+    });
+
+    function openCreate() {
+        showCreateModal.value = true;
+        newUser.value = {
+            name: "",
+            email: "",
+            password: "",
+            locale: DEFAULT_LOCALE,
+        };
+        clearCreateErrors();
     }
 
     const showEditModal = ref(false);
@@ -113,13 +101,33 @@ export function useUsers(
         password: "",
         locale: DEFAULT_LOCALE,
     });
-    const {
-        errors: editErrors,
-        validate: validateEdit,
-        handleErrors: handleEditErrors,
-        clearErrors: clearEditErrors,
-    } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEditErrors } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.profile.errors.name_required"))(
+                    editUserForm.value.name,
+                ),
+            email: () =>
+                compose(
+                    required(t("backend.profile.errors.email_invalid")),
+                    email(t("backend.profile.errors.email_invalid")),
+                )(editUserForm.value.email),
+            password: () => {
+                if (
+                    editUserForm.value.password &&
+                    editUserForm.value.password.length < 8
+                )
+                    return t("backend.profile.errors.password_too_short");
+                return null;
+            },
+        }),
+        url: () => buildPath(userUpdatePath, { id: editingUser.value.id }),
+        body: () => editUserForm.value,
+        onSuccess: () => {
+            window.location.reload();
+        },
+    });
 
     function openEdit(user) {
         editingUser.value = user;
@@ -138,39 +146,9 @@ export function useUsers(
         editingUser.value = null;
     }
 
-    async function submitEdit() {
+    async function submitEditGuarded() {
         if (!editingUser.value) return;
-
-        const isValid = validateEdit({
-            name: () =>
-                required(t("backend.profile.errors.name_required"))(
-                    editUserForm.value.name,
-                ),
-            email: () =>
-                compose(
-                    required(t("backend.profile.errors.email_invalid")),
-                    email(t("backend.profile.errors.email_invalid")),
-                )(editUserForm.value.email),
-            password: () => {
-                if (
-                    editUserForm.value.password &&
-                    editUserForm.value.password.length < 8
-                )
-                    return t("backend.profile.errors.password_too_short");
-                return null;
-            },
-        });
-
-        if (!isValid) return;
-
-        const url = buildPath(userUpdatePath, { id: editingUser.value.id });
-        const data = await editRequest(url, editUserForm.value);
-        if (!data) return;
-        if (data.success) {
-            window.location.reload();
-        } else {
-            handleEditErrors(data.errors);
-        }
+        await submitEdit();
     }
 
     const pendingDelete = ref(null);
@@ -221,7 +199,7 @@ export function useUsers(
         editErrors,
         openEdit,
         closeEdit,
-        submitEdit,
+        submitEdit: submitEditGuarded,
         pendingDelete,
         confirmDelete,
         doDelete,

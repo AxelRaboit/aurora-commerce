@@ -3,8 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
@@ -52,13 +51,22 @@ export function useDocumentsForm(
     const newDoc = ref(emptyForm());
     const showMediaPickerCreate = ref(false);
     const uploadingCreate = ref(false);
-    const {
-        errors: createErrors,
-        validate: validateCreate,
-        clearErrors: clearCreate,
-        handleErrors: handleCreateErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request: createRequest } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("backend.ged.documents.errors.title_required"))(
+                    newDoc.value.title,
+                ),
+        }),
+        url: () => createPath,
+        body: () => ({ ...newDoc.value }),
+        onSuccess: () => {
+            showCreate.value = false;
+            toast.success(t("backend.ged.documents.created"));
+            reset();
+        },
+    });
 
     function openCreate() {
         newDoc.value = emptyForm();
@@ -95,37 +103,27 @@ export function useDocumentsForm(
         }
     }
 
-    async function submitCreate() {
-        if (
-            !validateCreate({
-                title: () =>
-                    required(t("backend.ged.documents.errors.title_required"))(
-                        newDoc.value.title,
-                    ),
-            })
-        )
-            return;
-        const data = await createRequest(createPath, { ...newDoc.value });
-        if (!data) return;
-        if (data.success) {
-            showCreate.value = false;
-            toast.success(t("backend.ged.documents.created"));
-            reset();
-        } else handleCreateErrors(data.errors);
-    }
-
     const showEdit = ref(false);
     const editingDoc = ref(null);
     const editForm = ref(emptyForm());
     const showMediaPickerEdit = ref(false);
     const uploadingEdit = ref(false);
-    const {
-        errors: editErrors,
-        validate: validateEdit,
-        clearErrors: clearEdit,
-        handleErrors: handleEditErrors,
-    } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("backend.ged.documents.errors.title_required"))(
+                    editForm.value.title,
+                ),
+        }),
+        url: () => buildPath(updatePath, { id: editingDoc.value.id }),
+        body: () => ({ ...editForm.value }),
+        onSuccess: () => {
+            showEdit.value = false;
+            toast.success(t("backend.ged.documents.updated"));
+            reset();
+        },
+    });
 
     function openEdit(doc) {
         editingDoc.value = doc;
@@ -170,26 +168,6 @@ export function useDocumentsForm(
         } finally {
             uploadingEdit.value = false;
         }
-    }
-
-    async function submitEdit() {
-        if (
-            !validateEdit({
-                title: () =>
-                    required(t("backend.ged.documents.errors.title_required"))(
-                        editForm.value.title,
-                    ),
-            })
-        )
-            return;
-        const url = buildPath(updatePath, { id: editingDoc.value.id });
-        const data = await editRequest(url, { ...editForm.value });
-        if (!data) return;
-        if (data.success) {
-            showEdit.value = false;
-            toast.success(t("backend.ged.documents.updated"));
-            reset();
-        } else handleEditErrors(data.errors);
     }
 
     const {

@@ -2,8 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { emptyGalleryForm } from "./useGalleryForm.js";
 
@@ -14,8 +13,26 @@ export function useGalleriesEdit(props, reload) {
     const editForm = ref(emptyGalleryForm());
     const editingId = ref(null);
     const editingHasPassword = ref(false);
-    const { errors: editErrors, clearErrors, handleErrors } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("photo.galleries.errors.title_required"))(
+                    editForm.value.title,
+                ),
+            slug: () =>
+                required(t("photo.galleries.errors.slug_required"))(
+                    editForm.value.slug,
+                ),
+        }),
+        url: () => buildPath(props.updatePath, { id: editingId.value }),
+        body: () => editForm.value,
+        onSuccess: () => {
+            toast.success(t("photo.galleries.updated"));
+            showEdit.value = false;
+            reload();
+        },
+    });
 
     function openGallery(g) {
         window.location.href = buildPath(props.editPath, { id: g.id });
@@ -47,29 +64,6 @@ export function useGalleriesEdit(props, reload) {
         };
         clearErrors();
         showEdit.value = true;
-    }
-
-    async function submitEdit() {
-        const errs = {};
-        if (required("required")(editForm.value.title))
-            errs.title = t("photo.galleries.errors.title_required");
-        if (required("required")(editForm.value.slug))
-            errs.slug = t("photo.galleries.errors.slug_required");
-        if (Object.keys(errs).length) {
-            setErrors(errs);
-            return;
-        }
-        const data = await editRequest(
-            buildPath(props.updatePath, { id: editingId.value }),
-            editForm.value,
-        );
-        if (!data?.success) {
-            handleErrors(data?.errors);
-            return;
-        }
-        toast.success(t("photo.galleries.updated"));
-        showEdit.value = false;
-        reload();
     }
 
     return {

@@ -2,8 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import {
     emptyProductForm,
@@ -18,8 +17,22 @@ export function useProductsEdit(updatePath, reset) {
     const editingProduct = ref(null);
     const editForm = ref(emptyProductForm());
     const editFormImage = makeImageRef(editForm);
-    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
-    const { loading: editLoading, request } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.erp.products.errors.name_required"))(
+                    editForm.value.name,
+                ),
+        }),
+        url: () => buildPath(updatePath, { id: editingProduct.value.id }),
+        body: () => buildProductPayload(editForm.value),
+        onSuccess: () => {
+            showEdit.value = false;
+            toast.success(t("backend.erp.products.updated"));
+            reset();
+        },
+    });
 
     function openEdit(product) {
         editingProduct.value = product;
@@ -37,26 +50,6 @@ export function useProductsEdit(updatePath, reset) {
         };
         clearErrors();
         showEdit.value = true;
-    }
-
-    async function submitEdit() {
-        if (
-            !validate({
-                name: () =>
-                    required(t("backend.erp.products.errors.name_required"))(
-                        editForm.value.name,
-                    ),
-            })
-        )
-            return;
-        const url = buildPath(updatePath, { id: editingProduct.value.id });
-        const data = await request(url, buildProductPayload(editForm.value));
-        if (!data) return;
-        if (data.success) {
-            showEdit.value = false;
-            toast.success(t("backend.erp.products.updated"));
-            reset();
-        } else handleErrors(data.errors);
     }
 
     return {

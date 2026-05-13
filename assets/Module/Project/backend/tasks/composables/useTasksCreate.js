@@ -2,8 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 export function emptyTaskForm(columnId = null) {
@@ -28,13 +27,22 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
 
     const showCreateTask = ref(false);
     const newTask = ref(emptyTaskForm());
-    const {
-        errors: createTaskErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: createTaskLoading, request } = useRequest();
+
+    const { errors: createTaskErrors, loading: createTaskLoading, submit: submitCreateTask, clearErrors } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("backend.projects.errors.title_required"))(
+                    newTask.value.title,
+                ),
+        }),
+        url: () => buildPath(taskCreatePath, { id: activeProject.value.id }),
+        body: () => newTask.value,
+        onSuccess: async () => {
+            showCreateTask.value = false;
+            toast.success(t("backend.projects.toast.taskCreated"));
+            await reloadDetail();
+        },
+    });
 
     function openCreateTask(columnId = null) {
         // Default to the first column of the active project when no explicit column was provided.
@@ -45,27 +53,9 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
         showCreateTask.value = true;
     }
 
-    async function submitCreateTask() {
+    async function submitCreateTaskGuarded() {
         if (!activeProject.value) return;
-        if (
-            !validate({
-                title: () =>
-                    required(t("backend.projects.errors.title_required"))(
-                        newTask.value.title,
-                    ),
-            })
-        )
-            return;
-        const url = buildPath(taskCreatePath, { id: activeProject.value.id });
-        const data = await request(url, newTask.value);
-        if (!data) return;
-        if (data.success) {
-            showCreateTask.value = false;
-            toast.success(t("backend.projects.toast.taskCreated"));
-            await reloadDetail();
-        } else {
-            handleErrors(data.errors);
-        }
+        await submitCreateTask();
     }
 
     return {
@@ -74,6 +64,6 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
         createTaskErrors,
         createTaskLoading,
         openCreateTask,
-        submitCreateTask,
+        submitCreateTask: submitCreateTaskGuarded,
     };
 }

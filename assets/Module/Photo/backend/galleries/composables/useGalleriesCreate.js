@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { emptyGalleryForm, slugify } from "./useGalleryForm.js";
 
@@ -12,8 +11,26 @@ export function useGalleriesCreate(createPath, reload) {
     const showCreate = ref(false);
     const newForm = ref(emptyGalleryForm());
     const slugManuallyEdited = ref(false);
-    const { errors: createErrors, clearErrors, handleErrors } = useServerErrors();
-    const { loading: createLoading, request: createRequest } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("photo.galleries.errors.title_required"))(
+                    newForm.value.title,
+                ),
+            slug: () =>
+                required(t("photo.galleries.errors.slug_required"))(
+                    newForm.value.slug,
+                ),
+        }),
+        url: () => createPath,
+        body: () => newForm.value,
+        onSuccess: () => {
+            toast.success(t("photo.galleries.created"));
+            showCreate.value = false;
+            reload();
+        },
+    });
 
     function openCreate() {
         newForm.value = emptyGalleryForm();
@@ -30,26 +47,6 @@ export function useGalleriesCreate(createPath, reload) {
     function onCreateSlugInput(value) {
         newForm.value.slug = value;
         slugManuallyEdited.value = true;
-    }
-
-    async function submitCreate() {
-        const errs = {};
-        if (required("required")(newForm.value.title))
-            errs.title = t("photo.galleries.errors.title_required");
-        if (required("required")(newForm.value.slug))
-            errs.slug = t("photo.galleries.errors.slug_required");
-        if (Object.keys(errs).length) {
-            setErrors(errs);
-            return;
-        }
-        const data = await createRequest(createPath, newForm.value);
-        if (!data?.success) {
-            handleErrors(data?.errors);
-            return;
-        }
-        toast.success(t("photo.galleries.created"));
-        showCreate.value = false;
-        reload();
     }
 
     return {

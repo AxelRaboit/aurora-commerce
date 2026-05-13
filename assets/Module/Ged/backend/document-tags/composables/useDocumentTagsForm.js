@@ -2,8 +2,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
@@ -34,13 +33,22 @@ export function useDocumentTagsForm(
 
     const showCreate = ref(false);
     const newTag = ref(emptyForm());
-    const {
-        errors: createErrors,
-        validate: validateCreate,
-        clearErrors: clearCreate,
-        handleErrors: handleCreateErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request: createRequest } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.ged.tags.errors.name_required"))(
+                    newTag.value.name,
+                ),
+        }),
+        url: () => createPath,
+        body: () => newTag.value,
+        onSuccess: (data) => {
+            showCreate.value = false;
+            toast.success(t("backend.ged.tags.created"));
+            applyUpdatedList(data);
+        },
+    });
 
     function openCreate() {
         newTag.value = emptyForm();
@@ -48,35 +56,25 @@ export function useDocumentTagsForm(
         showCreate.value = true;
     }
 
-    async function submitCreate() {
-        if (
-            !validateCreate({
-                name: () =>
-                    required(t("backend.ged.tags.errors.name_required"))(
-                        newTag.value.name,
-                    ),
-            })
-        )
-            return;
-        const data = await createRequest(createPath, newTag.value);
-        if (!data) return;
-        if (data.success) {
-            showCreate.value = false;
-            toast.success(t("backend.ged.tags.created"));
-            applyUpdatedList(data);
-        } else handleCreateErrors(data.errors);
-    }
-
     const showEdit = ref(false);
     const editingTag = ref(null);
     const editForm = ref(emptyForm());
-    const {
-        errors: editErrors,
-        validate: validateEdit,
-        clearErrors: clearEdit,
-        handleErrors: handleEditErrors,
-    } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.ged.tags.errors.name_required"))(
+                    editForm.value.name,
+                ),
+        }),
+        url: () => buildPath(updatePath, { id: editingTag.value.id }),
+        body: () => editForm.value,
+        onSuccess: (data) => {
+            showEdit.value = false;
+            toast.success(t("backend.ged.tags.updated"));
+            applyUpdatedList(data);
+        },
+    });
 
     function openEdit(tag) {
         editingTag.value = tag;
@@ -86,26 +84,6 @@ export function useDocumentTagsForm(
         };
         clearEdit();
         showEdit.value = true;
-    }
-
-    async function submitEdit() {
-        if (
-            !validateEdit({
-                name: () =>
-                    required(t("backend.ged.tags.errors.name_required"))(
-                        editForm.value.name,
-                    ),
-            })
-        )
-            return;
-        const url = buildPath(updatePath, { id: editingTag.value.id });
-        const data = await editRequest(url, editForm.value);
-        if (!data) return;
-        if (data.success) {
-            showEdit.value = false;
-            toast.success(t("backend.ged.tags.updated"));
-            applyUpdatedList(data);
-        } else handleEditErrors(data.errors);
     }
 
     const {

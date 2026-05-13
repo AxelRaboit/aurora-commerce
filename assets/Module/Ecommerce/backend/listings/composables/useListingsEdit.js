@@ -2,8 +2,7 @@ import { ref } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { emptyListingForm, makeListingImageRef } from "./useListingsCreate.js";
 
@@ -13,8 +12,22 @@ export function useListingsEdit(updatePath, reset) {
     const editingListing = ref(null);
     const editForm = ref(emptyListingForm());
     const editFormImage = makeListingImageRef(editForm);
-    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
+
+    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+        rules: () => ({
+            slug: () =>
+                required(
+                    t("backend.ecommerce.listings.errors.slug_required"),
+                )(editForm.value.slug),
+        }),
+        url: () => buildPath(updatePath, { id: editingListing.value.id }),
+        body: () => editForm.value,
+        onSuccess: () => {
+            showEdit.value = false;
+            toast.success(t("backend.ecommerce.listings.updated"));
+            reset();
+        },
+    });
 
     function openEdit(listing) {
         editingListing.value = listing;
@@ -31,28 +44,6 @@ export function useListingsEdit(updatePath, reset) {
         };
         clearErrors();
         showEdit.value = true;
-    }
-
-    async function submitEdit() {
-        if (
-            !validate({
-                slug: () =>
-                    required(
-                        t("backend.ecommerce.listings.errors.slug_required"),
-                    )(editForm.value.slug),
-            })
-        )
-            return;
-        const url = buildPath(updatePath, { id: editingListing.value.id });
-        const data = await editRequest(url, editForm.value);
-        if (!data) return;
-        if (data.success) {
-            showEdit.value = false;
-            toast.success(t("backend.ecommerce.listings.updated"));
-            reset();
-        } else {
-            handleErrors(data.errors);
-        }
     }
 
     return {

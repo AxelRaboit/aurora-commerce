@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
 import { makeImageRef } from "./useProductsOptions.js";
@@ -21,25 +20,16 @@ export function useProductDetailEdit(updatePath, product) {
         type: product.value.type ?? "physical",
     });
     const editFormImage = makeImageRef(editForm);
-    const {
-        errors: editErrors,
-        validate: validateEdit,
-        handleErrors: handleEditErrors,
-    } = useServerErrors();
-    const { loading: editLoading, request: editRequest } = useRequest();
 
-    async function submitEdit() {
-        if (
-            !validateEdit({
-                name: () =>
-                    required(t("backend.erp.products.errors.name_required"))(
-                        editForm.value.name,
-                    ),
-            })
-        )
-            return;
-
-        const data = await editRequest(updatePath, {
+    const { errors: editErrors, loading: editLoading, submit: submitEdit } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.erp.products.errors.name_required"))(
+                    editForm.value.name,
+                ),
+        }),
+        url: () => updatePath,
+        body: () => ({
             name: editForm.value.name,
             reference: editForm.value.reference,
             description: editForm.value.description,
@@ -47,19 +37,16 @@ export function useProductDetailEdit(updatePath, product) {
             currency: editForm.value.currency,
             status: editForm.value.status,
             type: editForm.value.type,
-        });
-        if (!data) return;
-        if (data.success) {
+        }),
+        onSuccess: (data) => {
             product.value = {
                 ...product.value,
                 ...(data.product ?? editForm.value),
             };
             showEdit.value = false;
             toast.success(t("shared.common.saved"));
-        } else {
-            handleEditErrors(data.errors);
-        }
-    }
+        },
+    });
 
     return {
         showEdit,

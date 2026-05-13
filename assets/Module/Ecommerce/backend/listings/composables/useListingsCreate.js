@@ -1,8 +1,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 
@@ -38,13 +37,27 @@ export function useListingsCreate(createPath, reset, loadProducts) {
     const showCreate = ref(false);
     const newListing = ref(emptyListingForm());
     const newListingImage = makeListingImageRef(newListing);
-    const {
-        errors: createErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request: createRequest } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+        rules: () => ({
+            productId: () =>
+                required(
+                    t("backend.ecommerce.listings.errors.product_required"),
+                )(newListing.value.productId),
+            slug: () =>
+                required(
+                    t("backend.ecommerce.listings.errors.slug_required"),
+                )(newListing.value.slug),
+        }),
+        url: () => createPath,
+        body: () => newListing.value,
+        onSuccess: () => {
+            showCreate.value = false;
+            toast.success(t("backend.ecommerce.listings.created"));
+            reset();
+            loadProducts();
+        },
+    });
 
     function openCreate() {
         newListing.value = emptyListingForm();
@@ -54,32 +67,6 @@ export function useListingsCreate(createPath, reset, loadProducts) {
 
     function onProductChange(product, form) {
         if (product) form.slug = slugifyIfEmpty(form.slug, product.name);
-    }
-
-    async function submitCreate() {
-        if (
-            !validate({
-                productId: () =>
-                    required(
-                        t("backend.ecommerce.listings.errors.product_required"),
-                    )(newListing.value.productId),
-                slug: () =>
-                    required(
-                        t("backend.ecommerce.listings.errors.slug_required"),
-                    )(newListing.value.slug),
-            })
-        )
-            return;
-        const data = await createRequest(createPath, newListing.value);
-        if (!data) return;
-        if (data.success) {
-            showCreate.value = false;
-            toast.success(t("backend.ecommerce.listings.created"));
-            reset();
-            loadProducts();
-        } else {
-            handleErrors(data.errors);
-        }
     }
 
     return {

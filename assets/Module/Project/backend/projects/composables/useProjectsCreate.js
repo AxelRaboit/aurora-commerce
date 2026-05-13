@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 export function emptyProjectForm() {
@@ -24,39 +23,27 @@ export function useProjectsCreate(createPath, reset) {
 
     const showCreate = ref(false);
     const newProject = ref(emptyProjectForm());
-    const {
-        errors: createErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+        rules: () => ({
+            title: () =>
+                required(t("backend.projects.errors.title_required"))(
+                    newProject.value.title,
+                ),
+        }),
+        url: () => createPath,
+        body: () => newProject.value,
+        onSuccess: () => {
+            showCreate.value = false;
+            toast.success(t("backend.projects.toast.created"));
+            reset();
+        },
+    });
 
     function openCreate() {
         newProject.value = emptyProjectForm();
         clearErrors();
         showCreate.value = true;
-    }
-
-    async function submitCreate() {
-        if (
-            !validate({
-                title: () =>
-                    required(t("backend.projects.errors.title_required"))(
-                        newProject.value.title,
-                    ),
-            })
-        )
-            return;
-        const data = await request(createPath, newProject.value);
-        if (!data) return;
-        if (data.success) {
-            showCreate.value = false;
-            toast.success(t("backend.projects.toast.created"));
-            reset();
-        } else {
-            handleErrors(data.errors);
-        }
     }
 
     return {

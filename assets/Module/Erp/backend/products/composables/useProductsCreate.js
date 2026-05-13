@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import {
     emptyProductForm,
@@ -16,40 +15,27 @@ export function useProductsCreate(createPath, reset) {
     const showCreate = ref(false);
     const newProduct = ref(emptyProductForm());
     const newProductImage = makeImageRef(newProduct);
-    const {
-        errors: createErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: createLoading, request } = useRequest();
+
+    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+        rules: () => ({
+            name: () =>
+                required(t("backend.erp.products.errors.name_required"))(
+                    newProduct.value.name,
+                ),
+        }),
+        url: () => createPath,
+        body: () => buildProductPayload(newProduct.value),
+        onSuccess: () => {
+            showCreate.value = false;
+            toast.success(t("backend.erp.products.created"));
+            reset();
+        },
+    });
 
     function openCreate() {
         newProduct.value = emptyProductForm();
         clearErrors();
         showCreate.value = true;
-    }
-
-    async function submitCreate() {
-        if (
-            !validate({
-                name: () =>
-                    required(t("backend.erp.products.errors.name_required"))(
-                        newProduct.value.name,
-                    ),
-            })
-        )
-            return;
-        const data = await request(
-            createPath,
-            buildProductPayload(newProduct.value),
-        );
-        if (!data) return;
-        if (data.success) {
-            showCreate.value = false;
-            toast.success(t("backend.erp.products.created"));
-            reset();
-        } else handleErrors(data.errors);
     }
 
     return {
