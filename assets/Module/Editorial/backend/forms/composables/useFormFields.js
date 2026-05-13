@@ -37,11 +37,11 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
     }
 
     const OPERATORS = computed(() => [
-        { value: "eq",        label: t("backend.forms.operators.eq") },
-        { value: "neq",       label: t("backend.forms.operators.neq") },
-        { value: "contains",  label: t("backend.forms.operators.contains") },
+        { value: "eq", label: t("backend.forms.operators.eq") },
+        { value: "neq", label: t("backend.forms.operators.neq") },
+        { value: "contains", label: t("backend.forms.operators.contains") },
         { value: "not_empty", label: t("backend.forms.operators.not_empty") },
-        { value: "empty",     label: t("backend.forms.operators.empty") },
+        { value: "empty", label: t("backend.forms.operators.empty") },
     ]);
 
     const editingField = ref({
@@ -105,7 +105,9 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
             type: field.type,
             required: field.required,
             step: field.step ?? null,
-            conditions: field.conditions ? field.conditions.map((c) => ({ ...c })) : [],
+            conditions: field.conditions
+                ? field.conditions.map((c) => ({ ...c }))
+                : [],
             conditionsLogic: field.conditionsLogic ?? "and",
             translations,
         };
@@ -147,7 +149,9 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
             type: editingField.value.type,
             required: editingField.value.required,
             step: editingField.value.step,
-            conditions: editingField.value.conditions?.length ? editingField.value.conditions : null,
+            conditions: editingField.value.conditions?.length
+                ? editingField.value.conditions
+                : null,
             conditionsLogic: editingField.value.conditionsLogic,
             translations,
         };

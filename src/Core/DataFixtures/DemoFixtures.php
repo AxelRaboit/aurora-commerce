@@ -967,6 +967,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 if (empty($fieldDef['conditions_def'])) {
                     continue;
                 }
+
                 if (!isset($fieldDef['key'], $fieldsByKey[$fieldDef['key']])) {
                     continue;
                 }

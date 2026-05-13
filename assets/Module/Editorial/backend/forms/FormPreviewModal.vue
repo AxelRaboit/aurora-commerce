@@ -6,6 +6,11 @@ import { ChevronLeft, ChevronRight, Eye, X } from "lucide-vue-next";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 
 const { t } = useI18n();
 
@@ -84,12 +89,12 @@ function evaluateCondition(condition) {
     const value = formData[condition.fieldId];
     const str = Array.isArray(value) ? value.join(",") : String(value ?? "");
     switch (condition.operator) {
-        case "eq":        return str === String(condition.value ?? "");
-        case "neq":       return str !== String(condition.value ?? "");
-        case "contains":  return str.includes(String(condition.value ?? ""));
-        case "not_empty": return str.trim() !== "";
-        case "empty":     return str.trim() === "";
-        default:          return true;
+    case "eq":        return str === String(condition.value ?? "");
+    case "neq":       return str !== String(condition.value ?? "");
+    case "contains":  return str.includes(String(condition.value ?? ""));
+    case "not_empty": return str.trim() !== "";
+    case "empty":     return str.trim() === "";
+    default:          return true;
     }
 }
 
@@ -201,76 +206,69 @@ function toggleCheckbox(fieldId, option) {
                 </div>
 
                 <form v-else class="space-y-4" v-on:submit.prevent="isLastStep() ? handleSubmit() : nextStep()">
-                    <div v-for="field in currentStepFields" :key="field.id" class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-primary">
-                            {{ field.label || '—' }}
-                            <span v-if="field.required" class="text-rose-400 ml-0.5">*</span>
-                        </label>
-
-                        <textarea
+                    <template v-for="field in currentStepFields" :key="field.id">
+                        <AppTextarea
                             v-if="field.type === 'textarea'"
                             v-model="formData[field.id]"
-                            rows="3"
-                            class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
-                            :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
+                            :label="field.label || '—'"
                             :placeholder="field.placeholder ?? ''"
+                            :required="field.required"
+                            :error="errors[field.id] ?? ''"
+                            :rows="3"
                         />
 
-                        <select
+                        <AppSelect
                             v-else-if="field.type === 'select'"
                             v-model="formData[field.id]"
-                            class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent-500"
-                            :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
+                            :label="field.label || '—'"
+                            :placeholder="t('shared.form.selectPlaceholder')"
+                            :required="field.required"
+                            :error="errors[field.id] ?? ''"
                         >
-                            <option value="" disabled>{{ t('shared.form.selectPlaceholder') }}</option>
                             <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}</option>
-                        </select>
+                        </AppSelect>
 
-                        <div v-else-if="field.type === 'radio'" class="space-y-1.5">
-                            <label
-                                v-for="opt in field.options"
-                                :key="opt"
-                                class="flex items-center gap-2 text-sm text-primary cursor-pointer"
-                            >
-                                <input
-                                    v-model="formData[field.id]"
-                                    type="radio"
-                                    :name="`preview-${field.id}`"
-                                    :value="opt"
-                                    class="text-accent-600 focus:ring-accent-500"
-                                >
-                                {{ opt }}
-                            </label>
+                        <div v-else-if="field.type === 'radio'">
+                            <AppFieldLabel :label="field.label || '—'" :required="field.required" />
+                            <div class="mt-1.5 space-y-1.5">
+                                <label v-for="opt in field.options" :key="opt" class="flex items-center gap-2 text-sm text-primary cursor-pointer">
+                                    <input
+                                        v-model="formData[field.id]"
+                                        type="radio"
+                                        :name="`preview-${field.id}`"
+                                        :value="opt"
+                                        class="text-accent-600 focus:ring-accent-500"
+                                    >
+                                    {{ opt }}
+                                </label>
+                            </div>
+                            <p v-if="errors[field.id]" class="mt-1 text-xs text-rose-400">{{ errors[field.id] }}</p>
                         </div>
 
-                        <div v-else-if="field.type === 'checkbox'" class="space-y-1.5">
-                            <label
-                                v-for="opt in field.options"
-                                :key="opt"
-                                class="flex items-center gap-2 text-sm text-primary cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :value="opt"
-                                    :checked="isChecked(field.id, opt)"
-                                    class="rounded text-accent-600 focus:ring-accent-500"
-                                    v-on:change="toggleCheckbox(field.id, opt)"
-                                >
-                                {{ opt }}
-                            </label>
+                        <div v-else-if="field.type === 'checkbox'">
+                            <AppFieldLabel :label="field.label || '—'" :required="field.required" />
+                            <div class="mt-1.5 space-y-1.5">
+                                <AppCheckbox
+                                    v-for="opt in field.options"
+                                    :key="opt"
+                                    :label="opt"
+                                    :model-value="isChecked(field.id, opt)"
+                                    v-on:update:model-value="toggleCheckbox(field.id, opt)"
+                                />
+                            </div>
+                            <p v-if="errors[field.id]" class="mt-1 text-xs text-rose-400">{{ errors[field.id] }}</p>
                         </div>
 
-                        <input
+                        <AppInput
                             v-else
                             v-model="formData[field.id]"
                             :type="field.type"
-                            class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent-500"
-                            :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
+                            :label="field.label || '—'"
                             :placeholder="field.placeholder ?? ''"
-                        >
-
-                        <p v-if="errors[field.id]" class="text-xs text-rose-400">{{ errors[field.id] }}</p>
-                    </div>
+                            :required="field.required"
+                            :error="errors[field.id] ?? ''"
+                        />
+                    </template>
 
                     <div class="flex items-center gap-3 pt-1" :class="isMultiStep && currentStep > 0 ? 'justify-between' : 'justify-end'">
                         <button

@@ -175,7 +175,9 @@ export function useFormEditor(props, fetchForms) {
             notifyEmail: editingForm.value.notifyEmail || null,
             webhookUrl: editingForm.value.webhookUrl || null,
             crmSync: editingForm.value.crmSync,
-            steps: editingForm.value.steps?.length ? editingForm.value.steps : null,
+            steps: editingForm.value.steps?.length
+                ? editingForm.value.steps
+                : null,
             active: editingForm.value.active,
             translations: editingForm.value.translations,
         };

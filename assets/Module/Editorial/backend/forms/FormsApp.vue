@@ -8,6 +8,8 @@ import { useFormEditor } from "@editorial/backend/forms/composables/useFormEdito
 import { useFormFields } from "@editorial/backend/forms/composables/useFormFields.js";
 import { useFormSubmissions } from "@editorial/backend/forms/composables/useFormSubmissions.js";
 import {
+    ChevronLeft,
+    ChevronRight,
     ClipboardList,
     Plus,
     Trash2,
@@ -36,6 +38,8 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppToggle from "@/shared/components/form/AppToggle.vue";
 import { slugify } from "@/shared/utils/format/slugify.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -128,14 +132,14 @@ const showPreview = ref(false);
                     <li
                         v-for="form in forms"
                         :key="form.id"
-                        class="px-4 py-3 cursor-pointer hover:bg-surface-2/50 transition-colors flex items-start gap-2"
+                        class="px-4 py-3.5 cursor-pointer hover:bg-surface-2/50 active:bg-accent-600/5 transition-colors flex items-start gap-3"
                         :class="selectedForm?.id === form.id ? 'bg-accent-600/10' : ''"
                         v-on:click="selectForm(form)"
                     >
                         <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
                         <div class="min-w-0 flex-1">
                             <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
-                            <p class="text-xs text-muted">{{ form.submissionCount }} {{ t("backend.forms.submissions_count") }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ form.submissionCount }} {{ t("backend.forms.submissions_count") }}</p>
                         </div>
                         <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("backend.forms.inactive") }}</AppBadge>
                     </li>
@@ -146,14 +150,14 @@ const showPreview = ref(false);
         </div>
 
         <div v-if="selectedForm || isCreating" class="flex-1 min-w-0 min-h-0 bg-surface border border-line/60 rounded-xl overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-line/60">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-5 py-4 border-b border-line/60">
                 <div class="flex items-center gap-2 min-w-0">
                     <ClipboardList class="w-5 h-5 shrink-0 text-accent-400" :stroke-width="2" />
                     <h2 class="text-base font-semibold text-primary truncate">
                         {{ isCreating ? t("backend.forms.newForm") : (formTitle(selectedForm) || "—") }}
                     </h2>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <AppButton
                         v-if="!isCreating && can('editorial.forms.edit')"
                         variant="danger"
@@ -222,124 +226,92 @@ const showPreview = ref(false);
                 </div>
 
                 <div :class="sharedSlug ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-4'">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.title") }}</label>
-                        <input
-                            v-model="editingForm.translations[activeLocale].title"
-                            type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
-                            :class="localeFieldError(formErrors, activeLocale, 'title') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('backend.forms.titlePlaceholder')"
-                            v-on:input="onTitleInput"
-                        >
-                        <p v-if="localeFieldError(formErrors, activeLocale, 'title')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'title') }}</p>
-                    </div>
-                    <div v-if="!sharedSlug" class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.slug") }}</label>
-                        <input
-                            v-model="editingForm.translations[activeLocale].slug"
-                            type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
-                            :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('backend.forms.slugPlaceholder')"
-                            v-on:input="onSlugInput"
-                        >
-                        <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
-                    </div>
+                    <AppInput
+                        v-model="editingForm.translations[activeLocale].title"
+                        :label="t('backend.forms.title')"
+                        :placeholder="t('backend.forms.titlePlaceholder')"
+                        :error="localeFieldError(formErrors, activeLocale, 'title') ?? ''"
+                        v-on:update:model-value="onTitleInput"
+                    />
+                    <AppInput
+                        v-if="!sharedSlug"
+                        v-model="editingForm.translations[activeLocale].slug"
+                        :label="t('backend.forms.slug')"
+                        :placeholder="t('backend.forms.slugPlaceholder')"
+                        :error="localeFieldError(formErrors, activeLocale, 'slug') ?? ''"
+                        v-on:update:model-value="onSlugInput"
+                    />
                 </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.description") }}</label>
-                    <textarea
-                        v-model="editingForm.translations[activeLocale].description"
-                        rows="3"
-                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
-                        :placeholder="t('backend.forms.descriptionPlaceholder')"
+                <AppTextarea
+                    v-model="editingForm.translations[activeLocale].description"
+                    :label="t('backend.forms.description')"
+                    :placeholder="t('backend.forms.descriptionPlaceholder')"
+                    :rows="3"
+                />
+
+                <hr class="border-line/40">
+
+                <div class="space-y-2">
+                    <AppCheckbox
+                        v-if="locales.length > 1"
+                        v-model="sharedSlug"
+                        :label="t('backend.forms.sharedSlug')"
+                        v-on:update:model-value="onSharedSlugToggle"
+                    />
+                    <AppInput
+                        v-if="sharedSlug"
+                        v-model="editingForm.translations[activeLocale].slug"
+                        :label="t('backend.forms.slug')"
+                        :placeholder="t('backend.forms.slugPlaceholder')"
+                        :error="localeFieldError(formErrors, activeLocale, 'slug') ?? ''"
+                        v-on:update:model-value="onSlugInput"
                     />
                 </div>
 
                 <hr class="border-line/40">
 
-                <div class="space-y-2">
-                    <div v-if="locales.length > 1" class="flex items-center gap-2">
-                        <input
-                            id="shared-slug"
-                            v-model="sharedSlug"
-                            type="checkbox"
-                            class="rounded border-line text-accent-600 focus:ring-accent-500"
-                            v-on:change="onSharedSlugToggle"
-                        >
-                        <label for="shared-slug" class="text-sm text-primary cursor-pointer">{{ t("backend.forms.sharedSlug") }}</label>
-                    </div>
-
-                    <div v-if="sharedSlug" class="flex flex-col gap-1.5">
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.slug") }}</label>
-                        <input
-                            v-model="editingForm.translations[activeLocale].slug"
-                            type="text"
-                            class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500 font-mono"
-                            :class="localeFieldError(formErrors, activeLocale, 'slug') ? 'border-rose-500' : 'border-line/60'"
-                            :placeholder="t('backend.forms.slugPlaceholder')"
-                            v-on:input="onSlugInput"
-                        >
-                        <p v-if="localeFieldError(formErrors, activeLocale, 'slug')" class="text-xs text-rose-400">{{ localeFieldError(formErrors, activeLocale, 'slug') }}</p>
-                    </div>
-                </div>
-
-                <hr class="border-line/40">
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.notifyEmail") }}</label>
-                    <input
+                <div class="flex flex-col gap-1">
+                    <AppInput
                         v-model="editingForm.notifyEmail"
                         type="email"
-                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted focus:outline-none focus:ring-1 focus:ring-accent-500"
+                        :label="t('backend.forms.notifyEmail')"
                         :placeholder="t('backend.forms.notifyEmailPlaceholder')"
-                    >
+                    />
                     <p class="text-xs text-muted">{{ t("backend.forms.notifyEmailHint") }}</p>
                 </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <div class="flex items-center gap-1.5">
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-1.5 mb-1">
                         <Webhook class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.webhookUrl") }}</label>
+                        <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.webhookUrl") }}</span>
                     </div>
-                    <input
+                    <AppInput
                         v-model="editingForm.webhookUrl"
                         type="url"
-                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted font-mono focus:outline-none focus:ring-1 focus:ring-accent-500"
                         :placeholder="t('backend.forms.webhookUrlPlaceholder')"
-                    >
+                    />
                     <p class="text-xs text-muted">{{ t("backend.forms.webhookUrlHint") }}</p>
                 </div>
 
-                <div class="flex flex-col gap-3">
-                    <div class="flex items-center gap-3">
-                        <button
-                            type="button"
-                            class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors"
-                            :class="editingForm.crmSync ? 'bg-accent-600' : 'bg-surface-3'"
-                            v-on:click="editingForm.crmSync = !editingForm.crmSync"
-                        >
-                            <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.crmSync ? 'translate-x-4' : 'translate-x-0.5'" />
-                        </button>
-                        <div>
-                            <label class="text-sm text-primary cursor-pointer flex items-center gap-1.5" v-on:click="editingForm.crmSync = !editingForm.crmSync">
-                                <Users class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
-                                {{ t("backend.forms.crmSync") }}
-                            </label>
-                            <p class="text-xs text-muted">{{ t("backend.forms.crmSyncHint") }}</p>
-                        </div>
+                <div class="flex items-start gap-3">
+                    <AppToggle v-model="editingForm.crmSync" class="mt-0.5" />
+                    <div>
+                        <p class="text-sm text-primary flex items-center gap-1.5">
+                            <Users class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                            {{ t("backend.forms.crmSync") }}
+                        </p>
+                        <p class="text-xs text-muted">{{ t("backend.forms.crmSyncHint") }}</p>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div class="flex items-center gap-1.5">
                             <GitBranch class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                             <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.steps") }}</label>
                         </div>
-                        <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1" v-on:click="addStep">
+                        <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1 self-start sm:self-auto" v-on:click="addStep">
                             <Plus class="w-3 h-3" :stroke-width="2" />
                             {{ t("backend.forms.addStep") }}
                         </button>
@@ -347,12 +319,11 @@ const showPreview = ref(false);
                     <p v-if="!editingForm.steps?.length" class="text-xs text-muted">{{ t("backend.forms.stepsEmpty") }}</p>
                     <div v-for="(step, i) in editingForm.steps" :key="i" class="flex items-center gap-2">
                         <span class="text-xs text-muted w-5 shrink-0 text-center">{{ i + 1 }}</span>
-                        <input
+                        <AppInput
                             v-model="editingForm.steps[i][activeLocale]"
-                            type="text"
-                            class="flex-1 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
                             :placeholder="`${t('backend.forms.stepLabel')} ${i + 1}`"
-                        >
+                            class="flex-1"
+                        />
                         <button class="text-muted hover:text-rose-400 transition-colors shrink-0" v-on:click="removeStep(i)">
                             <X class="w-4 h-4" :stroke-width="2" />
                         </button>
@@ -361,15 +332,8 @@ const showPreview = ref(false);
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button
-                        type="button"
-                        class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors"
-                        :class="editingForm.active ? 'bg-accent-600' : 'bg-surface-3'"
-                        v-on:click="editingForm.active = !editingForm.active"
-                    >
-                        <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.active ? 'translate-x-4' : 'translate-x-0.5'" />
-                    </button>
-                    <label class="text-sm text-primary cursor-pointer" v-on:click="editingForm.active = !editingForm.active">{{ t("backend.forms.active") }}</label>
+                    <AppToggle v-model="editingForm.active" />
+                    <span class="text-sm text-primary">{{ t("backend.forms.active") }}</span>
                 </div>
             </div>
 
@@ -462,7 +426,7 @@ const showPreview = ref(false);
             </div>
         </div>
 
-        <div v-else class="flex-1 flex items-center justify-center text-sm text-muted bg-surface border border-line/60 rounded-xl">
+        <div v-else class="flex-1 hidden lg:flex items-center justify-center text-sm text-muted bg-surface border border-line/60 rounded-xl min-h-48">
             {{ t("backend.forms.selectOrCreate") }}
         </div>
     </div>
@@ -508,29 +472,24 @@ const showPreview = ref(false);
                         class="px-2 py-0.5 text-xs rounded-md border transition-colors"
                         :class="editingField.conditionsLogic === logic ? 'bg-accent-600 border-accent-600 text-white' : 'border-line text-secondary hover:border-accent-400'"
                         v-on:click="editingField.conditionsLogic = logic"
-                    >{{ t(`backend.forms.conditionsLogic.${logic}`) }}</button>
+                    >
+                        {{ t(`backend.forms.conditionsLogic.${logic}`) }}
+                    </button>
                 </div>
-                <div v-for="(condition, i) in editingField.conditions" :key="i" class="flex items-start gap-1.5 flex-wrap">
-                    <select
-                        v-model="condition.fieldId"
-                        class="flex-1 min-w-28 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
-                    >
+                <div v-for="(condition, i) in editingField.conditions" :key="i" class="flex items-end gap-1.5 flex-wrap">
+                    <AppSelect v-model="condition.fieldId" class="flex-1 min-w-28">
                         <option v-for="f in otherFields" :key="f.id" :value="f.id">{{ fieldLabel(f) || f.id }}</option>
-                    </select>
-                    <select
-                        v-model="condition.operator"
-                        class="w-28 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
-                    >
+                    </AppSelect>
+                    <AppSelect v-model="condition.operator" class="w-32">
                         <option v-for="op in OPERATORS" :key="op.value" :value="op.value">{{ op.label }}</option>
-                    </select>
-                    <input
+                    </AppSelect>
+                    <AppInput
                         v-if="!['empty', 'not_empty'].includes(condition.operator)"
                         v-model="condition.value"
-                        type="text"
-                        class="flex-1 min-w-20 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
                         :placeholder="t('backend.forms.conditionValue')"
-                    >
-                    <button class="text-muted hover:text-rose-400 transition-colors mt-1.5" v-on:click="removeCondition(i)">
+                        class="flex-1 min-w-20"
+                    />
+                    <button class="text-muted hover:text-rose-400 transition-colors mb-1.5" v-on:click="removeCondition(i)">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                     </button>
                 </div>
@@ -557,35 +516,27 @@ const showPreview = ref(false);
                 </AppTab>
             </div>
 
-            <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldLabel") }}</label>
-                <input
-                    v-model="editingField.translations[fieldActiveLocale].label"
-                    type="text"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
-                    :class="localeFieldError(fieldErrors, fieldActiveLocale, 'label') ? 'border-rose-500' : 'border-line/60'"
-                    :placeholder="t('backend.forms.fieldLabelPlaceholder')"
-                >
-                <p v-if="localeFieldError(fieldErrors, fieldActiveLocale, 'label')" class="text-xs text-rose-400">{{ localeFieldError(fieldErrors, fieldActiveLocale, 'label') }}</p>
-            </div>
+            <AppInput
+                v-model="editingField.translations[fieldActiveLocale].label"
+                :label="t('backend.forms.fieldLabel')"
+                :placeholder="t('backend.forms.fieldLabelPlaceholder')"
+                :error="localeFieldError(fieldErrors, fieldActiveLocale, 'label') ?? ''"
+            />
 
-            <div v-if="!fieldHasOptions" class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldPlaceholder") }}</label>
-                <input
-                    v-model="editingField.translations[fieldActiveLocale].placeholder"
-                    type="text"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
-                    :placeholder="t('backend.forms.fieldPlaceholderPlaceholder')"
-                >
-            </div>
+            <AppInput
+                v-if="!fieldHasOptions"
+                v-model="editingField.translations[fieldActiveLocale].placeholder"
+                :label="t('backend.forms.fieldPlaceholder')"
+                :placeholder="t('backend.forms.fieldPlaceholderPlaceholder')"
+            />
 
-            <div v-if="fieldHasOptions" class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldOptions") }}</label>
-                <textarea
+            <div v-if="fieldHasOptions" class="flex flex-col gap-1">
+                <AppTextarea
                     v-model="fieldOptionsText[fieldActiveLocale]"
-                    rows="4"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary font-mono focus:outline-none focus:ring-1 focus:ring-accent-500 resize-none"
+                    :label="t('backend.forms.fieldOptions')"
                     :placeholder="t('backend.forms.fieldOptionsPlaceholder')"
+                    :rows="4"
+                    :mono="true"
                 />
                 <p class="text-xs text-muted">{{ t("backend.forms.fieldOptionsHint") }}</p>
             </div>
