@@ -195,7 +195,7 @@ async function handleSubmit() {
                         class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-white dark:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-[--th-accent]"
                         :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
                     >
-                        <option value="">{{ t("shared.form.selectPlaceholder") }}</option>
+                        <option value="" disabled>{{ t("shared.form.selectPlaceholder") }}</option>
                         <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
                     </select>
 

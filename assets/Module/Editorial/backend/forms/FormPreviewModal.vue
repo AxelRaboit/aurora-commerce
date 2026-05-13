@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { FormFieldType } from "@editorial/shared/enums/formFieldType.js";
 import { ChevronLeft, ChevronRight, Eye, X } from "lucide-vue-next";
@@ -65,10 +65,14 @@ function resetPreview() {
     currentStep.value = 0;
     submitted.value = false;
     Object.keys(errors).forEach((k) => delete errors[k]);
+    Object.keys(formData).forEach((k) => delete formData[k]);
     for (const field of previewFields.value) {
         formData[field.id] = field.type === FormFieldType.Checkbox ? [] : "";
     }
 }
+
+// Initialize formData each time the modal opens
+watch(() => props.show, (visible) => { if (visible) resetPreview(); });
 
 function onClose() {
     resetPreview();
@@ -218,7 +222,7 @@ function toggleCheckbox(fieldId, option) {
                             class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent-500"
                             :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
                         >
-                            <option value="">{{ t('shared.form.selectPlaceholder') }}</option>
+                            <option value="" disabled>{{ t('shared.form.selectPlaceholder') }}</option>
                             <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}</option>
                         </select>
 
