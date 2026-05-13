@@ -824,6 +824,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 $em->persist($ft);
             }
 
+            // Build fields and keep a map labelFr → field for submissions
+            $fieldsByLabel = [];
             foreach ($fd['fields'] as $pos => $fieldDef) {
                 $field = new FormField();
                 $field->setForm($form)->setType($fieldDef['type'])->setRequired($fieldDef['req'])->setPosition($pos);
@@ -837,18 +839,27 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     if (isset($fieldDef['opts_fr']) && 'fr' === $locale) {
                         $fft->setOptions($fieldDef['opts_fr']);
                     }
-
                     if (isset($fieldDef['opts_en']) && 'en' === $locale) {
                         $fft->setOptions($fieldDef['opts_en']);
                     }
-
                     $em->persist($fft);
                 }
+
+                $fieldsByLabel[$fieldDef['fr']] = $field;
             }
 
+            // Flush to get field IDs — FormSubmission.data keys must be string field IDs
+            $em->flush();
+
             foreach ($fd['submissions'] as $sub) {
+                $data = [];
+                foreach ($sub as $label => $value) {
+                    if (isset($fieldsByLabel[$label])) {
+                        $data[(string) $fieldsByLabel[$label]->getId()] = $value;
+                    }
+                }
                 $fs = new FormSubmission();
-                $fs->setForm($form)->setData($sub)->setLocale('fr');
+                $fs->setForm($form)->setData($data)->setLocale('fr');
                 $em->persist($fs);
             }
         }
