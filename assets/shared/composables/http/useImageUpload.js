@@ -39,7 +39,11 @@ export function useImageUpload({
             onError?.(err);
         } finally {
             uploading.value = false;
-            if (inputRef.value) inputRef.value.value = "";
+            if (inputRef.value?.reset) {
+                inputRef.value.reset();
+            } else if (inputRef.value) {
+                inputRef.value.value = "";
+            }
         }
     }
 

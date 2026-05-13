@@ -7,6 +7,7 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import GoogleSerpPreview from "./GoogleSerpPreview.vue";
 import { seoCounterClass } from "@/shared/utils/seo/seoCounter.js";
@@ -181,22 +182,17 @@ async function selectOgFromLibrary() {
                             <ImagePlus v-else class="w-6 h-6 sm:w-5 sm:h-5 text-muted" :stroke-width="2" />
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <input
+                            <AppFilePickerButton
                                 ref="ogInputRef"
-                                type="file"
                                 accept="image/*"
-                                class="hidden"
-                                v-on:change="uploadOgImage"
-                            >
-                            <AppButton
                                 variant="secondary"
                                 size="sm"
                                 :loading="uploadingOg"
                                 class="flex-1 sm:flex-none"
-                                v-on:click="ogInputRef?.click()"
+                                v-on:change="uploadOgImage"
                             >
                                 <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.seo.ogImageUpload") }}
-                            </AppButton>
+                            </AppFilePickerButton>
                             <AppButton variant="ghost" size="sm" class="flex-1 sm:flex-none" v-on:click="selectOgFromLibrary">
                                 <ImagePlus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.selectFromLibrary") }}
                             </AppButton>

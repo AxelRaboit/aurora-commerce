@@ -57,7 +57,11 @@ export function useMediaUpload(props, media, currentFolderId) {
         } finally {
             uploading.value = false;
             uploadProgress.value = [];
-            if (uploadInput.value) uploadInput.value.value = "";
+            if (uploadInput.value?.reset) {
+                uploadInput.value.reset();
+            } else if (uploadInput.value) {
+                uploadInput.value.value = "";
+            }
         }
     }
 

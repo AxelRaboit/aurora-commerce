@@ -28,6 +28,7 @@ import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -1379,10 +1380,10 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         <AppDatePicker v-model="sprintsManage.sprintForm.value.startDate" :label="t('backend.projects.fields.startDate')" />
                         <AppDatePicker v-model="sprintsManage.sprintForm.value.endDate" :label="t('backend.projects.fields.endDate')" />
                     </div>
-                    <label class="flex items-center gap-2 text-sm text-primary">
-                        <input v-model="sprintsManage.sprintForm.value.isActive" type="checkbox" class="rounded border-line">
-                        {{ t('backend.projects.sprints.activeField') }}
-                    </label>
+                    <AppCheckbox
+                        v-model="sprintsManage.sprintForm.value.isActive"
+                        :label="t('backend.projects.sprints.activeField')"
+                    />
                 </div>
             </div>
             <template #footer>

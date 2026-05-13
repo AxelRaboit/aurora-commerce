@@ -1,10 +1,9 @@
 <script setup>
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { computed, ref, watch } from "vue";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useImageUpload } from "@/shared/composables/http/useImageUpload.js";
+import { usePostReferenceField } from "@editorial/backend/posts/composables/usePostReferenceField.js";
 import { X, ImagePlus, Upload } from "lucide-vue-next";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
@@ -12,6 +11,7 @@ import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
@@ -32,101 +32,17 @@ function update(value) {
     emit("update:modelValue", value);
 }
 
-// ── Reference picker ─────────────────────────────────────────────────────────
-const isReference = computed(() => props.field.type === PostFieldType.Reference);
-const isMultiple = computed(() => props.field.options?.multiple === true);
+const { isReference, isMultiple, resolved, search, results, open, loading, runSearch, addReference, removeReference } =
+    usePostReferenceField({
+        field: toRef(props, "field"),
+        modelValue: toRef(props, "modelValue"),
+        update,
+    });
 
-const referenceIds = computed(() => {
-    if (!isReference.value) return [];
-    if (isMultiple.value) return Array.isArray(props.modelValue) ? props.modelValue.map(Number) : [];
-    return props.modelValue ? [Number(props.modelValue)] : [];
+const { uploading, inputRef: mediaInput, uploadFromEvent: uploadMedia } = useImageUpload({
+    onSuccess: ({ file }) => update(file?.id ?? null),
+    onError: () => toast.error(t("shared.common.error")),
 });
-
-const resolved = ref([]);
-const search = ref("");
-const results = ref([]);
-const open = ref(false);
-
-const { loading, request: searchRequest } = useRequest();
-const { request: resolveRequest } = useRequest();
-
-watch(search, useDebounce(runSearch, 200));
-
-async function runSearch() {
-    const url = new URL("/backend/posts/search", window.location.origin);
-    if (search.value) url.searchParams.set("q", search.value);
-    if (props.field.options?.postTypeId) url.searchParams.set("postTypeId", String(props.field.options.postTypeId));
-    const data = await searchRequest(url.toString(), null, { method: HttpMethod.Get, noGuard: true });
-    if (!data) { results.value = []; return; }
-    const exclude = new Set(referenceIds.value);
-    results.value = (data.results ?? []).filter((r) => !exclude.has(r.id));
-}
-
-async function resolveMissingIds() {
-    if (!isReference.value) return;
-    const alreadyResolved = new Set(resolved.value.map((r) => r.id));
-    const missing = referenceIds.value.filter((id) => !alreadyResolved.has(id));
-    if (missing.length === 0) {
-        resolved.value = resolved.value.filter((r) => referenceIds.value.includes(r.id));
-        return;
-    }
-    const url = new URL("/backend/posts/search", window.location.origin);
-    url.searchParams.set("ids", missing.join(","));
-    const data = await resolveRequest(url.toString(), null, { method: HttpMethod.Get, noGuard: true });
-    if (data) {
-        for (const result of data.results ?? []) {
-            if (!alreadyResolved.has(result.id)) resolved.value.push(result);
-        }
-    }
-    resolved.value = resolved.value.filter((r) => referenceIds.value.includes(r.id));
-}
-
-watch(() => props.modelValue, resolveMissingIds, { immediate: true });
-
-function addReference(result) {
-    if (referenceIds.value.includes(result.id)) return;
-    resolved.value.push(result);
-    if (isMultiple.value) {
-        update([...referenceIds.value, result.id]);
-    } else {
-        update(result.id);
-        open.value = false;
-    }
-    search.value = "";
-}
-
-function removeReference(id) {
-    resolved.value = resolved.value.filter((r) => r.id !== id);
-    if (isMultiple.value) {
-        update(referenceIds.value.filter((existing) => existing !== id));
-    } else {
-        update(null);
-    }
-}
-
-// ── Media upload ─────────────────────────────────────────────────────────────
-const uploading = ref(false);
-const mediaInput = ref(null);
-
-async function uploadMedia(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    uploading.value = true;
-    try {
-        const body = new FormData();
-        body.append("image", file);
-        const response = await fetch("/backend/media/upload", { method: HttpMethod.Post, body });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        if (data.success) update(data.file?.id ?? null);
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        uploading.value = false;
-        if (mediaInput.value) mediaInput.value.value = "";
-    }
-}
-
 </script>
 
 <template>
@@ -210,16 +126,16 @@ async function uploadMedia(event) {
                     <span v-if="modelValue" class="text-xs text-muted font-mono">#{{ modelValue }}</span>
                     <ImagePlus v-else class="w-4 h-4 text-muted" :stroke-width="2" />
                 </div>
-                <input
+                <AppFilePickerButton
                     ref="mediaInput"
-                    type="file"
                     accept="image/*"
-                    class="hidden"
+                    variant="secondary"
+                    size="sm"
+                    :loading="uploading"
                     v-on:change="uploadMedia"
                 >
-                <AppButton variant="secondary" size="sm" :loading="uploading" v-on:click="mediaInput?.click()">
                     <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.customField.upload") }}
-                </AppButton>
+                </AppFilePickerButton>
                 <AppButton v-if="modelValue" variant="ghost" size="sm" v-on:click="update(null)">
                     <X class="w-3.5 h-3.5" :stroke-width="2" />
                 </AppButton>

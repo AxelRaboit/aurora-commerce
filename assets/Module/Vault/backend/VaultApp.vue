@@ -33,6 +33,7 @@ import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
+import AppColorField from '@shared/components/form/AppColorField.vue';
 import {
     Plus, Lock, Star, Pencil, Trash2, X, Save, Home, Layers, Folder, FolderOpen, ShieldCheck,
     ChevronRight, ChevronDown, Eye,
@@ -480,14 +481,10 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                         <span class="text-sm text-secondary">{{ t('vault.folders.color') }}</span>
                         <AppToggle v-model="folderForm.useColor" />
                     </div>
-                    <div v-if="folderForm.useColor" class="flex items-center gap-3">
-                        <input
-                            v-model="folderForm.color"
-                            type="color"
-                            class="w-10 h-10 rounded cursor-pointer border border-line bg-transparent"
-                        >
-                        <span class="text-sm text-secondary font-mono">{{ folderForm.color }}</span>
-                    </div>
+                    <AppColorField
+                        v-if="folderForm.useColor"
+                        v-model="folderForm.color"
+                    />
                 </div>
                 <AppMultiselect
                     v-model="folderForm.parentId"

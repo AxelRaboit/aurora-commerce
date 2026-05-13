@@ -27,6 +27,9 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
 import { slugify } from "@/shared/utils/format/slugify.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -372,20 +375,11 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
         v-on:close="showFieldModal = false"
     >
         <div class="space-y-4">
-            <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.fieldType") }}</label>
-                <select
-                    v-model="editingField.type"
-                    class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
-                >
-                    <option v-for="ft in FIELD_TYPES" :key="ft.value" :value="ft.value">{{ ft.label }}</option>
-                </select>
-            </div>
+            <AppSelect v-model="editingField.type" :label="t('backend.forms.fieldType')">
+                <option v-for="ft in FIELD_TYPES" :key="ft.value" :value="ft.value">{{ ft.label }}</option>
+            </AppSelect>
 
-            <div class="flex items-center gap-2">
-                <input id="field-required" v-model="editingField.required" type="checkbox" class="rounded border-line text-accent-600 focus:ring-accent-500">
-                <label for="field-required" class="text-sm text-primary">{{ t("backend.forms.fieldRequired") }}</label>
-            </div>
+            <AppCheckbox v-model="editingField.required" :label="t('backend.forms.fieldRequired')" />
 
             <hr class="border-line/40">
 

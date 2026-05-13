@@ -13,6 +13,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import { Eye, Trash2, RotateCcw, FileText, ScrollText, LayoutList, CircleCheck, X, Check } from "lucide-vue-next";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { MimeType, isPdfMimeType, isImageMimeType } from "@core/utils/enums/media/mimeType.js";
@@ -251,10 +252,12 @@ const { formatDateTimeNumeric: formatDateTime } = useDateFormat();
         <AppModal :show="!!pendingDelete" max-width="sm" :closeable="false" v-on:close="pendingDelete = null; deleteTiersToo = false">
             <p class="text-sm text-primary">{{ t('backend.billing.ocr.deleteConfirm', { id: pendingDelete?.id ?? '' }) }}</p>
             <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
-            <label v-if="canDeleteTiers" class="flex items-center gap-2 mt-3 text-sm text-secondary cursor-pointer select-none">
-                <input v-model="deleteTiersToo" type="checkbox" class="rounded border-line">
-                {{ t('backend.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' }) }}
-            </label>
+            <AppCheckbox
+                v-if="canDeleteTiers"
+                v-model="deleteTiersToo"
+                :label="t('backend.billing.ocr.deleteTiersToo', { name: pendingDelete?.invoiceSupplierName ?? '' })"
+                class="mt-3"
+            />
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null; deleteTiersToo = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

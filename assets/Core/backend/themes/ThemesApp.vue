@@ -5,6 +5,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -176,12 +177,11 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                 <div class="space-y-1.5 pt-6 border-t border-line/60">
                     <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ t('backend.themes.primaryColor') }}</span>
                     <div class="flex items-center gap-3 bg-surface-2 rounded-lg px-3 py-2">
-                        <input
-                            type="color"
-                            :value="primaryColor"
-                            class="w-8 h-8 rounded cursor-pointer border border-line bg-transparent p-0.5"
-                            v-on:input="primaryColor = $event.target.value"
-                        >
+                        <AppColorSwatch
+                            :model-value="primaryColor"
+                            size="sm"
+                            v-on:update:model-value="primaryColor = $event"
+                        />
                         <div class="flex flex-col min-w-0 flex-1">
                             <span class="text-xs font-medium text-primary">{{ t('backend.themes.primaryColorLabel') }}</span>
                             <span class="text-xs text-muted">{{ t('backend.themes.primaryColorHint') }}</span>
@@ -195,12 +195,11 @@ const { deletingTheme, confirmDelete } = useThemesDelete(themeList, props.delete
                     <span class="block text-xs text-secondary uppercase tracking-wide font-semibold">{{ section.label }}</span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div v-for="cssVar in section.vars" :key="cssVar.key" class="flex items-center gap-3 bg-surface-2 rounded-lg px-3 py-2">
-                            <input
-                                type="color"
-                                :value="colorFields[cssVar.key]"
-                                class="w-8 h-8 rounded cursor-pointer border border-line bg-transparent p-0.5"
-                                v-on:input="colorFields[cssVar.key] = $event.target.value"
-                            >
+                            <AppColorSwatch
+                                :model-value="colorFields[cssVar.key]"
+                                size="sm"
+                                v-on:update:model-value="colorFields[cssVar.key] = $event"
+                            />
                             <div class="flex flex-col min-w-0 flex-1">
                                 <span class="text-xs font-medium text-primary">{{ cssVar.label }}</span>
                                 <span class="text-xs font-mono text-muted truncate">{{ cssVar.key }}</span>

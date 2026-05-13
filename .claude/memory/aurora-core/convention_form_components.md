@@ -35,7 +35,10 @@ contrôles spéciaux comme l'input du DatePicker que l'on n'expose pas.
 | Checkbox classique | `AppCheckbox` |
 | Date / datetime | `AppDatePicker` (jamais `type="date"` natif !) |
 | Recherche (avec icône loupe) | `AppSearchInput` |
-| Upload fichier | `AppFileInput` ou `AppDropZone` |
+| Upload fichier (drag&drop) | `AppFileInput` ou `AppDropZone` |
+| Upload fichier (bouton trigger) | `AppFilePickerButton` (wrap hidden input + AppButton) |
+| Couleur (swatch nu) | `AppColorSwatch` (size="sm|md") |
+| Couleur (champ form avec label/error/hex) | `AppColorField` |
 
 ### Pourquoi
 Cohérence visuelle, dark mode, accessibilité (focus, aria-label),
@@ -51,8 +54,14 @@ grep -rEn "<button\\b|<input\\b|<select\\b" assets/Core/ assets/Module/ \
   | grep -v ".test." | grep -v "node_modules"
 ```
 
-Cas légitimes : input de type checkbox uniquement utilisé par un
-composant App* lui-même, ou un button dans un composant App* primitive.
+Cas légitimes :
+- input de type `checkbox` uniquement utilisé par un composant App* lui-même
+- un `<button>` dans un composant App* primitive
+- `<input type="hidden">` pour CSRF tokens (`name="_token"` ou `name="_csrf_token"`)
+- `<input type="range">` (pas d'AppRange à ce jour — 2 usages seulement)
+- `<label>` wrapper avec `<input type="file" class="sr-only">` formant une drop-zone cliquable
+  (différent du pattern bouton+hidden input qui doit utiliser `AppFilePickerButton`)
+
 Sinon refacto.
 
 ## Règle 2 — Toujours fournir un `placeholder` sur les inputs

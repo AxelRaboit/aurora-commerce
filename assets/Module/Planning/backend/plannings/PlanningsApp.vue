@@ -8,6 +8,7 @@ import { Plus, Pencil, Trash2, Save, X, CalendarDays, Users, Building2, LayoutGr
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppColorField from "@/shared/components/form/AppColorField.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
@@ -372,10 +373,9 @@ onMounted(() => {
                     :placeholder="t('backend.plannings.fields.descriptionPlaceholder')"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppInput
+                    <AppColorField
                         v-model="planningForm.editForm.color"
                         :label="t('backend.plannings.fields.color')"
-                        type="color"
                         :error="planningForm.editModal.errors.color ?? ''"
                     />
                     <AppSelect

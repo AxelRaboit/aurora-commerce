@@ -29,6 +29,8 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [convention_mobile_card_layout.md](convention_mobile_card_layout.md) — `sm:hidden` cards + `hidden sm:block` table ; footer actions ; bouton full-width mobile ; logique search dans le composable
 - [convention_vue_form_validation.md](convention_vue_form_validation.md) — `useForm` + `required()` + `:error` ; `useI18n()` dans le composable ; reset loading sur tous les chemins
 - [convention_form_components.md](convention_form_components.md) — toujours `App*` au lieu de `<button>`/`<input>`/`<select>` brut, placeholders obligatoires, `AppDatePicker` (jamais `type="date"` natif)
+- [convention_file_picker_button.md](convention_file_picker_button.md) — `AppFilePickerButton` encapsule `<input type="file" hidden>` + `<AppButton>` trigger ; expose `open()`/`reset()`
+- [convention_color_picker.md](convention_color_picker.md) — 3 composants couleur : `AppColorSwatch` (nu), `AppColorField` (form), `AppColorPicker` (preset grid)
 - [convention_vue_directives.md](convention_vue_directives.md) — toujours `v-on:click` (jamais `@click`), `:` shorthand OK pour `v-bind`
 - [convention_modal_and_confirmation.md](convention_modal_and_confirmation.md) — `AppModal` API (`:show + v-on:close`) + confirmation suppression via modale, jamais `confirm()` natif
 - [convention_js_privacy.md](convention_js_privacy.md) — privacy JS : `#field` dans les classes (jamais `_field`), variable module-level non exportée pour les composables

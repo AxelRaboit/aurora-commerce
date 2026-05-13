@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, FileText, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -126,25 +127,20 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         v-on:search="(q) => navigateTo(currentFolderId, q)"
                     />
                 </div>
-                <input
+                <AppFilePickerButton
+                    v-if="can('core.media.manage')"
                     ref="uploadInput"
-                    type="file"
                     accept="image/*"
                     multiple
-                    class="hidden"
-                    v-on:change="uploadFiles"
-                >
-                <AppButton
-                    v-if="can('core.media.manage')"
                     variant="primary"
                     size="md"
                     class="w-full sm:w-auto"
                     :loading="uploading"
-                    v-on:click="uploadInput?.click()"
+                    v-on:change="uploadFiles"
                 >
                     <Upload class="w-4 h-4" :stroke-width="2" />
                     {{ t("backend.media.upload") }}
-                </AppButton>
+                </AppFilePickerButton>
             </div>
         </div>
 
