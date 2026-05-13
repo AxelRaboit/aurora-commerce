@@ -1,7 +1,7 @@
 <script setup>
+import { computed, ref, watch } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { ref } from "vue";
 import { usePostsTrash } from "@editorial/backend/posts/composables/usePostsTrash.js";
 import { usePostsEditor } from "@editorial/backend/posts/composables/usePostsEditor.js";
 import { usePostsPreview } from "@editorial/backend/posts/composables/usePostsPreview.js";
@@ -18,9 +18,10 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { usePostList } from "@editorial/backend/posts/composables/usePostList.js";
 import { usePostDelete } from "@editorial/backend/posts/composables/usePostDelete.js";
-import { Pencil, Trash2, Plus, FileText, Eye, Inbox, RotateCcw, X } from "lucide-vue-next";
+import { Filter, FileText, Eye, Inbox, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-vue-next";
 import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
+import PostTaxonomiesPanel from "@editorial/backend/posts/PostTaxonomiesPanel.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -42,6 +43,8 @@ const props = defineProps({
     taxonomies: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     trashed: { type: Boolean, default: false },
+    postTypeId: { type: Number, default: null },
+    termIds: { type: Array, default: () => [] },
     createPath: { type: String, required: true },
     showPath: { type: String, required: true },
     previewPath: { type: String, required: true },
@@ -50,23 +53,68 @@ const props = defineProps({
     restorePath: { type: String, required: true },
     forceDeletePath: { type: String, required: true },
     emptyTrashPath: { type: String, default: "" },
-    /**
-     * Extra fields not directly used here (the post editor lives in
-     * PostEditor.vue which has its own extraFields prop), but kept on the
-     * list app for symmetry — clients can use it to drive extra-cells
-     * rendering when their slot needs the same config.
-     */
     extraFields: { type: Object, default: () => ({}) },
 });
 
 const parsedPostTypes  = props.postTypes ?? [];
 const parsedTaxonomies = props.taxonomies ?? [];
 const parsedLocales    = props.locales ?? DEFAULT_LOCALES;
+const defaultLocale    = parsedLocales[0] ?? "fr";
 
-// removePost must be defined before usePostsTrash which receives it as argument
-const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
-    usePostList(props.postsPath, props.posts, props.search, () => (trashed.value ? { trashed: "1" } : {}));
+// --- Filter state ---
+const selectedPostTypeId = ref(props.postTypeId ?? null);
+const selectedTermIds    = ref([...(props.termIds ?? [])]);
 
+const hasActiveFilters = computed(() => selectedPostTypeId.value !== null || selectedTermIds.value.length > 0);
+
+function syncFiltersToUrl() {
+    const url = new URL(window.location.href);
+    if (selectedPostTypeId.value) {
+        url.searchParams.set("postTypeId", String(selectedPostTypeId.value));
+    } else {
+        url.searchParams.delete("postTypeId");
+    }
+    url.searchParams.delete("termIds");
+    selectedTermIds.value.forEach((id) => url.searchParams.append("termIds", String(id)));
+    history.replaceState(history.state, "", url);
+}
+
+function setPostTypeFilter(id) {
+    selectedPostTypeId.value = selectedPostTypeId.value === id ? null : id;
+    selectedTermIds.value = [];
+    syncFiltersToUrl();
+    performSearch();
+}
+
+function toggleTerm(id) {
+    const index = selectedTermIds.value.indexOf(id);
+    if (index === -1) {
+        selectedTermIds.value = [...selectedTermIds.value, id];
+    } else {
+        selectedTermIds.value = selectedTermIds.value.filter((t) => t !== id);
+    }
+    syncFiltersToUrl();
+    performSearch();
+}
+
+function clearFilters() {
+    selectedPostTypeId.value = null;
+    selectedTermIds.value = [];
+    syncFiltersToUrl();
+    performSearch();
+}
+
+// --- Taxonomy terms filtered by selected postType ---
+const visibleTaxonomies = computed(() => {
+    if (!selectedPostTypeId.value || !parsedTaxonomies.length) {
+        return parsedTaxonomies;
+    }
+    const postType = parsedPostTypes.find((pt) => pt.id === selectedPostTypeId.value);
+    if (!postType?.taxonomyIds?.length) return parsedTaxonomies;
+    return parsedTaxonomies.filter((tax) => postType.taxonomyIds.includes(tax.id));
+});
+
+// --- List ---
 const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
     initial: props.trashed,
     serialize: (value) => {
@@ -75,13 +123,19 @@ const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
         else url.searchParams.delete("trashed");
         return url;
     },
-    deserialize: (event) => event.state?.value
-        ?? (new URLSearchParams(window.location.search).get("trashed") === "1"),
+    deserialize: (event) =>
+        event.state?.value ?? (new URLSearchParams(window.location.search).get("trashed") === "1"),
     onSync: () => performSearch(),
 });
 
-const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
+const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
+    usePostList(props.postsPath, props.posts, props.search, () => ({
+        ...(trashed.value ? { trashed: "1" } : {}),
+        ...(selectedPostTypeId.value ? { postTypeId: selectedPostTypeId.value } : {}),
+        ...(selectedTermIds.value.length ? Object.fromEntries(selectedTermIds.value.map((id, i) => [`termIds[${i}]`, id])) : {}),
+    }));
 
+const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
 const { view, editingPostId, openCreate, openEdit, closeEditor, onEditorSaved } = usePostsEditor(addPost, updatePost);
 
 const syncSearchUrl = useUrlSearchSync();
@@ -115,21 +169,62 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
     />
 
     <div v-else class="flex flex-col md:flex-row gap-6">
-        <nav class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="right">
-                <AppTab :active="!trashed" v-on:click="setTrashedFilter(false)">
-                    <FileText class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    {{ t("backend.posts.tabs.active") }}
-                </AppTab>
-            </AppTooltip>
-            <AppTooltip :title="t('backend.posts.tabs.trash')" :description="t('backend.posts.tabs.trash_description')" placement="right">
-                <AppTab :active="trashed" color="rose" v-on:click="setTrashedFilter(true)">
-                    <Inbox class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    {{ t("backend.posts.tabs.trash") }}
-                </AppTab>
-            </AppTooltip>
+        <!-- Desktop sidebar -->
+        <nav class="hidden md:flex flex-col w-52 shrink-0 gap-4">
+            <div class="flex flex-col gap-0.5">
+                <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="right">
+                    <AppTab :active="!trashed" v-on:click="setTrashedFilter(false)">
+                        <FileText class="w-4 h-4 shrink-0" :stroke-width="2" />
+                        {{ t("backend.posts.tabs.active") }}
+                    </AppTab>
+                </AppTooltip>
+                <AppTooltip :title="t('backend.posts.tabs.trash')" :description="t('backend.posts.tabs.trash_description')" placement="right">
+                    <AppTab :active="trashed" color="rose" v-on:click="setTrashedFilter(true)">
+                        <Inbox class="w-4 h-4 shrink-0" :stroke-width="2" />
+                        {{ t("backend.posts.tabs.trash") }}
+                    </AppTab>
+                </AppTooltip>
+            </div>
+
+            <template v-if="!trashed">
+                <div v-if="parsedPostTypes.length > 1" class="flex flex-col gap-1">
+                    <p class="text-xs font-medium text-muted uppercase tracking-wide px-2 mb-0.5">{{ t('backend.posts.filterByType') }}</p>
+                    <button
+                        v-for="postType in parsedPostTypes"
+                        :key="postType.id"
+                        class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm transition-colors text-left"
+                        :class="selectedPostTypeId === postType.id
+                            ? 'bg-accent-600/15 text-accent-400 font-medium'
+                            : 'text-secondary hover:bg-surface-2 hover:text-primary'"
+                        v-on:click="setPostTypeFilter(postType.id)"
+                    >
+                        <span class="truncate">{{ postType.label }}</span>
+                    </button>
+                </div>
+
+                <div v-if="visibleTaxonomies.length" class="flex flex-col gap-3">
+                    <p class="text-xs font-medium text-muted uppercase tracking-wide px-2">{{ t('backend.posts.filterByTerm') }}</p>
+                    <PostTaxonomiesPanel
+                        :taxonomies="visibleTaxonomies"
+                        :selected-term-ids="selectedTermIds"
+                        :active-locale="defaultLocale"
+                        :default-locale="defaultLocale"
+                        v-on:toggle-term="toggleTerm"
+                    />
+                </div>
+
+                <button
+                    v-if="hasActiveFilters"
+                    class="flex items-center gap-1.5 px-2 text-xs text-muted hover:text-rose-400 transition-colors"
+                    v-on:click="clearFilters"
+                >
+                    <X class="w-3 h-3" :stroke-width="2" />
+                    {{ t('backend.posts.clearFilters') }}
+                </button>
+            </template>
         </nav>
 
+        <!-- Mobile: status tabs -->
         <div class="flex md:hidden gap-1 flex-wrap w-full">
             <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="bottom">
                 <AppTab :active="!trashed" size="sm" v-on:click="setTrashedFilter(false)">
@@ -143,6 +238,29 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     {{ t("backend.posts.tabs.trash") }}
                 </AppTab>
             </AppTooltip>
+        </div>
+
+        <!-- Mobile: postType chips (if multiple types) -->
+        <div v-if="!trashed && parsedPostTypes.length > 1" class="flex md:hidden gap-1.5 flex-wrap">
+            <button
+                v-for="postType in parsedPostTypes"
+                :key="postType.id"
+                class="px-3 py-1 rounded-full text-xs font-medium border transition-colors"
+                :class="selectedPostTypeId === postType.id
+                    ? 'bg-accent-600 border-accent-600 text-white'
+                    : 'bg-surface-2 border-line text-secondary hover:border-accent-400 hover:text-primary'"
+                v-on:click="setPostTypeFilter(postType.id)"
+            >
+                {{ postType.label }}
+            </button>
+            <button
+                v-if="hasActiveFilters"
+                class="px-3 py-1 rounded-full text-xs font-medium border border-rose-500/40 text-rose-400 hover:bg-rose-500/10 transition-colors"
+                v-on:click="clearFilters"
+            >
+                <X class="w-3 h-3 inline -mt-0.5" :stroke-width="2" />
+                {{ t('backend.posts.clearFilters') }}
+            </button>
         </div>
 
         <div class="flex-1 min-w-0 space-y-4">
