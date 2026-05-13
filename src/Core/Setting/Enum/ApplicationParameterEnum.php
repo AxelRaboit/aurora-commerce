@@ -68,6 +68,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryFinalizationPrefix = 'photo_gallery_finalization_prefix';
     case PhotoGalleryItemCommentPrefix = 'photo_gallery_item_comment_prefix';
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
+    case NavSectionAliases = 'nav_section_aliases';
 
     public function getKey(): string
     {
@@ -137,6 +138,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix => 'backend.parameters.photo_gallery_finalization_prefix.label',
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.label',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.label',
+            self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
         };
     }
 
@@ -203,6 +205,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix => 'backend.parameters.photo_gallery_finalization_prefix.description',
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.description',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.description',
+            self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
         };
     }
 
@@ -269,6 +272,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryFinalizationPrefix => SequencePrefixEnum::GalleryFinalization->value,
             self::PhotoGalleryItemCommentPrefix => SequencePrefixEnum::GalleryItemComment->value,
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
+            self::NavSectionAliases => '{}',
+            default => '',
         };
     }
 
@@ -288,7 +293,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation' => true,
             default => false,
         };
     }
@@ -306,6 +311,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix, self::PdfFormDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
+            self::NavSectionAliases => 'navigation',
         };
     }
 }

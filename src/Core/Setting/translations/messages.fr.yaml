@@ -17,8 +17,11 @@ backend:
       email_description: Langue des emails sortants.
       sequences: Séquences
       sequences_description: Préfixes des références auto-générées.
+      navigation: Navigation
+      navigation_description: Personnalisez les noms des sections de la barre latérale.
       modules: Modules
       ecommerce: E-commerce
+    navAliasesEmpty: Aucune section de navigation disponible.
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
@@ -86,7 +89,7 @@ backend:
       label: Demandes d'accès admin ouvertes
       description: Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)
     front_registration_enabled:
-      label: Inscriptions front ouvertes
+      label: Inscriptions frontend ouvertes
       description: 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)'
     post_revisions_limit:
       label: Nombre de révisions gardées par article
@@ -217,6 +220,9 @@ backend:
     photo_gallery_pick_prefix:
       label: Préfixe des références sélections de photo
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    nav_section_aliases:
+      label: Alias des sections de navigation
+      description: 'Carte JSON des alias de sections (géré via l''interface).'
     intro: Consultez et modifiez les paramètres techniques de l'application.
     key: Paramètre
     value: Valeur

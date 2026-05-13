@@ -47,6 +47,7 @@ const props = defineProps({
     notificationsMarkAllReadPath: { type: String, default: "" },
     notificationsDeletePath: { type: String, default: "" },
     notificationsDeleteAllPath: { type: String, default: "" },
+    navSectionAliases: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -69,7 +70,7 @@ const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, itemIsActive, itemClasses, iconClasses,
-} = useSidebarNav(props.navSections, props.activeRoute);
+} = useSidebarNav(props.navSections, props.activeRoute, props.navSectionAliases);
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -23,38 +23,60 @@ const props = defineProps({
     updatePath: { type: String, default: "" },
     mediaPickerPath: { type: String, default: "" },
     postSearchPath: { type: String, default: "" },
+    navSections: { type: Array, default: () => [] },
 });
 
 const { t } = useI18n();
 
-const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "email", "sequences"];
-const availableGroups = groupOrder.filter((groupName) => props.groups[groupName]);
+const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "email", "sequences", "navigation"];
+const availableGroups = groupOrder.filter((groupName) => props.groups[groupName] || groupName === "navigation");
 const activeTab = ref(availableGroups[0] ?? "general");
 
 const tabLabels = {
-    general: () => t("backend.settings.tabs.general"),
-    reading: () => t("backend.settings.tabs.reading"),
+    general:    () => t("backend.settings.tabs.general"),
+    reading:    () => t("backend.settings.tabs.reading"),
     localization: () => t("backend.settings.tabs.localization"),
-    branding: () => t("backend.settings.tabs.branding"),
-    seo: () => t("backend.settings.tabs.seo"),
-    system: () => t("backend.settings.tabs.system"),
-    email: () => t("backend.settings.tabs.email"),
-    sequences: () => t("backend.settings.tabs.sequences"),
+    branding:   () => t("backend.settings.tabs.branding"),
+    seo:        () => t("backend.settings.tabs.seo"),
+    system:     () => t("backend.settings.tabs.system"),
+    email:      () => t("backend.settings.tabs.email"),
+    sequences:  () => t("backend.settings.tabs.sequences"),
+    navigation: () => t("backend.settings.tabs.navigation"),
 };
 
 const tabDescriptions = {
-    general: () => t("backend.settings.tabs.general_description"),
-    reading: () => t("backend.settings.tabs.reading_description"),
+    general:    () => t("backend.settings.tabs.general_description"),
+    reading:    () => t("backend.settings.tabs.reading_description"),
     localization: () => t("backend.settings.tabs.localization_description"),
-    branding: () => t("backend.settings.tabs.branding_description"),
-    seo: () => t("backend.settings.tabs.seo_description"),
-    system: () => t("backend.settings.tabs.system_description"),
-    email: () => t("backend.settings.tabs.email_description"),
-    sequences: () => t("backend.settings.tabs.sequences_description"),
+    branding:   () => t("backend.settings.tabs.branding_description"),
+    seo:        () => t("backend.settings.tabs.seo_description"),
+    system:     () => t("backend.settings.tabs.system_description"),
+    email:      () => t("backend.settings.tabs.email_description"),
+    sequences:  () => t("backend.settings.tabs.sequences_description"),
+    navigation: () => t("backend.settings.tabs.navigation_description"),
 };
 
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
     useSettingsForm(props.groups, availableGroups, props.updatePath);
+
+// Navigation aliases
+const navAliasesRaw = props.groups?.navigation?.find?.((s) => s.key === "nav_section_aliases")?.value ?? "{}";
+const navAliases = reactive((() => { try { return JSON.parse(navAliasesRaw) || {}; } catch { return {}; } })());
+const aliasesSaving = ref(false);
+
+async function saveNavAliases() {
+    aliasesSaving.value = true;
+    try {
+        await fetch(props.updatePath, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ key: "nav_section_aliases", value: JSON.stringify(navAliases) }),
+        });
+        window.location.reload();
+    } finally {
+        aliasesSaving.value = false;
+    }
+}
 
 const { postPickerLabels, postPickerSearch, postPickerResults, postPickerOpen, resolvePostLabel, searchPosts, selectPost, clearPost, onPostPickerBlur, onPostPickerFocus } =
     useSettingsPostPicker(props.groups, availableGroups, fieldValues, props.postSearchPath);
@@ -101,8 +123,30 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
         </div>
 
         <div class="flex-1 min-w-0">
+            <!-- Navigation aliases tab — custom UI, not a generic setting renderer -->
+            <div v-show="activeTab === 'navigation'" class="bg-surface border border-line rounded-xl p-6 space-y-4">
+                <p class="text-sm text-secondary">{{ t('backend.settings.tabs.navigation_description') }}</p>
+                <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
+                <div v-else class="space-y-3">
+                    <div v-for="section in navSections" :key="section.id" class="flex items-center gap-4">
+                        <span class="text-sm text-secondary w-36 shrink-0">{{ t(`backend.nav.sections.${section.id}`) }}</span>
+                        <AppInput
+                            v-model="navAliases[section.id]"
+                            :placeholder="t(`backend.nav.sections.${section.id}`)"
+                            class="flex-1"
+                        />
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <AppButton variant="primary" size="md" :loading="aliasesSaving" v-on:click="saveNavAliases">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.save') }}
+                    </AppButton>
+                </div>
+            </div>
+
             <div
-                v-for="groupName in availableGroups"
+                v-for="groupName in availableGroups.filter(g => g !== 'navigation')"
                 v-show="activeTab === groupName"
                 :key="groupName"
             >

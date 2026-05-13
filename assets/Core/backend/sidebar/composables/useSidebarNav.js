@@ -71,7 +71,7 @@ const ICON_MAP = {
     vault: Lock,
 };
 
-export function useSidebarNav(navSections, activeRoute) {
+export function useSidebarNav(navSections, activeRoute, sectionAliases = {}) {
     const { t } = useI18n();
 
     const {
@@ -108,7 +108,7 @@ export function useSidebarNav(navSections, activeRoute) {
     const groupedSections = computed(() =>
         navSections.map((section) => ({
             id: section.id,
-            label: t(`backend.nav.sections.${section.id}`),
+            label: sectionAliases[section.id]?.trim() || t(`backend.nav.sections.${section.id}`),
             items: section.items.map(buildItem),
         })),
     );

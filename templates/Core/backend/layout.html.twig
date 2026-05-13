@@ -35,6 +35,7 @@
 
     <div {{ vue_component('core/backend/sidebar/AppSidebar', {
         navSections: sidebar_nav_sections(),
+        navSectionAliases: nav_section_aliases(),
         userName: app.user.name,
         userEmail: app.user.email,
         userPhotoUrl: app.user.profilePhotoUrl ?? '',
