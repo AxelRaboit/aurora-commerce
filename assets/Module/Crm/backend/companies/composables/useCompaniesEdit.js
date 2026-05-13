@@ -3,9 +3,8 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required, url } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyCompanyForm } from "./useCompaniesCreate.js";
 
 export function useCompaniesEdit(updatePath, reset) {
@@ -14,7 +13,7 @@ export function useCompaniesEdit(updatePath, reset) {
     const showEdit = ref(false);
     const editingCompany = ref(null);
     const editForm = ref(emptyCompanyForm());
-    const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request } = useRequest();
 
     function openEdit(company) {
@@ -54,7 +53,7 @@ export function useCompaniesEdit(updatePath, reset) {
             showEdit.value = false;
             toast.success(t("backend.crm.companies.updated"));
             reset();
-        } else setErrors(translateServerErrors(t, data.errors));
+        } else handleErrors(data.errors);
     }
 
     return {

@@ -2,9 +2,8 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyGalleryForm, slugify } from "./useGalleryForm.js";
 
 export function useGalleriesCreate(createPath, reload) {
@@ -13,7 +12,7 @@ export function useGalleriesCreate(createPath, reload) {
     const showCreate = ref(false);
     const newForm = ref(emptyGalleryForm());
     const slugManuallyEdited = ref(false);
-    const { errors: createErrors, clearErrors, setErrors } = useForm();
+    const { errors: createErrors, clearErrors, handleErrors } = useServerErrors();
     const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
@@ -45,7 +44,7 @@ export function useGalleriesCreate(createPath, reload) {
         }
         const data = await createRequest(createPath, newForm.value);
         if (!data?.success) {
-            setErrors(translateServerErrors(t, data?.errors));
+            handleErrors(data?.errors);
             return;
         }
         toast.success(t("photo.galleries.created"));

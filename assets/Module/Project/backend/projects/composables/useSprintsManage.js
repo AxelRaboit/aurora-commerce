@@ -4,9 +4,8 @@ import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 export function useSprintsManage(paths, activeProject, reloadDetail) {
     const { t } = useI18n();
@@ -25,8 +24,8 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
         errors: sprintErrors,
         validate,
         clearErrors,
-        setErrors,
-    } = useForm();
+        handleErrors,
+    } = useServerErrors();
     const { loading, request } = useRequest();
 
     function openSprintsModal() {
@@ -84,7 +83,7 @@ export function useSprintsManage(paths, activeProject, reloadDetail) {
             cancelEdit();
             await reloadDetail();
         } else {
-            setErrors(translateServerErrors(t, data.errors));
+            handleErrors(data.errors);
         }
     }
 

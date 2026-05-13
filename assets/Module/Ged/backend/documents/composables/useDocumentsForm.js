@@ -4,10 +4,9 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 export const DOCUMENT_STATUS_BADGE = {
     draft: "gray",
@@ -57,8 +56,8 @@ export function useDocumentsForm(
         errors: createErrors,
         validate: validateCreate,
         clearErrors: clearCreate,
-        setErrors: setCreateErrors,
-    } = useForm();
+        handleErrors: handleCreateErrors,
+    } = useServerErrors();
     const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
@@ -112,7 +111,7 @@ export function useDocumentsForm(
             showCreate.value = false;
             toast.success(t("backend.ged.documents.created"));
             reset();
-        } else setCreateErrors(translateServerErrors(t, data.errors));
+        } else handleCreateErrors(data.errors);
     }
 
     const showEdit = ref(false);
@@ -124,8 +123,8 @@ export function useDocumentsForm(
         errors: editErrors,
         validate: validateEdit,
         clearErrors: clearEdit,
-        setErrors: setEditErrors,
-    } = useForm();
+        handleErrors: handleEditErrors,
+    } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(doc) {
@@ -190,7 +189,7 @@ export function useDocumentsForm(
             showEdit.value = false;
             toast.success(t("backend.ged.documents.updated"));
             reset();
-        } else setEditErrors(translateServerErrors(t, data.errors));
+        } else handleEditErrors(data.errors);
     }
 
     const {

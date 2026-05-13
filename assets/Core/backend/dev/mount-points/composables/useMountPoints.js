@@ -2,9 +2,8 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 export function useMountPoints(
@@ -58,17 +57,17 @@ export function useMountPoints(
     const {
         errors: createErrors,
         validate: validateCreate,
-        setErrors: setCreateErrors,
+        handleErrors: handleCreateErrors,
         clearErrors: clearCreateErrors,
-    } = useForm();
+    } = useServerErrors();
 
     const editForm = ref(emptyForm());
     const {
         errors: editErrors,
         validate: validateEdit,
-        setErrors: setEditErrors,
+        handleErrors: handleEditErrors,
         clearErrors: clearEditErrors,
-    } = useForm();
+    } = useServerErrors();
 
     const filteredMountPoints = computed(() => {
         const query = searchInput.value.trim().toLowerCase();
@@ -146,7 +145,7 @@ export function useMountPoints(
         if (!data) return;
 
         if (!data.success) {
-            setCreateErrors(translateServerErrors(t, data.errors));
+            handleCreateErrors(data.errors);
             return;
         }
 
@@ -204,7 +203,7 @@ export function useMountPoints(
         if (!data) return;
 
         if (!data.success) {
-            setEditErrors(translateServerErrors(t, data.errors));
+            handleEditErrors(data.errors);
             return;
         }
 

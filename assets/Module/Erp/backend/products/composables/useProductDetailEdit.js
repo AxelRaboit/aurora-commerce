@@ -2,9 +2,8 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { DEFAULT_CURRENCY } from "@/shared/utils/format/currencies.js";
 import { makeImageRef } from "./useProductsOptions.js";
 
@@ -25,8 +24,8 @@ export function useProductDetailEdit(updatePath, product) {
     const {
         errors: editErrors,
         validate: validateEdit,
-        setErrors: setEditErrors,
-    } = useForm();
+        handleErrors: handleEditErrors,
+    } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     async function submitEdit() {
@@ -58,7 +57,7 @@ export function useProductDetailEdit(updatePath, product) {
             showEdit.value = false;
             toast.success(t("shared.common.saved"));
         } else {
-            setEditErrors(translateServerErrors(t, data.errors));
+            handleEditErrors(data.errors);
         }
     }
 

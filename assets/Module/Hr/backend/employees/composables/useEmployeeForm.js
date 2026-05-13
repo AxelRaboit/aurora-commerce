@@ -3,8 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 const DEFAULT_FORM = {
@@ -23,7 +22,7 @@ const DEFAULT_FORM = {
 export function useEmployeeForm(createPath, updatePath, options = {}) {
     const { t } = useI18n();
     const { request } = useRequest();
-    const { errors, validate, setErrors, clearErrors } = useForm();
+    const { errors, validate, handleErrors, clearErrors } = useServerErrors();
     const extraFields = options.extraFields ?? {};
     const onSuccess = options.onSuccess ?? null;
 
@@ -104,7 +103,7 @@ export function useEmployeeForm(createPath, updatePath, options = {}) {
             const data = await request(url, { ...form });
 
             if (!data?.success) {
-                setErrors(translateServerErrors(t, data?.errors));
+                handleErrors(data?.errors);
                 return;
             }
 

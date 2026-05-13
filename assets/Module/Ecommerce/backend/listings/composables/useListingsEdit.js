@@ -3,9 +3,8 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyListingForm, makeListingImageRef } from "./useListingsCreate.js";
 
 export function useListingsEdit(updatePath, reset) {
@@ -14,7 +13,7 @@ export function useListingsEdit(updatePath, reset) {
     const editingListing = ref(null);
     const editForm = ref(emptyListingForm());
     const editFormImage = makeListingImageRef(editForm);
-    const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(listing) {
@@ -52,9 +51,7 @@ export function useListingsEdit(updatePath, reset) {
             toast.success(t("backend.ecommerce.listings.updated"));
             reset();
         } else {
-            const translated = translateServerErrors(t, data.errors);
-            if (translated._global) toast.error(translated._global);
-            setErrors(translated);
+            handleErrors(data.errors);
         }
     }
 

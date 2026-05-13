@@ -3,9 +3,8 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyProjectForm } from "./useProjectsCreate.js";
 
 export function useProjectsEdit(updatePath, reset, activeProject) {
@@ -14,7 +13,7 @@ export function useProjectsEdit(updatePath, reset, activeProject) {
     const showEdit = ref(false);
     const editingProject = ref(null);
     const editForm = ref(emptyProjectForm());
-    const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request } = useRequest();
 
     function openEdit(project) {
@@ -61,7 +60,7 @@ export function useProjectsEdit(updatePath, reset, activeProject) {
                 activeProject.value = data.project;
             }
         } else {
-            setErrors(translateServerErrors(t, data.errors));
+            handleErrors(data.errors);
         }
     }
 

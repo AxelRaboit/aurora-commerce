@@ -3,9 +3,8 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import {
     emptyProductForm,
     buildProductPayload,
@@ -19,7 +18,7 @@ export function useProductsEdit(updatePath, reset) {
     const editingProduct = ref(null);
     const editForm = ref(emptyProductForm());
     const editFormImage = makeImageRef(editForm);
-    const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request } = useRequest();
 
     function openEdit(product) {
@@ -57,7 +56,7 @@ export function useProductsEdit(updatePath, reset) {
             showEdit.value = false;
             toast.success(t("backend.erp.products.updated"));
             reset();
-        } else setErrors(translateServerErrors(t, data.errors));
+        } else handleErrors(data.errors);
     }
 
     return {

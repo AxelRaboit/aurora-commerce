@@ -3,9 +3,8 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 export function emptyTaskForm(columnId = null) {
     return {
@@ -33,8 +32,8 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
         errors: createTaskErrors,
         validate,
         clearErrors,
-        setErrors,
-    } = useForm();
+        handleErrors,
+    } = useServerErrors();
     const { loading: createTaskLoading, request } = useRequest();
 
     function openCreateTask(columnId = null) {
@@ -65,7 +64,7 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
             toast.success(t("backend.projects.toast.taskCreated"));
             await reloadDetail();
         } else {
-            setErrors(translateServerErrors(t, data.errors));
+            handleErrors(data.errors);
         }
     }
 

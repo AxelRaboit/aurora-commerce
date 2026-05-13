@@ -3,9 +3,8 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyGalleryForm } from "./useGalleryForm.js";
 
 export function useGalleriesEdit(props, reload) {
@@ -15,7 +14,7 @@ export function useGalleriesEdit(props, reload) {
     const editForm = ref(emptyGalleryForm());
     const editingId = ref(null);
     const editingHasPassword = ref(false);
-    const { errors: editErrors, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openGallery(g) {
@@ -65,7 +64,7 @@ export function useGalleriesEdit(props, reload) {
             editForm.value,
         );
         if (!data?.success) {
-            setErrors(translateServerErrors(t, data?.errors));
+            handleErrors(data?.errors);
             return;
         }
         toast.success(t("photo.galleries.updated"));

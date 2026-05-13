@@ -2,10 +2,9 @@ import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import {
     required,
     email,
@@ -58,9 +57,9 @@ export function useUsers(
     const {
         errors: createErrors,
         validate: validateCreate,
-        setErrors: setCreateErrors,
+        handleErrors: handleCreateErrors,
         clearErrors: clearCreateErrors,
-    } = useForm();
+    } = useServerErrors();
     const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
@@ -102,7 +101,7 @@ export function useUsers(
         if (data.success) {
             window.location.reload();
         } else {
-            setCreateErrors(translateServerErrors(t, data.errors));
+            handleCreateErrors(data.errors);
         }
     }
 
@@ -117,9 +116,9 @@ export function useUsers(
     const {
         errors: editErrors,
         validate: validateEdit,
-        setErrors: setEditErrors,
+        handleErrors: handleEditErrors,
         clearErrors: clearEditErrors,
-    } = useForm();
+    } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(user) {
@@ -170,7 +169,7 @@ export function useUsers(
         if (data.success) {
             window.location.reload();
         } else {
-            setEditErrors(translateServerErrors(t, data.errors));
+            handleEditErrors(data.errors);
         }
     }
 

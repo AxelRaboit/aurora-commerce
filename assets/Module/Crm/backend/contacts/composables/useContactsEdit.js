@@ -3,12 +3,11 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import {
     required,
     email as emailValidator,
 } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { emptyContactForm } from "./useContactsCreate.js";
 
 export function useContactsEdit(updatePath, reset) {
@@ -17,7 +16,7 @@ export function useContactsEdit(updatePath, reset) {
     const showEdit = ref(false);
     const editingContact = ref(null);
     const editForm = ref(emptyContactForm());
-    const { errors: editErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: editErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading: editLoading, request } = useRequest();
 
     function openEdit(contact) {
@@ -61,7 +60,7 @@ export function useContactsEdit(updatePath, reset) {
             showEdit.value = false;
             toast.success(t("backend.crm.contacts.updated"));
             reset();
-        } else setErrors(translateServerErrors(t, data.errors));
+        } else handleErrors(data.errors);
     }
 
     return {

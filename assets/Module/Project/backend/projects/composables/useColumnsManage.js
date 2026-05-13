@@ -4,9 +4,9 @@ import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
-import { required } from "@/shared/utils/validation/validators.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { required } from "@/shared/utils/validation/validators.js";
 
 /**
  * CRUD + reorder for the project's Kanban columns.
@@ -24,8 +24,8 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         errors: createColumnErrors,
         validate: validateCreate,
         clearErrors: clearCreateErrors,
-        setErrors: setCreateErrors,
-    } = useForm();
+        handleErrors: handleCreateErrors,
+    } = useServerErrors();
     const { loading: createColumnLoading, request: createRequest } =
         useRequest();
 
@@ -53,7 +53,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
             showCreateColumn.value = false;
             await reloadDetail();
         } else {
-            setCreateErrors(translateServerErrors(t, data.errors));
+            handleCreateErrors(data.errors);
         }
     }
 
@@ -65,8 +65,8 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
         errors: renameErrors,
         validate: validateRename,
         clearErrors: clearRenameErrors,
-        setErrors: setRenameErrors,
-    } = useForm();
+        handleErrors: handleRenameErrors,
+    } = useServerErrors();
     const { loading: renameLoading, request: renameRequest } = useRequest();
 
     function openRenameColumn(column) {
@@ -96,7 +96,7 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
             showRenameColumn.value = false;
             await reloadDetail();
         } else {
-            setRenameErrors(translateServerErrors(t, data.errors));
+            handleRenameErrors(data.errors);
         }
     }
 

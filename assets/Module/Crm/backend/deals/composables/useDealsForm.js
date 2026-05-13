@@ -3,9 +3,8 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -42,7 +41,7 @@ export function useDealsForm(
 
     const form = reactive(emptyDealForm(extraFields));
 
-    const { errors, validate, clearErrors, setErrors } = useForm();
+    const { errors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading, request } = useRequest();
 
     function resetForm() {
@@ -108,7 +107,7 @@ export function useDealsForm(
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
         } else {
-            setErrors(translateServerErrors(t, data.errors));
+            handleErrors(data.errors);
         }
     }
 

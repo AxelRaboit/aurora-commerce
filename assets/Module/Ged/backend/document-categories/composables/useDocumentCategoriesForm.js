@@ -3,10 +3,9 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 function emptyForm() {
     return { name: "", description: "" };
@@ -26,8 +25,8 @@ export function useDocumentCategoriesForm(
         errors: createErrors,
         validate: validateCreate,
         clearErrors: clearCreate,
-        setErrors: setCreateErrors,
-    } = useForm();
+        handleErrors: handleCreateErrors,
+    } = useServerErrors();
     const { loading: createLoading, request: createRequest } = useRequest();
 
     function openCreate() {
@@ -52,7 +51,7 @@ export function useDocumentCategoriesForm(
             showCreate.value = false;
             toast.success(t("backend.ged.categories.created"));
             reset();
-        } else setCreateErrors(translateServerErrors(t, data.errors));
+        } else handleCreateErrors(data.errors);
     }
 
     const showEdit = ref(false);
@@ -62,8 +61,8 @@ export function useDocumentCategoriesForm(
         errors: editErrors,
         validate: validateEdit,
         clearErrors: clearEdit,
-        setErrors: setEditErrors,
-    } = useForm();
+        handleErrors: handleEditErrors,
+    } = useServerErrors();
     const { loading: editLoading, request: editRequest } = useRequest();
 
     function openEdit(category) {
@@ -93,7 +92,7 @@ export function useDocumentCategoriesForm(
             showEdit.value = false;
             toast.success(t("backend.ged.categories.updated"));
             reset();
-        } else setEditErrors(translateServerErrors(t, data.errors));
+        } else handleEditErrors(data.errors);
     }
 
     const {

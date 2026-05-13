@@ -4,9 +4,8 @@ import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useForm } from "@/shared/composables/form/useForm.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 
 export const LABEL_COLORS = [
     "slate",
@@ -26,7 +25,7 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
     const pendingDeleteLabel = ref(null);
     const labelForm = ref({ name: "", color: "accent" });
 
-    const { errors: labelErrors, validate, clearErrors, setErrors } = useForm();
+    const { errors: labelErrors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading, request } = useRequest();
 
     function openLabelsModal() {
@@ -69,7 +68,7 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
             cancelEdit();
             await reloadDetail();
         } else {
-            setErrors(translateServerErrors(t, data.errors));
+            handleErrors(data.errors);
         }
     }
 
