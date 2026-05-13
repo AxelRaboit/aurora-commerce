@@ -52,8 +52,9 @@ export function useListingsEdit(updatePath, reset) {
             toast.success(t("backend.ecommerce.listings.updated"));
             reset();
         } else {
-            if (data.errors?._global) toast.error(data.errors._global);
-            setErrors(translateServerErrors(t, data.errors));
+            const translated = translateServerErrors(t, data.errors);
+            if (translated._global) toast.error(translated._global);
+            setErrors(translated);
         }
     }
 

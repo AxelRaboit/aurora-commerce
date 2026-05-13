@@ -28,7 +28,7 @@ export function useVaultFolderTree(folders, currentFolderId) {
         collapsedFolderIds.value = next;
         try {
             localStorage.setItem(LS_COLLAPSED, JSON.stringify([...next]));
-        } catch {}
+        } catch {} // best-effort: localStorage may be unavailable (private mode, quota)
     }
 
     const flatFolders = computed(() =>

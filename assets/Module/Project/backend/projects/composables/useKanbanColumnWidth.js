@@ -16,7 +16,7 @@ function load() {
 function persist(value) {
     try {
         localStorage.setItem(STORAGE_KEY, String(value));
-    } catch {}
+    } catch {} // best-effort: localStorage may be unavailable (private mode, quota)
 }
 
 export function useKanbanColumnWidth() {

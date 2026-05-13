@@ -123,10 +123,8 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
             if (data.success) {
                 pendingDeleteColumn.value = null;
                 await reloadDetail();
-            } else if (data.errors?._global) {
-                toast.error(t(data.errors._global));
             } else {
-                toast.error(t("shared.common.error"));
+                toast.error(translateServerErrors(t, data.errors)._global ?? t("shared.common.error"));
             }
         } catch {
             toast.error(t("shared.common.error"));

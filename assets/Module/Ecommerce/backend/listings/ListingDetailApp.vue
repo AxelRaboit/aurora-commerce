@@ -70,8 +70,9 @@ async function submitEdit() {
         showEdit.value = false;
         toast.success(t("shared.common.saved"));
     } else {
-        if (data.errors?._global) toast.error(data.errors._global);
-        setEditErrors(translateServerErrors(t, data.errors));
+        const translated = translateServerErrors(t, data.errors);
+        if (translated._global) toast.error(translated._global);
+        setEditErrors(translated);
     }
 }
 

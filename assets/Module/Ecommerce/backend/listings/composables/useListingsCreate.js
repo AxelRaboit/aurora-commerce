@@ -79,8 +79,9 @@ export function useListingsCreate(createPath, reset, loadProducts) {
             reset();
             loadProducts();
         } else {
-            if (data.errors?._global) toast.error(data.errors._global);
-            setErrors(translateServerErrors(t, data.errors));
+            const translated = translateServerErrors(t, data.errors);
+            if (translated._global) toast.error(translated._global);
+            setErrors(translated);
         }
     }
 

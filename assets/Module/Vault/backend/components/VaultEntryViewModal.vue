@@ -46,7 +46,7 @@ async function copy(field, value) {
                     if (current === value) {
                         await navigator.clipboard.writeText('');
                     }
-                } catch {}
+                } catch {} // best-effort: Clipboard API may be unavailable (no permission, insecure context)
             }, 30_000);
         }
     } catch {
