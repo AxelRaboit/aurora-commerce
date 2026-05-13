@@ -83,39 +83,22 @@ function termLabel(term) {
             <span v-if="hasActiveTerms(taxonomy)" class="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0" />
         </div>
 
-        <template v-if="!isCollapsed(taxonomy.slug)">
-            <div v-if="!taxonomy.hierarchical" class="flex items-center gap-1.5 flex-wrap">
-                <label
-                    v-for="term in taxonomy.terms"
-                    :key="term.id"
-                    class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer border transition-colors select-none"
-                    :class="selectedTermIds.includes(term.id)
-                        ? 'bg-accent-600 border-accent-600 text-white'
-                        : 'bg-surface-2 border-line text-secondary hover:border-accent-400 hover:text-primary'"
+        <div v-if="!isCollapsed(taxonomy.slug)" class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
+            <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
+            <label
+                v-for="term in taxonomy.hierarchical ? flattenTreeWithDepth(buildTermTree(taxonomy.terms)) : taxonomy.terms"
+                :key="term.id"
+                class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
+                :style="taxonomy.hierarchical ? { paddingLeft: `${0.375 + (term.depth ?? 0) * 1.25}rem` } : {}"
+            >
+                <input
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0 shrink-0"
+                    :checked="selectedTermIds.includes(term.id)"
+                    v-on:change="emit('toggle-term', term.id)"
                 >
-                    <input type="checkbox" class="sr-only" :checked="selectedTermIds.includes(term.id)" v-on:change="emit('toggle-term', term.id)">
-                    {{ termLabel(term) }}
-                </label>
-                <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
-            </div>
-
-            <div v-else class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
-                <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
-                <label
-                    v-for="term in flattenTreeWithDepth(buildTermTree(taxonomy.terms))"
-                    :key="term.id"
-                    class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
-                    :style="{ paddingLeft: `${0.375 + term.depth * 1.25}rem` }"
-                >
-                    <input
-                        type="checkbox"
-                        class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0"
-                        :checked="selectedTermIds.includes(term.id)"
-                        v-on:change="emit('toggle-term', term.id)"
-                    >
-                    <span class="text-primary">{{ termLabel(term) }}</span>
-                </label>
-            </div>
-        </template>
+                <span class="text-primary truncate">{{ termLabel(term) }}</span>
+            </label>
+        </div>
     </div>
 </template>
