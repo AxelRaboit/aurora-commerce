@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { usePostsTrash } from "@editorial/backend/posts/composables/usePostsTrash.js";
@@ -18,7 +18,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { usePostList } from "@editorial/backend/posts/composables/usePostList.js";
 import { usePostDelete } from "@editorial/backend/posts/composables/usePostDelete.js";
-import { Filter, FileText, Eye, Inbox, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-vue-next";
+import { FileText, Eye, Inbox, LayoutList, List, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-vue-next";
 import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
 import PostTaxonomiesPanel from "@editorial/backend/posts/PostTaxonomiesPanel.vue";
@@ -29,6 +29,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
+import { usePostViewMode } from "@editorial/backend/posts/composables/usePostViewMode.js";
 import { PostStatus } from "@editorial/shared/enums/postStatus.js";
 
 const { t } = useI18n();
@@ -151,6 +152,27 @@ const deletePost = usePostDelete(
 );
 
 const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(props.showPath, props.locales);
+
+// --- View mode ---
+const { mode: viewMode, setMode: setViewMode } = usePostViewMode();
+
+const termMap = computed(() => {
+    const map = {};
+    for (const taxonomy of parsedTaxonomies) {
+        for (const term of taxonomy.terms ?? []) {
+            const name =
+                term.translations?.[defaultLocale]?.name ??
+                term.translations?.["fr"]?.name ??
+                term.slug;
+            map[term.id] = name;
+        }
+    }
+    return map;
+});
+
+function postTermLabels(post) {
+    return (post.termIds ?? []).map((id) => termMap.value[id]).filter(Boolean);
+}
 </script>
 
 <template>
@@ -270,27 +292,47 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                     :placeholder="t('backend.posts.searchPlaceholder')"
                     v-on:search="onSearch"
                 />
-                <AppButton
-                    v-if="!trashed && can('editorial.posts.create')"
-                    variant="primary"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    v-on:click="openCreate"
-                >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t("backend.posts.add") }}
-                </AppButton>
-                <AppButton
-                    v-if="trashed && posts.length"
-                    variant="danger"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    :loading="emptyingTrash"
-                    v-on:click="confirmEmptyTrash = true"
-                >
-                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                    {{ t("backend.posts.emptyTrash") }}
-                </AppButton>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="flex items-center rounded-lg border border-line overflow-hidden shrink-0">
+                        <button
+                            class="flex items-center justify-center w-8 h-8 transition-colors"
+                            :class="viewMode === 'compact' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
+                            :title="t('backend.posts.viewCompact')"
+                            v-on:click="setViewMode('compact')"
+                        >
+                            <List class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                        <button
+                            class="flex items-center justify-center w-8 h-8 border-l border-line transition-colors"
+                            :class="viewMode === 'detailed' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
+                            :title="t('backend.posts.viewDetailed')"
+                            v-on:click="setViewMode('detailed')"
+                        >
+                            <LayoutList class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+                    <AppButton
+                        v-if="!trashed && can('editorial.posts.create')"
+                        variant="primary"
+                        size="md"
+                        class="flex-1 sm:flex-none"
+                        v-on:click="openCreate"
+                    >
+                        <Plus class="w-4 h-4" :stroke-width="2" />
+                        {{ t("backend.posts.add") }}
+                    </AppButton>
+                    <AppButton
+                        v-if="trashed && posts.length"
+                        variant="danger"
+                        size="md"
+                        class="flex-1 sm:flex-none"
+                        :loading="emptyingTrash"
+                        v-on:click="confirmEmptyTrash = true"
+                    >
+                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        {{ t("backend.posts.emptyTrash") }}
+                    </AppButton>
+                </div>
             </div>
 
             <div class="sm:hidden space-y-2">
@@ -301,6 +343,13 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
                             <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
                             <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
+                            <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1.5">
+                                <span
+                                    v-for="label in postTermLabels(post)"
+                                    :key="label"
+                                    class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
+                                >{{ label }}</span>
+                            </div>
                         </div>
                         <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
                             {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
@@ -347,10 +396,17 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
                             <td class="px-6 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center gap-2.5">
-                                    <FileText class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
+                                    <FileText class="w-3.5 h-3.5 text-muted shrink-0 self-start mt-0.5" :stroke-width="2" />
                                     <div class="min-w-0 flex-1">
                                         <p class="font-medium text-primary text-sm truncate">{{ post.title ?? "-" }}</p>
                                         <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate font-mono">{{ frontUrl(post) }}</p>
+                                        <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1">
+                                            <span
+                                                v-for="label in postTermLabels(post)"
+                                                :key="label"
+                                                class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
+                                            >{{ label }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
