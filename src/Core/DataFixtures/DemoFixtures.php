@@ -809,7 +809,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ['Nom complet' => 'Pierre Dubois',   'Adresse email' => 'pierre.dubois@tech-innovation.fr', 'Téléphone' => '+33 6 12 34 56 78', 'Sujet' => 'Demande commerciale', 'Message' => "Bonjour, nous souhaitons migrer notre outil CRM actuel vers Aurora. Pouvez-vous nous envoyer un devis pour 10 utilisateurs avec le module GED inclus ? Merci d'avance."],
                     ['Nom complet' => 'Camille Leroy',   'Adresse email' => 'c.leroy@biomed-france.com',        'Téléphone' => '+33 6 23 45 67 89', 'Sujet' => 'Support technique',   'Message' => "Depuis la mise à jour de vendredi, nos données CRM ne se synchronisent plus correctement avec l'ERP. Les stocks ne sont plus à jour côté e-commerce. Urgence niveau 2."],
                     ['Nom complet' => 'François Moreau', 'Adresse email' => 'f.moreau@retail-connect.fr',       'Téléphone' => '+33 6 34 56 78 90', 'Sujet' => 'Partenariat',         'Message' => "Nous sommes un intégrateur spécialisé en transformation digitale pour les réseaux de distribution. Aurora correspond parfaitement à nos besoins clients. Pouvons-nous discuter d'un partenariat revendeur ?"],
-                    ['Nom complet' => 'Julie Chen',      'Adresse email' => 'julie.chen@tech-innovation.fr',    'Téléphone' => '',                  'Sujet' => 'Demande commerciale', 'Message' => "Suite à notre démo de la semaine dernière, mon équipe est convaincue. Nous aimerions démarrer avec la Suite Complète Aurora pour 15 utilisateurs. Quelles sont les prochaines étapes ?"],
+                    ['Nom complet' => 'Julie Chen',      'Adresse email' => 'julie.chen@tech-innovation.fr',    'Téléphone' => '',                  'Sujet' => 'Demande commerciale', 'Message' => 'Suite à notre démo de la semaine dernière, mon équipe est convaincue. Nous aimerions démarrer avec la Suite Complète Aurora pour 15 utilisateurs. Quelles sont les prochaines étapes ?'],
                     ['Nom complet' => 'Isabelle Renard', 'Adresse email' => 'i.renard@nexus-digital.fr',        'Téléphone' => '+33 6 67 89 01 23', 'Sujet' => 'Autre',               'Message' => "Bonjour, je cherche à intégrer Aurora dans notre stack Vercel + Next.js via API. Disposez-vous d'une documentation sur votre API REST et les webhooks disponibles ?"],
                     ['Nom complet' => 'David Beaumont',  'Adresse email' => 'd.beaumont@leclerc-nord.fr',       'Téléphone' => '+33 6 78 90 12 34', 'Sujet' => 'Support technique',   'Message' => "Le module Billing plante lors de l'import OCR de factures PDF multi-pages. Log d'erreur joint. Merci de traiter en priorité car nous avons 200+ factures en attente de traitement."],
                 ],
@@ -886,10 +886,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                         'opts_fr' => ['Oui, sans hésitation', 'Probablement', 'Non'],
                         'opts_en' => ['Yes, absolutely', 'Probably', 'No']],
                     // Shown only when "Non" is selected — conditions_def resolved after flush
-                    ['key' => 'pourquoi_non', 'type' => FormFieldTypeEnum::Textarea, 'fr' => "Pourquoi pas ?", 'en' => 'Why not?', 'ph_fr' => "Qu'est-ce qui vous a déçu ?", 'ph_en' => 'What disappointed you?', 'req' => false,
+                    ['key' => 'pourquoi_non', 'type' => FormFieldTypeEnum::Textarea, 'fr' => 'Pourquoi pas ?', 'en' => 'Why not?', 'ph_fr' => "Qu'est-ce qui vous a déçu ?", 'ph_en' => 'What disappointed you?', 'req' => false,
                         'conditions_def' => [['fieldKey' => 'recommande', 'operator' => 'eq', 'value' => 'Non']],
                         'conditionsLogic' => 'and'],
-                    ['key' => 'source', 'type' => FormFieldTypeEnum::Select,   'fr' => "Comment nous avez-vous trouvé ?", 'en' => 'How did you find us?', 'ph_fr' => '', 'ph_en' => '', 'req' => false,
+                    ['key' => 'source', 'type' => FormFieldTypeEnum::Select,   'fr' => 'Comment nous avez-vous trouvé ?', 'en' => 'How did you find us?', 'ph_fr' => '', 'ph_en' => '', 'req' => false,
                         'opts_fr' => ['Bouche-à-oreille', 'Moteur de recherche', 'Réseaux sociaux', 'Conférence / événement', 'Autre'],
                         'opts_en' => ['Word of mouth', 'Search engine', 'Social media', 'Conference / event', 'Other']],
                     // Shown only when "Autre" is selected
@@ -899,11 +899,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ['key' => 'commentaire', 'type' => FormFieldTypeEnum::Textarea, 'fr' => 'Commentaire libre', 'en' => 'Additional comments', 'ph_fr' => 'Vos suggestions, remarques…', 'ph_en' => 'Your suggestions, remarks…', 'req' => false],
                 ],
                 'submissions' => [
-                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', "Comment nous avez-vous trouvé ?" => 'Bouche-à-oreille',           'Commentaire libre' => 'Excellent outil, très bien intégré. Le module CRM est particulièrement efficace.'],
-                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          "Comment nous avez-vous trouvé ?" => 'Moteur de recherche',          'Commentaire libre' => "L'interface est intuitive mais quelques options avancées mériteraient plus de documentation."],
-                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Non',                   "Pourquoi pas ?" => "Le module de facturation manque encore de fonctionnalités pour notre secteur (BTP). On attend avec impatience les prochaines mises à jour.", "Comment nous avez-vous trouvé ?" => 'Conférence / événement', 'Commentaire libre' => ''],
-                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', "Comment nous avez-vous trouvé ?" => 'Autre', 'Précisez la source' => 'Article dans le magazine Développez.com', 'Commentaire libre' => 'Super découverte !'],
-                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          "Comment nous avez-vous trouvé ?" => 'Réseaux sociaux',              'Commentaire libre' => "Bon produit dans l'ensemble. La courbe d'apprentissage est un peu longue au démarrage."],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', 'Comment nous avez-vous trouvé ?' => 'Bouche-à-oreille',           'Commentaire libre' => 'Excellent outil, très bien intégré. Le module CRM est particulièrement efficace.'],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          'Comment nous avez-vous trouvé ?' => 'Moteur de recherche',          'Commentaire libre' => "L'interface est intuitive mais quelques options avancées mériteraient plus de documentation."],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Non',                   'Pourquoi pas ?' => 'Le module de facturation manque encore de fonctionnalités pour notre secteur (BTP). On attend avec impatience les prochaines mises à jour.', 'Comment nous avez-vous trouvé ?' => 'Conférence / événement', 'Commentaire libre' => ''],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', 'Comment nous avez-vous trouvé ?' => 'Autre', 'Précisez la source' => 'Article dans le magazine Développez.com', 'Commentaire libre' => 'Super découverte !'],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          'Comment nous avez-vous trouvé ?' => 'Réseaux sociaux',              'Commentaire libre' => "Bon produit dans l'ensemble. La courbe d'apprentissage est un peu longue au démarrage."],
                 ],
             ],
         ];
@@ -926,7 +926,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
             // Build fields — keep two maps: labelFr → field, key → field
             $fieldsByLabel = [];
-            $fieldsByKey   = [];
+            $fieldsByKey = [];
             foreach ($fd['fields'] as $pos => $fieldDef) {
                 $field = new FormField();
                 $field->setForm($form)
@@ -945,9 +945,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     if (isset($fieldDef['opts_fr']) && 'fr' === $locale) {
                         $fft->setOptions($fieldDef['opts_fr']);
                     }
+
                     if (isset($fieldDef['opts_en']) && 'en' === $locale) {
                         $fft->setOptions($fieldDef['opts_en']);
                     }
+
                     $em->persist($fft);
                 }
 
@@ -962,25 +964,32 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
             // Resolve conditions_def → real field IDs, then persist
             foreach ($fd['fields'] as $fieldDef) {
-                if (empty($fieldDef['conditions_def']) || !isset($fieldDef['key'], $fieldsByKey[$fieldDef['key']])) {
+                if (empty($fieldDef['conditions_def'])) {
                     continue;
                 }
+                if (!isset($fieldDef['key'], $fieldsByKey[$fieldDef['key']])) {
+                    continue;
+                }
+
                 $conditions = [];
                 foreach ($fieldDef['conditions_def'] as $condDef) {
                     $targetField = $fieldsByKey[$condDef['fieldKey']] ?? null;
-                    if (null === $targetField) {
+                    if (!$targetField instanceof FormField) {
                         continue;
                     }
+
                     $conditions[] = [
-                        'fieldId'  => $targetField->getId(),
+                        'fieldId' => $targetField->getId(),
                         'operator' => $condDef['operator'],
-                        'value'    => $condDef['value'] ?? null,
+                        'value' => \$condDef['value'],
                     ];
                 }
+
                 if ([] !== $conditions) {
                     $fieldsByKey[$fieldDef['key']]->setConditions($conditions);
                 }
             }
+
             $em->flush();
 
             // Submissions
@@ -991,6 +1000,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                         $data[(string) $fieldsByLabel[$label]->getId()] = $value;
                     }
                 }
+
                 $fs = new FormSubmission();
                 $fs->setForm($form)->setData($data)->setLocale('fr');
                 $em->persist($fs);
