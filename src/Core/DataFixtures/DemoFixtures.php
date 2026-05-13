@@ -769,66 +769,172 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     private function createForms(EntityManagerInterface $em): void
     {
+        /**
+         * Form definitions.
+         *
+         * Structure:
+         *   slug_fr / slug_en   : per-locale slugs
+         *   fr / en             : translated title
+         *   crmSync             : bool — create CRM contact on submission
+         *   webhookUrl          : ?string
+         *   steps               : list<{fr,en}> — multi-step labels (null = single page)
+         *   fields              : list of field definitions
+         *     key               : internal reference for conditions
+         *     type / fr / en / ph_fr / ph_en / req / opts_fr / opts_en
+         *     step              : int step index (0-based), null = no step
+         *     conditions_def    : list<{fieldKey, operator, value}> — resolved after flush
+         *     conditionsLogic   : 'and'|'or'
+         *   submissions         : list<{labelFr => value}>
+         */
         $formDefs = [
+            // ── 1. Contact (with CRM sync) ─────────────────────────────────────
             [
-                'slug' => 'contact',
+                'slug_fr' => 'nous-contacter',
+                'slug_en' => 'contact',
                 'fr' => 'Nous contacter',
                 'en' => 'Contact Us',
+                'crmSync' => true,
+                'webhookUrl' => null,
+                'steps' => null,
                 'fields' => [
-                    ['type' => FormFieldTypeEnum::Text,     'fr' => 'Nom complet',      'en' => 'Full name',      'ph_fr' => 'Jean Dupont',              'ph_en' => 'John Doe',             'req' => true],
-                    ['type' => FormFieldTypeEnum::Email,    'fr' => 'Adresse email',    'en' => 'Email address',  'ph_fr' => 'jean@exemple.fr',          'ph_en' => 'john@example.com',     'req' => true],
-                    ['type' => FormFieldTypeEnum::Tel,      'fr' => 'Téléphone',        'en' => 'Phone',          'ph_fr' => '+33 6 00 00 00 00',       'ph_en' => '+1 555 000 0000',       'req' => false],
-                    ['type' => FormFieldTypeEnum::Select,   'fr' => 'Sujet',            'en' => 'Subject',        'ph_fr' => 'Choisissez un sujet',     'ph_en' => 'Choose a subject',      'req' => true,
+                    ['key' => 'nom',     'type' => FormFieldTypeEnum::Text,     'fr' => 'Nom complet',   'en' => 'Full name',     'ph_fr' => 'Jean Dupont',           'ph_en' => 'John Doe',          'req' => true],
+                    ['key' => 'email',   'type' => FormFieldTypeEnum::Email,    'fr' => 'Adresse email', 'en' => 'Email address', 'ph_fr' => 'jean@exemple.fr',       'ph_en' => 'john@example.com',  'req' => true],
+                    ['key' => 'tel',     'type' => FormFieldTypeEnum::Tel,      'fr' => 'Téléphone',     'en' => 'Phone',         'ph_fr' => '+33 6 00 00 00 00',     'ph_en' => '+1 555 000 0000',   'req' => false],
+                    ['key' => 'sujet',   'type' => FormFieldTypeEnum::Select,   'fr' => 'Sujet',         'en' => 'Subject',       'ph_fr' => 'Choisissez un sujet',   'ph_en' => 'Choose a subject',  'req' => true,
                         'opts_fr' => ['Demande commerciale', 'Support technique', 'Partenariat', 'Autre'],
                         'opts_en' => ['Sales inquiry', 'Technical support', 'Partnership', 'Other']],
-                    ['type' => FormFieldTypeEnum::Textarea, 'fr' => 'Message',          'en' => 'Message',        'ph_fr' => 'Votre message…',          'ph_en' => 'Your message…',         'req' => true],
+                    ['key' => 'message', 'type' => FormFieldTypeEnum::Textarea, 'fr' => 'Message',       'en' => 'Message',       'ph_fr' => 'Votre message…',        'ph_en' => 'Your message…',     'req' => true],
                 ],
                 'submissions' => [
                     ['Nom complet' => 'Pierre Dubois',   'Adresse email' => 'pierre.dubois@tech-innovation.fr', 'Téléphone' => '+33 6 12 34 56 78', 'Sujet' => 'Demande commerciale', 'Message' => "Bonjour, nous souhaitons migrer notre outil CRM actuel vers Aurora. Pouvez-vous nous envoyer un devis pour 10 utilisateurs avec le module GED inclus ? Merci d'avance."],
-                    ['Nom complet' => 'Camille Leroy',   'Adresse email' => 'c.leroy@biomed-france.com',        'Téléphone' => '+33 6 23 45 67 89', 'Sujet' => 'Support technique',   'Message' => 'Depuis la mise à jour de vendredi, nos données CRM ne se synchronisent plus correctement avec l\'ERP. Les stocks ne sont plus à jour côté e-commerce. Urgence niveau 2.'],
-                    ['Nom complet' => 'François Moreau', 'Adresse email' => 'f.moreau@retail-connect.fr',       'Téléphone' => '+33 6 34 56 78 90', 'Sujet' => 'Partenariat',         'Message' => 'Nous sommes un intégrateur spécialisé en transformation digitale pour les réseaux de distribution. Aurora correspond parfaitement à nos besoins clients. Pouvons-nous discuter d\'un partenariat revendeur ?'],
-                    ['Nom complet' => 'Julie Chen',      'Adresse email' => 'julie.chen@tech-innovation.fr',    'Téléphone' => '',                  'Sujet' => 'Demande commerciale', 'Message' => 'Suite à notre démo de la semaine dernière, mon équipe est convaincue. Nous aimerions démarrer avec la Suite Complète Aurora pour 15 utilisateurs. Quelles sont les prochaines étapes ?'],
-                    ['Nom complet' => 'Isabelle Renard', 'Adresse email' => 'i.renard@nexus-digital.fr',        'Téléphone' => '+33 6 67 89 01 23', 'Sujet' => 'Autre',               'Message' => 'Bonjour, je cherche à intégrer Aurora dans notre stack Vercel + Next.js via API. Disposez-vous d\'une documentation sur votre API REST et les webhooks disponibles ?'],
-                    ['Nom complet' => 'David Beaumont',  'Adresse email' => 'd.beaumont@leclerc-nord.fr',       'Téléphone' => '+33 6 78 90 12 34', 'Sujet' => 'Support technique',   'Message' => 'Le module Billing plante lors de l\'import OCR de factures PDF multi-pages. Log d\'erreur joint. Merci de traiter en priorité car nous avons 200+ factures en attente de traitement.'],
+                    ['Nom complet' => 'Camille Leroy',   'Adresse email' => 'c.leroy@biomed-france.com',        'Téléphone' => '+33 6 23 45 67 89', 'Sujet' => 'Support technique',   'Message' => "Depuis la mise à jour de vendredi, nos données CRM ne se synchronisent plus correctement avec l'ERP. Les stocks ne sont plus à jour côté e-commerce. Urgence niveau 2."],
+                    ['Nom complet' => 'François Moreau', 'Adresse email' => 'f.moreau@retail-connect.fr',       'Téléphone' => '+33 6 34 56 78 90', 'Sujet' => 'Partenariat',         'Message' => "Nous sommes un intégrateur spécialisé en transformation digitale pour les réseaux de distribution. Aurora correspond parfaitement à nos besoins clients. Pouvons-nous discuter d'un partenariat revendeur ?"],
+                    ['Nom complet' => 'Julie Chen',      'Adresse email' => 'julie.chen@tech-innovation.fr',    'Téléphone' => '',                  'Sujet' => 'Demande commerciale', 'Message' => "Suite à notre démo de la semaine dernière, mon équipe est convaincue. Nous aimerions démarrer avec la Suite Complète Aurora pour 15 utilisateurs. Quelles sont les prochaines étapes ?"],
+                    ['Nom complet' => 'Isabelle Renard', 'Adresse email' => 'i.renard@nexus-digital.fr',        'Téléphone' => '+33 6 67 89 01 23', 'Sujet' => 'Autre',               'Message' => "Bonjour, je cherche à intégrer Aurora dans notre stack Vercel + Next.js via API. Disposez-vous d'une documentation sur votre API REST et les webhooks disponibles ?"],
+                    ['Nom complet' => 'David Beaumont',  'Adresse email' => 'd.beaumont@leclerc-nord.fr',       'Téléphone' => '+33 6 78 90 12 34', 'Sujet' => 'Support technique',   'Message' => "Le module Billing plante lors de l'import OCR de factures PDF multi-pages. Log d'erreur joint. Merci de traiter en priorité car nous avons 200+ factures en attente de traitement."],
                 ],
             ],
+
+            // ── 2. Newsletter (CRM sync — French-localized) ────────────────────
             [
-                'slug' => 'newsletter',
-                'fr' => 'Inscription Newsletter',
+                'slug_fr' => 'inscription-newsletter',
+                'slug_en' => 'newsletter',
+                'fr' => 'Inscription à la newsletter',
                 'en' => 'Newsletter Sign-up',
+                'crmSync' => true,
+                'webhookUrl' => null,
+                'steps' => null,
                 'fields' => [
-                    ['type' => FormFieldTypeEnum::Email, 'fr' => 'Votre email', 'en' => 'Your email', 'ph_fr' => 'vous@exemple.fr', 'ph_en' => 'you@example.com', 'req' => true],
-                    ['type' => FormFieldTypeEnum::Text,  'fr' => 'Prénom',      'en' => 'First name', 'ph_fr' => 'Prénom',          'ph_en' => 'First name',      'req' => false],
-                    ['type' => FormFieldTypeEnum::Checkbox, 'fr' => "J'accepte de recevoir des communications Aurora", 'en' => 'I agree to receive Aurora communications', 'ph_fr' => '', 'ph_en' => '', 'req' => true],
+                    ['key' => 'email',   'type' => FormFieldTypeEnum::Email,    'fr' => 'Votre email', 'en' => 'Your email',      'ph_fr' => 'vous@exemple.fr', 'ph_en' => 'you@example.com', 'req' => true],
+                    ['key' => 'prenom',  'type' => FormFieldTypeEnum::Text,     'fr' => 'Prénom',      'en' => 'First name',      'ph_fr' => 'Prénom',          'ph_en' => 'First name',      'req' => false],
+                    ['key' => 'consent', 'type' => FormFieldTypeEnum::Checkbox, 'fr' => "J'accepte de recevoir les communications Aurora", 'en' => 'I agree to receive Aurora communications', 'ph_fr' => '', 'ph_en' => '', 'req' => true],
                 ],
                 'submissions' => [
-                    ['Votre email' => 'julie.martin@gmail.com',       'Prénom' => 'Julie',     "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'marc.fontaine@outlook.fr',     'Prénom' => 'Marc',      "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'sophie.bernard@yahoo.fr',      'Prénom' => 'Sophie',    "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'thomas.dev@protonmail.com',    'Prénom' => 'Thomas',    "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'alice.designer@gmail.com',     'Prénom' => 'Alice',     "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'hugo.cto@startupfactory.fr',   'Prénom' => 'Hugo',      "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'nathalie.rh@clinique-sj.fr',   'Prénom' => 'Nathalie',  "J'accepte de recevoir des communications Aurora" => true],
-                    ['Votre email' => 'pierre.pdg@ecobuilding.fr',    'Prénom' => 'Pierre',    "J'accepte de recevoir des communications Aurora" => true],
+                    ['Votre email' => 'julie.martin@gmail.com',     'Prénom' => 'Julie',    "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'marc.fontaine@outlook.fr',   'Prénom' => 'Marc',     "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'sophie.b@yahoo.fr',          'Prénom' => 'Sophie',   "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'thomas.dev@protonmail.com',  'Prénom' => 'Thomas',   "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'alice.design@gmail.com',     'Prénom' => 'Alice',    "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'hugo.cto@startupfactory.fr', 'Prénom' => 'Hugo',     "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'nathalie.rh@clinique-sj.fr', 'Prénom' => 'Nathalie', "J'accepte de recevoir les communications Aurora" => '1'],
+                    ['Votre email' => 'pierre.pdg@ecobuilding.fr',  'Prénom' => 'Pierre',   "J'accepte de recevoir les communications Aurora" => '1'],
+                ],
+            ],
+
+            // ── 3. Demande de devis — multi-step ──────────────────────────────
+            [
+                'slug_fr' => 'demande-de-devis',
+                'slug_en' => 'request-quote',
+                'fr' => 'Demande de devis',
+                'en' => 'Request a Quote',
+                'crmSync' => true,
+                'webhookUrl' => null,
+                'steps' => [
+                    ['fr' => 'Vos coordonnées', 'en' => 'Your details'],
+                    ['fr' => 'Votre projet',     'en' => 'Your project'],
+                ],
+                'fields' => [
+                    ['key' => 'nom',      'type' => FormFieldTypeEnum::Text,     'fr' => 'Nom complet',            'en' => 'Full name',           'ph_fr' => 'Jean Dupont',          'ph_en' => 'John Doe',         'req' => true,  'step' => 0],
+                    ['key' => 'email',    'type' => FormFieldTypeEnum::Email,    'fr' => 'Adresse email',          'en' => 'Email address',       'ph_fr' => 'jean@exemple.fr',      'ph_en' => 'john@example.com', 'req' => true,  'step' => 0],
+                    ['key' => 'tel',      'type' => FormFieldTypeEnum::Tel,      'fr' => 'Téléphone',              'en' => 'Phone',               'ph_fr' => '+33 6 00 00 00 00',    'ph_en' => '+1 555 000 0000',  'req' => false, 'step' => 0],
+                    ['key' => 'service',  'type' => FormFieldTypeEnum::Select,   'fr' => 'Type de prestation',     'en' => 'Service type',        'ph_fr' => '',                     'ph_en' => '',                 'req' => true,  'step' => 1,
+                        'opts_fr' => ['Développement web', 'Conseil & architecture', 'Formation', 'Intégration Aurora', 'Autre'],
+                        'opts_en' => ['Web development', 'Consulting & architecture', 'Training', 'Aurora integration', 'Other']],
+                    ['key' => 'budget',   'type' => FormFieldTypeEnum::Select,   'fr' => 'Budget estimé',          'en' => 'Estimated budget',    'ph_fr' => '',                     'ph_en' => '',                 'req' => false, 'step' => 1,
+                        'opts_fr' => ['< 5 000 €', '5 000 – 15 000 €', '15 000 – 50 000 €', '> 50 000 €'],
+                        'opts_en' => ['< €5,000', '€5,000 – €15,000', '€15,000 – €50,000', '> €50,000']],
+                    ['key' => 'projet',   'type' => FormFieldTypeEnum::Textarea, 'fr' => 'Décrivez votre projet',  'en' => 'Describe your project', 'ph_fr' => 'Contexte, objectifs, contraintes…', 'ph_en' => 'Context, goals, constraints…', 'req' => true, 'step' => 1],
+                ],
+                'submissions' => [
+                    ['Nom complet' => 'Antoine Garnier', 'Adresse email' => 'a.garnier@fintech-horizons.fr', 'Téléphone' => '+33 6 90 12 34 56', 'Type de prestation' => 'Intégration Aurora', 'Budget estimé' => '15 000 – 50 000 €', 'Décrivez votre projet' => "Nous souhaitons intégrer Aurora dans notre système de gestion de portefeuille clients. Besoin d'une interface personnalisée pour nos conseillers financiers."],
+                    ['Nom complet' => 'Laure Michaud',   'Adresse email' => 'l.michaud@ecobuilding.fr',      'Téléphone' => '+33 6 01 23 45 67', 'Type de prestation' => 'Développement web',  'Budget estimé' => '5 000 – 15 000 €',  'Décrivez votre projet' => "Refonte complète de notre site corporate avec intégration Aurora pour la gestion des appels d'offres et documents contractuels."],
+                    ['Nom complet' => 'Emma Rousseau',   'Adresse email' => 'e.rousseau@startupfactory.fr',  'Téléphone' => '',                  'Type de prestation' => 'Formation',          'Budget estimé' => '< 5 000 €',         'Décrivez votre projet' => "Formation d'une équipe de 8 personnes sur Aurora — modules CRM, GED et facturation. Idéalement en présentiel sur Paris."],
+                ],
+            ],
+
+            // ── 4. Satisfaction — conditional fields ──────────────────────────
+            [
+                'slug_fr' => 'satisfaction',
+                'slug_en' => 'satisfaction',
+                'fr' => 'Enquête de satisfaction',
+                'en' => 'Satisfaction Survey',
+                'crmSync' => false,
+                'webhookUrl' => null,
+                'steps' => null,
+                'fields' => [
+                    ['key' => 'recommande', 'type' => FormFieldTypeEnum::Radio,    'fr' => 'Recommanderiez-vous Aurora à un collègue ?', 'en' => 'Would you recommend Aurora to a colleague?', 'ph_fr' => '', 'ph_en' => '', 'req' => true,
+                        'opts_fr' => ['Oui, sans hésitation', 'Probablement', 'Non'],
+                        'opts_en' => ['Yes, absolutely', 'Probably', 'No']],
+                    // Shown only when "Non" is selected — conditions_def resolved after flush
+                    ['key' => 'pourquoi_non', 'type' => FormFieldTypeEnum::Textarea, 'fr' => "Pourquoi pas ?", 'en' => 'Why not?', 'ph_fr' => "Qu'est-ce qui vous a déçu ?", 'ph_en' => 'What disappointed you?', 'req' => false,
+                        'conditions_def' => [['fieldKey' => 'recommande', 'operator' => 'eq', 'value' => 'Non']],
+                        'conditionsLogic' => 'and'],
+                    ['key' => 'source', 'type' => FormFieldTypeEnum::Select,   'fr' => "Comment nous avez-vous trouvé ?", 'en' => 'How did you find us?', 'ph_fr' => '', 'ph_en' => '', 'req' => false,
+                        'opts_fr' => ['Bouche-à-oreille', 'Moteur de recherche', 'Réseaux sociaux', 'Conférence / événement', 'Autre'],
+                        'opts_en' => ['Word of mouth', 'Search engine', 'Social media', 'Conference / event', 'Other']],
+                    // Shown only when "Autre" is selected
+                    ['key' => 'source_autre', 'type' => FormFieldTypeEnum::Text, 'fr' => 'Précisez la source', 'en' => 'Please specify the source', 'ph_fr' => 'ex : podcast, presse…', 'ph_en' => 'e.g. podcast, press…', 'req' => false,
+                        'conditions_def' => [['fieldKey' => 'source', 'operator' => 'eq', 'value' => 'Autre']],
+                        'conditionsLogic' => 'and'],
+                    ['key' => 'commentaire', 'type' => FormFieldTypeEnum::Textarea, 'fr' => 'Commentaire libre', 'en' => 'Additional comments', 'ph_fr' => 'Vos suggestions, remarques…', 'ph_en' => 'Your suggestions, remarks…', 'req' => false],
+                ],
+                'submissions' => [
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', "Comment nous avez-vous trouvé ?" => 'Bouche-à-oreille',           'Commentaire libre' => 'Excellent outil, très bien intégré. Le module CRM est particulièrement efficace.'],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          "Comment nous avez-vous trouvé ?" => 'Moteur de recherche',          'Commentaire libre' => "L'interface est intuitive mais quelques options avancées mériteraient plus de documentation."],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Non',                   "Pourquoi pas ?" => "Le module de facturation manque encore de fonctionnalités pour notre secteur (BTP). On attend avec impatience les prochaines mises à jour.", "Comment nous avez-vous trouvé ?" => 'Conférence / événement', 'Commentaire libre' => ''],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Oui, sans hésitation', "Comment nous avez-vous trouvé ?" => 'Autre', 'Précisez la source' => 'Article dans le magazine Développez.com', 'Commentaire libre' => 'Super découverte !'],
+                    ['Recommanderiez-vous Aurora à un collègue ?' => 'Probablement',          "Comment nous avez-vous trouvé ?" => 'Réseaux sociaux',              'Commentaire libre' => "Bon produit dans l'ensemble. La courbe d'apprentissage est un peu longue au démarrage."],
                 ],
             ],
         ];
 
         foreach ($formDefs as $fd) {
             $form = new Form();
+            $form->setCrmSync($fd['crmSync'] ?? false);
+            $form->setWebhookUrl($fd['webhookUrl'] ?? null);
+            $form->setSteps($fd['steps'] ?? null);
             $em->persist($form);
 
             foreach (['fr', 'en'] as $locale) {
                 $ft = new FormTranslation();
-                $ft->setForm($form)->setLocale($locale)->setTitle($fd[$locale])->setSlug($fd['slug']);
+                $ft->setForm($form)
+                   ->setLocale($locale)
+                   ->setTitle($fd[$locale])
+                   ->setSlug('fr' === $locale ? $fd['slug_fr'] : $fd['slug_en']);
                 $em->persist($ft);
             }
 
-            // Build fields and keep a map labelFr → field for submissions
+            // Build fields — keep two maps: labelFr → field, key → field
             $fieldsByLabel = [];
+            $fieldsByKey   = [];
             foreach ($fd['fields'] as $pos => $fieldDef) {
                 $field = new FormField();
-                $field->setForm($form)->setType($fieldDef['type'])->setRequired($fieldDef['req'])->setPosition($pos);
+                $field->setForm($form)
+                      ->setType($fieldDef['type'])
+                      ->setRequired($fieldDef['req'])
+                      ->setPosition($pos)
+                      ->setStep($fieldDef['step'] ?? null)
+                      ->setConditionsLogic($fieldDef['conditionsLogic'] ?? 'and');
                 $em->persist($field);
 
                 foreach (['fr', 'en'] as $locale) {
@@ -846,11 +952,38 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 }
 
                 $fieldsByLabel[$fieldDef['fr']] = $field;
+                if (isset($fieldDef['key'])) {
+                    $fieldsByKey[$fieldDef['key']] = $field;
+                }
             }
 
-            // Flush to get field IDs — FormSubmission.data keys must be string field IDs
+            // Flush to get field IDs — needed for conditions AND submissions
             $em->flush();
 
+            // Resolve conditions_def → real field IDs, then persist
+            foreach ($fd['fields'] as $fieldDef) {
+                if (empty($fieldDef['conditions_def']) || !isset($fieldDef['key'], $fieldsByKey[$fieldDef['key']])) {
+                    continue;
+                }
+                $conditions = [];
+                foreach ($fieldDef['conditions_def'] as $condDef) {
+                    $targetField = $fieldsByKey[$condDef['fieldKey']] ?? null;
+                    if (null === $targetField) {
+                        continue;
+                    }
+                    $conditions[] = [
+                        'fieldId'  => $targetField->getId(),
+                        'operator' => $condDef['operator'],
+                        'value'    => $condDef['value'] ?? null,
+                    ];
+                }
+                if ([] !== $conditions) {
+                    $fieldsByKey[$fieldDef['key']]->setConditions($conditions);
+                }
+            }
+            $em->flush();
+
+            // Submissions
             foreach ($fd['submissions'] as $sub) {
                 $data = [];
                 foreach ($sub as $label => $value) {
