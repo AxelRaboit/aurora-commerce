@@ -1,9 +1,7 @@
-import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
-import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
+import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 /**
@@ -34,85 +32,39 @@ export function useDealsForm(
     const { t } = useI18n();
     const extraFields = options.extraFields ?? {};
 
-    const formModal = reactive({
-        open: false,
-        deal: null,
-    });
-
-    const form = reactive(emptyDealForm(extraFields));
-
-    const { errors, validate, clearErrors, handleErrors } = useServerErrors();
-    const { loading, request } = useRequest();
-
-    function resetForm() {
-        Object.assign(form, emptyDealForm(extraFields));
-    }
-
-    function loadFrom(deal) {
-        form.name = deal.name;
-        form.stage = deal.stage;
-        form.value = deal.value ?? "";
-        form.contactId = deal.contact?.id ?? "";
-        form.companyId = deal.company?.id ?? "";
-        form.closingDate = deal.closingDate ?? "";
-        form.notes = deal.notes ?? "";
-        for (const [key, def] of Object.entries(extraFields)) {
-            form[key] = def.fromEntity
-                ? def.fromEntity(deal)
-                : (deal[key] ?? def.default);
-        }
-    }
-
-    function openCreate() {
-        formModal.deal = null;
-        resetForm();
-        clearErrors();
-        formModal.open = true;
-    }
-
-    function openEdit(deal) {
-        formModal.deal = deal;
-        loadFrom(deal);
-        clearErrors();
-        formModal.open = true;
-    }
-
-    async function submit() {
-        if (
-            !validate({
-                name: () =>
-                    required(t("backend.crm.deals.errors.name_required"))(
-                        form.name,
-                    ),
-            })
-        )
-            return;
-
-        const isCreate = null === formModal.deal;
-        const url = isCreate
-            ? createPath
-            : buildPath(updatePath, { id: formModal.deal.id });
-        const data = await request(url, { ...form });
-        if (!data) return;
-
-        if (data.success) {
-            formModal.open = false;
-            toast.success(
-                t(
-                    isCreate
-                        ? "backend.crm.deals.created"
-                        : "backend.crm.deals.updated",
-                ),
-            );
+    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+        empty: () => ({
+            ...emptyDealForm(extraFields),
+        }),
+        fromEntity: (deal) => ({
+            name:        deal.name,
+            stage:       deal.stage,
+            value:       deal.value ?? "",
+            contactId:   deal.contact?.id ?? "",
+            companyId:   deal.company?.id ?? "",
+            closingDate: deal.closingDate ?? "",
+            notes:       deal.notes ?? "",
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.fromEntity ? def.fromEntity(deal) : (deal[key] ?? def.default),
+                ]),
+            ),
+        }),
+        createUrl: () => createPath,
+        editUrl:   (deal) => buildPath(updatePath, { id: deal.id }),
+        rules: () => ({
+            name: () => required(t("backend.crm.deals.errors.name_required"))(form.name),
+        }),
+        onSuccess: async ({ isCreate }) => {
+            toast.success(t(isCreate ? "backend.crm.deals.created" : "backend.crm.deals.updated"));
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
-        } else {
-            handleErrors(data.errors);
-        }
-    }
+        },
+    });
 
     return {
-        formModal,
+        modal,
         form,
         errors,
         loading,
@@ -127,13 +79,13 @@ export function useDealsForm(
  */
 export function emptyDealForm(extraFields = {}) {
     return {
-        name: "",
-        stage: "lead",
-        value: "",
-        contactId: "",
-        companyId: "",
+        name:        "",
+        stage:       "lead",
+        value:       "",
+        contactId:   "",
+        companyId:   "",
         closingDate: "",
-        notes: "",
+        notes:       "",
         ...Object.fromEntries(
             Object.entries(extraFields).map(([key, def]) => [key, def.default]),
         ),

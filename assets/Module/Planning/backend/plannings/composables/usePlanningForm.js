@@ -1,17 +1,16 @@
-import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 
 const DEFAULT_FORM = {
-    name: "",
+    name:        "",
     description: "",
-    color: "#3b82f6",
-    timezone: "Europe/Paris",
-    visibility: "private",
-    ownerId: null,
-    agencyId: null,
+    color:       "#3b82f6",
+    timezone:    "Europe/Paris",
+    visibility:  "private",
+    ownerId:     null,
+    agencyId:    null,
 };
 
 /**
@@ -27,71 +26,30 @@ export function usePlanningForm(
     options = {},
 ) {
     const { t } = useI18n();
-    const { request } = useRequest();
     const extraFields = options.extraFields ?? {};
 
-    const editModal = reactive({
-        open: false,
-        planning: null,
-        errors: {},
-        saving: false,
-    });
-    const editForm = reactive({
-        ...DEFAULT_FORM,
-        ...Object.fromEntries(
-            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
-        ),
-    });
-
-    function resetForm() {
-        Object.assign(editForm, DEFAULT_FORM);
-        for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.default;
-        }
-    }
-
-    function loadFrom(planning) {
-        Object.assign(editForm, {
-            name: planning.name,
+    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+        empty: () => ({
+            ...DEFAULT_FORM,
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+            ),
+        }),
+        fromEntity: (planning) => ({
+            name:        planning.name,
             description: planning.description ?? "",
-            color: planning.color,
-            timezone: planning.timezone,
-            visibility: planning.visibility,
-            ownerId: planning.owner?.id ?? null,
-            agencyId: planning.agency?.id ?? null,
-        });
-        for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.fromEntity(planning);
-        }
-    }
-
-    function openCreate() {
-        editModal.planning = null;
-        editModal.errors = {};
-        resetForm();
-        editModal.open = true;
-    }
-
-    function openEdit(planning) {
-        editModal.planning = planning;
-        editModal.errors = {};
-        loadFrom(planning);
-        editModal.open = true;
-    }
-
-    async function submit() {
-        editModal.saving = true;
-        editModal.errors = {};
-        try {
-            const isCreate = null === editModal.planning;
-            const url = isCreate
-                ? createPath
-                : buildPath(updatePath, { id: editModal.planning.id });
-            const data = await request(url, { ...editForm });
-            if (!data?.success) {
-                editModal.errors = data?.errors ?? {};
-                return;
-            }
+            color:       planning.color,
+            timezone:    planning.timezone,
+            visibility:  planning.visibility,
+            ownerId:     planning.owner?.id ?? null,
+            agencyId:    planning.agency?.id ?? null,
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [key, def.fromEntity(planning)]),
+            ),
+        }),
+        createUrl: () => createPath,
+        editUrl:   (planning) => buildPath(updatePath, { id: planning.id }),
+        onSuccess: ({ data, isCreate }) => {
             if (isCreate) {
                 plannings.value.push(data.planning);
                 plannings.value.sort((planningA, planningB) =>
@@ -99,16 +57,13 @@ export function usePlanningForm(
                 );
             } else {
                 const index = plannings.value.findIndex(
-                    (planning) => planning.id === editModal.planning.id,
+                    (planning) => planning.id === data.planning.id,
                 );
                 if (index !== -1) plannings.value[index] = data.planning;
             }
             toast.success(t("shared.common.saved"));
-            editModal.open = false;
-        } finally {
-            editModal.saving = false;
-        }
-    }
+        },
+    });
 
-    return { editModal, editForm, openCreate, openEdit, submit };
+    return { modal, form, errors, loading, openCreate, openEdit, close, submit };
 }

@@ -1,60 +1,27 @@
-import { reactive } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 
 const SUPPORTS = ["blocks", "thumbnail", "excerpt"];
 
-export function usePostTypeModal(
-    props,
-    postTypes,
-    selectedId,
-    replacePostType,
-) {
-    const { modal, openCreate, openEdit, submit } = useFormModal();
-    const form = reactive({
-        slug: "",
-        label: "",
-        icon: "",
-        hasArchive: false,
-        supports: [],
-        taxonomyIds: [],
-    });
-
-    function openCreatePostType() {
-        openCreate(() =>
-            Object.assign(form, {
-                slug: "",
-                label: "",
-                icon: "",
-                hasArchive: false,
-                supports: [...SUPPORTS],
-                taxonomyIds: [],
-            }),
-        );
-    }
-
-    function openEditPostType(pt) {
-        openEdit(pt, (p) =>
-            Object.assign(form, {
-                slug: p.slug,
-                label: p.label,
-                icon: p.icon ?? "",
-                hasArchive: p.hasArchive,
-                supports: [...(p.supports ?? [])],
-                taxonomyIds: [...(p.taxonomyIds ?? [])],
-            }),
-        );
-    }
-
-    async function submitPostType() {
-        const url = modal.editing
-            ? buildPath(props.editPath, { id: modal.editing.id })
-            : props.createPath;
-        await submit(url, form, (data) => {
+export function usePostTypeModal(props, postTypes, selectedId, replacePostType) {
+    const { modal, form, errors: postTypeErrors, loading: postTypeLoading, openCreate, openEdit, submit } = useFormModal({
+        empty: () => ({
+            slug: "", label: "", icon: "", hasArchive: false,
+            supports: [...SUPPORTS], taxonomyIds: [],
+        }),
+        fromEntity: (pt) => ({
+            slug: pt.slug, label: pt.label, icon: pt.icon ?? "",
+            hasArchive: pt.hasArchive,
+            supports: [...(pt.supports ?? [])],
+            taxonomyIds: [...(pt.taxonomyIds ?? [])],
+        }),
+        createUrl: () => props.createPath,
+        editUrl:   (pt) => buildPath(props.editPath, { id: pt.id }),
+        onSuccess: ({ data }) => {
             replacePostType(data.postType);
             selectedId.value = data.postType.id;
-        });
-    }
+        },
+    });
 
     function toggleIn(list, value) {
         return list.includes(value)
@@ -64,10 +31,12 @@ export function usePostTypeModal(
 
     return {
         postTypeModal: modal,
-        form: form,
-        openCreatePostType,
-        openEditPostType,
-        submitPostType,
+        form,
+        postTypeErrors,
+        postTypeLoading,
+        openCreatePostType: openCreate,
+        openEditPostType: openEdit,
+        submitPostType: submit,
         toggleIn,
     };
 }

@@ -1,8 +1,7 @@
-import { ref, reactive, computed } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@shared/composables/http/useRequest.js";
-import { useServerErrors } from "@shared/composables/form/useServerErrors.js";
+import { useFormModal } from "@shared/composables/form/useFormModal.js";
 import { useDelete } from "@shared/composables/form/useDelete.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { buildPath } from "@shared/utils/http/buildPath.js";
@@ -17,97 +16,50 @@ export function useVaultFolders(
 ) {
     const { t } = useI18n();
 
-    const folderModal = reactive({ open: false, editing: null });
-    const folderForm = reactive({
-        name: "",
-        useColor: false,
-        color: "#6366f1",
-        parentId: null,
-    });
-
-    const {
-        errors: folderErrors,
-        validate,
-        clearErrors,
-        handleErrors,
-    } = useServerErrors();
-    const { loading: folderSaving, request: folderRequest } = useRequest();
-
-    function openCreateFolder() {
-        folderModal.editing = null;
-        folderForm.name = "";
-        folderForm.useColor = false;
-        folderForm.color = "#6366f1";
-        folderForm.parentId = currentFolderId.value;
-        clearErrors();
-        folderModal.open = true;
-    }
-
-    function openEditFolder(folder) {
-        folderModal.editing = folder;
-        folderForm.name = folder.name;
-        folderForm.useColor = folder.color !== null;
-        folderForm.color = folder.color ?? "#6366f1";
-        folderForm.parentId = folder.parentId ?? null;
-        clearErrors();
-        folderModal.open = true;
-    }
-
-    async function submitFolder() {
-        if (
-            !validate({
-                name: () =>
-                    required(t("vault.folders.errors.name_required"))(
-                        folderForm.name,
-                    ),
-            })
-        )
-            return;
-
-        const isEdit = !!folderModal.editing;
-        const url = isEdit
-            ? buildPath(props.updateFolderPath, { id: folderModal.editing.id })
-            : props.createFolderPath;
-
-        const payload = {
-            name: folderForm.name.trim(),
-            color: folderForm.useColor ? folderForm.color : null,
-            position: isEdit
-                ? folderModal.editing.position
+    const { modal: folderModal, form: folderForm, errors: folderErrors, loading: folderSaving, openCreate: openCreateFolder, openEdit: openEditFolder, submit: submitFolder } = useFormModal({
+        empty: () => ({
+            name:     "",
+            useColor: false,
+            color:    "#6366f1",
+            parentId: currentFolderId.value,
+        }),
+        fromEntity: (folder) => ({
+            name:     folder.name,
+            useColor: folder.color !== null,
+            color:    folder.color ?? "#6366f1",
+            parentId: folder.parentId ?? null,
+        }),
+        createUrl: () => props.createFolderPath,
+        editUrl:   (folder) => buildPath(props.updateFolderPath, { id: folder.id }),
+        buildBody: (form) => ({
+            name:     form.name.trim(),
+            color:    form.useColor ? form.color : null,
+            position: folderModal.entity
+                ? folderModal.entity.position
                 : folders.value.filter(
-                      (f) =>
-                          (f.parentId ?? null) ===
-                          (folderForm.parentId ?? null),
+                      (f) => (f.parentId ?? null) === (form.parentId ?? null),
                   ).length,
-            parentId: folderForm.parentId,
-        };
-
-        const data = await folderRequest(url, payload);
-        if (!data) return;
-
-        if (data.success) {
-            if (isEdit) {
-                const idx = folders.value.findIndex(
-                    (f) => f.id === data.folder.id,
-                );
+            parentId: form.parentId,
+        }),
+        rules: () => ({
+            name: () => required(t("vault.folders.errors.name_required"))(folderForm.name),
+        }),
+        onSuccess: ({ data, isCreate }) => {
+            if (isCreate) {
+                folders.value.push(data.folder);
+            } else {
+                const idx = folders.value.findIndex((f) => f.id === data.folder.id);
                 if (idx !== -1) folders.value[idx] = data.folder;
                 entries.value.forEach((entry) => {
                     if (entry.folderId === data.folder.id) {
-                        entry.folderName = data.folder.name;
+                        entry.folderName  = data.folder.name;
                         entry.folderColor = data.folder.color;
                     }
                 });
-            } else {
-                folders.value.push(data.folder);
             }
-            toast.success(
-                t(isEdit ? "vault.folders.updated" : "vault.folders.created"),
-            );
-            folderModal.open = false;
-        } else {
-            handleErrors(data.errors);
-        }
-    }
+            toast.success(t(isCreate ? "vault.folders.created" : "vault.folders.updated"));
+        },
+    });
 
     const {
         pendingDelete,
@@ -117,7 +69,7 @@ export function useVaultFolders(
     } = useDelete(
         props.deleteFolderPath,
         (deletedId) => {
-            const folder = folders.value.find((f) => f.id === deletedId);
+            const folder   = folders.value.find((f) => f.id === deletedId);
             const parentId = folder?.parentId ?? null;
 
             folders.value = folders.value
@@ -127,8 +79,8 @@ export function useVaultFolders(
                 );
             entries.value.forEach((entry) => {
                 if (entry.folderId === deletedId) {
-                    entry.folderId = null;
-                    entry.folderName = null;
+                    entry.folderId    = null;
+                    entry.folderName  = null;
                     entry.folderColor = null;
                 }
             });
@@ -141,14 +93,11 @@ export function useVaultFolders(
 
     const folderParentSelectOptions = computed(() => {
         const forbidden = new Set();
-        if (folderModal.editing) {
-            const desc = getDescendantIds(
-                folders.value,
-                folderModal.editing.id,
-            );
+        if (folderModal.entity) {
+            const desc = getDescendantIds(folders.value, folderModal.entity.id);
             desc.forEach((id) => forbidden.add(id));
         }
-        const eligible = folderModal.editing
+        const eligible = folderModal.entity
             ? folders.value.filter((f) => !forbidden.has(f.id))
             : folders.value;
 

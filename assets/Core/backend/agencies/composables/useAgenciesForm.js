@@ -1,8 +1,7 @@
-import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 
 /**
  * @typedef {Object} ExtraField
@@ -17,64 +16,24 @@ export function useAgenciesForm(
     options = {},
 ) {
     const { t } = useI18n();
-    const { request } = useRequest();
-
     const extraFields = options.extraFields ?? {};
 
-    const editModal = reactive({
-        open: false,
-        agency: null,
-        errors: {},
-        saving: false,
-    });
-    const editForm = reactive({
-        name: "",
-        ...Object.fromEntries(
-            Object.entries(extraFields).map(([key, def]) => [key, def.default]),
-        ),
-    });
-
-    function resetExtras() {
-        for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.default;
-        }
-    }
-
-    function loadExtrasFrom(agency) {
-        for (const [key, def] of Object.entries(extraFields)) {
-            editForm[key] = def.fromEntity(agency);
-        }
-    }
-
-    function openCreate() {
-        editModal.agency = null;
-        editModal.errors = {};
-        editForm.name = "";
-        resetExtras();
-        editModal.open = true;
-    }
-
-    function openEdit(agency) {
-        editModal.agency = agency;
-        editModal.errors = {};
-        editForm.name = agency.name;
-        loadExtrasFrom(agency);
-        editModal.open = true;
-    }
-
-    async function submitEdit() {
-        editModal.saving = true;
-        editModal.errors = {};
-        try {
-            const isCreate = null === editModal.agency;
-            const url = isCreate
-                ? createPath
-                : buildPath(updatePath, { id: editModal.agency.id });
-            const data = await request(url, { ...editForm });
-            if (!data?.success) {
-                editModal.errors = data?.errors ?? {};
-                return;
-            }
+    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+        empty: () => ({
+            name: "",
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+            ),
+        }),
+        fromEntity: (agency) => ({
+            name: agency.name,
+            ...Object.fromEntries(
+                Object.entries(extraFields).map(([key, def]) => [key, def.fromEntity(agency)]),
+            ),
+        }),
+        createUrl: () => createPath,
+        editUrl:   (agency) => buildPath(updatePath, { id: agency.id }),
+        onSuccess: ({ data, isCreate }) => {
             if (isCreate) {
                 agencyList.value.push(data.agency);
                 agencyList.value.sort((agencyA, agencyB) =>
@@ -82,16 +41,13 @@ export function useAgenciesForm(
                 );
             } else {
                 const index = agencyList.value.findIndex(
-                    (agency) => agency.id === editModal.agency.id,
+                    (agency) => agency.id === data.agency.id,
                 );
                 if (index !== -1) agencyList.value[index] = data.agency;
             }
             toast.success(t("shared.common.saved"));
-            editModal.open = false;
-        } finally {
-            editModal.saving = false;
-        }
-    }
+        },
+    });
 
-    return { editModal, editForm, openCreate, openEdit, submitEdit };
+    return { modal, form, errors, loading, openCreate, openEdit, close, submit };
 }

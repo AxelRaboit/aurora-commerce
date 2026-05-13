@@ -29,7 +29,7 @@ const props = defineProps({
 });
 
 const { serviceList } = useServicesList(props.services);
-const { editModal, editForm, openCreate, openEdit, submitEdit } = useServicesForm(serviceList, props.createPath, props.updatePath, { extraFields: props.extraFields });
+const { modal, form, errors, loading, openCreate, openEdit, submit } = useServicesForm(serviceList, props.createPath, props.updatePath, { extraFields: props.extraFields });
 const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.deletePath);
 </script>
 
@@ -73,27 +73,27 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
         </div>
 
         <AppModal
-            :show="editModal.open"
+            :show="modal.open"
             max-width="sm"
-            :title="editModal.service ? t('backend.services.edit_title', { name: editModal.service.name }) : t('backend.services.new')"
-            :icon="editModal.service ? Pencil : Building2"
+            :title="modal.entity ? t('backend.services.edit_title', { name: modal.entity.name }) : t('backend.services.new')"
+            :icon="modal.entity ? Pencil : Building2"
             :closeable="false"
-            v-on:close="editModal.open = false"
+            v-on:close="modal.open = false"
         >
-            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+            <form class="space-y-4" v-on:submit.prevent="submit">
                 <AppInput
-                    v-model="editForm.name"
+                    v-model="form.name"
                     :label="t('backend.services.name')"
                     :placeholder="t('backend.services.namePlaceholder')"
-                    :error="editModal.errors.name ?? ''"
+                    :error="errors.name ?? ''"
                     :required="true"
                 />
-                <slot name="extra-form-fields" :form="editForm" :errors="editModal.errors" :service="editModal.service" />
+                <slot name="extra-form-fields" :form="form" :errors="errors" :service="modal.entity" />
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="editModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="editModal.saving">
+                    <AppButton variant="ghost" size="md" v-on:click="modal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="loading">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>

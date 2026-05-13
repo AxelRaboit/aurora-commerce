@@ -353,53 +353,53 @@ onMounted(() => {
 
         <!-- Edit / Create planning -->
         <AppModal
-            :show="planningForm.editModal.open"
+            :show="planningForm.modal.open"
             max-width="md"
-            :title="planningForm.editModal.planning ? t('backend.plannings.edit') : t('backend.plannings.new')"
+            :title="planningForm.modal.entity ? t('backend.plannings.edit') : t('backend.plannings.new')"
             :closeable="false"
-            v-on:close="planningForm.editModal.open = false"
+            v-on:close="planningForm.modal.open = false"
         >
             <form class="space-y-4" v-on:submit.prevent="planningForm.submit()">
                 <AppInput
-                    v-model="planningForm.editForm.name"
+                    v-model="planningForm.form.name"
                     :label="t('backend.plannings.fields.name')"
                     :placeholder="t('backend.plannings.fields.namePlaceholder')"
-                    :error="planningForm.editModal.errors.name ?? ''"
+                    :error="planningForm.errors.name ?? ''"
                     :required="true"
                 />
                 <AppTextarea
-                    v-model="planningForm.editForm.description"
+                    v-model="planningForm.form.description"
                     :label="t('backend.plannings.fields.description')"
                     :placeholder="t('backend.plannings.fields.descriptionPlaceholder')"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppColorField
-                        v-model="planningForm.editForm.color"
+                        v-model="planningForm.form.color"
                         :label="t('backend.plannings.fields.color')"
-                        :error="planningForm.editModal.errors.color ?? ''"
+                        :error="planningForm.errors.color ?? ''"
                     />
                     <AppSelect
-                        v-model="planningForm.editForm.timezone"
+                        v-model="planningForm.form.timezone"
                         :label="t('backend.plannings.fields.timezone')"
                         :options="timezoneOptions"
-                        :error="planningForm.editModal.errors.timezone ?? ''"
+                        :error="planningForm.errors.timezone ?? ''"
                     />
                 </div>
                 <AppSelect
-                    v-model="planningForm.editForm.visibility"
+                    v-model="planningForm.form.visibility"
                     :label="t('backend.plannings.fields.visibility')"
                     :options="visibilityOptions"
-                    :error="planningForm.editModal.errors.visibility ?? ''"
+                    :error="planningForm.errors.visibility ?? ''"
                 />
-                <slot name="extra-form-fields" :edit-form="planningForm.editForm" :errors="planningForm.editModal.errors" />
+                <slot name="extra-form-fields" :edit-form="planningForm.form" :errors="planningForm.errors" />
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="planningForm.editModal.open = false">
+                    <AppButton variant="ghost" size="md" v-on:click="planningForm.modal.open = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="planningForm.editModal.saving">
+                    <AppButton type="submit" variant="primary" size="md" :loading="planningForm.loading">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>

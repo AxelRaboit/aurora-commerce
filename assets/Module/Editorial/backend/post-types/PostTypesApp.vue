@@ -1,6 +1,5 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { VueDraggable } from "vue-draggable-plus";
 import { usePostTypeSelect } from "@editorial/backend/post-types/composables/usePostTypeSelect.js";
 import { usePostTypeModal } from "@editorial/backend/post-types/composables/usePostTypeModal.js";
@@ -39,7 +38,7 @@ const props = defineProps({
 const FIELD_TYPES = Object.values(PostFieldType);
 
 const { postTypes, selectedId, selected, replacePostType } = usePostTypeSelect(props.postTypes);
-const { postTypeModal, form: postTypeForm, openCreatePostType, openEditPostType, submitPostType, toggleIn } = usePostTypeModal(props, postTypes, selectedId, replacePostType);
+const { postTypeModal, form: postTypeForm, postTypeErrors, postTypeLoading, openCreatePostType, openEditPostType, submitPostType, toggleIn } = usePostTypeModal(props, postTypes, selectedId, replacePostType);
 const { deletingPostType, confirmDeletePostType } = usePostTypeDelete(props.deletePath, postTypes, selectedId);
 const { fieldModal, fieldForm, openCreateField, openEditField, submitField, deletingField, confirmDeleteField, orderedFields, persistFieldOrder } =
     usePostTypeFields(props, selected, replacePostType);
@@ -165,8 +164,8 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         <AppModal
             :show="postTypeModal.open"
             max-width="lg"
-            :title="postTypeModal.editing ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')"
-            :icon="postTypeModal.editing ? Pencil : Layers"
+            :title="postTypeModal.entity ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')"
+            :icon="postTypeModal.entity ? Pencil : Layers"
             :closeable="false"
             v-on:close="postTypeModal.open = false"
         >
@@ -174,14 +173,14 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 <AppInput
                     v-model="postTypeForm.slug"
                     :label="t('backend.postTypes.slug')"
-                    :error="postTypeModal.errors.slug ?? ''"
-                    :disabled="postTypeModal.editing?.isBuiltIn ?? false"
+                    :error="postTypeErrors.slug ?? ''"
+                    :disabled="postTypeModal.entity?.isBuiltIn ?? false"
                     :placeholder="t('backend.postTypes.slugPlaceholder')"
                 />
                 <AppInput
                     v-model="postTypeForm.label"
                     :label="t('backend.postTypes.label')"
-                    :error="postTypeModal.errors.label ?? ''"
+                    :error="postTypeErrors.label ?? ''"
                     :placeholder="t('backend.postTypes.labelPlaceholder')"
                 />
                 <AppInput
@@ -238,7 +237,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="postTypeModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="postTypeModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="postTypeLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>

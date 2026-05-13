@@ -463,7 +463,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
 
         <AppModal
             :show="folderModal.open"
-            :title="folderModal.editing ? t('vault.folders.edit') : t('vault.folders.create')"
+            :title="folderModal.entity ? t('vault.folders.edit') : t('vault.folders.create')"
             max-width="sm"
             :closeable="false"
             v-on:close="folderModal.open = false"

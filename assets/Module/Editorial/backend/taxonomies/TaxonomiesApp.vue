@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
@@ -53,58 +53,57 @@ const { deletingTaxonomy, confirmDeleteTaxonomy } = useTaxonomyDelete(props.dele
 const { deletingTerm, confirmDeleteTerm } = useTermDelete(props.termDeletePath, selected, replaceTaxonomy);
 
 // ── Taxonomy form (modal) ────────────────────────────────────────────────────
-const { modal: taxonomyModal, openCreate: taxonomyModalCreate, openEdit: taxonomyModalEdit, submit: taxonomyModalSubmit } = useFormModal();
-const taxonomyForm = reactive({ slug: "", hierarchical: false, translations: {}, postTypeIds: [] });
-
-function openCreateTaxonomy() {
-    taxonomyModalCreate(() => Object.assign(taxonomyForm, {
+const {
+    modal: taxonomyModal, form: taxonomyForm,
+    errors: taxonomyErrors, loading: taxonomyLoading,
+    openCreate: openCreateTaxonomy, openEdit: openEditTaxonomy, submit: submitTaxonomy,
+} = useFormModal({
+    empty: () => ({
         slug: "", hierarchical: false,
         postTypeIds: props.postTypes.map((pt) => pt.id),
         translations: Object.fromEntries(props.locales.map((l) => [l, { label: "", description: "" }])),
-    }));
-}
-
-function openEditTaxonomy(taxonomy) {
-    taxonomyModalEdit(taxonomy, (tx) => Object.assign(taxonomyForm, {
-        slug: tx.slug, hierarchical: tx.hierarchical, postTypeIds: [...(tx.postTypeIds ?? [])],
+    }),
+    fromEntity: (tx) => ({
+        slug: tx.slug, hierarchical: tx.hierarchical,
+        postTypeIds: [...(tx.postTypeIds ?? [])],
         translations: Object.fromEntries(props.locales.map((l) => [l, {
             label: tx.translations?.[l]?.label ?? "",
             description: tx.translations?.[l]?.description ?? "",
         }])),
-    }));
-}
-
-async function submitTaxonomy() {
-    const url = taxonomyModal.editing
-        ? buildPath(props.editPath, { id: taxonomyModal.editing.id })
-        : props.createPath;
-    await taxonomyModalSubmit(url, taxonomyForm, (data) => {
-        replaceTaxonomy(data.taxonomy);
-        selectedId.value = data.taxonomy.id;
-    });
-}
-
+    }),
+    createUrl: () => props.createPath,
+    editUrl:   (tx) => buildPath(props.editPath, { id: tx.id }),
+    onSuccess: ({ data }) => { replaceTaxonomy(data.taxonomy); selectedId.value = data.taxonomy.id; },
+});
 
 // ── Term form (modal) ────────────────────────────────────────────────────────
-const { modal: termModal, openCreate: termModalCreate, openEdit: termModalEdit, submit: termModalSubmit } = useFormModal();
-const termForm = reactive({ parentId: null, translations: {} });
+const pendingParentId = { value: null };
 
-function openCreateTerm(parentId = null) {
-    termModalCreate(() => Object.assign(termForm, {
-        parentId,
+const {
+    modal: termModal, form: termForm,
+    errors: termErrors, loading: termLoading,
+    openCreate: openTermCreate, openEdit: openEditTerm, submit: rawSubmitTerm,
+} = useFormModal({
+    empty: () => ({
+        parentId: pendingParentId.value,
         translations: Object.fromEntries(props.locales.map((l) => [l, { name: "", slug: "", description: "" }])),
-    }));
-}
-
-function openEditTerm(term) {
-    termModalEdit(term, (tr) => Object.assign(termForm, {
+    }),
+    fromEntity: (tr) => ({
         parentId: tr.parentId,
         translations: Object.fromEntries(props.locales.map((l) => [l, {
             name: tr.translations?.[l]?.name ?? "",
             slug: tr.translations?.[l]?.slug ?? "",
             description: tr.translations?.[l]?.description ?? "",
         }])),
-    }));
+    }),
+    createUrl: () => buildPath(props.termCreatePath, { id: selected.value.id }),
+    editUrl:   (tr) => buildPath(props.termEditPath, { id: selected.value.id, termId: tr.id }),
+    onSuccess: ({ data }) => replaceTaxonomy(data.taxonomy),
+});
+
+function openCreateTerm(parentId = null) {
+    pendingParentId.value = parentId;
+    openTermCreate();
 }
 
 function autoSlugTerm(locale) {
@@ -112,22 +111,20 @@ function autoSlugTerm(locale) {
     if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
 }
 
-async function submitTerm() {
+function submitTerm() {
     if (!selected.value) return;
     for (const locale of props.locales) {
         const entry = termForm.translations[locale];
         if (entry?.name) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
     }
-    const url = termModal.editing
-        ? buildPath(props.termEditPath, { id: selected.value.id, termId: termModal.editing.id })
-        : buildPath(props.termCreatePath, { id: selected.value.id });
-    await termModalSubmit(url, termForm, (data) => replaceTaxonomy(data.taxonomy));
+    rawSubmitTerm();
 }
-
 
 const parentOptions = computed(() => {
     if (!selected.value?.hierarchical) return [];
-    const forbidden = termModal.editing ? collectDescendantIds(findNodeInTree(tree.value, termModal.editing.id) ?? termModal.editing) : new Set();
+    const forbidden = termModal.entity
+        ? collectDescendantIds(findNodeInTree(tree.value, termModal.entity.id) ?? termModal.entity)
+        : new Set();
     return flatTermsForParentSelect.value.filter((opt) => !forbidden.has(opt.id));
 });
 </script>
@@ -260,8 +257,8 @@ const parentOptions = computed(() => {
         <AppModal
             :show="taxonomyModal.open"
             max-width="lg"
-            :title="taxonomyModal.editing ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')"
-            :icon="taxonomyModal.editing ? Pencil : Tag"
+            :title="taxonomyModal.entity ? t('backend.taxonomies.editTaxonomy') : t('backend.taxonomies.addTaxonomy')"
+            :icon="taxonomyModal.entity ? Pencil : Tag"
             :closeable="false"
             v-on:close="taxonomyModal.open = false"
         >
@@ -269,15 +266,15 @@ const parentOptions = computed(() => {
                 <AppInput
                     v-model="taxonomyForm.slug"
                     :label="t('backend.taxonomies.slug')"
-                    :error="taxonomyModal.errors.slug ?? ''"
+                    :error="taxonomyErrors.slug ?? ''"
                     :placeholder="t('backend.taxonomies.slugPlaceholder')"
-                    :disabled="taxonomyModal.editing?.isBuiltIn ?? false"
+                    :disabled="taxonomyModal.entity?.isBuiltIn ?? false"
                 />
 
                 <AppCheckbox
                     v-model="taxonomyForm.hierarchical"
                     :label="t('backend.taxonomies.hierarchical')"
-                    :disabled="taxonomyModal.editing?.isBuiltIn ?? false"
+                    :disabled="taxonomyModal.entity?.isBuiltIn ?? false"
                 />
 
                 <div class="space-y-2">
@@ -335,7 +332,7 @@ const parentOptions = computed(() => {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="taxonomyModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="taxonomyLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -343,8 +340,8 @@ const parentOptions = computed(() => {
         <AppModal
             :show="termModal.open"
             max-width="md"
-            :title="termModal.editing ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')"
-            :icon="termModal.editing ? Pencil : Tag"
+            :title="termModal.entity ? t('backend.taxonomies.terms.editTerm') : t('backend.taxonomies.terms.addTerm')"
+            :icon="termModal.entity ? Pencil : Tag"
             :closeable="false"
             v-on:close="termModal.open = false"
         >
@@ -378,14 +375,14 @@ const parentOptions = computed(() => {
                 <AppInput
                     v-model="termForm.translations[activeLocale].name"
                     :label="t('backend.taxonomies.terms.name')"
-                    :error="termModal.errors[`translations[${activeLocale}].name`] ?? ''"
+                    :error="termErrors[`translations[${activeLocale}].name`] ?? ''"
                     :placeholder="t('backend.taxonomies.terms.namePlaceholder')"
                     v-on:blur="autoSlugTerm(activeLocale)"
                 />
                 <AppInput
                     v-model="termForm.translations[activeLocale].slug"
                     :label="t('backend.taxonomies.terms.slug')"
-                    :error="termModal.errors[`translations[${activeLocale}].slug`] ?? ''"
+                    :error="termErrors[`translations[${activeLocale}].slug`] ?? ''"
                     :placeholder="t('backend.taxonomies.terms.slugPlaceholder')"
                 />
                 <AppTextarea
@@ -398,7 +395,7 @@ const parentOptions = computed(() => {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="termModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="termModal.saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="termLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>

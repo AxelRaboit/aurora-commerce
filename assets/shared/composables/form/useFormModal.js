@@ -1,63 +1,84 @@
 import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 
 /**
- * Manages create/edit modal state with integrated fetch submit.
- * Handles loading, error mapping, and success/error toasts.
+ * Unified create+edit modal composable.
+ *
+ * Handles the universal pattern of a single modal that serves both creation
+ * and editing, with conditional URL and success message.
+ *
+ * openCreate()        → resets form, entity=null, opens modal
+ * openEdit(entity)    → populates form, entity=set, opens modal
+ * submit()            → validates → posts to createUrl or editUrl → handles response
+ * modal.entity        → null while creating, the entity while editing
+ * modal.open          → bind to :show on AppModal
+ *
+ * @param {Object} options
+ * @param {() => object}                 options.empty       Factory for a blank form.
+ * @param {(entity: *) => object}       [options.fromEntity] Populate form from existing entity.
+ * @param {() => string}                 options.createUrl
+ * @param {(entity: *) => string}        options.editUrl
+ * @param {(form: object) => object}    [options.buildBody]  Transform form before sending (default: spread).
+ * @param {() => Record<string, () => string|null>} [options.rules] Lazy validation rules.
+ * @param {({ data, isCreate, entity }) => void|Promise} [options.onSuccess]
+ *
+ * Usage:
+ *   const { modal, form, errors, loading, openCreate, openEdit, submit } = useFormModal({
+ *     empty:      () => ({ name: "" }),
+ *     fromEntity: (item) => ({ name: item.name }),
+ *     createUrl:  () => createPath,
+ *     editUrl:    (item) => buildPath(updatePath, { id: item.id }),
+ *     rules:      () => ({ name: () => required(t("…"))(form.name) }),
+ *     onSuccess:  ({ isCreate }) => {
+ *       toast.success(t(isCreate ? "…created" : "…updated"));
+ *       reset();
+ *     },
+ *   });
  */
-export function useFormModal() {
-    const { t } = useI18n();
-    const modal = reactive({
-        open: false,
-        editing: null,
-        errors: {},
-        saving: false,
-    });
+export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody, rules, onSuccess } = {}) {
+    const modal = reactive({ open: false, entity: null });
+    const form  = reactive({ ...empty?.() });
 
-    function openCreate(resetFn) {
-        modal.editing = null;
-        modal.errors = {};
-        resetFn?.();
-        modal.open = true;
+    const { errors, validate, clearErrors, handleErrors } = useServerErrors();
+    const { loading, request } = useRequest();
+
+    function openCreate() {
+        if (empty) Object.assign(form, empty());
+        clearErrors();
+        modal.entity = null;
+        modal.open   = true;
     }
 
-    function openEdit(item, populateFn) {
-        modal.editing = item;
-        modal.errors = {};
-        populateFn?.(item);
-        modal.open = true;
+    function openEdit(entity) {
+        if (fromEntity) Object.assign(form, fromEntity(entity));
+        else if (empty) Object.assign(form, empty());
+        clearErrors();
+        modal.entity = entity;
+        modal.open   = true;
     }
 
     function close() {
         modal.open = false;
-        modal.errors = {};
     }
 
-    async function submit(url, payload, onSuccess) {
-        modal.saving = true;
-        modal.errors = {};
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-            const data = await response.json();
-            if (!data.success) {
-                modal.errors = data.errors ?? {};
-                return;
-            }
+    async function submit() {
+        if (rules && !validate(rules())) return;
+
+        const isCreate = modal.entity === null;
+        const url      = isCreate ? createUrl?.() : editUrl?.(modal.entity);
+        const body     = buildBody ? buildBody(form) : { ...form };
+        const data     = await request(url, body);
+        if (!data) return;
+
+        if (data.success) {
+            clearErrors();
             modal.open = false;
-            toast.success(t("shared.common.saved"));
-            onSuccess?.(data);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            modal.saving = false;
+            await onSuccess?.({ data, isCreate, entity: modal.entity });
+        } else {
+            handleErrors(data.errors);
         }
     }
 
-    return { modal, openCreate, openEdit, close, submit };
+    return { modal, form, errors, loading, openCreate, openEdit, close, submit, clearErrors };
 }

@@ -49,14 +49,13 @@ function openView(employee) {
 }
 
 const {
-    modalOpen,
-    saving,
+    modal,
+    loading,
     form,
     errors,
-    editingEmployee,
     openCreate,
     openEdit,
-    closeModal,
+    close,
     submit,
 } = useEmployeeForm(props.createPath, props.updatePath, { extraFields: props.extraFields, onSuccess: reload });
 
@@ -214,11 +213,11 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
 
         <!-- Edit / Create modal -->
         <AppModal
-            :show="modalOpen"
-            :title="editingEmployee ? editingEmployee.fullName : t('backend.employees.add')"
-            :icon="editingEmployee ? Pencil : UserCheck"
+            :show="modal.open"
+            :title="modal.entity ? modal.entity.fullName : t('backend.employees.add')"
+            :icon="modal.entity ? Pencil : UserCheck"
             :closeable="false"
-            v-on:close="closeModal"
+            v-on:close="close"
         >
             <form class="space-y-4" v-on:submit.prevent="submit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -271,11 +270,11 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" size="md" v-on:click="closeModal">
+                    <AppButton variant="ghost" size="md" v-on:click="close">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.cancel') }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" :loading="saving" v-on:click="submit">
+                    <AppButton variant="primary" size="md" :loading="loading" v-on:click="submit">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
                     </AppButton>
