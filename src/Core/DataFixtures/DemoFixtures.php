@@ -45,6 +45,7 @@ use Aurora\Module\Editorial\Post\Entity\PostType;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
+use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
@@ -347,7 +348,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     }
 
     /**
-     * @param array<string, TaxonomyTerm> $terms
+     * @param array<string, TaxonomyTermInterface> $terms
      *
      * @return Post[]
      */
@@ -379,10 +380,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $bilingualDefs = [
             [
                 'fr' => [
-                    'title'   => 'Bienvenue sur Aurora — La suite métier tout-en-un',
-                    'slug'    => 'bienvenue-sur-aurora',
+                    'title' => 'Bienvenue sur Aurora — La suite métier tout-en-un',
+                    'slug' => 'bienvenue-sur-aurora',
                     'excerpt' => 'Découvrez Aurora, la plateforme qui unifie CRM, ERP, e-commerce, facturation et gestion documentaire.',
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => 'Une plateforme pour tout gérer', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => "Aurora unifie CRM, ERP, e-commerce, facturation, GED et photographie dans un seul espace d'administration. ".self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u0, 'width' => 1280, 'height' => 853], 'caption' => "L'interface Aurora — tableau de bord principal", 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
@@ -396,10 +397,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ],
                 ],
                 'en' => [
-                    'title'   => 'Welcome to Aurora — The All-in-One Business Suite',
-                    'slug'    => 'welcome-to-aurora',
+                    'title' => 'Welcome to Aurora — The All-in-One Business Suite',
+                    'slug' => 'welcome-to-aurora',
                     'excerpt' => 'Discover Aurora, the platform that unifies CRM, ERP, e-commerce, billing and document management.',
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => 'One platform to manage everything', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u0, 'width' => 1280, 'height' => 853], 'caption' => 'Aurora admin dashboard', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
@@ -408,14 +409,14 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 ],
                 'media' => $media[0] ?? null,
                 'terms' => ['actualites', 'nouveaute', 'open-source'],
-                'ago'   => '3 weeks',
+                'ago' => '3 weeks',
             ],
             [
                 'fr' => [
-                    'title'   => 'Les meilleures pratiques du développement web en 2025',
-                    'slug'    => 'meilleures-pratiques-developpement-web-2025',
+                    'title' => 'Les meilleures pratiques du développement web en 2025',
+                    'slug' => 'meilleures-pratiques-developpement-web-2025',
                     'excerpt' => 'Symfony, Vue.js, Vite, Tailwind CSS — le stack moderne pour construire des applications web performantes.',
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => 'Le stack moderne en 2025', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => "Le développement web évolue vite. En 2025, les meilleures équipes s'appuient sur des outils modernes, typés et performants. ".self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u1, 'width' => 1280, 'height' => 720], 'caption' => "Architecture d'une application Aurora moderne", 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
@@ -429,10 +430,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ],
                 ],
                 'en' => [
-                    'title'   => 'Web Development Best Practices in 2025',
-                    'slug'    => 'web-development-best-practices-2025',
+                    'title' => 'Web Development Best Practices in 2025',
+                    'slug' => 'web-development-best-practices-2025',
                     'excerpt' => 'Symfony, Vue.js, Vite, Tailwind CSS — the modern stack for performant web applications.',
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => 'The modern stack in 2025', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u1, 'width' => 1280, 'height' => 720], 'caption' => 'Modern web development architecture', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
@@ -441,16 +442,16 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 ],
                 'media' => $media[1] ?? null,
                 'terms' => ['tutoriels', 'symfony', 'vue-js', 'tailwind-css', 'php'],
-                'ago'   => '2 weeks',
+                'ago' => '2 weeks',
             ],
             [
                 'fr' => [
-                    'title'   => 'Comment Aurora transforme la gestion de votre entreprise',
-                    'slug'    => 'aurora-transforme-gestion-entreprise',
+                    'title' => 'Comment Aurora transforme la gestion de votre entreprise',
+                    'slug' => 'aurora-transforme-gestion-entreprise',
                     'excerpt' => "Retour d'expérience après 6 mois d'utilisation — témoignage d'un dirigeant de PME.",
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => '6 mois avec Aurora : notre bilan', 'level' => 2]],
-                        ['type' => 'paragraph', 'data' => ['text' => "Avant Aurora, notre équipe jonglait entre 4 outils différents pour gérer les clients, les stocks, les commandes et la facturation. ".self::LOREM]],
+                        ['type' => 'paragraph', 'data' => ['text' => 'Avant Aurora, notre équipe jonglait entre 4 outils différents pour gérer les clients, les stocks, les commandes et la facturation. '.self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u3, 'width' => 1200, 'height' => 800], 'caption' => "L'équipe Aurora Tech dans leurs nouveaux locaux", 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                         ['type' => 'header',    'data' => ['text' => 'Ce qui a changé', 'level' => 3]],
                         ['type' => 'paragraph', 'data' => ['text' => "Le premier bénéfice immédiat : la centralisation des données. Un seul endroit pour trouver l'historique d'un client, ses commandes, ses factures. ".self::LOREM]],
@@ -460,10 +461,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ],
                 ],
                 'en' => [
-                    'title'   => 'How Aurora Transforms Your Business Management',
-                    'slug'    => 'aurora-transforms-business-management',
+                    'title' => 'How Aurora Transforms Your Business Management',
+                    'slug' => 'aurora-transforms-business-management',
                     'excerpt' => 'A 6-month experience report — testimonial from an SME founder.',
-                    'blocks'  => [
+                    'blocks' => [
                         ['type' => 'header',    'data' => ['text' => '6 months with Aurora: our review', 'level' => 2]],
                         ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                         ['type' => 'image',     'data' => ['file' => ['url' => $u3, 'width' => 1200, 'height' => 800], 'caption' => 'Aurora Tech team at the office', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
@@ -472,7 +473,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 ],
                 'media' => $media[2] ?? null,
                 'terms' => ['etudes-de-cas'],
-                'ago'   => '1 week',
+                'ago' => '1 week',
             ],
         ];
 
@@ -494,9 +495,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 if ('fr' === $locale) {
                     $tr->setMetaDescription($loc['excerpt']);
                 }
+
                 if ('fr' === $locale && null !== $def['media']) {
                     $tr->setOgImage($def['media']);
                 }
+
                 $em->persist($tr);
             }
 
@@ -513,9 +516,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $frDefs = [
             [
                 'title' => 'Retour sur Aurora Tech Day 2025',
-                'slug'  => 'aurora-tech-day-2025',
+                'slug' => 'aurora-tech-day-2025',
                 'media' => $media[3] ?? null,
-                'ago'   => '3 days',
+                'ago' => '3 days',
                 'terms' => ['actualites', 'open-source'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => "Une journée dédiée à l'innovation", 'level' => 2]],
@@ -529,9 +532,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Roadmap Aurora 2025-2026 : les grandes orientations',
-                'slug'  => 'roadmap-aurora-2025-2026',
+                'slug' => 'roadmap-aurora-2025-2026',
                 'media' => $media[0] ?? null,
-                'ago'   => '10 days',
+                'ago' => '10 days',
                 'terms' => ['produit', 'actualites', 'nouveaute'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Notre vision pour les 18 prochains mois', 'level' => 2]],
@@ -545,13 +548,13 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Tutoriel : créer votre premier module client Aurora',
-                'slug'  => 'tutoriel-premier-module-client',
+                'slug' => 'tutoriel-premier-module-client',
                 'media' => $media[1] ?? null,
-                'ago'   => '5 days',
+                'ago' => '5 days',
                 'terms' => ['tutoriels', 'symfony', 'php', 'documentation'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Prérequis', 'level' => 2]],
-                    ['type' => 'paragraph', 'data' => ['text' => "Aurora est installé, vous avez un projet client. Maintenant, créons un module sur-mesure. ".self::LOREM]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'Aurora est installé, vous avez un projet client. Maintenant, créons un module sur-mesure. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img1, 'width' => 1280, 'height' => 720], 'caption' => "Structure d'un module Aurora", 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
                     ['type' => 'header',    'data' => ['text' => "Étape 1 : Créer l'entité", 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
@@ -562,9 +565,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => "Aurora & l'IA : automatisez vos processus métier",
-                'slug'  => 'aurora-ia-automatisation-processus',
+                'slug' => 'aurora-ia-automatisation-processus',
                 'media' => $media[2] ?? null,
-                'ago'   => '2 days',
+                'ago' => '2 days',
                 'terms' => ['produit', 'nouveaute', 'php'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => "L'IA au service de la productivité", 'level' => 2]],
@@ -576,9 +579,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Guide : Sécuriser Aurora en production',
-                'slug'  => 'guide-securiser-aurora-production',
+                'slug' => 'guide-securiser-aurora-production',
                 'media' => $media[0] ?? null,
-                'ago'   => '15 days',
+                'ago' => '15 days',
                 'terms' => ['tutoriels', 'devops', 'php', 'documentation'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Checklist sécurité production', 'level' => 2]],
@@ -590,12 +593,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             // Additional posts to make taxonomy filtering compelling
             [
                 'title' => 'Vue.js 3 Composition API : guide complet pour débutants',
-                'slug'  => 'vuejs-3-composition-api-guide',
+                'slug' => 'vuejs-3-composition-api-guide',
                 'media' => $media[2] ?? null,
-                'ago'   => '6 days',
+                'ago' => '6 days',
                 'terms' => ['tutoriels', 'vue-js', 'tailwind-css', 'documentation'],
                 'blocks' => [
-                    ['type' => 'header',    'data' => ['text' => "Pourquoi la Composition API ?", 'level' => 2]],
+                    ['type' => 'header',    'data' => ['text' => 'Pourquoi la Composition API ?', 'level' => 2]],
                     ['type' => 'paragraph', 'data' => ['text' => "Vue.js 3 introduit la Composition API comme alternative plus flexible et testable à l'Options API. ".self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img2, 'width' => 800, 'height' => 1000], 'caption' => 'Exemple de composable Vue.js 3', 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
                     ['type' => 'header',    'data' => ['text' => 'ref() et reactive() : les bases', 'level' => 3]],
@@ -606,13 +609,13 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'PostgreSQL pour les développeurs PHP : optimisation avancée',
-                'slug'  => 'postgresql-developpeurs-php-optimisation',
+                'slug' => 'postgresql-developpeurs-php-optimisation',
                 'media' => $media[1] ?? null,
-                'ago'   => '20 days',
+                'ago' => '20 days',
                 'terms' => ['tutoriels', 'postgresql', 'php', 'documentation'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Index, requêtes et performances', 'level' => 2]],
-                    ['type' => 'paragraph', 'data' => ['text' => "PostgreSQL offre des fonctionnalités avancées qui font toute la différence en production. ".self::LOREM]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'PostgreSQL offre des fonctionnalités avancées qui font toute la différence en production. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img1, 'width' => 1280, 'height' => 720], 'caption' => 'Explain analyze sur une requête complexe', 'withBorder' => true, 'withBackground' => false, 'stretched' => false]],
                     ['type' => 'header',    'data' => ['text' => 'JSONB et recherche full-text', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
@@ -622,9 +625,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Déploiement Aurora avec Docker & CI/CD GitHub Actions',
-                'slug'  => 'deploiement-aurora-docker-cicd',
+                'slug' => 'deploiement-aurora-docker-cicd',
                 'media' => $media[0] ?? null,
-                'ago'   => '12 days',
+                'ago' => '12 days',
                 'terms' => ['tutoriels', 'devops', 'open-source', 'documentation'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Infrastructure as Code pour Aurora', 'level' => 2]],
@@ -632,19 +635,19 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     ['type' => 'image',     'data' => ['file' => ['url' => $img0, 'width' => 1280, 'height' => 853], 'caption' => 'Pipeline CI/CD Aurora sur GitHub Actions', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                     ['type' => 'header',    'data' => ['text' => 'Docker Compose en production', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
-                    ['type' => 'header',    'data' => ['text' => 'Rollback automatique en cas d\'erreur', 'level' => 3]],
+                    ['type' => 'header',    'data' => ['text' => "Rollback automatique en cas d'erreur", 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
                 ],
             ],
             [
                 'title' => 'Étude de cas : BioMed France migre vers Aurora',
-                'slug'  => 'etude-de-cas-biomed-france-aurora',
+                'slug' => 'etude-de-cas-biomed-france-aurora',
                 'media' => $media[3] ?? null,
-                'ago'   => '18 days',
+                'ago' => '18 days',
                 'terms' => ['etudes-de-cas', 'postgresql', 'symfony'],
                 'blocks' => [
-                    ['type' => 'header',    'data' => ['text' => "Contexte : une PME de santé face à ses outils", 'level' => 2]],
-                    ['type' => 'paragraph', 'data' => ['text' => "BioMed France gère 45 collaborateurs, un catalogue de 800 références et des dizaines de clients grands comptes. ".self::LOREM]],
+                    ['type' => 'header',    'data' => ['text' => 'Contexte : une PME de santé face à ses outils', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'BioMed France gère 45 collaborateurs, un catalogue de 800 références et des dizaines de clients grands comptes. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img3, 'width' => 1200, 'height' => 800], 'caption' => 'Locaux BioMed France à Marseille', 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                     ['type' => 'header',    'data' => ['text' => 'Résultats après 8 mois', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
@@ -652,9 +655,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Webinar Aurora — démo ERP + Facturation en direct',
-                'slug'  => 'webinar-aurora-demo-erp-facturation',
+                'slug' => 'webinar-aurora-demo-erp-facturation',
                 'media' => $media[1] ?? null,
-                'ago'   => '1 day',
+                'ago' => '1 day',
                 'terms' => ['actualites', 'webinar', 'nouveaute'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Rejoignez-nous pour 90 minutes de démo live', 'level' => 2]],
@@ -666,9 +669,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Template : cahier des charges pour un projet Aurora',
-                'slug'  => 'template-cahier-des-charges-aurora',
+                'slug' => 'template-cahier-des-charges-aurora',
                 'media' => $media[2] ?? null,
-                'ago'   => '25 days',
+                'ago' => '25 days',
                 'terms' => ['produit', 'template', 'documentation'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Un point de départ pour vos projets', 'level' => 2]],
@@ -679,9 +682,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Sécuriser une API Symfony avec JWT et API Platform',
-                'slug'  => 'securiser-api-symfony-jwt',
+                'slug' => 'securiser-api-symfony-jwt',
                 'media' => $media[0] ?? null,
-                'ago'   => '8 days',
+                'ago' => '8 days',
                 'terms' => ['tutoriels', 'symfony', 'php', 'devops'],
                 'blocks' => [
                     ['type' => 'header',    'data' => ['text' => 'Authentification stateless avec JWT', 'level' => 2]],
@@ -693,13 +696,13 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ],
             [
                 'title' => 'Aurora est désormais open source — rejoignez la communauté',
-                'slug'  => 'aurora-open-source-communaute',
+                'slug' => 'aurora-open-source-communaute',
                 'media' => $media[3] ?? null,
-                'ago'   => '4 days',
+                'ago' => '4 days',
                 'terms' => ['actualites', 'open-source', 'nouveaute'],
                 'blocks' => [
-                    ['type' => 'header',    'data' => ['text' => "Une décision qui change tout", 'level' => 2]],
-                    ['type' => 'paragraph', 'data' => ['text' => "Après deux ans de développement interne, Aurora passe en open source sous licence MIT. ".self::LOREM]],
+                    ['type' => 'header',    'data' => ['text' => 'Une décision qui change tout', 'level' => 2]],
+                    ['type' => 'paragraph', 'data' => ['text' => 'Après deux ans de développement interne, Aurora passe en open source sous licence MIT. '.self::LOREM]],
                     ['type' => 'image',     'data' => ['file' => ['url' => $img3, 'width' => 1200, 'height' => 800], 'caption' => "L'équipe Aurora célèbre le passage en open source", 'withBorder' => false, 'withBackground' => false, 'stretched' => true]],
                     ['type' => 'header',    'data' => ['text' => 'Comment contribuer', 'level' => 3]],
                     ['type' => 'paragraph', 'data' => ['text' => self::LOREM]],
@@ -723,6 +726,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (null !== $def['media']) {
                 $tr->setOgImage($def['media']);
             }
+
             $em->persist($tr);
             $em->persist($post);
             $createdPosts[] = $post;
@@ -855,7 +859,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     /**
      * Creates demo taxonomy terms and links them to the article PostType.
      *
-     * @return array<string, TaxonomyTerm> all terms indexed by slug
+     * @return array<string, TaxonomyTermInterface> all terms indexed by slug
      */
     private function createTaxonomies(EntityManagerInterface $em, ?PostType $postType): array
     {
@@ -867,6 +871,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             foreach ($labels as $locale => $name) {
                 $term->translate($locale)->setName($name)->setSlug($slug);
             }
+
             $em->persist($term);
             $terms[$slug] = $term;
 
@@ -885,13 +890,13 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             }
 
             foreach ([
-                'symfony'      => ['fr' => 'Symfony',      'en' => 'Symfony'],
-                'vue-js'       => ['fr' => 'Vue.js',        'en' => 'Vue.js'],
-                'php'          => ['fr' => 'PHP',           'en' => 'PHP'],
+                'symfony' => ['fr' => 'Symfony',      'en' => 'Symfony'],
+                'vue-js' => ['fr' => 'Vue.js',        'en' => 'Vue.js'],
+                'php' => ['fr' => 'PHP',           'en' => 'PHP'],
                 'tailwind-css' => ['fr' => 'Tailwind CSS',  'en' => 'Tailwind CSS'],
-                'postgresql'   => ['fr' => 'PostgreSQL',    'en' => 'PostgreSQL'],
-                'devops'       => ['fr' => 'DevOps',        'en' => 'DevOps'],
-                'open-source'  => ['fr' => 'Open Source',   'en' => 'Open Source'],
+                'postgresql' => ['fr' => 'PostgreSQL',    'en' => 'PostgreSQL'],
+                'devops' => ['fr' => 'DevOps',        'en' => 'DevOps'],
+                'open-source' => ['fr' => 'Open Source',   'en' => 'Open Source'],
             ] as $slug => $labels) {
                 $makeTerm($tagTaxonomy, $slug, $labels);
             }
@@ -901,10 +906,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $catTaxonomy = $em->getRepository(Taxonomy::class)->findOneBy(['slug' => 'category']);
         if ($catTaxonomy instanceof Taxonomy) {
             foreach ([
-                'tutoriels'    => ['fr' => 'Tutoriels',       'en' => 'Tutorials'],
-                'actualites'   => ['fr' => 'Actualités',      'en' => 'News'],
-                'etudes-de-cas'=> ['fr' => 'Études de cas',   'en' => 'Case Studies'],
-                'produit'      => ['fr' => 'Produit',         'en' => 'Product'],
+                'tutoriels' => ['fr' => 'Tutoriels',       'en' => 'Tutorials'],
+                'actualites' => ['fr' => 'Actualités',      'en' => 'News'],
+                'etudes-de-cas' => ['fr' => 'Études de cas',   'en' => 'Case Studies'],
+                'produit' => ['fr' => 'Produit',         'en' => 'Product'],
             ] as $slug => $labels) {
                 $makeTerm($catTaxonomy, $slug, $labels);
             }
@@ -918,13 +923,14 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         if ($postType instanceof PostType) {
             $resTaxonomy->getPostTypes()->add($postType);
         }
+
         $em->persist($resTaxonomy);
 
         foreach ([
             'documentation' => ['fr' => 'Documentation', 'en' => 'Documentation'],
-            'video'         => ['fr' => 'Vidéo',          'en' => 'Video'],
-            'webinar'       => ['fr' => 'Webinaire',      'en' => 'Webinar'],
-            'template'      => ['fr' => 'Template',       'en' => 'Template'],
+            'video' => ['fr' => 'Vidéo',          'en' => 'Video'],
+            'webinar' => ['fr' => 'Webinaire',      'en' => 'Webinar'],
+            'template' => ['fr' => 'Template',       'en' => 'Template'],
         ] as $slug => $labels) {
             $makeTerm($resTaxonomy, $slug, $labels);
         }
