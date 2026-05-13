@@ -241,6 +241,44 @@ backend:
     dealsByStage: Deals by stage
     productsByStatus: Products by status
     inventory: Inventory
+    noModuleEnabled: No dashboard module is enabled.
+    comingSoon: Coming soon
+    editorial:
+      pendingReview: pending review
+      scheduled: scheduled
+      pendingComments: Pending comments
+      recentActivity: Recent activity
+      postsByAuthor: Posts by author
+      mediaByType: Media by type
+    crm:
+      recentDeals: Recent deals
+      conversionRate: Conversion rate
+      recentActivity: Contact activity (7 d)
+    erp:
+      outOfStock: Out of stock
+      byType: By type
+      catalogEvolution: Catalog evolution
+      topSelling: Top selling products
+    billing:
+      needingReview: Needs review
+      totalGross: Total invoiced
+      overdue: Overdue invoices
+      topSuppliers: Top suppliers
+      monthlyEvolution: Monthly evolution
+    photo:
+      active: Active galleries
+      finalized: Finalized
+      clientSelections: Client selections
+      byClient: Galleries by client
+    ecommerce:
+      pending: pending
+      revenue: Revenue
+      revenueSubtitle: paid + shipped + delivered
+      averageOrder: Average order
+      recentOrders: Recent orders
+      byStatus: By status
+      revenueChart: Revenue over time
+      topProducts: Top products sold
   forms:
     errors:
       slug_format: 'The slug can only contain lowercase letters, numbers and hyphens.'

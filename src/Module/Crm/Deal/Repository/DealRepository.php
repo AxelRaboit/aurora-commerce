@@ -6,9 +6,11 @@ namespace Aurora\Module\Crm\Deal\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -71,6 +73,30 @@ class DealRepository extends ResolveTargetEntityRepository
         }
 
         return (float) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return array<int, array{id: int, name: string, stage: string, value: ?string, contact: ?string, company: ?string, createdAt: string}>
+     */
+    public function findRecent(int $limit = 5): array
+    {
+        $deals = $this->createQueryBuilder('d')
+            ->leftJoin('d.contact', 'c')->addSelect('c')
+            ->leftJoin('d.company', 'co')->addSelect('co')
+            ->orderBy('d.createdAt', Order::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (DealInterface $deal): array => [
+            'id' => $deal->getId(),
+            'name' => $deal->getName(),
+            'stage' => $deal->getStage()->value,
+            'value' => $deal->getValue(),
+            'contact' => $deal->getContact() instanceof ContactInterface ? $deal->getContact()->getFirstName().' '.$deal->getContact()->getLastName() : null,
+            'company' => $deal->getCompany()?->getName(),
+            'createdAt' => $deal->getCreatedAt()->format(DateTimeInterface::ATOM),
+        ], $deals);
     }
 
     /** @return list<DealInterface> */

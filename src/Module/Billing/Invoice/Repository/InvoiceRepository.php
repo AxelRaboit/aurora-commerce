@@ -272,4 +272,14 @@ class InvoiceRepository extends ResolveTargetEntityRepository
 
         return $counts;
     }
+
+    public function getTotalGrossCents(): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COALESCE(SUM(i.totalGrossCents), 0)')
+            ->andWhere('i.status NOT IN (:exclude)')
+            ->setParameter('exclude', [InvoiceStatusEnum::Draft])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

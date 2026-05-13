@@ -11,6 +11,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Order as SortOrder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -79,6 +80,42 @@ class OrderRepository extends ResolveTargetEntityRepository
             ->andWhere('o.customer = :customer')->setParameter('customer', $customer);
 
         return $this->paginate($qb, $countQb, $page, $limit);
+    }
+
+    /**
+     * Sum of totalCents for orders considered as confirmed revenue (paid, shipped, delivered).
+     */
+    public function getTotalRevenueCents(): int
+    {
+        $result = $this->createQueryBuilder('o')
+            ->select('COALESCE(SUM(o.totalCents), 0) AS total')
+            ->andWhere('o.status IN (:statuses)')
+            ->setParameter('statuses', [OrderStatusEnum::Paid, OrderStatusEnum::Shipped, OrderStatusEnum::Delivered])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $result;
+    }
+
+    /**
+     * @return array<int, array{id: int, number: string, name: string, status: string, totalCents: int, createdAt: string}>
+     */
+    public function findRecent(int $limit = 5): array
+    {
+        $orders = $this->createQueryBuilder('o')
+            ->orderBy('o.createdAt', SortOrder::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (OrderInterface $order): array => [
+            'id' => $order->getId(),
+            'number' => $order->getNumber(),
+            'name' => $order->getName(),
+            'status' => $order->getStatus()->value,
+            'totalCents' => $order->getTotalCents(),
+            'createdAt' => $order->getCreatedAt()->format(DateTimeInterface::ATOM),
+        ], $orders);
     }
 
     /**

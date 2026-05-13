@@ -17,6 +17,7 @@ Chaque `page_header` backend commence son breadcrumb par le label de section :
 
 | moduleId | clé | Valeur FR |
 |---|---|---|
+| `general` | `backend.nav.sections.general` | Général |
 | `platform` | `backend.nav.sections.platform` | Plateforme |
 | `dev` | `backend.nav.sections.dev` | Administration |
 | `editorial` | `backend.nav.sections.editorial` | Editorial |
@@ -32,7 +33,8 @@ Chaque `page_header` backend commence son breadcrumb par le label de section :
 
 ## Cas particuliers
 
-- **Dashboard / Profil** : pages standalone sans section parente — pas de premier crumb section.
+- **Dashboard** : utilise `backend.nav.sections.general` comme premier crumb (moduleId `general`).
+- **Profil** : page standalone sans section parente — pas de premier crumb section.
 - **Editorial** : malgré plusieurs sous-sections dans la sidebar (`home`, `posts`, `terms`), toutes les pages Editorial utilisent `backend.nav.sections.editorial`. Pas de distinction par sous-section.
 - **GED Catégories** : `GED / Documents(→documents_url) / Catégories` — les catégories sont sous-éléments de documents.
 

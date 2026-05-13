@@ -29,7 +29,7 @@ const ORDER_STATUS_COLORS = {
 };
 
 export function useDashboardCharts(stats) {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
 
     const postsByMonthData = computed(() => {
         const series = stats.value.postsByMonth ?? [];
@@ -135,12 +135,12 @@ export function useDashboardCharts(stats) {
     const hasOrders = computed(() => (stats.value.ecommerce?.orders ?? 0) > 0);
 
     const formatCurrency = (cents) =>
-        new Intl.NumberFormat(undefined, {
+        new Intl.NumberFormat(locale.value, {
             style: "currency",
             currency: "EUR",
         }).format((cents ?? 0) / 100);
     const formatValue = (value) =>
-        new Intl.NumberFormat(undefined, {
+        new Intl.NumberFormat(locale.value, {
             style: "currency",
             currency: "EUR",
             maximumFractionDigits: 0,

@@ -7,6 +7,7 @@ namespace Aurora\Core\Dashboard\Service;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
@@ -17,6 +18,7 @@ use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Editorial\Comment\Repository\CommentRepository;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
@@ -31,6 +33,7 @@ final readonly class StatsService
     public function __construct(
         private PostRepository $postRepository,
         private PostTypeRepository $postTypeRepository,
+        private CommentRepository $commentRepository,
         private MediaRepository $mediaRepository,
         private MenuRepository $menuRepository,
         private UserRepository $userRepository,
@@ -48,27 +51,46 @@ final readonly class StatsService
     ) {}
 
     /**
+     * @param list<string> $enabledModules Module IDs to include (e.g. ['editorial', 'crm']).
+     *                                     An empty list returns an empty array.
+     *
      * @return array<string, mixed>
      */
-    public function getStats(): array
+    public function getStats(array $enabledModules): array
     {
-        return [
-            'posts' => $this->getPostStats(),
-            'media' => $this->getMediaStats(),
-            'menus' => [
-                'total' => $this->menuRepository->count([]),
-            ],
-            'users' => [
-                'total' => $this->userRepository->count([]),
-            ],
-            'crm' => $this->getCrmStats(),
-            'erp' => $this->getErpStats(),
-            'billing' => $this->getBillingStats(),
-            'ecommerce' => $this->getEcommerceStats(),
-            'photo' => $this->getPhotoStats(),
-            'postsByMonth' => $this->getPostsByMonth(),
-            'recentPosts' => $this->getRecentPosts(),
-        ];
+        $stats = [];
+
+        if (in_array('editorial', $enabledModules, true)) {
+            $stats['posts'] = $this->getPostStats();
+            $stats['comments'] = $this->commentRepository->countByStatus();
+            $stats['media'] = $this->getMediaStats();
+            $stats['menus'] = ['total' => $this->menuRepository->count([])];
+            $stats['users'] = ['total' => $this->userRepository->count([])];
+            $stats['postsByMonth'] = $this->getPostsByMonth();
+            $stats['recentPosts'] = $this->getRecentPosts();
+        }
+
+        if (in_array('crm', $enabledModules, true)) {
+            $stats['crm'] = $this->getCrmStats();
+        }
+
+        if (in_array('erp', $enabledModules, true)) {
+            $stats['erp'] = $this->getErpStats();
+        }
+
+        if (in_array('billing', $enabledModules, true)) {
+            $stats['billing'] = $this->getBillingStats();
+        }
+
+        if (in_array('ecommerce', $enabledModules, true)) {
+            $stats['ecommerce'] = $this->getEcommerceStats();
+        }
+
+        if (in_array('photo', $enabledModules, true)) {
+            $stats['photo'] = $this->getPhotoStats();
+        }
+
+        return $stats;
     }
 
     /** @return array<string, mixed> */
@@ -87,6 +109,7 @@ final readonly class StatsService
             'dealsByStage' => $stages,
             'pipelineValue' => $this->dealRepository->getTotalValue(),
             'wonValue' => $this->dealRepository->getTotalValue(DealStageEnum::Won),
+            'recentDeals' => $this->dealRepository->findRecent(5),
         ];
     }
 
@@ -101,6 +124,8 @@ final readonly class StatsService
             'active' => $byStatus['active'] ?? 0,
             'archived' => $byStatus['archived'] ?? 0,
             'inventoryCents' => $this->productRepository->getTotalInventoryCents(),
+            'outOfStock' => $this->productRepository->countOutOfStock(),
+            'byType' => $this->productRepository->countByType(),
         ];
     }
 
@@ -154,6 +179,8 @@ final readonly class StatsService
             'byStatus' => $byStatus,
             'suppliers' => $this->tiersRepository->count(['type' => TiersTypeEnum::Supplier]),
             'ocrJobs' => $this->ocrJobRepository->count([]),
+            'needingReview' => $byStatus[InvoiceStatusEnum::NeedsReview->value] ?? 0,
+            'totalGrossCents' => $this->invoiceRepository->getTotalGrossCents(),
         ];
     }
 
@@ -161,11 +188,16 @@ final readonly class StatsService
     private function getEcommerceStats(): array
     {
         $byStatus = $this->orderRepository->countByStatus();
+        $totalOrders = array_sum($byStatus);
+        $revenueCents = $this->orderRepository->getTotalRevenueCents();
 
         return [
-            'orders' => array_sum($byStatus),
+            'orders' => $totalOrders,
             'byStatus' => $byStatus,
             'listings' => $this->listingRepository->count([]),
+            'revenueCents' => $revenueCents,
+            'averageOrderCents' => $totalOrders > 0 ? (int) round($revenueCents / $totalOrders) : 0,
+            'recentOrders' => $this->orderRepository->findRecent(5),
         ];
     }
 
@@ -174,6 +206,8 @@ final readonly class StatsService
     {
         return [
             'galleries' => $this->galleryRepository->count([]),
+            'active' => $this->galleryRepository->countActive(),
+            'finalized' => $this->galleryRepository->countFinalized(),
             'photos' => $this->galleryItemRepository->count([]),
         ];
     }

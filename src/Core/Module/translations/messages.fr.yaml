@@ -31,6 +31,9 @@ backend:
         menus:
           manage: Gérer les menus
     role: Rôle requis
+  nav:
+    sections:
+      general: Général
   modules:
     media: Médias
     users: Utilisateurs

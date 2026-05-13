@@ -9,6 +9,7 @@ use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
+use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -71,6 +72,34 @@ class ProductRepository extends ResolveTargetEntityRepository
             ->select('COALESCE(SUM(p.priceCents), 0) AS total')
             ->andWhere('p.status != :archived')->setParameter('archived', ProductStatusEnum::Archived)
             ->getQuery()->getSingleScalarResult();
+    }
+
+    /** @return array<string, int> type value -> count */
+    public function countByType(): array
+    {
+        $rows = $this->createQueryBuilder('p')
+            ->select('p.type AS type, COUNT(p.id) AS total')
+            ->groupBy('p.type')
+            ->getQuery()
+            ->getArrayResult();
+
+        $counts = array_fill_keys(array_column(ProductTypeEnum::cases(), 'value'), 0);
+        foreach ($rows as $row) {
+            $counts[$row['type']->value] = (int) $row['total'];
+        }
+
+        return $counts;
+    }
+
+    public function countOutOfStock(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.status = :active')
+            ->andWhere('p.stockQuantity = 0')
+            ->setParameter('active', ProductStatusEnum::Active)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findOneByReference(string $reference): ?ProductInterface

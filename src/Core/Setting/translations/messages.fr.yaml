@@ -241,6 +241,44 @@ backend:
     dealsByStage: Affaires par étape
     productsByStatus: Produits par statut
     inventory: Inventaire
+    noModuleEnabled: Aucun module de dashboard activé.
+    comingSoon: Bientôt disponible
+    editorial:
+      pendingReview: en attente de revue
+      scheduled: planifiés
+      pendingComments: Commentaires en attente
+      recentActivity: Activité récente
+      postsByAuthor: Posts par auteur
+      mediaByType: Médias par type
+    crm:
+      recentDeals: Affaires récentes
+      conversionRate: Taux de conversion
+      recentActivity: Activité contacts (7 j)
+    erp:
+      outOfStock: Rupture de stock
+      byType: Par type
+      catalogEvolution: Évolution du catalogue
+      topSelling: Produits les plus vendus
+    billing:
+      needingReview: À traiter
+      totalGross: CA total facturé
+      overdue: Factures en retard
+      topSuppliers: Top fournisseurs
+      monthlyEvolution: Évolution mensuelle
+    photo:
+      active: Galeries actives
+      finalized: Finalisées
+      clientSelections: Sélections clients
+      byClient: Galeries par client
+    ecommerce:
+      pending: en attente
+      revenue: Chiffre d'affaires
+      revenueSubtitle: payées + expédiées + livrées
+      averageOrder: Panier moyen
+      recentOrders: Commandes récentes
+      byStatus: Répartition par statut
+      revenueChart: Évolution du CA
+      topProducts: Top produits vendus
   forms:
     errors:
       slug_format: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
