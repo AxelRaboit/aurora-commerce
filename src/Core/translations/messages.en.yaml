@@ -67,8 +67,11 @@ shared:
   form:
     submit: Submit
     submitting: Sending…
+    next: Next
+    prev: Back
     success: 'Thank you, your message has been sent!'
     error: An error occurred. Please try again.
+    fieldRequired: This field is required.
     selectPlaceholder: Choose…
   locales:
     fr: Français

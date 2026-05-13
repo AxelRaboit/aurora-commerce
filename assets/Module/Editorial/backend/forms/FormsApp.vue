@@ -18,7 +18,11 @@ import {
     Layers,
     Inbox,
     Save,
-    X, } from "lucide-vue-next";
+    Webhook,
+    GitBranch,
+    Users,
+    X,
+} from "lucide-vue-next";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -67,8 +71,32 @@ const tabs = computed(() => {
     ];
 });
 
-const { showFieldModal, editingField, fieldOptionsText, fieldErrors, fieldSaving, fieldActiveLocale, FIELD_TYPES, fieldHasOptions, fieldTypeLabel, fieldLabel, openAddField, openEditField, submitField, pendingDeleteField, deleteFieldLoading, confirmDeleteField, doDeleteField, onFieldsReordered } =
+const { showFieldModal, editingField, editingFieldId, fieldOptionsText, fieldErrors, fieldSaving, fieldActiveLocale, FIELD_TYPES, OPERATORS, fieldHasOptions, fieldTypeLabel, fieldLabel, openAddField, openEditField, submitField, pendingDeleteField, deleteFieldLoading, confirmDeleteField, doDeleteField, onFieldsReordered } =
     useFormFields(props, selectedForm, editingForm, jsonRequest);
+
+// Steps helpers
+function addStep() {
+    const step = Object.fromEntries(props.locales.map((l) => [l, ""]));
+    editingForm.value.steps = [...(editingForm.value.steps ?? []), step];
+}
+function removeStep(index) {
+    editingForm.value.steps = editingForm.value.steps.filter((_, i) => i !== index);
+}
+
+// Conditions helpers
+const otherFields = computed(() =>
+    (editingForm.value.fields ?? []).filter((f) => f.id !== editingFieldId.value),
+);
+function addCondition() {
+    const firstField = otherFields.value[0];
+    editingField.value.conditions = [
+        ...(editingField.value.conditions ?? []),
+        { fieldId: firstField?.id ?? null, operator: "eq", value: "" },
+    ];
+}
+function removeCondition(index) {
+    editingField.value.conditions = editingField.value.conditions.filter((_, i) => i !== index);
+}
 
 const { submissionFields, viewingSubmission, submissions, submissionsLoading, submissionsPage, submissionsTotalPages, submissionsTotal, fetchSubmissions, goToSubmissionsPage, resetSubmissions, exportCsv, submissionValue, onTabChange: onTabChangeBase } =
     useFormSubmissions(props.submissionsPath, props.exportPath, selectedForm, activeLocale);
@@ -259,6 +287,67 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                     <p class="text-xs text-muted">{{ t("backend.forms.notifyEmailHint") }}</p>
                 </div>
 
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <Webhook class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                        <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.webhookUrl") }}</label>
+                    </div>
+                    <input
+                        v-model="editingForm.webhookUrl"
+                        type="url"
+                        class="w-full px-3 py-2 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary placeholder-muted font-mono focus:outline-none focus:ring-1 focus:ring-accent-500"
+                        :placeholder="t('backend.forms.webhookUrlPlaceholder')"
+                    >
+                    <p class="text-xs text-muted">{{ t("backend.forms.webhookUrlHint") }}</p>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-3">
+                        <button
+                            type="button"
+                            class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors"
+                            :class="editingForm.crmSync ? 'bg-accent-600' : 'bg-surface-3'"
+                            v-on:click="editingForm.crmSync = !editingForm.crmSync"
+                        >
+                            <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform shadow-sm" :class="editingForm.crmSync ? 'translate-x-4' : 'translate-x-0.5'" />
+                        </button>
+                        <div>
+                            <label class="text-sm text-primary cursor-pointer flex items-center gap-1.5" v-on:click="editingForm.crmSync = !editingForm.crmSync">
+                                <Users class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                                {{ t("backend.forms.crmSync") }}
+                            </label>
+                            <p class="text-xs text-muted">{{ t("backend.forms.crmSyncHint") }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <GitBranch class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                            <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.steps") }}</label>
+                        </div>
+                        <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1" v-on:click="addStep">
+                            <Plus class="w-3 h-3" :stroke-width="2" />
+                            {{ t("backend.forms.addStep") }}
+                        </button>
+                    </div>
+                    <p v-if="!editingForm.steps?.length" class="text-xs text-muted">{{ t("backend.forms.stepsEmpty") }}</p>
+                    <div v-for="(step, i) in editingForm.steps" :key="i" class="flex items-center gap-2">
+                        <span class="text-xs text-muted w-5 shrink-0 text-center">{{ i + 1 }}</span>
+                        <input
+                            v-model="editingForm.steps[i][activeLocale]"
+                            type="text"
+                            class="flex-1 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-sm text-primary focus:outline-none focus:ring-1 focus:ring-accent-500"
+                            :placeholder="`${t('backend.forms.stepLabel')} ${i + 1}`"
+                        >
+                        <button class="text-muted hover:text-rose-400 transition-colors shrink-0" v-on:click="removeStep(i)">
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+                    <p v-if="editingForm.steps?.length" class="text-xs text-muted">{{ t("backend.forms.stepsHint") }}</p>
+                </div>
+
                 <div class="flex items-center gap-3">
                     <button
                         type="button"
@@ -380,6 +469,61 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             </AppSelect>
 
             <AppCheckbox v-model="editingField.required" :label="t('backend.forms.fieldRequired')" />
+
+            <AppSelect
+                v-if="editingForm.steps?.length"
+                v-model="editingField.step"
+                :label="t('backend.forms.fieldStep')"
+            >
+                <option :value="null">{{ t('backend.forms.fieldStepNone') }}</option>
+                <option v-for="(step, i) in editingForm.steps" :key="i" :value="i">
+                    {{ step[activeLocale] || step[props.locales[0]] || `${t('backend.forms.stepLabel')} ${i + 1}` }}
+                </option>
+            </AppSelect>
+
+            <div v-if="otherFields.length" class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.conditions") }}</label>
+                    <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1" v-on:click="addCondition">
+                        <Plus class="w-3 h-3" :stroke-width="2" /> {{ t("backend.forms.addCondition") }}
+                    </button>
+                </div>
+                <div v-if="editingField.conditions?.length > 1" class="flex items-center gap-2">
+                    <span class="text-xs text-muted">{{ t("backend.forms.conditionsLogicLabel") }}</span>
+                    <button
+                        v-for="logic in ['and', 'or']"
+                        :key="logic"
+                        class="px-2 py-0.5 text-xs rounded-md border transition-colors"
+                        :class="editingField.conditionsLogic === logic ? 'bg-accent-600 border-accent-600 text-white' : 'border-line text-secondary hover:border-accent-400'"
+                        v-on:click="editingField.conditionsLogic = logic"
+                    >{{ t(`backend.forms.conditionsLogic.${logic}`) }}</button>
+                </div>
+                <div v-for="(condition, i) in editingField.conditions" :key="i" class="flex items-start gap-1.5 flex-wrap">
+                    <select
+                        v-model="condition.fieldId"
+                        class="flex-1 min-w-28 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
+                    >
+                        <option v-for="f in otherFields" :key="f.id" :value="f.id">{{ fieldLabel(f) || f.id }}</option>
+                    </select>
+                    <select
+                        v-model="condition.operator"
+                        class="w-28 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
+                    >
+                        <option v-for="op in OPERATORS" :key="op.value" :value="op.value">{{ op.label }}</option>
+                    </select>
+                    <input
+                        v-if="!['empty', 'not_empty'].includes(condition.operator)"
+                        v-model="condition.value"
+                        type="text"
+                        class="flex-1 min-w-20 px-2 py-1.5 rounded-lg bg-surface-2 border border-line/60 text-xs text-primary focus:outline-none"
+                        :placeholder="t('backend.forms.conditionValue')"
+                    >
+                    <button class="text-muted hover:text-rose-400 transition-colors mt-1.5" v-on:click="removeCondition(i)">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                    </button>
+                </div>
+                <p v-if="!editingField.conditions?.length" class="text-xs text-muted">{{ t("backend.forms.conditionsEmpty") }}</p>
+            </div>
 
             <hr class="border-line/40">
 

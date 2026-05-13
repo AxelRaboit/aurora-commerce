@@ -1,8 +1,9 @@
 <script setup>
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { ref, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { FormFieldType } from "@editorial/shared/enums/formFieldType.js";
+import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -11,6 +12,7 @@ const props = defineProps({
     formTitle: { type: String, default: "" },
     formDescription: { type: String, default: null },
     fields: { type: Array, default: () => [] },
+    steps: { type: Array, default: () => [] },
 });
 
 const submitting = ref(false);
@@ -21,6 +23,74 @@ const formData = reactive({});
 for (const field of props.fields) {
     formData[field.id] = field.type === FormFieldType.Checkbox ? [] : "";
 }
+
+// ── Conditional logic ────────────────────────────────────────────────────────
+
+function evaluateCondition(condition) {
+    const value = formData[condition.fieldId];
+    const strValue = Array.isArray(value) ? value.join(",") : String(value ?? "");
+    switch (condition.operator) {
+        case "eq":        return strValue === String(condition.value ?? "");
+        case "neq":       return strValue !== String(condition.value ?? "");
+        case "contains":  return strValue.includes(String(condition.value ?? ""));
+        case "not_empty": return strValue.trim() !== "";
+        case "empty":     return strValue.trim() === "";
+        default:          return true;
+    }
+}
+
+function isFieldVisible(field) {
+    if (!field.conditions?.length) return true;
+    const results = field.conditions.map(evaluateCondition);
+    return field.conditionsLogic === "or"
+        ? results.some(Boolean)
+        : results.every(Boolean);
+}
+
+const visibleFields = computed(() => props.fields.filter(isFieldVisible));
+
+// ── Multi-step ───────────────────────────────────────────────────────────────
+
+const isMultiStep = computed(() => props.steps?.length > 0);
+const currentStep = ref(0);
+const totalSteps = computed(() => props.steps?.length ?? 1);
+
+function fieldsForStep(stepIndex) {
+    return visibleFields.value.filter((f) => (f.step ?? null) === stepIndex);
+}
+
+const currentStepFields = computed(() =>
+    isMultiStep.value ? fieldsForStep(currentStep.value) : visibleFields.value,
+);
+
+function isLastStep() {
+    return !isMultiStep.value || currentStep.value === totalSteps.value - 1;
+}
+
+function validateStep(fields) {
+    let valid = true;
+    for (const field of fields) {
+        const value = formData[field.id];
+        const isEmpty = Array.isArray(value) ? value.length === 0 : String(value ?? "").trim() === "";
+        if (field.required && isEmpty) {
+            errors[field.id] = t("shared.form.fieldRequired");
+            valid = false;
+        }
+    }
+    return valid;
+}
+
+function nextStep() {
+    Object.keys(errors).forEach((key) => delete errors[key]);
+    if (!validateStep(currentStepFields.value)) return;
+    if (currentStep.value < totalSteps.value - 1) currentStep.value++;
+}
+
+function prevStep() {
+    if (currentStep.value > 0) currentStep.value--;
+}
+
+// ── Submission ───────────────────────────────────────────────────────────────
 
 function isChecked(fieldId, option) {
     return Array.isArray(formData[fieldId]) && formData[fieldId].includes(option);
@@ -37,20 +107,34 @@ function toggleCheckbox(fieldId, option) {
 }
 
 async function handleSubmit() {
-    submitting.value = true;
     Object.keys(errors).forEach((key) => delete errors[key]);
+    if (!validateStep(currentStepFields.value)) return;
+    submitting.value = true;
+
+    const payload = {};
+    for (const field of visibleFields.value) {
+        payload[field.id] = formData[field.id];
+    }
 
     try {
         const response = await fetch(props.submitPath, {
             method: HttpMethod.Post,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...formData }),
+            body: JSON.stringify(payload),
         });
         const data = await response.json();
         if (data.success) {
             submitted.value = true;
         } else if (data.errors) {
             Object.assign(errors, data.errors);
+            if (isMultiStep.value) {
+                for (let s = 0; s < totalSteps.value; s++) {
+                    if (fieldsForStep(s).some((f) => errors[f.id])) {
+                        currentStep.value = s;
+                        break;
+                    }
+                }
+            }
         }
     } catch {
         errors["_global"] = t("shared.form.error");
@@ -72,10 +156,25 @@ async function handleSubmit() {
                 <p v-if="formDescription" class="text-secondary text-sm">{{ formDescription }}</p>
             </div>
 
+            <!-- Multi-step progress -->
+            <div v-if="isMultiStep" class="space-y-2">
+                <div class="flex items-center justify-between text-xs text-muted">
+                    <span>{{ steps[currentStep] }}</span>
+                    <span>{{ currentStep + 1 }} / {{ totalSteps }}</span>
+                </div>
+                <div class="h-1.5 bg-surface-2 rounded-full overflow-hidden">
+                    <div
+                        class="h-full rounded-full transition-all duration-300"
+                        style="background-color: var(--th-accent);"
+                        :style="{ width: `${((currentStep + 1) / totalSteps) * 100}%` }"
+                    />
+                </div>
+            </div>
+
             <p v-if="errors['_global']" class="text-sm text-rose-400">{{ errors["_global"] }}</p>
 
-            <form class="space-y-5" v-on:submit.prevent="handleSubmit">
-                <div v-for="field in fields" :key="field.id" class="flex flex-col gap-1.5">
+            <form class="space-y-5" v-on:submit.prevent="isLastStep() ? handleSubmit() : nextStep()">
+                <div v-for="field in currentStepFields" :key="field.id" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-primary">
                         {{ field.label }}
                         <span v-if="field.required" class="text-rose-400 ml-0.5">*</span>
@@ -88,7 +187,6 @@ async function handleSubmit() {
                         class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-white dark:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-[--th-accent] resize-none"
                         :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
                         :placeholder="field.placeholder ?? ''"
-                        :required="field.required"
                     />
 
                     <select
@@ -96,7 +194,6 @@ async function handleSubmit() {
                         v-model="formData[field.id]"
                         class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-white dark:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-[--th-accent]"
                         :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
-                        :required="field.required"
                     >
                         <option value="">{{ t("shared.form.selectPlaceholder") }}</option>
                         <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
@@ -143,20 +240,37 @@ async function handleSubmit() {
                         class="w-full px-3 py-2 rounded-lg border text-sm text-primary bg-white dark:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-[--th-accent]"
                         :class="errors[field.id] ? 'border-rose-400' : 'border-line/60'"
                         :placeholder="field.placeholder ?? ''"
-                        :required="field.required"
                     >
 
                     <p v-if="errors[field.id]" class="text-xs text-rose-400">{{ errors[field.id] }}</p>
                 </div>
 
-                <button
-                    type="submit"
-                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-colors focus:outline-none disabled:opacity-50"
-                    style="background-color: var(--th-accent);"
-                    :disabled="submitting"
-                >
-                    {{ submitting ? t("shared.form.submitting") : t("shared.form.submit") }}
-                </button>
+                <!-- Navigation buttons -->
+                <div class="flex items-center gap-3" :class="isMultiStep && currentStep > 0 ? 'justify-between' : 'justify-end'">
+                    <button
+                        v-if="isMultiStep && currentStep > 0"
+                        type="button"
+                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-secondary border border-line hover:bg-surface-2 transition-colors"
+                        v-on:click="prevStep"
+                    >
+                        <ChevronLeft class="w-4 h-4" :stroke-width="2" />
+                        {{ t("shared.form.prev") }}
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-colors focus:outline-none disabled:opacity-50"
+                        style="background-color: var(--th-accent);"
+                        :disabled="submitting"
+                    >
+                        <template v-if="submitting">{{ t("shared.form.submitting") }}</template>
+                        <template v-else-if="!isLastStep()">
+                            {{ t("shared.form.next") }}
+                            <ChevronRight class="w-4 h-4" :stroke-width="2" />
+                        </template>
+                        <template v-else>{{ t("shared.form.submit") }}</template>
+                    </button>
+                </div>
             </form>
         </template>
     </div>

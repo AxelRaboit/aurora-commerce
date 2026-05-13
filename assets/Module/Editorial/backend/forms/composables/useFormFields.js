@@ -36,9 +36,20 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
         );
     }
 
+    const OPERATORS = computed(() => [
+        { value: "eq",        label: t("backend.forms.operators.eq") },
+        { value: "neq",       label: t("backend.forms.operators.neq") },
+        { value: "contains",  label: t("backend.forms.operators.contains") },
+        { value: "not_empty", label: t("backend.forms.operators.not_empty") },
+        { value: "empty",     label: t("backend.forms.operators.empty") },
+    ]);
+
     const editingField = ref({
         type: "text",
         required: false,
+        step: null,
+        conditions: [],
+        conditionsLogic: "and",
         translations: emptyFieldTranslations(),
     });
 
@@ -67,6 +78,9 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
         editingField.value = {
             type: "text",
             required: false,
+            step: null,
+            conditions: [],
+            conditionsLogic: "and",
             translations: emptyFieldTranslations(),
         };
         fieldOptionsText.value = Object.fromEntries(
@@ -90,6 +104,9 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
         editingField.value = {
             type: field.type,
             required: field.required,
+            step: field.step ?? null,
+            conditions: field.conditions ? field.conditions.map((c) => ({ ...c })) : [],
+            conditionsLogic: field.conditionsLogic ?? "and",
             translations,
         };
         fieldOptionsText.value = Object.fromEntries(
@@ -129,6 +146,9 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
         const payload = {
             type: editingField.value.type,
             required: editingField.value.required,
+            step: editingField.value.step,
+            conditions: editingField.value.conditions?.length ? editingField.value.conditions : null,
+            conditionsLogic: editingField.value.conditionsLogic,
             translations,
         };
         const isUpdate = editingFieldId.value !== null;
@@ -224,11 +244,13 @@ export function useFormFields(props, selectedForm, editingForm, jsonRequest) {
     return {
         showFieldModal,
         editingField,
+        editingFieldId,
         fieldOptionsText,
         fieldErrors,
         fieldSaving,
         fieldActiveLocale,
         FIELD_TYPES,
+        OPERATORS,
         fieldHasOptions,
         fieldTypeLabel,
         fieldLabel,

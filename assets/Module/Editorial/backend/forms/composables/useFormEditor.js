@@ -38,6 +38,9 @@ export function useFormEditor(props, fetchForms) {
     function emptyForm() {
         return {
             notifyEmail: "",
+            webhookUrl: "",
+            crmSync: false,
+            steps: [],
             active: true,
             translations: emptyTranslations(),
             fields: [],
@@ -85,6 +88,9 @@ export function useFormEditor(props, fetchForms) {
         }
         editingForm.value = {
             notifyEmail: form.notifyEmail ?? "",
+            webhookUrl: form.webhookUrl ?? "",
+            crmSync: form.crmSync ?? false,
+            steps: form.steps ?? [],
             active: form.active,
             translations,
             fields: form.fields ?? [],
@@ -167,6 +173,9 @@ export function useFormEditor(props, fetchForms) {
             : buildPath(props.updatePath, { id: selectedForm.value.id });
         const payload = {
             notifyEmail: editingForm.value.notifyEmail || null,
+            webhookUrl: editingForm.value.webhookUrl || null,
+            crmSync: editingForm.value.crmSync,
+            steps: editingForm.value.steps?.length ? editingForm.value.steps : null,
             active: editingForm.value.active,
             translations: editingForm.value.translations,
         };
