@@ -273,7 +273,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => SequencePrefixEnum::GalleryItemComment->value,
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
-            default => '',
         };
     }
 
