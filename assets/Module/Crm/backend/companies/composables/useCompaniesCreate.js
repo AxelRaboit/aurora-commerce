@@ -21,7 +21,12 @@ export function useCompaniesCreate(createPath, reset) {
     const showCreate = ref(false);
     const newCompany = ref(emptyCompanyForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.crm.companies.errors.name_required"))(

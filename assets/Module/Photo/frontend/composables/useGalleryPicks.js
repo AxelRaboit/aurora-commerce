@@ -55,10 +55,11 @@ export function useGalleryPicks({
         kind,
         { name = null, email = null } = {},
     ) {
-        const data = await requestToggle(
-            buildPath(pickPath, { id: itemId }),
-            { name, email, kind },
-        );
+        const data = await requestToggle(buildPath(pickPath, { id: itemId }), {
+            name,
+            email,
+            kind,
+        });
         if (!data) {
             toast.error(t("shared.common.error"));
             return;

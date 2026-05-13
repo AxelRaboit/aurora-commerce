@@ -17,7 +17,12 @@ export function useCompanyDetailEdit(updatePath, company) {
         notes: company.value.notes ?? "",
     });
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.crm.companies.errors.name_required"))(
@@ -40,5 +45,12 @@ export function useCompanyDetailEdit(updatePath, company) {
         },
     });
 
-    return { showEdit, editForm, editErrors, editLoading, submitEdit, clearErrors };
+    return {
+        showEdit,
+        editForm,
+        editErrors,
+        editLoading,
+        submitEdit,
+        clearErrors,
+    };
 }

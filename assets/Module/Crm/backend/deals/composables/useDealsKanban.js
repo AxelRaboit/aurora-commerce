@@ -27,7 +27,11 @@ export function useDealsKanban(props) {
         if (!force && kanbanColumnsLoaded.value) return;
         if (!props.kanbanColumnsPath) return;
         kanbanLoading.value = true;
-        const data = await request(props.kanbanColumnsPath, null, HttpMethod.Get);
+        const data = await request(
+            props.kanbanColumnsPath,
+            null,
+            HttpMethod.Get,
+        );
         kanbanLoading.value = false;
         if (!data) return;
         const columns = data.columns ?? {};
@@ -45,7 +49,11 @@ export function useDealsKanban(props) {
 
     async function patchStage(dealId, stage) {
         const url = buildPath(props.updateStagePath, { id: dealId });
-        return await request(url, { stage }, { method: HttpMethod.Patch, noGuard: true });
+        return await request(
+            url,
+            { stage },
+            { method: HttpMethod.Patch, noGuard: true },
+        );
     }
 
     async function updateStageForDeal(deal, newStage) {

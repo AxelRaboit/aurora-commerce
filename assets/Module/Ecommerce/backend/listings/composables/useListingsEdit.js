@@ -13,12 +13,17 @@ export function useListingsEdit(updatePath, reset) {
     const editForm = ref(emptyListingForm());
     const editFormImage = makeListingImageRef(editForm);
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             slug: () =>
-                required(
-                    t("backend.ecommerce.listings.errors.slug_required"),
-                )(editForm.value.slug),
+                required(t("backend.ecommerce.listings.errors.slug_required"))(
+                    editForm.value.slug,
+                ),
         }),
         url: () => buildPath(updatePath, { id: editingListing.value.id }),
         body: () => editForm.value,

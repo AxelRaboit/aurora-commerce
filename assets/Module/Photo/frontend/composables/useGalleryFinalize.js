@@ -14,7 +14,8 @@ export function useGalleryFinalize({
 }) {
     const { t } = useI18n();
 
-    const { loading: finalizing, request: requestFinalize } = useFrontendRequest();
+    const { loading: finalizing, request: requestFinalize } =
+        useFrontendRequest();
 
     const showFinalizeModal = ref(false);
     const finalizeName = ref("");

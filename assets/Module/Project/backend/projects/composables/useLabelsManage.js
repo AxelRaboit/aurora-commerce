@@ -25,7 +25,12 @@ export function useLabelsManage(paths, activeProject, reloadDetail) {
     const pendingDeleteLabel = ref(null);
     const labelForm = ref({ name: "", color: "accent" });
 
-    const { errors: labelErrors, validate, clearErrors, handleErrors } = useServerErrors();
+    const {
+        errors: labelErrors,
+        validate,
+        clearErrors,
+        handleErrors,
+    } = useServerErrors();
     const { loading, request } = useRequest();
 
     function openLabelsModal() {

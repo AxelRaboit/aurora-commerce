@@ -13,7 +13,12 @@ export function useCompaniesEdit(updatePath, reset) {
     const editingCompany = ref(null);
     const editForm = ref(emptyCompanyForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.crm.companies.errors.name_required"))(

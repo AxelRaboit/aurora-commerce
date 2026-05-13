@@ -16,16 +16,21 @@ export function useContactsEdit(updatePath, reset) {
     const editingContact = ref(null);
     const editForm = ref(emptyContactForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             firstName: () =>
-                required(
-                    t("backend.crm.contacts.errors.first_name_required"),
-                )(editForm.value.firstName),
+                required(t("backend.crm.contacts.errors.first_name_required"))(
+                    editForm.value.firstName,
+                ),
             lastName: () =>
-                required(
-                    t("backend.crm.contacts.errors.last_name_required"),
-                )(editForm.value.lastName),
+                required(t("backend.crm.contacts.errors.last_name_required"))(
+                    editForm.value.lastName,
+                ),
             email: () =>
                 editForm.value.email
                     ? emailValidator(

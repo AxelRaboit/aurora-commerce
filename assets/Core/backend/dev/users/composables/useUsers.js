@@ -55,7 +55,12 @@ export function useUsers(
         locale: DEFAULT_LOCALE,
     });
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreateErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors: clearCreateErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.profile.errors.name_required"))(
@@ -102,7 +107,12 @@ export function useUsers(
         locale: DEFAULT_LOCALE,
     });
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEditErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors: clearEditErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.profile.errors.name_required"))(

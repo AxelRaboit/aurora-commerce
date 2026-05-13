@@ -28,7 +28,12 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
     const showCreateTask = ref(false);
     const newTask = ref(emptyTaskForm());
 
-    const { errors: createTaskErrors, loading: createTaskLoading, submit: submitCreateTask, clearErrors } = useFormAction({
+    const {
+        errors: createTaskErrors,
+        loading: createTaskLoading,
+        submit: submitCreateTask,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.projects.errors.title_required"))(

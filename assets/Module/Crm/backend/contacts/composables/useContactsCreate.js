@@ -24,15 +24,29 @@ export function useContactsCreate(createPath, reset) {
     const showCreate = ref(false);
     const newContact = ref(emptyContactForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
-            firstName: () => required(t("backend.crm.contacts.errors.first_name_required"))(newContact.value.firstName),
-            lastName:  () => required(t("backend.crm.contacts.errors.last_name_required"))(newContact.value.lastName),
-            email:     () => newContact.value.email
-                ? emailValidator(t("backend.crm.contacts.errors.email_invalid"))(newContact.value.email)
-                : null,
+            firstName: () =>
+                required(t("backend.crm.contacts.errors.first_name_required"))(
+                    newContact.value.firstName,
+                ),
+            lastName: () =>
+                required(t("backend.crm.contacts.errors.last_name_required"))(
+                    newContact.value.lastName,
+                ),
+            email: () =>
+                newContact.value.email
+                    ? emailValidator(
+                          t("backend.crm.contacts.errors.email_invalid"),
+                      )(newContact.value.email)
+                    : null,
         }),
-        url:  () => createPath,
+        url: () => createPath,
         body: () => newContact.value,
         onSuccess: () => {
             showCreate.value = false;
@@ -47,5 +61,12 @@ export function useContactsCreate(createPath, reset) {
         showCreate.value = true;
     }
 
-    return { showCreate, newContact, createErrors, createLoading, openCreate, submitCreate };
+    return {
+        showCreate,
+        newContact,
+        createErrors,
+        createLoading,
+        openCreate,
+        submitCreate,
+    };
 }

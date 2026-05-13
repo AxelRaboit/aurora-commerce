@@ -27,7 +27,12 @@ export function useDocumentFoldersForm(
     const showCreate = ref(false);
     const newFolder = ref(emptyForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors: clearCreate,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.ged.folders.errors.name_required"))(
@@ -53,7 +58,12 @@ export function useDocumentFoldersForm(
     const editingFolder = ref(null);
     const editForm = ref(emptyForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors: clearEdit,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.ged.folders.errors.name_required"))(

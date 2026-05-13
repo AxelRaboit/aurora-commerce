@@ -16,24 +16,33 @@ export function useVaultFolders(
 ) {
     const { t } = useI18n();
 
-    const { modal: folderModal, form: folderForm, errors: folderErrors, loading: folderSaving, openCreate: openCreateFolder, openEdit: openEditFolder, submit: submitFolder } = useFormModal({
+    const {
+        modal: folderModal,
+        form: folderForm,
+        errors: folderErrors,
+        loading: folderSaving,
+        openCreate: openCreateFolder,
+        openEdit: openEditFolder,
+        submit: submitFolder,
+    } = useFormModal({
         empty: () => ({
-            name:     "",
+            name: "",
             useColor: false,
-            color:    "#6366f1",
+            color: "#6366f1",
             parentId: currentFolderId.value,
         }),
         fromEntity: (folder) => ({
-            name:     folder.name,
+            name: folder.name,
             useColor: folder.color !== null,
-            color:    folder.color ?? "#6366f1",
+            color: folder.color ?? "#6366f1",
             parentId: folder.parentId ?? null,
         }),
         createUrl: () => props.createFolderPath,
-        editUrl:   (folder) => buildPath(props.updateFolderPath, { id: folder.id }),
+        editUrl: (folder) =>
+            buildPath(props.updateFolderPath, { id: folder.id }),
         buildBody: (form) => ({
-            name:     form.name.trim(),
-            color:    form.useColor ? form.color : null,
+            name: form.name.trim(),
+            color: form.useColor ? form.color : null,
             position: folderModal.entity
                 ? folderModal.entity.position
                 : folders.value.filter(
@@ -42,22 +51,29 @@ export function useVaultFolders(
             parentId: form.parentId,
         }),
         rules: () => ({
-            name: () => required(t("vault.folders.errors.name_required"))(folderForm.name),
+            name: () =>
+                required(t("vault.folders.errors.name_required"))(
+                    folderForm.name,
+                ),
         }),
         onSuccess: ({ data, isCreate }) => {
             if (isCreate) {
                 folders.value.push(data.folder);
             } else {
-                const idx = folders.value.findIndex((f) => f.id === data.folder.id);
+                const idx = folders.value.findIndex(
+                    (f) => f.id === data.folder.id,
+                );
                 if (idx !== -1) folders.value[idx] = data.folder;
                 entries.value.forEach((entry) => {
                     if (entry.folderId === data.folder.id) {
-                        entry.folderName  = data.folder.name;
+                        entry.folderName = data.folder.name;
                         entry.folderColor = data.folder.color;
                     }
                 });
             }
-            toast.success(t(isCreate ? "vault.folders.created" : "vault.folders.updated"));
+            toast.success(
+                t(isCreate ? "vault.folders.created" : "vault.folders.updated"),
+            );
         },
     });
 
@@ -69,7 +85,7 @@ export function useVaultFolders(
     } = useDelete(
         props.deleteFolderPath,
         (deletedId) => {
-            const folder   = folders.value.find((f) => f.id === deletedId);
+            const folder = folders.value.find((f) => f.id === deletedId);
             const parentId = folder?.parentId ?? null;
 
             folders.value = folders.value
@@ -79,8 +95,8 @@ export function useVaultFolders(
                 );
             entries.value.forEach((entry) => {
                 if (entry.folderId === deletedId) {
-                    entry.folderId    = null;
-                    entry.folderName  = null;
+                    entry.folderId = null;
+                    entry.folderName = null;
                     entry.folderColor = null;
                 }
             });

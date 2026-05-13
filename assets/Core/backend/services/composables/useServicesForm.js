@@ -18,21 +18,36 @@ export function useServicesForm(
     const { t } = useI18n();
     const extraFields = options.extraFields ?? {};
 
-    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+    const {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+    } = useFormModal({
         empty: () => ({
             name: "",
             ...Object.fromEntries(
-                Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.default,
+                ]),
             ),
         }),
         fromEntity: (service) => ({
             name: service.name,
             ...Object.fromEntries(
-                Object.entries(extraFields).map(([key, def]) => [key, def.fromEntity(service)]),
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.fromEntity(service),
+                ]),
             ),
         }),
         createUrl: () => createPath,
-        editUrl:   (service) => buildPath(updatePath, { id: service.id }),
+        editUrl: (service) => buildPath(updatePath, { id: service.id }),
         onSuccess: ({ data, isCreate }) => {
             if (isCreate) {
                 serviceList.value.push(data.service);
@@ -49,5 +64,14 @@ export function useServicesForm(
         },
     });
 
-    return { modal, form, errors, loading, openCreate, openEdit, close, submit };
+    return {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+    };
 }

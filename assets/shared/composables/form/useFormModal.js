@@ -36,9 +36,17 @@ import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
  *     },
  *   });
  */
-export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody, rules, onSuccess } = {}) {
+export function useFormModal({
+    empty,
+    fromEntity,
+    createUrl,
+    editUrl,
+    buildBody,
+    rules,
+    onSuccess,
+} = {}) {
     const modal = reactive({ open: false, entity: null });
-    const form  = reactive({ ...empty?.() });
+    const form = reactive({ ...empty?.() });
 
     const { errors, validate, clearErrors, handleErrors } = useServerErrors();
     const { loading, request } = useRequest();
@@ -47,7 +55,7 @@ export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody,
         if (empty) Object.assign(form, empty());
         clearErrors();
         modal.entity = null;
-        modal.open   = true;
+        modal.open = true;
     }
 
     function openEdit(entity) {
@@ -55,7 +63,7 @@ export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody,
         else if (empty) Object.assign(form, empty());
         clearErrors();
         modal.entity = entity;
-        modal.open   = true;
+        modal.open = true;
     }
 
     function close() {
@@ -66,9 +74,9 @@ export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody,
         if (rules && !validate(rules())) return;
 
         const isCreate = modal.entity === null;
-        const url      = isCreate ? createUrl?.() : editUrl?.(modal.entity);
-        const body     = buildBody ? buildBody(form) : { ...form };
-        const data     = await request(url, body);
+        const url = isCreate ? createUrl?.() : editUrl?.(modal.entity);
+        const body = buildBody ? buildBody(form) : { ...form };
+        const data = await request(url, body);
         if (!data) return;
 
         if (data.success) {
@@ -80,5 +88,15 @@ export function useFormModal({ empty, fromEntity, createUrl, editUrl, buildBody,
         }
     }
 
-    return { modal, form, errors, loading, openCreate, openEdit, close, submit, clearErrors };
+    return {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+        clearErrors,
+    };
 }

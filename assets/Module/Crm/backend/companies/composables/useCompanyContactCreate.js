@@ -21,16 +21,21 @@ export function useCompanyContactCreate(
     const showCreateContact = ref(false);
     const newContact = ref(emptyContactForm());
 
-    const { errors: contactErrors, loading: contactLoading, submit: submitContact, clearErrors } = useFormAction({
+    const {
+        errors: contactErrors,
+        loading: contactLoading,
+        submit: submitContact,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             firstName: () =>
-                required(
-                    t("backend.crm.contacts.errors.first_name_required"),
-                )(newContact.value.firstName),
+                required(t("backend.crm.contacts.errors.first_name_required"))(
+                    newContact.value.firstName,
+                ),
             lastName: () =>
-                required(
-                    t("backend.crm.contacts.errors.last_name_required"),
-                )(newContact.value.lastName),
+                required(t("backend.crm.contacts.errors.last_name_required"))(
+                    newContact.value.lastName,
+                ),
             email: () =>
                 newContact.value.email
                     ? emailValidator(

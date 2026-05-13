@@ -4,13 +4,13 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 
 const DEFAULT_FORM = {
-    name:        "",
+    name: "",
     description: "",
-    color:       "#3b82f6",
-    timezone:    "Europe/Paris",
-    visibility:  "private",
-    ownerId:     null,
-    agencyId:    null,
+    color: "#3b82f6",
+    timezone: "Europe/Paris",
+    visibility: "private",
+    ownerId: null,
+    agencyId: null,
 };
 
 /**
@@ -28,27 +28,42 @@ export function usePlanningForm(
     const { t } = useI18n();
     const extraFields = options.extraFields ?? {};
 
-    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+    const {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+    } = useFormModal({
         empty: () => ({
             ...DEFAULT_FORM,
             ...Object.fromEntries(
-                Object.entries(extraFields).map(([key, def]) => [key, def.default]),
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.default,
+                ]),
             ),
         }),
         fromEntity: (planning) => ({
-            name:        planning.name,
+            name: planning.name,
             description: planning.description ?? "",
-            color:       planning.color,
-            timezone:    planning.timezone,
-            visibility:  planning.visibility,
-            ownerId:     planning.owner?.id ?? null,
-            agencyId:    planning.agency?.id ?? null,
+            color: planning.color,
+            timezone: planning.timezone,
+            visibility: planning.visibility,
+            ownerId: planning.owner?.id ?? null,
+            agencyId: planning.agency?.id ?? null,
             ...Object.fromEntries(
-                Object.entries(extraFields).map(([key, def]) => [key, def.fromEntity(planning)]),
+                Object.entries(extraFields).map(([key, def]) => [
+                    key,
+                    def.fromEntity(planning),
+                ]),
             ),
         }),
         createUrl: () => createPath,
-        editUrl:   (planning) => buildPath(updatePath, { id: planning.id }),
+        editUrl: (planning) => buildPath(updatePath, { id: planning.id }),
         onSuccess: ({ data, isCreate }) => {
             if (isCreate) {
                 plannings.value.push(data.planning);
@@ -65,5 +80,14 @@ export function usePlanningForm(
         },
     });
 
-    return { modal, form, errors, loading, openCreate, openEdit, close, submit };
+    return {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+    };
 }

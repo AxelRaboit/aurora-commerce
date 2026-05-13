@@ -10,18 +10,31 @@ function emptyForm() {
     return { name: "", description: "" };
 }
 
-export function useDocumentCategoriesForm(createPath, updatePath, deletePath, reset) {
+export function useDocumentCategoriesForm(
+    createPath,
+    updatePath,
+    deletePath,
+    reset,
+) {
     const { t } = useI18n();
 
     // ── Create ───────────────────────────────────────────────────────────────
     const showCreate = ref(false);
     const newCategory = ref(emptyForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors: clearCreate,
+    } = useFormAction({
         rules: () => ({
-            name: () => required(t("backend.ged.categories.errors.name_required"))(newCategory.value.name),
+            name: () =>
+                required(t("backend.ged.categories.errors.name_required"))(
+                    newCategory.value.name,
+                ),
         }),
-        url:  () => createPath,
+        url: () => createPath,
         body: () => newCategory.value,
         onSuccess: () => {
             showCreate.value = false;
@@ -41,11 +54,19 @@ export function useDocumentCategoriesForm(createPath, updatePath, deletePath, re
     const editingCategory = ref(null);
     const editForm = ref(emptyForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors: clearEdit,
+    } = useFormAction({
         rules: () => ({
-            name: () => required(t("backend.ged.categories.errors.name_required"))(editForm.value.name),
+            name: () =>
+                required(t("backend.ged.categories.errors.name_required"))(
+                    editForm.value.name,
+                ),
         }),
-        url:  () => buildPath(updatePath, { id: editingCategory.value.id }),
+        url: () => buildPath(updatePath, { id: editingCategory.value.id }),
         body: () => editForm.value,
         onSuccess: () => {
             showEdit.value = false;
@@ -56,18 +77,39 @@ export function useDocumentCategoriesForm(createPath, updatePath, deletePath, re
 
     function openEdit(category) {
         editingCategory.value = category;
-        editForm.value = { name: category.name, description: category.description ?? "" };
+        editForm.value = {
+            name: category.name,
+            description: category.description ?? "",
+        };
         clearEdit();
         showEdit.value = true;
     }
 
     // ── Delete ────────────────────────────────────────────────────────────────
-    const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } =
-        useDelete(deletePath, () => reset(), "backend.ged.categories.deleted");
+    const {
+        pendingDelete,
+        loading: deleteLoading,
+        confirm: confirmDelete,
+        submit: doDelete,
+    } = useDelete(deletePath, () => reset(), "backend.ged.categories.deleted");
 
     return {
-        showCreate, newCategory, createErrors, createLoading, openCreate, submitCreate,
-        showEdit, editingCategory, editForm, editErrors, editLoading, openEdit, submitEdit,
-        pendingDelete, deleteLoading, confirmDelete, doDelete,
+        showCreate,
+        newCategory,
+        createErrors,
+        createLoading,
+        openCreate,
+        submitCreate,
+        showEdit,
+        editingCategory,
+        editForm,
+        editErrors,
+        editLoading,
+        openEdit,
+        submitEdit,
+        pendingDelete,
+        deleteLoading,
+        confirmDelete,
+        doDelete,
     };
 }

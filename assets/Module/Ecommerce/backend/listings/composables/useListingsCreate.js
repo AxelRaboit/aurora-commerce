@@ -38,16 +38,21 @@ export function useListingsCreate(createPath, reset, loadProducts) {
     const newListing = ref(emptyListingForm());
     const newListingImage = makeListingImageRef(newListing);
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             productId: () =>
                 required(
                     t("backend.ecommerce.listings.errors.product_required"),
                 )(newListing.value.productId),
             slug: () =>
-                required(
-                    t("backend.ecommerce.listings.errors.slug_required"),
-                )(newListing.value.slug),
+                required(t("backend.ecommerce.listings.errors.slug_required"))(
+                    newListing.value.slug,
+                ),
         }),
         url: () => createPath,
         body: () => newListing.value,

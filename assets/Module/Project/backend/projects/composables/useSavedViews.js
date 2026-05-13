@@ -27,7 +27,10 @@ export function useSavedViews(paths, activeProject) {
             return;
         }
         const url = buildPath(paths.list, { id: activeProject.value.id });
-        const data = await request(url, null, { method: HttpMethod.Get, noGuard: true });
+        const data = await request(url, null, {
+            method: HttpMethod.Get,
+            noGuard: true,
+        });
         if (data?.success) views.value = data.views ?? [];
     }
 

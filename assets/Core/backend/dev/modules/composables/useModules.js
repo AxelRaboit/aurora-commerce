@@ -172,7 +172,9 @@ export function useModules(
     async function confirmPassword() {
         passwordError.value = "";
         verifying.value = true;
-        const result = await verifyRequest(moduleVerifyPasswordPath, { password: password.value });
+        const result = await verifyRequest(moduleVerifyPasswordPath, {
+            password: password.value,
+        });
         verifying.value = false;
 
         if (!result) {

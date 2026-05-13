@@ -118,10 +118,7 @@ export function useCommentModeration(paths, initialStats, onRefresh) {
                     localStats.value.approved - 1,
                 );
             else if (comment.status === CommentStatus.Spam)
-                localStats.value.spam = Math.max(
-                    0,
-                    localStats.value.spam - 1,
-                );
+                localStats.value.spam = Math.max(0, localStats.value.spam - 1);
             pendingDelete.value = null;
             onRefresh();
         } else {

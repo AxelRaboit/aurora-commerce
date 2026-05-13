@@ -12,7 +12,12 @@ export function useGalleriesCreate(createPath, reload) {
     const newForm = ref(emptyGalleryForm());
     const slugManuallyEdited = ref(false);
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("photo.galleries.errors.title_required"))(

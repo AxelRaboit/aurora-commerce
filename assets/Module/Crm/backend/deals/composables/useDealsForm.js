@@ -32,32 +32,52 @@ export function useDealsForm(
     const { t } = useI18n();
     const extraFields = options.extraFields ?? {};
 
-    const { modal, form, errors, loading, openCreate, openEdit, close, submit } = useFormModal({
+    const {
+        modal,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        close,
+        submit,
+    } = useFormModal({
         empty: () => ({
             ...emptyDealForm(extraFields),
         }),
         fromEntity: (deal) => ({
-            name:        deal.name,
-            stage:       deal.stage,
-            value:       deal.value ?? "",
-            contactId:   deal.contact?.id ?? "",
-            companyId:   deal.company?.id ?? "",
+            name: deal.name,
+            stage: deal.stage,
+            value: deal.value ?? "",
+            contactId: deal.contact?.id ?? "",
+            companyId: deal.company?.id ?? "",
             closingDate: deal.closingDate ?? "",
-            notes:       deal.notes ?? "",
+            notes: deal.notes ?? "",
             ...Object.fromEntries(
                 Object.entries(extraFields).map(([key, def]) => [
                     key,
-                    def.fromEntity ? def.fromEntity(deal) : (deal[key] ?? def.default),
+                    def.fromEntity
+                        ? def.fromEntity(deal)
+                        : (deal[key] ?? def.default),
                 ]),
             ),
         }),
         createUrl: () => createPath,
-        editUrl:   (deal) => buildPath(updatePath, { id: deal.id }),
+        editUrl: (deal) => buildPath(updatePath, { id: deal.id }),
         rules: () => ({
-            name: () => required(t("backend.crm.deals.errors.name_required"))(form.name),
+            name: () =>
+                required(t("backend.crm.deals.errors.name_required"))(
+                    form.name,
+                ),
         }),
         onSuccess: async ({ isCreate }) => {
-            toast.success(t(isCreate ? "backend.crm.deals.created" : "backend.crm.deals.updated"));
+            toast.success(
+                t(
+                    isCreate
+                        ? "backend.crm.deals.created"
+                        : "backend.crm.deals.updated",
+                ),
+            );
             reset();
             if (kanbanColumnsLoaded.value) await ensureKanbanColumns(true);
         },
@@ -79,13 +99,13 @@ export function useDealsForm(
  */
 export function emptyDealForm(extraFields = {}) {
     return {
-        name:        "",
-        stage:       "lead",
-        value:       "",
-        contactId:   "",
-        companyId:   "",
+        name: "",
+        stage: "lead",
+        value: "",
+        contactId: "",
+        companyId: "",
         closingDate: "",
-        notes:       "",
+        notes: "",
         ...Object.fromEntries(
             Object.entries(extraFields).map(([key, def]) => [key, def.default]),
         ),

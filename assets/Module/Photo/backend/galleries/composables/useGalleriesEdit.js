@@ -14,7 +14,12 @@ export function useGalleriesEdit(props, reload) {
     const editingId = ref(null);
     const editingHasPassword = ref(false);
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("photo.galleries.errors.title_required"))(

@@ -24,7 +24,12 @@ export function useProjectsCreate(createPath, reset) {
     const showCreate = ref(false);
     const newProject = ref(emptyProjectForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.projects.errors.title_required"))(

@@ -17,7 +17,8 @@ export function useGalleryComment({
     identityKnown,
 }) {
     const { t } = useI18n();
-    const { loading: commentSending, request: requestComment } = useFrontendRequest();
+    const { loading: commentSending, request: requestComment } =
+        useFrontendRequest();
 
     const commentNameError = ref("");
     const commentEmailError = ref("");

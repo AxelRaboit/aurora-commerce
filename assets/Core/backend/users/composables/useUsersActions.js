@@ -15,14 +15,20 @@ export function useUsersActions(props, fetchUsers) {
 
     async function openView(user) {
         viewingUser.value = { ...user, subordinates: [], subordinatesCount: 0 };
-        const data = await request(buildPath(props.showPath, { id: user.id }), null, { method: HttpMethod.Get, noGuard: true });
+        const data = await request(
+            buildPath(props.showPath, { id: user.id }),
+            null,
+            { method: HttpMethod.Get, noGuard: true },
+        );
         if (data?.success && viewingUser.value?.id === user.id)
             viewingUser.value = data.user;
     }
 
     // ── Resend invitation ─────────────────────────────────────────────────────
     async function resendInvitation(user) {
-        const data = await request(buildPath(props.resendInvitationPath, { id: user.id }));
+        const data = await request(
+            buildPath(props.resendInvitationPath, { id: user.id }),
+        );
         if (!data) return;
         if (data.success) {
             toast.success(t("backend.users.invitationResent"));
@@ -40,7 +46,9 @@ export function useUsersActions(props, fetchUsers) {
     async function confirmToggleDisabled() {
         const user = togglingUser.value;
         if (!user) return;
-        const data = await request(buildPath(props.toggleDisabledPath, { id: user.id }));
+        const data = await request(
+            buildPath(props.toggleDisabledPath, { id: user.id }),
+        );
         togglingUser.value = null;
         if (!data) return;
         if (data.success) {
@@ -55,7 +63,9 @@ export function useUsersActions(props, fetchUsers) {
     async function confirmDelete() {
         const user = deletingUser.value;
         if (!user) return;
-        const data = await request(buildPath(props.deletePath, { id: user.id }));
+        const data = await request(
+            buildPath(props.deletePath, { id: user.id }),
+        );
         deletingUser.value = null;
         if (!data) return;
         if (data.success) {

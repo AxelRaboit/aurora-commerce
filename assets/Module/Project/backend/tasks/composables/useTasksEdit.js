@@ -14,7 +14,12 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
     const editingTask = ref(null);
     const editTaskForm = ref(emptyTaskForm());
 
-    const { errors: editTaskErrors, loading: editTaskLoading, submit: submitEditTask, clearErrors } = useFormAction({
+    const {
+        errors: editTaskErrors,
+        loading: editTaskLoading,
+        submit: submitEditTask,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.projects.errors.title_required"))(

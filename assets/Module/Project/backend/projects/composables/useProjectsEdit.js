@@ -13,7 +13,12 @@ export function useProjectsEdit(updatePath, reset, activeProject) {
     const editingProject = ref(null);
     const editForm = ref(emptyProjectForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.projects.errors.title_required"))(

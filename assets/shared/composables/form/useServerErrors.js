@@ -45,5 +45,12 @@ export function useServerErrors() {
         }
     }
 
-    return { errors, validate, setErrors, clearErrors, handleErrors, handleResponse };
+    return {
+        errors,
+        validate,
+        setErrors,
+        clearErrors,
+        handleErrors,
+        handleResponse,
+    };
 }

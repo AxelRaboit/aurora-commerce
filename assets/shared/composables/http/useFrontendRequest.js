@@ -39,7 +39,10 @@ export function useFrontendRequest() {
             const response = await fetch(url, options);
             return await response.json();
         } catch {
-            return { success: false, errors: { _global: t("shared.form.error") } };
+            return {
+                success: false,
+                errors: { _global: t("shared.form.error") },
+            };
         } finally {
             loading.value = false;
         }

@@ -121,7 +121,10 @@ export function useColumnsManage(paths, activeProject, reloadDetail) {
             pendingDeleteColumn.value = null;
             await reloadDetail();
         } else {
-            toast.error(translateServerErrors(t, data.errors)._global ?? t("shared.common.error"));
+            toast.error(
+                translateServerErrors(t, data.errors)._global ??
+                    t("shared.common.error"),
+            );
         }
     }
 

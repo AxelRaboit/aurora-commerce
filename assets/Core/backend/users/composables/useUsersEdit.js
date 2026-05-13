@@ -13,7 +13,10 @@ export function useUsersEdit(props, fetchUsers, options = {}) {
 
     async function loadSelectableUsers() {
         if (selectableUsers.value.length) return;
-        const data = await request(props.selectablePath, null, { method: "GET", noGuard: true });
+        const data = await request(props.selectablePath, null, {
+            method: "GET",
+            noGuard: true,
+        });
         selectableUsers.value = data?.success ? data.items : [];
     }
 
@@ -125,13 +128,9 @@ export function useUsersEdit(props, fetchUsers, options = {}) {
         });
         const payload = {
             ...editForm,
-            managerId: editForm.managerId
-                ? Number(editForm.managerId)
-                : null,
+            managerId: editForm.managerId ? Number(editForm.managerId) : null,
             agencyId: editForm.agencyId ? Number(editForm.agencyId) : null,
-            serviceId: editForm.serviceId
-                ? Number(editForm.serviceId)
-                : null,
+            serviceId: editForm.serviceId ? Number(editForm.serviceId) : null,
         };
         const data = await request(url, payload);
         editModal.saving = false;

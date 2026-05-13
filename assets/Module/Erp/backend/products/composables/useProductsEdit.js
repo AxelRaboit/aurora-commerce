@@ -18,7 +18,12 @@ export function useProductsEdit(updatePath, reset) {
     const editForm = ref(emptyProductForm());
     const editFormImage = makeImageRef(editForm);
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.erp.products.errors.name_required"))(

@@ -44,16 +44,16 @@ export function useGalleryEditItems(props, initialItems) {
             multiple: true,
         });
         if (!Array.isArray(picked) || picked.length === 0) return;
-        const data = await request(props.itemsAddPath, { mediaIds: picked.map((m) => m.id) });
+        const data = await request(props.itemsAddPath, {
+            mediaIds: picked.map((m) => m.id),
+        });
         if (!data) return;
         if (!data.success) {
             toast.error(t("shared.common.error"));
             return;
         }
         items.value = data.items ?? items.value;
-        toast.success(
-            t("photo.galleries.itemsAdded", { count: data.added }),
-        );
+        toast.success(t("photo.galleries.itemsAdded", { count: data.added }));
     }
 
     // ── Single delete ─────────────────────────────────────────────────────────
@@ -68,7 +68,9 @@ export function useGalleryEditItems(props, initialItems) {
         if (!pendingDeleteItem.value || deleteOneLoading.value) return;
         deleteOneLoading.value = true;
         const item = pendingDeleteItem.value;
-        const data = await request(buildPath(props.itemsDeletePath, { id: item.id }));
+        const data = await request(
+            buildPath(props.itemsDeletePath, { id: item.id }),
+        );
         deleteOneLoading.value = false;
         if (!data) return;
         if (data.success) {
@@ -103,9 +105,7 @@ export function useGalleryEditItems(props, initialItems) {
         bulkDeleteLoading.value = false;
         if (!data) return;
         if (data.success) {
-            items.value = items.value.filter(
-                (i) => !selected.value.has(i.id),
-            );
+            items.value = items.value.filter((i) => !selected.value.has(i.id));
             selected.value = new Set();
             pendingBulkDelete.value = false;
             toast.success(
@@ -137,7 +137,9 @@ export function useGalleryEditItems(props, initialItems) {
         reordered.splice(targetIndex, 0, moved);
         items.value = reordered;
         draggingIndex = null;
-        await request(props.itemsReorderPath, { itemIds: reordered.map((i) => i.id) });
+        await request(props.itemsReorderPath, {
+            itemIds: reordered.map((i) => i.id),
+        });
     }
 
     return {

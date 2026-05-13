@@ -34,7 +34,12 @@ export function useDocumentTagsForm(
     const showCreate = ref(false);
     const newTag = ref(emptyForm());
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors: clearCreate,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.ged.tags.errors.name_required"))(
@@ -60,7 +65,12 @@ export function useDocumentTagsForm(
     const editingTag = ref(null);
     const editForm = ref(emptyForm());
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors: clearEdit,
+    } = useFormAction({
         rules: () => ({
             name: () =>
                 required(t("backend.ged.tags.errors.name_required"))(

@@ -53,7 +53,12 @@ export function useDocumentsForm(
     const showMediaPickerCreate = ref(false);
     const uploadingCreate = ref(false);
 
-    const { errors: createErrors, loading: createLoading, submit: submitCreate, clearErrors: clearCreate } = useFormAction({
+    const {
+        errors: createErrors,
+        loading: createLoading,
+        submit: submitCreate,
+        clearErrors: clearCreate,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.ged.documents.errors.title_required"))(
@@ -101,7 +106,12 @@ export function useDocumentsForm(
     const showMediaPickerEdit = ref(false);
     const uploadingEdit = ref(false);
 
-    const { errors: editErrors, loading: editLoading, submit: submitEdit, clearErrors: clearEdit } = useFormAction({
+    const {
+        errors: editErrors,
+        loading: editLoading,
+        submit: submitEdit,
+        clearErrors: clearEdit,
+    } = useFormAction({
         rules: () => ({
             title: () =>
                 required(t("backend.ged.documents.errors.title_required"))(
