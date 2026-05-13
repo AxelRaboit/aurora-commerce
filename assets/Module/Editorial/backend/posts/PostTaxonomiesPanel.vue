@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { ChevronDown, ChevronRight } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, Search } from "lucide-vue-next";
 import { buildTermTree, flattenTreeWithDepth } from "@editorial/shared/termTree.js";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 
@@ -28,6 +28,7 @@ function loadCollapsed() {
 }
 
 const collapsed = ref(loadCollapsed());
+const searches  = ref({});
 
 function toggleCollapse(slug) {
     const next = new Set(collapsed.value);
@@ -35,6 +36,7 @@ function toggleCollapse(slug) {
         next.delete(slug);
     } else {
         next.add(slug);
+        searches.value[slug] = "";
     }
     collapsed.value = next;
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
@@ -63,6 +65,15 @@ function termLabel(term) {
         "(—)"
     );
 }
+
+function filteredTerms(taxonomy) {
+    const query = (searches.value[taxonomy.slug] ?? "").toLowerCase().trim();
+    const flat = taxonomy.hierarchical
+        ? flattenTreeWithDepth(buildTermTree(taxonomy.terms))
+        : taxonomy.terms;
+    if (!query) return flat;
+    return flat.filter((term) => termLabel(term).toLowerCase().includes(query));
+}
 </script>
 
 <template>
@@ -83,22 +94,35 @@ function termLabel(term) {
             <span v-if="hasActiveTerms(taxonomy)" class="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0" />
         </div>
 
-        <div v-if="!isCollapsed(taxonomy.slug)" class="max-h-60 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
-            <AppNoData v-if="!taxonomy.terms.length" :message="t('backend.posts.termsPickerEmpty')" />
-            <label
-                v-for="term in taxonomy.hierarchical ? flattenTreeWithDepth(buildTermTree(taxonomy.terms)) : taxonomy.terms"
-                :key="term.id"
-                class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
-                :style="taxonomy.hierarchical ? { paddingLeft: `${0.375 + (term.depth ?? 0) * 1.25}rem` } : {}"
-            >
+        <template v-if="!isCollapsed(taxonomy.slug)">
+            <div class="relative">
+                <Search class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted pointer-events-none" :stroke-width="2" />
                 <input
-                    type="checkbox"
-                    class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0 shrink-0"
-                    :checked="selectedTermIds.includes(term.id)"
-                    v-on:change="emit('toggle-term', term.id)"
+                    v-model="searches[taxonomy.slug]"
+                    type="text"
+                    :placeholder="t('backend.posts.searchTerms')"
+                    class="w-full pl-6 pr-2 py-1 text-xs bg-surface-2 border border-line/60 rounded-md text-primary placeholder:text-muted focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
+                    v-on:click.stop
+                />
+            </div>
+
+            <div class="max-h-52 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
+                <AppNoData v-if="!filteredTerms(taxonomy).length" :message="t('backend.posts.termsPickerEmpty')" />
+                <label
+                    v-for="term in filteredTerms(taxonomy)"
+                    :key="term.id"
+                    class="flex items-center gap-2 text-sm cursor-pointer hover:bg-surface-3 rounded px-1.5 py-0.5"
+                    :style="taxonomy.hierarchical ? { paddingLeft: `${0.375 + (term.depth ?? 0) * 1.25}rem` } : {}"
                 >
-                <span class="text-primary truncate">{{ termLabel(term) }}</span>
-            </label>
-        </div>
+                    <input
+                        type="checkbox"
+                        class="w-4 h-4 rounded border-line bg-surface text-accent-600 focus:ring-accent-500 focus:ring-offset-0 shrink-0"
+                        :checked="selectedTermIds.includes(term.id)"
+                        v-on:change="emit('toggle-term', term.id)"
+                    >
+                    <span class="text-primary truncate">{{ termLabel(term) }}</span>
+                </label>
+            </div>
+        </template>
     </div>
 </template>
