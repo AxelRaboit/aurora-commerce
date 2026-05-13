@@ -36,6 +36,7 @@ pointer. Capturer ici les **règles**, **décisions**, **pièges** et
 - [convention_js_privacy.md](convention_js_privacy.md) — privacy JS : `#field` dans les classes (jamais `_field`), variable module-level non exportée pour les composables
 - [convention_i18n_source_files.md](convention_i18n_source_files.md) — éditer les **YAML sources** (`src/.../translations/`), jamais le JSON généré. `make i18n` régénère, `npm run build` consomme
 - [convention_http_responses.md](convention_http_responses.md) — toujours `jsonSuccess/jsonFailure/jsonInvalidInput` + `HttpStatusEnum` — jamais `$this->json([...], 503)` brut ni code HTTP en dur
+- [convention_no_raw_fetch.md](convention_no_raw_fetch.md) — **jamais `await fetch()` brut** dans composables/vues admin → `useRequest` ; frontend public → `useFrontendRequest`
 - [convention_tmp_files_scheduler.md](convention_tmp_files_scheduler.md) — fichiers tmp : préfixe `aurora_<module>_<role>_` + `finally` + déclaration dans `CleanTempFilesHandler::TMP_PREFIXES` ; fichiers techniques → jamais MediaManager ; tâches récurrentes → Symfony Scheduler
 - [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — `snake_case` si la clé est construite par le code (enum suffix, nav id), `camelCase` si nommée manuellement pour l'UI. Mixte intentionnel, ne pas uniformiser
 
