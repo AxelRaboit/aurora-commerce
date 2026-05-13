@@ -75,13 +75,13 @@ backend:
       description: "Format d'affichage des dates (ex: d/m/Y)"
     comments_enabled:
       label: Commentaires activés
-      description: 'Commentaires activés (0 = désactivés, 1 = activés)'
+      description: 'Si activé, les visiteurs peuvent laisser des commentaires sur les articles du site public.'
     comment_moderation_enabled:
       label: Modération des commentaires
-      description: 'Si activée, les commentaires sont en attente de modération avant publication (1 = activée, 0 = approbation automatique)'
+      description: 'Si activé, les commentaires sont en attente de modération avant publication. Si désactivé, ils sont approuvés automatiquement.'
     maintenance_mode:
       label: Mode maintenance
-      description: 'Mode maintenance (0 = désactivé, 1 = site fermé au public)'
+      description: 'Si activé, le site public est fermé aux visiteurs et affiche une page de maintenance.'
     admin_registration_enabled:
       label: Inscriptions admin ouvertes
       description: Autoriser les inscriptions via /register (interface admin). À désactiver après la création du premier compte admin.
@@ -90,7 +90,7 @@ backend:
       description: Autoriser les demandes d'accès via /access-request (formulaire de demande d'accès à l'administration)
     front_registration_enabled:
       label: Inscriptions frontend ouvertes
-      description: 'Autoriser les inscriptions publiques sur le front (0 = désactivé, 1 = activé)'
+      description: 'Si activé, les visiteurs peuvent créer un compte depuis le site public.'
     post_revisions_limit:
       label: Nombre de révisions gardées par article
       description: Nombre maximal de révisions conservées par article (les plus anciennes sont supprimées)

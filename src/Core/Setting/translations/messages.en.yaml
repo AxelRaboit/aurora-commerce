@@ -75,13 +75,13 @@ backend:
       description: Date display format (e.g. d/m/Y)
     comments_enabled:
       label: Comments enabled
-      description: 'Comments enabled (0 = disabled, 1 = enabled)'
+      description: 'If enabled, visitors can leave comments on public articles.'
     comment_moderation_enabled:
       label: Comment moderation
-      description: 'If enabled, comments await moderation before publication (1 = enabled, 0 = auto-approve)'
+      description: 'If enabled, comments await moderation before publication. If disabled, they are automatically approved.'
     maintenance_mode:
       label: Maintenance mode
-      description: 'Maintenance mode (0 = disabled, 1 = site closed to public)'
+      description: 'If enabled, the public site is closed to visitors and displays a maintenance page.'
     admin_registration_enabled:
       label: Admin registrations open
       description: Allow registrations via /register (admin interface). Disable after creating the first admin account.
@@ -90,7 +90,7 @@ backend:
       description: Allow access requests via /access-request (access request form for the administration)
     front_registration_enabled:
       label: Front-end registrations open
-      description: 'Allow public registrations on the front end (0 = disabled, 1 = enabled)'
+      description: 'If enabled, visitors can create an account from the public site.'
     post_revisions_limit:
       label: Post revisions kept
       description: Maximum number of revisions kept per post (oldest are deleted)
