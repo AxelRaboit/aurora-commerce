@@ -14,6 +14,7 @@ import {
     GripVertical,
     Pencil,
     Download,
+    Eye,
     Settings,
     Layers,
     Inbox,
@@ -23,6 +24,7 @@ import {
     Users,
     X,
 } from "lucide-vue-next";
+import FormPreviewModal from "@editorial/backend/forms/FormPreviewModal.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -102,6 +104,8 @@ const { submissionFields, viewingSubmission, submissions, submissionsLoading, su
     useFormSubmissions(props.submissionsPath, props.exportPath, selectedForm, activeLocale);
 
 function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
+
+const showPreview = ref(false);
 </script>
 
 <template>
@@ -158,6 +162,14 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
                     >
                         <Trash2 class="w-4 h-4" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
+                    </AppButton>
+                    <AppButton
+                        variant="secondary"
+                        size="md"
+                        v-on:click="showPreview = true"
+                    >
+                        <Eye class="w-4 h-4" :stroke-width="2" />
+                        {{ t("backend.forms.preview") }}
                     </AppButton>
                     <AppButton
                         v-if="activeTab === 'settings'"
@@ -635,6 +647,17 @@ function onTabChange(tab) { onTabChangeBase(tab, activeTab); }
             </AppModalFooter>
         </template>
     </AppModal>
+
+    <FormPreviewModal
+        :show="showPreview"
+        :fields="editingForm.fields"
+        :steps="editingForm.steps ?? []"
+        :form-title="formTitle(editingForm)"
+        :form-description="editingForm.translations?.[activeLocale]?.description ?? ''"
+        :active-locale="activeLocale"
+        :default-locale="defaultLocale()"
+        v-on:close="showPreview = false"
+    />
 
     <AppModal
         :show="!!pendingDeleteField"
