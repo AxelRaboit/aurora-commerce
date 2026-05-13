@@ -1,14 +1,17 @@
 <script setup>
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useContactsCreate } from "@crm/backend/contacts/composables/useContactsCreate.js";
 import { useContactsEdit } from "@crm/backend/contacts/composables/useContactsEdit.js";
+import { useContactsShow, contactSourceColor } from "@crm/backend/contacts/composables/useContactsShow.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppTagsInput from "@/shared/components/form/AppTagsInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -29,8 +32,10 @@ const props = defineProps({
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     listPath: { type: String, required: true },
-    showPath: { type: String, default: "" },
+    activityPath: { type: String, default: "" },
 });
+
+const { formatDateTime } = useDateFormat();
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
@@ -40,6 +45,8 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 const { showCreate, newContact, createErrors, createLoading, openCreate, submitCreate } = useContactsCreate(props.createPath, reset);
 const { showEdit, editingContact, editForm, editErrors, editLoading, openEdit, submitEdit } = useContactsEdit(props.updatePath, reset);
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "backend.crm.contacts.deleted");
+
+const { showShow, showingContact, activity, activityLoading, openShow, closeShow, activityActionLabel } = useContactsShow(props.activityPath);
 </script>
 
 <template>
@@ -75,12 +82,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-primary">{{ contact.fullName }}</p>
                         <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
+                        <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1.5">
+                            <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
+                            <AppBadge v-for="tag in (contact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
                     <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -110,7 +121,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                     :email="contact.email"
                                     size="md"
                                 />
-                                <span class="font-medium text-primary">{{ contact.fullName }}</span>
+                                <div class="min-w-0">
+                                    <p class="font-medium text-primary truncate">{{ contact.fullName }}</p>
+                                    <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1">
+                                        <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
+                                        <AppBadge v-for="tag in (contact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                         <td class="px-6 py-3 text-secondary">{{ contact.email ?? '—' }}</td>
@@ -118,7 +135,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ contact.phone ?? '—' }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: contact.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                             </div>
@@ -133,6 +150,76 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+
+        <AppModal
+            :show="showShow"
+            :title="showingContact?.fullName ?? ''"
+            :icon="Users"
+            v-on:close="closeShow"
+        >
+            <div v-if="showingContact" class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <AppAvatar
+                        :first-name="showingContact.firstName"
+                        :last-name="showingContact.lastName"
+                        :name="showingContact.fullName"
+                        :email="showingContact.email"
+                        size="lg"
+                    />
+                    <div class="min-w-0">
+                        <p class="font-medium text-primary">{{ showingContact.fullName }}</p>
+                        <p v-if="showingContact.company" class="text-sm text-secondary truncate">{{ showingContact.company }}</p>
+                    </div>
+                </div>
+
+                <div v-if="showingContact.source || (showingContact.tags && showingContact.tags.length)" class="flex flex-wrap gap-1.5">
+                    <AppBadge v-if="showingContact.source" :color="contactSourceColor(showingContact.source)">{{ t(`backend.crm.contacts.sources.${showingContact.source}`) }}</AppBadge>
+                    <AppBadge v-for="tag in (showingContact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                </div>
+
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-line/40">
+                    <div v-if="showingContact.email" class="min-w-0">
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.contacts.email') }}</dt>
+                        <dd class="text-sm"><AppLink :href="`mailto:${showingContact.email}`" class="text-accent-400 hover:underline break-all">{{ showingContact.email }}</AppLink></dd>
+                    </div>
+                    <div v-if="showingContact.phone">
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.contacts.phone') }}</dt>
+                        <dd class="text-sm text-primary">{{ showingContact.phone }}</dd>
+                    </div>
+                    <div v-if="showingContact.company">
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.contacts.company') }}</dt>
+                        <dd class="text-sm text-primary">{{ showingContact.company }}</dd>
+                    </div>
+                    <div v-if="showingContact.notes" class="sm:col-span-2">
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.contacts.notes') }}</dt>
+                        <dd class="text-sm text-secondary whitespace-pre-wrap break-words">{{ showingContact.notes }}</dd>
+                    </div>
+                </dl>
+
+                <div class="pt-3 border-t border-line/40 space-y-2">
+                    <h4 class="text-xs text-muted uppercase tracking-wide">{{ t('backend.crm.activity.title') }}</h4>
+                    <p v-if="activityLoading" class="text-xs text-muted">{{ t('shared.common.loading') }}</p>
+                    <p v-else-if="!activity.length" class="text-xs text-muted">{{ t('backend.crm.activity.empty') }}</p>
+                    <ol v-else class="relative border-l border-line ml-2 space-y-3">
+                        <li v-for="event in activity" :key="event.id" class="ml-3">
+                            <div class="absolute w-2 h-2 bg-accent-600 rounded-full -left-[5px] border-2 border-bg" />
+                            <p class="text-sm text-primary">{{ activityActionLabel(event.action) }}</p>
+                            <p class="text-xs text-secondary">
+                                <span v-if="event.userName">{{ event.userName }}</span>
+                                <span v-if="event.userName && event.userEmail" class="text-muted"> · </span>
+                                <span v-if="event.userEmail" class="text-muted">{{ event.userEmail }}</span>
+                            </p>
+                            <time class="text-xs text-muted">{{ formatDateTime(event.createdAt) }}</time>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="closeShow"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.close') }}</AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
 
         <AppModal
             :show="showCreate"
@@ -167,6 +254,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 />
                 <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
                 <AppInput v-model="newContact.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppTagsInput v-model="newContact.tags" :label="t('backend.crm.contacts.tags')" :placeholder="t('backend.crm.contacts.tagsPlaceholder')" />
                 <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
             </form>
             <template #footer>
@@ -210,6 +298,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 />
                 <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
                 <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppTagsInput v-model="editForm.tags" :label="t('backend.crm.contacts.tags')" :placeholder="t('backend.crm.contacts.tagsPlaceholder')" />
+                <div v-if="editingContact?.source" class="text-xs text-muted">
+                    {{ t('backend.crm.contacts.sourceLabel') }}
+                    <AppBadge :color="contactSourceColor(editingContact.source)">{{ t(`backend.crm.contacts.sources.${editingContact.source}`) }}</AppBadge>
+                </div>
                 <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
             </form>
             <template #footer>

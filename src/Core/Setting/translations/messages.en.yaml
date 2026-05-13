@@ -145,6 +145,9 @@ backend:
     crm_company_prefix:
       label: CRM company reference prefix
       description: Auto-generated CRM company reference prefix (e.g. CPY). Leave empty to disable.
+    crm_sync_orders:
+      label: Sync orders into CRM
+      description: When enabled, each Ecommerce order automatically creates or enriches a CRM contact matching the buyer (with a "client" tag). Disable in pure B2C setups to avoid flooding the CRM.
     email_locale:
       label: Forced email locale
       description: 'Language code (fr, en, es, de) to force for all outgoing emails. Empty = use the current request locale.'

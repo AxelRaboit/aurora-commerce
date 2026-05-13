@@ -23,6 +23,8 @@ class ContactInput implements ContactInputInterface
         #[Assert\Positive]
         public readonly ?int $companyId = null,
         public readonly ?string $notes = null,
+        /** @var list<string> */
+        public readonly array $tags = [],
     ) {}
 
     public function getFirstName(): string
@@ -53,5 +55,11 @@ class ContactInput implements ContactInputInterface
     public function getNotes(): ?string
     {
         return $this->notes;
+    }
+
+    /** @return list<string> */
+    public function getTags(): array
+    {
+        return $this->tags;
     }
 }

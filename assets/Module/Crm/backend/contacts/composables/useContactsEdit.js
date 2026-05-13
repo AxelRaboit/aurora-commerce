@@ -56,6 +56,7 @@ export function useContactsEdit(updatePath, reset) {
             phone: contact.phone ?? "",
             company: contact.company ?? "",
             notes: contact.notes ?? "",
+            tags: Array.isArray(contact.tags) ? [...contact.tags] : [],
         };
         clearErrors();
         showEdit.value = true;

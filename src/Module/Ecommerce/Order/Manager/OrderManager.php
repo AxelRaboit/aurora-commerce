@@ -16,6 +16,7 @@ use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
+use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Service\OrderNotificationService;
 use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
@@ -24,6 +25,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[AsAlias(OrderManagerInterface::class)]
 class OrderManager implements OrderManagerInterface
@@ -37,6 +39,7 @@ class OrderManager implements OrderManagerInterface
         protected readonly OrderRefundService $refundService,
         protected readonly SettingRepository $settingRepository,
         protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale = 'fr'): Order
@@ -104,6 +107,8 @@ class OrderManager implements OrderManagerInterface
             ...$this->auditPayload($order),
             'totalCents' => $totalCents,
         ]);
+
+        $this->eventDispatcher->dispatch(new OrderCreatedEvent($order));
 
         return $order;
     }

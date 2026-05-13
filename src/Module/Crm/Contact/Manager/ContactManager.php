@@ -13,6 +13,7 @@ use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
+use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -33,6 +34,10 @@ class ContactManager implements ContactManagerInterface
     {
         $contact = $this->createContact();
         $this->applyInput($contact, $input);
+        if (!$contact->getSource() instanceof ContactSourceEnum) {
+            $contact->setSource(ContactSourceEnum::Manual);
+        }
+
         $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmContactPrefix->value, SequencePrefixEnum::Contact->value) ?? SequencePrefixEnum::Contact->value;
         $contact->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($contact);
@@ -74,6 +79,7 @@ class ContactManager implements ContactManagerInterface
         $contact->setPhone($input->getPhone());
         $contact->setCompany(null !== $input->getCompanyId() ? $this->companyRepository->find($input->getCompanyId()) : null);
         $contact->setNotes($input->getNotes());
+        $contact->setTags($input->getTags());
     }
 
     protected function auditCreated(ContactInterface $contact): void
@@ -93,6 +99,10 @@ class ContactManager implements ContactManagerInterface
 
     protected function auditPayload(ContactInterface $contact): array
     {
-        return ['name' => $contact->getFullName(), 'reference' => $contact->getReference()];
+        return [
+            'name' => $contact->getFullName(),
+            'reference' => $contact->getReference(),
+            'source' => $contact->getSource()?->value,
+        ];
     }
 }

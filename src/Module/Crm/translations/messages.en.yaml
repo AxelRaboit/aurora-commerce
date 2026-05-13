@@ -112,6 +112,13 @@ backend:
       updated: Contact updated.
       noContacts: No contacts linked to this company.
       contactLinked: 'Will be linked to {name}'
+      tags: Tags
+      tagsPlaceholder: 'Type a tag then press Enter…'
+      sourceLabel: 'Source:'
+      sources:
+        manual: Manual entry
+        form: Form submission
+        order: Order
     deals:
       add: New deal
       create: Create deal

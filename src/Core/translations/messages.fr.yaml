@@ -35,6 +35,7 @@ shared:
     collapse: Replier
     select_placeholder: Sélectionner…
     no_options: Aucun élément disponible
+    add_tag_hint: Ajouter une étiquette…
     no_result: Aucun résultat
     select_to_pick: Appuyez sur Entrée pour sélectionner
     select_selected: Sélectionné

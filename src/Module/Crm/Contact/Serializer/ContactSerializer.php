@@ -23,6 +23,8 @@ class ContactSerializer implements ContactSerializerInterface
             'company' => $contact->getDisplayCompany(),
             'companyId' => $contact->getCompany()?->getId(),
             'notes' => $contact->getNotes(),
+            'source' => $contact->getSource()?->value,
+            'tags' => $contact->getTags(),
             'createdAt' => $contact->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $contact->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

@@ -112,6 +112,13 @@ backend:
       updated: Contact mis à jour.
       noContacts: Aucun contact lié à cette entreprise.
       contactLinked: 'Sera lié à {name}'
+      tags: Étiquettes
+      tagsPlaceholder: 'Ajouter une étiquette puis Entrée…'
+      sourceLabel: 'Origine :'
+      sources:
+        manual: Saisie manuelle
+        form: Formulaire
+        order: Commande
     deals:
       add: Nouvelle affaire
       create: Créer l'affaire

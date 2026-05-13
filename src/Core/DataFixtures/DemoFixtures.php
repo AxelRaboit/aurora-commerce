@@ -6,6 +6,8 @@ namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Audit\Entity\AbstractAuditLog;
+use Aurora\Core\Audit\Entity\AuditLog;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Menu\Entity\Menu;
@@ -25,6 +27,7 @@ use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
@@ -78,6 +81,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use ReflectionProperty;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -1124,28 +1128,30 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $contacts = [];
         $contactDefs = [
-            ['first' => 'Pierre',    'last' => 'Dubois',    'email' => 'pierre.dubois@tech-innovation.fr',  'phone' => '+33 6 12 34 56 78', 'company' => 0],
-            ['first' => 'Camille',   'last' => 'Leroy',     'email' => 'c.leroy@biomed-france.com',         'phone' => '+33 6 23 45 67 89', 'company' => 1],
-            ['first' => 'François',  'last' => 'Moreau',    'email' => 'f.moreau@retail-connect.fr',        'phone' => '+33 6 34 56 78 90', 'company' => 2],
-            ['first' => 'Julie',     'last' => 'Chen',      'email' => 'julie.chen@tech-innovation.fr',     'phone' => '+33 6 45 67 89 01', 'company' => 0],
-            ['first' => 'Marc',      'last' => 'Fontaine',  'email' => 'marc.fontaine@prospect.com',        'phone' => '+33 6 56 78 90 12', 'company' => null],
-            ['first' => 'Isabelle',  'last' => 'Renard',    'email' => 'i.renard@nexus-digital.fr',         'phone' => '+33 6 67 89 01 23', 'company' => 3],
-            ['first' => 'David',     'last' => 'Beaumont',  'email' => 'd.beaumont@leclerc-nord.fr',        'phone' => '+33 6 78 90 12 34', 'company' => 4],
-            ['first' => 'Nathalie',  'last' => 'Simon',     'email' => 'n.simon@clinique-sj.fr',            'phone' => '+33 6 89 01 23 45', 'company' => 5],
-            ['first' => 'Antoine',   'last' => 'Garnier',   'email' => 'a.garnier@fintech-horizons.fr',     'phone' => '+33 6 90 12 34 56', 'company' => 6],
-            ['first' => 'Laure',     'last' => 'Michaud',   'email' => 'l.michaud@ecobuilding.fr',          'phone' => '+33 6 01 23 45 67', 'company' => 7],
-            ['first' => 'Sébastien', 'last' => 'Blanc',     'email' => 's.blanc@logimove.fr',               'phone' => '+33 6 12 23 34 45', 'company' => 8],
-            ['first' => 'Emma',      'last' => 'Rousseau',  'email' => 'e.rousseau@startupfactory.fr',      'phone' => '+33 6 23 34 45 56', 'company' => 9],
-            ['first' => 'Thomas',    'last' => 'Lambert',   'email' => 'tlambert@prospect.io',              'phone' => '+33 6 34 45 56 67', 'company' => null],
-            ['first' => 'Céline',    'last' => 'Dupuis',    'email' => 'celine.dupuis@startup-prospect.fr', 'phone' => '+33 6 45 56 67 78', 'company' => null],
-            ['first' => 'Hugo',      'last' => 'Marchand',  'email' => 'h.marchand@tech-innovation.fr',     'phone' => '+33 6 56 67 78 89', 'company' => 0],
+            ['first' => 'Pierre',    'last' => 'Dubois',    'email' => 'pierre.dubois@tech-innovation.fr',  'phone' => '+33 6 12 34 56 78', 'company' => 0,    'source' => ContactSourceEnum::Manual, 'tags' => ['client', 'vip']],
+            ['first' => 'Camille',   'last' => 'Leroy',     'email' => 'c.leroy@biomed-france.com',         'phone' => '+33 6 23 45 67 89', 'company' => 1,    'source' => ContactSourceEnum::Manual, 'tags' => ['prospect']],
+            ['first' => 'François',  'last' => 'Moreau',    'email' => 'f.moreau@retail-connect.fr',        'phone' => '+33 6 34 56 78 90', 'company' => 2,    'source' => ContactSourceEnum::Order,  'tags' => ['client']],
+            ['first' => 'Julie',     'last' => 'Chen',      'email' => 'julie.chen@tech-innovation.fr',     'phone' => '+33 6 45 67 89 01', 'company' => 0,    'source' => ContactSourceEnum::Manual, 'tags' => ['client']],
+            ['first' => 'Marc',      'last' => 'Fontaine',  'email' => 'marc.fontaine@prospect.com',        'phone' => '+33 6 56 78 90 12', 'company' => null, 'source' => ContactSourceEnum::Form,   'tags' => ['prospect', 'newsletter']],
+            ['first' => 'Isabelle',  'last' => 'Renard',    'email' => 'i.renard@nexus-digital.fr',         'phone' => '+33 6 67 89 01 23', 'company' => 3,    'source' => ContactSourceEnum::Manual, 'tags' => ['partenaire']],
+            ['first' => 'David',     'last' => 'Beaumont',  'email' => 'd.beaumont@leclerc-nord.fr',        'phone' => '+33 6 78 90 12 34', 'company' => 4,    'source' => ContactSourceEnum::Manual, 'tags' => ['client']],
+            ['first' => 'Nathalie',  'last' => 'Simon',     'email' => 'n.simon@clinique-sj.fr',            'phone' => '+33 6 89 01 23 45', 'company' => 5,    'source' => ContactSourceEnum::Form,   'tags' => ['prospect', 'newsletter']],
+            ['first' => 'Antoine',   'last' => 'Garnier',   'email' => 'a.garnier@fintech-horizons.fr',     'phone' => '+33 6 90 12 34 56', 'company' => 6,    'source' => ContactSourceEnum::Manual, 'tags' => ['client', 'vip']],
+            ['first' => 'Laure',     'last' => 'Michaud',   'email' => 'l.michaud@ecobuilding.fr',          'phone' => '+33 6 01 23 45 67', 'company' => 7,    'source' => ContactSourceEnum::Order,  'tags' => ['client']],
+            ['first' => 'Sébastien', 'last' => 'Blanc',     'email' => 's.blanc@logimove.fr',               'phone' => '+33 6 12 23 34 45', 'company' => 8,    'source' => ContactSourceEnum::Manual, 'tags' => ['partenaire']],
+            ['first' => 'Emma',      'last' => 'Rousseau',  'email' => 'e.rousseau@startupfactory.fr',      'phone' => '+33 6 23 34 45 56', 'company' => 9,    'source' => ContactSourceEnum::Form,   'tags' => ['prospect']],
+            ['first' => 'Thomas',    'last' => 'Lambert',   'email' => 'tlambert@prospect.io',              'phone' => '+33 6 34 45 56 67', 'company' => null, 'source' => ContactSourceEnum::Form,   'tags' => ['prospect', 'newsletter']],
+            ['first' => 'Céline',    'last' => 'Dupuis',    'email' => 'celine.dupuis@startup-prospect.fr', 'phone' => '+33 6 45 56 67 78', 'company' => null, 'source' => ContactSourceEnum::Order,  'tags' => ['client']],
+            ['first' => 'Hugo',      'last' => 'Marchand',  'email' => 'h.marchand@tech-innovation.fr',     'phone' => '+33 6 56 67 78 89', 'company' => 0,    'source' => ContactSourceEnum::Manual, 'tags' => ['client']],
         ];
         foreach ($contactDefs as $def) {
             $c = new Contact();
             $c->setFirstName($def['first'])
               ->setLastName($def['last'])
               ->setEmail($def['email'])
-              ->setPhone($def['phone']);
+              ->setPhone($def['phone'])
+              ->setSource($def['source'])
+              ->setTags($def['tags']);
             if (null !== $def['company']) {
                 $c->setCompany($companies[$def['company']]);
             }
@@ -1180,7 +1186,101 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $em->persist($d);
         }
 
+        $em->flush();
+
+        $this->createContactActivity($em, $contacts, $users);
+
         return [$companies, $contacts];
+    }
+
+    /**
+     * Seeds a realistic audit trail for the demo contacts so the activity
+     * timeline in the contact detail modal isn't empty on a fresh install.
+     *
+     * Each tuple is: [contactIndex, action, daysAgo, actorUserIndex|null].
+     * `null` actor = system event (form submission, order sync).
+     *
+     * @param Contact[] $contacts
+     * @param User[]    $users
+     */
+    private function createContactActivity(EntityManagerInterface $em, array $contacts, array $users): void
+    {
+        $now = new DateTimeImmutable();
+        $events = [
+            // Pierre (VIP, manual) — long-running client relationship
+            [0, 'contact.created', 142, 0],
+            [0, 'contact.updated', 96,  0],
+            [0, 'contact.updated', 41,  1],
+            [0, 'contact.updated', 4,   0],
+            // Camille (prospect, manual)
+            [1, 'contact.created', 73,  1],
+            [1, 'contact.updated', 21,  1],
+            // François (order)
+            [2, 'contact.created', 38,  null],
+            [2, 'contact.updated', 9,   0],
+            // Julie (client, manual)
+            [3, 'contact.created', 110, 0],
+            [3, 'contact.updated', 60,  0],
+            [3, 'contact.updated', 12,  1],
+            // Marc (form, newsletter)
+            [4, 'contact.created', 22,  null],
+            [4, 'contact.updated', 6,   1],
+            // Isabelle (partenaire)
+            [5, 'contact.created', 65,  0],
+            // David (client)
+            [6, 'contact.created', 58,  1],
+            [6, 'contact.updated', 14,  0],
+            // Nathalie (form)
+            [7, 'contact.created', 11,  null],
+            // Antoine (VIP)
+            [8, 'contact.created', 130, 0],
+            [8, 'contact.updated', 76,  0],
+            [8, 'contact.updated', 18,  1],
+            [8, 'contact.updated', 1,   0],
+            // Laure (order)
+            [9, 'contact.created', 27,  null],
+            [9, 'contact.updated', 5,   0],
+            // Sébastien (partenaire)
+            [10, 'contact.created', 48, 1],
+            // Emma (form)
+            [11, 'contact.created', 17, null],
+            // Thomas (form)
+            [12, 'contact.created', 9,  null],
+            [12, 'contact.updated', 3,  0],
+            // Céline (order)
+            [13, 'contact.created', 4,  null],
+            // Hugo (client tech-innov)
+            [14, 'contact.created', 84, 0],
+            [14, 'contact.updated', 30, 1],
+        ];
+
+        foreach ($events as [$contactIndex, $action, $daysAgo, $actorIndex]) {
+            $contact = $contacts[$contactIndex];
+            $actor = null !== $actorIndex ? ($users[$actorIndex] ?? null) : null;
+
+            $log = new AuditLog(
+                module: 'crm',
+                action: $action,
+                entityType: 'Contact',
+                entityId: $contact->getId(),
+                userId: $actor?->getId(),
+                userEmail: $actor?->getEmail(),
+                userName: $actor?->getName(),
+                data: [
+                    'name' => $contact->getFullName(),
+                    'reference' => $contact->getReference(),
+                    'source' => $contact->getSource()?->value,
+                ],
+            );
+
+            $createdAt = $now->modify('-'.$daysAgo.' days');
+            $reflection = new ReflectionProperty(AbstractAuditLog::class, 'createdAt');
+            $reflection->setValue($log, $createdAt);
+
+            $em->persist($log);
+        }
+
+        $em->flush();
     }
 
     // ── ERP ───────────────────────────────────────────────────────────────────

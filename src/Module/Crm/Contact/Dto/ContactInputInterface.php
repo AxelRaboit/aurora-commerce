@@ -17,4 +17,7 @@ interface ContactInputInterface
     public function getCompanyId(): ?int;
 
     public function getNotes(): ?string;
+
+    /** @return list<string> */
+    public function getTags(): array;
 }

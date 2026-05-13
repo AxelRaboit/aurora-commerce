@@ -8,6 +8,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
+use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Editorial\Form\Entity\FormInterface;
 use Aurora\Module\Editorial\Form\Enum\FormFieldTypeEnum;
@@ -62,6 +63,8 @@ final readonly class FormSubmissionCrmSyncListener
             if (null !== $phone) {
                 $contact->setPhone($phone);
             }
+
+            $contact->setSource(ContactSourceEnum::Form);
 
             $this->entityManager->persist($contact);
             $this->entityManager->flush();

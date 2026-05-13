@@ -69,6 +69,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryItemCommentPrefix = 'photo_gallery_item_comment_prefix';
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
     case NavSectionAliases = 'nav_section_aliases';
+    case CrmSyncOrders = 'crm_sync_orders';
 
     public function getKey(): string
     {
@@ -139,6 +140,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.label',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.label',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
+            self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.label',
         };
     }
 
@@ -206,6 +208,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.description',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.description',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
+            self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.description',
         };
     }
 
@@ -273,6 +276,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => SequencePrefixEnum::GalleryItemComment->value,
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
+            self::CrmSyncOrders => '0',
         };
     }
 
@@ -282,7 +286,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             default => 'string',
@@ -292,7 +296,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation', 'crm' => true,
             default => false,
         };
     }
@@ -311,6 +315,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
             self::NavSectionAliases => 'navigation',
+            self::CrmSyncOrders => 'crm',
         };
     }
 }

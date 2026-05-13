@@ -6,6 +6,7 @@ namespace Aurora\Module\Crm\Contact\Entity;
 
 use Aurora\Core\Trait\TimestampableTrait;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -36,6 +37,13 @@ abstract class AbstractContact implements ContactInterface
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $notes = null;
+
+    #[ORM\Column(type: Types::STRING, length: 32, nullable: true, enumType: ContactSourceEnum::class)]
+    protected ?ContactSourceEnum $source = null;
+
+    /** @var list<string> */
+    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
+    protected array $tags = [];
 
     public function getFullName(): string
     {
@@ -127,6 +135,50 @@ abstract class AbstractContact implements ContactInterface
     public function setReference(?string $reference): static
     {
         $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getSource(): ?ContactSourceEnum
+    {
+        return $this->source;
+    }
+
+    public function setSource(?ContactSourceEnum $source): static
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /** @param list<string> $tags */
+    public function setTags(array $tags): static
+    {
+        $normalized = [];
+        foreach ($tags as $tag) {
+            $clean = mb_trim((string) $tag);
+            if ('' !== $clean && !in_array($clean, $normalized, true)) {
+                $normalized[] = $clean;
+            }
+        }
+
+        $this->tags = $normalized;
+
+        return $this;
+    }
+
+    public function addTag(string $tag): static
+    {
+        $clean = mb_trim($tag);
+        if ('' !== $clean && !in_array($clean, $this->tags, true)) {
+            $this->tags[] = $clean;
+        }
 
         return $this;
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Controller\Backend;
 
+use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
@@ -34,6 +36,8 @@ final class ContactsController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
         private readonly ContactsViewBuilder $viewBuilder,
         private readonly ContactInputFactoryInterface $contactInputFactory,
+        private readonly AuditLogRepository $auditLogRepository,
+        private readonly AuditLogSerializer $auditLogSerializer,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -76,6 +80,16 @@ final class ContactsController extends AbstractController
         $this->contactManager->update($contact, $input);
 
         return $this->jsonSuccess(['contact' => $this->contactSerializer->serialize($contact)]);
+    }
+
+    #[Route('/{id}/activity', name: '_activity', methods: [HttpMethodEnum::Get->value])]
+    public function activity(Contact $contact): JsonResponse
+    {
+        $result = $this->auditLogRepository->findPaginatedForEntity('Contact', $contact->getId(), 1, 20);
+
+        return $this->jsonSuccess([
+            'items' => array_map($this->auditLogSerializer->serialize(...), $result['items']),
+        ]);
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]

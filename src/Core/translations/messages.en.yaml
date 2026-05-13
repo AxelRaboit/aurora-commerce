@@ -35,6 +35,7 @@ shared:
     collapse: Collapse
     select_placeholder: Select…
     no_options: No items available
+    add_tag_hint: Add a tag…
     no_result: No results found
     select_to_pick: Press enter to select
     select_selected: Selected
