@@ -981,7 +981,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     $conditions[] = [
                         'fieldId' => $targetField->getId(),
                         'operator' => $condDef['operator'],
-                        'value' => \$condDef['value'],
+                        'value' => $condDef['value'],
                     ];
                 }
 
