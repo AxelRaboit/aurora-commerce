@@ -13,10 +13,12 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { Search, FileText, Lock, Save } from "lucide-vue-next";
+import { toast } from "vue-sonner";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
 import { useSettingsPostPicker } from "@core/backend/settings/composables/useSettingsPostPicker.js";
 import { useSettingsSequenceFilter } from "@core/backend/settings/composables/useSettingsSequenceFilter.js";
+import { useRequest } from "@/shared/composables/http/useRequest.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -62,19 +64,15 @@ const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChan
 // Navigation aliases
 const navAliasesRaw = props.groups?.navigation?.find?.((s) => s.key === "nav_section_aliases")?.value ?? "{}";
 const navAliases = reactive((() => { try { return JSON.parse(navAliasesRaw) || {}; } catch { return {}; } })());
-const aliasesSaving = ref(false);
+const { loading: aliasesSaving, request: aliasRequest } = useRequest();
 
 async function saveNavAliases() {
-    aliasesSaving.value = true;
-    try {
-        await fetch(props.updatePath, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
-            body: JSON.stringify({ key: "nav_section_aliases", value: JSON.stringify(navAliases) }),
-        });
-        window.location.reload();
-    } finally {
-        aliasesSaving.value = false;
+    const data = await aliasRequest(props.updatePath, {
+        key: "nav_section_aliases",
+        value: JSON.stringify(navAliases),
+    });
+    if (data?.success) {
+        toast.success(t("backend.settings.saved"));
     }
 }
 
