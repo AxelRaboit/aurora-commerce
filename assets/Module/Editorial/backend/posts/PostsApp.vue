@@ -231,6 +231,7 @@ function postTermLabels(post) {
                         :selected-term-ids="selectedTermIds"
                         :active-locale="defaultLocale"
                         :default-locale="defaultLocale"
+                        :collapsible="true"
                         v-on:toggle-term="toggleTerm"
                     />
                 </div>
