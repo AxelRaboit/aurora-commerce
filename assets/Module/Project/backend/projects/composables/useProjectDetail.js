@@ -1,7 +1,10 @@
 import { ref, watch } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useProjectDetail(showPath) {
+    const { request } = useRequest();
     const activeProject = ref(null);
     const activeTasks = ref([]);
     const detailLoading = ref(false);
@@ -46,11 +49,8 @@ export function useProjectDetail(showPath) {
         detailLoading.value = true;
         try {
             const url = buildPath(showPath, { id: project.id });
-            const response = await fetch(url, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            const data = await response.json();
-            if (data.success) {
+            const data = await request(url, null, HttpMethod.Get);
+            if (data?.success) {
                 activeProject.value = data.project;
                 activeTasks.value = data.tasks;
             }

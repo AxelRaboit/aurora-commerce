@@ -1,10 +1,10 @@
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function usePostsPreview(showPath, locales) {
-    const { t } = useI18n();
+    const { request } = useRequest();
     const previewPost = ref(null);
     const previewLoading = ref(false);
 
@@ -18,12 +18,12 @@ export function usePostsPreview(showPath, locales) {
         previewLoading.value = true;
         previewPost.value = null;
         try {
-            const response = await fetch(buildPath(showPath, { id: post.id }));
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data.success) previewPost.value = data.post;
-        } catch {
-            toast.error(t("shared.common.error"));
+            const data = await request(
+                buildPath(showPath, { id: post.id }),
+                null,
+                HttpMethod.Get,
+            );
+            if (data?.success) previewPost.value = data.post;
         } finally {
             previewLoading.value = false;
         }

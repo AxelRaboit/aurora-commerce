@@ -311,10 +311,10 @@ const showPreview = ref(false);
                             <GitBranch class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                             <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.steps") }}</label>
                         </div>
-                        <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1 self-start sm:self-auto" v-on:click="addStep">
+                        <AppButton variant="link-accent" size="none" class="text-xs flex items-center gap-1 self-start sm:self-auto" v-on:click="addStep">
                             <Plus class="w-3 h-3" :stroke-width="2" />
                             {{ t("backend.forms.addStep") }}
-                        </button>
+                        </AppButton>
                     </div>
                     <p v-if="!editingForm.steps?.length" class="text-xs text-muted">{{ t("backend.forms.stepsEmpty") }}</p>
                     <div v-for="(step, i) in editingForm.steps" :key="i" class="flex items-center gap-2">
@@ -324,9 +324,9 @@ const showPreview = ref(false);
                             :placeholder="`${t('backend.forms.stepLabel')} ${i + 1}`"
                             class="flex-1"
                         />
-                        <button class="text-muted hover:text-rose-400 transition-colors shrink-0" v-on:click="removeStep(i)">
+                        <AppButton variant="ghost" size="none" class="text-muted hover:text-rose-400 shrink-0" v-on:click="removeStep(i)">
                             <X class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppButton>
                     </div>
                     <p v-if="editingForm.steps?.length" class="text-xs text-muted">{{ t("backend.forms.stepsHint") }}</p>
                 </div>
@@ -460,21 +460,23 @@ const showPreview = ref(false);
             <div v-if="otherFields.length" class="flex flex-col gap-2">
                 <div class="flex items-center justify-between">
                     <label class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("backend.forms.conditions") }}</label>
-                    <button class="text-xs text-accent-400 hover:text-accent-300 flex items-center gap-1" v-on:click="addCondition">
+                    <AppButton variant="link-accent" size="none" class="text-xs flex items-center gap-1" v-on:click="addCondition">
                         <Plus class="w-3 h-3" :stroke-width="2" /> {{ t("backend.forms.addCondition") }}
-                    </button>
+                    </AppButton>
                 </div>
                 <div v-if="editingField.conditions?.length > 1" class="flex items-center gap-2">
                     <span class="text-xs text-muted">{{ t("backend.forms.conditionsLogicLabel") }}</span>
-                    <button
+                    <AppButton
                         v-for="logic in ['and', 'or']"
                         :key="logic"
+                        variant="ghost"
+                        size="none"
                         class="px-2 py-0.5 text-xs rounded-md border transition-colors"
                         :class="editingField.conditionsLogic === logic ? 'bg-accent-600 border-accent-600 text-white' : 'border-line text-secondary hover:border-accent-400'"
                         v-on:click="editingField.conditionsLogic = logic"
                     >
                         {{ t(`backend.forms.conditionsLogic.${logic}`) }}
-                    </button>
+                    </AppButton>
                 </div>
                 <div v-for="(condition, i) in editingField.conditions" :key="i" class="flex items-end gap-1.5 flex-wrap">
                     <AppSelect v-model="condition.fieldId" class="flex-1 min-w-28">
@@ -489,9 +491,9 @@ const showPreview = ref(false);
                         :placeholder="t('backend.forms.conditionValue')"
                         class="flex-1 min-w-20"
                     />
-                    <button class="text-muted hover:text-rose-400 transition-colors mb-1.5" v-on:click="removeCondition(i)">
+                    <AppButton variant="ghost" size="none" class="text-muted hover:text-rose-400 mb-1.5" v-on:click="removeCondition(i)">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    </button>
+                    </AppButton>
                 </div>
                 <p v-if="!editingField.conditions?.length" class="text-xs text-muted">{{ t("backend.forms.conditionsEmpty") }}</p>
             </div>

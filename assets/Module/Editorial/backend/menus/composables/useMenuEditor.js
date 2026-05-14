@@ -3,17 +3,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-
-async function jsonRequest(url, options = {}) {
-    const response = await fetch(url, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...(options.headers ?? {}),
-        },
-    });
-    return response.json();
-}
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const replacePath = (template, id) => buildPath(template, { id });
 
@@ -31,6 +21,7 @@ function flattenItems(items, list = []) {
 
 export function useMenuEditor(paths, initialMenus) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const menus = ref([...initialMenus]);
     const selectedMenu = ref(null);
@@ -43,14 +34,16 @@ export function useMenuEditor(paths, initialMenus) {
         }
         loadingMenu.value = true;
         try {
-            const data = await jsonRequest(replacePath(paths.show, menu.id));
-            if (data.success) {
+            const data = await request(
+                replacePath(paths.show, menu.id),
+                null,
+                HttpMethod.Get,
+            );
+            if (data?.success) {
                 selectedMenu.value = data.menu;
-            } else {
+            } else if (data) {
                 toast.error(t("shared.common.error"));
             }
-        } catch {
-            toast.error(t("shared.common.error"));
         } finally {
             loadingMenu.value = false;
         }
@@ -62,41 +55,31 @@ export function useMenuEditor(paths, initialMenus) {
     }
 
     async function refreshList() {
-        const data = await jsonRequest(paths.list);
-        if (data.success) menus.value = data.menus;
+        const data = await request(paths.list, null, HttpMethod.Get);
+        if (data?.success) menus.value = data.menus;
     }
 
     async function updateMenu(menu, payload) {
-        const data = await jsonRequest(replacePath(paths.update, menu.id), {
-            method: HttpMethod.Post,
-            body: JSON.stringify(payload),
-        });
-        if (data.success) {
+        const data = await request(replacePath(paths.update, menu.id), payload);
+        if (data?.success) {
             toast.success(t("shared.common.saved"));
             await refreshList();
             if (data.menu) await selectMenu(data.menu);
             return true;
         }
-        toast.error(t(data.error ?? "common.error"));
+        if (data) toast.error(t(data.error ?? "common.error"));
         return false;
     }
 
     async function deleteMenu(menu) {
-        try {
-            const data = await jsonRequest(replacePath(paths.delete, menu.id), {
-                method: HttpMethod.Post,
-            });
-            if (data.success) {
-                toast.success(t("shared.common.deleted"));
-                if (selectedMenu.value?.id === menu.id)
-                    selectedMenu.value = null;
-                await refreshList();
-                return true;
-            }
-            toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await request(replacePath(paths.delete, menu.id));
+        if (data?.success) {
+            toast.success(t("shared.common.deleted"));
+            if (selectedMenu.value?.id === menu.id) selectedMenu.value = null;
+            await refreshList();
+            return true;
         }
+        if (data) toast.error(t("shared.common.error"));
         return false;
     }
 
@@ -113,22 +96,14 @@ export function useMenuEditor(paths, initialMenus) {
         reassign(selectedMenu.value.items, null);
 
         const payload = flattenItems(selectedMenu.value.items);
-        try {
-            const data = await jsonRequest(
-                replacePath(paths.itemReorder, selectedMenu.value.id),
-                {
-                    method: HttpMethod.Post,
-                    body: JSON.stringify({ items: payload }),
-                },
-            );
-            if (data.success) {
-                selectedMenu.value = data.menu;
-            } else {
-                toast.error(t("shared.common.error"));
-                await refreshMenu();
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await request(
+            replacePath(paths.itemReorder, selectedMenu.value.id),
+            { items: payload },
+        );
+        if (data?.success) {
+            selectedMenu.value = data.menu;
+        } else {
+            if (data) toast.error(t("shared.common.error"));
             await refreshMenu();
         }
     }
@@ -138,39 +113,25 @@ export function useMenuEditor(paths, initialMenus) {
         const url = editingItem
             ? replacePath(paths.itemUpdate, editingItem.id)
             : replacePath(paths.itemCreate, selectedMenu.value.id);
-        try {
-            const data = await jsonRequest(url, {
-                method: HttpMethod.Post,
-                body: JSON.stringify(payload),
-            });
-            if (data.success) {
-                toast.success(t("shared.common.saved"));
-                selectedMenu.value = data.menu;
-                await refreshList();
-                return true;
-            }
-            toast.error(t(data.error ?? "common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await request(url, payload);
+        if (data?.success) {
+            toast.success(t("shared.common.saved"));
+            selectedMenu.value = data.menu;
+            await refreshList();
+            return true;
         }
+        if (data) toast.error(t(data.error ?? "common.error"));
         return false;
     }
 
     async function deleteItem(item) {
-        try {
-            const data = await jsonRequest(
-                replacePath(paths.itemDelete, item.id),
-                { method: HttpMethod.Post },
-            );
-            if (data.success) {
-                toast.success(t("shared.common.deleted"));
-                selectedMenu.value = data.menu;
-                return true;
-            }
-            toast.error(t("shared.common.error"));
-        } catch {
-            toast.error(t("shared.common.error"));
+        const data = await request(replacePath(paths.itemDelete, item.id));
+        if (data?.success) {
+            toast.success(t("shared.common.deleted"));
+            selectedMenu.value = data.menu;
+            return true;
         }
+        if (data) toast.error(t("shared.common.error"));
         return false;
     }
 

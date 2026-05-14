@@ -1,9 +1,10 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { ChevronDown, ChevronRight, Search } from "lucide-vue-next";
+import { ChevronDown, ChevronRight } from "lucide-vue-next";
 import { buildTermTree, flattenTreeWithDepth } from "@editorial/shared/termTree.js";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 
 const { t } = useI18n();
 
@@ -95,15 +96,11 @@ function filteredTerms(taxonomy) {
         </div>
 
         <template v-if="!isCollapsed(taxonomy.slug)">
-            <div class="relative">
-                <Search class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted pointer-events-none" :stroke-width="2" />
-                <input
+            <div v-on:click.stop>
+                <AppSearchInput
                     v-model="searches[taxonomy.slug]"
-                    type="text"
                     :placeholder="t('backend.posts.searchTerms')"
-                    class="w-full pl-6 pr-2 py-1 text-xs bg-surface-2 border border-line/60 rounded-md text-primary placeholder:text-muted focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
-                    v-on:click.stop
-                >
+                />
             </div>
 
             <div class="max-h-52 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
