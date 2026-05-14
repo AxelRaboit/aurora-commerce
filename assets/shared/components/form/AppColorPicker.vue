@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
+import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import { X } from "lucide-vue-next";
 
 const PRESETS = [
@@ -65,10 +66,10 @@ function clear() {
         </div>
 
         <div class="flex items-center gap-2">
-            <div
-                class="w-8 h-8 rounded-md border border-line shrink-0"
-                :style="preview ? { backgroundColor: preview } : {}"
-                :class="!preview ? 'bg-surface-2' : ''"
+            <AppColorSwatch
+                :model-value="preview ?? '#000000'"
+                size="sm"
+                v-on:update:model-value="selectPreset($event)"
             />
             <input
                 class="flex-1 bg-surface border rounded-lg px-3 py-1.5 text-sm font-mono text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 transition"

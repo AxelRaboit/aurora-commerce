@@ -15,7 +15,12 @@ Selon le contexte UI :
 |--------|-----------|
 | Swatch isolé dans un layout custom (avec label/reset autour) | `AppColorSwatch` |
 | Champ form classique (label + swatch + hex affiché + error) | `AppColorField` |
-| Picker complet avec presets et input hex | `AppColorPicker` |
+| Picker complet avec presets + roue native + input hex | `AppColorPicker` |
+
+`AppColorPicker` est la **valeur par défaut** pour un form admin (presets
+pour discoverability, hex input pour précision, swatch natif intégré pour la
+roue OS). Préférer à `AppColorField` sauf si l'écran a besoin d'un picker
+minimal sans presets.
 
 **❌ Jamais** `<input type="color">` brut ni `<AppInput type="color">` (hack qui
 contournait l'absence de composant dédié).

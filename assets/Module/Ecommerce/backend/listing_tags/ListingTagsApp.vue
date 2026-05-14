@@ -10,7 +10,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
-import AppColorField from "@/shared/components/form/AppColorField.vue";
+import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -199,16 +199,14 @@ function displaySlug(tag) {
             v-on:close="showCreate = false; showEdit = false"
         >
             <form class="space-y-4" v-on:submit.prevent="showEdit ? submitEdit() : submitCreate()">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppColorField
-                        v-model="editForm.color"
-                        :label="t('backend.ecommerce.listing_tags.color')"
-                        :error="(showEdit ? editErrors : createErrors)['color']"
-                    />
-                    <div class="flex items-center justify-between pt-2 sm:pt-0 sm:self-end">
-                        <span class="text-sm text-secondary">{{ t('backend.ecommerce.listing_tags.visible_label') }}</span>
-                        <AppToggle v-model="editForm.isVisible" />
-                    </div>
+                <AppColorPicker
+                    v-model="editForm.color"
+                    :label="t('backend.ecommerce.listing_tags.color')"
+                    :error="(showEdit ? editErrors : createErrors)['color']"
+                />
+                <div class="flex items-center justify-between pt-2 border-t border-line">
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listing_tags.visible_label') }}</span>
+                    <AppToggle v-model="editForm.isVisible" />
                 </div>
 
                 <AppMessage v-if="(showEdit ? editErrors : createErrors)['_global']" variant="error">
