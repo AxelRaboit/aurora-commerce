@@ -89,6 +89,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.title') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.slug') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.ecommerce.listings.categories') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.listings.price') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.visibility') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
@@ -109,6 +110,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             </div>
                         </td>
                         <td class="px-6 py-3 font-mono text-xs text-secondary">/{{ listing.slug }}</td>
+                        <td class="px-6 py-3 hidden lg:table-cell">
+                            <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
+                                <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
+                                    {{ category.name }}
+                                </AppBadge>
+                            </div>
+                        </td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
                         <td class="px-6 py-3">
                             <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
@@ -124,7 +132,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </td>
                     </tr>
                     <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</td>
+                        <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -139,6 +147,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </div>
                     <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
                         {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
+                    </AppBadge>
+                </div>
+                <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
+                    <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
+                        {{ category.name }}
                     </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
