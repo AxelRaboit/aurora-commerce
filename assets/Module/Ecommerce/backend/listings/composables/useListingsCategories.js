@@ -27,10 +27,9 @@ export function useListingsCategories(categoriesPath) {
         return availableCategories.value.map((category) => {
             const translation = pickTranslation(category);
             const name = translation?.name ?? `#${category.id}`;
-            const indent = "— ".repeat(category.depth);
             return {
                 id: category.id,
-                label: `${indent}${name}`,
+                label: name,
                 depth: category.depth,
                 name,
             };

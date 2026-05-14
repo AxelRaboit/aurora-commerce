@@ -171,8 +171,7 @@ backend:
       seo_description: SEO description
       seo_description_placeholder: 'Meta description shown in search engine results'
       parent: Parent category
-      parent_placeholder: '— (root)'
-      no_parent: '— (root)'
+      parent_placeholder: 'No parent'
       image: Image
       translations: Translations
       visibility: Visibility
