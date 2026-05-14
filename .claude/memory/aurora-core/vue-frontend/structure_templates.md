@@ -60,6 +60,40 @@ fichier client en priorité.
 Cf [`client/pattern_override_twig.md`](client/pattern_override_twig.md)
 pour les détails côté client.
 
+## Système de thèmes frontend
+
+`ThemeResolver::resolve('editorial/home')` :
+1. Cherche `templates/Frontend/themes/<slug-actif>/editorial/home.html.twig`
+2. Si trouvé → l'utilise. Sinon → fallback sur `default/`
+
+Le thème actif est lu en BDD (`core_themes WHERE active = true`).
+**Un seul thème actif à la fois.** Un thème custom n'override que les templates qu'il contient — tout le reste tombe sur `default`.
+
+### Créer et activer un thème custom
+
+```bash
+# 1. Créer le dossier + copier uniquement les templates à modifier
+mkdir -p templates/Frontend/themes/mon-theme/
+cp templates/Frontend/themes/default/layout.html.twig templates/Frontend/themes/mon-theme/
+
+# 2. Insérer en BDD
+php bin/console dbal:run-sql "INSERT INTO core_themes (id, slug, name, active, config) VALUES (NEXTVAL('seq_core_theme_id'), 'mon-theme', 'Mon Thème', false, '{}')"
+
+# 3. Activer (désactiver les autres d'abord)
+php bin/console dbal:run-sql "UPDATE core_themes SET active = false"
+php bin/console dbal:run-sql "UPDATE core_themes SET active = true WHERE slug = 'mon-theme'"
+```
+
+Aussi gérables depuis `/backend/themes`.
+
+### `resolveAll()`
+
+Retourne une map `nom → chemin résolu` pour les templates Editorial + layout.
+Utiliser `themeTemplates['editorial/_post_card']` dans les includes inter-templates
+pour que l'override suive le thème actif.
+
+**Doc canonique** : [`docs/aurora-core/dev/frontend_theme_override.md`](../../../docs/aurora-core/dev/frontend_theme_override.md)
+
 ## Conventions de naming
 
 ### Pages admin
