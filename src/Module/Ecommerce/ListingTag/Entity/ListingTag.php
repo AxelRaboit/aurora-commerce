@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingTag\Entity;
 
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,9 +30,19 @@ class ListingTag extends AbstractListingTag
     )]
     protected Collection $translations;
 
+    /** @var Collection<int, ListingInterface> */
+    #[ORM\ManyToMany(targetEntity: ListingInterface::class, mappedBy: 'tags')]
+    protected Collection $listings;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
+        $this->listings = new ArrayCollection();
+    }
+
+    public function getListings(): Collection
+    {
+        return $this->listings;
     }
 
     public function getId(): ?int

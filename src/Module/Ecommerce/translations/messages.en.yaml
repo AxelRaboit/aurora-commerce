@@ -149,6 +149,8 @@ backend:
       linkedProduct: Linked product
       categories: Categories
       categoriesPlaceholder: Pick one or more categories…
+      tags: Tags
+      tagsPlaceholder: Pick one or more tags…
       deleteConfirm: 'Delete listing "{name}"?'
       deleteWarning: 'The linked product is not deleted, only the shop page.'
     listing_categories:

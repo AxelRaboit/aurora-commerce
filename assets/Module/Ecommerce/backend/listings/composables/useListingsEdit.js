@@ -47,6 +47,7 @@ export function useListingsEdit(updatePath, reset) {
             featuredImageId: listing.featuredImage?.id ?? null,
             featuredImageUrl: listing.featuredImage?.url ?? null,
             categoryIds: (listing.categories ?? []).map((category) => category.id),
+            tagIds: (listing.tags ?? []).map((tag) => tag.id),
         };
         clearErrors();
         showEdit.value = true;

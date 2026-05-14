@@ -16,6 +16,8 @@ use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
+use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +34,7 @@ class ListingManager implements ListingManagerInterface
         protected readonly ProductRepository $productRepository,
         protected readonly MediaRepository $mediaRepository,
         protected readonly ListingCategoryRepository $listingCategoryRepository,
+        protected readonly ListingTagRepository $listingTagRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly TranslatorInterface $translator,
         protected readonly SequenceGenerator $sequenceGenerator,
@@ -93,6 +96,7 @@ class ListingManager implements ListingManagerInterface
             null !== $input->getFeaturedImageId() ? $this->mediaRepository->find($input->getFeaturedImageId()) : null,
         );
         $this->applyCategories($listing, $input);
+        $this->applyTags($listing, $input);
     }
 
     protected function applyCategories(ListingInterface $listing, ListingInputInterface $input): void
@@ -107,6 +111,22 @@ class ListingManager implements ListingManagerInterface
         foreach ($categories as $category) {
             if ($category instanceof ListingCategoryInterface) {
                 $listing->addCategory($category);
+            }
+        }
+    }
+
+    protected function applyTags(ListingInterface $listing, ListingInputInterface $input): void
+    {
+        $listing->clearTags();
+        $tagIds = $input->getTagIds();
+        if ([] === $tagIds) {
+            return;
+        }
+
+        $tags = $this->listingTagRepository->findBy(['id' => $tagIds]);
+        foreach ($tags as $tag) {
+            if ($tag instanceof ListingTagInterface) {
+                $listing->addTag($tag);
             }
         }
     }
@@ -136,10 +156,16 @@ class ListingManager implements ListingManagerInterface
             $categoryIds[] = $category->getId();
         }
 
+        $tagIds = [];
+        foreach ($listing->getTags() as $tag) {
+            $tagIds[] = $tag->getId();
+        }
+
         return [
             'slug' => $listing->getSlug(),
             'reference' => $listing->getReference(),
             'category_ids' => $categoryIds,
+            'tag_ids' => $tagIds,
         ];
     }
 

@@ -25,6 +25,8 @@ class ListingInput implements ListingInputInterface
         public readonly ?string $seoDescription = null,
         /** @var list<int> */
         public readonly array $categoryIds = [],
+        /** @var list<int> */
+        public readonly array $tagIds = [],
     ) {}
 
     public function getProductId(): ?int
@@ -71,5 +73,11 @@ class ListingInput implements ListingInputInterface
     public function getCategoryIds(): array
     {
         return $this->categoryIds;
+    }
+
+    /** @return list<int> */
+    public function getTagIds(): array
+    {
+        return $this->tagIds;
     }
 }

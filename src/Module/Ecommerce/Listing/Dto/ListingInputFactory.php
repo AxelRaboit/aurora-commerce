@@ -22,7 +22,8 @@ class ListingInputFactory implements ListingInputFactoryInterface
             isVisibleOnShop: (bool) ($data['isVisibleOnShop'] ?? true),
             seoTitle: Str::trimOrNullFromArray($data, 'seoTitle'),
             seoDescription: Str::trimOrNullFromArray($data, 'seoDescription'),
-            categoryIds: $this->extractCategoryIds($data),
+            categoryIds: $this->extractIdList($data, 'categoryIds', 'category_ids'),
+            tagIds: $this->extractIdList($data, 'tagIds', 'tag_ids'),
         );
     }
 
@@ -31,9 +32,9 @@ class ListingInputFactory implements ListingInputFactoryInterface
      *
      * @return list<int>
      */
-    private function extractCategoryIds(array $data): array
+    private function extractIdList(array $data, string $camelKey, string $snakeKey): array
     {
-        $raw = $data['categoryIds'] ?? $data['category_ids'] ?? [];
+        $raw = $data[$camelKey] ?? $data[$snakeKey] ?? [];
         if (!is_array($raw)) {
             return [];
         }

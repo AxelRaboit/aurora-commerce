@@ -17,6 +17,7 @@ export function emptyListingForm() {
         featuredImageId: null,
         featuredImageUrl: null,
         categoryIds: [],
+        tagIds: [],
     };
 }
 

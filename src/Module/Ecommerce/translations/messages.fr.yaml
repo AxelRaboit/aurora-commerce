@@ -149,6 +149,8 @@ backend:
       linkedProduct: Produit lié
       categories: Catégories
       categoriesPlaceholder: Choisir une ou plusieurs catégories…
+      tags: Tags
+      tagsPlaceholder: Choisir un ou plusieurs tags…
       deleteConfirm: 'Supprimer le listing « {name} » ?'
       deleteWarning: "Le produit lié n'est pas supprimé, seulement la fiche boutique."
     listing_categories:

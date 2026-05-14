@@ -32,6 +32,7 @@ final readonly class ListingsViewBuilder
             'showPath' => $this->urlGenerator->generate('backend_ecommerce_listings_show', ['id' => '__id__']),
             'productsPath' => $this->urlGenerator->generate('backend_ecommerce_listings_products'),
             'categoriesPath' => $this->urlGenerator->generate('backend_ecommerce_listing_categories_list'),
+            'tagsPath' => $this->urlGenerator->generate('backend_ecommerce_listing_tags_list'),
         ];
     }
 }

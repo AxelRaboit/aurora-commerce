@@ -24,4 +24,7 @@ interface ListingInputInterface
 
     /** @return list<int> */
     public function getCategoryIds(): array;
+
+    /** @return list<int> */
+    public function getTagIds(): array;
 }

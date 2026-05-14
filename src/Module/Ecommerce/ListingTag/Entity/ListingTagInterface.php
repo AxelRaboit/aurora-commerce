@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\ListingTag\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingTagInterface extends TimestampableInterface
@@ -27,4 +28,7 @@ interface ListingTagInterface extends TimestampableInterface
     public function addTranslation(ListingTagTranslationInterface $translation): static;
 
     public function removeTranslation(ListingTagTranslationInterface $translation): static;
+
+    /** @return Collection<int, ListingInterface> */
+    public function getListings(): Collection;
 }

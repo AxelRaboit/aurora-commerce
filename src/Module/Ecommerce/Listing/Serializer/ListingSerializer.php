@@ -69,6 +69,7 @@ class ListingSerializer implements ListingSerializerInterface
                 'isLowStock' => $isLowStock,
             ],
             'categories' => $this->serializeCategories($listing),
+            'tags' => $this->serializeTags($listing),
             'createdAt' => $listing->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $listing->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
@@ -97,6 +98,36 @@ class ListingSerializer implements ListingSerializerInterface
                 'id' => $category->getId(),
                 'name' => $translation->getName(),
                 'slug' => $translation->getSlug(),
+            ];
+        }
+
+        return $result;
+    }
+
+    /** @return list<array{id: int|null, name: string, slug: string, color: string}> */
+    private function serializeTags(ListingInterface $listing): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $locale = null !== $request ? $request->getLocale() : 'en';
+
+        $result = [];
+        foreach ($listing->getTags() as $tag) {
+            $translation = $tag->getTranslation($locale);
+            if (null === $translation) {
+                foreach ($tag->getTranslations() as $candidate) {
+                    $translation = $candidate;
+                    break;
+                }
+            }
+            if (null === $translation) {
+                continue;
+            }
+
+            $result[] = [
+                'id' => $tag->getId(),
+                'name' => $translation->getName(),
+                'slug' => $translation->getSlug(),
+                'color' => $tag->getColor(),
             ];
         }
 

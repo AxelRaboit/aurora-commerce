@@ -5,6 +5,7 @@ import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useListingsProducts } from "@ecommerce/backend/listings/composables/useListingsProducts.js";
 import { useListingsCategories } from "@ecommerce/backend/listings/composables/useListingsCategories.js";
+import { useListingsTags } from "@ecommerce/backend/listings/composables/useListingsTags.js";
 import { useListingsCreate } from "@ecommerce/backend/listings/composables/useListingsCreate.js";
 import { useListingsEdit } from "@ecommerce/backend/listings/composables/useListingsEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -42,6 +43,7 @@ const props = defineProps({
     listPath: { type: String, required: true },
     productsPath: { type: String, required: true },
     categoriesPath: { type: String, required: true },
+    tagsPath: { type: String, required: true },
 });
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
@@ -51,6 +53,7 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 
 const { availableProducts, loadProducts } = useListingsProducts(props.productsPath);
 const { flatCategories } = useListingsCategories(props.categoriesPath);
+const { flatTags } = useListingsTags(props.tagsPath);
 const { showCreate, newListing, newListingImage, createErrors, createLoading, openCreate, onProductChange, submitCreate } =
     useListingsCreate(props.createPath, reset, loadProducts);
 
@@ -116,6 +119,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                     {{ category.name }}
                                 </AppBadge>
                             </div>
+                            <div v-if="listing.tags?.length" class="flex flex-wrap gap-1 mt-1">
+                                <span
+                                    v-for="tag in listing.tags"
+                                    :key="tag.id"
+                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                    :style="{ backgroundColor: tag.color, color: '#fff' }"
+                                >
+                                    {{ tag.name }}
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
                         <td class="px-6 py-3">
@@ -153,6 +166,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
                         {{ category.name }}
                     </AppBadge>
+                </div>
+                <div v-if="listing.tags?.length" class="flex flex-wrap gap-1">
+                    <span
+                        v-for="tag in listing.tags"
+                        :key="tag.id"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                        :style="{ backgroundColor: tag.color, color: '#fff' }"
+                    >
+                        {{ tag.name }}
+                    </span>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
@@ -213,6 +236,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     track-by="id"
                     option-label="label"
                 />
+                <AppMultiselect
+                    v-model="newListing.tagIds"
+                    :options="flatTags"
+                    :label="t('backend.ecommerce.listings.tags')"
+                    :placeholder="t('backend.ecommerce.listings.tagsPlaceholder')"
+                    multiple
+                    track-by="id"
+                    option-label="label"
+                />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
                     <AppToggle v-model="newListing.isVisibleOnShop" />
@@ -255,6 +287,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :options="flatCategories"
                     :label="t('backend.ecommerce.listings.categories')"
                     :placeholder="t('backend.ecommerce.listings.categoriesPlaceholder')"
+                    multiple
+                    track-by="id"
+                    option-label="label"
+                />
+                <AppMultiselect
+                    v-model="editForm.tagIds"
+                    :options="flatTags"
+                    :label="t('backend.ecommerce.listings.tags')"
+                    :placeholder="t('backend.ecommerce.listings.tagsPlaceholder')"
                     multiple
                     track-by="id"
                     option-label="label"
