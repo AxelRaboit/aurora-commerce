@@ -96,12 +96,10 @@ function filteredTerms(taxonomy) {
         </div>
 
         <template v-if="!isCollapsed(taxonomy.slug)">
-            <div v-on:click.stop>
-                <AppSearchInput
-                    v-model="searches[taxonomy.slug]"
-                    :placeholder="t('backend.posts.searchTerms')"
-                />
-            </div>
+            <AppSearchInput
+                v-model="searches[taxonomy.slug]"
+                :placeholder="t('backend.posts.searchTerms')"
+            />
 
             <div class="max-h-52 overflow-y-auto scrollbar-thin border border-line/60 rounded-md bg-surface-2 p-2 space-y-1">
                 <AppNoData v-if="!filteredTerms(taxonomy).length" :message="t('backend.posts.termsPickerEmpty')" />
