@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
 import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus, EyeOff } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
@@ -35,9 +35,12 @@ const displaySlug = computed(() => {
 });
 
 const isCollapsed = computed(() => props.collapsed.has(props.node.id));
-const localChildren = ref([...(props.node.children ?? [])]);
-watch(() => props.node.children, (children) => { localChildren.value = [...(children ?? [])]; });
-const hasChildren = computed(() => localChildren.value.length > 0);
+
+const children = computed({
+    get: () => props.node.children ?? [],
+    set: (value) => { props.node.children = value; },
+});
+const hasChildren = computed(() => children.value.length > 0);
 </script>
 
 <template>
@@ -90,7 +93,7 @@ const hasChildren = computed(() => localChildren.value.length > 0);
 
         <VueDraggable
             v-if="!isCollapsed"
-            v-model="localChildren"
+            v-model="children"
             :group="{ name: groupName, pull: true, put: true }"
             handle=".drag-handle"
             :animation="150"
@@ -98,7 +101,7 @@ const hasChildren = computed(() => localChildren.value.length > 0);
             class="pl-5 pb-1 space-y-1 min-h-1"
             v-on:end="emit('end')"
         >
-            <template v-for="child in localChildren" :key="child.id">
+            <template v-for="child in children" :key="child.id">
                 <ListingCategoryNode
                     :node="child"
                     :active-locale="activeLocale"
