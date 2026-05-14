@@ -6,10 +6,12 @@ import { VueDraggable } from "vue-draggable-plus";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useListingCategoriesForm } from "@ecommerce/backend/listing_categories/composables/useListingCategoriesForm.js";
+import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 import ListingCategoryNode from "@ecommerce/backend/listing_categories/ListingCategoryNode.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -77,10 +79,30 @@ async function reload() {
     items.value = json.items ?? [];
 }
 
+function collectDescendantIds(node, set = new Set()) {
+    if (!node) return set;
+    set.add(node.id);
+    for (const child of node.children ?? []) collectDescendantIds(child, set);
+    return set;
+}
+
+function findNodeInTree(nodes, id) {
+    for (const node of nodes) {
+        if (node.id === id) return node;
+        const found = findNodeInTree(node.children ?? [], id);
+        if (found) return found;
+    }
+    return null;
+}
+
 const parentOptions = computed(() => {
+    const forbidden = editingCategory.value
+        ? collectDescendantIds(findNodeInTree(tree.value, editingCategory.value.id) ?? editingCategory.value)
+        : new Set();
     const list = [];
     const walk = (nodes, depth) => {
         for (const node of nodes) {
+            if (forbidden.has(node.id)) continue;
             const translation = node.translations?.[activeLocale.value];
             const firstTranslation = Object.values(node.translations ?? {})[0];
             const name = translation?.name ?? firstTranslation?.name ?? `#${node.id}`;
@@ -91,6 +113,11 @@ const parentOptions = computed(() => {
     walk(tree.value, 0);
     return list;
 });
+
+function autoSlug(locale) {
+    const entry = editForm.translations?.[locale];
+    if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
+}
 
 const {
     showCreate,
@@ -178,16 +205,17 @@ defineSlots();
     <div class="space-y-4">
         <div class="flex items-center justify-between gap-2 flex-wrap">
             <div v-if="locales.length > 1" class="flex gap-1">
-                <button
+                <AppTab
                     v-for="locale in locales"
                     :key="locale.code"
-                    type="button"
-                    class="px-3 py-1.5 text-xs font-medium rounded transition-colors"
-                    :class="activeTab === locale.code ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    size="xs"
+                    :active="activeTab === locale.code"
+                    active-class="bg-accent-600 text-white"
+                    inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                     v-on:click="activeTab = locale.code"
                 >
                     {{ locale.label }}
-                </button>
+                </AppTab>
             </div>
             <AppButton
                 v-if="can('ecommerce.listings.create')"
@@ -235,31 +263,21 @@ defineSlots();
 
         <AppModal
             :show="showCreate || showEdit"
+            max-width="lg"
             :title="showEdit ? t('backend.ecommerce.listing_categories.edit', { name: displayName(editingCategory ?? {}) }) : t('backend.ecommerce.listing_categories.create')"
             :icon="FolderTree"
             :closeable="false"
             v-on:close="showCreate = false; showEdit = false"
         >
             <form class="space-y-4" v-on:submit.prevent="showEdit ? submitEdit() : submitCreate()">
-                <AppSelect
+                <AppMultiselect
                     v-model="editForm.parentId"
+                    :options="parentOptions"
                     :label="t('backend.ecommerce.listing_categories.parent')"
-                >
-                    <option value="">{{ t('backend.ecommerce.listing_categories.no_parent') }}</option>
-                    <option
-                        v-for="opt in parentOptions"
-                        v-show="!editingCategory || opt.id !== editingCategory.id"
-                        :key="opt.id"
-                        :value="opt.id"
-                    >
-                        {{ opt.label }}
-                    </option>
-                </AppSelect>
-
-                <AppInput
-                    v-model.number="editForm.position"
-                    type="number"
-                    :label="t('backend.ecommerce.listing_categories.position')"
+                    :placeholder="t('backend.ecommerce.listing_categories.parent_placeholder')"
+                    :allow-empty="true"
+                    track-by="id"
+                    option-label="label"
                 />
 
                 <AppImagePickerField
@@ -272,46 +290,52 @@ defineSlots();
                     <AppToggle v-model="editForm.isVisible" />
                 </div>
 
-                <div class="border border-line rounded-lg">
-                    <div class="flex border-b border-line">
-                        <button
+                <div class="space-y-2">
+                    <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('backend.ecommerce.listing_categories.translations') }}</label>
+                    <div v-if="locales.length > 1" class="flex gap-1">
+                        <AppTab
                             v-for="locale in locales"
                             :key="locale.code"
-                            type="button"
-                            class="px-4 py-2 text-sm font-medium"
-                            :class="activeTab === locale.code ? 'text-primary border-b-2 border-accent' : 'text-muted'"
+                            size="xs"
+                            :active="activeTab === locale.code"
+                            active-class="bg-accent-600 text-white"
+                            inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
                             v-on:click="activeTab = locale.code"
                         >
                             {{ locale.label }}
-                        </button>
+                        </AppTab>
                     </div>
-                    <div v-for="locale in locales" v-show="activeTab === locale.code" :key="locale.code" class="p-4 space-y-3">
-                        <AppInput
-                            v-model="editForm.translations[locale.code].name"
-                            :label="t('backend.ecommerce.listing_categories.name')"
-                            :error="(showEdit ? editErrors : createErrors)['translations[' + locale.code + '].name']"
-                            required
-                        />
-                        <AppInput
-                            v-model="editForm.translations[locale.code].slug"
-                            :label="t('backend.ecommerce.listing_categories.slug')"
-                            :placeholder="t('backend.ecommerce.listing_categories.slug_placeholder')"
-                        />
-                        <AppTextarea
-                            v-model="editForm.translations[locale.code].description"
-                            :label="t('backend.ecommerce.listing_categories.description')"
-                            :rows="3"
-                        />
-                        <AppInput
-                            v-model="editForm.translations[locale.code].seoTitle"
-                            :label="t('backend.ecommerce.listing_categories.seo_title')"
-                        />
-                        <AppTextarea
-                            v-model="editForm.translations[locale.code].seoDescription"
-                            :label="t('backend.ecommerce.listing_categories.seo_description')"
-                            :rows="2"
-                        />
-                    </div>
+                    <AppInput
+                        v-model="editForm.translations[activeTab].name"
+                        :label="t('backend.ecommerce.listing_categories.name')"
+                        :placeholder="t('backend.ecommerce.listing_categories.name_placeholder')"
+                        :error="(showEdit ? editErrors : createErrors)['translations[' + activeTab + '].name']"
+                        required
+                        v-on:blur="autoSlug(activeTab)"
+                    />
+                    <AppInput
+                        v-model="editForm.translations[activeTab].slug"
+                        :label="t('backend.ecommerce.listing_categories.slug')"
+                        :placeholder="t('backend.ecommerce.listing_categories.slug_placeholder')"
+                        :error="(showEdit ? editErrors : createErrors)['translations[' + activeTab + '].slug']"
+                    />
+                    <AppTextarea
+                        v-model="editForm.translations[activeTab].description"
+                        :label="t('backend.ecommerce.listing_categories.description')"
+                        :placeholder="t('backend.ecommerce.listing_categories.description_placeholder')"
+                        :rows="3"
+                    />
+                    <AppInput
+                        v-model="editForm.translations[activeTab].seoTitle"
+                        :label="t('backend.ecommerce.listing_categories.seo_title')"
+                        :placeholder="t('backend.ecommerce.listing_categories.seo_title_placeholder')"
+                    />
+                    <AppTextarea
+                        v-model="editForm.translations[activeTab].seoDescription"
+                        :label="t('backend.ecommerce.listing_categories.seo_description')"
+                        :placeholder="t('backend.ecommerce.listing_categories.seo_description_placeholder')"
+                        :rows="2"
+                    />
                 </div>
 
                 <slot

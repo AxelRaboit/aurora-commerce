@@ -161,15 +161,20 @@ backend:
       empty: Aucune catégorie.
       dnd_hint: Glissez-déposez pour réordonner les catégories ou les imbriquer sous un autre parent.
       name: Nom
+      name_placeholder: 'ex. Hommes, Femmes, Accessoires'
       slug: Slug
       slug_placeholder: 'généré depuis le nom'
       description: Description
+      description_placeholder: 'Court texte d''introduction affiché en haut de la page catégorie'
       seo_title: Titre SEO
+      seo_title_placeholder: 'Titre affiché dans les résultats de recherche'
       seo_description: Description SEO
+      seo_description_placeholder: 'Meta description affichée dans les résultats de recherche'
       parent: Catégorie parente
+      parent_placeholder: '— (racine)'
       no_parent: '— (racine)'
-      position: Position
       image: Image
+      translations: Traductions
       visibility: Visibilité
       visible: Visible
       hidden: Masquée

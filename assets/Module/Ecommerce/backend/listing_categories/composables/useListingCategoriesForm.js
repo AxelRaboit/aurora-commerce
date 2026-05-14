@@ -24,7 +24,7 @@ function buildEmptyForm(locales, extraFields = {}) {
         extras[key] = extraFields[key].default;
     }
     return {
-        parentId: "",
+        parentId: null,
         position: 0,
         imageId: null,
         imageUrl: null,
@@ -61,7 +61,7 @@ export function useListingCategoriesForm(options) {
 
     function loadFromCategory(category) {
         resetForm();
-        editForm.parentId = category.parentId ?? "";
+        editForm.parentId = category.parentId ?? null;
         editForm.position = category.position ?? 0;
         editForm.imageId = category.image?.id ?? null;
         editForm.imageUrl = category.image?.url ?? null;
@@ -89,7 +89,7 @@ export function useListingCategoriesForm(options) {
     function buildBody() {
         return {
             ...editForm,
-            parentId: editForm.parentId === "" ? null : Number(editForm.parentId),
+            parentId: editForm.parentId == null || editForm.parentId === "" ? null : Number(editForm.parentId),
             imageId: editForm.imageId,
             position: Number(editForm.position) || 0,
             isVisible: !!editForm.isVisible,
