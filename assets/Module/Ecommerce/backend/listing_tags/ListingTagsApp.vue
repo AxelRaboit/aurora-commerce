@@ -134,7 +134,7 @@ function displaySlug(tag) {
                         <p class="font-medium text-primary truncate">{{ displayName(tag) }}</p>
                         <p class="text-xs font-mono text-muted mt-0.5 truncate">{{ displaySlug(tag) }}</p>
                     </div>
-                    <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
+                    <AppBadge :color="tag.isVisible ? 'emerald' : 'slate'">{{ t(tag.isVisible ? 'backend.ecommerce.listing_tags.visible' : 'backend.ecommerce.listing_tags.hidden') }}</AppBadge>
                 </div>
                 <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
                     <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tag)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -163,7 +163,7 @@ function displaySlug(tag) {
                         </td>
                         <td class="px-6 py-3 text-secondary font-mono text-xs">{{ displaySlug(tag) }}</td>
                         <td class="px-6 py-3">
-                            <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
+                            <AppBadge :color="tag.isVisible ? 'emerald' : 'slate'">{{ t(tag.isVisible ? 'backend.ecommerce.listing_tags.visible' : 'backend.ecommerce.listing_tags.hidden') }}</AppBadge>
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center justify-end gap-0.5">

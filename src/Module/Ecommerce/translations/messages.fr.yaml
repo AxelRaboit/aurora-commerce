@@ -210,6 +210,7 @@ backend:
       color: Couleur
       translations: Traductions
       visible_label: Visible
+      visible: Visible
       hidden: Masqué
       delete_confirm: 'Supprimer le tag « {name} » ?'
 ecommerce:
