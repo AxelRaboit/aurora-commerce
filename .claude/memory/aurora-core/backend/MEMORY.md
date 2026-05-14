@@ -1,6 +1,7 @@
 # Backend — PHP / Symfony / Doctrine
 
 ## Conventions métier
+- [convention_testing_php.md](convention_testing_php.md) — Unit vs Integration, IntegrationTestCase, fixtures, nommage, concerns
 - [convention_timestampable.md](convention_timestampable.md) — `Aurora\Core\Timestampable\` (jamais KNP), `#[ORM\HasLifecycleCallbacks]` obligatoire, pas de `updateTimestamps()`
 - [convention_extensibility.md](convention_extensibility.md) — résumé exécutif des 5 couches du pattern Sylius
 - [convention_naming.md](convention_naming.md) — naming des variables, dossiers, fichiers
