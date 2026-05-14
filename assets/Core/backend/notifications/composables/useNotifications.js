@@ -2,7 +2,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const POLL_INTERVAL_MS = 30_000; // 30s — light enough not to hammer.
 

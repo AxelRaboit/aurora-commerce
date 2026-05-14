@@ -8,7 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import frLocale from "@fullcalendar/core/locales/fr";
 import enLocale from "@fullcalendar/core/locales/en-gb";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Wires FullCalendar config, locales and event handlers to the planning

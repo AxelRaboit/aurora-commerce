@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useMediaDragDrop(
     props,

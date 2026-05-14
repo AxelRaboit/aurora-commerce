@@ -5,7 +5,7 @@ import { useForm } from "@shared/composables/form/useForm.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { generateSalt } from "@vault/backend/composables/useVaultCrypto.js";
 import { useVaultCrypto } from "@vault/backend/composables/useVaultCrypto.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useVaultChangeMasterPassword(
     changePath,

@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppChart from "@/shared/components/display/AppChart.vue";
 import { ExternalLink, RefreshCw, Globe, Layers, FileText, Tags, EyeOff } from "lucide-vue-next";

@@ -7,7 +7,7 @@ import {
     nextTick,
 } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 // ── Recent pages ─────────────────────────────────────────────────────────────

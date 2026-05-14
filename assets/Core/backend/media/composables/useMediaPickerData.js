@@ -7,7 +7,7 @@ import { MediaTypeFilter } from "@core/utils/enums/media/mediaTypeFilter.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { Files, Image as ImageIcon, Film, FileText } from "lucide-vue-next";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useMediaPickerData({
     listPath,

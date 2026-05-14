@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 
 export const KIND = {
     Favorite: "favorite",
@@ -48,7 +48,7 @@ export function useGalleryPicks({
         return picked.value[kind]?.has(Number(id)) ?? false;
     }
 
-    const { request: requestToggle } = useFrontendRequest();
+    const { request: requestToggle } = useRequest();
 
     async function sendToggle(
         itemId,

@@ -25,7 +25,7 @@ import PostFeaturedImagePanel from "./PostFeaturedImagePanel.vue";
 import PostTemplatesOverlay from "./PostTemplatesOverlay.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import { usePostSave } from "./composables/usePostSave.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useConflictResolution } from "./composables/useConflictResolution.js";
 import { useRelatedSearch } from "./composables/useRelatedSearch.js";

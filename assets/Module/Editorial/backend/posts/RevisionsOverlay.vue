@@ -11,7 +11,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 

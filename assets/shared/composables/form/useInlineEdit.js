@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Generic helpers for the {field, value} inline-edit + simple-action JSON

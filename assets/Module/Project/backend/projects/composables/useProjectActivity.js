@@ -2,7 +2,7 @@ import { ref, watch } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useProjectActivity(activityPath, activeProject) {
     const { t } = useI18n();

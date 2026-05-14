@@ -12,7 +12,7 @@ import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import GoogleSerpPreview from "./GoogleSerpPreview.vue";
 import { seoCounterClass } from "@/shared/utils/seo/seoCounter.js";
 import { parseJsonLd, buildArticleJsonLd } from "@/shared/utils/seo/jsonLd.js";
-import { useImageUpload } from "@/shared/composables/http/useImageUpload.js";
+import { useImageUpload } from "@/shared/composables/http/backend/useImageUpload.js";
 import { openMediaPicker } from "@shared/utils/mediaPicker.js";
 import { toast } from "vue-sonner";
 

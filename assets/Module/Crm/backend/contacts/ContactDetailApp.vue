@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";

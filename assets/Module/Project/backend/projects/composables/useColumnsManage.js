@@ -2,7 +2,7 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useServerErrors } from "@/shared/composables/form/useServerErrors.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { required } from "@/shared/utils/validation/validators.js";

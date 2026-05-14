@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { openMediaPicker } from "@/shared/utils/mediaPicker.js";
 
 export function useGalleryEditItems(props, initialItems) {

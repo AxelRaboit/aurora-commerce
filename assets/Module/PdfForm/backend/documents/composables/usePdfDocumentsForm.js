@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useDebounce } from "@/shared/composables/useDebounce.js";

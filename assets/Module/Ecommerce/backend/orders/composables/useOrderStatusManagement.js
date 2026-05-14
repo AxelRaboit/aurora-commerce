@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { Truck, PackageCheck } from "lucide-vue-next";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { OrderStatus } from "@/Module/Ecommerce/shared/enums/orderStatus.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 

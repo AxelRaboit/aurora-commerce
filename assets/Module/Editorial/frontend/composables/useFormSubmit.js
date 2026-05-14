@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 
 export function useFormSubmit(
     submitPath,
@@ -13,7 +13,7 @@ export function useFormSubmit(
     currentStep,
     validateStep,
 ) {
-    const { loading: submitting, request } = useFrontendRequest();
+    const { loading: submitting, request } = useRequest();
     const submitted = ref(false);
 
     async function handleSubmit() {

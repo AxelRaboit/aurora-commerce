@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 
 export function useGalleryFinalize({
     finalizePath,
@@ -14,8 +14,7 @@ export function useGalleryFinalize({
 }) {
     const { t } = useI18n();
 
-    const { loading: finalizing, request: requestFinalize } =
-        useFrontendRequest();
+    const { loading: finalizing, request: requestFinalize } = useRequest();
 
     const showFinalizeModal = ref(false);
     const finalizeName = ref("");

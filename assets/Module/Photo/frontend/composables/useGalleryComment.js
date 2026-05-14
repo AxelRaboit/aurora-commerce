@@ -3,7 +3,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 
 // showCommentBox and commentDraft are passed in as refs (shared with useGalleryLightbox)
 export function useGalleryComment({
@@ -17,8 +17,7 @@ export function useGalleryComment({
     identityKnown,
 }) {
     const { t } = useI18n();
-    const { loading: commentSending, request: requestComment } =
-        useFrontendRequest();
+    const { loading: commentSending, request: requestComment } = useRequest();
 
     const commentNameError = ref("");
     const commentEmailError = ref("");

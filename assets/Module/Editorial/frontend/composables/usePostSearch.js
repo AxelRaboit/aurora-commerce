@@ -1,7 +1,7 @@
-import { useFrontendPaginatedSearch } from "@/shared/composables/http/useFrontendPaginatedSearch.js";
+import { usePaginatedSearch } from "@/shared/composables/http/frontend/usePaginatedSearch.js";
 
 export function usePostSearch(props) {
-    const { items: posts, ...rest } = useFrontendPaginatedSearch({
+    const { items: posts, ...rest } = usePaginatedSearch({
         initialItems: props.initialPosts,
         initialPage: props.initialPage,
         initialTotalPages: props.initialTotalPages,

@@ -16,12 +16,12 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * @returns {{ loading: Ref<boolean>, request: (url, body?, method?) => Promise<*|null> }}
  *
  * Usage:
- *   const { loading, request } = useFrontendRequest();
+ *   const { loading, request } = useRequest();
  *   const data = await request(url, payload);
  *   if (!data) { errorMessage.value = t("shared.form.error"); return; }
  *   if (!data.success) { handleErrors(data.errors); return; }
  */
-export function useFrontendRequest() {
+export function useRequest() {
     const { t } = useI18n();
     const loading = ref(false);
 

@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function mediaUrl(base, folderId, search, all = false) {
     const url = new URL(base, window.location.origin);

@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
 import { PostFieldType } from "@editorial/shared/enums/postFieldType.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const EMPTY_FIELD = {
     name: "",

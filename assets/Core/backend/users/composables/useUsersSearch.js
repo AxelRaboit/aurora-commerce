@@ -1,6 +1,6 @@
 import { ref, onMounted, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
-import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/http/backend/usePaginatedFetch.js";
 
 export function useUsersSearch(listPath) {
     const search = ref("");

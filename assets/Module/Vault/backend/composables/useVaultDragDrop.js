@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@shared/utils/http/buildPath.js";
 import { getDescendantIds } from "@vault/backend/composables/useVaultTree.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const ENTRY_TYPE = "application/x-aurora-vault-entry";
 const FOLDER_TYPE = "application/x-aurora-vault-folder";

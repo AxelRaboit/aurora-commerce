@@ -2,8 +2,8 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { usePaginatedFetch } from "@/shared/composables/http/backend/usePaginatedFetch.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useParameters(
     parametersPath,

@@ -2,7 +2,7 @@
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useImageUpload } from "@/shared/composables/http/useImageUpload.js";
+import { useImageUpload } from "@/shared/composables/http/backend/useImageUpload.js";
 import { usePostReferenceField } from "@editorial/backend/posts/composables/usePostReferenceField.js";
 import { X, ImagePlus, Upload } from "lucide-vue-next";
 import AppInput from "@/shared/components/form/AppInput.vue";

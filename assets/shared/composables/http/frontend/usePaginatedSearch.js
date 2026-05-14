@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
@@ -14,7 +14,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * @param {string} opts.searchPath         - API endpoint URL
  * @param {string} opts.itemsKey           - Key in API response that holds the items array (e.g. 'posts', 'listings', 'items')
  */
-export function useFrontendPaginatedSearch({
+export function usePaginatedSearch({
     initialItems,
     initialPage,
     initialTotalPages,
@@ -28,7 +28,7 @@ export function useFrontendPaginatedSearch({
     const total = ref(initialTotal);
     const query = ref("");
 
-    const { loading, request } = useFrontendRequest();
+    const { loading, request } = useRequest();
 
     async function fetchPage(q, p) {
         const params = new URLSearchParams({ page: p });

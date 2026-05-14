@@ -18,7 +18,7 @@ import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
 import { useSettingsPostPicker } from "@core/backend/settings/composables/useSettingsPostPicker.js";
 import { useSettingsSequenceFilter } from "@core/backend/settings/composables/useSettingsSequenceFilter.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },

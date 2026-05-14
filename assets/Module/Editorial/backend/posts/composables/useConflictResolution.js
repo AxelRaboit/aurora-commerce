@@ -1,7 +1,7 @@
 import { ref, unref } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Manages optimistic-locking state for an edited post: tracks the version

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { KeyRound } from "lucide-vue-next";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import AppInput from "@/shared/components/form/AppInput.vue";

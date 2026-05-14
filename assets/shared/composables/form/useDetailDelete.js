@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Delete-and-redirect flow for detail pages.

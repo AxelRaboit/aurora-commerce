@@ -9,7 +9,7 @@ import PostCommentsReactionBar from "./PostCommentsReactionBar.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import { useFrontendRequest } from "@/shared/composables/http/useFrontendRequest.js";
+import { useRequest } from "@/shared/composables/http/frontend/useRequest.js";
 
 const props = defineProps({
     listPath: { type: String, required: true },
@@ -21,9 +21,9 @@ const props = defineProps({
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
 
-const { loading, request: requestList } = useFrontendRequest();
-const { loading: submitting, request: requestSubmit } = useFrontendRequest();
-const { request: requestReact } = useFrontendRequest();
+const { loading, request: requestList } = useRequest();
+const { loading: submitting, request: requestSubmit } = useRequest();
+const { request: requestReact } = useRequest();
 
 const roots = ref([]);
 const replies = ref({});

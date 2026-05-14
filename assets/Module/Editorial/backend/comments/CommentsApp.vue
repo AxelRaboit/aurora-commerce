@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
-import { usePaginatedFetch } from "@/shared/composables/http/usePaginatedFetch.js";
+import { usePaginatedFetch } from "@/shared/composables/http/backend/usePaginatedFetch.js";
 import { useI18n } from "vue-i18n";
 import { useCommentModeration } from "@/Module/Editorial/backend/comments/composables/useCommentModeration.js";
 import { useCommentFilter } from "@/Module/Editorial/backend/comments/composables/useCommentFilter.js";

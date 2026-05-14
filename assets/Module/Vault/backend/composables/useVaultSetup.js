@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRequest } from "@shared/composables/http/useRequest.js";
+import { useRequest } from "@shared/composables/http/backend/useRequest.js";
 import { useForm } from "@shared/composables/form/useForm.js";
 import { required } from "@shared/utils/validation/validators.js";
 import { generateSalt } from "@vault/backend/composables/useVaultCrypto.js";

@@ -1,7 +1,7 @@
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Lazy-loaded module/permission registry for the dev dashboard Permissions

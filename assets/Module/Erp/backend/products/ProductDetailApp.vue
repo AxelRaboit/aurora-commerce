@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { useLoadMore } from "@/shared/composables/http/useLoadMore.js";
+import { useLoadMore } from "@/shared/composables/http/backend/useLoadMore.js";
 import { useProductsOptions } from "./composables/useProductsOptions.js";
 import { useProductDetailEdit, useProductActivityLabels } from "./composables/useProductDetailEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";

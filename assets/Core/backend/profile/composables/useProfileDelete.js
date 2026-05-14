@@ -1,5 +1,5 @@
 import { useI18n } from "vue-i18n";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useProfileDelete(deletePath, loginPath, deleteCsrf) {
     const { t } = useI18n();

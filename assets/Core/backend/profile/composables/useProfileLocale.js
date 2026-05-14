@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useProfileLocale(localePath, initialLocale) {
     const selectedLocale = ref(initialLocale);

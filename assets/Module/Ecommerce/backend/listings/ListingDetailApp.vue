@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ProductStatus } from "@/Module/Ecommerce/shared/enums/productStatus.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useDetailDelete } from "@/shared/composables/form/useDetailDelete.js";
 import { useForm } from "@/shared/composables/form/useForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";

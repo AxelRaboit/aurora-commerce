@@ -5,7 +5,7 @@ import { useForm } from "@/shared/composables/form/useForm.js";
 import { required } from "@/shared/utils/validation/validators.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Saved-view dropdown for the active project. The "filters" payload is whatever

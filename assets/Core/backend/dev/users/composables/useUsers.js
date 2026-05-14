@@ -3,7 +3,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { useI18n } from "vue-i18n";
 import { useFormAction } from "@/shared/composables/form/useFormAction.js";
-import { useRequest } from "@/shared/composables/http/useRequest.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { submitForm } from "@/shared/utils/http/formSubmit.js";
 import {
     required,
