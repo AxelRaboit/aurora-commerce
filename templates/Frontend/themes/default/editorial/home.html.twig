@@ -1,0 +1,21 @@
+{% extends 'Frontend/themes/default/layout.html.twig' %}
+
+{% block title %}{{ context.siteName }}{% endblock %}
+
+{% block body %}
+
+    <section>
+        {% if posts.items|length == 0 %}
+            <p class="text-muted">{{ 'frontend.theme.no_posts'|trans }}</p>
+        {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for post in posts.items %}
+                    {{ include('Frontend/themes/default/editorial/_post_card.html.twig', {post: post, locale: locale}) }}
+                {% endfor %}
+            </div>
+            {% if posts.totalPages > 1 %}
+                {{ include('Frontend/themes/default/editorial/_pagination.html.twig', {page: posts.page, totalPages: posts.totalPages, route: 'editorial_home', params: {locale: locale}}) }}
+            {% endif %}
+        {% endif %}
+    </section>
+{% endblock %}

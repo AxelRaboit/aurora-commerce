@@ -1,0 +1,13 @@
+{% extends 'Frontend/themes/default/auth/layout.html.twig' %}
+
+{% block title %}{{ 'frontend.register.title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/frontend/auth/RegisterApp', {
+    registerPath: path('frontend_register', {locale: locale}),
+    loginPath: path('frontend_login', {locale: locale}),
+    registrationEnabled: registrationEnabled,
+    initialErrors: errors,
+    values: {name: values.name ?? '', email: values.email ?? ''},
+}) }}></div>
+{% endblock %}

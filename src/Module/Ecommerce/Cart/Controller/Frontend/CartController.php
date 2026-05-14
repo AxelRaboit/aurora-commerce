@@ -42,7 +42,7 @@ class CartController extends AbstractController
 
         $cart = $this->cartManager->getCurrentCart();
 
-        return $this->render($this->themeResolver->resolve('cart'), $this->viewBuilder->indexView($cart, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/cart'), $this->viewBuilder->indexView($cart, $locale));
     }
 
     #[Route('/{locale}/cart/add', name: 'frontend_cart_add', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Post->value], priority: 8)]

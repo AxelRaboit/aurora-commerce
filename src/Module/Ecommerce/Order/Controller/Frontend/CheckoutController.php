@@ -72,7 +72,7 @@ class CheckoutController extends AbstractController
         $submitPath = $this->urlGenerator->generate('frontend_checkout', ['locale' => $locale]);
 
         return $this->render(
-            $this->themeResolver->resolve('checkout'),
+            $this->themeResolver->resolve('ecommerce/checkout'),
             $this->viewBuilder->checkoutView($cart, $cartRequiresShipping, $formData, $locale, $this->stripeService->getPublicKey(), $submitPath),
         );
     }
@@ -151,7 +151,7 @@ class CheckoutController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('order_show'), $this->viewBuilder->showView($order, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/order_show'), $this->viewBuilder->showView($order, $locale));
     }
 
     private function cartContainsPhysicalItem(CartInterface $cart): bool

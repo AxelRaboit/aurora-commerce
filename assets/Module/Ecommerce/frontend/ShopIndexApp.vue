@@ -2,8 +2,11 @@
 import { useI18n } from "vue-i18n";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { formatMoney } from "@ecommerce/shared/formatMoney.js";
 import { ImageOff } from "lucide-vue-next";
+import { useShopSearch } from "./composables/useShopSearch.js";
 
 const { t } = useI18n();
 
@@ -13,24 +16,32 @@ const props = defineProps({
     locale: { type: String, default: "fr" },
     productPathBase: { type: String, required: true },
     indexPath: { type: String, required: true },
+    searchPath: { type: String, required: true },
 });
+
+const { query, listings, page, totalPages, loading, onSearch, goToPage } = useShopSearch(props);
 
 function productUrl(slug) {
     return `${props.productPathBase}/${slug}`;
-}
-
-function pageUrl(n) {
-    const url = new URL(props.indexPath, window.location.origin);
-    if (n > 1) url.searchParams.set("page", String(n));
-    return url.pathname + url.search;
 }
 </script>
 
 <template>
     <section>
-        <h1 class="text-3xl font-bold mb-6">{{ t('frontend.shop.title') }}</h1>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+            <h1 class="text-3xl font-bold flex-1">{{ t('frontend.shop.title') }}</h1>
+            <div class="w-full sm:w-72">
+                <AppSearchInput
+                    :model-value="query"
+                    :placeholder="t('frontend.shop.search_placeholder')"
+                    v-on:search="onSearch"
+                />
+            </div>
+        </div>
 
-        <AppNoData v-if="!listings.length" :message="t('frontend.shop.empty')" />
+        <div v-if="loading" class="text-muted text-sm py-8 text-center">{{ t('shared.common.loadMore') }}…</div>
+
+        <AppNoData v-else-if="!listings.length" :message="query ? t('frontend.shop.no_results') : t('frontend.shop.empty')" />
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <article
@@ -76,16 +87,8 @@ function pageUrl(n) {
             </article>
         </div>
 
-        <nav v-if="pagination.totalPages > 1" class="flex items-center justify-center gap-1 mt-8">
-            <a
-                v-for="n in pagination.totalPages"
-                :key="n"
-                :href="pageUrl(n)"
-                class="w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium transition-colors"
-                :class="n === pagination.page ? 'bg-accent text-white' : 'bg-surface text-secondary hover:text-primary'"
-            >
-                {{ n }}
-            </a>
-        </nav>
+        <div class="mt-8">
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        </div>
     </section>
 </template>

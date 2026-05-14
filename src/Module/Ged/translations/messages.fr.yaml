@@ -134,3 +134,7 @@ ged:
     documents:
       title: Bibliothèque de documents
       empty: Aucun document disponible pour le moment.
+      noCategory: Sans catégorie
+      search_placeholder: Rechercher un document…
+      no_results: Aucun document ne correspond à votre recherche.
+      result_count: '{count} document|{count} documents'

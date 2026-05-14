@@ -134,3 +134,7 @@ ged:
     documents:
       title: Document Library
       empty: No documents available at the moment.
+      noCategory: No category
+      search_placeholder: Search documents…
+      no_results: No documents match your search.
+      result_count: '{count} document|{count} documents'

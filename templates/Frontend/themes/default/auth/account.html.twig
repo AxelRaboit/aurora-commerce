@@ -1,0 +1,10 @@
+{% extends 'Frontend/themes/default/auth/layout.html.twig' %}
+
+{% block title %}{{ 'frontend.account.title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('core/frontend/AccountApp', {
+    logoutPath: path('frontend_logout', {locale: locale}),
+    user: {name: user.name, email: user.email},
+}) }}></div>
+{% endblock %}

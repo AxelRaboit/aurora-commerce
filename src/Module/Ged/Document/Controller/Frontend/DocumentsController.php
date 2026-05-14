@@ -5,52 +5,54 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\Document\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Module\Ged\Document\Repository\DocumentRepository;
-use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
-use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
-use Aurora\Module\Ged\DocumentCategory\Serializer\DocumentCategorySerializerInterface;
-use Aurora\Module\Ged\Enum\DocumentStatusEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Frontend\Controller\LocaleTrait;
+use Aurora\Core\Frontend\Service\Context;
+use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Module\Ged\Document\View\Frontend\DocumentsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/ged', name: 'frontend_ged')]
+#[Route('/{locale}/ged', name: 'frontend_ged', requirements: ['locale' => '[a-z]{2}'])]
 class DocumentsController extends AbstractController
 {
+    use LocaleTrait;
+    use JsonResponseTrait;
+
     public function __construct(
-        private readonly DocumentRepository $documentRepository,
-        private readonly DocumentSerializerInterface $documentSerializer,
-        private readonly DocumentCategoryRepository $categoryRepository,
-        private readonly DocumentCategorySerializerInterface $categorySerializer,
+        private readonly DocumentsViewBuilder $viewBuilder,
+        private readonly ThemeResolver $themeResolver,
+        private readonly Context $context,
     ) {}
 
     #[Route('', name: '_index', methods: [HttpMethodEnum::Get->value])]
-    public function index(): Response
+    public function index(string $locale, Request $request): Response
     {
-        $documents = $this->documentRepository->findPaginated(1, 200, status: DocumentStatusEnum::Published);
-        $categories = array_map($this->categorySerializer->serialize(...), $this->categoryRepository->findAllOrdered());
+        $this->assertActiveLocale($this->context, $locale);
+        $request->setLocale($locale);
 
-        $byCategory = [];
-        foreach ($categories as $category) {
-            $byCategory[$category['id']] = ['category' => $category, 'documents' => []];
-        }
+        $page = max(1, $request->query->getInt('page', 1));
+        $searchPath = $this->generateUrl('frontend_ged_search', ['locale' => $locale]);
 
-        $uncategorized = [];
+        return $this->render(
+            $this->themeResolver->resolve('ged/documents/index'),
+            $this->viewBuilder->indexView($locale, $page, $searchPath),
+        );
+    }
 
-        foreach ($documents['items'] as $document) {
-            $serialized = $this->documentSerializer->serialize($document);
-            if (null !== $serialized['categoryId'] && isset($byCategory[$serialized['categoryId']])) {
-                $byCategory[$serialized['categoryId']]['documents'][] = $serialized;
-            } else {
-                $uncategorized[] = $serialized;
-            }
-        }
+    #[Route('/search', name: '_search', methods: [HttpMethodEnum::Get->value])]
+    public function search(string $locale, Request $request): JsonResponse
+    {
+        $this->assertActiveLocale($this->context, $locale);
 
-        $groups = array_values(array_filter($byCategory, static fn (array $group): bool => [] !== $group['documents']));
+        $query = mb_trim($request->query->getString('q', ''));
+        $page = max(1, $request->query->getInt('page', 1));
 
-        return $this->render('@Ged/frontend/documents/index.html.twig', [
-            'groups' => $groups,
-            'uncategorized' => $uncategorized,
-        ]);
+        return $this->jsonSuccess(
+            $this->viewBuilder->pageData($page, '' !== $query ? $query : null),
+        );
     }
 }

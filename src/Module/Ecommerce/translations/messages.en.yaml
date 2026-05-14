@@ -192,6 +192,8 @@ frontend:
   shop:
     title: Shop
     empty: No products available yet.
+    search_placeholder: Search products…
+    no_results: No products match your search.
     no_image: No image
     back_to_list: Back to shop
     add_to_cart: Add to cart

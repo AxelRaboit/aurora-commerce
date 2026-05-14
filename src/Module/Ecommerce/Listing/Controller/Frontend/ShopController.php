@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Listing\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Theme\Service\ThemeResolver;
@@ -12,6 +13,7 @@ use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\View\ShopViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,6 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ShopController extends AbstractController
 {
     use LocaleTrait;
+    use JsonResponseTrait;
 
     public function __construct(
         private readonly ListingRepository $listingRepository,
@@ -34,8 +37,22 @@ class ShopController extends AbstractController
         $request->setLocale($locale);
 
         $page = max(1, (int) $request->query->get('page', '1'));
+        $searchPath = $this->generateUrl('frontend_shop_search', ['locale' => $locale]);
 
-        return $this->render($this->themeResolver->resolve('shop_index'), $this->viewBuilder->indexView($page, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/shop_index'), $this->viewBuilder->indexView($page, $locale, $searchPath));
+    }
+
+    #[Route('/{locale}/shop/search', name: 'frontend_shop_search', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
+    public function search(string $locale, Request $request): JsonResponse
+    {
+        $this->assertActiveLocale($this->context, $locale);
+
+        $query = mb_trim($request->query->getString('q', ''));
+        $page = max(1, $request->query->getInt('page', 1));
+
+        return $this->jsonSuccess(
+            $this->viewBuilder->pageData($page, '' !== $query ? $query : null),
+        );
     }
 
     #[Route('/{locale}/shop/{slug}', name: 'frontend_shop_product', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: [HttpMethodEnum::Get->value], priority: 8)]
@@ -49,6 +66,6 @@ class ShopController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('shop_product'), $this->viewBuilder->showView($listing, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/shop_product'), $this->viewBuilder->showView($listing, $locale));
     }
 }

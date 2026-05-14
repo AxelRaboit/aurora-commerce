@@ -1,0 +1,12 @@
+{% extends 'Frontend/themes/default/auth/layout.html.twig' %}
+
+{% block title %}{{ 'frontend.register.confirm_title'|trans }} — {{ context.siteName }}{% endblock %}
+
+{% block body %}
+    <div {{ vue_component('core/frontend/auth/RegisterConfirmApp', {
+        loginPath: path('frontend_login', {locale: locale}),
+        resendPath: path('frontend_resend_verification', {locale: locale}),
+        pendingEmail: pendingEmail|default(''),
+        resent: resent|default(false),
+    }) }}></div>
+{% endblock %}

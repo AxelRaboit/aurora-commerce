@@ -192,6 +192,8 @@ frontend:
   shop:
     title: Boutique
     empty: Aucun produit disponible pour le moment.
+    search_placeholder: Rechercher un produit…
+    no_results: Aucun produit ne correspond à votre recherche.
     no_image: Pas d'image
     back_to_list: Retour à la boutique
     add_to_cart: Ajouter au panier

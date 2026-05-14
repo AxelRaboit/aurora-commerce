@@ -392,14 +392,32 @@ a `Module/<Name>/Frontend/Controller/` directory with public routes (typically p
 | Editorial  | ✅ Yes | A CMS exists to serve public pages |
 | Ecommerce  | ✅ Yes | Catalog (`/shop`), cart, checkout, order confirmation |
 | Photo      | ✅ Yes | Client gallery pages (`/g/{slug}`) — password-protected |
+| Ged        | ✅ Yes | Published documents exposed at `/{locale}/ged` |
 | CRM        | ❌ Never | Contacts/companies/deals are private business data |
 | ERP        | ❌ Internal-only | Inventory stays backend; the public catalog lives in Ecommerce |
 | Billing    | ❌ Internal-only | Invoice management, suppliers, OCR — admin only |
-| Ged        | ❌ Internal-only | Document storage — admin only |
 | Hr         | ❌ Internal-only | Employee records — admin only |
 | Planning   | ❌ Internal-only | Internal planning/agenda — admin only |
 | Project    | ❌ Internal-only | Project & task management — admin only |
 | Core       | n/a | Infrastructure |
+
+**Frontend controller conventions:**
+
+Every frontend controller must call `ViewBuilder::baseView(string $locale)` and merge
+its own variables into the result. This injects `locale`, `context`, `themeContext`,
+`pageDescription` and `alternates` — required by the default layout.
+
+```php
+return $this->render($this->themeResolver->resolve('...'), $this->viewBuilder->baseView($locale) + [
+    'myVar' => $myVar,
+]);
+```
+
+The `showFrontMenus` parameter (default `false`) controls whether the header and footer
+load the Editorial nav menus (`primary`, `account`, `footer`). Pass `true` only for
+modules that are part of the main site navigation (Editorial, Ecommerce). Standalone
+modules like GED or Photo keep it `false` — they have their own layout or simply no
+global nav.
 
 ### 6.5 Module dependencies & shared entities
 

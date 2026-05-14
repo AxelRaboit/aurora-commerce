@@ -25,9 +25,21 @@ final readonly class ShopViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function indexView(int $page, string $locale): array
+    public function indexView(int $page, string $locale, string $searchPath): array
     {
-        $result = $this->listingRepository->findPaginated($page, 12, visibleOnly: true);
+        return array_merge($this->pageData($page, null), [
+            'locale' => $locale,
+            'context' => $this->context,
+            'showFrontMenus' => true,
+            'themeContext' => $this->themeContext,
+            'searchPath' => $searchPath,
+        ]);
+    }
+
+    /** @return array{listings: array<mixed>, pagination: array<string, int>} */
+    public function pageData(int $page, ?string $search): array
+    {
+        $result = $this->listingRepository->findPaginated($page, 12, search: $search, visibleOnly: true);
 
         return [
             'listings' => array_map($this->listingSerializer->serialize(...), $result['items']),
@@ -36,10 +48,6 @@ final readonly class ShopViewBuilder
                 'totalPages' => $result['totalPages'],
                 'total' => $result['total'],
             ],
-            'locale' => $locale,
-            'context' => $this->context,
-            'showFrontMenus' => true,
-            'themeContext' => $this->themeContext,
         ];
     }
 
