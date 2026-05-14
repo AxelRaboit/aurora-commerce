@@ -42,7 +42,7 @@ final class CommentControllerTest extends IntegrationTestCase
             ->getId();
 
         $postId = (int) $conn->fetchOne(
-            "INSERT INTO core_posts (id, post_type_id, status) VALUES (NEXTVAL('seq_core_post_id'), ?, 'published') RETURNING id",
+            "INSERT INTO core_posts (id, post_type_id, status, created_at, updated_at) VALUES (NEXTVAL('seq_core_post_id'), ?, 'published', NOW(), NOW()) RETURNING id",
             [$postTypeId],
         );
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Entity;
 
-use Aurora\Core\User\Entity\User;
 use Aurora\Core\Timestampable\TimestampableTrait;
+use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]

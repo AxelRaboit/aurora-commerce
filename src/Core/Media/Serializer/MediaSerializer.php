@@ -29,7 +29,7 @@ class MediaSerializer implements MediaSerializerInterface
 
         return [
             'id' => $media->getId(),
-            'url' => $media->getPublicUrl().'?v='.($media->getUpdatedAt()?->getTimestamp() ?? 0),
+            'url' => $media->getPublicUrl().'?v='.$media->getUpdatedAt()->getTimestamp(),
             'permalink' => $this->urlGenerator->generate('media_view', ['id' => $media->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             'filename' => $media->getFilename(),
             'originalName' => $media->getOriginalName(),
@@ -50,8 +50,8 @@ class MediaSerializer implements MediaSerializerInterface
             'variants' => $variantUrls,
             'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
             'position' => $media->getPosition(),
-            'createdAt' => $media->getCreatedAt()?->format(DateTimeInterface::ATOM),
-            'updatedAt' => $media->getUpdatedAt()?->format(DateTimeInterface::ATOM),
+            'createdAt' => $media->getCreatedAt()->format(DateTimeInterface::ATOM),
+            'updatedAt' => $media->getUpdatedAt()->format(DateTimeInterface::ATOM),
             'uploadedBy' => $media->getUploadedBy()?->getName(),
         ];
     }

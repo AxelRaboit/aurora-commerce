@@ -21,7 +21,7 @@ class MediaViewController extends AbstractController
     public function view(Media $media): RedirectResponse
     {
         return $this->redirect(
-            $media->getPublicUrl().'?v='.($media->getUpdatedAt()?->getTimestamp() ?? 0),
+            $media->getPublicUrl().'?v='.$media->getUpdatedAt()->getTimestamp(),
             HttpStatusEnum::Found->value,
         );
     }
