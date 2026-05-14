@@ -6,7 +6,7 @@ namespace Aurora\Module\Hr\Employee\Entity;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Service\Entity\ServiceInterface;
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

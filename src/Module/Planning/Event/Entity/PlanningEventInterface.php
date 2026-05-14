@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Event\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Event\Enum\PlanningEventStatusEnum;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 
 interface AgencyInterface extends TimestampableInterface
 {

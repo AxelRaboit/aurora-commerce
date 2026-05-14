@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 

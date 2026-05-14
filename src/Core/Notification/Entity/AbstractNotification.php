@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Notification\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

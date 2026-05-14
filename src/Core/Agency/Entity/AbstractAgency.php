@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Agency\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Entity;
 
 use Aurora\Core\User\Entity\User;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 
 #[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class AbstractMedia implements MediaInterface
 {
     use TimestampableTrait;

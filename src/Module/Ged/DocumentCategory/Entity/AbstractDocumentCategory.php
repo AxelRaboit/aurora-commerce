@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentCategory\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

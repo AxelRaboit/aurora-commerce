@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;

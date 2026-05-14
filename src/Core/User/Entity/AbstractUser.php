@@ -7,7 +7,7 @@ namespace Aurora\Core\User\Entity;
 use Aurora\Core\Agency\Entity\AgencyInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Service\Entity\ServiceInterface;
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;
 use Aurora\Core\User\Enum\UserTypeEnum;

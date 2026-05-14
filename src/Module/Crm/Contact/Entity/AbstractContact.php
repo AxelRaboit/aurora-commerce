@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Doctrine\DBAL\Types\Types;

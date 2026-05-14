@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Vault\VaultUserConfig\Entity;
 
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;

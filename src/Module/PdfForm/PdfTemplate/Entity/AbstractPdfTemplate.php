@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PdfForm\PdfTemplate\Entity;
 
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\PdfForm\Enum\PdfTemplateStatusEnum;
 use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
 use Doctrine\Common\Collections\ArrayCollection;

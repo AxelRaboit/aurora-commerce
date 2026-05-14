@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Vault\VaultUserConfig\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 
 interface VaultUserConfigInterface extends TimestampableInterface

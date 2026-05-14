@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Auth\Entity;
 
 use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use DateTimeImmutable;
 
 interface AccessRequestInterface extends TimestampableInterface

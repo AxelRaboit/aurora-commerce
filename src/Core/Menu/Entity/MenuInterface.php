@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface MenuInterface extends TimestampableInterface

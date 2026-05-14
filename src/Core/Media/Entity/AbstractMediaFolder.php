@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Entity;
 
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 
 #[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class AbstractMediaFolder implements MediaFolderInterface
 {
     use TimestampableTrait;

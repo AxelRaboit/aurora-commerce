@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Vault\VaultEntry\Entity;
 
-use Aurora\Core\Contract\TimestampableInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\Enum\VaultRecordTypeEnum;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;

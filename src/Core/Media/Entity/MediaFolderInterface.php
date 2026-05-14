@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Entity;
 
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Doctrine\Common\Collections\Collection;
-use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 
 interface MediaFolderInterface extends TimestampableInterface
 {

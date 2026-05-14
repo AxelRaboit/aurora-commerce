@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp\Product\Entity;
 
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Trait\TimestampableTrait;
+use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
