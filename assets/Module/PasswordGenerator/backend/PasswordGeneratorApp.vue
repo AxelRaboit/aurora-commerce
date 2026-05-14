@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { calculatePasswordStrength } from '@shared/utils/validation/passwordStrength.js';
 import { usePasswordGenerator } from '@password-generator/backend/composables/usePasswordGenerator.js';
 import AppButton from '@shared/components/action/AppButton.vue';
+import AppRange from '@/shared/components/form/AppRange.vue';
 import AppToggle from '@shared/components/form/AppToggle.vue';
 import { Copy, Check, RefreshCw, KeyRound } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -67,14 +68,7 @@ const strengthLabels = ['', 'vault.setup.strength.weak', 'vault.setup.strength.f
                         <span class="text-sm font-medium text-primary">{{ t('password_generator.length') }}</span>
                         <span class="text-sm font-mono text-accent-500 tabular-nums w-8 text-right">{{ length }}</span>
                     </div>
-                    <input
-                        v-model.number="length"
-                        type="range"
-                        min="8"
-                        max="64"
-                        step="1"
-                        class="w-full accent-accent-500 cursor-pointer"
-                    >
+                    <AppRange v-model="length" :min="8" :max="64" :step="1" />
                     <div class="flex justify-between text-xs text-muted">
                         <span>8</span>
                         <span>64</span>

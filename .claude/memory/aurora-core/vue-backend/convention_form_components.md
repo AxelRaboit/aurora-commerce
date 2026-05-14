@@ -39,6 +39,7 @@ contrôles spéciaux comme l'input du DatePicker que l'on n'expose pas.
 | Upload fichier (bouton trigger) | `AppFilePickerButton` (wrap hidden input + AppButton) |
 | Couleur (swatch nu) | `AppColorSwatch` (size="sm|md") |
 | Couleur (champ form avec label/error/hex) | `AppColorField` |
+| Slider / range (min-max) | `AppRange` (v-model Number, props min/max/step/disabled) |
 | Pagination (prev/next + numéros) | `AppPagination` (émet `@change` avec le numéro de page) |
 
 ### Pourquoi
@@ -59,7 +60,7 @@ Cas légitimes :
 - input de type `checkbox` uniquement utilisé par un composant App* lui-même
 - un `<button>` dans un composant App* primitive
 - `<input type="hidden">` pour CSRF tokens (`name="_token"` ou `name="_csrf_token"`)
-- `<input type="range">` (pas d'AppRange à ce jour)
+- `<input type="range">` → utiliser `AppRange` (`shared/components/form/AppRange.vue`)
 - `<label>` wrapper avec `<input type="file" class="sr-only">` formant une drop-zone cliquable
   (différent du pattern bouton+hidden input qui doit utiliser `AppFilePickerButton`)
 - `<label>` wrapper avec `<input type="checkbox" class="sr-only">` formant un toggle pill/badge
