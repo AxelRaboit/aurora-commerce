@@ -1,10 +1,14 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
-import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus, Eye, EyeOff } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus, EyeOff } from "lucide-vue-next";
+import { useI18n } from "vue-i18n";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+
+const { t } = useI18n();
 
 const props = defineProps({
     node: { type: Object, required: true },
@@ -66,8 +70,10 @@ const hasChildren = computed(() => localChildren.value.length > 0);
             <span class="flex-1 min-w-0 text-sm font-medium text-primary truncate">{{ displayName }}</span>
             <span class="text-xs text-muted font-mono truncate hidden sm:inline">{{ displaySlug }}</span>
 
-            <Eye v-if="node.isVisible" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
-            <EyeOff v-else class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
+            <AppBadge v-if="!node.isVisible" color="slate">
+                <EyeOff class="w-3 h-3" :stroke-width="2" />
+                {{ t('backend.ecommerce.listing_categories.hidden') }}
+            </AppBadge>
 
             <div class="flex items-center gap-0.5">
                 <AppIconButton v-if="canEdit" color="sky" v-on:click="emit('add-child', node.id)">
