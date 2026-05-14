@@ -332,7 +332,7 @@ class AuroraBundle extends AbstractBundle
         }
 
         $twigPaths[$dir.'/templates'] = null;
-        $twigPaths[$dir.'/assets/styles'] = 'styles';
+        $twigPaths[$dir.'/assets/css'] = 'styles';
         foreach ($namespacedPaths as $namespace => $relative) {
             $twigPaths[$dir.$relative] = $namespace;
         }

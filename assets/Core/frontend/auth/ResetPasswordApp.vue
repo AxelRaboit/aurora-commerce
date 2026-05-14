@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import { KeyRound } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import AuthCard from "@/frontend/components/AuthCard.vue";
+import AuthCard from "@core/frontend/components/AuthCard.vue";
 import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
 import { passwordValidator } from "@/shared/utils/validation/passwordRules.js";
 
