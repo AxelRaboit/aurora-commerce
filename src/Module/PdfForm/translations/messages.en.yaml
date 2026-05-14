@@ -35,8 +35,8 @@ backend:
       status: Status
       file: PDF file
       fieldCount: Fields
-      add: New template
-      create: Create template
+      add: Add template
+      create: New template
       edit: "Edit template {name}"
       detectFields: Detect fields
       detectFieldsSuccess: "{count} field(s) successfully detected."
@@ -85,7 +85,7 @@ backend:
       template: Template
       status: Status
       fieldValues: Field values
-      add: New document
+      add: Add document
       pickTemplate: Choose a template
       noActiveTemplate: No active template available. Activate a template in the PDF Templates section.
       noPreview: No PDF file attached to this template.

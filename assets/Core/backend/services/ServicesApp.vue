@@ -39,7 +39,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             <h1 class="text-2xl font-bold text-primary">{{ t("backend.services.title") }}</h1>
             <AppButton v-if="isAdmin" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("backend.services.new") }}
+                {{ t("backend.services.add") }}
             </AppButton>
         </div>
 
@@ -75,7 +75,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
         <AppModal
             :show="modal.open"
             max-width="sm"
-            :title="modal.entity ? t('backend.services.edit_title', { name: modal.entity.name }) : t('backend.services.new')"
+            :title="modal.entity ? t('backend.services.edit_title', { name: modal.entity.name }) : t('backend.services.create')"
             :icon="modal.entity ? Pencil : Building2"
             :closeable="false"
             v-on:close="modal.open = false"

@@ -15,6 +15,7 @@
 - [convention_repository_eager_loading.md](convention_repository_eager_loading.md) — méthodes repo anti-N+1 : `findAllForIndex`, `findAllWith*`, `hydrate*Collections`
 - [convention_collection_on_concrete.md](convention_collection_on_concrete.md) — `Collection` ManyToMany/OneToMany sur la concrete + `__construct` qui init, jamais sur Abstract
 - [pattern_two_pass_n_plus_1_hydration.md](pattern_two_pass_n_plus_1_hydration.md) — pagination + ManyToMany : page query d'abord, puis 2e passe `WHERE id IN (:pageIds)` pour peupler l'identity map
+- [convention_admin_create_labels.md](convention_admin_create_labels.md) — i18n CRUD admin : `add` = "Ajouter un X" (toolbar) / `create` = "Nouveau X" (modal/éditeur)
 
 ## Permissions & Navigation backend
 - [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` en FR + EN

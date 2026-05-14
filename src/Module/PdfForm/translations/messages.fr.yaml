@@ -35,8 +35,8 @@ backend:
       status: Statut
       file: Fichier PDF
       fieldCount: "Champs"
-      add: Nouveau template
-      create: Créer un template
+      add: Ajouter un template
+      create: Nouveau template
       edit: "Modifier le template {name}"
       detectFields: Détecter les champs
       detectFieldsSuccess: "{count} champ(s) détecté(s) avec succès."
@@ -85,7 +85,7 @@ backend:
       template: Template
       status: Statut
       fieldValues: Valeurs des champs
-      add: Nouveau document
+      add: Ajouter un document
       pickTemplate: Choisir un template
       noActiveTemplate: Aucun template actif disponible. Activez un template dans la section Templates PDF.
       noPreview: Aucun fichier PDF associé à ce template.

@@ -392,7 +392,7 @@ function forceSave() {
                     <ArrowLeft class="w-5 h-5" :stroke-width="2" />
                 </AppButton>
                 <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
-                    {{ postId ? t("backend.posts.edit") : t("backend.posts.add") }}
+                    {{ postId ? t("backend.posts.edit") : t("backend.posts.create") }}
                 </h1>
             </div>
 

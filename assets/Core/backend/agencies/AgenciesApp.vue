@@ -39,7 +39,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             <h1 class="text-2xl font-bold text-primary">{{ t("backend.agencies.title") }}</h1>
             <AppButton v-if="isAdmin" variant="primary" size="md" v-on:click="openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("backend.agencies.new") }}
+                {{ t("backend.agencies.add") }}
             </AppButton>
         </div>
 
@@ -75,7 +75,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
         <AppModal
             :show="modal.open"
             max-width="sm"
-            :title="modal.entity ? t('backend.agencies.edit_title', { name: modal.entity.name }) : t('backend.agencies.new')"
+            :title="modal.entity ? t('backend.agencies.edit_title', { name: modal.entity.name }) : t('backend.agencies.create')"
             :icon="modal.entity ? Pencil : Building"
             :closeable="false"
             v-on:close="modal.open = false"

@@ -56,8 +56,8 @@ vault:
     error: Mot de passe incorrect.
     lock: Verrouiller
   entries:
-    add: Nouvelle entrée
-    create: Créer l'entrée
+    add: Ajouter une entrée
+    create: Nouvelle entrée
     edit: Modifier l'entrée
     empty: Aucune entrée dans ce coffre-fort.
     emptyFolder: Aucune entrée dans ce dossier.
@@ -86,8 +86,8 @@ vault:
       encrypted_data_required: Les données chiffrées sont requises.
       iv_required: Le vecteur d'initialisation est requis.
   folders:
-    add: Nouveau dossier
-    create: Créer le dossier
+    add: Ajouter un dossier
+    create: Nouveau dossier
     edit: Modifier le dossier
     manage: Gérer les dossiers
     empty: Aucun dossier.

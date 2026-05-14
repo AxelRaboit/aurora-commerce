@@ -45,8 +45,8 @@ backend:
       status: Statut
       category: Catégorie
       file: Fichier
-      add: Nouveau document
-      create: Créer un document
+      add: Ajouter un document
+      create: Nouveau document
       edit: "Modifier le document {title}"
       searchPlaceholder: Rechercher un document…
       created: Document créé avec succès
@@ -81,8 +81,8 @@ backend:
       name: Nom
       slug: Identifiant
       description: Description
-      add: Nouvelle catégorie
-      create: Créer une catégorie
+      add: Ajouter une catégorie
+      create: Nouvelle catégorie
       edit: "Modifier la catégorie {name}"
       searchPlaceholder: Rechercher une catégorie…
       created: Catégorie créée avec succès
@@ -99,8 +99,8 @@ backend:
       name: Nom
       color: Couleur
       searchPlaceholder: Rechercher une étiquette…
-      add: Nouvelle étiquette
-      create: Créer une étiquette
+      add: Ajouter une étiquette
+      create: Nouvelle étiquette
       edit: "Modifier l'étiquette {name}"
       created: Étiquette créée avec succès
       updated: Étiquette mise à jour
@@ -115,8 +115,8 @@ backend:
       name: Nom
       parent: Dossier parent
       position: Position
-      add: Nouveau dossier
-      create: Créer un dossier
+      add: Ajouter un dossier
+      create: Nouveau dossier
       edit: "Modifier le dossier {name}"
       created: Dossier créé avec succès
       updated: Dossier mis à jour

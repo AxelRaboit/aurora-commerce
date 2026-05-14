@@ -45,8 +45,8 @@ backend:
       status: Status
       category: Category
       file: File
-      add: New document
-      create: Create a document
+      add: Add document
+      create: New document
       edit: "Edit document {title}"
       searchPlaceholder: Search a document…
       created: Document created successfully
@@ -81,8 +81,8 @@ backend:
       name: Name
       slug: Identifier
       description: Description
-      add: New category
-      create: Create a category
+      add: Add category
+      create: New category
       edit: "Edit category {name}"
       searchPlaceholder: Search a category…
       created: Category created successfully
@@ -99,8 +99,8 @@ backend:
       name: Name
       color: Color
       searchPlaceholder: Search a tag…
-      add: New tag
-      create: Create a tag
+      add: Add tag
+      create: New tag
       edit: "Edit tag {name}"
       created: Tag created successfully
       updated: Tag updated
@@ -115,8 +115,8 @@ backend:
       name: Name
       parent: Parent folder
       position: Position
-      add: New folder
-      create: Create a folder
+      add: Add folder
+      create: New folder
       edit: "Edit folder {name}"
       created: Folder created successfully
       updated: Folder updated

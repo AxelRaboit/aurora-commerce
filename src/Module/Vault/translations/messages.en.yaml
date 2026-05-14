@@ -56,8 +56,8 @@ vault:
     error: Incorrect password.
     lock: Lock
   entries:
-    add: New entry
-    create: Create entry
+    add: Add entry
+    create: New entry
     edit: Edit entry
     empty: No entries in this vault.
     emptyFolder: No entries in this folder.
@@ -86,8 +86,8 @@ vault:
       encrypted_data_required: Encrypted data is required.
       iv_required: Initialisation vector is required.
   folders:
-    add: New folder
-    create: Create folder
+    add: Add folder
+    create: New folder
     edit: Edit folder
     manage: Manage folders
     empty: No folders.

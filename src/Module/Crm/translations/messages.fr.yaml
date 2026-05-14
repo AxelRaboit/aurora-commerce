@@ -55,8 +55,8 @@ backend:
       updated: 'a mis à jour {name}'
       deleted: 'a supprimé {name}'
     companies:
-      add: Nouvelle entreprise
-      create: Créer l'entreprise
+      add: Ajouter une entreprise
+      create: Nouvelle entreprise
       edit: Modifier l'entreprise
       empty: Aucune entreprise.
       created: Entreprise créée.
@@ -83,8 +83,8 @@ backend:
       listView: Vue liste
       kanbanView: Vue Kanban
     contacts:
-      add: Nouveau contact
-      create: Créer le contact
+      add: Ajouter un contact
+      create: Nouveau contact
       edit: Modifier le contact
       empty: Aucun contact.
       created: Contact créé.
@@ -120,8 +120,8 @@ backend:
         form: Formulaire
         order: Commande
     deals:
-      add: Nouvelle affaire
-      create: Créer l'affaire
+      add: Ajouter une affaire
+      create: Nouvelle affaire
       edit: Modifier l'affaire
       empty: Aucune affaire.
       updated: Affaire mise à jour.
@@ -156,7 +156,8 @@ backend:
       contactLinked: 'Sera lié à {name}'
   agencies:
     title: Agences
-    new: Nouvelle agence
+    add: Ajouter une agence
+    create: Nouvelle agence
     empty: Aucune agence.
     searchPlaceholder: Rechercher une agence…
     name: Nom
@@ -168,7 +169,8 @@ backend:
       name_too_long: Le nom ne peut pas dépasser 150 caractères.
   services:
     title: Services
-    new: Nouveau service
+    add: Ajouter un service
+    create: Nouveau service
     empty: Aucun service.
     searchPlaceholder: Rechercher un service…
     name: Nom

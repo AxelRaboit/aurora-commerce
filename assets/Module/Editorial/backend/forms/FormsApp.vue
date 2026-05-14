@@ -123,7 +123,7 @@ const showPreview = ref(false);
                 v-on:click="startCreate"
             >
                 <Plus class="w-4 h-4 shrink-0" :stroke-width="2" />
-                {{ t("backend.forms.create") }}
+                {{ t("backend.forms.add") }}
             </AppButton>
 
             <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">

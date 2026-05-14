@@ -55,8 +55,8 @@ backend:
       updated: 'updated {name}'
       deleted: 'deleted {name}'
     companies:
-      add: New company
-      create: Create company
+      add: Add company
+      create: New company
       edit: Edit company
       empty: No companies.
       created: Company created.
@@ -83,8 +83,8 @@ backend:
       listView: List view
       kanbanView: Kanban view
     contacts:
-      add: New contact
-      create: Create contact
+      add: Add contact
+      create: New contact
       edit: Edit contact
       empty: No contacts.
       created: Contact created.
@@ -120,8 +120,8 @@ backend:
         form: Form submission
         order: Order
     deals:
-      add: New deal
-      create: Create deal
+      add: Add deal
+      create: New deal
       edit: Edit deal
       empty: No deals.
       updated: Deal updated.
@@ -156,7 +156,8 @@ backend:
       contactLinked: 'Will be linked to {name}'
   agencies:
     title: Agencies
-    new: New agency
+    add: Add agency
+    create: New agency
     empty: No agencies.
     searchPlaceholder: Search agencies…
     name: Name
@@ -168,7 +169,8 @@ backend:
       name_too_long: Name cannot exceed 150 characters.
   services:
     title: Services
-    new: New service
+    add: Add service
+    create: New service
     empty: No services.
     searchPlaceholder: Search services…
     name: Name

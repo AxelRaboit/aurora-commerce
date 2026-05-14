@@ -162,7 +162,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
         <AppModal
             :show="postTypeModal.open"
             max-width="lg"
-            :title="postTypeModal.entity ? t('backend.postTypes.editPostType') : t('backend.postTypes.add')"
+            :title="postTypeModal.entity ? t('backend.postTypes.editPostType') : t('backend.postTypes.create')"
             :icon="postTypeModal.entity ? Pencil : Layers"
             :closeable="false"
             v-on:close="postTypeModal.open = false"
