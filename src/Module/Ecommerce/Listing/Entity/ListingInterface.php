@@ -6,7 +6,9 @@ namespace Aurora\Module\Ecommerce\Listing\Entity;
 
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface ListingInterface extends TimestampableInterface
 {
@@ -49,4 +51,13 @@ interface ListingInterface extends TimestampableInterface
     public function getReference(): ?string;
 
     public function setReference(?string $reference): static;
+
+    /** @return Collection<int, ListingCategoryInterface> */
+    public function getCategories(): Collection;
+
+    public function addCategory(ListingCategoryInterface $category): static;
+
+    public function removeCategory(ListingCategoryInterface $category): static;
+
+    public function clearCategories(): static;
 }

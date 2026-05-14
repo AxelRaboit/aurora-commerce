@@ -14,6 +14,8 @@ use Aurora\Module\Ecommerce\Listing\Dto\ListingInputInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
+use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +31,7 @@ class ListingManager implements ListingManagerInterface
         protected readonly ListingRepository $listingRepository,
         protected readonly ProductRepository $productRepository,
         protected readonly MediaRepository $mediaRepository,
+        protected readonly ListingCategoryRepository $listingCategoryRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly TranslatorInterface $translator,
         protected readonly SequenceGenerator $sequenceGenerator,
@@ -89,6 +92,23 @@ class ListingManager implements ListingManagerInterface
         $listing->setFeaturedImage(
             null !== $input->getFeaturedImageId() ? $this->mediaRepository->find($input->getFeaturedImageId()) : null,
         );
+        $this->applyCategories($listing, $input);
+    }
+
+    protected function applyCategories(ListingInterface $listing, ListingInputInterface $input): void
+    {
+        $listing->clearCategories();
+        $categoryIds = $input->getCategoryIds();
+        if ([] === $categoryIds) {
+            return;
+        }
+
+        $categories = $this->listingCategoryRepository->findBy(['id' => $categoryIds]);
+        foreach ($categories as $category) {
+            if ($category instanceof ListingCategoryInterface) {
+                $listing->addCategory($category);
+            }
+        }
     }
 
     protected function auditCreated(ListingInterface $listing): void
@@ -111,7 +131,16 @@ class ListingManager implements ListingManagerInterface
 
     protected function auditPayload(ListingInterface $listing): array
     {
-        return ['slug' => $listing->getSlug(), 'reference' => $listing->getReference()];
+        $categoryIds = [];
+        foreach ($listing->getCategories() as $category) {
+            $categoryIds[] = $category->getId();
+        }
+
+        return [
+            'slug' => $listing->getSlug(),
+            'reference' => $listing->getReference(),
+            'category_ids' => $categoryIds,
+        ];
     }
 
     private function resolveProduct(ListingInputInterface $input): ProductInterface

@@ -4,11 +4,13 @@ import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useListingsProducts } from "@ecommerce/backend/listings/composables/useListingsProducts.js";
+import { useListingsCategories } from "@ecommerce/backend/listings/composables/useListingsCategories.js";
 import { useListingsCreate } from "@ecommerce/backend/listings/composables/useListingsCreate.js";
 import { useListingsEdit } from "@ecommerce/backend/listings/composables/useListingsEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
@@ -39,6 +41,7 @@ const props = defineProps({
     showPath: { type: String, default: "" },
     listPath: { type: String, required: true },
     productsPath: { type: String, required: true },
+    categoriesPath: { type: String, required: true },
 });
 
 const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
@@ -47,6 +50,7 @@ const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload
 );
 
 const { availableProducts, loadProducts } = useListingsProducts(props.productsPath);
+const { flatCategories } = useListingsCategories(props.categoriesPath);
 const { showCreate, newListing, newListingImage, createErrors, createLoading, openCreate, onProductChange, submitCreate } =
     useListingsCreate(props.createPath, reset, loadProducts);
 
@@ -187,6 +191,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :label="t('backend.ecommerce.listings.featuredImage')"
                     :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
                 />
+                <AppMultiselect
+                    v-model="newListing.categoryIds"
+                    :options="flatCategories"
+                    :label="t('backend.ecommerce.listings.categories')"
+                    :placeholder="t('backend.ecommerce.listings.categoriesPlaceholder')"
+                    multiple
+                    track-by="id"
+                    option-label="label"
+                />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
                     <AppToggle v-model="newListing.isVisibleOnShop" />
@@ -223,6 +236,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     v-model="editFormImage"
                     :label="t('backend.ecommerce.listings.featuredImage')"
                     :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
+                />
+                <AppMultiselect
+                    v-model="editForm.categoryIds"
+                    :options="flatCategories"
+                    :label="t('backend.ecommerce.listings.categories')"
+                    :placeholder="t('backend.ecommerce.listings.categoriesPlaceholder')"
+                    multiple
+                    track-by="id"
+                    option-label="label"
                 />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>

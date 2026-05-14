@@ -6,6 +6,7 @@ namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingCategoryInterface extends TimestampableInterface
@@ -49,4 +50,7 @@ interface ListingCategoryInterface extends TimestampableInterface
     public function isRoot(): bool;
 
     public function getDepth(): int;
+
+    /** @return Collection<int, ListingInterface> */
+    public function getListings(): Collection;
 }

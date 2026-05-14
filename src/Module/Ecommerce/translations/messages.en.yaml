@@ -141,6 +141,8 @@ backend:
       seoDescription: SEO description
       frontUrl: Public URL
       linkedProduct: Linked product
+      categories: Categories
+      categoriesPlaceholder: Pick one or more categories…
       deleteConfirm: 'Delete listing "{name}"?'
       deleteWarning: 'The linked product is not deleted, only the shop page.'
     listing_categories:

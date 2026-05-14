@@ -23,6 +23,8 @@ class ListingInput implements ListingInputInterface
         #[Assert\Length(max: 200)]
         public readonly ?string $seoTitle = null,
         public readonly ?string $seoDescription = null,
+        /** @var list<int> */
+        public readonly array $categoryIds = [],
     ) {}
 
     public function getProductId(): ?int
@@ -63,5 +65,11 @@ class ListingInput implements ListingInputInterface
     public function getSeoDescription(): ?string
     {
         return $this->seoDescription;
+    }
+
+    /** @return list<int> */
+    public function getCategoryIds(): array
+    {
+        return $this->categoryIds;
     }
 }

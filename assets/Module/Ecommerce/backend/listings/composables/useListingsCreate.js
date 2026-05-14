@@ -16,6 +16,7 @@ export function emptyListingForm() {
         seoDescription: "",
         featuredImageId: null,
         featuredImageUrl: null,
+        categoryIds: [],
     };
 }
 

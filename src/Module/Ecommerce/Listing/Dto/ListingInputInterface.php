@@ -21,4 +21,7 @@ interface ListingInputInterface
     public function getSeoTitle(): ?string;
 
     public function getSeoDescription(): ?string;
+
+    /** @return list<int> */
+    public function getCategoryIds(): array;
 }

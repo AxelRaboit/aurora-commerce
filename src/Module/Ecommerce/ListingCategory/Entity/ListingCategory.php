@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -33,10 +34,20 @@ class ListingCategory extends AbstractListingCategory
     )]
     protected Collection $translations;
 
+    /** @var Collection<int, ListingInterface> */
+    #[ORM\ManyToMany(targetEntity: ListingInterface::class, mappedBy: 'categories')]
+    protected Collection $listings;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
         $this->translations = new ArrayCollection();
+        $this->listings = new ArrayCollection();
+    }
+
+    public function getListings(): Collection
+    {
+        return $this->listings;
     }
 
     public function getId(): ?int

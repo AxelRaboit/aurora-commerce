@@ -10,11 +10,15 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsAlias(ListingSerializerInterface::class)]
 class ListingSerializer implements ListingSerializerInterface
 {
-    public function __construct(protected readonly SettingRepository $settingRepository) {}
+    public function __construct(
+        protected readonly SettingRepository $settingRepository,
+        protected readonly RequestStack $requestStack,
+    ) {}
 
     public function serialize(ListingInterface $listing): array
     {
@@ -64,8 +68,38 @@ class ListingSerializer implements ListingSerializerInterface
                 'inStock' => $product->isInStock(),
                 'isLowStock' => $isLowStock,
             ],
+            'categories' => $this->serializeCategories($listing),
             'createdAt' => $listing->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $listing->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
+    }
+
+    /** @return list<array{id: int|null, name: string, slug: string}> */
+    private function serializeCategories(ListingInterface $listing): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $locale = null !== $request ? $request->getLocale() : 'en';
+
+        $result = [];
+        foreach ($listing->getCategories() as $category) {
+            $translation = $category->getTranslation($locale);
+            if (null === $translation) {
+                foreach ($category->getTranslations() as $candidate) {
+                    $translation = $candidate;
+                    break;
+                }
+            }
+            if (null === $translation) {
+                continue;
+            }
+
+            $result[] = [
+                'id' => $category->getId(),
+                'name' => $translation->getName(),
+                'slug' => $translation->getSlug(),
+            ];
+        }
+
+        return $result;
     }
 }
