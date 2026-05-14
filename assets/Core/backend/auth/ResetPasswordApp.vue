@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { KeyRound } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
-import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
+import AppPasswordStrength from "@/shared/components/form/AppPasswordStrength.vue";
 import { useAuthForm } from "@/shared/composables/form/useAuthForm.js";
 import { passwordValidator } from "@/shared/utils/validation/passwordRules.js";
 
@@ -45,7 +45,7 @@ function handleSubmit(event) {
                 autofocus
                 required
             />
-            <PasswordStrength :password="password" />
+            <AppPasswordStrength :password="password" />
         </div>
 
         <AppInput

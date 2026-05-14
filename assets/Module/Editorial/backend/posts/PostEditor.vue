@@ -14,7 +14,7 @@ import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
-import EditorBlock from "@/shared/components/display/EditorBlock.vue";
+import EditorBlock from "@editorial/backend/EditorBlock.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";

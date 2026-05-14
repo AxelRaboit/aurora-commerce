@@ -1,41 +1,39 @@
 import { ref } from "vue";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useContactSearch(searchPath) {
     const contactSearchQuery = ref("");
     const contactSearchResults = ref([]);
     const contactSearchOpen = ref(false);
-    let abortController = null;
-    let debounceTimer = null;
     let activeForm = null;
 
+    const { request } = useRequest();
+
     async function searchContacts(query) {
-        if (!searchPath) return;
-        if (abortController) abortController.abort();
-        if (!query.trim()) {
+        if (!searchPath || !query.trim()) {
             contactSearchResults.value = [];
             contactSearchOpen.value = false;
             return;
         }
-        abortController = new AbortController();
-        try {
-            const url = new URL(searchPath, window.location.origin);
-            url.searchParams.set("search", query);
-            const response = await fetch(url, {
-                signal: abortController.signal,
-            });
-            const data = await response.json();
+
+        const url = new URL(searchPath, window.location.origin);
+        url.searchParams.set("search", query);
+
+        const data = await request(url.toString(), null, HttpMethod.Get);
+        if (data) {
             contactSearchResults.value = data?.items ?? [];
-            contactSearchOpen.value = true;
-        } catch (error) {
-            if (error.name !== "AbortError") contactSearchOpen.value = false;
+            contactSearchOpen.value = contactSearchResults.value.length > 0;
         }
     }
+
+    const debouncedSearch = useDebounce(searchContacts, 200);
 
     function onContactQueryInput(form, value) {
         activeForm = form;
         contactSearchQuery.value = value;
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchContacts(value), 200);
+        debouncedSearch(value);
     }
 
     function selectContact(contact) {

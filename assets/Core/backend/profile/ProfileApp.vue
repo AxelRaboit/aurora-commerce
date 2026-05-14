@@ -6,7 +6,7 @@ import AppFileInput from "@/shared/components/form/AppFileInput.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
-import PasswordStrength from "@/shared/components/form/PasswordStrength.vue";
+import AppPasswordStrength from "@/shared/components/form/AppPasswordStrength.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useProfileLocale } from "@core/backend/profile/composables/useProfileLocale.js";
 import { useProfileInfo } from "@core/backend/profile/composables/useProfileInfo.js";
@@ -178,7 +178,7 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                         toggleable
                         required
                     />
-                    <PasswordStrength :password="newPassword" />
+                    <AppPasswordStrength :password="newPassword" />
                 </div>
                 <AppInput
                     v-model="confirmPassword"

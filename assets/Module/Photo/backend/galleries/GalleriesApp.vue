@@ -3,7 +3,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { useContactSearch } from "@/shared/composables/search/useContactSearch.js";
+import { useContactSearch } from "@photo/backend/composables/useContactSearch.js";
 import { galleryCoverState, onGalleryCoverChange, isExpiryInPast } from "@photo/backend/galleries/composables/useGalleryForm.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useGalleriesCreate } from "@photo/backend/galleries/composables/useGalleriesCreate.js";
