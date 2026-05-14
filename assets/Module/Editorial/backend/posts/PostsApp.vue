@@ -9,6 +9,7 @@ import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.j
 import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { toast } from "vue-sonner";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -155,7 +156,7 @@ const { state: trashed, set: setTrashedFilter } = useUrlSyncedState({
     onSync: () => performSearch(),
 });
 
-const { posts, page, totalPages, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
+const { posts, page, totalPages, loading, search: searchInput, addPost, updatePost, removePost, performSearch, goToPage } =
     usePostList(props.postsPath, props.posts, props.search, () => ({
         ...(trashed.value ? { trashed: "1" } : {}),
         ...Object.fromEntries(selectedPostTypeIds.value.map((id, i) => [`postTypeIds[${i}]`, id])),
@@ -286,49 +287,49 @@ function postTermLabels(post) {
                 />
                 <template #actions>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <div class="flex items-center rounded-lg border border-line overflow-hidden shrink-0">
+                        <div class="flex items-center rounded-lg border border-line overflow-hidden shrink-0">
+                            <AppButton
+                                variant="ghost"
+                                size="none"
+                                class="flex items-center justify-center w-8 h-8 transition-colors"
+                                :class="viewMode === 'compact' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
+                                :title="t('backend.posts.viewCompact')"
+                                v-on:click="setViewMode('compact')"
+                            >
+                                <List class="w-4 h-4" :stroke-width="2" />
+                            </AppButton>
+                            <AppButton
+                                variant="ghost"
+                                size="none"
+                                class="flex items-center justify-center w-8 h-8 border-l border-line transition-colors"
+                                :class="viewMode === 'detailed' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
+                                :title="t('backend.posts.viewDetailed')"
+                                v-on:click="setViewMode('detailed')"
+                            >
+                                <LayoutList class="w-4 h-4" :stroke-width="2" />
+                            </AppButton>
+                        </div>
                         <AppButton
-                            variant="ghost"
-                            size="none"
-                            class="flex items-center justify-center w-8 h-8 transition-colors"
-                            :class="viewMode === 'compact' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
-                            :title="t('backend.posts.viewCompact')"
-                            v-on:click="setViewMode('compact')"
+                            v-if="!trashed && can('editorial.posts.create')"
+                            variant="primary"
+                            size="md"
+                            class="flex-1 sm:flex-none"
+                            v-on:click="openCreate"
                         >
-                            <List class="w-4 h-4" :stroke-width="2" />
+                            <Plus class="w-4 h-4" :stroke-width="2" />
+                            {{ t("backend.posts.add") }}
                         </AppButton>
                         <AppButton
-                            variant="ghost"
-                            size="none"
-                            class="flex items-center justify-center w-8 h-8 border-l border-line transition-colors"
-                            :class="viewMode === 'detailed' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
-                            :title="t('backend.posts.viewDetailed')"
-                            v-on:click="setViewMode('detailed')"
+                            v-if="trashed && posts.length"
+                            variant="danger"
+                            size="md"
+                            class="flex-1 sm:flex-none"
+                            :loading="emptyingTrash"
+                            v-on:click="confirmEmptyTrash = true"
                         >
-                            <LayoutList class="w-4 h-4" :stroke-width="2" />
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            {{ t("backend.posts.emptyTrash") }}
                         </AppButton>
-                    </div>
-                    <AppButton
-                        v-if="!trashed && can('editorial.posts.create')"
-                        variant="primary"
-                        size="md"
-                        class="flex-1 sm:flex-none"
-                        v-on:click="openCreate"
-                    >
-                        <Plus class="w-4 h-4" :stroke-width="2" />
-                        {{ t("backend.posts.add") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="trashed && posts.length"
-                        variant="danger"
-                        size="md"
-                        class="flex-1 sm:flex-none"
-                        :loading="emptyingTrash"
-                        v-on:click="confirmEmptyTrash = true"
-                    >
-                        <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        {{ t("backend.posts.emptyTrash") }}
-                    </AppButton>
                     </div>
                 </template>
             </AppListToolbar>
@@ -367,111 +368,115 @@ function postTermLabels(post) {
                 </AppButton>
             </div>
 
-            <div class="sm:hidden space-y-2">
-                <AppNoData v-if="!posts.length" :message="t('backend.posts.empty')" />
-                <div v-for="post in posts" :key="post.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
-                            <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
-                            <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
-                            <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1.5">
-                                <span
-                                    v-for="label in postTermLabels(post)"
-                                    :key="label"
-                                    class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
-                                >{{ label }}</span>
+            <div class="relative space-y-4">
+                <div class="sm:hidden space-y-2">
+                    <AppNoData v-if="!posts.length" :message="t('backend.posts.empty')" />
+                    <div v-for="post in posts" :key="post.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-primary truncate text-sm">{{ post.title ?? "-" }}</p>
+                                <p class="text-xs text-muted mt-0.5">{{ post.postType?.label }}</p>
+                                <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate mt-0.5 font-mono">{{ frontUrl(post) }}</p>
+                                <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1.5">
+                                    <span
+                                        v-for="label in postTermLabels(post)"
+                                        :key="label"
+                                        class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
+                                    >{{ label }}</span>
+                                </div>
                             </div>
+                            <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
+                                {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
+                            </AppBadge>
                         </div>
-                        <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)" class="shrink-0">
-                            {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
-                        </AppBadge>
-                    </div>
-                    <div class="flex items-center justify-between pt-2 border-t border-line/40">
-                        <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
-                        <div class="flex items-center gap-0.5">
-                            <AppIconButton color="sky" v-on:click="openPreview(post)">
-                                <Eye class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
-                            <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
-                                <Pencil class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
-                            <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
-                                <RotateCcw class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
-                            <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
-                                <Trash2 class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
+                        <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                            <p class="text-xs text-muted">{{ formatDateShort(post.createdAt) }}</p>
+                            <div class="flex items-center gap-0.5">
+                                <AppIconButton color="sky" v-on:click="openPreview(post)">
+                                    <Eye class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
+                                    <Pencil class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
+                                    <RotateCcw class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-surface-2/50 border-b border-line/40">
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.title") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.posts.postType") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.status") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.tags.createdAt") }}</th>
-                            <slot name="extra-headers" />
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.tags.actions") }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-line/40">
-                        <tr v-if="!posts.length">
-                            <td colspan="6"><AppNoData :message="t('backend.posts.empty')" /></td>
-                        </tr>
-                        <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
-                            <td class="px-6 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
-                            <td class="px-6 py-3">
-                                <div class="flex items-center gap-2.5">
-                                    <FileText class="w-3.5 h-3.5 text-muted shrink-0 self-start mt-0.5" :stroke-width="2" />
-                                    <div class="min-w-0 flex-1">
-                                        <p class="font-medium text-primary text-sm truncate">{{ post.title ?? "-" }}</p>
-                                        <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate font-mono">{{ frontUrl(post) }}</p>
-                                        <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1">
-                                            <span
-                                                v-for="label in postTermLabels(post)"
-                                                :key="label"
-                                                class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
-                                            >{{ label }}</span>
+                <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-surface-2/50 border-b border-line/40">
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.title") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.posts.postType") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.posts.status") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.tags.createdAt") }}</th>
+                                <slot name="extra-headers" />
+                                <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.tags.actions") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line/40">
+                            <tr v-if="!posts.length">
+                                <td colspan="6"><AppNoData :message="t('backend.posts.empty')" /></td>
+                            </tr>
+                            <tr v-for="post in posts" :key="post.id" class="group hover:bg-surface-2/40 transition-colors">
+                                <td class="px-6 py-3 text-xs text-muted font-mono hidden lg:table-cell">{{ post.id }}</td>
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <FileText class="w-3.5 h-3.5 text-muted shrink-0 self-start mt-0.5" :stroke-width="2" />
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-medium text-primary text-sm truncate">{{ post.title ?? "-" }}</p>
+                                            <p v-if="frontUrl(post) && !trashed" class="text-xs text-accent-400 truncate font-mono">{{ frontUrl(post) }}</p>
+                                            <div v-if="viewMode === 'detailed' && postTermLabels(post).length" class="flex flex-wrap gap-1 mt-1">
+                                                <span
+                                                    v-for="label in postTermLabels(post)"
+                                                    :key="label"
+                                                    class="px-1.5 py-0.5 text-xs rounded-md bg-surface-2 border border-line/60 text-secondary"
+                                                >{{ label }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
-                            <td class="px-6 py-3">
-                                <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)">
-                                    {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
-                                </AppBadge>
-                            </td>
-                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
-                            <slot name="extra-cells" :post="post" />
-                            <td class="px-6 py-3">
-                                <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton color="sky" v-on:click="openPreview(post)">
-                                        <Eye class="w-4 h-4" :stroke-width="2" />
-                                    </AppIconButton>
-                                    <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
-                                        <Pencil class="w-4 h-4" :stroke-width="2" />
-                                    </AppIconButton>
-                                    <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
-                                        <RotateCcw class="w-4 h-4" :stroke-width="2" />
-                                    </AppIconButton>
-                                    <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
-                                        <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                    </AppIconButton>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-secondary hidden md:table-cell">{{ post.postType?.label ?? "-" }}</td>
+                                <td class="px-6 py-3">
+                                    <AppBadge :color="post.trashed ? 'rose' : statusBadgeColor(post.status)">
+                                        {{ post.trashed ? t("backend.posts.statusTrashed") : t("backend.stats.postStatus." + post.status) }}
+                                    </AppBadge>
+                                </td>
+                                <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(post.createdAt) }}</td>
+                                <slot name="extra-cells" :post="post" />
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center justify-end gap-0.5">
+                                        <AppIconButton color="sky" v-on:click="openPreview(post)">
+                                            <Eye class="w-4 h-4" :stroke-width="2" />
+                                        </AppIconButton>
+                                        <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
+                                            <Pencil class="w-4 h-4" :stroke-width="2" />
+                                        </AppIconButton>
+                                        <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
+                                            <RotateCcw class="w-4 h-4" :stroke-width="2" />
+                                        </AppIconButton>
+                                        <AppIconButton color="rose" v-on:click="deletePost.confirm(post)">
+                                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                        </AppIconButton>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+                <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+
+                <AppLoader :active="loading" />
+            </div>
 
             <AppModal
                 :show="!!deletePost.pendingDelete.value"

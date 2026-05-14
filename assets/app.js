@@ -4,6 +4,7 @@ import {
 } from "vite-plugin-symfony/stimulus/helpers";
 import { registerVueControllerComponents } from "@symfony/ux-vue";
 import { createAppI18n } from "@/i18n.js";
+import "./shared/utils/loader.js";
 import "./css/app.css";
 
 document.addEventListener("vue:before-mount", (event) => {

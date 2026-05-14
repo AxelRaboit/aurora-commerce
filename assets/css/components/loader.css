@@ -1,0 +1,51 @@
+/* Global app loader.
+ *
+ * Full-viewport overlay shown on initial page load until the first Vue
+ * component mounts under <main>. Fades out then is removed from the DOM.
+ *
+ * Markup + boot script: templates/Shared/components/app_loader.html.twig
+ */
+
+.aurora-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: var(--th-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 280ms ease;
+}
+
+.aurora-loader.is-done {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.aurora-loader-spinner {
+    width: 28px;
+    height: 28px;
+    border: 2.5px solid var(--th-surface-2);
+    border-top-color: var(--th-accent-500, var(--th-accent, #6366f1));
+    border-radius: 50%;
+    animation: aurora-loader-spin 0.8s linear infinite;
+}
+
+.aurora-loader-spinner--sm { width: 20px; height: 20px; border-width: 2px; }
+.aurora-loader-spinner--lg { width: 40px; height: 40px; border-width: 3px; }
+
+@keyframes aurora-loader-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Scoped overlay loader: covers its positioned parent (e.g. a list/table
+   container). Used by AppLoader.vue while async data is loading. */
+.aurora-loader-scoped {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--th-bg) 60%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
