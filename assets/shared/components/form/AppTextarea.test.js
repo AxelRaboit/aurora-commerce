@@ -16,7 +16,9 @@ describe("AppTextarea", () => {
             props: { placeholder: "Write something…" },
             global: { plugins: [i18n] },
         });
-        expect(wrapper.find("textarea").attributes("placeholder")).toBe("Write something…");
+        expect(wrapper.find("textarea").attributes("placeholder")).toBe(
+            "Write something…",
+        );
     });
 
     it("sets the rows attribute from rows prop", () => {

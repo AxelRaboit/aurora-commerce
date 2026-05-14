@@ -25,18 +25,24 @@ describe("AppTab", () => {
     });
 
     it("applies rose active classes when color is rose", () => {
-        const wrapper = mount(AppTab, { props: { active: true, color: "rose" } });
+        const wrapper = mount(AppTab, {
+            props: { active: true, color: "rose" },
+        });
         expect(wrapper.find("button").classes()).toContain("bg-rose-500/15");
         expect(wrapper.find("button").classes()).toContain("text-rose-400");
     });
 
     it("uses activeClass override when provided", () => {
-        const wrapper = mount(AppTab, { props: { active: true, activeClass: "custom-active" } });
+        const wrapper = mount(AppTab, {
+            props: { active: true, activeClass: "custom-active" },
+        });
         expect(wrapper.find("button").classes()).toContain("custom-active");
     });
 
     it("uses inactiveClass override when inactive", () => {
-        const wrapper = mount(AppTab, { props: { active: false, inactiveClass: "custom-inactive" } });
+        const wrapper = mount(AppTab, {
+            props: { active: false, inactiveClass: "custom-inactive" },
+        });
         expect(wrapper.find("button").classes()).toContain("custom-inactive");
     });
 });

@@ -34,7 +34,11 @@ describe("AppChart", () => {
 
     it("merges custom options with baseOptions", async () => {
         const wrapper = mount(AppChart, {
-            props: { type: "bar", data: chartData, options: { animation: false } },
+            props: {
+                type: "bar",
+                data: chartData,
+                options: { animation: false },
+            },
             global: { stubs: { Doughnut: true, Bar: true, Line: true } },
         });
         // component should still render with merged options

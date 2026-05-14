@@ -6,7 +6,11 @@ describe("AppThumbnail", () => {
     it("renders AppImage when src is provided", () => {
         const wrapper = mount(AppThumbnail, {
             props: { src: "https://example.com/thumb.jpg", alt: "Thumb" },
-            global: { stubs: { AppImage: { template: '<img data-testid="app-image" />' } } },
+            global: {
+                stubs: {
+                    AppImage: { template: '<img data-testid="app-image" />' },
+                },
+            },
         });
         expect(wrapper.find("[data-testid='app-image']").exists()).toBe(true);
     });
@@ -14,11 +18,17 @@ describe("AppThumbnail", () => {
     it("renders slot content when src is null", () => {
         const wrapper = mount(AppThumbnail, {
             props: { src: null },
-            slots: { default: '<span data-testid="slot-content">placeholder</span>' },
+            slots: {
+                default: '<span data-testid="slot-content">placeholder</span>',
+            },
             global: { stubs: { AppImage: true } },
         });
-        expect(wrapper.find("[data-testid='slot-content']").exists()).toBe(true);
-        expect(wrapper.find("[data-testid='slot-content']").text()).toBe("placeholder");
+        expect(wrapper.find("[data-testid='slot-content']").exists()).toBe(
+            true,
+        );
+        expect(wrapper.find("[data-testid='slot-content']").text()).toBe(
+            "placeholder",
+        );
     });
 
     it("applies w-10 h-10 by default (size=sm)", () => {

@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { diffBlocksAgainstRevision, summarizeRevisionDiff, RevisionDiffKind } from "./revisionDiff.js";
+import {
+    diffBlocksAgainstRevision,
+    summarizeRevisionDiff,
+    RevisionDiffKind,
+} from "./revisionDiff.js";
 
 describe("diffBlocksAgainstRevision", () => {
     it("marks unchanged blocks", () => {
@@ -10,13 +14,19 @@ describe("diffBlocksAgainstRevision", () => {
     });
 
     it("marks added blocks (present in current, absent in revision)", () => {
-        const result = diffBlocksAgainstRevision([{ id: "1", type: "text" }], []);
+        const result = diffBlocksAgainstRevision(
+            [{ id: "1", type: "text" }],
+            [],
+        );
         expect(result[0].kind).toBe(RevisionDiffKind.Added);
         expect(result[0].revision).toBeNull();
     });
 
     it("marks removed blocks (absent in current, present in revision)", () => {
-        const result = diffBlocksAgainstRevision([], [{ id: "1", type: "text" }]);
+        const result = diffBlocksAgainstRevision(
+            [],
+            [{ id: "1", type: "text" }],
+        );
         expect(result[0].kind).toBe(RevisionDiffKind.Removed);
         expect(result[0].current).toBeNull();
     });
@@ -42,6 +52,11 @@ describe("summarizeRevisionDiff", () => {
             { kind: RevisionDiffKind.Removed },
             { kind: RevisionDiffKind.Modified },
         ];
-        expect(summarizeRevisionDiff(entries)).toEqual({ unchanged: 1, added: 2, removed: 1, modified: 1 });
+        expect(summarizeRevisionDiff(entries)).toEqual({
+            unchanged: 1,
+            added: 2,
+            removed: 1,
+            modified: 1,
+        });
     });
 });

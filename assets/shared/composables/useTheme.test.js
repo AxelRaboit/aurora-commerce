@@ -8,7 +8,10 @@ async function freshUseTheme(storedTheme = null, prefersDark = false) {
         getItem: vi.fn().mockReturnValue(storedTheme),
         setItem: vi.fn(),
     });
-    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: prefersDark }));
+    vi.stubGlobal(
+        "matchMedia",
+        vi.fn().mockReturnValue({ matches: prefersDark }),
+    );
     vi.resetModules();
     const { useTheme } = await import("./useTheme.js");
     return useTheme;

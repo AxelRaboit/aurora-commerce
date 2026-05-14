@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { CURRENCY_OPTIONS, CURRENCY_BY_CODE, DEFAULT_CURRENCY, symbolFor } from "./currencies.js";
+import {
+    CURRENCY_OPTIONS,
+    CURRENCY_BY_CODE,
+    DEFAULT_CURRENCY,
+    symbolFor,
+} from "./currencies.js";
 
 describe("CURRENCY_OPTIONS", () => {
     it("contains EUR and USD entries", () => {

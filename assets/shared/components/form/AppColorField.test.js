@@ -4,7 +4,9 @@ import AppColorField from "./AppColorField.vue";
 
 describe("AppColorField", () => {
     it("renders label text", () => {
-        const wrapper = mount(AppColorField, { props: { label: "Brand color", modelValue: "" } });
+        const wrapper = mount(AppColorField, {
+            props: { label: "Brand color", modelValue: "" },
+        });
         expect(wrapper.text()).toContain("Brand color");
     });
 
@@ -29,7 +31,9 @@ describe("AppColorField", () => {
     });
 
     it("contains a color input via AppColorSwatch", () => {
-        const wrapper = mount(AppColorField, { props: { modelValue: "#ff0000" } });
+        const wrapper = mount(AppColorField, {
+            props: { modelValue: "#ff0000" },
+        });
         expect(wrapper.find("input[type='color']").exists()).toBe(true);
     });
 });

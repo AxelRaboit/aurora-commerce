@@ -3,15 +3,23 @@ import { deepMerge } from "./deepMerge.js";
 
 describe("deepMerge", () => {
     it("merges flat objects, source wins on conflict", () => {
-        expect(deepMerge({ a: 1, b: 2 }, { b: 99, c: 3 })).toEqual({ a: 1, b: 99, c: 3 });
+        expect(deepMerge({ a: 1, b: 2 }, { b: 99, c: 3 })).toEqual({
+            a: 1,
+            b: 99,
+            c: 3,
+        });
     });
 
     it("recursively merges nested objects", () => {
-        expect(deepMerge({ x: { a: 1, b: 2 } }, { x: { b: 99, c: 3 } })).toEqual({ x: { a: 1, b: 99, c: 3 } });
+        expect(
+            deepMerge({ x: { a: 1, b: 2 } }, { x: { b: 99, c: 3 } }),
+        ).toEqual({ x: { a: 1, b: 99, c: 3 } });
     });
 
     it("replaces arrays instead of merging them", () => {
-        expect(deepMerge({ tags: [1, 2] }, { tags: [3] })).toEqual({ tags: [3] });
+        expect(deepMerge({ tags: [1, 2] }, { tags: [3] })).toEqual({
+            tags: [3],
+        });
     });
 
     it("returns source when target is not a plain object", () => {

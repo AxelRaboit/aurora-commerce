@@ -62,11 +62,16 @@ describe("AppTooltip", () => {
 
     it("renders description when provided", async () => {
         vi.useFakeTimers();
-        const wrapper = mountTooltip({ title: "Title", description: "Details here" });
+        const wrapper = mountTooltip({
+            title: "Title",
+            description: "Details here",
+        });
         await wrapper.find("div.contents").trigger("mouseenter");
         vi.runAllTimers();
         await nextTick();
-        expect(wrapper.find('[role="tooltip"]').text()).toContain("Details here");
+        expect(wrapper.find('[role="tooltip"]').text()).toContain(
+            "Details here",
+        );
         vi.useRealTimers();
     });
 });

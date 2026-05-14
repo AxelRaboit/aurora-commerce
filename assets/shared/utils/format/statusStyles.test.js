@@ -1,9 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { statusBadge, statusBadgeColor, accessRequestStatusBadge, accessRequestStatusBadgeColor } from "./statusStyles.js";
+import {
+    statusBadge,
+    statusBadgeColor,
+    accessRequestStatusBadge,
+    accessRequestStatusBadgeColor,
+} from "./statusStyles.js";
 
 describe("statusBadge", () => {
     it("returns the correct classes for known statuses", () => {
-        expect(statusBadge("published")).toBe("bg-emerald-500/15 text-emerald-400");
+        expect(statusBadge("published")).toBe(
+            "bg-emerald-500/15 text-emerald-400",
+        );
         expect(statusBadge("draft")).toBe("bg-amber-500/15 text-amber-400");
     });
 
@@ -25,12 +32,18 @@ describe("statusBadgeColor", () => {
 
 describe("accessRequestStatusBadge", () => {
     it("returns correct classes for access request statuses", () => {
-        expect(accessRequestStatusBadge("pending")).toBe("bg-amber-500/15 text-amber-400");
-        expect(accessRequestStatusBadge("approved")).toBe("bg-emerald-500/15 text-emerald-400");
+        expect(accessRequestStatusBadge("pending")).toBe(
+            "bg-amber-500/15 text-amber-400",
+        );
+        expect(accessRequestStatusBadge("approved")).toBe(
+            "bg-emerald-500/15 text-emerald-400",
+        );
     });
 
     it("returns fallback for unknown status", () => {
-        expect(accessRequestStatusBadge("other")).toBe("bg-surface-2 text-secondary");
+        expect(accessRequestStatusBadge("other")).toBe(
+            "bg-surface-2 text-secondary",
+        );
     });
 });
 

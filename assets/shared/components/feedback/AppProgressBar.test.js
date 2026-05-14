@@ -15,7 +15,9 @@ describe("AppProgressBar", () => {
 
     it("clamps value above 100 to 100%", () => {
         const wrapper = mount(AppProgressBar, { props: { value: 150 } });
-        expect(getFillBar(wrapper).attributes("style")).toContain("width: 100%");
+        expect(getFillBar(wrapper).attributes("style")).toContain(
+            "width: 100%",
+        );
     });
 
     it("clamps negative value to 0%", () => {

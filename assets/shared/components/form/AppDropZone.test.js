@@ -27,7 +27,9 @@ describe("AppDropZone", () => {
             props: { hint: "JPG, PNG only" },
             global: { plugins: [i18n] },
         });
-        expect(wrapper.find("p.text-xs.text-muted").text()).toBe("JPG, PNG only");
+        expect(wrapper.find("p.text-xs.text-muted").text()).toBe(
+            "JPG, PNG only",
+        );
     });
 
     it("renders upload icon", () => {

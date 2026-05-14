@@ -7,7 +7,8 @@ vi.mock("vue-i18n", () => ({
 }));
 
 const stubAppButton = {
-    template: '<button :disabled="disabled || loading" @click="$emit(\'click\')"><slot /></button>',
+    template:
+        '<button :disabled="disabled || loading" @click="$emit(\'click\')"><slot /></button>',
     props: ["variant", "size", "loading", "disabled"],
     emits: ["click"],
 };

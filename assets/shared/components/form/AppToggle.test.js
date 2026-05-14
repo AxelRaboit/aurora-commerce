@@ -14,7 +14,9 @@ describe("AppToggle", () => {
     });
 
     it("applies disabled state and opacity class when disabled=true", () => {
-        const wrapper = mount(AppToggle, { props: { modelValue: false, disabled: true } });
+        const wrapper = mount(AppToggle, {
+            props: { modelValue: false, disabled: true },
+        });
         expect(wrapper.find("button").element.disabled).toBe(true);
         expect(wrapper.find("button").classes()).toContain("opacity-50");
     });
@@ -27,7 +29,9 @@ describe("AppToggle", () => {
     });
 
     it("does not emit when disabled and clicked", async () => {
-        const wrapper = mount(AppToggle, { props: { modelValue: false, disabled: true } });
+        const wrapper = mount(AppToggle, {
+            props: { modelValue: false, disabled: true },
+        });
         await wrapper.find("button").trigger("click");
         expect(wrapper.emitted("update:modelValue")).toBeFalsy();
     });

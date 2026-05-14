@@ -10,7 +10,9 @@ describe("AppIconButton", () => {
     });
 
     it("renders an <a> when href is provided", () => {
-        const wrapper = mount(AppIconButton, { props: { href: "https://example.com" } });
+        const wrapper = mount(AppIconButton, {
+            props: { href: "https://example.com" },
+        });
         expect(wrapper.element.tagName).toBe("A");
         expect(wrapper.attributes("href")).toBe("https://example.com");
     });
@@ -21,7 +23,9 @@ describe("AppIconButton", () => {
         });
         expect(withAriaLabel.attributes("aria-label")).toBe("Close dialog");
 
-        const withTitleOnly = mount(AppIconButton, { props: { title: "Settings" } });
+        const withTitleOnly = mount(AppIconButton, {
+            props: { title: "Settings" },
+        });
         expect(withTitleOnly.attributes("aria-label")).toBe("Settings");
     });
 

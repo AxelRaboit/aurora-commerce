@@ -22,7 +22,7 @@ describe("calculatePasswordStrength", () => {
     });
 
     it("accounts for length thresholds at 12 and 20", () => {
-        const short = calculatePasswordStrength("Abcde1!");   // < 12 chars
+        const short = calculatePasswordStrength("Abcde1!"); // < 12 chars
         const medium = calculatePasswordStrength("Abcdefgh1!zz"); // >= 12 chars
         expect(medium).toBeGreaterThan(short);
     });

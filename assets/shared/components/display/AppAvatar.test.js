@@ -9,7 +9,9 @@ describe("AppAvatar", () => {
     });
 
     it("renders initials from firstName + lastName when no name given", () => {
-        const wrapper = mount(AppAvatar, { props: { firstName: "Alice", lastName: "Martin" } });
+        const wrapper = mount(AppAvatar, {
+            props: { firstName: "Alice", lastName: "Martin" },
+        });
         expect(wrapper.find("span").text()).toBe("AM");
     });
 
@@ -18,12 +20,16 @@ describe("AppAvatar", () => {
             props: { name: "John", photoUrl: "https://example.com/avatar.jpg" },
         });
         expect(wrapper.find("img").exists()).toBe(true);
-        expect(wrapper.find("img").attributes("src")).toBe("https://example.com/avatar.jpg");
+        expect(wrapper.find("img").attributes("src")).toBe(
+            "https://example.com/avatar.jpg",
+        );
         expect(wrapper.find("span").exists()).toBe(false);
     });
 
     it("applies solid variant class when variant=solid", () => {
-        const wrapper = mount(AppAvatar, { props: { name: "Bob", variant: "solid" } });
+        const wrapper = mount(AppAvatar, {
+            props: { name: "Bob", variant: "solid" },
+        });
         expect(wrapper.find("div").classes()).toContain("bg-accent-600");
     });
 

@@ -7,7 +7,11 @@ vi.mock("@/shared/composables/overlay/useBackButtonClose.js", () => ({
     useBackButtonClose: () => ({ requestClose: vi.fn() }),
 }));
 
-const i18n = createI18n({ legacy: false, locale: "en", messages: { en: { shared: { common: { close: "Close" } } } } });
+const i18n = createI18n({
+    legacy: false,
+    locale: "en",
+    messages: { en: { shared: { common: { close: "Close" } } } },
+});
 
 function mountModal(props = {}, slots = {}) {
     return mount(AppModal, {
@@ -39,12 +43,19 @@ describe("AppModal", () => {
     });
 
     it("hides close button when closeable=false", () => {
-        const wrapper = mountModal({ show: true, title: "T", closeable: false });
+        const wrapper = mountModal({
+            show: true,
+            title: "T",
+            closeable: false,
+        });
         expect(wrapper.find("button[aria-label]").exists()).toBe(false);
     });
 
     it("renders footer slot when provided", () => {
-        const wrapper = mountModal({ show: true }, { footer: "<button>Save</button>" });
+        const wrapper = mountModal(
+            { show: true },
+            { footer: "<button>Save</button>" },
+        );
         expect(wrapper.html()).toContain("Save");
     });
 });

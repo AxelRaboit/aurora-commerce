@@ -3,7 +3,7 @@ import { mount } from "@vue/test-utils";
 import AppNavLink from "./AppNavLink.vue";
 
 const stubAppTooltip = {
-    template: '<div><slot /></div>',
+    template: "<div><slot /></div>",
     props: ["title", "description", "placement"],
 };
 
@@ -38,7 +38,9 @@ describe("AppNavLink", () => {
             props: { href: "/dashboard", sidebarActive: true },
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
-        expect(wrapper.find("a").attributes("data-sidebar-active")).toBe("true");
+        expect(wrapper.find("a").attributes("data-sidebar-active")).toBe(
+            "true",
+        );
     });
 
     it("omits data-sidebar-active attribute when sidebarActive is false", () => {
@@ -46,7 +48,9 @@ describe("AppNavLink", () => {
             props: { href: "/dashboard", sidebarActive: false },
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
-        expect(wrapper.find("a").attributes("data-sidebar-active")).toBeUndefined();
+        expect(
+            wrapper.find("a").attributes("data-sidebar-active"),
+        ).toBeUndefined();
     });
 
     it("sets rel=noopener when target is _blank", () => {

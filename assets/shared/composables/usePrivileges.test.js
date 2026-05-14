@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-async function freshUsePrivileges({ isDev = false, isAdmin = false, privileges = [] } = {}) {
+async function freshUsePrivileges({
+    isDev = false,
+    isAdmin = false,
+    privileges = [],
+} = {}) {
     vi.stubGlobal("__isDev__", isDev ? true : undefined);
     vi.stubGlobal("__isAdmin__", isAdmin ? true : undefined);
     vi.stubGlobal("__privileges__", privileges);

@@ -10,12 +10,16 @@ const options = [
 
 describe("AppSelect", () => {
     it("renders a select element", () => {
-        const wrapper = mount(AppSelect, { props: { modelValue: "", options } });
+        const wrapper = mount(AppSelect, {
+            props: { modelValue: "", options },
+        });
         expect(wrapper.find("select").exists()).toBe(true);
     });
 
     it("renders all options from array prop", () => {
-        const wrapper = mount(AppSelect, { props: { modelValue: "", options } });
+        const wrapper = mount(AppSelect, {
+            props: { modelValue: "", options },
+        });
         const optionEls = wrapper.findAll("option");
         expect(optionEls.map((o) => o.text())).toContain("Cat");
         expect(optionEls.map((o) => o.text())).toContain("Dog");
@@ -39,7 +43,9 @@ describe("AppSelect", () => {
     });
 
     it("emits update:modelValue on change", async () => {
-        const wrapper = mount(AppSelect, { props: { modelValue: "", options } });
+        const wrapper = mount(AppSelect, {
+            props: { modelValue: "", options },
+        });
         await wrapper.find("select").setValue("dog");
         expect(wrapper.emitted("update:modelValue")).toBeTruthy();
         expect(wrapper.emitted("update:modelValue")[0][0]).toBe("dog");

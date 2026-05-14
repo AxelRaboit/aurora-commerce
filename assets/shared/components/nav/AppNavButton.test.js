@@ -3,7 +3,7 @@ import { mount } from "@vue/test-utils";
 import AppNavButton from "./AppNavButton.vue";
 
 const stubAppTooltip = {
-    template: '<div><slot /></div>',
+    template: "<div><slot /></div>",
     props: ["title", "description", "placement"],
 };
 
@@ -27,7 +27,9 @@ describe("AppNavButton", () => {
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
         expect(wrapper.find("button").classes()).toContain("text-secondary");
-        expect(wrapper.find("button").classes()).toContain("hover:text-primary");
+        expect(wrapper.find("button").classes()).toContain(
+            "hover:text-primary",
+        );
     });
 
     it("applies rose hover classes when hoverColor is rose", () => {
@@ -35,7 +37,9 @@ describe("AppNavButton", () => {
             props: { hoverColor: "rose" },
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
-        expect(wrapper.find("button").classes()).toContain("hover:text-rose-400");
+        expect(wrapper.find("button").classes()).toContain(
+            "hover:text-rose-400",
+        );
     });
 
     it("renders slot content", () => {

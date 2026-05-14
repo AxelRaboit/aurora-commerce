@@ -24,7 +24,9 @@ describe("AppCheckbox", () => {
     });
 
     it("renders label from prop", () => {
-        const wrapper = mount(AppCheckbox, { props: { label: "Accept terms" } });
+        const wrapper = mount(AppCheckbox, {
+            props: { label: "Accept terms" },
+        });
         expect(wrapper.text()).toContain("Accept terms");
     });
 

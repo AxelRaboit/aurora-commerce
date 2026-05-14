@@ -41,12 +41,18 @@ describe("useServerErrors", () => {
         const onSuccess = vi.fn();
         handleResponse({ success: true, data: { id: 1 } }, onSuccess);
         expect(errors.value).toEqual({});
-        expect(onSuccess).toHaveBeenCalledWith({ success: true, data: { id: 1 } });
+        expect(onSuccess).toHaveBeenCalledWith({
+            success: true,
+            data: { id: 1 },
+        });
     });
 
     it("handleResponse sets field errors from data.errors", () => {
         const { errors, handleResponse } = mountWithComposable();
-        handleResponse({ success: false, errors: { name: "already_a_string" } });
+        handleResponse({
+            success: false,
+            errors: { name: "already_a_string" },
+        });
         expect(errors.value).toHaveProperty("name");
     });
 

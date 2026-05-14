@@ -41,7 +41,11 @@ describe("useUrlSyncedState", () => {
             serialize: (value) => `/?tab=${value}`,
         });
         api().set("tab-b");
-        expect(pushSpy).toHaveBeenCalledWith({ value: "tab-b" }, "", "/?tab=tab-b");
+        expect(pushSpy).toHaveBeenCalledWith(
+            { value: "tab-b" },
+            "",
+            "/?tab=tab-b",
+        );
         pushSpy.mockRestore();
     });
 

@@ -47,7 +47,9 @@ describe("AppTagsInput", () => {
             props: { modelValue: [], error: "Tags required" },
             global: { plugins: [i18n] },
         });
-        expect(wrapper.find("div.flex.flex-wrap").classes()).toContain("border-rose-400");
+        expect(wrapper.find("div.flex.flex-wrap").classes()).toContain(
+            "border-rose-400",
+        );
     });
 
     it("renders error message text when error prop is set", () => {

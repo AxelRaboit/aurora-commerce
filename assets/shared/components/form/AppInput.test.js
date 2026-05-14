@@ -16,7 +16,9 @@ describe("AppInput", () => {
             props: { placeholder: "Enter your name" },
             global: { plugins: [i18n] },
         });
-        expect(wrapper.find("input").attributes("placeholder")).toBe("Enter your name");
+        expect(wrapper.find("input").attributes("placeholder")).toBe(
+            "Enter your name",
+        );
     });
 
     it("renders label text", () => {

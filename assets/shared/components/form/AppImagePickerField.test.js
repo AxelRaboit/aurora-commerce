@@ -13,14 +13,20 @@ const i18n = createI18n({ legacy: false, locale: "en", messages: {} });
 const globalConfig = {
     plugins: [i18n],
     stubs: {
-        AppImage: { template: '<img :src="src" />', props: ["src", "alt", "objectFit"] },
+        AppImage: {
+            template: '<img :src="src" />',
+            props: ["src", "alt", "objectFit"],
+        },
     },
 };
 
 describe("AppImagePickerField", () => {
     it("renders label when label prop is set", () => {
         const wrapper = mount(AppImagePickerField, {
-            props: { label: "Cover image", modelValue: { id: null, url: null } },
+            props: {
+                label: "Cover image",
+                modelValue: { id: null, url: null },
+            },
             global: globalConfig,
         });
         expect(wrapper.find("p").text()).toBe("Cover image");
@@ -28,16 +34,22 @@ describe("AppImagePickerField", () => {
 
     it("shows image when modelValue.url is set", () => {
         const wrapper = mount(AppImagePickerField, {
-            props: { modelValue: { id: 1, url: "https://example.com/img.jpg" } },
+            props: {
+                modelValue: { id: 1, url: "https://example.com/img.jpg" },
+            },
             global: globalConfig,
         });
         expect(wrapper.find("img").exists()).toBe(true);
-        expect(wrapper.find("img").attributes("src")).toBe("https://example.com/img.jpg");
+        expect(wrapper.find("img").attributes("src")).toBe(
+            "https://example.com/img.jpg",
+        );
     });
 
     it("shows at least two buttons when image url is set (change + remove)", () => {
         const wrapper = mount(AppImagePickerField, {
-            props: { modelValue: { id: 1, url: "https://example.com/img.jpg" } },
+            props: {
+                modelValue: { id: 1, url: "https://example.com/img.jpg" },
+            },
             global: globalConfig,
         });
         const buttons = wrapper.findAll("button");
@@ -55,7 +67,9 @@ describe("AppImagePickerField", () => {
 
     it("emits update:modelValue with null values when remove is clicked", async () => {
         const wrapper = mount(AppImagePickerField, {
-            props: { modelValue: { id: 1, url: "https://example.com/img.jpg" } },
+            props: {
+                modelValue: { id: 1, url: "https://example.com/img.jpg" },
+            },
             global: globalConfig,
         });
         // The ghost/remove button is the last button in the actions block
