@@ -24,6 +24,10 @@ backend:
           created: Annonce créée
           updated: Annonce mise à jour
           deleted: Annonce supprimée
+        listing_category:
+          created: Catégorie créée
+          updated: Catégorie mise à jour
+          deleted: Catégorie supprimée
         order:
           created: Commande créée
           paid: Commande payée
@@ -36,6 +40,8 @@ backend:
       ecommerce: E-commerce
     listings: Boutique
     listings_description: Articles publiés sur la boutique en ligne et leur stock
+    listing_categories: Catégories
+    listing_categories_description: Catégories hiérarchiques pour les annonces boutique
     orders: Commandes
     orders_description: 'Commandes des clients, statuts et paiements'
   ecommerce:
@@ -137,6 +143,35 @@ backend:
       linkedProduct: Produit lié
       deleteConfirm: 'Supprimer le listing « {name} » ?'
       deleteWarning: "Le produit lié n'est pas supprimé, seulement la fiche boutique."
+    listing_categories:
+      errors:
+        parent_not_found: Catégorie parente introuvable.
+        self_parent: Une catégorie ne peut pas être son propre parent.
+        cycle_detected: Impossible de déplacer une catégorie sous l'une de ses descendantes.
+        translations_required: Au moins une traduction est requise.
+        name_required: Le nom est obligatoire.
+      created: Catégorie créée.
+      updated: Catégorie mise à jour.
+      deleted: Catégorie supprimée.
+      add: Ajouter une catégorie
+      create: Nouvelle catégorie
+      edit: 'Modifier {name}'
+      empty: Aucune catégorie.
+      name: Nom
+      slug: Slug
+      slug_placeholder: 'généré depuis le nom'
+      description: Description
+      seo_title: Titre SEO
+      seo_description: Description SEO
+      parent: Catégorie parente
+      no_parent: '— (racine)'
+      position: Position
+      image: Image
+      visibility: Visibilité
+      visible: Visible
+      hidden: Masquée
+      visible_label: Visible
+      delete_confirm: 'Supprimer la catégorie « {name} » ?'
 ecommerce:
   mail:
     subject:

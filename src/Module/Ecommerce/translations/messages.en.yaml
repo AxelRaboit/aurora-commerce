@@ -24,6 +24,10 @@ backend:
           created: Listing created
           updated: Listing updated
           deleted: Listing deleted
+        listing_category:
+          created: Listing category created
+          updated: Listing category updated
+          deleted: Listing category deleted
         order:
           created: Order created
           paid: Order paid
@@ -36,6 +40,8 @@ backend:
       ecommerce: E-commerce
     listings: Shop
     listings_description: Items listed in the online shop and their stock
+    listing_categories: Categories
+    listing_categories_description: Hierarchical categories for shop listings
     orders: Orders
     orders_description: 'Customer orders, statuses and payments'
   ecommerce:
@@ -137,6 +143,35 @@ backend:
       linkedProduct: Linked product
       deleteConfirm: 'Delete listing "{name}"?'
       deleteWarning: 'The linked product is not deleted, only the shop page.'
+    listing_categories:
+      errors:
+        parent_not_found: Parent category not found.
+        self_parent: A category cannot be its own parent.
+        cycle_detected: Cannot move a category under one of its descendants.
+        translations_required: At least one translation is required.
+        name_required: Name is required.
+      created: Category created.
+      updated: Category updated.
+      deleted: Category deleted.
+      add: Add category
+      create: New category
+      edit: 'Edit {name}'
+      empty: No categories yet.
+      name: Name
+      slug: Slug
+      slug_placeholder: 'auto-generated from name'
+      description: Description
+      seo_title: SEO title
+      seo_description: SEO description
+      parent: Parent category
+      no_parent: '— (root)'
+      position: Position
+      image: Image
+      visibility: Visibility
+      visible: Visible
+      hidden: Hidden
+      visible_label: Visible
+      delete_confirm: 'Delete category "{name}"?'
 ecommerce:
   mail:
     subject:
