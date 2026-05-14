@@ -52,5 +52,8 @@ backend:
       name_required: Le nom est requis.
 frontend:
   theme:
+    title: Articles
     no_posts: Aucun article publié pour le moment.
     no_content: Aucun contenu.
+    search_placeholder: Rechercher un article…
+    no_results: Aucun article ne correspond à votre recherche.

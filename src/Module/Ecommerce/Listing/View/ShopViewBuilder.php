@@ -36,18 +36,16 @@ final readonly class ShopViewBuilder
         ]);
     }
 
-    /** @return array{listings: array<mixed>, pagination: array<string, int>} */
+    /** @return array{listings: array<mixed>, page: int, totalPages: int, total: int} */
     public function pageData(int $page, ?string $search): array
     {
         $result = $this->listingRepository->findPaginated($page, 12, search: $search, visibleOnly: true);
 
         return [
             'listings' => array_map($this->listingSerializer->serialize(...), $result['items']),
-            'pagination' => [
-                'page' => $result['page'],
-                'totalPages' => $result['totalPages'],
-                'total' => $result['total'],
-            ],
+            'page' => $result['page'],
+            'totalPages' => $result['totalPages'],
+            'total' => $result['total'],
         ];
     }
 

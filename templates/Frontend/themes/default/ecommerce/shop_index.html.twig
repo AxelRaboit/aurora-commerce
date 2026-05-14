@@ -5,7 +5,9 @@
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/ShopIndexApp', {
     listings: listings,
-    pagination: pagination,
+    initialPage: page,
+    initialTotalPages: totalPages,
+    initialTotal: total,
     locale: locale,
     productPathBase: path('frontend_shop_product', {locale: locale, slug: 'SLUG'})|replace({'/SLUG': ''}),
     indexPath: path('frontend_shop_index', {locale: locale}),

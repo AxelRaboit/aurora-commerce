@@ -12,7 +12,9 @@ const { t } = useI18n();
 
 const props = defineProps({
     listings: { type: Array, default: () => [] },
-    pagination: { type: Object, default: () => ({ page: 1, totalPages: 1 }) },
+    initialPage: { type: Number, default: 1 },
+    initialTotalPages: { type: Number, default: 1 },
+    initialTotal: { type: Number, default: 0 },
     locale: { type: String, default: "fr" },
     productPathBase: { type: String, required: true },
     indexPath: { type: String, required: true },
