@@ -11,13 +11,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant hover (&:hover);
 
-@import "./theme.css";
-@import "./theme-transition.css";
-@import "./base.css";
-@import "./scrollbar.css";
-@import "./input.css";
-@import "./modal.css";
-@import "./editor.css";
-@import "./prose.css";
-@import "./blocks.css";
+@import "./base/theme.css";
+@import "./base/theme-transition.css";
+@import "./base/base.css";
+@import "./base/scrollbar.css";
+@import "./components/input.css";
+@import "./components/modal.css";
+@import "./components/sidebar.css";
+@import "./editor/editor.css";
+@import "./editor/prose.css";
+@import "./editor/blocks.css";
 @import "flag-icons/css/flag-icons.min.css";

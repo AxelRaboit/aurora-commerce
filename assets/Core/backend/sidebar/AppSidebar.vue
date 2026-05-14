@@ -15,7 +15,7 @@ import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import AppNavButton from "@/shared/components/nav/AppNavButton.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppNotificationsBell from "@core/backend/notifications/AppNotificationsBell.vue";
-import "@/css/sidebar.css";
+import "@/css/components/sidebar.css";
 import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
     ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
