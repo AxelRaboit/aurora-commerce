@@ -14,7 +14,6 @@ use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
-use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -95,9 +94,7 @@ class ContactManager implements ContactManagerInterface
 
         $contactTags = $this->contactTagRepository->findBy(['id' => $tagIds]);
         foreach ($contactTags as $contactTag) {
-            if ($contactTag instanceof ContactTagInterface) {
-                $contact->addContactTag($contactTag);
-            }
+            $contact->addContactTag($contactTag);
         }
     }
 

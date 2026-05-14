@@ -12,6 +12,8 @@ use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
+use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -29,8 +31,11 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 #[AsEventListener]
 final readonly class OrderCrmSyncListener
 {
+    private const string CLIENT_TAG_SLUG = 'client';
+
     public function __construct(
         private ContactRepository $contactRepository,
+        private ContactTagRepository $contactTagRepository,
         private EntityManagerInterface $entityManager,
         private SequenceGenerator $sequenceGenerator,
         private SettingRepository $settingRepository,
@@ -52,6 +57,8 @@ final readonly class OrderCrmSyncListener
 
         $contact = $this->contactRepository->findOneBy(['email' => $email]);
 
+        $clientTag = $this->contactTagRepository->findOneBySlug(self::CLIENT_TAG_SLUG);
+
         if (!$contact instanceof ContactInterface) {
             $contact = new Contact();
             $contact->setReference($this->sequenceGenerator->next(SequencePrefixEnum::Contact->value));
@@ -59,7 +66,9 @@ final readonly class OrderCrmSyncListener
             $contact->setFirstName($firstName);
             $contact->setLastName($lastName);
             $contact->setSource(ContactSourceEnum::Order);
-            $contact->addTag('client');
+            if ($clientTag instanceof ContactTagInterface) {
+                $contact->addContactTag($clientTag);
+            }
 
             $this->entityManager->persist($contact);
             $this->entityManager->flush();
@@ -78,14 +87,25 @@ final readonly class OrderCrmSyncListener
             $dirty = true;
         }
 
-        if (!in_array('client', $contact->getTags(), true)) {
-            $contact->addTag('client');
+        if ($clientTag instanceof ContactTagInterface && !$this->hasTag($contact, $clientTag)) {
+            $contact->addContactTag($clientTag);
             $dirty = true;
         }
 
         if ($dirty) {
             $this->entityManager->flush();
         }
+    }
+
+    private function hasTag(ContactInterface $contact, ContactTagInterface $tag): bool
+    {
+        foreach ($contact->getContactTags() as $existing) {
+            if ($existing->getId() === $tag->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return array{string, string} */
