@@ -272,6 +272,8 @@ frontend:
     back_to_list: Retour à la boutique
     categories: Catégories
     category_breadcrumb: Catégorie
+    tags: Étiquettes
+    tag_breadcrumb: Étiquette
     add_to_cart: Ajouter au panier
     added_to_cart: Produit ajouté au panier
     in_stock: En stock

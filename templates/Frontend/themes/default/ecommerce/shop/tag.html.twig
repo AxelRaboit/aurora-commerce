@@ -1,0 +1,19 @@
+{% extends 'Frontend/themes/default/layout.html.twig' %}
+
+{% block title %}{{ tag.name }} — {{ context.siteName }}{% endblock %}
+{% block pageDescription %}{{ tag.description ?? '' }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ecommerce/frontend/ShopTagApp', {
+    tag: tag,
+    otherTags: otherTags,
+    listings: listings,
+    page: page,
+    totalPages: totalPages,
+    total: total,
+    locale: locale,
+    shopPath: path('frontend_shop_index', {locale: locale}),
+    tagPathBase: path('frontend_shop_tag', {locale: locale, slug: 'SLUG'})|replace({'/SLUG': ''}),
+    productPathBase: path('frontend_shop_product', {locale: locale, slug: 'SLUG'})|replace({'/SLUG': ''}),
+}) }}></div>
+{% endblock %}

@@ -11,6 +11,8 @@ use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
+use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 
 /**
  * Builds the Twig payloads for the public shop views.
@@ -23,6 +25,7 @@ final readonly class ShopViewBuilder
         private Context $context,
         private ThemeContext $themeContext,
         private ListingCategoryRepository $listingCategoryRepository,
+        private ListingTagRepository $listingTagRepository,
     ) {}
 
     /**
@@ -37,7 +40,37 @@ final readonly class ShopViewBuilder
             'themeContext' => $this->themeContext,
             'searchPath' => $searchPath,
             'rootCategories' => $this->buildRootCategories($locale),
+            'availableTags' => $this->buildAvailableTags($locale),
         ]);
+    }
+
+    /**
+     * Lists all visible tags translated for the active locale. Tags are flat
+     * (no parent/child), so we expose the full set sorted alphabetically for
+     * discoverability on the shop index.
+     *
+     * @return list<array{name: string, slug: string, color: string}>
+     */
+    private function buildAvailableTags(string $locale): array
+    {
+        $tags = $this->listingTagRepository->findAllOrdered($locale);
+        $result = [];
+        foreach ($tags as $tag) {
+            if (!$tag->isVisible()) {
+                continue;
+            }
+            $translation = $tag->getTranslation($locale);
+            if (null === $translation) {
+                continue;
+            }
+            $result[] = [
+                'name' => $translation->getName(),
+                'slug' => $translation->getSlug(),
+                'color' => $tag->getColor(),
+            ];
+        }
+
+        return $result;
     }
 
     /**
@@ -153,5 +186,83 @@ final readonly class ShopViewBuilder
             'showFrontMenus' => true,
             'themeContext' => $this->themeContext,
         ];
+    }
+
+    /**
+     * Builds the payload for a tag landing page. Tags are flat, so unlike
+     * categoryView there is no descendant traversal and no breadcrumb.
+     *
+     * @return array<string, mixed>
+     */
+    public function tagView(ListingTagInterface $tag, string $locale, int $page): array
+    {
+        $perPage = 12;
+
+        $tagId = $tag->getId();
+        $tagIds = null !== $tagId ? [(int) $tagId] : [];
+
+        $paginated = $this->listingRepository->findVisibleByTagIdsPaginated($tagIds, $page, $perPage);
+        $total = $paginated['total'];
+        $totalPages = (int) max(1, (int) ceil($total / $perPage));
+
+        $translation = $tag->getTranslation($locale);
+        $name = null !== $translation ? $translation->getName() : '';
+        $description = null !== $translation ? $translation->getDescription() : null;
+        $slug = null !== $translation ? $translation->getSlug() : '';
+
+        return [
+            'tag' => [
+                'id' => $tagId,
+                'name' => $name,
+                'slug' => $slug,
+                'description' => $description,
+                'color' => $tag->getColor(),
+            ],
+            'otherTags' => $this->buildOtherTags($tag, $locale),
+            'listings' => array_map($this->listingSerializer->serialize(...), $paginated['items']),
+            'page' => $paginated['page'],
+            'perPage' => $paginated['perPage'],
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'locale' => $locale,
+            'context' => $this->context,
+            'showFrontMenus' => true,
+            'themeContext' => $this->themeContext,
+        ];
+    }
+
+    /**
+     * Up to 8 visible tags (excluding the current one) for cross-navigation on
+     * a tag page, sorted alphabetically via findAllOrdered().
+     *
+     * @return list<array{name: string, slug: string, color: string}>
+     */
+    private function buildOtherTags(ListingTagInterface $current, string $locale): array
+    {
+        $currentId = $current->getId();
+        $tags = $this->listingTagRepository->findAllOrdered($locale);
+        $result = [];
+        foreach ($tags as $tag) {
+            if (!$tag->isVisible()) {
+                continue;
+            }
+            if (null !== $currentId && $tag->getId() === $currentId) {
+                continue;
+            }
+            $translation = $tag->getTranslation($locale);
+            if (null === $translation) {
+                continue;
+            }
+            $result[] = [
+                'name' => $translation->getName(),
+                'slug' => $translation->getSlug(),
+                'color' => $tag->getColor(),
+            ];
+            if (count($result) >= 8) {
+                break;
+            }
+        }
+
+        return $result;
     }
 }

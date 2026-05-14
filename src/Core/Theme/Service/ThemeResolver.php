@@ -28,7 +28,14 @@ final readonly class ThemeResolver
     /** @return array<string, string> */
     public function resolveAll(): array
     {
-        $templates = ['layout', 'editorial/home', 'editorial/post', 'editorial/archive', 'editorial/term', 'editorial/_post_card', 'editorial/_pagination'];
+        $templates = [
+            'layout',
+            'editorial/home/index',
+            'editorial/archive/index',
+            'editorial/term/index',
+            'editorial/form/index',
+            'editorial/post/index',
+        ];
         $map = [];
         foreach ($templates as $name) {
             $map[$name] = $this->resolve($name);

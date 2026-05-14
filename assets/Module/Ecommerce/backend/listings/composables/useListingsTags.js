@@ -1,5 +1,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { pickTranslation } from "@/shared/utils/i18n/pickTranslation.js";
 
 export function useListingsTags(tagsPath) {
     const { locale } = useI18n();
@@ -13,19 +14,9 @@ export function useListingsTags(tagsPath) {
         if (data.success) availableTags.value = data.items;
     }
 
-    function pickTranslation(tag) {
-        const translations = tag.translations ?? {};
-        return (
-            translations[locale.value]
-            ?? translations.en
-            ?? Object.values(translations)[0]
-            ?? null
-        );
-    }
-
     const flatTags = computed(() => {
         return availableTags.value.map((tag) => {
-            const translation = pickTranslation(tag);
+            const translation = pickTranslation(tag, locale.value);
             const name = translation?.name ?? `#${tag.id}`;
             return {
                 id: tag.id,

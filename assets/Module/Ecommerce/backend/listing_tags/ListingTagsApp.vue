@@ -2,8 +2,8 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useListingTagsForm } from "@ecommerce/backend/listing_tags/composables/useListingTagsForm.js";
-import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -18,7 +18,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Trash2, Plus, Save, X, Tag, Pencil } from "lucide-vue-next";
-import { usePrivileges } from "@/shared/composables/usePrivileges.js";
+import { translatedField } from "@/shared/utils/i18n/pickTranslation.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -43,11 +43,6 @@ async function reload() {
     items.value = json.items ?? [];
 }
 
-function autoSlug(locale) {
-    const entry = editForm.translations?.[locale];
-    if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
-}
-
 const {
     showCreate,
     showEdit,
@@ -61,6 +56,7 @@ const {
     openEdit,
     submitCreate,
     submitEdit,
+    autoSlug,
 } = useListingTagsForm({
     createPath: props.createPath,
     updatePath: props.updatePath,
@@ -77,21 +73,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 function displayName(tag) {
     if (!tag) return "";
-    const translation = tag.translations?.[activeLocale.value];
-    if (translation?.name) return translation.name;
-    const firstTranslation = Object.values(tag.translations ?? {})[0];
-    return firstTranslation?.name ?? `#${tag.id}`;
+    return translatedField(tag, "name", activeLocale.value, `#${tag.id}`);
 }
 
 function displaySlug(tag) {
     if (!tag) return "";
-    const translation = tag.translations?.[activeLocale.value];
-    if (translation?.slug) return translation.slug;
-    const firstTranslation = Object.values(tag.translations ?? {})[0];
-    return firstTranslation?.slug ?? "";
+    return translatedField(tag, "slug", activeLocale.value, "");
 }
-
-defineSlots();
 </script>
 
 <template>

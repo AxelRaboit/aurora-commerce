@@ -1,0 +1,19 @@
+{% extends 'Frontend/themes/default/layout.html.twig' %}
+
+{% block title %}{{ category.seoTitle ?? category.name }} — {{ context.siteName }}{% endblock %}
+{% block pageDescription %}{{ category.seoDescription ?? '' }}{% endblock %}
+
+{% block body %}
+<div {{ vue_component('ecommerce/frontend/ShopCategoryApp', {
+    category: category,
+    breadcrumb: breadcrumb,
+    listings: listings,
+    page: page,
+    totalPages: totalPages,
+    total: total,
+    locale: locale,
+    shopPath: path('frontend_shop_index', {locale: locale}),
+    categoryPathBase: path('frontend_shop_category', {locale: locale, slug: 'SLUG'})|replace({'/SLUG': ''}),
+    productPathBase: path('frontend_shop_product', {locale: locale, slug: 'SLUG'})|replace({'/SLUG': ''}),
+}) }}></div>
+{% endblock %}

@@ -33,6 +33,8 @@ use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslation;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
@@ -133,6 +135,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $products = $this->createErp($manager, $media);
         $listings = $this->createEcommerce($manager, $products, $media, $users);
         $this->createListingCategories($manager, $listings);
+        $this->createListingTags($manager, $listings);
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
@@ -1526,6 +1529,89 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             foreach ($listingIndexes as $index) {
                 if (isset($listings[$index])) {
                     $listings[$index]->addCategory($category);
+                }
+            }
+        }
+    }
+
+    // ── Listing Tags ──────────────────────────────────────────────────────────
+
+    /**
+     * @param Listing[] $listings
+     */
+    private function createListingTags(EntityManagerInterface $em, array $listings): void
+    {
+        $tagDefs = [
+            [
+                'key' => 'new',
+                'color' => '#10B981',
+                'translations' => [
+                    'fr' => ['name' => 'Nouveauté', 'slug' => 'nouveaute', 'description' => 'Les dernières nouveautés Aurora.'],
+                    'en' => ['name' => 'New', 'slug' => 'new', 'description' => 'The latest Aurora arrivals.'],
+                ],
+            ],
+            [
+                'key' => 'sale',
+                'color' => '#EF4444',
+                'translations' => [
+                    'fr' => ['name' => 'Promo', 'slug' => 'promo', 'description' => 'Produits en promotion.'],
+                    'en' => ['name' => 'Sale', 'slug' => 'sale', 'description' => 'Products on sale.'],
+                ],
+            ],
+            [
+                'key' => 'limited',
+                'color' => '#F59E0B',
+                'translations' => [
+                    'fr' => ['name' => 'Édition limitée', 'slug' => 'edition-limitee', 'description' => 'Disponibles en quantité limitée.'],
+                    'en' => ['name' => 'Limited edition', 'slug' => 'limited-edition', 'description' => 'Available in limited quantities.'],
+                ],
+            ],
+            [
+                'key' => 'featured',
+                'color' => '#8B5CF6',
+                'translations' => [
+                    'fr' => ['name' => 'Coup de cœur', 'slug' => 'coup-de-coeur', 'description' => 'Nos sélections préférées.'],
+                    'en' => ['name' => 'Featured', 'slug' => 'featured', 'description' => 'Our favourite picks.'],
+                ],
+            ],
+        ];
+
+        $tags = [];
+        foreach ($tagDefs as $def) {
+            $tag = new ListingTag();
+            $tag->setColor($def['color']);
+            $tag->setVisible(true);
+
+            foreach ($def['translations'] as $locale => $t) {
+                $translation = new ListingTagTranslation();
+                $translation->setLocale($locale)
+                    ->setName($t['name'])
+                    ->setSlug($t['slug'])
+                    ->setDescription($t['description'])
+                    ->setTag($tag);
+                $tag->addTranslation($translation);
+                $em->persist($translation);
+            }
+
+            $em->persist($tag);
+            $tags[$def['key']] = $tag;
+        }
+
+        // Distribute tags across existing demo listings. Indices map to the
+        // listingDefs order in createEcommerce(). Some listings carry multiple
+        // tags so the multi-tag display is exercised in the admin and frontend.
+        $assignments = [
+            'new' => [0, 12, 8],          // CRM licence, Editorial CMS, formation dev web
+            'sale' => [4, 5, 7],          // NAS 4 baies, NAS 8 baies, écran 4K
+            'limited' => [3, 6],          // Suite Complète, station USB-C
+            'featured' => [0, 3, 11, 12], // CRM licence, Suite Complète, onboarding, Editorial CMS
+        ];
+
+        foreach ($assignments as $tagKey => $listingIndexes) {
+            $tag = $tags[$tagKey];
+            foreach ($listingIndexes as $index) {
+                if (isset($listings[$index])) {
+                    $listings[$index]->addTag($tag);
                 }
             }
         }

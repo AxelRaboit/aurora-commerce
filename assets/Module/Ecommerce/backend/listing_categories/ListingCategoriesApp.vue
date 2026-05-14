@@ -1,12 +1,18 @@
 <script setup>
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, reactive, computed, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { VueDraggable } from "vue-draggable-plus";
+import {
+    buildTree,
+    flattenTreeForReorder,
+    collectDescendantIds,
+    findNodeInTree,
+} from "@/shared/composables/tree/useHierarchicalTree.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useListingCategoriesForm } from "@ecommerce/backend/listing_categories/composables/useListingCategoriesForm.js";
-import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 import ListingCategoryNode from "@ecommerce/backend/listing_categories/ListingCategoryNode.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -20,7 +26,7 @@ import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vu
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Trash2, Plus, Save, X, FolderTree } from "lucide-vue-next";
-import { usePrivileges } from "@/shared/composables/usePrivileges.js";
+import { translatedField } from "@/shared/utils/i18n/pickTranslation.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -40,33 +46,11 @@ const props = defineProps({
 const items = ref([...props.categories]);
 const activeTab = ref(props.locales[0]?.code ?? "en");
 const activeLocale = computed(() => activeTab.value);
-const collapsed = ref(new Set());
+const collapsed = reactive(new Set());
 
 function toggleCollapsed(id) {
-    if (collapsed.value.has(id)) collapsed.value.delete(id);
-    else collapsed.value.add(id);
-    // Force reactivity on Set
-    collapsed.value = new Set(collapsed.value);
-}
-
-function buildTree(flatCategories) {
-    const byId = new Map(
-        flatCategories.map((category) => [category.id, { ...category, children: [] }]),
-    );
-    const roots = [];
-    for (const node of byId.values()) {
-        if (node.parentId && byId.has(node.parentId)) {
-            byId.get(node.parentId).children.push(node);
-        } else {
-            roots.push(node);
-        }
-    }
-    const sortRecursive = (nodes) => {
-        nodes.sort((a, b) => (a.position - b.position) || (a.id - b.id));
-        nodes.forEach((node) => sortRecursive(node.children));
-    };
-    sortRecursive(roots);
-    return roots;
+    if (collapsed.has(id)) collapsed.delete(id);
+    else collapsed.add(id);
 }
 
 const tree = ref(buildTree(items.value));
@@ -79,22 +63,6 @@ async function reload() {
     items.value = json.items ?? [];
 }
 
-function collectDescendantIds(node, set = new Set()) {
-    if (!node) return set;
-    set.add(node.id);
-    for (const child of node.children ?? []) collectDescendantIds(child, set);
-    return set;
-}
-
-function findNodeInTree(nodes, id) {
-    for (const node of nodes) {
-        if (node.id === id) return node;
-        const found = findNodeInTree(node.children ?? [], id);
-        if (found) return found;
-    }
-    return null;
-}
-
 const parentOptions = computed(() => {
     const forbidden = editingCategory.value
         ? collectDescendantIds(findNodeInTree(tree.value, editingCategory.value.id) ?? editingCategory.value)
@@ -103,9 +71,7 @@ const parentOptions = computed(() => {
     const walk = (nodes) => {
         for (const node of nodes) {
             if (forbidden.has(node.id)) continue;
-            const translation = node.translations?.[activeLocale.value];
-            const firstTranslation = Object.values(node.translations ?? {})[0];
-            const name = translation?.name ?? firstTranslation?.name ?? `#${node.id}`;
+            const name = translatedField(node, "name", activeLocale.value, `#${node.id}`);
             list.push({ id: node.id, label: name });
             if (node.children?.length) walk(node.children);
         }
@@ -113,11 +79,6 @@ const parentOptions = computed(() => {
     walk(tree.value);
     return list;
 });
-
-function autoSlug(locale) {
-    const entry = editForm.translations?.[locale];
-    if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
-}
 
 const {
     showCreate,
@@ -133,6 +94,7 @@ const {
     openEdit,
     submitCreate,
     submitEdit,
+    autoSlug,
 } = useListingCategoriesForm({
     createPath: props.createPath,
     updatePath: props.updatePath,
@@ -158,24 +120,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 function displayName(category) {
     if (!category) return "";
-    const translation = category.translations?.[activeLocale.value];
-    if (translation?.name) return translation.name;
-    const firstTranslation = Object.values(category.translations ?? {})[0];
-    return firstTranslation?.name ?? `#${category.id}`;
+    return translatedField(category, "name", activeLocale.value, `#${category.id}`);
 }
 
 // ── Drag & drop persistence ──────────────────────────────────────────────────
-function flattenTreeForReorder(nodes, parentId = null) {
-    const entries = [];
-    nodes.forEach((node, index) => {
-        entries.push({ id: node.id, parentId, position: index });
-        if (node.children?.length) {
-            entries.push(...flattenTreeForReorder(node.children, node.id));
-        }
-    });
-    return entries;
-}
-
 let reorderTimer = null;
 async function persistTreeOrder() {
     const entries = flattenTreeForReorder(tree.value);
@@ -197,8 +145,6 @@ function onDragEnd() {
         nextTick(() => persistTreeOrder());
     }, 300);
 }
-
-defineSlots();
 </script>
 
 <template>

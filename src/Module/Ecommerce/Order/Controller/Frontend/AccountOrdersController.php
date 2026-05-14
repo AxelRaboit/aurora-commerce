@@ -40,6 +40,6 @@ class AccountOrdersController extends AbstractController
 
         $page = max(1, (int) $request->query->get('page', '1'));
 
-        return $this->render($this->themeResolver->resolve('ecommerce/account_orders'), $this->viewBuilder->indexView($user, $page, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/account/orders'), $this->viewBuilder->indexView($user, $page, $locale));
     }
 }

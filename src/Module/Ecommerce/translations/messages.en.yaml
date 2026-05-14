@@ -272,6 +272,8 @@ frontend:
     back_to_list: Back to shop
     categories: Categories
     category_breadcrumb: Category
+    tags: Tags
+    tag_breadcrumb: Tag
     add_to_cart: Add to cart
     added_to_cart: Product added to cart
     in_stock: In stock

@@ -1,8 +1,14 @@
 import { ref, reactive, computed, watch, nextTick } from "vue";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import {
+    buildTree,
+    flattenTreeForReorder,
+    collectDescendantIds,
+    findNodeInTree,
+} from "@/shared/composables/tree/useHierarchicalTree.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 export function useTaxonomyTree(
     selected,
@@ -15,24 +21,6 @@ export function useTaxonomyTree(
 ) {
     const { t } = useI18n();
     const { request } = useRequest();
-
-    function buildTree(terms) {
-        const byId = new Map(
-            terms.map((term) => [term.id, { ...term, children: [] }]),
-        );
-        const roots = [];
-        for (const node of byId.values()) {
-            if (node.parentId && byId.has(node.parentId))
-                byId.get(node.parentId).children.push(node);
-            else roots.push(node);
-        }
-        const sortRecursive = (nodes) => {
-            nodes.sort((a, b) => a.position - b.position || a.id - b.id);
-            nodes.forEach((n) => sortRecursive(n.children));
-        };
-        sortRecursive(roots);
-        return roots;
-    }
 
     const tree = ref([]);
 
@@ -52,16 +40,6 @@ export function useTaxonomyTree(
     );
 
     const dragging = ref(false);
-
-    function flattenTreeForReorder(nodes, parentId = null) {
-        const entries = [];
-        nodes.forEach((node, index) => {
-            entries.push({ id: node.id, parentId, position: index });
-            if (node.children?.length)
-                entries.push(...flattenTreeForReorder(node.children, node.id));
-        });
-        return entries;
-    }
 
     async function persistTreeOrder() {
         if (!selected.value) return;
@@ -86,33 +64,17 @@ export function useTaxonomyTree(
         else collapsed.add(id);
     }
 
-    function collectDescendantIds(node) {
-        const ids = new Set([node.id]);
-        for (const child of node.children ?? [])
-            collectDescendantIds(child).forEach((id) => ids.add(id));
-        return ids;
-    }
-
-    function findNodeInTree(nodes, id) {
-        for (const n of nodes) {
-            if (n.id === id) return n;
-            const found = findNodeInTree(n.children ?? [], id);
-            if (found) return found;
-        }
-        return null;
-    }
-
     const flatTermsForParentSelect = computed(() => {
         if (!selected.value?.hierarchical) return [];
         const list = [];
         const walk = (nodes, depth) =>
-            nodes.forEach((n) => {
+            nodes.forEach((node) => {
                 list.push({
-                    id: n.id,
-                    label: `${"— ".repeat(depth)}${termName(n, activeLocale.value)}`,
-                    descendants: collectDescendantIds(n),
+                    id: node.id,
+                    label: `${"— ".repeat(depth)}${termName(node, activeLocale.value)}`,
+                    descendants: collectDescendantIds(node),
                 });
-                if (n.children) walk(n.children, depth + 1);
+                if (node.children) walk(node.children, depth + 1);
             });
         walk(tree.value, 0);
         return list;

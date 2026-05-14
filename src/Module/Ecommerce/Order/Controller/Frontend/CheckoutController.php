@@ -151,7 +151,7 @@ class CheckoutController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('ecommerce/order_show'), $this->viewBuilder->showView($order, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/order/show'), $this->viewBuilder->showView($order, $locale));
     }
 
     private function cartContainsPhysicalItem(CartInterface $cart): bool

@@ -1,8 +1,0 @@
-{# Theme-level passerelle — delegates to the shared paginator. Override this file
-   in a custom theme if you need a different pagination look. #}
-{{ include('@Shared/components/app_pagination.html.twig', {
-    page: page,
-    totalPages: totalPages,
-    route: route,
-    params: params|default({}),
-}) }}

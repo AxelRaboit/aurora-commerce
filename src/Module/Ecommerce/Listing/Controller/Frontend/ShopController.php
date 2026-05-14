@@ -13,6 +13,7 @@ use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\View\ShopViewBuilder;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
+use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ class ShopController extends AbstractController
         private readonly ThemeResolver $themeResolver,
         private readonly ShopViewBuilder $viewBuilder,
         private readonly ListingCategoryRepository $listingCategoryRepository,
+        private readonly ListingTagRepository $listingTagRepository,
     ) {}
 
     #[Route('/{locale}/shop', name: 'frontend_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
@@ -41,7 +43,7 @@ class ShopController extends AbstractController
         $page = max(1, (int) $request->query->get('page', '1'));
         $searchPath = $this->generateUrl('frontend_shop_search', ['locale' => $locale]);
 
-        return $this->render($this->themeResolver->resolve('ecommerce/shop_index'), $this->viewBuilder->indexView($page, $locale, $searchPath));
+        return $this->render($this->themeResolver->resolve('ecommerce/shop/index'), $this->viewBuilder->indexView($page, $locale, $searchPath));
     }
 
     #[Route('/{locale}/shop/search', name: 'frontend_shop_search', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
@@ -71,8 +73,27 @@ class ShopController extends AbstractController
         $page = max(1, (int) $request->query->get('page', '1'));
 
         return $this->render(
-            $this->themeResolver->resolve('ecommerce/shop_category'),
+            $this->themeResolver->resolve('ecommerce/shop/category'),
             $this->viewBuilder->categoryView($category, $locale, $page),
+        );
+    }
+
+    #[Route('/{locale}/shop/tag/{slug}', name: 'frontend_shop_tag', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: [HttpMethodEnum::Get->value], priority: 9)]
+    public function showTag(string $locale, string $slug, Request $request): Response
+    {
+        $this->assertActiveLocale($this->context, $locale);
+        $request->setLocale($locale);
+
+        $tag = $this->listingTagRepository->findOneBySlug($slug, $locale);
+        if (null === $tag || !$tag->isVisible()) {
+            throw $this->createNotFoundException();
+        }
+
+        $page = max(1, (int) $request->query->get('page', '1'));
+
+        return $this->render(
+            $this->themeResolver->resolve('ecommerce/shop/tag'),
+            $this->viewBuilder->tagView($tag, $locale, $page),
         );
     }
 
@@ -87,6 +108,6 @@ class ShopController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->render($this->themeResolver->resolve('ecommerce/shop_product'), $this->viewBuilder->showView($listing, $locale));
+        return $this->render($this->themeResolver->resolve('ecommerce/shop/product'), $this->viewBuilder->showView($listing, $locale));
     }
 }

@@ -1,8 +1,9 @@
 import { reactive, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormAction } from "@/shared/composables/form/useFormAction.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 
 function emptyTranslation() {
     return {
@@ -140,6 +141,11 @@ export function useListingCategoriesForm(options) {
         showEdit.value = true;
     }
 
+    function autoSlug(locale) {
+        const entry = editForm.translations?.[locale];
+        if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
+    }
+
     return {
         showCreate,
         showEdit,
@@ -154,5 +160,6 @@ export function useListingCategoriesForm(options) {
         openEdit,
         submitCreate,
         submitEdit,
+        autoSlug,
     };
 }

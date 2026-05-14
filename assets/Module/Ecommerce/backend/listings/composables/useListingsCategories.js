@@ -1,5 +1,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { pickTranslation } from "@/shared/utils/i18n/pickTranslation.js";
 
 export function useListingsCategories(categoriesPath) {
     const { locale } = useI18n();
@@ -13,19 +14,9 @@ export function useListingsCategories(categoriesPath) {
         if (data.success) availableCategories.value = data.items;
     }
 
-    function pickTranslation(category) {
-        const translations = category.translations ?? {};
-        return (
-            translations[locale.value]
-            ?? translations.en
-            ?? Object.values(translations)[0]
-            ?? null
-        );
-    }
-
     const flatCategories = computed(() => {
         return availableCategories.value.map((category) => {
-            const translation = pickTranslation(category);
+            const translation = pickTranslation(category, locale.value);
             const name = translation?.name ?? `#${category.id}`;
             return {
                 id: category.id,
