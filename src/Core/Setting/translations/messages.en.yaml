@@ -9,6 +9,8 @@ backend:
       localization_description: 'Language, timezone, date format.'
       branding: Branding
       branding_description: 'Logo, favicon and visual identity.'
+      appearance: Appearance
+      appearance_description: 'Customize the admin color palette and other visual settings.'
       seo: SEO
       seo_description: Title template and default meta description.
       system: System
@@ -21,6 +23,15 @@ backend:
       navigation_description: Customize sidebar section names.
       modules: Modules
       ecommerce: E-commerce
+    appearance:
+      color_presets:
+        title: Color picker palette
+        help: These colors appear as quick-pick swatches in every admin color selector.
+        add: Add a color
+        confirm_add: Add
+        remove: Remove this color
+        reset: Reset to default colors
+        invalid_hex: 'Invalid hex code. Expected format: #rrggbb.'
     navAliasesEmpty: No navigation sections available.
     cascadeLocked: 'Enable "{parent}" first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'
@@ -226,6 +237,9 @@ backend:
     nav_section_aliases:
       label: Navigation section aliases
       description: JSON map of section aliases (managed via the UI).
+    color_picker_presets:
+      label: Color picker palette
+      description: JSON list of hex colors offered as quick-pick swatches in every admin color selector.
     intro: View and edit the application technical parameters.
     key: Parameter
     value: Value

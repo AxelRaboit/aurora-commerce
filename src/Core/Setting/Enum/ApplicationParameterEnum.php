@@ -70,6 +70,19 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
     case NavSectionAliases = 'nav_section_aliases';
     case CrmSyncOrders = 'crm_sync_orders';
+    case ColorPickerPresets = 'color_picker_presets';
+
+    /**
+     * Default palette for AppColorPicker. JSON-encoded list of hex strings.
+     *
+     * @var list<string>
+     */
+    public const array DEFAULT_COLOR_PICKER_PRESETS = [
+        '#ef4444', '#f97316', '#f59e0b', '#eab308',
+        '#84cc16', '#22c55e', '#10b981', '#14b8a6',
+        '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6',
+        '#a855f7', '#ec4899', '#f43f5e', '#64748b',
+    ];
 
     public function getKey(): string
     {
@@ -141,6 +154,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.label',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
             self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.label',
+            self::ColorPickerPresets => 'backend.parameters.color_picker_presets.label',
         };
     }
 
@@ -209,6 +223,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.description',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
             self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.description',
+            self::ColorPickerPresets => 'backend.parameters.color_picker_presets.description',
         };
     }
 
@@ -277,6 +292,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
             self::CrmSyncOrders => '0',
+            self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, \JSON_THROW_ON_ERROR),
         };
     }
 
@@ -289,6 +305,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
+            self::ColorPickerPresets => 'json',
             default => 'string',
         };
     }
@@ -296,7 +313,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation', 'crm' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation', 'crm', 'appearance' => true,
             default => false,
         };
     }
@@ -316,6 +333,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::EmailLocale => 'email',
             self::NavSectionAliases => 'navigation',
             self::CrmSyncOrders => 'crm',
+            self::ColorPickerPresets => 'appearance',
         };
     }
 }

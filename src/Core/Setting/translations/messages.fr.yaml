@@ -9,6 +9,8 @@ backend:
       localization_description: 'Langue, fuseau horaire, format de date.'
       branding: Branding
       branding_description: 'Logo, favicon et identité visuelle.'
+      appearance: Apparence
+      appearance_description: 'Personnaliser la palette de couleurs et autres paramètres visuels de l''admin.'
       seo: SEO
       seo_description: Template de titre et meta description par défaut.
       system: Système
@@ -21,6 +23,15 @@ backend:
       navigation_description: Personnalisez les noms des sections de la barre latérale.
       modules: Modules
       ecommerce: E-commerce
+    appearance:
+      color_presets:
+        title: Palette du picker de couleurs
+        help: 'Ces couleurs s''affichent en raccourci dans tous les sélecteurs de couleurs de l''admin.'
+        add: Ajouter une couleur
+        confirm_add: Ajouter
+        remove: Retirer cette couleur
+        reset: Réinitialiser aux couleurs par défaut
+        invalid_hex: 'Code hexadécimal invalide. Format attendu : #rrggbb.'
     navAliasesEmpty: Aucune section de navigation disponible.
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
@@ -226,6 +237,9 @@ backend:
     nav_section_aliases:
       label: Alias des sections de navigation
       description: 'Carte JSON des alias de sections (géré via l''interface).'
+    color_picker_presets:
+      label: Palette du picker de couleurs
+      description: 'Liste JSON de couleurs hexadécimales proposées en raccourci dans tous les sélecteurs de couleurs de l''admin.'
     intro: Consultez et modifiez les paramètres techniques de l'application.
     key: Paramètre
     value: Valeur

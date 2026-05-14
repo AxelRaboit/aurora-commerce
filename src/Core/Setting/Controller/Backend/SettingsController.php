@@ -53,6 +53,14 @@ final class SettingsController extends AbstractController
             return $this->jsonForbidden();
         }
 
+        if (ApplicationParameterEnum::ColorPickerPresets === $parameter) {
+            $normalised = $this->normaliseColorPickerPresets($value);
+            if (null === $normalised) {
+                return $this->jsonFailure('invalid_color_presets');
+            }
+            $value = $normalised;
+        }
+
         try {
             $this->settingsManager->set($key, $value);
         } catch (CascadeViolationException $cascadeViolationException) {
@@ -68,5 +76,38 @@ final class SettingsController extends AbstractController
             'value' => $value,
             'mediaUrl' => 'media' === $parameter->getType() ? $this->viewBuilder->resolveMediaUrl($value) : null,
         ]);
+    }
+
+    /**
+     * Validates and normalises the color picker presets payload.
+     * Accepts a JSON-encoded list of strings (or a raw list passed by mistake);
+     * keeps only `#rrggbb` strings (lowercased) and re-encodes as compact JSON.
+     * Returns null when the input is malformed or empty.
+     */
+    private function normaliseColorPickerPresets(?string $raw): ?string
+    {
+        if (null === $raw || '' === $raw) {
+            return null;
+        }
+
+        try {
+            $decoded = json_decode($raw, true, 512, \JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return null;
+        }
+
+        if (!is_array($decoded) || [] === $decoded) {
+            return null;
+        }
+
+        $valid = [];
+        foreach ($decoded as $hex) {
+            if (!is_string($hex) || 1 !== preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) {
+                return null;
+            }
+            $valid[] = strtolower($hex);
+        }
+
+        return json_encode(array_values($valid), \JSON_THROW_ON_ERROR);
     }
 }

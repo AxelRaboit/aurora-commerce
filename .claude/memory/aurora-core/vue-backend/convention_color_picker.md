@@ -56,6 +56,15 @@ Champ form complet (équivalent `AppInput` mais pour couleur).
 Composant existant : preset grid 4×4 + input hex éditable + bouton clear.
 Utilisé pour les pickers riches (vraiment "choisir une couleur").
 
+**Presets configurables depuis l'admin** : les 16 couleurs par défaut
+peuvent être éditées via `/backend/settings` → tab "Apparence" → "Palette
+du picker de couleurs". L'`ApplicationParameter` `color_picker_presets`
+(group `appearance`, type `json`) stocke la liste. Le composant lit
+`window.__auroraConfig.colorPickerPresets` (injecté par
+`AppearanceExtension` dans `templates/Core/backend/layout.html.twig`) avec
+fallback hardcodé sur les 16 couleurs par défaut. Cf
+[[pattern_app_config_bootstrap]] pour le pattern d'injection.
+
 ## Why
 
 3 fichiers avaient `<input type="color">` raw avec styling quasi-identique

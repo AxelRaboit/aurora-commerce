@@ -4,12 +4,21 @@ import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import { X } from "lucide-vue-next";
 
-const PRESETS = [
+const DEFAULT_PRESETS = [
     "#ef4444", "#f97316", "#f59e0b", "#eab308",
     "#84cc16", "#22c55e", "#10b981", "#14b8a6",
     "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6",
     "#a855f7", "#ec4899", "#f43f5e", "#64748b",
 ];
+
+const presets = computed(() => {
+    const fromConfig = typeof window !== "undefined"
+        ? window.__auroraConfig?.colorPickerPresets
+        : null;
+    return Array.isArray(fromConfig) && fromConfig.length > 0
+        ? fromConfig
+        : DEFAULT_PRESETS;
+});
 
 const props = defineProps({
     modelValue: { type: String, default: null },
@@ -54,7 +63,7 @@ function clear() {
 
         <div class="grid grid-cols-8 gap-1.5">
             <button
-                v-for="color in PRESETS"
+                v-for="color in presets"
                 :key="color"
                 type="button"
                 class="w-7 h-7 rounded-md border-2 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-accent"

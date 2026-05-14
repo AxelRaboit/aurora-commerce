@@ -12,7 +12,9 @@ import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
-import { Search, FileText, Lock, Save } from "lucide-vue-next";
+import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
+import AppColorField from "@/shared/components/form/AppColorField.vue";
+import { Search, FileText, Lock, Save, Plus, X, RotateCcw } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
@@ -30,8 +32,8 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const groupOrder = ["general", "reading", "localization", "branding", "seo", "system", "email", "sequences", "navigation"];
-const availableGroups = groupOrder.filter((groupName) => props.groups[groupName] || groupName === "navigation");
+const groupOrder = ["general", "reading", "localization", "branding", "appearance", "seo", "system", "email", "sequences", "navigation"];
+const availableGroups = groupOrder.filter((groupName) => props.groups[groupName] || groupName === "navigation" || groupName === "appearance");
 const activeTab = ref(availableGroups[0] ?? "general");
 
 const tabLabels = {
@@ -39,6 +41,7 @@ const tabLabels = {
     reading:    () => t("backend.settings.tabs.reading"),
     localization: () => t("backend.settings.tabs.localization"),
     branding:   () => t("backend.settings.tabs.branding"),
+    appearance: () => t("backend.settings.tabs.appearance"),
     seo:        () => t("backend.settings.tabs.seo"),
     system:     () => t("backend.settings.tabs.system"),
     email:      () => t("backend.settings.tabs.email"),
@@ -51,6 +54,7 @@ const tabDescriptions = {
     reading:    () => t("backend.settings.tabs.reading_description"),
     localization: () => t("backend.settings.tabs.localization_description"),
     branding:   () => t("backend.settings.tabs.branding_description"),
+    appearance: () => t("backend.settings.tabs.appearance_description"),
     seo:        () => t("backend.settings.tabs.seo_description"),
     system:     () => t("backend.settings.tabs.system_description"),
     email:      () => t("backend.settings.tabs.email_description"),
@@ -73,6 +77,64 @@ async function saveNavAliases() {
     });
     if (data?.success) {
         toast.success(t("backend.settings.saved"));
+    }
+}
+
+// Appearance — color picker presets
+const DEFAULT_COLOR_PRESETS = [
+    "#ef4444", "#f97316", "#f59e0b", "#eab308",
+    "#84cc16", "#22c55e", "#10b981", "#14b8a6",
+    "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6",
+    "#a855f7", "#ec4899", "#f43f5e", "#64748b",
+];
+const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
+const appearanceParameter = props.groups?.appearance?.find?.((s) => s.key === "color_picker_presets") ?? null;
+const colorPickerPresets = ref((() => {
+    try {
+        const decoded = JSON.parse(appearanceParameter?.value ?? "[]");
+        return Array.isArray(decoded) ? decoded.filter((c) => HEX_PATTERN.test(c)) : [];
+    } catch {
+        return [];
+    }
+})());
+if (colorPickerPresets.value.length === 0) {
+    colorPickerPresets.value = [...DEFAULT_COLOR_PRESETS];
+}
+const newPresetColor = ref(null);
+const showAddPresetForm = ref(false);
+const { loading: appearanceSaving, request: appearanceRequest } = useRequest();
+
+function addPresetColor() {
+    const value = newPresetColor.value;
+    if (!value || !HEX_PATTERN.test(value)) {
+        toast.error(t("backend.settings.appearance.color_presets.invalid_hex"));
+        return;
+    }
+    const normalised = value.toLowerCase();
+    if (!colorPickerPresets.value.includes(normalised)) {
+        colorPickerPresets.value.push(normalised);
+    }
+    newPresetColor.value = null;
+    showAddPresetForm.value = false;
+}
+
+function removePresetColor(color) {
+    colorPickerPresets.value = colorPickerPresets.value.filter((c) => c !== color);
+}
+
+function resetPresetColors() {
+    colorPickerPresets.value = [...DEFAULT_COLOR_PRESETS];
+}
+
+async function saveColorPickerPresets() {
+    const data = await appearanceRequest(props.updatePath, {
+        key: "color_picker_presets",
+        value: JSON.stringify(colorPickerPresets.value),
+    });
+    if (data?.success) {
+        toast.success(t("backend.settings.saved"));
+    } else {
+        toast.error(t("shared.common.error"));
     }
 }
 
@@ -143,8 +205,70 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                 </div>
             </div>
 
+            <!-- Appearance tab — custom UI (palette editor) -->
+            <div v-show="activeTab === 'appearance'" class="bg-surface border border-line rounded-xl p-6 space-y-6">
+                <div>
+                    <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.appearance.color_presets.title') }}</h3>
+                    <p class="text-xs text-muted mt-1">{{ t('backend.settings.appearance.color_presets.help') }}</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <div
+                        v-for="color in colorPickerPresets"
+                        :key="color"
+                        class="relative group"
+                    >
+                        <AppColorSwatch :model-value="color" size="md" :disabled="true" />
+                        <button
+                            type="button"
+                            class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-surface border border-line text-muted hover:text-danger hover:border-danger flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-sm"
+                            :title="t('backend.settings.appearance.color_presets.remove')"
+                            v-on:click="removePresetColor(color)"
+                        >
+                            <X class="w-3 h-3" :stroke-width="2.5" />
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <div v-if="showAddPresetForm" class="border border-line rounded-lg p-4 bg-surface-2 space-y-3">
+                        <AppColorField
+                            v-model="newPresetColor"
+                            :label="t('backend.settings.appearance.color_presets.add')"
+                            :show-hex="true"
+                            size="md"
+                        />
+                        <div class="flex gap-2 justify-end">
+                            <AppTextLinkButton color="muted" size="sm" v-on:click="showAddPresetForm = false; newPresetColor = null">
+                                {{ t('shared.common.cancel') }}
+                            </AppTextLinkButton>
+                            <AppButton variant="primary" size="sm" v-on:click="addPresetColor">
+                                {{ t('backend.settings.appearance.color_presets.confirm_add') }}
+                            </AppButton>
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-wrap gap-2">
+                        <AppButton variant="secondary" size="sm" v-on:click="showAddPresetForm = true">
+                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('backend.settings.appearance.color_presets.add') }}
+                        </AppButton>
+                        <AppButton variant="ghost" size="sm" v-on:click="resetPresetColors">
+                            <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('backend.settings.appearance.color_presets.reset') }}
+                        </AppButton>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-line flex justify-end">
+                    <AppButton variant="primary" size="md" :loading="appearanceSaving" :disabled="colorPickerPresets.length === 0" v-on:click="saveColorPickerPresets">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('backend.settings.save') }}
+                    </AppButton>
+                </div>
+            </div>
+
             <div
-                v-for="groupName in availableGroups.filter(g => g !== 'navigation')"
+                v-for="groupName in availableGroups.filter(g => g !== 'navigation' && g !== 'appearance')"
                 v-show="activeTab === groupName"
                 :key="groupName"
             >

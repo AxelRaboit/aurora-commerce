@@ -8,3 +8,4 @@
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`
 - [decision_marketing_taxonomies_on_listing.md](decision_marketing_taxonomies_on_listing.md) — taxonomies marketing (Category/Tag) sur `Listing` jamais sur `Product` ; URL canonique produit découplée des filtres
+- [pattern_app_config_bootstrap.md](pattern_app_config_bootstrap.md) — exposer un `ApplicationParameter` aux composants Vue via `window.__auroraConfig.<key>` (extension Twig dédiée + fallback hardcodé)
