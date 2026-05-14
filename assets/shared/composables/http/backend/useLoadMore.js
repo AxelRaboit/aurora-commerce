@@ -1,4 +1,6 @@
 import { ref, computed } from "vue";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 /**
  * Generic "load more" composable for paginated XHR endpoints.
@@ -18,33 +20,26 @@ export function useLoadMore(
     const items = ref([...(initial.items ?? [])]);
     const page = ref(initial.page ?? 1);
     const totalPages = ref(initial.totalPages ?? 1);
-    const loading = ref(false);
+
+    const { loading, request } = useRequest();
 
     const hasMore = computed(() => page.value < totalPages.value);
 
     async function loadMore() {
         if (loading.value || !hasMore.value) return;
-        loading.value = true;
-        try {
-            const params = new URLSearchParams({
-                page: String(page.value + 1),
-            });
-            for (const [key, value] of Object.entries(getExtraParams())) {
-                if (value !== undefined && value !== null && value !== "") {
-                    params.set(key, String(value));
-                }
+        const params = new URLSearchParams({
+            page: String(page.value + 1),
+        });
+        for (const [key, value] of Object.entries(getExtraParams())) {
+            if (value !== undefined && value !== null && value !== "") {
+                params.set(key, String(value));
             }
-            const response = await fetch(`${path}?${params}`, {
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-            });
-            const data = await response.json();
-            if (data.success) {
-                items.value.push(...(data.items ?? []));
-                page.value = data.page ?? page.value + 1;
-                totalPages.value = data.totalPages ?? totalPages.value;
-            }
-        } finally {
-            loading.value = false;
+        }
+        const data = await request(`${path}?${params}`, null, HttpMethod.Get);
+        if (data?.success) {
+            items.value.push(...(data.items ?? []));
+            page.value = data.page ?? page.value + 1;
+            totalPages.value = data.totalPages ?? totalPages.value;
         }
     }
 

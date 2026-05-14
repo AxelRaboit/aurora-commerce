@@ -3,16 +3,12 @@ import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { MenuTargetType } from "@core/utils/enums/menu/menuTargetType.js";
-
-async function jsonRequest(url) {
-    const response = await fetch(url, {
-        headers: { "X-Requested-With": "XMLHttpRequest" },
-    });
-    return response.json();
-}
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useMenuItemForm(props) {
     const { t } = useI18n();
+    const { request: jsonRequest } = useRequest();
 
     const form = reactive({
         targetType: MenuTargetType.Home,
@@ -92,8 +88,12 @@ export function useMenuItemForm(props) {
     async function loadFilters() {
         try {
             if (form.targetType === MenuTargetType.Post) {
-                const data = await jsonRequest(props.pickerPostTypesPath);
-                if (data.success)
+                const data = await jsonRequest(
+                    props.pickerPostTypesPath,
+                    null,
+                    HttpMethod.Get,
+                );
+                if (data?.success)
                     postTypeOptions.value = [
                         { id: 0, label: t("backend.menus.allTypes") },
                         ...data.items,
@@ -103,8 +103,12 @@ export function useMenuItemForm(props) {
                 form.targetType === MenuTargetType.Term &&
                 !taxonomyOptions.value.length
             ) {
-                const data = await jsonRequest(props.pickerTaxonomiesPath);
-                if (data.success)
+                const data = await jsonRequest(
+                    props.pickerTaxonomiesPath,
+                    null,
+                    HttpMethod.Get,
+                );
+                if (data?.success)
                     taxonomyOptions.value = [
                         { id: 0, label: t("backend.menus.allTaxonomies") },
                         ...data.items,
@@ -113,8 +117,10 @@ export function useMenuItemForm(props) {
             if (form.targetType === MenuTargetType.PostTypeArchive) {
                 const data = await jsonRequest(
                     `${props.pickerPostTypesPath}?withArchive=1`,
+                    null,
+                    HttpMethod.Get,
                 );
-                if (data.success) postTypeOptions.value = data.items;
+                if (data?.success) postTypeOptions.value = data.items;
             }
         } catch {
             toast.error(t("shared.common.error"));
@@ -151,8 +157,8 @@ export function useMenuItemForm(props) {
             } else {
                 return;
             }
-            const data = await jsonRequest(url);
-            if (data.success) {
+            const data = await jsonRequest(url, null, HttpMethod.Get);
+            if (data?.success) {
                 pickerResults.value = data.items;
                 pickerOpen.value = true;
             }

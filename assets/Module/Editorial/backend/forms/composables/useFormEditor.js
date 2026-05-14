@@ -4,6 +4,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { slugify } from "@/shared/utils/format/slugify.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useFormEditor(props, fetchForms) {
     const { t } = useI18n();
@@ -65,16 +66,7 @@ export function useFormEditor(props, fetchForms) {
         return scope[`translations.${locale}.${key}`];
     }
 
-    async function jsonRequest(url, options = {}) {
-        const response = await fetch(url, {
-            ...options,
-            headers: {
-                "Content-Type": "application/json",
-                ...(options.headers ?? {}),
-            },
-        });
-        return response.json();
-    }
+    const { request: jsonRequest } = useRequest();
 
     function applyFormResponse(form) {
         selectedForm.value = form;
@@ -125,8 +117,10 @@ export function useFormEditor(props, fetchForms) {
         try {
             const data = await jsonRequest(
                 buildPath(props.getPath, { id: form.id }),
+                null,
+                HttpMethod.Get,
             );
-            if (data.success) applyFormResponse(data.form);
+            if (data?.success) applyFormResponse(data.form);
         } catch {
             toast.error(t("shared.common.error"));
         }
@@ -182,15 +176,12 @@ export function useFormEditor(props, fetchForms) {
             translations: editingForm.value.translations,
         };
         try {
-            const data = await jsonRequest(url, {
-                method: HttpMethod.Post,
-                body: JSON.stringify(payload),
-            });
-            if (data.success) {
+            const data = await jsonRequest(url, payload, HttpMethod.Post);
+            if (data?.success) {
                 toast.success(t("shared.common.saved"));
                 applyFormResponse(data.form);
                 await fetchForms();
-            } else if (data.errors) {
+            } else if (data?.errors) {
                 formErrors.value = data.errors;
                 const firstErrorLocale = Object.keys(data.errors)
                     .find((k) => k.startsWith("translations."))
@@ -211,9 +202,10 @@ export function useFormEditor(props, fetchForms) {
         try {
             const data = await jsonRequest(
                 buildPath(props.deletePath, { id: selectedForm.value.id }),
-                { method: HttpMethod.Post },
+                null,
+                HttpMethod.Post,
             );
-            if (data.success) {
+            if (data?.success) {
                 toast.success(t("shared.common.deleted"));
                 selectedForm.value = null;
                 await fetchForms();

@@ -247,14 +247,16 @@ function postTermLabels(post) {
                     />
                 </div>
 
-                <button
+                <AppButton
                     v-if="hasActiveFilters"
+                    variant="ghost"
+                    size="none"
                     class="flex items-center gap-1.5 px-2 text-xs text-muted hover:text-rose-400 transition-colors"
                     v-on:click="clearFilters"
                 >
                     <X class="w-3 h-3" :stroke-width="2" />
                     {{ t('backend.posts.clearFilters') }}
-                </button>
+                </AppButton>
             </template>
         </nav>
 
@@ -283,22 +285,26 @@ function postTermLabels(post) {
                 />
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <div class="flex items-center rounded-lg border border-line overflow-hidden shrink-0">
-                        <button
+                        <AppButton
+                            variant="ghost"
+                            size="none"
                             class="flex items-center justify-center w-8 h-8 transition-colors"
                             :class="viewMode === 'compact' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
                             :title="t('backend.posts.viewCompact')"
                             v-on:click="setViewMode('compact')"
                         >
                             <List class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                        <button
+                        </AppButton>
+                        <AppButton
+                            variant="ghost"
+                            size="none"
                             class="flex items-center justify-center w-8 h-8 border-l border-line transition-colors"
                             :class="viewMode === 'detailed' ? 'bg-surface-2 text-primary' : 'text-muted hover:text-secondary'"
                             :title="t('backend.posts.viewDetailed')"
                             v-on:click="setViewMode('detailed')"
                         >
                             <LayoutList class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppButton>
                     </div>
                     <AppButton
                         v-if="!trashed && can('editorial.posts.create')"
@@ -346,14 +352,16 @@ function postTermLabels(post) {
                     class="min-w-40 flex-1 sm:flex-none"
                     v-on:update:model-value="onStatusFilterChange"
                 />
-                <button
+                <AppButton
                     v-if="hasActiveFilters"
+                    variant="ghost"
+                    size="none"
                     class="flex items-center gap-1.5 px-2 py-1 text-xs text-muted hover:text-rose-400 transition-colors self-center"
                     v-on:click="clearFilters"
                 >
                     <X class="w-3 h-3" :stroke-width="2" />
                     {{ t('backend.posts.clearFilters') }}
-                </button>
+                </AppButton>
             </div>
 
             <div class="sm:hidden space-y-2">

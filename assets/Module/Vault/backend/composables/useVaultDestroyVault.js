@@ -1,6 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useVaultCrypto } from "@vault/backend/composables/useVaultCrypto.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useVaultDestroyVault(
     destroyPath,
@@ -16,6 +18,7 @@ export function useVaultDestroyVault(
     const error = ref(null);
 
     const tempCrypto = useVaultCrypto();
+    const { request } = useRequest();
 
     function open() {
         masterPassword.value = "";
@@ -54,10 +57,9 @@ export function useVaultDestroyVault(
         loading.value = true;
 
         try {
-            const response = await fetch(destroyPath, { method: "POST" });
-            const json = await response.json();
+            const json = await request(destroyPath, null, HttpMethod.Post);
 
-            if (json.success) {
+            if (json?.success) {
                 show.value = false;
                 onSuccess?.();
             } else {
