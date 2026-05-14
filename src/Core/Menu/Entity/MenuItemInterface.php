@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Menu\Entity;
 
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
 use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface MenuItemInterface extends TimestampableInterface

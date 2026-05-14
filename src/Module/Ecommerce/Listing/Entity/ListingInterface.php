@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Entity;
 
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 
 interface ListingInterface extends TimestampableInterface

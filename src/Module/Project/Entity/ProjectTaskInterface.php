@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;

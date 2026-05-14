@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Entity;
 
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use DateTimeImmutable;

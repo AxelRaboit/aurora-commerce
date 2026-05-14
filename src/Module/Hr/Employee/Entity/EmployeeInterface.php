@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Hr\Employee\Entity;
 
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Service\Entity\ServiceInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Entity;
 
-use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
