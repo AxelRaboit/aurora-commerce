@@ -11,5 +11,6 @@
 - [convention_assets_subfolder_layout.md](convention_assets_subfolder_layout.md) — compartimentage feature-subfolder dans `assets/Module/<M>/backend/`
 - [composable_hierarchical_tree.md](composable_hierarchical_tree.md) — `@/shared/composables/tree/useHierarchicalTree.js` (`buildTree`, `flattenTreeForReorder`, …) — ne pas dupliquer
 - [composable_url_pagination.md](composable_url_pagination.md) — `useUrlPagination` pour la pagination full-reload (`?page=N`) — pas pour l'AJAX
+- [composable_client_filtered_list.md](composable_client_filtered_list.md) — `useClientFilteredList` pour les listes admin courtes (items + searchInput + filteredItems + reload), pendant client-side de `useListPage`
 - [utility_pick_translation.md](utility_pick_translation.md) — `pickTranslation` / `translatedField` avec fallback locale → en → première dispo
 - [convention_twig_locale_extension.md](convention_twig_locale_extension.md) — `locale_flag()` / `locale_name()` Twig depuis `LocaleExtension.php`

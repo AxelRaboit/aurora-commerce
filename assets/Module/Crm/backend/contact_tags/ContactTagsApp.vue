@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useContactTagsForm } from "@crm/backend/contact_tags/composables/useContactTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -27,23 +27,13 @@ const props = defineProps({
     extraFields: { type: Object, default: () => ({}) },
 });
 
-const items = ref([...props.tags]);
-const searchInput = ref("");
-
-const filteredItems = computed(() => {
-    const query = searchInput.value.toLowerCase().trim();
-    if (!query) return items.value;
-    return items.value.filter((tag) =>
+const { searchInput, filteredItems, reload } = useClientFilteredList(
+    props.tags,
+    props.listPath,
+    (tag, query) =>
         (tag.label ?? "").toLowerCase().includes(query)
         || (tag.slug ?? "").toLowerCase().includes(query),
-    );
-});
-
-async function reload() {
-    const response = await fetch(props.listPath, { headers: { Accept: "application/json" } });
-    const json = await response.json();
-    items.value = json.items ?? [];
-}
+);
 
 const {
     showCreate,

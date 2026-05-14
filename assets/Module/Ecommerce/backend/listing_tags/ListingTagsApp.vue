@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useListingTagsForm } from "@ecommerce/backend/listing_tags/composables/useListingTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -33,9 +34,6 @@ const props = defineProps({
     extraFields: { type: Object, default: () => ({}) },
 });
 
-const items = ref([...props.tags]);
-const searchInput = ref("");
-
 function tagSearchHaystack(tag) {
     const parts = [];
     for (const translation of Object.values(tag.translations ?? {})) {
@@ -45,19 +43,13 @@ function tagSearchHaystack(tag) {
     return parts.join(" ").toLowerCase();
 }
 
-const filteredItems = computed(() => {
-    const query = searchInput.value.toLowerCase().trim();
-    if (!query) return items.value;
-    return items.value.filter((tag) => tagSearchHaystack(tag).includes(query));
-});
+const { searchInput, filteredItems, reload } = useClientFilteredList(
+    props.tags,
+    props.listPath,
+    (tag, query) => tagSearchHaystack(tag).includes(query),
+);
 const activeTab = ref(props.locales[0]?.code ?? "en");
 const activeLocale = computed(() => activeTab.value);
-
-async function reload() {
-    const response = await fetch(props.listPath, { headers: { Accept: "application/json" } });
-    const json = await response.json();
-    items.value = json.items ?? [];
-}
 
 const {
     showCreate,
