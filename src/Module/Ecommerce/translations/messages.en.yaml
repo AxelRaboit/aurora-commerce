@@ -28,6 +28,10 @@ backend:
           created: Listing category created
           updated: Listing category updated
           deleted: Listing category deleted
+        listing_tag:
+          created: Listing tag created
+          updated: Listing tag updated
+          deleted: Listing tag deleted
         order:
           created: Order created
           paid: Order paid
@@ -42,6 +46,8 @@ backend:
     listings_description: Items listed in the online shop and their stock
     listing_categories: Categories
     listing_categories_description: Hierarchical categories for shop listings
+    listing_tags: Tags
+    listing_tags_description: Flat tags to label and filter shop listings
     orders: Orders
     orders_description: 'Customer orders, statuses and payments'
   ecommerce:
@@ -179,6 +185,30 @@ backend:
       hidden: Hidden
       visible_label: Visible
       delete_confirm: 'Delete category "{name}"?'
+    listing_tags:
+      errors:
+        translations_required: At least one translation is required.
+        name_required: Name is required.
+        color_required: Color is required.
+        color_invalid: Color must be a hex code like #FF5733.
+      created: Tag created.
+      updated: Tag updated.
+      deleted: Tag deleted.
+      add: Add tag
+      create: New tag
+      edit: 'Edit {name}'
+      empty: No tags yet.
+      name: Name
+      name_placeholder: 'e.g. New, Sale, Featured'
+      slug: Slug
+      slug_placeholder: 'auto-generated from name'
+      description: Description
+      description_placeholder: 'Short description shown on the tag page'
+      color: Color
+      translations: Translations
+      visible_label: Visible
+      hidden: Hidden
+      delete_confirm: 'Delete tag "{name}"?'
 ecommerce:
   mail:
     subject:

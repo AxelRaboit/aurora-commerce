@@ -60,6 +60,10 @@ use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslation;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslationInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
@@ -268,6 +272,8 @@ class AuroraBundle extends AbstractBundle
                     ListingInterface::class => Listing::class,
                     ListingCategoryInterface::class => ListingCategory::class,
                     ListingCategoryTranslationInterface::class => ListingCategoryTranslation::class,
+                    ListingTagInterface::class => ListingTag::class,
+                    ListingTagTranslationInterface::class => ListingTagTranslation::class,
                     OrderInterface::class => Order::class,
                     OrderLineInterface::class => OrderLine::class,
                     ProductInterface::class => Product::class,

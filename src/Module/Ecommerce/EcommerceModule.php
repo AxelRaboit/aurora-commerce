@@ -45,6 +45,7 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
         if ($this->ecommerceContext->isListingsEnabled()) {
             $items[] = new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listings_description');
             $items[] = new NavItem('backend_ecommerce_listing_categories', 'backend.nav.listing_categories', 'folder-tree', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listing_categories_description');
+            $items[] = new NavItem('backend_ecommerce_listing_tags', 'backend.nav.listing_tags', 'tag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listing_tags_description');
         }
 
         if ($this->ecommerceContext->isOrdersEnabled()) {
@@ -64,6 +65,7 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
             new NavSection('ecommerce', [
                 new NavItem('backend_ecommerce_listings', 'backend.nav.listings', 'shopping-bag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listings_description'),
                 new NavItem('backend_ecommerce_listing_categories', 'backend.nav.listing_categories', 'folder-tree', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listing_categories_description'),
+                new NavItem('backend_ecommerce_listing_tags', 'backend.nav.listing_tags', 'tag', requiredPrivilege: 'ecommerce.listings.view', descriptionKey: 'backend.nav.listing_tags_description'),
                 new NavItem('backend_ecommerce_orders', 'backend.nav.orders', 'receipt', requiredPrivilege: 'ecommerce.orders.view', descriptionKey: 'backend.nav.orders_description'),
             ], priority: 60),
         ];

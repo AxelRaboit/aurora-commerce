@@ -28,6 +28,10 @@ backend:
           created: Catégorie créée
           updated: Catégorie mise à jour
           deleted: Catégorie supprimée
+        listing_tag:
+          created: Tag créé
+          updated: Tag mis à jour
+          deleted: Tag supprimé
         order:
           created: Commande créée
           paid: Commande payée
@@ -42,6 +46,8 @@ backend:
     listings_description: Articles publiés sur la boutique en ligne et leur stock
     listing_categories: Catégories
     listing_categories_description: Catégories hiérarchiques pour les annonces boutique
+    listing_tags: Tags
+    listing_tags_description: Tags plats pour étiqueter et filtrer les annonces boutique
     orders: Commandes
     orders_description: 'Commandes des clients, statuts et paiements'
   ecommerce:
@@ -179,6 +185,30 @@ backend:
       hidden: Masquée
       visible_label: Visible
       delete_confirm: 'Supprimer la catégorie « {name} » ?'
+    listing_tags:
+      errors:
+        translations_required: Au moins une traduction est requise.
+        name_required: Le nom est obligatoire.
+        color_required: La couleur est obligatoire.
+        color_invalid: 'La couleur doit être un code hexadécimal (ex. #FF5733).'
+      created: Tag créé.
+      updated: Tag mis à jour.
+      deleted: Tag supprimé.
+      add: Ajouter un tag
+      create: Nouveau tag
+      edit: 'Modifier {name}'
+      empty: Aucun tag.
+      name: Nom
+      name_placeholder: 'ex. Nouveau, Promo, En vedette'
+      slug: Slug
+      slug_placeholder: 'généré depuis le nom'
+      description: Description
+      description_placeholder: 'Courte description affichée sur la page du tag'
+      color: Couleur
+      translations: Traductions
+      visible_label: Visible
+      hidden: Masqué
+      delete_confirm: 'Supprimer le tag « {name} » ?'
 ecommerce:
   mail:
     subject:
