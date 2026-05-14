@@ -19,12 +19,7 @@ function buildEmptyForm(extraFields = {}) {
 }
 
 export function useContactTagsForm(options) {
-    const {
-        createPath,
-        updatePath,
-        reset,
-        extraFields = {},
-    } = options;
+    const { createPath, updatePath, reset, extraFields = {} } = options;
     const { t } = useI18n();
 
     const showCreate = ref(false);

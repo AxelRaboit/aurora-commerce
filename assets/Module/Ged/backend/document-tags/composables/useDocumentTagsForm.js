@@ -19,10 +19,12 @@ export function useDocumentTagsForm(
 ) {
     const { t } = useI18n();
 
-    const { items, searchInput: search, filteredItems } = useClientFilteredList(
-        initialTags,
-        null,
-        (tag, query) => (tag.name ?? "").toLowerCase().includes(query),
+    const {
+        items,
+        searchInput: search,
+        filteredItems,
+    } = useClientFilteredList(initialTags, null, (tag, query) =>
+        (tag.name ?? "").toLowerCase().includes(query),
     );
 
     function applyUpdatedList(data) {

@@ -260,7 +260,13 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                 </div>
 
                 <div class="pt-2 border-t border-line flex justify-end">
-                    <AppButton variant="primary" size="md" :loading="appearanceSaving" :disabled="colorPickerPresets.length === 0" v-on:click="saveColorPickerPresets">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :loading="appearanceSaving"
+                        :disabled="colorPickerPresets.length === 0"
+                        v-on:click="saveColorPickerPresets"
+                    >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('backend.settings.save') }}
                     </AppButton>

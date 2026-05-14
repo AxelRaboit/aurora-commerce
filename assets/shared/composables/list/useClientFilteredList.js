@@ -34,7 +34,9 @@ export function useClientFilteredList(initialItems, listPath, matcher) {
 
     async function reload() {
         if (!listPath) return;
-        const response = await fetch(listPath, { headers: { Accept: "application/json" } });
+        const response = await fetch(listPath, {
+            headers: { Accept: "application/json" },
+        });
         const json = await response.json();
         items.value = json.items ?? [];
     }

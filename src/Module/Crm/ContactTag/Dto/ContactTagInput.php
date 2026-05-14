@@ -33,7 +33,7 @@ class ContactTagInput implements ContactTagInputInterface
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context): void
     {
-        if ('' === trim($this->label)) {
+        if ('' === mb_trim($this->label)) {
             $context->buildViolation('backend.crm.contact_tags.errors.label_required')
                 ->atPath('label')
                 ->addViolation();

@@ -6,6 +6,8 @@ namespace Aurora\Core\Setting\Enum;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
 
+use const JSON_THROW_ON_ERROR;
+
 enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterface
 {
     case SiteName = 'site_name';
@@ -292,7 +294,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
             self::CrmSyncOrders => '0',
-            self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, \JSON_THROW_ON_ERROR),
+            self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, JSON_THROW_ON_ERROR),
         };
     }
 

@@ -1160,6 +1160,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 $uniqueLabels[$label] = true;
             }
         }
+
         foreach (array_keys($uniqueLabels) as $label) {
             $contactTag = new ContactTag();
             $contactTag->setLabel($label)
@@ -1179,6 +1180,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (null !== $def['company']) {
                 $c->setCompany($companies[$def['company']]);
             }
+
             foreach ($def['tags'] as $label) {
                 $c->addContactTag($contactTagsByLabel[$label]);
             }

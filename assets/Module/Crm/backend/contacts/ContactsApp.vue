@@ -94,7 +94,9 @@ const { flatTags } = useContactsTags(props.tagsPath);
                                 v-for="tag in (contact.tags ?? [])"
                                 :key="tag.id"
                                 :color="tag.color"
-                            >{{ tag.label }}</AppBadge>
+                            >
+                                {{ tag.label }}
+                            </AppBadge>
                         </div>
                     </div>
                 </div>
@@ -139,7 +141,9 @@ const { flatTags } = useContactsTags(props.tagsPath);
                                             v-for="tag in (contact.tags ?? [])"
                                             :key="tag.id"
                                             :color="tag.color"
-                                        >{{ tag.label }}</AppBadge>
+                                        >
+                                            {{ tag.label }}
+                                        </AppBadge>
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +196,9 @@ const { flatTags } = useContactsTags(props.tagsPath);
                         v-for="tag in (showingContact.tags ?? [])"
                         :key="tag.id"
                         :color="tag.color"
-                    >{{ tag.label }}</AppBadge>
+                    >
+                        {{ tag.label }}
+                    </AppBadge>
                 </div>
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-line/40">

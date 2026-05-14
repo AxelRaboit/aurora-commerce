@@ -6,7 +6,10 @@ namespace Aurora\Core\Twig;
 
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use JsonException;
 use Twig\Attribute\AsTwigFunction;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Exposes Appearance application parameters to Twig so they can be injected
@@ -61,8 +64,8 @@ final class AppearanceExtension
         }
 
         try {
-            $decoded = json_decode($raw, true, 512, \JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
+            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
             return [];
         }
 

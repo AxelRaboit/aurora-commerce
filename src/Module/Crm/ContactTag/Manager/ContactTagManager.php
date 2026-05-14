@@ -63,7 +63,7 @@ class ContactTagManager implements ContactTagManagerInterface
         $contactTag->setColor($input->getColor());
 
         $slug = $input->getSlug();
-        if (null === $slug || '' === trim($slug)) {
+        if (null === $slug || '' === mb_trim($slug)) {
             $slug = $this->slugger->slug($input->getLabel())->lower()->toString();
         }
 

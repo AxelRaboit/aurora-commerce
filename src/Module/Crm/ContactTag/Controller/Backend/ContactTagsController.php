@@ -108,6 +108,6 @@ final class ContactTagsController extends AbstractController
     {
         $contactTags = $this->contactTagRepository->findAllOrdered();
 
-        return array_map(fn ($contactTag): array => $this->serializer->serialize($contactTag), $contactTags);
+        return array_map($this->serializer->serialize(...), $contactTags);
     }
 }

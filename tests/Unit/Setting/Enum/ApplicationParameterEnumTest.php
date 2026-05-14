@@ -7,6 +7,8 @@ namespace Aurora\Tests\Unit\Setting\Enum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use PHPUnit\Framework\TestCase;
 
+use const JSON_THROW_ON_ERROR;
+
 final class ApplicationParameterEnumTest extends TestCase
 {
     public function testColorPickerPresetsCaseHasExpectedShape(): void
@@ -22,7 +24,7 @@ final class ApplicationParameterEnumTest extends TestCase
     public function testColorPickerPresetsDefaultIsValidJsonOfHexColors(): void
     {
         $default = ApplicationParameterEnum::ColorPickerPresets->getDefaultValue();
-        $decoded = json_decode($default, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($default, true, 512, JSON_THROW_ON_ERROR);
 
         self::assertIsArray($decoded);
         self::assertCount(16, $decoded);

@@ -12,12 +12,15 @@ use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\Setting\View\SettingsViewBuilder;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+use const JSON_THROW_ON_ERROR;
 
 #[Route('/backend/settings', name: 'backend_settings')]
 #[IsGranted('core.settings.manage')]
@@ -58,6 +61,7 @@ final class SettingsController extends AbstractController
             if (null === $normalised) {
                 return $this->jsonFailure('invalid_color_presets');
             }
+
             $value = $normalised;
         }
 
@@ -91,8 +95,8 @@ final class SettingsController extends AbstractController
         }
 
         try {
-            $decoded = json_decode($raw, true, 512, \JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
+            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
             return null;
         }
 
@@ -105,9 +109,10 @@ final class SettingsController extends AbstractController
             if (!is_string($hex) || 1 !== preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) {
                 return null;
             }
-            $valid[] = strtolower($hex);
+
+            $valid[] = mb_strtolower($hex);
         }
 
-        return json_encode(array_values($valid), \JSON_THROW_ON_ERROR);
+        return json_encode($valid, JSON_THROW_ON_ERROR);
     }
 }
