@@ -110,8 +110,13 @@ avec `v-if="hasEnabledFronts"`.
 - Route gate : `src/Core/Frontend/EventSubscriber/FrontendRouteGateSubscriber.php`
 - Root dispatch + redirect cascade : `src/Core/Frontend/Controller/RootDispatchController.php`
 - Twig helper : `src/Core/Frontend/Twig/FrontendExtension.php` (`has_enabled_fronts()`)
-- Implémentations actuelles : `Aurora\Module\Editorial\EditorialFrontend`,
+- Implémentations actuelles : `Aurora\Module\Editorial\EditorialFrontDescriptor`,
+  `Aurora\Module\Ecommerce\EcommerceFrontDescriptor`,
+  `Aurora\Module\Photo\PhotoFrontDescriptor`,
+  `Aurora\Module\Ged\GedFrontDescriptor`,
   `App\Module\Tracking\Frontend\TrackingFrontend` (aurora-client)
+- Convention de nommage : suffixe **`FrontDescriptor`** au niveau racine
+  du module — voir [`pattern_frontend_descriptor.md`](pattern_frontend_descriptor.md).
 
 ## Voir aussi
 
