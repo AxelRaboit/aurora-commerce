@@ -42,10 +42,9 @@ onBeforeUnmount(() => document.removeEventListener("click", onClickOutside));
     <div ref="dropdownRef" class="relative">
         <AppButton
             type="button"
-            variant="ghost"
+            variant="front-ghost"
             size="none"
             :class="'inline-flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors hover:opacity-80'"
-            :style="{ color: 'var(--th-header-text, var(--th-primary))' }"
             :aria-label="current?.name"
             v-on:click="toggle"
         >
@@ -70,10 +69,9 @@ onBeforeUnmount(() => document.removeEventListener("click", onClickOutside));
                     v-for="locale in locales"
                     :key="locale.code"
                     type="button"
-                    variant="ghost"
+                    variant="front-primary"
                     size="none"
                     :class="['w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors', locale.code === currentLocale ? 'font-semibold' : 'hover:bg-surface-2']"
-                    :style="{ color: 'var(--th-primary)' }"
                     v-on:click="select(locale)"
                 >
                     <span :class="`fi fi-${locale.flagCode}`" class="block w-5 h-4 rounded-sm shadow-sm shrink-0" />

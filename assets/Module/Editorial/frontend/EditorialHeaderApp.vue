@@ -105,10 +105,9 @@ onBeforeUnmount(() => {
                                 <AppButton
                                     v-if="child.targetType === 'frontend_logout'"
                                     type="submit"
-                                    variant="ghost"
+                                    variant="front-ghost"
                                     size="none"
                                     :class="'w-full text-left'"
-                                    :style="{ color: 'var(--th-primary)' }"
                                 >
                                     {{ child.label }}
                                 </AppButton>
@@ -158,10 +157,9 @@ onBeforeUnmount(() => {
                 <div v-if="showAccountMenu" ref="accountRef" class="relative">
                     <AppButton
                         type="button"
-                        variant="ghost"
+                        variant="front-ghost"
                         size="none"
                         :class="'inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80 relative'"
-                        :style="{ color: 'var(--th-header-text, var(--th-primary))' }"
                         v-on:click.stop="toggleAccount"
                     >
                         <User class="w-4 h-4" :stroke-width="2" />
@@ -217,10 +215,9 @@ onBeforeUnmount(() => {
                                 <AppButton
                                     v-if="item.targetType === 'frontend_logout'"
                                     type="submit"
-                                    variant="ghost"
+                                    variant="front-ghost"
                                     size="none"
                                     :class="'w-full text-left'"
-                                    :style="{ color: 'var(--th-primary)' }"
                                 >
                                     {{ item.label }}
                                 </AppButton>
