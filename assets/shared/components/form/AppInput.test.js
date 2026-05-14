@@ -31,7 +31,7 @@ describe("AppInput", () => {
 
     it("applies error border class when error prop is set", () => {
         const wrapper = mount(AppInput, {
-            props: { error: "This field is required" },
+            props: { error: "shared.common.error" },
             global: { plugins: [i18n] },
         });
         expect(wrapper.find("input").classes()).toContain("border-red-500");

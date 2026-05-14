@@ -1,5 +1,26 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+
+vi.mock("vue-chartjs", () => ({
+    Doughnut: { template: "<canvas />" },
+    Bar: { template: "<canvas />" },
+    Line: { template: "<canvas />" },
+}));
+
+// Chart.js registers need to be silenced too
+vi.mock("chart.js", () => ({
+    Chart: { register: vi.fn() },
+    ArcElement: {},
+    Tooltip: {},
+    Legend: {},
+    CategoryScale: {},
+    LinearScale: {},
+    BarElement: {},
+    LineElement: {},
+    PointElement: {},
+    Filler: {},
+}));
+
 import AppChart from "./AppChart.vue";
 
 const chartData = {
@@ -9,47 +30,25 @@ const chartData = {
 
 describe("AppChart", () => {
     it("renders without throwing for type=doughnut", () => {
-        const wrapper = mount(AppChart, {
-            props: { type: "doughnut", data: chartData },
-            global: { stubs: { Doughnut: true, Bar: true, Line: true } },
-        });
-        expect(wrapper.exists()).toBe(true);
+        expect(() => mount(AppChart, { props: { type: "doughnut", data: chartData } })).not.toThrow();
     });
 
     it("renders without throwing for type=bar", () => {
-        const wrapper = mount(AppChart, {
-            props: { type: "bar", data: chartData },
-            global: { stubs: { Doughnut: true, Bar: true, Line: true } },
-        });
-        expect(wrapper.exists()).toBe(true);
+        expect(() => mount(AppChart, { props: { type: "bar", data: chartData } })).not.toThrow();
     });
 
     it("renders without throwing for type=line", () => {
-        const wrapper = mount(AppChart, {
-            props: { type: "line", data: chartData },
-            global: { stubs: { Doughnut: true, Bar: true, Line: true } },
-        });
-        expect(wrapper.exists()).toBe(true);
+        expect(() => mount(AppChart, { props: { type: "line", data: chartData } })).not.toThrow();
     });
 
-    it("merges custom options with baseOptions", async () => {
-        const wrapper = mount(AppChart, {
-            props: {
-                type: "bar",
-                data: chartData,
-                options: { animation: false },
-            },
-            global: { stubs: { Doughnut: true, Bar: true, Line: true } },
-        });
-        // component should still render with merged options
-        expect(wrapper.exists()).toBe(true);
+    it("merges custom options without throwing", () => {
+        expect(() => mount(AppChart, {
+            props: { type: "bar", data: chartData, options: { animation: false } },
+        })).not.toThrow();
     });
 
-    it("renders a canvas-based element for doughnut type", () => {
-        const wrapper = mount(AppChart, {
-            props: { type: "doughnut", data: chartData },
-            global: { stubs: { Doughnut: true, Bar: true, Line: true } },
-        });
-        expect(wrapper.exists()).toBe(true);
+    it("renders a canvas element for the chart", () => {
+        const wrapper = mount(AppChart, { props: { type: "doughnut", data: chartData } });
+        expect(wrapper.find("canvas").exists()).toBe(true);
     });
 });

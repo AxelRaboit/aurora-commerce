@@ -10,6 +10,8 @@ export function createTestI18n(messages = {}, locale = "fr") {
         legacy: false,
         locale,
         fallbackLocale: locale,
+        missingWarn: false,
+        fallbackWarn: false,
         messages: {
             [locale]: deepMerge(baseMessages, messages),
         },
@@ -45,6 +47,14 @@ const baseMessages = {
         pagination: {
             previous: "Précédent",
             next: "Suivant",
+        },
+        password: {
+            criteria: {
+                length: "Au moins 8 caractères",
+                uppercase: "Une majuscule",
+                number: "Un chiffre",
+                special: "Un caractère spécial",
+            },
         },
         locales: {
             fr: "Français",
