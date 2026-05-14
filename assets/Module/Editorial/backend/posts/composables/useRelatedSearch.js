@@ -1,5 +1,7 @@
 import { ref, watch } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 /**
  * Autocomplete search for related posts. Maintains the search state, the
@@ -18,6 +20,7 @@ export function useRelatedSearch({
     const loading = ref(false);
     const open = ref(false);
     const selected = ref([]);
+    const { request } = useRequest();
 
     watch(query, useDebounce(run, 200));
 
@@ -27,13 +30,13 @@ export function useRelatedSearch({
             const url = new URL(searchPath, window.location.origin);
             if (query.value) url.searchParams.set("q", query.value);
             if (excludeId) url.searchParams.set("excludeId", String(excludeId));
-            const response = await fetch(url);
-            if (!response.ok) throw new Error();
-            const data = await response.json();
-            const selectedIds = getSelectedIds();
-            results.value = (data.results ?? []).filter(
-                (result) => !selectedIds.includes(result.id),
-            );
+            const data = await request(url.toString(), null, HttpMethod.Get);
+            if (data) {
+                const selectedIds = getSelectedIds();
+                results.value = (data.results ?? []).filter(
+                    (result) => !selectedIds.includes(result.id),
+                );
+            }
         } catch {
             results.value = [];
         } finally {

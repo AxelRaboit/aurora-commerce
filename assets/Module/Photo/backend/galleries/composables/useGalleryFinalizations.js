@@ -2,6 +2,8 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useLocalPagination } from "@/shared/composables/list/useLocalPagination.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useGalleryFinalizations(
     deletePath,
@@ -10,6 +12,7 @@ export function useGalleryFinalizations(
     galleryRef,
 ) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const expandedFinalizations = ref(new Set());
     const {
@@ -40,11 +43,11 @@ export function useGalleryFinalizations(
         finalizationDeleteLoading.value = true;
         const finalization = pendingFinalizationDelete.value;
         try {
-            const res = await fetch(
+            const data = await request(
                 deletePath.replace("__id__", finalization.id),
-                { method: "DELETE" },
+                null,
+                HttpMethod.Delete,
             );
-            const data = await res.json();
             if (data?.success) {
                 finalizations.value =
                     data.finalizations ??

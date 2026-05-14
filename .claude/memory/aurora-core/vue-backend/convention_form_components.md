@@ -59,9 +59,11 @@ Cas légitimes :
 - input de type `checkbox` uniquement utilisé par un composant App* lui-même
 - un `<button>` dans un composant App* primitive
 - `<input type="hidden">` pour CSRF tokens (`name="_token"` ou `name="_csrf_token"`)
-- `<input type="range">` (pas d'AppRange à ce jour — 2 usages seulement)
+- `<input type="range">` (pas d'AppRange à ce jour)
 - `<label>` wrapper avec `<input type="file" class="sr-only">` formant une drop-zone cliquable
   (différent du pattern bouton+hidden input qui doit utiliser `AppFilePickerButton`)
+- `<label>` wrapper avec `<input type="checkbox" class="sr-only">` formant un toggle pill/badge
+  personnalisé (quand `AppCheckbox` ne peut pas reproduire le style voulu)
 
 Sinon refacto.
 

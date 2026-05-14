@@ -57,20 +57,18 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 </AppButton>
             </div>
             <div class="space-y-1">
-                <button
+                <AppButton
                     v-for="postType in postTypes"
                     :key="postType.id"
-                    type="button"
-                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
-                    :class="selectedId === postType.id
-                        ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30'
-                        : 'bg-surface hover:bg-surface-2 text-primary border border-line/60'"
+                    variant="ghost"
+                    size="none"
+                    :extra-class="'w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ' + (selectedId === postType.id ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30' : 'bg-surface hover:bg-surface-2 text-primary border border-line/60')"
                     v-on:click="selectedId = postType.id"
                 >
                     <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium truncate">{{ postType.label }}</span>
                     <Lock v-if="postType.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.postTypes.builtIn')" />
-                </button>
+                </AppButton>
             </div>
         </aside>
 
@@ -137,9 +135,9 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             :key="field.id"
                             class="flex items-center gap-2 px-3 py-2 rounded-md border border-line bg-surface-2"
                         >
-                            <button type="button" class="drag-handle cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1">
+                            <AppIconButton class="drag-handle cursor-grab active:cursor-grabbing p-1" :title="''">
                                 <GripVertical class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                            </AppIconButton>
                             <div class="flex-1 min-w-0">
                                 <div class="text-sm font-medium text-primary truncate">{{ field.label }}</div>
                                 <div class="text-xs text-muted font-mono truncate">{{ field.name }}</div>

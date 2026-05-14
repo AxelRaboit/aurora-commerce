@@ -2,9 +2,12 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 export function useGalleryInvites(paths, invites) {
     const { t } = useI18n();
+    const { request } = useRequest();
 
     const inviteForm = ref({ name: "", email: "" });
     const inviteErrors = ref({ name: "", email: "" });
@@ -18,18 +21,13 @@ export function useGalleryInvites(paths, invites) {
         inviteErrors.value = { name: "", email: "" };
         inviteCreating.value = true;
         try {
-            const res = await fetch(paths.create, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(inviteForm.value),
-            });
-            const data = await res.json();
+            const data = await request(paths.create, inviteForm.value);
             if (data?.success) {
                 invites.value = data.invites;
                 inviteForm.value = { name: "", email: "" };
                 toast.success(t("photo.galleries.admin.invites.created"));
-            } else {
-                const errs = translateServerErrors(t, data?.errors);
+            } else if (data?.errors) {
+                const errs = translateServerErrors(t, data.errors);
                 inviteErrors.value = {
                     name: errs.name ?? "",
                     email: errs.email ?? "",
@@ -46,10 +44,7 @@ export function useGalleryInvites(paths, invites) {
         if (!paths.send || inviteSendingId.value) return;
         inviteSendingId.value = invite.id;
         try {
-            const res = await fetch(paths.send.replace("__id__", invite.id), {
-                method: "POST",
-            });
-            const data = await res.json();
+            const data = await request(paths.send.replace("__id__", invite.id));
             if (data?.success) {
                 invites.value = data.invites;
                 toast.success(t("photo.galleries.admin.invites.sent"));
@@ -71,10 +66,11 @@ export function useGalleryInvites(paths, invites) {
         inviteDeleting.value = true;
         const invite = pendingInviteDelete.value;
         try {
-            const res = await fetch(paths.delete.replace("__id__", invite.id), {
-                method: "DELETE",
-            });
-            const data = await res.json();
+            const data = await request(
+                paths.delete.replace("__id__", invite.id),
+                null,
+                HttpMethod.Delete,
+            );
             if (data?.success) {
                 invites.value =
                     data.invites ??
