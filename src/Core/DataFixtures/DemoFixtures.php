@@ -31,6 +31,8 @@ use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
@@ -130,6 +132,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         [$companies, $contacts] = $this->createCrm($manager, $users);
         $products = $this->createErp($manager, $media);
         $listings = $this->createEcommerce($manager, $products, $media, $users);
+        $this->createListingCategories($manager, $listings);
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
@@ -1434,6 +1437,98 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         return $listings;
+    }
+
+    // ── Listing Categories ────────────────────────────────────────────────────
+
+    /**
+     * @param Listing[] $listings
+     */
+    private function createListingCategories(EntityManagerInterface $em, array $listings): void
+    {
+        $categoryDefs = [
+            [
+                'key' => 'apparel',
+                'parent' => null,
+                'position' => 0,
+                'translations' => [
+                    'fr' => ['name' => 'Vêtements', 'slug' => 'vetements', 'description' => 'Toute notre sélection de vêtements.', 'seoTitle' => 'Vêtements — Aurora', 'seoDescription' => 'Découvrez la collection de vêtements Aurora.'],
+                    'en' => ['name' => 'Apparel', 'slug' => 'apparel', 'description' => 'Our full apparel collection.', 'seoTitle' => 'Apparel — Aurora', 'seoDescription' => 'Discover the Aurora apparel collection.'],
+                ],
+            ],
+            [
+                'key' => 'men',
+                'parent' => 'apparel',
+                'position' => 0,
+                'translations' => [
+                    'fr' => ['name' => 'Hommes', 'slug' => 'hommes', 'description' => 'Vêtements pour hommes.', 'seoTitle' => 'Hommes — Aurora', 'seoDescription' => 'Vêtements pour hommes.'],
+                    'en' => ['name' => 'Men', 'slug' => 'men', 'description' => 'Apparel for men.', 'seoTitle' => 'Men — Aurora', 'seoDescription' => 'Apparel for men.'],
+                ],
+            ],
+            [
+                'key' => 'women',
+                'parent' => 'apparel',
+                'position' => 1,
+                'translations' => [
+                    'fr' => ['name' => 'Femmes', 'slug' => 'femmes', 'description' => 'Vêtements pour femmes.', 'seoTitle' => 'Femmes — Aurora', 'seoDescription' => 'Vêtements pour femmes.'],
+                    'en' => ['name' => 'Women', 'slug' => 'women', 'description' => 'Apparel for women.', 'seoTitle' => 'Women — Aurora', 'seoDescription' => 'Apparel for women.'],
+                ],
+            ],
+            [
+                'key' => 'accessories',
+                'parent' => null,
+                'position' => 1,
+                'translations' => [
+                    'fr' => ['name' => 'Accessoires', 'slug' => 'accessoires', 'description' => 'Accessoires et compléments.', 'seoTitle' => 'Accessoires — Aurora', 'seoDescription' => 'Accessoires et compléments Aurora.'],
+                    'en' => ['name' => 'Accessories', 'slug' => 'accessories', 'description' => 'Accessories and add-ons.', 'seoTitle' => 'Accessories — Aurora', 'seoDescription' => 'Aurora accessories and add-ons.'],
+                ],
+            ],
+        ];
+
+        $categories = [];
+        foreach ($categoryDefs as $def) {
+            $category = new ListingCategory();
+            $category->setPosition($def['position']);
+            $category->setVisible(true);
+
+            if (null !== $def['parent']) {
+                $category->setParent($categories[$def['parent']]);
+            }
+
+            foreach ($def['translations'] as $locale => $t) {
+                $translation = new ListingCategoryTranslation();
+                $translation->setLocale($locale)
+                    ->setName($t['name'])
+                    ->setSlug($t['slug'])
+                    ->setDescription($t['description'])
+                    ->setSeoTitle($t['seoTitle'])
+                    ->setSeoDescription($t['seoDescription'])
+                    ->setCategory($category);
+                $category->addTranslation($translation);
+                $em->persist($translation);
+            }
+
+            $em->persist($category);
+            $categories[$def['key']] = $category;
+        }
+
+        // Distribute the existing demo listings across the leaf/standalone categories.
+        // Indices map to the listingDefs order in createEcommerce(). The exact split
+        // is illustrative — what matters is that each demo category has ≥1 listing.
+        $assignments = [
+            'men' => [0, 4, 8],         // CRM licence, NAS 4 baies, formation dev web
+            'women' => [1, 5, 12],      // ERP licence, NAS 8 baies, Editorial CMS
+            'accessories' => [6, 7, 11], // Station USB-C, écran 4K, onboarding
+        ];
+
+        foreach ($assignments as $categoryKey => $listingIndexes) {
+            $category = $categories[$categoryKey];
+            foreach ($listingIndexes as $index) {
+                if (isset($listings[$index])) {
+                    $listings[$index]->addCategory($category);
+                }
+            }
+        }
     }
 
     // ── Billing ───────────────────────────────────────────────────────────────
