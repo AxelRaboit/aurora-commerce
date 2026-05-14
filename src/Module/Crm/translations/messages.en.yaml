@@ -26,6 +26,8 @@ backend:
       crm: CRM
     contacts: Contacts
     contacts_description: Address book of people connected to your business
+    contact_tags: Contact tags
+    contact_tags_description: Tags to segment contacts (VIP, prospect, etc.)
     companies: Companies
     companies_description: 'Records for client, prospect and partner companies'
     deals: Deals
@@ -42,6 +44,10 @@ backend:
           created: Contact created
           updated: Contact updated
           deleted: Contact deleted
+        contact_tag:
+          created: Contact tag created
+          updated: Contact tag updated
+          deleted: Contact tag deleted
         deal:
           created: Deal created
           updated: Deal updated
@@ -119,6 +125,23 @@ backend:
         manual: Manual entry
         form: Form submission
         order: Order
+    contact_tags:
+      errors:
+        label_required: Label is required.
+        color_invalid: 'Color must be a hex code (e.g. #FF5733).'
+      created: Tag created.
+      updated: Tag updated.
+      deleted: Tag deleted.
+      add: Add tag
+      create: New tag
+      edit: 'Edit {name}'
+      empty: No tags.
+      label: Label
+      label_placeholder: 'e.g. VIP, Prospect, Partner'
+      slug: Slug
+      slug_placeholder: 'generated from the label'
+      color: Color
+      delete_confirm: 'Delete tag "{name}"?'
     deals:
       add: Add deal
       create: New deal

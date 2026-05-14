@@ -49,6 +49,7 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
 
         if ($this->crmContext->isContactsEnabled()) {
             $items[] = new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contacts_description');
+            $items[] = new NavItem('backend_crm_contact_tags', 'backend.nav.contact_tags', 'tag', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contact_tags_description');
         }
 
         if ($this->crmContext->isCompaniesEnabled()) {
@@ -71,6 +72,7 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
         return [
             new NavSection('crm', [
                 new NavItem('backend_crm_contacts', 'backend.nav.contacts', 'users', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contacts_description'),
+                new NavItem('backend_crm_contact_tags', 'backend.nav.contact_tags', 'tag', requiredPrivilege: 'crm.contacts.view', descriptionKey: 'backend.nav.contact_tags_description'),
                 new NavItem('backend_crm_companies', 'backend.nav.companies', 'building-2', requiredPrivilege: 'crm.companies.view', descriptionKey: 'backend.nav.companies_description'),
                 new NavItem('backend_crm_deals', 'backend.nav.deals', 'trending-up', requiredPrivilege: 'crm.deals.view', descriptionKey: 'backend.nav.deals_description'),
             ], priority: 40),

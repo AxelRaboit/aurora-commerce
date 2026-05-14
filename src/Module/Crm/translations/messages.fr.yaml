@@ -26,6 +26,8 @@ backend:
       crm: CRM
     contacts: Contacts
     contacts_description: Carnet d'adresses des personnes liées à votre activité
+    contact_tags: Tags contact
+    contact_tags_description: Étiquettes pour segmenter les contacts (VIP, prospect, etc.)
     companies: Entreprises
     companies_description: 'Fiches des entreprises clientes, prospects et partenaires'
     deals: Affaires
@@ -42,6 +44,10 @@ backend:
           created: Contact créé
           updated: Contact mis à jour
           deleted: Contact supprimé
+        contact_tag:
+          created: Étiquette créée
+          updated: Étiquette mise à jour
+          deleted: Étiquette supprimée
         deal:
           created: Affaire créée
           updated: Affaire mise à jour
@@ -119,6 +125,23 @@ backend:
         manual: Saisie manuelle
         form: Formulaire
         order: Commande
+    contact_tags:
+      errors:
+        label_required: Le libellé est requis.
+        color_invalid: 'La couleur doit être un code hexadécimal (ex. #FF5733).'
+      created: Étiquette créée.
+      updated: Étiquette mise à jour.
+      deleted: Étiquette supprimée.
+      add: Ajouter une étiquette
+      create: Nouvelle étiquette
+      edit: 'Modifier {name}'
+      empty: Aucune étiquette.
+      label: Libellé
+      label_placeholder: 'ex. VIP, Prospect, Partenaire'
+      slug: Slug
+      slug_placeholder: 'généré depuis le libellé'
+      color: Couleur
+      delete_confirm: "Supprimer l'étiquette « {name} » ?"
     deals:
       add: Ajouter une affaire
       create: Nouvelle affaire

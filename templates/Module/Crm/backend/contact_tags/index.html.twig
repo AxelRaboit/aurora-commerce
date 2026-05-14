@@ -1,0 +1,22 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.contact_tags'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.crm'|trans},
+            {label: 'backend.nav.contact_tags'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('crm/backend/contact_tags/ContactTagsApp', {
+    tags: tags,
+    listPath: listPath,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

@@ -48,6 +48,8 @@ use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
@@ -231,6 +233,7 @@ class AuroraBundle extends AbstractBundle
                     OcrJobInterface::class => OcrJob::class,
                     CompanyInterface::class => Company::class,
                     ContactInterface::class => Contact::class,
+                    ContactTagInterface::class => ContactTag::class,
                     CommentInterface::class => Comment::class,
                     CommentReactionInterface::class => CommentReaction::class,
                     FormInterface::class => Form::class,
