@@ -120,14 +120,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                 </AppBadge>
                             </div>
                             <div v-if="listing.tags?.length" class="flex flex-wrap gap-1 mt-1">
-                                <span
-                                    v-for="tag in listing.tags"
-                                    :key="tag.id"
-                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                    :style="{ backgroundColor: tag.color, color: '#fff' }"
-                                >
+                                <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
                                     {{ tag.name }}
-                                </span>
+                                </AppBadge>
                             </div>
                         </td>
                         <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
@@ -168,14 +163,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </AppBadge>
                 </div>
                 <div v-if="listing.tags?.length" class="flex flex-wrap gap-1">
-                    <span
-                        v-for="tag in listing.tags"
-                        :key="tag.id"
-                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                        :style="{ backgroundColor: tag.color, color: '#fff' }"
-                    >
+                    <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
                         {{ tag.name }}
-                    </span>
+                    </AppBadge>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-line">
                     <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>

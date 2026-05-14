@@ -87,12 +87,11 @@ const { flatTags } = useContactsTags(props.tagsPath);
                         <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
                         <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1.5">
                             <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                            <span
+                            <AppBadge
                                 v-for="tag in (contact.tags ?? [])"
                                 :key="tag.id"
-                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                :style="{ backgroundColor: tag.color, color: '#fff' }"
-                            >{{ tag.label }}</span>
+                                :color="tag.color"
+                            >{{ tag.label }}</AppBadge>
                         </div>
                     </div>
                 </div>
@@ -133,12 +132,11 @@ const { flatTags } = useContactsTags(props.tagsPath);
                                     <p class="font-medium text-primary truncate">{{ contact.fullName }}</p>
                                     <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1">
                                         <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                                        <span
-                                v-for="tag in (contact.tags ?? [])"
-                                :key="tag.id"
-                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                                :style="{ backgroundColor: tag.color, color: '#fff' }"
-                            >{{ tag.label }}</span>
+                                        <AppBadge
+                                            v-for="tag in (contact.tags ?? [])"
+                                            :key="tag.id"
+                                            :color="tag.color"
+                                        >{{ tag.label }}</AppBadge>
                                     </div>
                                 </div>
                             </div>
@@ -187,12 +185,11 @@ const { flatTags } = useContactsTags(props.tagsPath);
 
                 <div v-if="showingContact.source || (showingContact.tags && showingContact.tags.length)" class="flex flex-wrap gap-1.5">
                     <AppBadge v-if="showingContact.source" :color="contactSourceColor(showingContact.source)">{{ t(`backend.crm.contacts.sources.${showingContact.source}`) }}</AppBadge>
-                    <span
+                    <AppBadge
                         v-for="tag in (showingContact.tags ?? [])"
                         :key="tag.id"
-                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                        :style="{ backgroundColor: tag.color, color: '#fff' }"
-                    >{{ tag.label }}</span>
+                        :color="tag.color"
+                    >{{ tag.label }}</AppBadge>
                 </div>
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-line/40">

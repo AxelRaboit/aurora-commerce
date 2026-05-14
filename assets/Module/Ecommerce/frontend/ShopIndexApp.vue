@@ -1,5 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -56,11 +57,7 @@ function tagUrl(slug) {
             <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide mb-3">{{ t('frontend.shop.tags') }}</h2>
             <ul class="flex flex-wrap gap-2">
                 <li v-for="tag in availableTags" :key="tag.slug">
-                    <a
-                        :href="tagUrl(tag.slug)"
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity"
-                        :style="{ backgroundColor: tag.color }"
-                    >{{ tag.name }}</a>
+                    <AppBadge :color="tag.color" size="sm" :href="tagUrl(tag.slug)">{{ tag.name }}</AppBadge>
                 </li>
             </ul>
         </nav>

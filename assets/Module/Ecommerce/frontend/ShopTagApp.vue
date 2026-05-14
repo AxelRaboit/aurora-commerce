@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { useUrlPagination } from "@/shared/composables/nav/useUrlPagination.js";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import ShopListingCard from "@ecommerce/frontend/ShopListingCard.vue";
@@ -37,10 +38,7 @@ function tagUrl(slug) {
         </nav>
 
         <header class="mb-8 flex flex-wrap items-center gap-3">
-            <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white"
-                :style="{ backgroundColor: tag.color }"
-            >{{ tag.name }}</span>
+            <AppBadge :color="tag.color" size="sm">{{ tag.name }}</AppBadge>
             <h1 class="text-3xl font-bold text-primary">{{ tag.name }}</h1>
         </header>
 
@@ -65,11 +63,7 @@ function tagUrl(slug) {
             <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide mb-4">{{ t('frontend.shop.tags') }}</h2>
             <ul class="flex flex-wrap gap-2">
                 <li v-for="otherTag in otherTags" :key="otherTag.slug">
-                    <a
-                        :href="tagUrl(otherTag.slug)"
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity"
-                        :style="{ backgroundColor: otherTag.color }"
-                    >{{ otherTag.name }}</a>
+                    <AppBadge :color="otherTag.color" size="sm" :href="tagUrl(otherTag.slug)">{{ otherTag.name }}</AppBadge>
                 </li>
             </ul>
         </nav>
