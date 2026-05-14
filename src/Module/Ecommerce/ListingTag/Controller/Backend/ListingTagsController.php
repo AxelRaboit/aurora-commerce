@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagInputFactoryInterface;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Ecommerce\ListingTag\Manager\ListingTagManagerInterface;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Aurora\Module\Ecommerce\ListingTag\Serializer\ListingTagSerializerInterface;
@@ -76,7 +76,7 @@ final class ListingTagsController extends AbstractController
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('ecommerce.listings.edit')]
-    public function update(ListingTag $tag, Request $request): JsonResponse
+    public function update(ListingTagInterface $tag, Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
@@ -96,7 +96,7 @@ final class ListingTagsController extends AbstractController
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('ecommerce.listings.delete')]
-    public function delete(ListingTag $tag): JsonResponse
+    public function delete(ListingTagInterface $tag): JsonResponse
     {
         $this->manager->delete($tag);
 

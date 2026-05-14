@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryInputFactoryInterface;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Manager\ListingCategoryManagerInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
 use Aurora\Module\Ecommerce\ListingCategory\Serializer\ListingCategorySerializerInterface;
@@ -76,7 +76,7 @@ final class ListingCategoriesController extends AbstractController
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('ecommerce.listings.edit')]
-    public function update(ListingCategory $category, Request $request): JsonResponse
+    public function update(ListingCategoryInterface $category, Request $request): JsonResponse
     {
         $input = $this->inputFactory->fromArray(json_decode($request->getContent(), true) ?? []);
 
@@ -96,7 +96,7 @@ final class ListingCategoriesController extends AbstractController
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('ecommerce.listings.delete')]
-    public function delete(ListingCategory $category): JsonResponse
+    public function delete(ListingCategoryInterface $category): JsonResponse
     {
         $this->manager->delete($category);
 

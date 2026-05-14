@@ -7,7 +7,6 @@ namespace Aurora\Module\Ecommerce\ListingTag\Repository;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
-use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,7 +20,7 @@ class ListingTagRepository extends ResolveTargetEntityRepository
     }
 
     /** @return list<ListingTagInterface> */
-    public function findAllOrdered(): array
+    public function findAllOrdered(?string $locale = null): array
     {
         /** @var list<ListingTagInterface> $tags */
         $tags = $this->createQueryBuilder('t')
@@ -30,20 +29,21 @@ class ListingTagRepository extends ResolveTargetEntityRepository
             ->getQuery()
             ->getResult();
 
-        usort($tags, static function (ListingTagInterface $a, ListingTagInterface $b): int {
-            $aName = '';
-            foreach ($a->getTranslations() as $translation) {
-                $aName = $translation->getName();
-                break;
+        $resolveName = static function (ListingTagInterface $tag) use ($locale): string {
+            if (null !== $locale) {
+                $translation = $tag->getTranslation($locale);
+                if (null !== $translation) {
+                    return strtolower((string) $translation->getName());
+                }
             }
-            $bName = '';
-            foreach ($b->getTranslations() as $translation) {
-                $bName = $translation->getName();
-                break;
+            foreach ($tag->getTranslations() as $translation) {
+                return strtolower((string) $translation->getName());
             }
 
-            return strcasecmp($aName, $bName);
-        });
+            return '';
+        };
+
+        usort($tags, static fn (ListingTagInterface $a, ListingTagInterface $b): int => strcmp($resolveName($a), $resolveName($b)));
 
         return $tags;
     }
