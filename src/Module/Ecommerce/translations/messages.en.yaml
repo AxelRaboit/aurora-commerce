@@ -159,6 +159,7 @@ backend:
       create: New category
       edit: 'Edit {name}'
       empty: No categories yet.
+      dnd_hint: Drag categories to reorder them or to nest them under a different parent.
       name: Name
       slug: Slug
       slug_placeholder: 'auto-generated from name'

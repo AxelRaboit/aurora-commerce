@@ -16,4 +16,11 @@ interface ListingCategoryManagerInterface
     public function delete(ListingCategoryInterface $category): void;
 
     public function move(ListingCategoryInterface $category, ?ListingCategoryInterface $newParent, int $position): void;
+
+    /**
+     * Apply a bulk tree reorder in one transaction.
+     *
+     * @param list<array{id: int, parentId: int|null, position: int}> $entries
+     */
+    public function reorderTree(array $entries): void;
 }

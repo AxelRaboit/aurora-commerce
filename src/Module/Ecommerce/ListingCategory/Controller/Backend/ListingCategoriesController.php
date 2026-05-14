@@ -103,6 +103,40 @@ final class ListingCategoriesController extends AbstractController
         return $this->jsonSuccess();
     }
 
+    #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ecommerce.listings.edit')]
+    public function reorder(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $rawEntries = is_array($data) && isset($data['entries']) ? $data['entries'] : [];
+
+        $entries = [];
+        foreach ((array) $rawEntries as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $id = (int) ($entry['id'] ?? 0);
+            if ($id <= 0) {
+                continue;
+            }
+
+            $entries[] = [
+                'id' => $id,
+                'parentId' => isset($entry['parentId']) && (int) $entry['parentId'] > 0 ? (int) $entry['parentId'] : null,
+                'position' => (int) ($entry['position'] ?? 0),
+            ];
+        }
+
+        try {
+            $this->manager->reorderTree($entries);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return $this->jsonFailure($invalidArgumentException->getMessage());
+        }
+
+        return $this->jsonSuccess(['items' => $this->buildListPayload()]);
+    }
+
     /** @return list<array<string, mixed>> */
     private function buildListPayload(): array
     {

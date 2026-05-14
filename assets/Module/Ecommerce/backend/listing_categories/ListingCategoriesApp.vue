@@ -1,24 +1,28 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { VueDraggable } from "vue-draggable-plus";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useListingCategoriesForm } from "@ecommerce/backend/listing_categories/composables/useListingCategoriesForm.js";
+import ListingCategoryNode from "@ecommerce/backend/listing_categories/ListingCategoryNode.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
-import AppImage from "@/shared/components/display/AppImage.vue";
-import { Pencil, Trash2, Plus, Save, X, FolderTree } from "lucide-vue-next";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import { Trash2, Plus, Save, X, FolderTree } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
+const { request } = useRequest();
 
 const props = defineProps({
     categories: { type: Array, default: () => [] },
@@ -27,27 +31,65 @@ const props = defineProps({
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    reorderPath: { type: String, required: true },
     extraFields: { type: Object, default: () => ({}) },
 });
 
 const items = ref([...props.categories]);
 const activeTab = ref(props.locales[0]?.code ?? "en");
+const activeLocale = computed(() => activeTab.value);
+const collapsed = ref(new Set());
+
+function toggleCollapsed(id) {
+    if (collapsed.value.has(id)) collapsed.value.delete(id);
+    else collapsed.value.add(id);
+    // Force reactivity on Set
+    collapsed.value = new Set(collapsed.value);
+}
+
+function buildTree(flatCategories) {
+    const byId = new Map(
+        flatCategories.map((category) => [category.id, { ...category, children: [] }]),
+    );
+    const roots = [];
+    for (const node of byId.values()) {
+        if (node.parentId && byId.has(node.parentId)) {
+            byId.get(node.parentId).children.push(node);
+        } else {
+            roots.push(node);
+        }
+    }
+    const sortRecursive = (nodes) => {
+        nodes.sort((a, b) => (a.position - b.position) || (a.id - b.id));
+        nodes.forEach((node) => sortRecursive(node.children));
+    };
+    sortRecursive(roots);
+    return roots;
+}
+
+const tree = ref(buildTree(items.value));
+
+watch(items, (next) => { tree.value = buildTree(next); }, { deep: true });
 
 async function reload() {
-    const res = await fetch(props.listPath, { headers: { Accept: "application/json" } });
-    const json = await res.json();
+    const response = await fetch(props.listPath, { headers: { Accept: "application/json" } });
+    const json = await response.json();
     items.value = json.items ?? [];
 }
 
 const parentOptions = computed(() => {
-    return items.value.map((c) => {
-        const indent = "— ".repeat(c.depth ?? 0);
-        const firstTranslation = Object.values(c.translations ?? {})[0];
-        return {
-            id: c.id,
-            label: indent + (firstTranslation?.name ?? `#${c.id}`),
-        };
-    });
+    const list = [];
+    const walk = (nodes, depth) => {
+        for (const node of nodes) {
+            const translation = node.translations?.[activeLocale.value];
+            const firstTranslation = Object.values(node.translations ?? {})[0];
+            const name = translation?.name ?? firstTranslation?.name ?? `#${node.id}`;
+            list.push({ id: node.id, label: `${"— ".repeat(depth)}${name}` });
+            if (node.children?.length) walk(node.children, depth + 1);
+        }
+    };
+    walk(tree.value, 0);
+    return list;
 });
 
 const {
@@ -72,6 +114,15 @@ const {
     extraFields: props.extraFields,
 });
 
+function openCreateRoot() {
+    openCreate();
+}
+
+function openCreateChild(parentId) {
+    openCreate();
+    editForm.parentId = parentId;
+}
+
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deletePath,
     reload,
@@ -79,8 +130,45 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 );
 
 function displayName(category) {
-    const firstLocale = props.locales[0]?.code;
-    return category.translations?.[firstLocale]?.name ?? `#${category.id}`;
+    if (!category) return "";
+    const translation = category.translations?.[activeLocale.value];
+    if (translation?.name) return translation.name;
+    const firstTranslation = Object.values(category.translations ?? {})[0];
+    return firstTranslation?.name ?? `#${category.id}`;
+}
+
+// ── Drag & drop persistence ──────────────────────────────────────────────────
+function flattenTreeForReorder(nodes, parentId = null) {
+    const entries = [];
+    nodes.forEach((node, index) => {
+        entries.push({ id: node.id, parentId, position: index });
+        if (node.children?.length) {
+            entries.push(...flattenTreeForReorder(node.children, node.id));
+        }
+    });
+    return entries;
+}
+
+let reorderTimer = null;
+async function persistTreeOrder() {
+    const entries = flattenTreeForReorder(tree.value);
+    const data = await request(props.reorderPath, { entries });
+    if (!data) return;
+    if (!data.success) {
+        toast.error(data.error ?? t("shared.common.error"));
+        await reload();
+        return;
+    }
+    if (Array.isArray(data.items)) {
+        items.value = data.items;
+    }
+}
+
+function onDragEnd() {
+    if (reorderTimer) clearTimeout(reorderTimer);
+    reorderTimer = setTimeout(() => {
+        nextTick(() => persistTreeOrder());
+    }, 300);
 }
 
 defineSlots();
@@ -88,66 +176,62 @@ defineSlots();
 
 <template>
     <div class="space-y-4">
-        <div class="flex justify-end">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div v-if="locales.length > 1" class="flex gap-1">
+                <button
+                    v-for="locale in locales"
+                    :key="locale.code"
+                    type="button"
+                    class="px-3 py-1.5 text-xs font-medium rounded transition-colors"
+                    :class="activeTab === locale.code ? 'bg-accent-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    v-on:click="activeTab = locale.code"
+                >
+                    {{ locale.label }}
+                </button>
+            </div>
             <AppButton
                 v-if="can('ecommerce.listings.create')"
                 variant="primary"
                 size="md"
-                v-on:click="openCreate"
+                v-on:click="openCreateRoot"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
                 {{ t('backend.ecommerce.listing_categories.add') }}
             </AppButton>
         </div>
 
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_categories.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_categories.slug') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_categories.position') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_categories.visibility') }}</th>
-                        <slot name="extra-headers" />
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="category in items" :key="category.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-9 h-9 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <AppImage v-if="category.image" :src="category.image.url" :alt="category.image.alt ?? ''" object-fit="cover" />
-                                    <span v-else class="text-muted text-xs">—</span>
-                                </div>
-                                <div class="min-w-0">
-                                    <div class="font-medium text-primary truncate" :style="{ paddingLeft: (category.depth * 12) + 'px' }">
-                                        {{ displayName(category) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ Object.values(category.translations ?? {})[0]?.slug ?? '' }}</td>
-                        <td class="px-6 py-3 text-secondary">{{ category.position }}</td>
-                        <td class="px-6 py-3">
-                            <AppBadge :color="category.isVisible ? 'emerald' : 'slate'">
-                                {{ t(category.isVisible ? 'backend.ecommerce.listing_categories.visible' : 'backend.ecommerce.listing_categories.hidden') }}
-                            </AppBadge>
-                        </td>
-                        <slot name="extra-cells" :category="category" />
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(category)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(category)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_categories.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <AppMessage variant="info">
+            {{ t('backend.ecommerce.listing_categories.dnd_hint') }}
+        </AppMessage>
+
+        <AppNoData v-if="!tree.length" :message="t('backend.ecommerce.listing_categories.empty')" />
+
+        <VueDraggable
+            v-else
+            v-model="tree"
+            :group="{ name: 'listing-categories', pull: true, put: true }"
+            handle=".drag-handle"
+            :animation="150"
+            ghost-class="opacity-50"
+            class="space-y-1"
+            v-on:end="onDragEnd"
+        >
+            <template v-for="node in tree" :key="node.id">
+                <ListingCategoryNode
+                    :node="node"
+                    :active-locale="activeLocale"
+                    group-name="listing-categories"
+                    :collapsed="collapsed"
+                    :can-edit="can('ecommerce.listings.edit')"
+                    :can-delete="can('ecommerce.listings.delete')"
+                    v-on:toggle-collapse="toggleCollapsed($event)"
+                    v-on:edit="openEdit($event)"
+                    v-on:delete="confirmDelete($event)"
+                    v-on:add-child="openCreateChild($event)"
+                    v-on:end="onDragEnd"
+                />
+            </template>
+        </VueDraggable>
 
         <AppModal
             :show="showCreate || showEdit"

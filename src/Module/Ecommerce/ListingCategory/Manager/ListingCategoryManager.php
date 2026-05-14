@@ -73,6 +73,85 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
         $this->auditUpdated($category);
     }
 
+    /**
+     * Apply a bulk tree reorder in one transaction. Each entry describes the
+     * intended parent + sibling position of a single category.
+     *
+     * @param list<array{id: int, parentId: int|null, position: int}> $entries
+     */
+    public function reorderTree(array $entries): void
+    {
+        $ids = [];
+        foreach ($entries as $entry) {
+            $id = (int) ($entry['id'] ?? 0);
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+
+        if ([] === $ids) {
+            return;
+        }
+
+        /** @var list<ListingCategoryInterface> $categories */
+        $categories = $this->categoryRepository->findBy(['id' => $ids]);
+        $categoriesById = [];
+        foreach ($categories as $category) {
+            $categoriesById[$category->getId()] = $category;
+        }
+
+        $parentMap = [];
+        foreach ($entries as $entry) {
+            $id = (int) ($entry['id'] ?? 0);
+            if (!isset($categoriesById[$id])) {
+                continue;
+            }
+
+            $parentId = isset($entry['parentId']) && (int) $entry['parentId'] > 0 ? (int) $entry['parentId'] : null;
+            $parentMap[$id] = $parentId;
+        }
+
+        // Detect cycles on the intended tree before mutating entities.
+        foreach ($parentMap as $id => $initialParentId) {
+            $visited = [$id => true];
+            $current = $initialParentId;
+            while (null !== $current) {
+                if (isset($visited[$current])) {
+                    throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listing_categories.errors.cycle_detected'));
+                }
+                $visited[$current] = true;
+                $current = $parentMap[$current] ?? null;
+            }
+        }
+
+        $this->entityManager->wrapInTransaction(function () use ($entries, $categoriesById, $parentMap): void {
+            // Detach all moved nodes from their parent first to avoid transient
+            // descendant constraint failures during reparenting.
+            foreach (array_keys($parentMap) as $id) {
+                $categoriesById[$id]->setParent(null);
+            }
+
+            foreach ($entries as $entry) {
+                $id = (int) ($entry['id'] ?? 0);
+                $category = $categoriesById[$id] ?? null;
+                if (!$category instanceof ListingCategoryInterface) {
+                    continue;
+                }
+
+                $parentId = $parentMap[$id] ?? null;
+                $parent = null !== $parentId ? ($categoriesById[$parentId] ?? null) : null;
+                $category->setParent($parent);
+                $category->setPosition((int) ($entry['position'] ?? 0));
+            }
+
+            $this->entityManager->flush();
+        });
+
+        foreach (array_keys($parentMap) as $id) {
+            $this->auditUpdated($categoriesById[$id]);
+        }
+    }
+
     protected function createCategory(): ListingCategoryInterface
     {
         return new ListingCategory();

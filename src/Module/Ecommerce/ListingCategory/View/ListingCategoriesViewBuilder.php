@@ -36,6 +36,7 @@ final readonly class ListingCategoriesViewBuilder
             'createPath' => $this->urlGenerator->generate('backend_ecommerce_listing_categories_create'),
             'updatePath' => $this->urlGenerator->generate('backend_ecommerce_listing_categories_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_ecommerce_listing_categories_delete', ['id' => '__id__']),
+            'reorderPath' => $this->urlGenerator->generate('backend_ecommerce_listing_categories_reorder'),
         ];
     }
 }

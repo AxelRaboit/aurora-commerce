@@ -159,6 +159,7 @@ backend:
       create: Nouvelle catégorie
       edit: 'Modifier {name}'
       empty: Aucune catégorie.
+      dnd_hint: Glissez-déposez pour réordonner les catégories ou les imbriquer sous un autre parent.
       name: Nom
       slug: Slug
       slug_placeholder: 'généré depuis le nom'
