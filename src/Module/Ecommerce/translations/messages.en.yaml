@@ -200,6 +200,7 @@ backend:
       create: New tag
       edit: 'Edit {name}'
       empty: No tags yet.
+      searchPlaceholder: 'Search by name or slug…'
       name: Name
       name_placeholder: 'e.g. New, Sale, Featured'
       slug: Slug

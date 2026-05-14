@@ -200,6 +200,7 @@ backend:
       create: Nouveau tag
       edit: 'Modifier {name}'
       empty: Aucun tag.
+      searchPlaceholder: 'Rechercher par nom ou slug…'
       name: Nom
       name_placeholder: 'ex. Nouveau, Promo, En vedette'
       slug: Slug

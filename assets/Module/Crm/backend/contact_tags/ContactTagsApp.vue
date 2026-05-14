@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -7,6 +7,7 @@ import { useContactTagsForm } from "@crm/backend/contact_tags/composables/useCon
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -27,6 +28,16 @@ const props = defineProps({
 });
 
 const items = ref([...props.tags]);
+const searchInput = ref("");
+
+const filteredItems = computed(() => {
+    const query = searchInput.value.toLowerCase().trim();
+    if (!query) return items.value;
+    return items.value.filter((tag) =>
+        (tag.label ?? "").toLowerCase().includes(query)
+        || (tag.slug ?? "").toLowerCase().includes(query),
+    );
+});
 
 async function reload() {
     const response = await fetch(props.listPath, { headers: { Accept: "application/json" } });
@@ -69,7 +80,11 @@ function displayLabel(tag) {
 
 <template>
     <div class="space-y-4">
-        <div class="flex items-center justify-end gap-2 flex-wrap">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('backend.crm.contact_tags.searchPlaceholder')"
+            />
             <AppButton
                 v-if="can('crm.contacts.create')"
                 variant="primary"
@@ -83,7 +98,7 @@ function displayLabel(tag) {
         </div>
 
         <div class="sm:hidden space-y-3">
-            <div v-for="tag in items" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+            <div v-for="tag in filteredItems" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-center gap-3">
                     <AppColorSwatch :model-value="tag.color" size="sm" disabled />
                     <div class="flex-1 min-w-0">
@@ -108,7 +123,7 @@ function displayLabel(tag) {
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
-                    <tr v-for="tag in items" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
+                    <tr v-for="tag in filteredItems" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
                                 <AppColorSwatch :model-value="tag.color" size="sm" disabled />
@@ -123,14 +138,14 @@ function displayLabel(tag) {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="!items?.length">
+                    <tr v-if="!filteredItems.length">
                         <td :colspan="3" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.contact_tags.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <p v-if="!items?.length" class="sm:hidden py-8 text-center text-sm text-muted">{{ t('backend.crm.contact_tags.empty') }}</p>
+        <p v-if="!filteredItems.length" class="sm:hidden py-8 text-center text-sm text-muted">{{ t('backend.crm.contact_tags.empty') }}</p>
 
         <AppModal
             :show="showCreate || showEdit"

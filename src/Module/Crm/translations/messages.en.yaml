@@ -136,6 +136,7 @@ backend:
       create: New tag
       edit: 'Edit {name}'
       empty: No tags.
+      searchPlaceholder: 'Search by label or slug…'
       label: Label
       label_placeholder: 'e.g. VIP, Prospect, Partner'
       slug: Slug

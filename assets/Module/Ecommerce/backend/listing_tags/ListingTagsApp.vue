@@ -8,6 +8,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
@@ -33,6 +34,22 @@ const props = defineProps({
 });
 
 const items = ref([...props.tags]);
+const searchInput = ref("");
+
+function tagSearchHaystack(tag) {
+    const parts = [];
+    for (const translation of Object.values(tag.translations ?? {})) {
+        if (translation?.name) parts.push(translation.name);
+        if (translation?.slug) parts.push(translation.slug);
+    }
+    return parts.join(" ").toLowerCase();
+}
+
+const filteredItems = computed(() => {
+    const query = searchInput.value.toLowerCase().trim();
+    if (!query) return items.value;
+    return items.value.filter((tag) => tagSearchHaystack(tag).includes(query));
+});
 const activeTab = ref(props.locales[0]?.code ?? "en");
 const activeLocale = computed(() => activeTab.value);
 
@@ -83,20 +100,25 @@ function displaySlug(tag) {
 
 <template>
     <div class="space-y-4">
-        <div class="flex items-center justify-between gap-2 flex-wrap">
-            <div v-if="locales.length > 1" class="flex gap-1">
-                <AppTab
-                    v-for="locale in locales"
-                    :key="locale.code"
-                    size="xs"
-                    :active="activeTab === locale.code"
-                    active-class="bg-accent-600 text-white"
-                    inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
-                    v-on:click="activeTab = locale.code"
-                >
-                    {{ locale.label }}
-                </AppTab>
-            </div>
+        <div v-if="locales.length > 1" class="flex gap-1">
+            <AppTab
+                v-for="locale in locales"
+                :key="locale.code"
+                size="xs"
+                :active="activeTab === locale.code"
+                active-class="bg-accent-600 text-white"
+                inactive-class="bg-surface-2 text-secondary hover:bg-surface-3"
+                v-on:click="activeTab = locale.code"
+            >
+                {{ locale.label }}
+            </AppTab>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('backend.ecommerce.listing_tags.searchPlaceholder')"
+            />
             <AppButton
                 v-if="can('ecommerce.listings.create')"
                 variant="primary"
@@ -110,7 +132,7 @@ function displaySlug(tag) {
         </div>
 
         <div class="sm:hidden space-y-3">
-            <div v-for="tag in items" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+            <div v-for="tag in filteredItems" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start gap-3">
                     <AppColorSwatch :model-value="tag.color" size="sm" disabled />
                     <div class="flex-1 min-w-0">
@@ -137,7 +159,7 @@ function displaySlug(tag) {
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
-                    <tr v-for="tag in items" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
+                    <tr v-for="tag in filteredItems" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
                                 <AppColorSwatch :model-value="tag.color" size="sm" disabled />
@@ -155,14 +177,14 @@ function displaySlug(tag) {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="!items?.length">
+                    <tr v-if="!filteredItems.length">
                         <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_tags.empty') }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <p v-if="!items?.length" class="sm:hidden py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_tags.empty') }}</p>
+        <p v-if="!filteredItems.length" class="sm:hidden py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_tags.empty') }}</p>
 
         <AppModal
             :show="showCreate || showEdit"

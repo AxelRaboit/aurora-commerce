@@ -136,6 +136,7 @@ backend:
       create: Nouvelle étiquette
       edit: 'Modifier {name}'
       empty: Aucune étiquette.
+      searchPlaceholder: 'Rechercher par libellé ou slug…'
       label: Libellé
       label_placeholder: 'ex. VIP, Prospect, Partenaire'
       slug: Slug
