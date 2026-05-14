@@ -62,9 +62,14 @@ pour les détails côté client.
 
 ## Système de thèmes frontend
 
-`ThemeResolver::resolve('editorial/home')` :
-1. Cherche `templates/Frontend/themes/<slug-actif>/editorial/home.html.twig`
+`ThemeResolver::resolve('editorial/post/index')` :
+1. Cherche `templates/Frontend/themes/<slug-actif>/editorial/post/index.html.twig`
 2. Si trouvé → l'utilise. Sinon → fallback sur `default/`
+
+Exemples de chemins résolus :
+- `ecommerce/shop/category` → `themes/<slug>/ecommerce/shop/category.html.twig`
+- `ecommerce/shop/tag` → `themes/<slug>/ecommerce/shop/tag.html.twig`
+- `editorial/post/show` → `themes/<slug>/editorial/post/show.html.twig`
 
 Le thème actif est lu en BDD (`core_themes WHERE active = true`).
 **Un seul thème actif à la fois.** Un thème custom n'override que les templates qu'il contient — tout le reste tombe sur `default`.
@@ -88,9 +93,11 @@ Aussi gérables depuis `/backend/themes`.
 
 ### `resolveAll()`
 
-Retourne une map `nom → chemin résolu` pour les templates Editorial + layout.
-Utiliser `themeTemplates['editorial/_post_card']` dans les includes inter-templates
-pour que l'override suive le thème actif.
+Retourne une map `nom → chemin résolu` pour les templates de pages + le layout
+de chaque thème. Les anciens partials `editorial/_post_card` et
+`editorial/_pagination` ont été supprimés (remplacés par les composants Vue
+`PostCard.vue` et `AppPagination`), donc `resolveAll()` ne pointe plus vers ces
+fichiers — il ne contient que les pages-passerelles et le layout.
 
 **Doc canonique** : [`docs/aurora-core/dev/frontend_theme_override.md`](../../../docs/aurora-core/dev/frontend_theme_override.md)
 
@@ -106,9 +113,16 @@ pour que l'override suive le thème actif.
   pour PostEditor full-page).
 
 ### Pages frontend
-- `<Module>/frontend/<page>.html.twig` (snake_case dans le path).
-- Les pages frontend héritent souvent d'un layout dans `Shared/` ou
-  `Frontend/themes/<theme>/layout.html.twig`.
+- **Folder-per-feature** quand le feature a ≥1 template :
+  `<Module>/frontend/<feature>/index.html.twig`, `…/<feature>/category.html.twig`, etc.
+  Ex : `Ecommerce/frontend/shop/{index,category,tag,product}.html.twig`,
+  `Editorial/frontend/post/{index,show}.html.twig`.
+- **Plat** quand single-file : `<Module>/frontend/<page>.html.twig`
+  (ex : `Ecommerce/frontend/cart.html.twig`).
+- Les pages frontend héritent du layout du thème
+  (`Frontend/themes/<theme>/layout.html.twig`).
+- Tous les templates frontend sont des passerelles Vue
+  (cf [[convention_frontend_rendering]]).
 
 ### Emails
 - `<Module>/email/<event>.html.twig` (ex: `Crm/email/deal_stage_changed.html.twig`).
@@ -117,8 +131,9 @@ pour que l'override suive le thème actif.
 
 ## Pattern admin page (Vue mount)
 
-L'admin Aurora utilise Twig comme **shell** qui mount un composant Vue.
-Pattern type :
+L'admin Aurora utilise Twig comme **shell** qui mount un composant Vue
+via le helper Twig `vue_component(...)` — **même pattern que le frontend**
+(cf [[convention_frontend_rendering]]). Pattern type :
 
 ```twig
 {# templates/Core/backend/agencies/index.html.twig #}
@@ -127,22 +142,22 @@ Pattern type :
 {% block title %}{{ 'backend.agencies.title' | trans }}{% endblock %}
 
 {% block body %}
-    <div
-        data-controller="vue-mount"
-        data-vue-mount-component-value="AgenciesApp"
-        data-vue-mount-props-value="{{ {
-            agencies: agencies,
-            createPath: createPath,
-            updatePath: updatePath,
-            deletePath: deletePath,
-        } | json_encode | escape('html_attr') }}"
-    ></div>
+<div {{ vue_component('core/backend/agencies/AgenciesApp', {
+    agencies: agencies,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+}) }}></div>
 {% endblock %}
 ```
 
-Le Stimulus controller `vue-mount` instancie le composant Vue avec les
-props passées par le ViewBuilder. **Pas de logique inline en Twig** pour
-les pages admin SPA.
+Le helper `vue_component()` sérialise les props en attributs data et
+enregistre le mount. **Pas de logique inline en Twig** pour les pages
+admin SPA — toutes les données viennent du `*ViewBuilder`.
+
+> Note : l'ancien pattern `data-controller="vue-mount"` avec props
+> `json_encode | escape('html_attr')` n'est plus utilisé. Tout est passé
+> par `vue_component()` depuis le passage au composant unique de mount.
 
 ## Anti-patterns
 

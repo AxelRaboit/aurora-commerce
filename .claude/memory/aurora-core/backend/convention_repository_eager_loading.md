@@ -75,5 +75,5 @@ Appeler cette méthode juste après `$this->paginate(...)`.
 ## Comment l'appliquer
 
 1. Dès qu'un `*ViewBuilder` appelle `findAll()` ou `findBy()`, vérifier si le serializer accède à des collections → si oui, ajouter la méthode dédiée.
-2. Pour les queries paginées : ne jamais ajouter de JOIN collection dans la query principale, toujours hydration batch post-pagination.
+2. Pour les queries paginées : ne jamais ajouter de JOIN collection dans la query principale, toujours hydration batch post-pagination — pattern détaillé dans [[pattern_two_pass_n_plus_1_hydration]] (cas spécifique ManyToMany + `setMaxResults` qui crée un produit cartésien).
 3. Ne pas utiliser `findAll()` / `findBy()` dans un `*ViewBuilder` si le serializer touche une relation.

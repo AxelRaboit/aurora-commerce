@@ -71,7 +71,7 @@ export function useDocumentSearch(props) {
 
 - `useFrontendRequest` + `HttpMethod.Get` pour les requêtes GET avec params URL
 - `goToPage` sans debounce (action utilisateur explicite)
-- Props initiales issues du SSR Twig (première page rendue côté serveur)
+- Props initiales passées par le `*ViewBuilder` via `vue_component(...)` côté Twig (la première page est sérialisée dans le payload du composant Vue, pas rendue en HTML — cf [[convention_frontend_rendering]]).
 
 ---
 

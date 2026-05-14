@@ -7,3 +7,4 @@
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`
+- [decision_marketing_taxonomies_on_listing.md](decision_marketing_taxonomies_on_listing.md) — taxonomies marketing (Category/Tag) sur `Listing` jamais sur `Product` ; URL canonique produit découplée des filtres

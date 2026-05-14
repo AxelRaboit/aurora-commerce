@@ -13,6 +13,8 @@
 - [convention_http_responses.md](convention_http_responses.md) — `jsonSuccess/jsonFailure/jsonInvalidInput` + `HttpStatusEnum`, jamais `$this->json([...], 503)` brut
 - [convention_tmp_files_scheduler.md](convention_tmp_files_scheduler.md) — fichiers tmp : préfixe `aurora_<module>_<role>_` + `finally` + `CleanTempFilesHandler::TMP_PREFIXES`
 - [convention_repository_eager_loading.md](convention_repository_eager_loading.md) — méthodes repo anti-N+1 : `findAllForIndex`, `findAllWith*`, `hydrate*Collections`
+- [convention_collection_on_concrete.md](convention_collection_on_concrete.md) — `Collection` ManyToMany/OneToMany sur la concrete + `__construct` qui init, jamais sur Abstract
+- [pattern_two_pass_n_plus_1_hydration.md](pattern_two_pass_n_plus_1_hydration.md) — pagination + ManyToMany : page query d'abord, puis 2e passe `WHERE id IN (:pageIds)` pour peupler l'identity map
 
 ## Permissions & Navigation backend
 - [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` en FR + EN

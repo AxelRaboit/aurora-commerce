@@ -5,3 +5,4 @@
 - [convention_modal_and_confirmation.md](convention_modal_and_confirmation.md) — `AppModal` (`:show + v-on:close`) + confirmation via modale, jamais `confirm()` natif
 - [convention_file_picker_button.md](convention_file_picker_button.md) — `AppFilePickerButton` encapsule `<input type="file" hidden>` + `<AppButton>` trigger
 - [convention_color_picker.md](convention_color_picker.md) — 3 composants couleur : `AppColorSwatch` (nu), `AppColorField` (form), `AppColorPicker` (preset grid)
+- [pitfall_nested_drag_drop_clone.md](pitfall_nested_drag_drop_clone.md) — node récursif VueDraggable : computed bidirectionnel sur `props.node.children`, jamais `ref([...])`. Bug latent dans `TermNode.vue`

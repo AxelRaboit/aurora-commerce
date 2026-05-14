@@ -9,3 +9,7 @@
 - [convention_no_raw_fetch.md](convention_no_raw_fetch.md) — jamais `await fetch()` brut → `useRequest` (admin) ou `useFrontendRequest` (public)
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, `frontend/components/` + `frontend/composables/`, anti-patterns
 - [convention_assets_subfolder_layout.md](convention_assets_subfolder_layout.md) — compartimentage feature-subfolder dans `assets/Module/<M>/backend/`
+- [composable_hierarchical_tree.md](composable_hierarchical_tree.md) — `@/shared/composables/tree/useHierarchicalTree.js` (`buildTree`, `flattenTreeForReorder`, …) — ne pas dupliquer
+- [composable_url_pagination.md](composable_url_pagination.md) — `useUrlPagination` pour la pagination full-reload (`?page=N`) — pas pour l'AJAX
+- [utility_pick_translation.md](utility_pick_translation.md) — `pickTranslation` / `translatedField` avec fallback locale → en → première dispo
+- [convention_twig_locale_extension.md](convention_twig_locale_extension.md) — `locale_flag()` / `locale_name()` Twig depuis `LocaleExtension.php`
