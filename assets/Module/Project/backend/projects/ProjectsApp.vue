@@ -25,6 +25,7 @@ import { TASK_PRIORITY_TONE } from "@project/backend/utils/enums/projectTaskPrio
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
@@ -253,23 +254,25 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
 <template>
     <div class="space-y-4">
         <!-- Top: full-width search + create button -->
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.projects.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton
-                v-if="can('project.projects.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreateProject"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.projects.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('project.projects.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreateProject"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.projects.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <!-- Status filter tabs -->
         <div class="flex gap-1 flex-wrap">

@@ -5,6 +5,7 @@ import { useDocumentTagsForm } from "./composables/useDocumentTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -33,18 +34,20 @@ const {
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput v-model="tagSearch" :placeholder="t('backend.ged.tags.searchPlaceholder')" />
-            <AppButton
-                v-if="can('ged.tags.manage')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.tags.add") }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('ged.tags.manage')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.tags.add") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">

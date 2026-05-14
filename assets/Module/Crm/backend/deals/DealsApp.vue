@@ -10,6 +10,7 @@ import { useDealsDelete } from "@crm/backend/deals/composables/useDealsDelete.js
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
@@ -104,23 +105,25 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
         <div class="flex-1 min-w-0 space-y-4">
             <!-- LIST VIEW -->
             <div v-show="view === 'list'" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+                <AppListToolbar>
                     <AppSearchInput
                         v-model="searchInput"
                         :placeholder="t('backend.crm.deals.searchPlaceholder')"
                         v-on:search="onSearch"
                     />
-                    <AppButton
-                        v-if="can('crm.deals.create')"
-                        variant="primary"
-                        size="md"
-                        class="w-full sm:w-auto"
-                        v-on:click="openCreate"
-                    >
-                        <Plus class="w-4 h-4" :stroke-width="2" />
-                        {{ t('backend.crm.deals.add') }}
-                    </AppButton>
-                </div>
+                    <template #actions>
+                        <AppButton
+                            v-if="can('crm.deals.create')"
+                            variant="primary"
+                            size="md"
+                            class="w-full sm:w-auto"
+                            v-on:click="openCreate"
+                        >
+                            <Plus class="w-4 h-4" :stroke-width="2" />
+                            {{ t('backend.crm.deals.add') }}
+                        </AppButton>
+                    </template>
+                </AppListToolbar>
                 <div class="sm:hidden space-y-3">
                     <div v-for="deal in items" :key="deal.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                         <div class="flex items-start justify-between gap-3">

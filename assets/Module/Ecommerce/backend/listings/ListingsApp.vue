@@ -20,6 +20,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import { Pencil, Trash2, Plus, Eye, Save, X, ShoppingBag } from "lucide-vue-next";
@@ -68,23 +69,25 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.ecommerce.listings.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton
-                v-if="can('ecommerce.listings.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.ecommerce.listings.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('ecommerce.listings.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.ecommerce.listings.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">

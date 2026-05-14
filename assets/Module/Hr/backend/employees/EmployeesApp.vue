@@ -12,6 +12,7 @@ import AppInput from "@/shared/components/form/AppInput.vue";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -71,19 +72,21 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.employees.searchPlaceholder')" v-on:search="onSearch" />
-            <AppButton
-                v-if="can('hr.employees.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.employees.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('hr.employees.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.employees.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">

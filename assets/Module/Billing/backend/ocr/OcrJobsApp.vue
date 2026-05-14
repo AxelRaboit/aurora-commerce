@@ -9,6 +9,7 @@ import { useOcrJobs } from "@billing/backend/ocr/composables/useOcrJobs.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
@@ -68,7 +69,7 @@ onMounted(startPolling);
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppMultiselect
                 v-model="statusFilter"
                 :options="STATUS_SELECT"
@@ -76,11 +77,13 @@ onMounted(startPolling);
                 :allow-empty="true"
                 v-on:update:model-value="onStatusChange"
             />
-            <AppButton variant="primary" size="md" :href="importPath">
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.billing.ocr.import') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton variant="primary" size="md" :href="importPath">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.billing.ocr.import') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('backend.billing.ocr.empty')" />

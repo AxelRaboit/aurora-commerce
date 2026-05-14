@@ -7,6 +7,7 @@ import { useCompaniesEdit } from "./composables/useCompaniesEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -42,23 +43,25 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.crm.companies.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton
-                v-if="can('crm.companies.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.crm.companies.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('crm.companies.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.crm.companies.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
         <div class="sm:hidden space-y-3">
             <div v-for="company in items" :key="company.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">

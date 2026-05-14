@@ -29,6 +29,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import { useUrlSearchSync } from "@/shared/composables/list/useUrlSearchSync.js";
 import { usePostViewMode } from "@editorial/backend/posts/composables/usePostViewMode.js";
 import { PostStatus } from "@editorial/shared/enums/postStatus.js";
@@ -277,13 +278,14 @@ function postTermLabels(post) {
         </div>
 
         <div class="flex-1 min-w-0 space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+            <AppListToolbar>
                 <AppSearchInput
                     v-model="searchInput"
                     :placeholder="t('backend.posts.searchPlaceholder')"
                     v-on:search="onSearch"
                 />
-                <div class="flex items-center gap-2 w-full sm:w-auto">
+                <template #actions>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
                     <div class="flex items-center rounded-lg border border-line overflow-hidden shrink-0">
                         <AppButton
                             variant="ghost"
@@ -327,8 +329,9 @@ function postTermLabels(post) {
                         <Trash2 class="w-4 h-4" :stroke-width="2" />
                         {{ t("backend.posts.emptyTrash") }}
                     </AppButton>
-                </div>
-            </div>
+                    </div>
+                </template>
+            </AppListToolbar>
 
             <div v-if="!trashed" class="flex flex-wrap gap-2 items-end">
                 <AppMultiselect

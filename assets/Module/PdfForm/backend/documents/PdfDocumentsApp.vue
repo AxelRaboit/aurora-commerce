@@ -7,6 +7,7 @@ import { usePdfDocumentsForm, DOCUMENT_STATUS_BADGE } from "./composables/usePdf
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
@@ -52,18 +53,20 @@ const {
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput v-model="searchInput" :placeholder="t('backend.pdfform.documents.searchPlaceholder')" v-on:search="onSearch" />
-            <AppButton
-                v-if="can('pdfform.documents.generate')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openModal"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.pdfform.documents.add") }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('pdfform.documents.generate')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openModal"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.pdfform.documents.add") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">

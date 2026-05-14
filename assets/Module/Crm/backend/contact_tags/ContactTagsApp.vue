@@ -8,6 +8,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
 import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -70,22 +71,24 @@ function displayLabel(tag) {
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.crm.contact_tags.searchPlaceholder')"
             />
-            <AppButton
-                v-if="can('crm.contacts.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.crm.contact_tags.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('crm.contacts.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.crm.contact_tags.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="sm:hidden space-y-3">
             <div v-for="tag in filteredItems" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">

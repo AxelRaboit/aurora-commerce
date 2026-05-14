@@ -8,6 +8,7 @@ import { useProductsCreate } from "@erp/backend/products/composables/useProducts
 import { useProductsEdit } from "@erp/backend/products/composables/useProductsEdit.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
@@ -51,23 +52,25 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.erp.products.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton
-                v-if="can('erp.products.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.erp.products.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('erp.products.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.erp.products.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">

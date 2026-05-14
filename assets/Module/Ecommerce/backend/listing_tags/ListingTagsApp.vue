@@ -10,6 +10,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppColorPicker from "@/shared/components/form/AppColorPicker.vue";
@@ -106,22 +107,24 @@ function displaySlug(tag) {
             </AppTab>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.ecommerce.listing_tags.searchPlaceholder')"
             />
-            <AppButton
-                v-if="can('ecommerce.listings.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.ecommerce.listing_tags.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('ecommerce.listings.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.ecommerce.listing_tags.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="sm:hidden space-y-3">
             <div v-for="tag in filteredItems" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">

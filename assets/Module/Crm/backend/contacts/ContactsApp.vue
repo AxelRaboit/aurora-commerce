@@ -13,6 +13,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -54,23 +55,25 @@ const { flatTags } = useContactsTags(props.tagsPath);
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
                 :placeholder="t('backend.crm.contacts.searchPlaceholder')"
                 v-on:search="onSearch"
             />
-            <AppButton
-                v-if="can('crm.contacts.create')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t('backend.crm.contacts.add') }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('crm.contacts.create')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t('backend.crm.contacts.add') }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="sm:hidden space-y-3">
             <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">

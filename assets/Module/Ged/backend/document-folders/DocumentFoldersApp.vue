@@ -6,6 +6,7 @@ import { useDocumentFolderTree } from "./composables/useDocumentFolderTree.js";
 import { useDocumentFolderDragDrop } from "./composables/useDocumentFolderDragDrop.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -42,21 +43,23 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
 
 <template>
     <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+        <AppListToolbar>
             <AppSearchInput
                 v-model="folderSearch"
                 :placeholder="t('backend.ged.folders.searchPlaceholder')"
             />
-            <AppButton
-                v-if="can('ged.folders.manage')"
-                variant="primary"
-                size="md"
-                class="w-full sm:w-auto"
-                v-on:click="openCreate"
-            >
-                <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.folders.add") }}
-            </AppButton>
-        </div>
+            <template #actions>
+                <AppButton
+                    v-if="can('ged.folders.manage')"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="openCreate"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.folders.add") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div class="bg-surface border border-line rounded-lg overflow-hidden">
             <div v-if="!items?.length" class="px-6 py-4">
