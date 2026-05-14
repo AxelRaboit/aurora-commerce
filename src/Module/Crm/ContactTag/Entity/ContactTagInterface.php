@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\ContactTag\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
+use Aurora\Module\Crm\Contact\Entity\ContactInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface ContactTagInterface extends TimestampableInterface
 {
@@ -21,4 +23,7 @@ interface ContactTagInterface extends TimestampableInterface
     public function getColor(): string;
 
     public function setColor(string $color): static;
+
+    /** @return Collection<int, ContactInterface> */
+    public function getContacts(): Collection;
 }

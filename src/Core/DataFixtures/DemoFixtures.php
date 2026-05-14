@@ -28,6 +28,7 @@ use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
@@ -89,6 +90,7 @@ use ReflectionProperty;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 /**
  * Comprehensive demo fixtures covering all Aurora modules.
@@ -1150,16 +1152,35 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ['first' => 'Céline',    'last' => 'Dupuis',    'email' => 'celine.dupuis@startup-prospect.fr', 'phone' => '+33 6 45 56 67 78', 'company' => null, 'source' => ContactSourceEnum::Order,  'tags' => ['client']],
             ['first' => 'Hugo',      'last' => 'Marchand',  'email' => 'h.marchand@tech-innovation.fr',     'phone' => '+33 6 56 67 78 89', 'company' => 0,    'source' => ContactSourceEnum::Manual, 'tags' => ['client']],
         ];
+        $slugger = new AsciiSlugger();
+        $contactTagsByLabel = [];
+        $uniqueLabels = [];
+        foreach ($contactDefs as $def) {
+            foreach ($def['tags'] as $label) {
+                $uniqueLabels[$label] = true;
+            }
+        }
+        foreach (array_keys($uniqueLabels) as $label) {
+            $contactTag = new ContactTag();
+            $contactTag->setLabel($label)
+                ->setSlug($slugger->slug($label)->lower()->toString())
+                ->setColor('#6366F1');
+            $em->persist($contactTag);
+            $contactTagsByLabel[$label] = $contactTag;
+        }
+
         foreach ($contactDefs as $def) {
             $c = new Contact();
             $c->setFirstName($def['first'])
               ->setLastName($def['last'])
               ->setEmail($def['email'])
               ->setPhone($def['phone'])
-              ->setSource($def['source'])
-              ->setTags($def['tags']);
+              ->setSource($def['source']);
             if (null !== $def['company']) {
                 $c->setCompany($companies[$def['company']]);
+            }
+            foreach ($def['tags'] as $label) {
+                $c->addContactTag($contactTagsByLabel[$label]);
             }
 
             $em->persist($c);

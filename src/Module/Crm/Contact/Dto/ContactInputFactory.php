@@ -20,31 +20,29 @@ class ContactInputFactory implements ContactInputFactoryInterface
             phone: Str::trimOrNullFromArray($data, 'phone'),
             companyId: isset($data['companyId']) && '' !== (string) $data['companyId'] ? (int) $data['companyId'] : null,
             notes: Str::trimOrNullFromArray($data, 'notes'),
-            tags: $this->normalizeTags($data['tags'] ?? []),
+            tagIds: $this->extractIdList($data, 'tagIds', 'tag_ids'),
         );
     }
 
     /**
-     * @return list<string>
+     * @param array<string, mixed> $data
+     *
+     * @return list<int>
      */
-    private function normalizeTags($raw): array
+    private function extractIdList(array $data, string $camelKey, string $snakeKey): array
     {
+        $raw = $data[$camelKey] ?? $data[$snakeKey] ?? [];
         if (!is_array($raw)) {
             return [];
         }
 
-        $tags = [];
-        foreach ($raw as $tag) {
-            if (!is_string($tag)) {
-                continue;
-            }
-
-            $clean = mb_trim($tag);
-            if ('' !== $clean && !in_array($clean, $tags, true)) {
-                $tags[] = $clean;
+        $ids = [];
+        foreach ($raw as $value) {
+            if (is_int($value) || (is_string($value) && '' !== $value && ctype_digit($value))) {
+                $ids[] = (int) $value;
             }
         }
 
-        return $tags;
+        return array_values(array_unique($ids));
     }
 }

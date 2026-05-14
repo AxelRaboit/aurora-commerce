@@ -14,6 +14,8 @@ use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
+use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -24,6 +26,7 @@ class ContactManager implements ContactManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly CompanyRepository $companyRepository,
+        protected readonly ContactTagRepository $contactTagRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly CrmNotificationService $notificationService,
         protected readonly SequenceGenerator $sequenceGenerator,
@@ -79,7 +82,23 @@ class ContactManager implements ContactManagerInterface
         $contact->setPhone($input->getPhone());
         $contact->setCompany(null !== $input->getCompanyId() ? $this->companyRepository->find($input->getCompanyId()) : null);
         $contact->setNotes($input->getNotes());
-        $contact->setTags($input->getTags());
+        $this->applyTags($contact, $input);
+    }
+
+    protected function applyTags(ContactInterface $contact, ContactInputInterface $input): void
+    {
+        $contact->clearContactTags();
+        $tagIds = $input->getTagIds();
+        if ([] === $tagIds) {
+            return;
+        }
+
+        $contactTags = $this->contactTagRepository->findBy(['id' => $tagIds]);
+        foreach ($contactTags as $contactTag) {
+            if ($contactTag instanceof ContactTagInterface) {
+                $contact->addContactTag($contactTag);
+            }
+        }
     }
 
     protected function auditCreated(ContactInterface $contact): void
@@ -99,10 +118,16 @@ class ContactManager implements ContactManagerInterface
 
     protected function auditPayload(ContactInterface $contact): array
     {
+        $contactTagIds = [];
+        foreach ($contact->getContactTags() as $contactTag) {
+            $contactTagIds[] = $contactTag->getId();
+        }
+
         return [
             'name' => $contact->getFullName(),
             'reference' => $contact->getReference(),
             'source' => $contact->getSource()?->value,
+            'contact_tag_ids' => $contactTagIds,
         ];
     }
 }

@@ -18,6 +18,6 @@ interface ContactInputInterface
 
     public function getNotes(): ?string;
 
-    /** @return list<string> */
-    public function getTags(): array;
+    /** @return list<int> */
+    public function getTagIds(): array;
 }

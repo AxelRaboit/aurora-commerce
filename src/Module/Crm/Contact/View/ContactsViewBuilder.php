@@ -33,6 +33,7 @@ final readonly class ContactsViewBuilder
             'updatePath' => $this->urlGenerator->generate('backend_crm_contacts_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_crm_contacts_delete', ['id' => '__id__']),
             'activityPath' => $this->urlGenerator->generate('backend_crm_contacts_activity', ['id' => '__id__']),
+            'tagsPath' => $this->urlGenerator->generate('backend_crm_contact_tags_list'),
         ];
     }
 

@@ -24,9 +24,25 @@ class ContactSerializer implements ContactSerializerInterface
             'companyId' => $contact->getCompany()?->getId(),
             'notes' => $contact->getNotes(),
             'source' => $contact->getSource()?->value,
-            'tags' => $contact->getTags(),
+            'tags' => $this->serializeTags($contact),
             'createdAt' => $contact->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $contact->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
+    }
+
+    /** @return list<array{id: int|null, label: string, slug: string, color: string}> */
+    private function serializeTags(ContactInterface $contact): array
+    {
+        $result = [];
+        foreach ($contact->getContactTags() as $contactTag) {
+            $result[] = [
+                'id' => $contactTag->getId(),
+                'label' => $contactTag->getLabel(),
+                'slug' => $contactTag->getSlug(),
+                'color' => $contactTag->getColor(),
+            ];
+        }
+
+        return $result;
     }
 }

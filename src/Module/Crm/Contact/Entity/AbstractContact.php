@@ -41,10 +41,6 @@ abstract class AbstractContact implements ContactInterface
     #[ORM\Column(type: Types::STRING, length: 32, nullable: true, enumType: ContactSourceEnum::class)]
     protected ?ContactSourceEnum $source = null;
 
-    /** @var list<string> */
-    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
-    protected array $tags = [];
-
     public function getFullName(): string
     {
         return mb_trim($this->firstName.' '.$this->lastName);
@@ -147,38 +143,6 @@ abstract class AbstractContact implements ContactInterface
     public function setSource(?ContactSourceEnum $source): static
     {
         $this->source = $source;
-
-        return $this;
-    }
-
-    /** @return list<string> */
-    public function getTags(): array
-    {
-        return $this->tags;
-    }
-
-    /** @param list<string> $tags */
-    public function setTags(array $tags): static
-    {
-        $normalized = [];
-        foreach ($tags as $tag) {
-            $clean = mb_trim((string) $tag);
-            if ('' !== $clean && !in_array($clean, $normalized, true)) {
-                $normalized[] = $clean;
-            }
-        }
-
-        $this->tags = $normalized;
-
-        return $this;
-    }
-
-    public function addTag(string $tag): static
-    {
-        $clean = mb_trim($tag);
-        if ('' !== $clean && !in_array($clean, $this->tags, true)) {
-            $this->tags[] = $clean;
-        }
 
         return $this;
     }

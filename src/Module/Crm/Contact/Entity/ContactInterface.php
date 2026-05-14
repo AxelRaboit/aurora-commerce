@@ -7,6 +7,8 @@ namespace Aurora\Module\Crm\Contact\Entity;
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface ContactInterface extends TimestampableInterface
 {
@@ -48,11 +50,12 @@ interface ContactInterface extends TimestampableInterface
 
     public function setSource(?ContactSourceEnum $source): static;
 
-    /** @return list<string> */
-    public function getTags(): array;
+    /** @return Collection<int, ContactTagInterface> */
+    public function getContactTags(): Collection;
 
-    /** @param list<string> $tags */
-    public function setTags(array $tags): static;
+    public function addContactTag(ContactTagInterface $contactTag): static;
 
-    public function addTag(string $tag): static;
+    public function removeContactTag(ContactTagInterface $contactTag): static;
+
+    public function clearContactTags(): static;
 }

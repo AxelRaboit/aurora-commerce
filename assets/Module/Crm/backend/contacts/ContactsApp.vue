@@ -6,12 +6,13 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useContactsCreate } from "@crm/backend/contacts/composables/useContactsCreate.js";
 import { useContactsEdit } from "@crm/backend/contacts/composables/useContactsEdit.js";
 import { useContactsShow, contactSourceColor } from "@crm/backend/contacts/composables/useContactsShow.js";
+import { useContactsTags } from "@crm/backend/contacts/composables/useContactsTags.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
-import AppTagsInput from "@/shared/components/form/AppTagsInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -33,6 +34,7 @@ const props = defineProps({
     deletePath: { type: String, required: true },
     listPath: { type: String, required: true },
     activityPath: { type: String, default: "" },
+    tagsPath: { type: String, required: true },
 });
 
 const { formatDateTime } = useDateFormat();
@@ -47,6 +49,7 @@ const { showEdit, editingContact, editForm, editErrors, editLoading, openEdit, s
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(props.deletePath, () => reset(), "backend.crm.contacts.deleted");
 
 const { showShow, showingContact, activity, activityLoading, openShow, closeShow, activityActionLabel } = useContactsShow(props.activityPath);
+const { flatTags } = useContactsTags(props.tagsPath);
 </script>
 
 <template>
@@ -84,7 +87,12 @@ const { showShow, showingContact, activity, activityLoading, openShow, closeShow
                         <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
                         <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1.5">
                             <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                            <AppBadge v-for="tag in (contact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                            <span
+                                v-for="tag in (contact.tags ?? [])"
+                                :key="tag.id"
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                :style="{ backgroundColor: tag.color, color: '#fff' }"
+                            >{{ tag.label }}</span>
                         </div>
                     </div>
                 </div>
@@ -125,7 +133,12 @@ const { showShow, showingContact, activity, activityLoading, openShow, closeShow
                                     <p class="font-medium text-primary truncate">{{ contact.fullName }}</p>
                                     <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1">
                                         <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                                        <AppBadge v-for="tag in (contact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                                        <span
+                                v-for="tag in (contact.tags ?? [])"
+                                :key="tag.id"
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                :style="{ backgroundColor: tag.color, color: '#fff' }"
+                            >{{ tag.label }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -174,7 +187,12 @@ const { showShow, showingContact, activity, activityLoading, openShow, closeShow
 
                 <div v-if="showingContact.source || (showingContact.tags && showingContact.tags.length)" class="flex flex-wrap gap-1.5">
                     <AppBadge v-if="showingContact.source" :color="contactSourceColor(showingContact.source)">{{ t(`backend.crm.contacts.sources.${showingContact.source}`) }}</AppBadge>
-                    <AppBadge v-for="tag in (showingContact.tags ?? [])" :key="tag" color="gray">{{ tag }}</AppBadge>
+                    <span
+                        v-for="tag in (showingContact.tags ?? [])"
+                        :key="tag.id"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                        :style="{ backgroundColor: tag.color, color: '#fff' }"
+                    >{{ tag.label }}</span>
                 </div>
 
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-line/40">
@@ -254,7 +272,14 @@ const { showShow, showingContact, activity, activityLoading, openShow, closeShow
                 />
                 <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
                 <AppInput v-model="newContact.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
-                <AppTagsInput v-model="newContact.tags" :label="t('backend.crm.contacts.tags')" :placeholder="t('backend.crm.contacts.tagsPlaceholder')" />
+                <AppMultiselect
+                    v-model="newContact.tagIds"
+                    :options="flatTags"
+                    :label="t('backend.crm.contacts.tags')"
+                    :placeholder="t('backend.crm.contacts.tagsPlaceholder')"
+                    track-by="id"
+                    multiple
+                />
                 <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
             </form>
             <template #footer>
@@ -298,7 +323,14 @@ const { showShow, showingContact, activity, activityLoading, openShow, closeShow
                 />
                 <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
                 <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
-                <AppTagsInput v-model="editForm.tags" :label="t('backend.crm.contacts.tags')" :placeholder="t('backend.crm.contacts.tagsPlaceholder')" />
+                <AppMultiselect
+                    v-model="editForm.tagIds"
+                    :options="flatTags"
+                    :label="t('backend.crm.contacts.tags')"
+                    :placeholder="t('backend.crm.contacts.tagsPlaceholder')"
+                    track-by="id"
+                    multiple
+                />
                 <div v-if="editingContact?.source" class="text-xs text-muted">
                     {{ t('backend.crm.contacts.sourceLabel') }}
                     <AppBadge :color="contactSourceColor(editingContact.source)">{{ t(`backend.crm.contacts.sources.${editingContact.source}`) }}</AppBadge>

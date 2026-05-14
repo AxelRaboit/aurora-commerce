@@ -15,7 +15,7 @@ export function emptyContactForm() {
         phone: "",
         company: "",
         notes: "",
-        tags: [],
+        tagIds: [],
     };
 }
 
