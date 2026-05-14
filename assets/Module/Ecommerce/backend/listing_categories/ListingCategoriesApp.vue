@@ -100,17 +100,17 @@ const parentOptions = computed(() => {
         ? collectDescendantIds(findNodeInTree(tree.value, editingCategory.value.id) ?? editingCategory.value)
         : new Set();
     const list = [];
-    const walk = (nodes, depth) => {
+    const walk = (nodes) => {
         for (const node of nodes) {
             if (forbidden.has(node.id)) continue;
             const translation = node.translations?.[activeLocale.value];
             const firstTranslation = Object.values(node.translations ?? {})[0];
             const name = translation?.name ?? firstTranslation?.name ?? `#${node.id}`;
-            list.push({ id: node.id, label: `${"— ".repeat(depth)}${name}` });
-            if (node.children?.length) walk(node.children, depth + 1);
+            list.push({ id: node.id, label: name });
+            if (node.children?.length) walk(node.children);
         }
     };
-    walk(tree.value, 0);
+    walk(tree.value);
     return list;
 });
 
