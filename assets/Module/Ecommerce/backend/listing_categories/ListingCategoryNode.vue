@@ -19,7 +19,7 @@ const props = defineProps({
     canDelete: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["edit", "delete", "add-child", "toggle-collapse", "end"]);
+const emit = defineEmits(["edit", "delete", "add-child", "toggle-collapse", "end", "update:node"]);
 
 const displayName = computed(() => {
     const translation = props.node.translations?.[props.activeLocale];
@@ -32,7 +32,7 @@ const isCollapsed = computed(() => props.collapsed.has(props.node.id));
 
 const children = computed({
     get: () => props.node.children ?? [],
-    set: (value) => { props.node.children = value; },
+    set: (value) => emit('update:node', { ...props.node, children: value }),
 });
 const hasChildren = computed(() => children.value.length > 0);
 </script>

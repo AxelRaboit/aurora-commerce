@@ -61,6 +61,7 @@ final class ListingCategoriesControllerTest extends IntegrationTestCase
     /**
      * @param array<string, mixed> $routeParameters
      * @param array<string, mixed> $payload
+     *
      * @return array{0: int, 1: array<string, mixed>}
      */
     private function postJson(string $route, array $routeParameters, array $payload): array
@@ -91,7 +92,7 @@ final class ListingCategoriesControllerTest extends IntegrationTestCase
             'isVisible' => true,
             'imageId' => null,
             'translations' => [
-                'en' => ['name' => $name, 'slug' => strtolower($name).'-'.bin2hex(random_bytes(3)), 'description' => null, 'seoTitle' => null, 'seoDescription' => null],
+                'en' => ['name' => $name, 'slug' => mb_strtolower($name).'-'.bin2hex(random_bytes(3)), 'description' => null, 'seoTitle' => null, 'seoDescription' => null],
             ],
         ]);
         self::assertSame(200, $status, json_encode($body));
@@ -121,7 +122,7 @@ final class ListingCategoriesControllerTest extends IntegrationTestCase
         self::assertIsArray($body['items']);
 
         $repository = static::getContainer()->get(ListingCategoryRepository::class);
-        static::getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class)->clear();
+        static::getContainer()->get(EntityManagerInterface::class)->clear();
 
         $reloadedBeta = $repository->find($beta['id']);
         $reloadedAlpha = $repository->find($alpha['id']);

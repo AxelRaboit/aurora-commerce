@@ -12,7 +12,9 @@ use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\View\ShopViewBuilder;
+use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -66,7 +68,7 @@ class ShopController extends AbstractController
         $request->setLocale($locale);
 
         $category = $this->listingCategoryRepository->findOneBySlug($slug, $locale);
-        if (null === $category || !$category->isVisible()) {
+        if (!$category instanceof ListingCategoryInterface || !$category->isVisible()) {
             throw $this->createNotFoundException();
         }
 
@@ -85,7 +87,7 @@ class ShopController extends AbstractController
         $request->setLocale($locale);
 
         $tag = $this->listingTagRepository->findOneBySlug($slug, $locale);
-        if (null === $tag || !$tag->isVisible()) {
+        if (!$tag instanceof ListingTagInterface || !$tag->isVisible()) {
             throw $this->createNotFoundException();
         }
 

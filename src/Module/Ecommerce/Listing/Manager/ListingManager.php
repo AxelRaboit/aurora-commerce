@@ -14,9 +14,7 @@ use Aurora\Module\Ecommerce\Listing\Dto\ListingInputInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
@@ -109,9 +107,7 @@ class ListingManager implements ListingManagerInterface
 
         $categories = $this->listingCategoryRepository->findBy(['id' => $categoryIds]);
         foreach ($categories as $category) {
-            if ($category instanceof ListingCategoryInterface) {
-                $listing->addCategory($category);
-            }
+            $listing->addCategory($category);
         }
     }
 
@@ -125,9 +121,7 @@ class ListingManager implements ListingManagerInterface
 
         $tags = $this->listingTagRepository->findBy(['id' => $tagIds]);
         foreach ($tags as $tag) {
-            if ($tag instanceof ListingTagInterface) {
-                $listing->addTag($tag);
-            }
+            $listing->addTag($tag);
         }
     }
 

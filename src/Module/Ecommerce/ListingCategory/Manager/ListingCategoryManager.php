@@ -83,7 +83,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
     {
         $ids = [];
         foreach ($entries as $entry) {
-            $id = (int) ($entry['id'] ?? 0);
+            $id = $entry['id'];
             if ($id > 0) {
                 $ids[] = $id;
             }
@@ -102,12 +102,12 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
 
         $parentMap = [];
         foreach ($entries as $entry) {
-            $id = (int) ($entry['id'] ?? 0);
+            $id = $entry['id'];
             if (!isset($categoriesById[$id])) {
                 continue;
             }
 
-            $parentId = isset($entry['parentId']) && (int) $entry['parentId'] > 0 ? (int) $entry['parentId'] : null;
+            $parentId = isset($entry['parentId']) && $entry['parentId'] > 0 ? $entry['parentId'] : null;
             $parentMap[$id] = $parentId;
         }
 
@@ -119,6 +119,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
                 if (isset($visited[$current])) {
                     throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listing_categories.errors.cycle_detected'));
                 }
+
                 $visited[$current] = true;
                 $current = $parentMap[$current] ?? null;
             }
@@ -132,7 +133,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
             }
 
             foreach ($entries as $entry) {
-                $id = (int) ($entry['id'] ?? 0);
+                $id = $entry['id'];
                 $category = $categoriesById[$id] ?? null;
                 if (!$category instanceof ListingCategoryInterface) {
                     continue;
@@ -141,7 +142,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
                 $parentId = $parentMap[$id] ?? null;
                 $parent = null !== $parentId ? ($categoriesById[$parentId] ?? null) : null;
                 $category->setParent($parent);
-                $category->setPosition((int) ($entry['position'] ?? 0));
+                $category->setPosition($entry['position']);
             }
 
             $this->entityManager->flush();
@@ -170,9 +171,11 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
             if (!$parent instanceof ListingCategoryInterface) {
                 throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listing_categories.errors.parent_not_found'));
             }
+
             if ($category->getId() === $parent->getId()) {
                 throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listing_categories.errors.self_parent'));
             }
+
             $this->assertNotDescendant($category, $parent);
         }
 
@@ -212,6 +215,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
         if (null === $slug || '' === $slug) {
             $slug = $this->slugger->slug($input->name)->lower()->toString();
         }
+
         $translation->setSlug($slug);
 
         $translation->setDescription($input->description);
@@ -261,6 +265,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
             if ($current->getId() === $category->getId()) {
                 throw new InvalidArgumentException($this->translator->trans('backend.ecommerce.listing_categories.errors.cycle_detected'));
             }
+
             $current = $current->getParent();
         }
     }

@@ -55,6 +55,7 @@ final class ListingTagsControllerTest extends IntegrationTestCase
     /**
      * @param array<string, mixed> $routeParameters
      * @param array<string, mixed> $payload
+     *
      * @return array{0: int, 1: array<string, mixed>}
      */
     private function postJson(string $route, array $routeParameters, array $payload): array
@@ -83,7 +84,7 @@ final class ListingTagsControllerTest extends IntegrationTestCase
             'translations' => [
                 'en' => [
                     'name' => $name,
-                    'slug' => strtolower($name).'-'.bin2hex(random_bytes(3)),
+                    'slug' => mb_strtolower($name).'-'.bin2hex(random_bytes(3)),
                     'description' => null,
                 ],
             ],

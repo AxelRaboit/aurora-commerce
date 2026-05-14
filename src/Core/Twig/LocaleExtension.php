@@ -9,7 +9,7 @@ use Twig\Attribute\AsTwigFunction;
 final class LocaleExtension
 {
     /** @var array<string, string> ISO 3166-1 alpha-2 flag code per locale */
-    private const FLAG_CODES = [
+    private const array FLAG_CODES = [
         'fr' => 'fr',
         'en' => 'gb',
         'es' => 'es',
@@ -20,7 +20,7 @@ final class LocaleExtension
     ];
 
     /** @var array<string, string> */
-    private const NAMES = [
+    private const array NAMES = [
         'fr' => 'Français',
         'en' => 'English',
         'es' => 'Español',

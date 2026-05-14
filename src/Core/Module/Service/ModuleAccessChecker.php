@@ -46,10 +46,9 @@ class ModuleAccessChecker
      */
     public function isEnabled(ModuleParameterEnum|string $toggle, ?CoreUserInterface $user = null): bool
     {
-        $key = $toggle instanceof ModuleParameterEnum ? $toggle->value : $toggle;
         $user ??= $this->resolveCurrentUser();
 
-        return $this->checkKey($key, $user);
+        return $this->checkKey($this->resolveKey($toggle), $user);
     }
 
     /**
@@ -57,9 +56,7 @@ class ModuleAccessChecker
      */
     public function isGloballyEnabled(ModuleParameterEnum|string $toggle): bool
     {
-        $key = $toggle instanceof ModuleParameterEnum ? $toggle->value : $toggle;
-
-        return $this->getGlobal($key);
+        return $this->getGlobal($this->resolveKey($toggle));
     }
 
     /**
@@ -68,9 +65,7 @@ class ModuleAccessChecker
      */
     public function isMaskedForUser(ModuleParameterEnum|string $toggle, CoreUserInterface $user): bool
     {
-        $key = $toggle instanceof ModuleParameterEnum ? $toggle->value : $toggle;
-
-        return in_array($key, $user->getDisabledModules(), true);
+        return in_array($this->resolveKey($toggle), $user->getDisabledModules(), true);
     }
 
     private function checkKey(string $key, ?CoreUserInterface $user): bool
@@ -99,6 +94,11 @@ class ModuleAccessChecker
     private function getGlobal(string $key): bool
     {
         return $this->globalCache[$key] ??= $this->settingRepository->getBoolean($key, true);
+    }
+
+    private function resolveKey(ModuleParameterEnum|string $toggle): string
+    {
+        return $toggle instanceof ModuleParameterEnum ? $toggle->value : $toggle;
     }
 
     private function resolveCurrentUser(): ?CoreUserInterface

@@ -43,7 +43,7 @@ defineProps({
         <div
             class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-primary prose-a:text-accent hover:prose-a:text-accent-hover prose-a:no-underline prose-code:text-primary prose-pre:bg-surface-2 prose-pre:border prose-pre:border-line prose-blockquote:border-accent prose-blockquote:bg-surface-2 prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-line"
             v-html="content"
-        ></div>
+        />
     </article>
 
     <PostCommentsApp

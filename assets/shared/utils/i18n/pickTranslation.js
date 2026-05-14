@@ -8,10 +8,10 @@
 export function pickTranslation(entity, locale, fallbackLocale = "en") {
     const translations = entity?.translations ?? {};
     return (
-        translations[locale]
-        ?? translations[fallbackLocale]
-        ?? Object.values(translations)[0]
-        ?? null
+        translations[locale] ??
+        translations[fallbackLocale] ??
+        Object.values(translations)[0] ??
+        null
     );
 }
 

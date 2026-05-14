@@ -59,10 +59,12 @@ final readonly class ShopViewBuilder
             if (!$tag->isVisible()) {
                 continue;
             }
+
             $translation = $tag->getTranslation($locale);
             if (null === $translation) {
                 continue;
             }
+
             $result[] = [
                 'name' => $translation->getName(),
                 'slug' => $translation->getSlug(),
@@ -84,10 +86,12 @@ final readonly class ShopViewBuilder
             if (!$category->isVisible()) {
                 continue;
             }
+
             $translation = $category->getTranslation($locale);
             if (null === $translation) {
                 continue;
             }
+
             $result[] = [
                 'name' => $translation->getName(),
                 'slug' => $translation->getSlug(),
@@ -145,25 +149,26 @@ final readonly class ShopViewBuilder
 
         $paginated = $this->listingRepository->findVisibleByCategoryIdsPaginated($categoryIds, $page, $perPage);
         $total = $paginated['total'];
-        $totalPages = (int) max(1, (int) ceil($total / $perPage));
+        $totalPages = max(1, (int) ceil($total / $perPage));
 
         $translation = $category->getTranslation($locale);
-        $name = null !== $translation ? $translation->getName() : '';
-        $description = null !== $translation ? $translation->getDescription() : null;
-        $seoTitle = null !== $translation ? $translation->getSeoTitle() : null;
-        $seoDescription = null !== $translation ? $translation->getSeoDescription() : null;
-        $slug = null !== $translation ? $translation->getSlug() : '';
+        $name = $translation?->getName() ?? '';
+        $description = $translation?->getDescription();
+        $seoTitle = $translation?->getSeoTitle();
+        $seoDescription = $translation?->getSeoDescription();
+        $slug = $translation?->getSlug() ?? '';
 
         $breadcrumb = [];
         $cursor = $category->getParent();
-        while (null !== $cursor) {
+        while ($cursor instanceof ListingCategoryInterface) {
             $parentTranslation = $cursor->getTranslation($locale);
             $breadcrumb[] = [
-                'name' => null !== $parentTranslation ? $parentTranslation->getName() : '',
-                'slug' => null !== $parentTranslation ? $parentTranslation->getSlug() : '',
+                'name' => $parentTranslation?->getName() ?? '',
+                'slug' => $parentTranslation?->getSlug() ?? '',
             ];
             $cursor = $cursor->getParent();
         }
+
         $breadcrumb = array_reverse($breadcrumb);
 
         return [
@@ -199,16 +204,16 @@ final readonly class ShopViewBuilder
         $perPage = 12;
 
         $tagId = $tag->getId();
-        $tagIds = null !== $tagId ? [(int) $tagId] : [];
+        $tagIds = null !== $tagId ? [$tagId] : [];
 
         $paginated = $this->listingRepository->findVisibleByTagIdsPaginated($tagIds, $page, $perPage);
         $total = $paginated['total'];
-        $totalPages = (int) max(1, (int) ceil($total / $perPage));
+        $totalPages = max(1, (int) ceil($total / $perPage));
 
         $translation = $tag->getTranslation($locale);
-        $name = null !== $translation ? $translation->getName() : '';
-        $description = null !== $translation ? $translation->getDescription() : null;
-        $slug = null !== $translation ? $translation->getSlug() : '';
+        $name = $translation?->getName() ?? '';
+        $description = $translation?->getDescription();
+        $slug = $translation?->getSlug() ?? '';
 
         return [
             'tag' => [
@@ -246,13 +251,16 @@ final readonly class ShopViewBuilder
             if (!$tag->isVisible()) {
                 continue;
             }
+
             if (null !== $currentId && $tag->getId() === $currentId) {
                 continue;
             }
+
             $translation = $tag->getTranslation($locale);
             if (null === $translation) {
                 continue;
             }
+
             $result[] = [
                 'name' => $translation->getName(),
                 'slug' => $translation->getSlug(),

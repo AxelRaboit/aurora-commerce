@@ -287,7 +287,7 @@ function onDragEnd() {
 
                 <slot
                     name="extra-form-fields"
-                    :editForm="editForm"
+                    :edit-form="editForm"
                     :errors="showEdit ? editErrors : createErrors"
                 />
             </form>

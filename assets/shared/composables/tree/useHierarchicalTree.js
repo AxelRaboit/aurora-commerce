@@ -23,7 +23,7 @@ export function buildTree(flatItems) {
 }
 
 export function sortRecursive(nodes) {
-    nodes.sort((a, b) => (a.position - b.position) || (a.id - b.id));
+    nodes.sort((a, b) => a.position - b.position || a.id - b.id);
     nodes.forEach((node) => sortRecursive(node.children ?? []));
 }
 

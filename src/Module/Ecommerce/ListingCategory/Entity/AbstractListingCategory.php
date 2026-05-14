@@ -78,7 +78,7 @@ abstract class AbstractListingCategory implements ListingCategoryInterface
 
     public function isRoot(): bool
     {
-        return null === $this->parent;
+        return !$this->parent instanceof ListingCategoryInterface;
     }
 
     public function getDepth(): int

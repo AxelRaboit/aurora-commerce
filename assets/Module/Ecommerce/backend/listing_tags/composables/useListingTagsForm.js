@@ -31,7 +31,13 @@ function buildEmptyForm(locales, extraFields = {}) {
 }
 
 export function useListingTagsForm(options) {
-    const { createPath, updatePath, locales, reset, extraFields = {} } = options;
+    const {
+        createPath,
+        updatePath,
+        locales,
+        reset,
+        extraFields = {},
+    } = options;
     const { t } = useI18n();
 
     const showCreate = ref(false);
@@ -65,7 +71,9 @@ export function useListingTagsForm(options) {
 
         for (const key of Object.keys(extraFields)) {
             const fromEntity = extraFields[key].fromEntity;
-            editForm[key] = fromEntity ? fromEntity(tag) : extraFields[key].default;
+            editForm[key] = fromEntity
+                ? fromEntity(tag)
+                : extraFields[key].default;
         }
     }
 

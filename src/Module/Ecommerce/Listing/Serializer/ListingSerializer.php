@@ -10,6 +10,7 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsAlias(ListingSerializerInterface::class)]
@@ -79,7 +80,7 @@ class ListingSerializer implements ListingSerializerInterface
     private function serializeCategories(ListingInterface $listing): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        $locale = null !== $request ? $request->getLocale() : 'en';
+        $locale = $request instanceof Request ? $request->getLocale() : 'en';
 
         $result = [];
         foreach ($listing->getCategories() as $category) {
@@ -90,6 +91,7 @@ class ListingSerializer implements ListingSerializerInterface
                     break;
                 }
             }
+
             if (null === $translation) {
                 continue;
             }
@@ -108,7 +110,7 @@ class ListingSerializer implements ListingSerializerInterface
     private function serializeTags(ListingInterface $listing): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        $locale = null !== $request ? $request->getLocale() : 'en';
+        $locale = $request instanceof Request ? $request->getLocale() : 'en';
 
         $result = [];
         foreach ($listing->getTags() as $tag) {
@@ -119,6 +121,7 @@ class ListingSerializer implements ListingSerializerInterface
                     break;
                 }
             }
+
             if (null === $translation) {
                 continue;
             }

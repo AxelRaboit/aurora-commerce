@@ -7,6 +7,7 @@ namespace Aurora\Module\Ecommerce\ListingTag\Repository;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
+use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslationInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,12 +33,13 @@ class ListingTagRepository extends ResolveTargetEntityRepository
         $resolveName = static function (ListingTagInterface $tag) use ($locale): string {
             if (null !== $locale) {
                 $translation = $tag->getTranslation($locale);
-                if (null !== $translation) {
-                    return strtolower((string) $translation->getName());
+                if ($translation instanceof ListingTagTranslationInterface) {
+                    return mb_strtolower($translation->getName());
                 }
             }
+
             foreach ($tag->getTranslations() as $translation) {
-                return strtolower((string) $translation->getName());
+                return mb_strtolower((string) $translation->getName());
             }
 
             return '';

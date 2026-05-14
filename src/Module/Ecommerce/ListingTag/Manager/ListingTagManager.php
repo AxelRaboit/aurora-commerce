@@ -99,6 +99,7 @@ class ListingTagManager implements ListingTagManagerInterface
         if (null === $slug || '' === $slug) {
             $slug = $this->slugger->slug($input->name)->lower()->toString();
         }
+
         $translation->setSlug($slug);
 
         $translation->setDescription($input->description);

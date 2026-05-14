@@ -30,11 +30,17 @@ final readonly class VaultEntriesViewBuilder
     public function indexView(CoreUserInterface $user): array
     {
         $config = $this->vaultUserConfigRepository->findOneByUser($user);
-        $entries = $config instanceof VaultUserConfigInterface ? $this->vaultEntryRepository->findByUserWithFolder($user) : [];
-        $folders = $config instanceof VaultUserConfigInterface ? $this->vaultFolderRepository->findAllByUserOrdered($user) : [];
+        $entries = [];
+        $folders = [];
+        $vaultConfig = null;
+        if ($config instanceof VaultUserConfigInterface) {
+            $entries = $this->vaultEntryRepository->findByUserWithFolder($user);
+            $folders = $this->vaultFolderRepository->findAllByUserOrdered($user);
+            $vaultConfig = $this->vaultUserConfigSerializer->serialize($config);
+        }
 
         return [
-            'vaultConfig' => $config instanceof VaultUserConfigInterface ? $this->vaultUserConfigSerializer->serialize($config) : null,
+            'vaultConfig' => $vaultConfig,
             'entries' => array_map($this->vaultEntrySerializer->serialize(...), $entries),
             'folders' => array_map($this->vaultFolderSerializer->serialize(...), $folders),
             'setupPath' => $this->urlGenerator->generate('backend_vault_config_setup'),

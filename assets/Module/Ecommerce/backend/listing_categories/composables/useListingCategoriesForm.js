@@ -36,7 +36,13 @@ function buildEmptyForm(locales, extraFields = {}) {
 }
 
 export function useListingCategoriesForm(options) {
-    const { createPath, updatePath, locales, reset, extraFields = {} } = options;
+    const {
+        createPath,
+        updatePath,
+        locales,
+        reset,
+        extraFields = {},
+    } = options;
     const { t } = useI18n();
 
     const showCreate = ref(false);
@@ -83,14 +89,19 @@ export function useListingCategoriesForm(options) {
 
         for (const key of Object.keys(extraFields)) {
             const fromEntity = extraFields[key].fromEntity;
-            editForm[key] = fromEntity ? fromEntity(category) : extraFields[key].default;
+            editForm[key] = fromEntity
+                ? fromEntity(category)
+                : extraFields[key].default;
         }
     }
 
     function buildBody() {
         return {
             ...editForm,
-            parentId: editForm.parentId == null || editForm.parentId === "" ? null : Number(editForm.parentId),
+            parentId:
+                editForm.parentId == null || editForm.parentId === ""
+                    ? null
+                    : Number(editForm.parentId),
             imageId: editForm.imageId,
             position: Number(editForm.position) || 0,
             isVisible: !!editForm.isVisible,

@@ -119,7 +119,7 @@ function displaySlug(tag) {
                         <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.name') }}</th>
                         <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.slug') }}</th>
                         <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.visible_label') }}</th>
-                        <th class="px-3 py-2 w-20"></th>
+                        <th class="px-3 py-2 w-20" />
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -254,7 +254,7 @@ function displaySlug(tag) {
 
                 <slot
                     name="extra-form-fields"
-                    :editForm="editForm"
+                    :edit-form="editForm"
                     :errors="showEdit ? editErrors : createErrors"
                 />
             </form>

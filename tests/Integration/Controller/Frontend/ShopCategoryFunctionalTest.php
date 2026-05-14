@@ -214,7 +214,7 @@ final class ShopCategoryFunctionalTest extends IntegrationTestCase
     {
         $product = new Product();
         $product->setName($title)
-            ->setReference(strtoupper(substr(md5($slug), 0, 12)))
+            ->setReference(mb_strtoupper(mb_substr(md5($slug), 0, 12)))
             ->setPriceCents(1000)
             ->setCurrency(CurrencyEnum::EUR)
             ->setStatus(ProductStatusEnum::Active)
