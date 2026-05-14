@@ -49,6 +49,13 @@ describe("useClientFilteredList", () => {
         expect(itemsRef.value).toEqual([]);
     });
 
+    it("reload() is a no-op when listPath is null (consumer manages items externally)", async () => {
+        const { items: itemsRef, reload } = useClientFilteredList(items, null, matcher);
+        await reload();
+        expect(global.fetch).not.toHaveBeenCalled();
+        expect(itemsRef.value).toHaveLength(3);
+    });
+
     it("does not mutate the initial array reference", () => {
         const seed = [...items];
         const { items: itemsRef } = useClientFilteredList(seed, "/list", matcher);

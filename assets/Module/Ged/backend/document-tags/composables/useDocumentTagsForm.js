@@ -1,9 +1,10 @@
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormAction } from "@/shared/composables/form/useFormAction.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { required } from "@/shared/utils/validation/validators.js";
 
 function emptyForm() {
@@ -18,18 +19,15 @@ export function useDocumentTagsForm(
 ) {
     const { t } = useI18n();
 
-    const items = ref(initialTags ?? []);
+    const { items, searchInput: search, filteredItems } = useClientFilteredList(
+        initialTags,
+        null,
+        (tag, query) => (tag.name ?? "").toLowerCase().includes(query),
+    );
 
     function applyUpdatedList(data) {
         if (Array.isArray(data?.tags)) items.value = data.tags;
     }
-
-    const search = ref("");
-    const filteredItems = computed(() => {
-        const q = search.value.trim().toLowerCase();
-        if (!q) return items.value;
-        return items.value.filter((tag) => tag.name.toLowerCase().includes(q));
-    });
 
     const showCreate = ref(false);
     const newTag = ref(emptyForm());

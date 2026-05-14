@@ -6,10 +6,14 @@ import { ref, computed } from "vue";
  * Use for short collections (< few hundred items) where loading the full set
  * on mount is cheap. For paginated/server-side search, see `useListPage`.
  *
+ * `listPath` is optional. When provided, `reload()` refetches from it.
+ * When absent (consumer manages `items` externally, e.g. through form-action
+ * response payloads), `reload()` is a no-op.
+ *
  * @template T
  * @param {T[]} initialItems         hydrated from SSR / Twig payload
- * @param {string} listPath          JSON endpoint returning `{ items: T[] }`,
- *                                   called on every `reload()`
+ * @param {string|null} listPath     JSON endpoint returning `{ items: T[] }`,
+ *                                   or null when items are updated externally
  * @param {(item: T, lowerQuery: string) => boolean} matcher  filter predicate
  * @returns {{
  *   items: import('vue').Ref<T[]>,
@@ -29,6 +33,7 @@ export function useClientFilteredList(initialItems, listPath, matcher) {
     });
 
     async function reload() {
+        if (!listPath) return;
         const response = await fetch(listPath, { headers: { Accept: "application/json" } });
         const json = await response.json();
         items.value = json.items ?? [];

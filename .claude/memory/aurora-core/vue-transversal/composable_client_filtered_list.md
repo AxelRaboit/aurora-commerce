@@ -54,7 +54,16 @@ basculer sur `useListPage`.
 1. Liste flat avec recherche client-side ? → `useClientFilteredList`.
 2. Le matcher est passé à l'appel — donne accès aux champs spécifiques
    de l'entité (label/name/slug/tags imbriqués…).
-3. `reload()` reçoit `props.listPath` au moment de la construction du
-   composable, pas besoin de le passer au call site.
+3. `listPath` est **optionnel**. Si `null`, `reload()` est un no-op —
+   utile quand les updates viennent du payload d'un form action plutôt
+   que d'un endpoint list dédié (cf `useDocumentTagsForm.js`).
 4. Le retour expose `items` (ref) si tu as besoin d'inspecter / muter
    la liste depuis le call site. Sinon n'utiliser que `filteredItems`.
+
+## Précédents d'usage
+
+- `ContactTagsApp` (CRM) — items hydratés via SSR, `reload()` sur listPath
+- `ListingTagsApp` (Ecommerce) — idem
+- `useDocumentTagsForm` (Ged) — items hydratés via SSR, **pas de listPath**
+  car le composable form-action retourne la liste mise à jour dans son
+  payload (`applyUpdatedList(data)`). Démontre l'usage de `listPath: null`.
