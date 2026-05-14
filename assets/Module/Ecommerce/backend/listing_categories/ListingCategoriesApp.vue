@@ -221,6 +221,7 @@ defineSlots();
                 v-if="can('ecommerce.listings.create')"
                 variant="primary"
                 size="md"
+                class="w-full sm:w-auto"
                 v-on:click="openCreateRoot"
             >
                 <Plus class="w-4 h-4" :stroke-width="2" />
