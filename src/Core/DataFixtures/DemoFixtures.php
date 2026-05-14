@@ -487,7 +487,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                  ->setStatus(PostStatusEnum::Published)
                  ->setPublishedAt(new DateTimeImmutable('-'.$def['ago']))
                  ->setFeaturedMedia($def['media'] ?? null);
-            $tag($post, $def['terms'] ?? [], $terms);
+            $tag($post, $def['terms'], $terms);
 
             foreach (['fr', 'en'] as $locale) {
                 $loc = $def[$locale];
@@ -720,7 +720,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                  ->setStatus(PostStatusEnum::Published)
                  ->setPublishedAt(new DateTimeImmutable('-'.$def['ago']))
                  ->setFeaturedMedia($def['media'] ?? null);
-            $tag($post, $def['terms'] ?? [], $terms);
+            $tag($post, $def['terms'], $terms);
 
             $tr = new PostTranslation();
             $tr->setPost($post)->setLocale('fr')
