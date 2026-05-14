@@ -7,7 +7,11 @@ metadata:
 
 ## Règle
 
-**Tout fichier `.test.js` vit à côté de son fichier source** (co-location). Jamais dans un dossier `tests/` centralisé.
+**Tests Vue/JS → co-localisés à côté du fichier source** (convention Vitest/Vue moderne).
+
+C'est intentionnellement différent des tests PHP (centralisés dans `tests/`) — deux écosystèmes, deux conventions établies.
+
+**Tout fichier `.test.js` vit à côté de son fichier source**. Jamais dans un dossier `tests/` centralisé.
 
 ```
 AppButton.vue

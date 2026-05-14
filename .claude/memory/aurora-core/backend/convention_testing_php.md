@@ -7,6 +7,15 @@ metadata:
 
 ## Règle
 
+**Tests PHP → dossier centralisé `tests/` qui miroir `src/`** (convention Symfony/PHPUnit).
+
+```
+src/Module/Billing/Service/InvoiceExtractor.php
+tests/Unit/Module/Billing/Service/InvoiceExtractorTest.php   ← miroir
+```
+
+C'est intentionnellement différent des tests Vue/JS (co-localisés) — deux écosystèmes, deux conventions établies. Ne pas mélanger : pas de `.test.php` co-localisé dans `src/`.
+
 ```
 tests/
   Unit/         ← sans BDD, mocks uniquement

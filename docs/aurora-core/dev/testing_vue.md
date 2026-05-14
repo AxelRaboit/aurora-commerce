@@ -2,7 +2,11 @@
 
 ## Convention : co-location
 
+**Tests Vue/JS → co-localisés à côté du fichier source.**
+
 Tout fichier `.test.js` vit **à côté de son fichier source**, dans le même dossier.
+
+C'est intentionnellement différent des tests PHP (centralisés dans `tests/` — voir [testing_php.md](testing_php.md)). Deux écosystèmes, deux conventions établies.
 
 ```
 assets/shared/components/form/

@@ -1,5 +1,18 @@
 # Tests PHP — Guide
 
+## Convention de placement
+
+**Tests PHP → dossier centralisé `tests/` qui miroir `src/`.**
+
+```
+src/Module/Billing/Service/InvoiceExtractor.php
+tests/Unit/Module/Billing/Service/InvoiceExtractorTest.php
+```
+
+C'est intentionnellement différent des tests Vue/JS (co-localisés à côté de leur source — voir [testing_vue.md](testing_vue.md)). Deux écosystèmes, deux conventions établies. Ne pas mélanger : pas de `.test.php` dans `src/`.
+
+---
+
 ## Structure
 
 ```
