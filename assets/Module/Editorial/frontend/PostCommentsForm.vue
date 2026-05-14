@@ -2,7 +2,8 @@
 import { useI18n } from "vue-i18n";
 import { Send, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
+import AppInput from "@/shared/components/form/AppInput.vue";
+import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 
 const { t } = useI18n();
 
@@ -16,49 +17,37 @@ defineProps({
 });
 
 defineEmits(["update:authorName", "update:authorEmail", "update:content", "submit", "cancel"]);
-
-const inputClass = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-500";
 </script>
 
 <template>
     <form class="space-y-3" v-on:submit.prevent="$emit('submit')">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-                <AppFieldLabel :label="t('shared.comment.name')" :required="true" class="mb-1" />
-                <input
-                    :class="inputClass"
-                    type="text"
-                    :value="authorName"
-                    required
-                    maxlength="100"
-                    v-on:input="$emit('update:authorName', $event.target.value)"
-                >
-                <p v-if="errors.authorName" class="mt-1 text-xs text-rose-500">{{ errors.authorName }}</p>
-            </div>
-            <div>
-                <AppFieldLabel :label="t('shared.comment.email')" :required="true" class="mb-1" />
-                <input
-                    :class="inputClass"
-                    type="email"
-                    :value="authorEmail"
-                    required
-                    v-on:input="$emit('update:authorEmail', $event.target.value)"
-                >
-                <p v-if="errors.authorEmail" class="mt-1 text-xs text-rose-500">{{ errors.authorEmail }}</p>
-            </div>
-        </div>
-        <div>
-            <AppFieldLabel :label="t('shared.comment.content')" :required="true" class="mb-1" />
-            <textarea
-                :class="inputClass + ' resize-y'"
-                :value="content"
-                required
-                rows="3"
-                maxlength="2000"
-                v-on:input="$emit('update:content', $event.target.value)"
+            <AppInput
+                type="text"
+                :model-value="authorName"
+                :label="t('shared.comment.name')"
+                :required="true"
+                :error="errors.authorName ?? ''"
+                v-on:update:model-value="$emit('update:authorName', $event)"
             />
-            <p v-if="errors.content" class="mt-1 text-xs text-rose-500">{{ errors.content }}</p>
+            <AppInput
+                type="email"
+                :model-value="authorEmail"
+                :label="t('shared.comment.email')"
+                :required="true"
+                :error="errors.authorEmail ?? ''"
+                v-on:update:model-value="$emit('update:authorEmail', $event)"
+            />
         </div>
+        <AppTextarea
+            :model-value="content"
+            :label="t('shared.comment.content')"
+            :required="true"
+            :rows="3"
+            :maxlength="2000"
+            :error="errors.content ?? ''"
+            v-on:update:model-value="$emit('update:content', $event)"
+        />
         <div class="flex items-center gap-2">
             <AppButton type="submit" variant="primary" size="md" :loading="submitting">
                 <Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.comment.submit") }}

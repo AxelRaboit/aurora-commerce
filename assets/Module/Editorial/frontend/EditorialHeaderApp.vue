@@ -3,6 +3,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { Menu, ChevronDown, User, ShoppingCart, Package } from "lucide-vue-next";
 import LocaleSwitcher from "./LocaleSwitcher.vue";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -101,7 +102,16 @@ onBeforeUnmount(() => {
                                 :class="child.cssClass"
                                 style="color: var(--th-primary);"
                             >
-                                <button v-if="child.targetType === 'frontend_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ child.label }}</button>
+                                <AppButton
+                                    v-if="child.targetType === 'frontend_logout'"
+                                    type="submit"
+                                    variant="ghost"
+                                    size="none"
+                                    :class="'w-full text-left'"
+                                    :style="{ color: 'var(--th-primary)' }"
+                                >
+                                    {{ child.label }}
+                                </AppButton>
                                 <template v-else>{{ child.label }}</template>
                             </component>
                         </div>
@@ -146,10 +156,12 @@ onBeforeUnmount(() => {
 
             <div class="ml-auto flex items-center gap-2 text-sm">
                 <div v-if="showAccountMenu" ref="accountRef" class="relative">
-                    <button
+                    <AppButton
                         type="button"
-                        class="inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80 relative"
-                        style="color: var(--th-header-text, var(--th-primary));"
+                        variant="ghost"
+                        size="none"
+                        :class="'inline-flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-80 relative'"
+                        :style="{ color: 'var(--th-header-text, var(--th-primary))' }"
                         v-on:click.stop="toggleAccount"
                     >
                         <User class="w-4 h-4" :stroke-width="2" />
@@ -159,7 +171,7 @@ onBeforeUnmount(() => {
                             class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-white text-xs tabular-nums"
                         >{{ cartCount }}</span>
                         <ChevronDown class="w-3.5 h-3.5" :stroke-width="2.5" />
-                    </button>
+                    </AppButton>
 
                     <div v-if="accountOpen" class="absolute right-0 top-full mt-1 min-w-56 z-50">
                         <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
@@ -202,7 +214,16 @@ onBeforeUnmount(() => {
                                 :class="item.cssClass"
                                 style="color: var(--th-primary);"
                             >
-                                <button v-if="item.targetType === 'frontend_logout'" type="submit" class="w-full text-left" style="color: var(--th-primary);">{{ item.label }}</button>
+                                <AppButton
+                                    v-if="item.targetType === 'frontend_logout'"
+                                    type="submit"
+                                    variant="ghost"
+                                    size="none"
+                                    :class="'w-full text-left'"
+                                    :style="{ color: 'var(--th-primary)' }"
+                                >
+                                    {{ item.label }}
+                                </AppButton>
                                 <template v-else>{{ item.label }}</template>
                             </component>
                         </div>

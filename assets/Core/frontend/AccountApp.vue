@@ -1,5 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();
 
@@ -14,9 +15,9 @@ defineProps({
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-2xl font-bold text-primary">{{ t('frontend.account.heading') }}</h1>
             <form method="POST" :action="logoutPath">
-                <button type="submit" class="text-sm text-secondary hover:text-danger transition-colors">
+                <AppButton type="submit" variant="ghost" size="sm" :class="'text-secondary hover:text-danger'">
                     {{ t('frontend.account.logout') }}
-                </button>
+                </AppButton>
             </form>
         </div>
 

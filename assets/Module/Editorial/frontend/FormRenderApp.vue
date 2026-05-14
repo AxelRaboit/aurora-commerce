@@ -2,6 +2,7 @@
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
+import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
@@ -144,19 +145,21 @@ const { submitting, submitted, handleSubmit } =
                 </template>
 
                 <div class="flex items-center gap-3" :class="isMultiStep && currentStep > 0 ? 'justify-between' : 'justify-end'">
-                    <button
+                    <AppButton
                         v-if="isMultiStep && currentStep > 0"
                         type="button"
-                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-secondary border border-line hover:bg-surface-2 transition-colors"
+                        variant="secondary"
+                        size="md"
                         v-on:click="prevStep"
                     >
                         <ChevronLeft class="w-4 h-4" :stroke-width="2" />
                         {{ t("shared.form.prev") }}
-                    </button>
-                    <button
+                    </AppButton>
+                    <AppButton
                         type="submit"
-                        class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-colors focus:outline-none disabled:opacity-50"
-                        style="background-color: var(--th-accent);"
+                        variant="primary"
+                        size="md"
+                        :style="{ backgroundColor: 'var(--th-accent)' }"
                         :disabled="submitting"
                     >
                         <template v-if="submitting">{{ t("shared.form.submitting") }}</template>
@@ -165,7 +168,7 @@ const { submitting, submitted, handleSubmit } =
                             <ChevronRight class="w-4 h-4" :stroke-width="2" />
                         </template>
                         <template v-else>{{ t("shared.form.submit") }}</template>
-                    </button>
+                    </AppButton>
                 </div>
             </form>
         </template>

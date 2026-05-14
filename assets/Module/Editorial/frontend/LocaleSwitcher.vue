@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { ChevronDown, Check } from "lucide-vue-next";
+import AppButton from "@/shared/components/action/AppButton.vue";
 
 const props = defineProps({
     currentLocale: { type: String, required: true },
@@ -39,16 +40,18 @@ onBeforeUnmount(() => document.removeEventListener("click", onClickOutside));
 
 <template>
     <div ref="dropdownRef" class="relative">
-        <button
+        <AppButton
             type="button"
-            class="inline-flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors hover:opacity-80"
-            style="color: var(--th-header-text, var(--th-primary));"
+            variant="ghost"
+            size="none"
+            :class="'inline-flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors hover:opacity-80'"
+            :style="{ color: 'var(--th-header-text, var(--th-primary))' }"
             :aria-label="current?.name"
             v-on:click="toggle"
         >
             <span :class="`fi fi-${current?.flagCode}`" class="block w-5 h-4 rounded-sm shadow-sm" />
             <ChevronDown class="w-3.5 h-3.5 shrink-0 transition-transform" :class="{ 'rotate-180': open }" :stroke-width="2.5" />
-        </button>
+        </AppButton>
 
         <transition
             enter-active-class="transition ease-out duration-100"
@@ -63,19 +66,20 @@ onBeforeUnmount(() => document.removeEventListener("click", onClickOutside));
                 class="absolute right-0 mt-2 min-w-45 rounded-lg border shadow-xl z-50 overflow-hidden origin-top-right"
                 style="background-color: var(--th-surface); border-color: var(--color-border);"
             >
-                <button
+                <AppButton
                     v-for="locale in locales"
                     :key="locale.code"
                     type="button"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors"
-                    :class="locale.code === currentLocale ? 'font-semibold' : 'hover:bg-surface-2'"
-                    style="color: var(--th-primary);"
+                    variant="ghost"
+                    size="none"
+                    :class="['w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors', locale.code === currentLocale ? 'font-semibold' : 'hover:bg-surface-2']"
+                    :style="{ color: 'var(--th-primary)' }"
                     v-on:click="select(locale)"
                 >
                     <span :class="`fi fi-${locale.flagCode}`" class="block w-5 h-4 rounded-sm shadow-sm shrink-0" />
                     <span class="flex-1">{{ locale.name }}</span>
                     <Check v-if="locale.code === currentLocale" class="w-4 h-4 shrink-0" :stroke-width="2.5" style="color: var(--th-accent);" />
-                </button>
+                </AppButton>
             </div>
         </transition>
     </div>

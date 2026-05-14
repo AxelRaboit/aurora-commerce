@@ -180,11 +180,13 @@ function downloadOne(itemId) {
         <!-- Grid -->
         <AppNoData v-if="displayedItems.length === 0" :message="t('photo.frontend.empty')" />
         <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-            <button
+            <AppButton
                 v-for="(item, index) in displayedItems"
                 :key="item.id"
                 type="button"
-                class="group relative aspect-square overflow-hidden rounded-md bg-surface-2 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                variant="ghost"
+                size="none"
+                :class="'group relative aspect-square overflow-hidden rounded-md bg-surface-2 focus:outline-none focus:ring-2 focus:ring-accent-500'"
                 v-on:click="openLightbox(index)"
             >
                 <img
@@ -231,7 +233,7 @@ function downloadOne(itemId) {
                 >
                     <Columns2 class="w-4 h-4" :stroke-width="2" />
                 </AppOverlayIconButton>
-            </button>
+            </AppButton>
         </div>
 
         <!-- Sticky favorites progress -->
@@ -252,12 +254,25 @@ function downloadOne(itemId) {
         >
             <Columns2 class="w-4 h-4" :stroke-width="2" />
             <span class="text-sm font-medium">{{ t("photo.frontend.compare.selected", { count: compareIds.length, max: COMPARE_MAX }) }}</span>
-            <button type="button" class="text-sm font-medium underline ml-2" v-on:click="showCompare = true">
+            <AppButton
+                type="button"
+                variant="ghost"
+                size="none"
+                :class="'text-sm font-medium underline ml-2 text-white'"
+                v-on:click="showCompare = true"
+            >
                 {{ t("photo.frontend.compare.open") }}
-            </button>
-            <button type="button" class="ml-1 opacity-80 hover:opacity-100" :aria-label="t('photo.frontend.compare.clear')" v-on:click="clearCompare">
+            </AppButton>
+            <AppButton
+                type="button"
+                variant="ghost"
+                size="none"
+                :class="'ml-1 opacity-80 hover:opacity-100'"
+                :aria-label="t('photo.frontend.compare.clear')"
+                v-on:click="clearCompare"
+            >
                 <X class="w-4 h-4" :stroke-width="2" />
-            </button>
+            </AppButton>
         </div>
 
         <!-- Compare modal -->
@@ -269,9 +284,15 @@ function downloadOne(itemId) {
             <div class="flex items-center justify-between p-4 text-white">
                 <span class="text-sm font-medium">{{ t("photo.frontend.compare.title") }} ({{ compareItems.length }})</span>
                 <div class="flex items-center gap-2">
-                    <button type="button" class="text-sm underline" v-on:click="clearCompare">
+                    <AppButton
+                        type="button"
+                        variant="ghost"
+                        size="none"
+                        :class="'text-sm underline text-white'"
+                        v-on:click="clearCompare"
+                    >
                         {{ t("photo.frontend.compare.clear") }}
-                    </button>
+                    </AppButton>
                     <AppOverlayIconButton size="md" variant="light" :title="t('shared.common.close')" v-on:click="showCompare = false">
                         <X class="w-5 h-5" :stroke-width="2" />
                     </AppOverlayIconButton>
@@ -290,14 +311,16 @@ function downloadOne(itemId) {
                         <span v-if="item.number" class="absolute top-2 left-2 px-2 py-1 rounded bg-black/60 text-white text-xs font-semibold tabular-nums">
                             #{{ item.number }}
                         </span>
-                        <button
+                        <AppButton
                             type="button"
-                            class="absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white hover:bg-black/80"
+                            variant="ghost"
+                            size="none"
+                            :class="'absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white hover:bg-black/80'"
                             :title="t('photo.frontend.compare.remove')"
                             v-on:click="toggleCompare(item.id)"
                         >
                             <X class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppButton>
                     </div>
                 </div>
             </div>

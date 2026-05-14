@@ -1,6 +1,5 @@
 # Vue Backend — Vue / JS (Interface Admin)
 
-- [convention_form_components.md](convention_form_components.md) — toujours `App*` (AppButton, AppInput, AppPagination…) jamais HTML brut ; table complète des composants
 - [convention_mobile_card_layout.md](convention_mobile_card_layout.md) — `sm:hidden` cards + `hidden sm:block` table ; footer actions ; bouton full-width mobile
 - [convention_vue_form_validation.md](convention_vue_form_validation.md) — `useForm` + `required()` + `:error` ; `useI18n()` dans le composable ; reset loading sur tous les chemins
 - [convention_modal_and_confirmation.md](convention_modal_and_confirmation.md) — `AppModal` (`:show + v-on:close`) + confirmation via modale, jamais `confirm()` natif
