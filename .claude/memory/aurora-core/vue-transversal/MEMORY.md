@@ -1,5 +1,6 @@
 # Vue / JS — Transversal (admin + public)
 
+- [convention_testing.md](convention_testing.md) — co-location obligatoire `.test.js` à côté de la source ; patterns composant/composable/util ; stubs courants ; ce qu'on skip
 - [convention_vue_directives.md](convention_vue_directives.md) — `v-on:click` (jamais `@click`), `:` shorthand OK pour `v-bind`
 - [convention_js_privacy.md](convention_js_privacy.md) — `#field` dans les classes (jamais `_field`), variable module-level non exportée
 - [convention_i18n_source_files.md](convention_i18n_source_files.md) — éditer les YAML sources, jamais le JSON généré. `make i18n` régénère
