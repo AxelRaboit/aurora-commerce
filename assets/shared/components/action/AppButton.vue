@@ -24,9 +24,8 @@ const variants = {
     link: 'bg-transparent text-muted hover:text-secondary underline p-0 text-sm',
     'link-accent': 'bg-transparent text-accent hover:underline p-0 text-sm',
     icon: 'bg-transparent p-0',
-    // Frontend public — use inside a parent that sets the text color via CSS variable
+    // Frontend — use inside a parent that sets the text color via CSS variable
     'front-ghost': 'bg-transparent hover:opacity-80 transition-opacity',
-    // Frontend public — explicit theme-aware colors
     'front-primary': 'bg-transparent text-primary hover:opacity-80 transition-opacity',
     'front-accent': 'bg-transparent font-medium text-accent hover:opacity-80 transition-opacity',
 };
