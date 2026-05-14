@@ -28,12 +28,6 @@ const displayName = computed(() => {
     return firstTranslation?.name ?? `#${props.node.id}`;
 });
 
-const displaySlug = computed(() => {
-    const translation = props.node.translations?.[props.activeLocale];
-    if (translation?.slug) return translation.slug;
-    return Object.values(props.node.translations ?? {})[0]?.slug ?? "";
-});
-
 const isCollapsed = computed(() => props.collapsed.has(props.node.id));
 
 const children = computed({
@@ -65,13 +59,11 @@ const hasChildren = computed(() => children.value.length > 0);
             </AppIconButton>
             <span v-else class="w-5" />
 
-            <div class="w-7 h-7 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                <AppImage v-if="node.image" :src="node.image.url" :alt="node.image.alt ?? ''" object-fit="cover" />
-                <span v-else class="text-muted text-xs">—</span>
+            <div v-if="node.image" class="w-7 h-7 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
+                <AppImage :src="node.image.url" :alt="node.image.alt ?? ''" object-fit="cover" />
             </div>
 
             <span class="flex-1 min-w-0 text-sm font-medium text-primary truncate">{{ displayName }}</span>
-            <span class="text-xs text-muted font-mono truncate hidden sm:inline">{{ displaySlug }}</span>
 
             <AppBadge v-if="!node.isVisible" color="slate">
                 <EyeOff class="w-3 h-3" :stroke-width="2" />
