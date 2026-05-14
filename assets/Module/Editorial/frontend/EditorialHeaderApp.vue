@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Menu, ChevronDown, User, ShoppingCart, Package } from "lucide-vue-next";
 import LocaleSwitcher from "./LocaleSwitcher.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 
 const { t } = useI18n();
 
@@ -62,28 +63,26 @@ onBeforeUnmount(() => {
         style="background-color: var(--th-header-bg, var(--th-surface)); border-color: var(--th-header-border, var(--color-border)); color: var(--th-header-text, var(--th-primary));"
     >
         <div class="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-6 flex-wrap">
-            <a
+            <AppLink
                 :href="homePath"
-                class="flex items-center gap-2 text-lg"
-                style="color: var(--th-header-text, var(--th-primary));"
+                variant="front-nav"
+                extra-class="flex items-center gap-2 text-lg"
             >
                 <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-8 w-8 object-cover rounded-xl shrink-0">
                 <span>{{ headerCustomText || siteName }}</span>
-            </a>
+            </AppLink>
 
             <nav v-if="primaryMenuItems.length" class="hidden md:flex items-center gap-1">
                 <div v-for="item in primaryMenuItems" :key="item.id" class="relative group">
-                    <a
+                    <AppLink
                         :href="item.url"
-                        :target="item.openInNewTab ? '_blank' : null"
-                        :rel="item.openInNewTab ? 'noopener' : null"
-                        class="inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm transition-colors hover:opacity-80"
-                        :class="item.cssClass"
-                        style="color: var(--th-header-text, var(--th-primary));"
+                        :target="item.openInNewTab ? '_blank' : '_self'"
+                        variant="front-nav"
+                        :extra-class="['inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm transition-colors', item.cssClass]"
                     >
                         {{ item.label }}
                         <ChevronDown v-if="item.children && item.children.length" class="w-3.5 h-3.5" :stroke-width="2.5" />
-                    </a>
+                    </AppLink>
                     <div
                         v-if="item.children && item.children.length"
                         class="absolute left-0 top-full pt-1 min-w-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50"
@@ -125,28 +124,24 @@ onBeforeUnmount(() => {
                 </summary>
                 <ul class="mt-2 space-y-1 border-t pt-2" style="border-color: var(--th-header-border, var(--color-border));">
                     <li v-for="item in primaryMenuItems" :key="item.id">
-                        <a
+                        <AppLink
                             :href="item.url"
-                            :target="item.openInNewTab ? '_blank' : null"
-                            :rel="item.openInNewTab ? 'noopener' : null"
-                            class="block px-3 py-2 rounded-md text-sm hover:opacity-80"
-                            :class="item.cssClass"
-                            style="color: var(--th-header-text, var(--th-primary));"
+                            :target="item.openInNewTab ? '_blank' : '_self'"
+                            variant="front-nav"
+                            :extra-class="['block px-3 py-2 rounded-md text-sm', item.cssClass]"
                         >
                             {{ item.label }}
-                        </a>
+                        </AppLink>
                         <ul v-if="item.children && item.children.length" class="ml-4 mt-1 space-y-1 border-l pl-2" style="border-color: var(--th-header-border, var(--color-border));">
                             <li v-for="child in item.children" :key="child.id">
-                                <a
+                                <AppLink
                                     :href="child.url"
-                                    :target="child.openInNewTab ? '_blank' : null"
-                                    :rel="child.openInNewTab ? 'noopener' : null"
-                                    class="block px-3 py-1.5 rounded-md text-sm hover:opacity-80"
-                                    :class="child.cssClass"
-                                    style="color: var(--th-header-text, var(--th-primary));"
+                                    :target="child.openInNewTab ? '_blank' : '_self'"
+                                    variant="front-nav"
+                                    :extra-class="['block px-3 py-1.5 rounded-md text-sm', child.cssClass]"
                                 >
                                     {{ child.label }}
-                                </a>
+                                </AppLink>
                             </li>
                         </ul>
                     </li>
@@ -174,10 +169,10 @@ onBeforeUnmount(() => {
                     <div v-if="accountOpen" class="absolute right-0 top-full mt-1 min-w-56 z-50">
                         <div class="rounded-lg border shadow-xl overflow-hidden" style="background-color: var(--th-surface); border-color: var(--color-border);">
                             <template v-if="ecommerceEnabled">
-                                <a
+                                <AppLink
                                     :href="cartPath"
-                                    class="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
-                                    style="color: var(--th-primary);"
+                                    variant="front-nav"
+                                    extra-class="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors"
                                 >
                                     <span class="flex items-center gap-2">
                                         <ShoppingCart class="w-4 h-4" :stroke-width="2" />
@@ -187,16 +182,16 @@ onBeforeUnmount(() => {
                                         v-if="cartCount > 0"
                                         class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-white text-xs tabular-nums"
                                     >{{ cartCount }}</span>
-                                </a>
-                                <a
+                                </AppLink>
+                                <AppLink
                                     v-if="currentUser"
                                     :href="accountOrdersPath"
-                                    class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
-                                    style="color: var(--th-primary);"
+                                    variant="front-nav"
+                                    extra-class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
                                 >
                                     <Package class="w-4 h-4" :stroke-width="2" />
                                     {{ t('frontend.account.orders') }}
-                                </a>
+                                </AppLink>
                             </template>
                             <div v-if="ecommerceEnabled && accountMenuItems.length" class="border-t" style="border-color: var(--color-border);" />
                             <component

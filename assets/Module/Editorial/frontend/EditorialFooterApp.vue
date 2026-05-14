@@ -1,5 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import AppLink from "@/shared/components/nav/AppLink.vue";
 
 const { t } = useI18n();
 
@@ -20,28 +21,24 @@ defineProps({
         >
             <ul v-if="footerMenuItems.length" class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                 <li v-for="item in footerMenuItems" :key="item.id">
-                    <a
+                    <AppLink
                         :href="item.url"
-                        :target="item.openInNewTab ? '_blank' : null"
-                        :rel="item.openInNewTab ? 'noopener' : null"
-                        class="text-xs transition-colors hover:opacity-80"
-                        :class="item.cssClass"
-                        style="color: var(--th-footer-text, var(--th-muted));"
+                        :target="item.openInNewTab ? '_blank' : '_self'"
+                        variant="front-nav"
+                        :extra-class="['text-xs transition-colors', item.cssClass]"
                     >
                         {{ item.label }}
-                    </a>
+                    </AppLink>
                     <ul v-if="item.children && item.children.length" class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 ml-2">
                         <li v-for="child in item.children" :key="child.id">
-                            <a
+                            <AppLink
                                 :href="child.url"
-                                :target="child.openInNewTab ? '_blank' : null"
-                                :rel="child.openInNewTab ? 'noopener' : null"
-                                class="text-xs transition-colors hover:opacity-80"
-                                :class="child.cssClass"
-                                style="color: var(--th-footer-text, var(--th-muted));"
+                                :target="child.openInNewTab ? '_blank' : '_self'"
+                                variant="front-nav"
+                                :extra-class="['text-xs transition-colors', child.cssClass]"
                             >
                                 {{ child.label }}
-                            </a>
+                            </AppLink>
                         </li>
                     </ul>
                 </li>

@@ -10,7 +10,10 @@
 - `<input>` brut → utiliser `AppInput`, `AppCheckbox`, `AppToggle`,
   `AppSearchInput`, `AppFileInput`, `AppDatePicker` selon le type.
 - `<select>` brut → utiliser `AppSelect` ou `AppMultiselect`.
-- `<a>` brut quand c'est de la nav → `AppLink` / `AppNavLink`.
+- `<a>` brut pour un lien texte/nav → `AppLink` (variant `admin`, `front`, `front-accent`, `front-nav`)
+  - `front-nav` : hérite la couleur du parent — pour les liens dans un header qui fixe déjà la couleur via CSS variable
+  - `extraClass` prop disponible pour les classes layout (`flex items-center gap-2 text-lg`)
+  - **Exception** : `<a class="block">` ou `<a class="block ...">` wrappant une carte/image — `AppLink` n'est pas conçu pour les liens blocs
 
 Le seul cas où le HTML brut est OK : les éléments de présentation pure
 (`<div>`, `<span>`, `<p>`, `<h1>` à `<h6>`, `<table>`, etc.) ou les
