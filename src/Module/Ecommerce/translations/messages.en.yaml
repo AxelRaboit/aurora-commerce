@@ -233,6 +233,8 @@ frontend:
     no_results: No products match your search.
     no_image: No image
     back_to_list: Back to shop
+    categories: Categories
+    category_breadcrumb: Category
     add_to_cart: Add to cart
     added_to_cart: Product added to cart
     in_stock: In stock

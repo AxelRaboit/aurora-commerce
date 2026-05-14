@@ -233,6 +233,8 @@ frontend:
     no_results: Aucun produit ne correspond à votre recherche.
     no_image: Pas d'image
     back_to_list: Retour à la boutique
+    categories: Catégories
+    category_breadcrumb: Catégorie
     add_to_cart: Ajouter au panier
     added_to_cart: Produit ajouté au panier
     in_stock: En stock

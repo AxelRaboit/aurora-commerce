@@ -12,6 +12,7 @@ use Aurora\Core\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\View\ShopViewBuilder;
+use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,7 @@ class ShopController extends AbstractController
         private readonly Context $context,
         private readonly ThemeResolver $themeResolver,
         private readonly ShopViewBuilder $viewBuilder,
+        private readonly ListingCategoryRepository $listingCategoryRepository,
     ) {}
 
     #[Route('/{locale}/shop', name: 'frontend_shop_index', requirements: ['locale' => '[a-z]{2}'], methods: [HttpMethodEnum::Get->value], priority: 8)]
@@ -52,6 +54,25 @@ class ShopController extends AbstractController
 
         return $this->jsonSuccess(
             $this->viewBuilder->pageData($page, '' !== $query ? $query : null),
+        );
+    }
+
+    #[Route('/{locale}/shop/category/{slug}', name: 'frontend_shop_category', requirements: ['locale' => '[a-z]{2}', 'slug' => '[a-z0-9-]+'], methods: [HttpMethodEnum::Get->value], priority: 9)]
+    public function showCategory(string $locale, string $slug, Request $request): Response
+    {
+        $this->assertActiveLocale($this->context, $locale);
+        $request->setLocale($locale);
+
+        $category = $this->listingCategoryRepository->findOneBySlug($slug, $locale);
+        if (null === $category || !$category->isVisible()) {
+            throw $this->createNotFoundException();
+        }
+
+        $page = max(1, (int) $request->query->get('page', '1'));
+
+        return $this->render(
+            $this->themeResolver->resolve('ecommerce/shop_category'),
+            $this->viewBuilder->categoryView($category, $locale, $page),
         );
     }
 

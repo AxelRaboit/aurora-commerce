@@ -3,6 +3,18 @@
 {% block title %}{{ 'frontend.shop.title'|trans }} — {{ context.siteName }}{% endblock %}
 
 {% block body %}
+{% if rootCategories is defined and rootCategories|length > 0 %}
+<nav class="shop-index__categories" aria-label="{{ 'frontend.shop.categories'|trans }}">
+    <h2>{{ 'frontend.shop.categories'|trans }}</h2>
+    <ul>
+        {% for category in rootCategories %}
+            <li>
+                <a href="{{ path('frontend_shop_category', {locale: locale, slug: category.slug}) }}">{{ category.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}
 <div {{ vue_component('ecommerce/frontend/ShopIndexApp', {
     listings: listings,
     initialPage: page,
