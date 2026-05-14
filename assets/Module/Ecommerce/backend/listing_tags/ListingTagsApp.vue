@@ -16,7 +16,6 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
-import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Trash2, Plus, Save, X, Tag, Pencil } from "lucide-vue-next";
 import { translatedField } from "@/shared/utils/i18n/pickTranslation.js";
 
@@ -110,85 +109,60 @@ function displaySlug(tag) {
             </AppButton>
         </div>
 
-        <AppNoData v-if="!items.length" :message="t('backend.ecommerce.listing_tags.empty')" />
-
-        <div v-else class="rounded-lg border border-line overflow-hidden">
-            <table class="hidden sm:table w-full text-sm">
-                <thead class="bg-surface-2 text-secondary">
-                    <tr>
-                        <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.name') }}</th>
-                        <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.slug') }}</th>
-                        <th class="text-left px-3 py-2 font-medium">{{ t('backend.ecommerce.listing_tags.visible_label') }}</th>
-                        <th class="px-3 py-2 w-20" />
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line">
-                    <tr v-for="tag in items" :key="tag.id" class="hover:bg-surface-2/40">
-                        <td class="px-3 py-2">
-                            <div class="flex items-center gap-2">
-                                <AppColorSwatch :model-value="tag.color" size="sm" disabled />
-                                <span class="text-primary">{{ displayName(tag) }}</span>
-                            </div>
-                        </td>
-                        <td class="px-3 py-2 text-secondary font-mono text-xs">{{ displaySlug(tag) }}</td>
-                        <td class="px-3 py-2">
-                            <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
-                        </td>
-                        <td class="px-3 py-2 text-right">
-                            <div class="flex justify-end gap-1">
-                                <AppIconButton
-                                    v-if="can('ecommerce.listings.edit')"
-                                    color="accent"
-                                    :title="t('shared.common.edit')"
-                                    v-on:click="openEdit(tag)"
-                                >
-                                    <Pencil class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton
-                                    v-if="can('ecommerce.listings.delete')"
-                                    color="rose"
-                                    :title="t('shared.common.delete')"
-                                    v-on:click="confirmDelete(tag)"
-                                >
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="sm:hidden divide-y divide-line">
-                <div v-for="tag in items" :key="tag.id" class="p-3 space-y-2">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <AppColorSwatch :model-value="tag.color" size="sm" disabled />
-                            <span class="text-primary truncate">{{ displayName(tag) }}</span>
-                        </div>
-                        <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
+        <div class="sm:hidden space-y-3">
+            <div v-for="tag in items" :key="tag.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                <div class="flex items-start gap-3">
+                    <AppColorSwatch :model-value="tag.color" size="sm" disabled />
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-primary truncate">{{ displayName(tag) }}</p>
+                        <p class="text-xs font-mono text-muted mt-0.5 truncate">{{ displaySlug(tag) }}</p>
                     </div>
-                    <div class="text-xs text-secondary font-mono truncate">{{ displaySlug(tag) }}</div>
-                    <div class="flex justify-end gap-1">
-                        <AppIconButton
-                            v-if="can('ecommerce.listings.edit')"
-                            color="accent"
-                            :title="t('shared.common.edit')"
-                            v-on:click="openEdit(tag)"
-                        >
-                            <Pencil class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton
-                            v-if="can('ecommerce.listings.delete')"
-                            color="rose"
-                            :title="t('shared.common.delete')"
-                            v-on:click="confirmDelete(tag)"
-                        >
-                            <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                    </div>
+                    <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
+                </div>
+                <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                    <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tag)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tag)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                 </div>
             </div>
         </div>
+
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_tags.name') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_tags.slug') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listing_tags.visible_label') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-line/40">
+                    <tr v-for="tag in items" :key="tag.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <td class="px-6 py-3">
+                            <div class="flex items-center gap-3">
+                                <AppColorSwatch :model-value="tag.color" size="sm" disabled />
+                                <span class="font-medium text-primary truncate">{{ displayName(tag) }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-3 text-secondary font-mono text-xs">{{ displaySlug(tag) }}</td>
+                        <td class="px-6 py-3">
+                            <AppBadge v-if="!tag.isVisible" color="gray">{{ t('backend.ecommerce.listing_tags.hidden') }}</AppBadge>
+                        </td>
+                        <td class="px-6 py-3">
+                            <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tag)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tag)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="!items?.length">
+                        <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_tags.empty') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p v-if="!items?.length" class="sm:hidden py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listing_tags.empty') }}</p>
 
         <AppModal
             :show="showCreate || showEdit"
