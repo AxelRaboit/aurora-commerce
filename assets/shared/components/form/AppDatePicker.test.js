@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
-import { createI18n } from "vue-i18n";
+import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { ref } from "vue";
 
 // useTheme accesses localStorage + window.matchMedia at module level — stub it
@@ -10,7 +10,7 @@ vi.mock("@/shared/composables/useTheme.js", () => ({
 
 import AppDatePicker from "./AppDatePicker.vue";
 
-const i18n = createI18n({ legacy: false, locale: "en", messages: {} });
+const i18n = createTestI18n({}, "en");
 
 const globalConfig = {
     plugins: [i18n],

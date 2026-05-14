@@ -19,11 +19,32 @@ export function createTestI18n(messages = {}, locale = "fr") {
 const baseMessages = {
     shared: {
         common: {
-            cancel: "Annuler",
-            save: "Enregistrer",
-            confirm: "Confirmer",
-            error: "Erreur",
-            deleted: "Supprimé.",
+            cancel: "Cancel",
+            save: "Save",
+            confirm: "Confirm",
+            error: "Error",
+            deleted: "Deleted.",
+            close: "Close",
+            loadMore: "Load more",
+            no_options: "No options",
+            no_result: "No results",
+            pagination: "Page {page} of {totalPages}",
+            select_placeholder: "Select…",
+            add_tag_hint: "Add a tag",
+        },
+        dropZone: {
+            cta: "Click or drag a file here",
+            drop: "Drop to upload",
+            uploading: "Uploading…",
+        },
+        media: {
+            change: "Change",
+            choose: "Choose",
+            remove: "Remove",
+        },
+        pagination: {
+            previous: "Previous",
+            next: "Next",
         },
         locales: {
             fr: "Français",

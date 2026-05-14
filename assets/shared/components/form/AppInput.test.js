@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import { createI18n } from "vue-i18n";
+import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import AppInput from "./AppInput.vue";
 
-const i18n = createI18n({ legacy: false, locale: "en", messages: {} });
+const i18n = createTestI18n({}, "en");
 
 describe("AppInput", () => {
     it("renders the input element", () => {
