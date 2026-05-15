@@ -73,7 +73,9 @@ function initLoader() {
 
     document.addEventListener(AppEvents.LayoutMounted, onLayoutMounted);
     document.addEventListener("vue:mount", onVueMount, true);
-    window.addEventListener("load", () => setTimeout(hide, FALLBACK_AFTER_LOAD_MS));
+    window.addEventListener("load", () =>
+        setTimeout(hide, FALLBACK_AFTER_LOAD_MS),
+    );
 }
 
 if (document.readyState === "loading") {
