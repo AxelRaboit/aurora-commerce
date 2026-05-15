@@ -84,8 +84,8 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 
 | Binaire | Module | Usage | Installation |
 |---------|--------|-------|-------------|
-| `pdftk` | **PDF Forms** | Détection des champs AcroForm et génération de PDFs remplis | `sudo apt install pdftk` (ou `pdftk-java` sur Ubuntu 22+) |
-| `ghostscript` (`gs`) | **PDF Forms** | Aplatissement Unicode-safe des PDFs verrouillés | `sudo apt install ghostscript` |
+| `pdftk` | **PDF Forms** | Détection des champs AcroForm (`dump_data_fields`) | `sudo apt install pdftk` (ou `pdftk-java` sur Ubuntu 22+) |
+| `node` (Node.js ≥ 18) | **PDF Forms** | Remplissage et aplatissement Unicode-safe via `tools/pdf/fill.mjs` (basé sur `pdf-lib`, installé via `pnpm install`) | Déjà requis pour le build assets — aucune install supplémentaire |
 | `ssh` (OpenSSH client) | **MountPoint** | Tunnels SSH vers des bases de données distantes | Inclus par défaut sur Linux/macOS |
 | `ollama` | **Billing OCR** | Inférence du modèle vision pour l'extraction de factures | [ollama.ai](https://ollama.ai) — voir [ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md) |
 
