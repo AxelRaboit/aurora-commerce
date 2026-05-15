@@ -1,9 +1,32 @@
 # Notes — Wiki-links & graph
 
-- [ ] **Wiki-links `[[titre]]`** dans le contenu markdown. Composable `useNoteWikiLinks.js` à porter (parsing + rendu cliquable en preview).
-- [ ] **Rename automatique** : quand un titre de note change, remplacer `[[old]]` → `[[new]]` dans toutes les autres notes de l'utilisateur. Logique côté `NoteManager::update` (cf. `NoteService::renameWikiLinks` dans Onyx).
-- [ ] **Backlinks** — endpoint `GET /notes/{id}/backlinks` : retourne les notes qui contiennent `[[titre-courant]]`. Composable `useNoteBacklinks.js`.
-- [ ] **Unlinked mentions** — endpoint `GET /notes/{id}/unlinked-mentions` : notes qui mentionnent le titre **sans** la syntaxe `[[…]]`.
-- [ ] **Graph view** — endpoint `GET /notes/graph` retourne `{nodes, edges}` (nodes = notes, edges = wiki-links). Composant `NoteGraph.vue` à porter.
-  - **À identifier** : quelle lib graph Onyx utilise (D3 / Cytoscape / Sigma / vis-network) — inspecter `onyx/resources/js/components/notes/NoteGraph.vue` avant portage.
-- [ ] **Perf** : `backlinks`/`unlinkedMentions`/`graph` chargent tout le `content` user en RAM. Acceptable au démarrage, monitorer sur gros volumes.
+## Backend — ✅ Fait (commit `fca34119`)
+
+- [x] **Wiki-links `[[titre]]`** parsing + rendu cliquable en preview. Marked.js extension `markedWikiLinks.js`.
+- [x] **Rename automatique** : changement de titre → remplace `[[old]]` par `[[new]]` dans toutes les autres notes user. Logique dans `MarkdownNoteManager::update` + helper protected `renameWikiLinks`.
+- [x] **Backlinks** — endpoint `GET /backend/notes/markdown/{id}/backlinks`. Composable `useNoteSidePanel.js` côté front.
+- [x] **Unlinked mentions** — endpoint `GET /backend/notes/markdown/{id}/unlinked-mentions`. Mêmes hooks SidePanel.
+- [x] **Graph data** — endpoint `GET /backend/notes/markdown/graph` retourne `{nodes, edges}` parsé via regex `[[…]]`.
+
+## Frontend — Graph view : ⏳ À faire
+
+- [ ] **Composant `NoteGraph.vue`** consommant l'endpoint `/graph`. Lib à
+      choisir :
+  - **D3** — flexible, courbe d'apprentissage. ~80kb gzip.
+  - **Cytoscape** — riche, plus orienté graph theory. ~120kb gzip.
+  - **Sigma** — perf sur gros graphes. ~50kb gzip.
+  - **vis-network** — simple drop-in, force layout intégré. ~140kb gzip.
+  - **Recommandation initiale** : Cytoscape (mature, beaucoup d'exemples,
+    force layout + zoom/pan natifs, intégration Vue facile via wrapper).
+- [ ] **UI d'accès** : bouton "Graph" dans le header de l'éditeur ou
+      tab dédié dans la sidebar.
+- [ ] **Click sur node** → ouvre la note correspondante.
+- [ ] **Filtres** (optionnel v1) : par tag, par profondeur de wiki-link.
+
+## Perf
+
+- Backend : `backlinks` / `unlinkedMentions` / `graph` chargent tout le
+  `content` user en RAM (décryption côté Doctrine Type). Acceptable
+  jusqu'à ~qq centaines de notes. À monitorer.
+- Frontend graph : Cytoscape peut tenir 1000-2000 nodes facilement avec
+  un force layout. Au-delà, switcher sur Sigma.

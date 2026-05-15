@@ -1,5 +1,10 @@
 # Notes markdown — Import depuis Onyx
 
+**Statut : ⏳ Pas commencé.** À faire quand on aura du contenu Onyx à migrer (dépend de l'usage prévu). Le module Markdown a déjà ses propres demo fixtures fonctionnelles.
+
+> **Pré-requis** : avoir terminé [`images.md`](images.md) (sinon les
+> images Onyx référencées dans le contenu seront cassées).
+
 - [ ] **Commande Symfony** `aurora:notes:import-from-onyx` one-shot pour migrer le contenu utilisateur existant.
   - Lit la base Onyx (SQLite/MySQL) en read-only
   - Décrypte `title` / `content` avec la clé Laravel (`APP_KEY` Onyx)
