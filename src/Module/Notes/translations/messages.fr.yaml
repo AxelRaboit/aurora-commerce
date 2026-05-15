@@ -35,6 +35,17 @@ notes:
       edit: Édition seule
       split: Édition + aperçu
       preview: Aperçu seul
+    links:
+      title: Liens
+      open: Afficher les liens entrants
+      close: Fermer le panneau
+      backlinks: Backlinks
+      mentions: Mentions
+      loading: Chargement…
+      empty_backlinks: Aucun backlink
+      empty_backlinks_description: Aucune note ne référence celle-ci avec [[…]].
+      empty_mentions: Aucune mention
+      empty_mentions_description: Aucune note ne mentionne ce titre sans wiki-link.
     empty:
       title: Aucune note
       description: Cliquez sur + pour créer votre première note.

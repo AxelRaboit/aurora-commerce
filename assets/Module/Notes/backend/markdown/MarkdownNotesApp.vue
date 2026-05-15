@@ -8,12 +8,13 @@ import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js'
 import { toggleCheckboxInContent } from '@notes/backend/markdown/composables/markedExtensions/markedCheckboxes.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
+import NoteSidePanel from '@notes/backend/markdown/components/NoteSidePanel.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppInput from '@shared/components/form/AppInput.vue';
 import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
-import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns } from 'lucide-vue-next';
+import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -38,6 +39,7 @@ const selectedId = ref(null);
 const form = ref({ title: '', content: '', tags: [] });
 const saving = ref(false);
 const deleting = ref(false);
+const sidePanelOpen = ref(false);
 
 const { tree } = useNoteTree(notes);
 
@@ -213,6 +215,16 @@ function beforeUnloadHandler(event) {
                         class="flex-1 text-lg font-medium"
                     />
 
+                    <AppIconButton
+                        :title="sidePanelOpen ? t('notes.markdown.links.close') : t('notes.markdown.links.open')"
+                        size="md"
+                        :variant="sidePanelOpen ? 'primary' : 'ghost'"
+                        v-on:click="sidePanelOpen = !sidePanelOpen"
+                    >
+                        <PanelRightClose v-if="sidePanelOpen" class="w-4 h-4" :stroke-width="2" />
+                        <PanelRightOpen v-else class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+
                     <!-- View mode toggle (edit / split / preview) -->
                     <div class="inline-flex rounded-md border border-line overflow-hidden">
                         <button
@@ -291,5 +303,14 @@ function beforeUnloadHandler(event) {
                 />
             </div>
         </section>
+
+        <NoteSidePanel
+            v-if="sidePanelOpen && selectedNote"
+            :note-id="selectedId"
+            :fetch-backlinks="api.backlinks"
+            :fetch-unlinked-mentions="api.unlinkedMentions"
+            v-on:close="sidePanelOpen = false"
+            v-on:navigate="selectNote"
+        />
     </div>
 </template>

@@ -35,6 +35,17 @@ notes:
       edit: Edit only
       split: Edit + preview
       preview: Preview only
+    links:
+      title: Links
+      open: Show incoming links
+      close: Close panel
+      backlinks: Backlinks
+      mentions: Mentions
+      loading: Loading…
+      empty_backlinks: No backlinks
+      empty_backlinks_description: No note links to this one with [[…]].
+      empty_mentions: No mentions
+      empty_mentions_description: No note mentions this title without a wiki-link.
     empty:
       title: No notes yet
       description: Click + to create your first note.
