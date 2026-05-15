@@ -53,6 +53,9 @@ client.
   override `create<X>()` sinon Doctrine perd les champs custom
 - [pitfall_call_parent_apply_input.md](pitfall_call_parent_apply_input.md)
   — toujours `parent::applyInput()` avant d'ajouter ses propres setters
+- [pitfall_instanceof_scoping.md](pitfall_instanceof_scoping.md) —
+  `_instanceof` est scopé par fichier YAML : le client doit dupliquer le
+  bloc dans son `services.yaml` pour que ses modules soient auto-tagués
 
 ## Index — checklist d'extension complète d'une entité
 
