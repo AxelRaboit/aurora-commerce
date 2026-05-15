@@ -223,6 +223,47 @@ php bin/phpunit --filter testCreate
 
 ---
 
+## Couverture de code (coverage)
+
+### Prérequis — driver PCOV
+
+PHPUnit a besoin d'un driver pour instrumenter le code. PCOV est recommandé
+(plus rapide que Xdebug, dédié au coverage uniquement) :
+
+```bash
+sudo apt install php8.4-pcov
+```
+
+Vérifier que le driver est actif :
+
+```bash
+php -m | grep pcov
+```
+
+### Générer le rapport HTML
+
+```bash
+make coverage
+# équivalent : php -d pcov.enabled=1 bin/phpunit --coverage
+```
+
+Le rapport est généré dans `var/coverage/` (configurable dans `phpunit.dist.xml`).
+Ouvrir `var/coverage/index.html` dans un navigateur pour visualiser :
+- la couverture par fichier / classe / méthode,
+- les lignes non couvertes (en rouge).
+
+Un résumé texte est aussi affiché dans le terminal à la fin de l'exécution.
+
+### Coverage sur un seul dossier
+
+```bash
+php -d pcov.enabled=1 bin/phpunit tests/Unit/Module/Billing --coverage
+```
+
+> `var/coverage/` est dans `.gitignore` — ne pas committer les rapports générés.
+
+---
+
 ## Fixtures
 
 Les fixtures sont définies dans `src/Core/DataFixtures/AppFixtures.php`. Elles créent les données minimales nécessaires aux tests d'intégration (users, post types, etc.).

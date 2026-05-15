@@ -274,6 +274,9 @@ test-frontend: i18n ## Run frontend unit tests (Vitest)
 test-e2e: ## Run end-to-end tests (Playwright)
 	$(PNPM) --dir=$(AURORA) run test:e2e
 
+coverage: db-test ## Generate PHP code coverage report (requires php8.4-pcov)
+	$(PHP_BIN) -d pcov.enabled=1 $(AURORA)/bin/phpunit --coverage
+
 db-test: ## Create and migrate the test database
 	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
 	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction

@@ -17,6 +17,7 @@ make test               # frontend + backend
 make test-backend       # PHPUnit (recrée la DB de test, joue le schéma)
 make test-frontend      # Vitest (i18n régénéré au préalable)
 make ft                 # fix (linters) + test — à passer avant chaque commit
+make coverage           # rapport de couverture HTML dans var/coverage/ (nécessite php8.4-pcov)
 ```
 
 `make test-backend` enchaîne :

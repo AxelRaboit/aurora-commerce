@@ -6,14 +6,21 @@
 
 ## Prérequis
 
-| Outil | Version minimale |
-|---|---|
-| PHP | 8.4 |
-| Composer | 2.x |
-| PostgreSQL | 16+ |
-| Node.js | 20+ |
-| pnpm | 10+ |
-| Docker (optionnel) | pour la base de données en local |
+| Outil | Version minimale | Notes |
+|---|---|---|
+| PHP | 8.4 | |
+| Composer | 2.x | |
+| PostgreSQL | 16+ | |
+| Node.js | 20+ | |
+| pnpm | 10+ | |
+| php8.4-pcov | — | driver de coverage PHPUnit (optionnel, pour `--coverage`) |
+| Docker (optionnel) | — | pour la base de données en local |
+
+Installer PCOV :
+
+```bash
+sudo apt install php8.4-pcov
+```
 
 ---
 
