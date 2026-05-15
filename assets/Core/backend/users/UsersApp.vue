@@ -18,6 +18,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import UserRowActions from "@core/backend/users/UserRowActions.vue";
 import ModuleAccessNode from "@core/backend/users/ModuleAccessNode.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { useUsersSearch } from "@core/backend/users/composables/useUsersSearch.js";
 import { useUsersInvite } from "@core/backend/users/composables/useUsersInvite.js";
 import { useUsersEdit } from "@core/backend/users/composables/useUsersEdit.js";
@@ -93,6 +94,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
             </AppButton>
         </div>
 
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
             <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
@@ -209,6 +211,8 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="inviteModal.open"

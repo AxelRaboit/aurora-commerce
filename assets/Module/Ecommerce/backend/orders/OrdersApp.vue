@@ -10,6 +10,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Eye } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -30,7 +31,7 @@ const props = defineProps({
     extraFields: { type: Object, default: () => ({}) },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, reload, goToPage } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, reload, goToPage } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
@@ -67,6 +68,7 @@ const formatTotal = (order) => formatOrderTotal(order);
             v-on:search="onSearch"
         />
 
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!items?.length" :message="t('backend.ecommerce.orders.empty')" />
             <div v-for="order in items" :key="order.id" class="bg-surface border border-line rounded-xl p-4 space-y-2">
@@ -132,5 +134,7 @@ const formatTotal = (order) => formatOrderTotal(order);
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
     </div>
 </template>

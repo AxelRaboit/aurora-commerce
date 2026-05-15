@@ -13,6 +13,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Eye, Trash2, Download, Calendar, TrendingUp, AlertCircle, FileText, X } from "lucide-vue-next";
 import { formatCents } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -33,7 +34,7 @@ const props = defineProps({
     statusOptions: { type: Array, default: () => [] },
 });
 
-const { items, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
+const { items, loading, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
@@ -113,6 +114,7 @@ const { formatDateNumeric } = useDateFormat();
             </div>
         </div>
 
+        <div class="relative space-y-4">
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
             <table v-else class="w-full text-sm">
@@ -155,6 +157,8 @@ const { formatDateNumeric } = useDateFormat();
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="!!pendingDelete"

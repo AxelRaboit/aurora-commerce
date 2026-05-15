@@ -23,6 +23,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Save, Lock, Eye, EyeOff, CheckCircle, Image as ImageIcon, User, X, Images } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -42,7 +43,7 @@ const props = defineProps({
     contactsSearchPath: { type: String, default: "" },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.galleries },
 );
@@ -78,6 +79,7 @@ const onCoverChange = onGalleryCoverChange;
             </AppButton>
         </div>
 
+        <div class="relative space-y-4">
         <AppNoData v-if="!items.length">
             {{ t("photo.galleries.empty") }}
         </AppNoData>
@@ -127,6 +129,8 @@ const onCoverChange = onGalleryCoverChange;
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showCreate"

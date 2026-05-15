@@ -27,6 +27,7 @@ import {
     X,
 } from "lucide-vue-next";
 import FormPreviewModal from "@editorial/backend/forms/FormPreviewModal.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -126,6 +127,7 @@ const showPreview = ref(false);
                 {{ t("backend.forms.add") }}
             </AppButton>
 
+            <div class="relative space-y-3">
             <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
                 <AppNoData v-if="!loading && !forms.length" :message="t('backend.forms.empty')" />
                 <ul v-else class="divide-y divide-line/60">
@@ -147,6 +149,8 @@ const showPreview = ref(false);
             </div>
 
             <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
+            </div>
         </div>
 
         <div v-if="selectedForm || isCreating" class="flex-1 min-w-0 min-h-0 bg-surface border border-line/60 rounded-xl overflow-hidden flex flex-col">

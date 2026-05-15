@@ -6,6 +6,7 @@ import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { Save } from "lucide-vue-next";
 import { useParameters } from "./composables/useParameters.js";
@@ -53,6 +54,7 @@ onMounted(() => {
             />
         </div>
 
+        <div class="relative space-y-3">
         <div class="sm:hidden space-y-3">
             <p v-if="!parameters.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.parameters.empty') }}</p>
             <div v-for="parameter in parameters.items.value" :key="parameter.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
@@ -129,5 +131,7 @@ onMounted(() => {
             :total-pages="parameters.totalPages.value"
             v-on:change="parameters.goToPage"
         />
+        <AppLoader :active="parameters.loading.value" />
+        </div>
     </div>
 </template>

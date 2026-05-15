@@ -6,6 +6,7 @@ import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { OcrJobStatus, ACTIVE_STATUSES, RETRYABLE_STATUSES } from "@billing/backend/utils/ocrJobStatus.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useOcrJobs } from "@billing/backend/ocr/composables/useOcrJobs.js";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
@@ -36,7 +37,7 @@ const props = defineProps({
 
 const statusFilter = ref("");
 
-const { items, page, totalPages, goToPage, reload, load } = useListPage(
+const { items, loading, page, totalPages, goToPage, reload, load } = useListPage(
     props.listPath,
     {
         initialData: props.jobs,
@@ -85,6 +86,7 @@ onMounted(startPolling);
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('backend.billing.ocr.empty')" />
             <table v-else class="w-full text-sm">
@@ -133,6 +135,8 @@ onMounted(startPolling);
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="!!errorJob"

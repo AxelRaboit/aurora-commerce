@@ -19,6 +19,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import PdfCanvasEditor from "./components/PdfCanvasEditor.vue";
 import SignaturePad from "./components/SignaturePad.vue";
 import SignatureDisplay from "./components/SignatureDisplay.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Trash2, FileOutput, X, Download, FileText, ChevronLeft, Eye, Loader2, PenLine } from "lucide-vue-next";
 
 const viewingDoc = ref(null);
@@ -36,7 +37,7 @@ const props = defineProps({
     templateListPath: { type: String, required: true },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath, { initialSearch: props.search, initialData: props.documents },
 );
 
@@ -68,6 +69,7 @@ const {
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
@@ -105,6 +107,8 @@ const {
             </table>
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <!-- Modale unique : step 1 = picker, step 2 = éditeur -->
         <AppModal

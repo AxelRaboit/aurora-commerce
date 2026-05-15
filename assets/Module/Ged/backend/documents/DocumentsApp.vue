@@ -22,6 +22,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
@@ -65,7 +66,7 @@ const {
     hasActiveFilter, extraParams, applyFilter, resetFilters,
 } = useDocumentFilters(() => reset());
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
@@ -148,6 +149,7 @@ const {
             </AppButton>
         </div>
 
+        <div class="relative space-y-4">
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!items?.length" :message="t('backend.ged.documents.empty')" />
@@ -292,6 +294,8 @@ const {
             </table>
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <!-- Create modal -->
         <AppModal

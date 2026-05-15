@@ -12,6 +12,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Save, X, Tag } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -25,7 +26,7 @@ const props = defineProps({
     listPath: { type: String, required: true },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath, { initialSearch: props.search, initialData: props.categories },
 );
 
@@ -53,6 +54,7 @@ const {
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!items?.length" :message="t('backend.ged.categories.empty')" />
@@ -96,6 +98,8 @@ const {
             </table>
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showCreate"

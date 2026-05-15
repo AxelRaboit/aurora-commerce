@@ -14,6 +14,7 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import InlineField from "@billing/backend/components/InlineField.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Eye, Trash2, X } from "lucide-vue-next";
 import { formatCents } from "@/shared/utils/format/formatPrice.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -36,7 +37,7 @@ const { tiers, showDeleteModal, deleting, updateField, deleteTiers } = useTiersA
 
 const statusFilter = ref("");
 
-const { items, page, totalPages, total, search, onSearch, goToPage, reload } = useListPage(
+const { items, loading, page, totalPages, total, search, onSearch, goToPage, reload } = useListPage(
     props.invoicesListPath,
     {
         initialData: props.invoices,
@@ -155,6 +156,7 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
                 />
             </div>
 
+            <div class="relative space-y-4">
             <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
                 <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
                 <table v-else class="w-full text-sm">
@@ -184,6 +186,8 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
             </div>
 
             <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
+            </div>
         </div>
 
         <AppModal

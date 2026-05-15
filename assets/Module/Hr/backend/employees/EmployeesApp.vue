@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Save, X, Users, Eye, UserCheck } from "lucide-vue-next";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -37,7 +38,7 @@ const props = defineProps({
 const { t } = useI18n();
 const { can } = usePrivileges();
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.initialData },
 );
@@ -51,7 +52,7 @@ function openView(employee) {
 
 const {
     modal,
-    loading,
+    loading: formLoading,
     form,
     errors,
     openCreate,
@@ -88,6 +89,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <!-- Mobile cards -->
         <div class="sm:hidden space-y-3">
             <div v-for="employee in items" :key="employee.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -149,6 +151,8 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <!-- View modal -->
         <AppModal
@@ -277,7 +281,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.cancel') }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" :loading="loading" v-on:click="submit">
+                    <AppButton variant="primary" size="md" :loading="formLoading" v-on:click="submit">
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('shared.common.save') }}
                     </AppButton>

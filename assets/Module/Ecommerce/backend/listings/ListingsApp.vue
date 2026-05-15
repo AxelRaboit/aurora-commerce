@@ -23,6 +23,7 @@ import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Pencil, Trash2, Plus, Eye, Save, X, ShoppingBag } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { required } from "@/shared/utils/validation/validators.js";
@@ -47,7 +48,7 @@ const props = defineProps({
     tagsPath: { type: String, required: true },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.listings },
 );
@@ -89,6 +90,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
@@ -183,6 +185,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showCreate"

@@ -6,6 +6,7 @@ import { useCommentModeration } from "@/Module/Editorial/backend/comments/compos
 import { useCommentFilter } from "@/Module/Editorial/backend/comments/composables/useCommentFilter.js";
 import { CommentStatus } from "@/Module/Editorial/shared/enums/commentStatus.js";
 import { MessageSquare, Check, Ban, Trash2, Eye, X } from "lucide-vue-next";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -91,6 +92,7 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
             </AppButton>
         </div>
 
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-2">
             <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
             <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
@@ -174,6 +176,8 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="!!viewingComment"

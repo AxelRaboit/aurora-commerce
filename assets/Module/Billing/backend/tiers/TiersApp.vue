@@ -13,6 +13,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Eye, Trash2, X } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -36,7 +37,7 @@ const TYPE_SELECT = [
     ...props.typeOptions.map(o => ({ value: o.value, label: t(o.labelKey) })),
 ];
 
-const { items, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
+const { items, loading, page, totalPages, search, onSearch, goToPage, reload } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
@@ -75,6 +76,7 @@ const TYPE_BADGE = {
             />
         </div>
 
+        <div class="relative space-y-4">
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <AppNoData v-if="!items?.length" :message="t('backend.billing.tiers.empty')" />
             <table v-else class="w-full text-sm">
@@ -113,6 +115,8 @@ const TYPE_BADGE = {
         </div>
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="!!pendingDelete"

@@ -21,6 +21,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Eye, Save, X, Users } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -40,7 +41,7 @@ const props = defineProps({
 
 const { formatDateTime } = useDateFormat();
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.contacts },
 );
@@ -75,6 +76,7 @@ const { flatTags } = useContactsTags(props.tagsPath);
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-3">
             <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start gap-3">
@@ -168,6 +170,8 @@ const { flatTags } = useContactsTags(props.tagsPath);
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showShow"

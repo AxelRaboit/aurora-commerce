@@ -17,7 +17,7 @@ export function useParameters(
     const searchInput = ref(initialSearch ?? "");
     const groupFilter = ref(initialGroup ?? "");
 
-    const { items, page, totalPages, goToPage, reset, load } =
+    const { items, loading, page, totalPages, goToPage, reset, load } =
         usePaginatedFetch(
             parametersPath,
             () => ({
@@ -69,6 +69,7 @@ export function useParameters(
 
     return {
         items,
+        loading,
         page,
         totalPages,
         goToPage,

@@ -20,6 +20,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Pencil, Trash2, Plus, Eye, Save, X, Package } from "lucide-vue-next";
 import { formatProductPrice } from "@/shared/utils/format/formatPrice.js";
 import { CURRENCY_OPTIONS, symbolFor } from "@/shared/utils/format/currencies.js";
@@ -38,7 +39,7 @@ const props = defineProps({
     listPath: { type: String, required: true },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.products },
 );
@@ -72,6 +73,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
@@ -142,6 +144,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showCreate"

@@ -25,6 +25,7 @@ import { TASK_PRIORITY_TONE } from "@project/backend/utils/enums/projectTaskPrio
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
@@ -298,7 +299,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         <AppNoData v-if="!listLoading && !projects.length" :message="t('backend.projects.empty')" />
 
         <!-- Project list (no project selected) -->
-        <div v-else-if="!activeProject" class="space-y-3">
+        <div v-else-if="!activeProject" class="relative space-y-4">
             <div class="space-y-1">
                 <button
                     v-for="project in projects"
@@ -324,6 +325,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             </div>
 
             <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="listLoading" />
         </div>
 
         <!-- Project detail (full width) -->

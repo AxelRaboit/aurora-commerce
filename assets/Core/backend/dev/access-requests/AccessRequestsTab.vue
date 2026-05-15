@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -55,6 +56,7 @@ onMounted(() => {
             </AppButton>
         </div>
 
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-3">
             <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</p>
             <div v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -135,6 +137,8 @@ onMounted(() => {
             :total-pages="accessRequests.totalPages.value"
             v-on:change="accessRequests.goToPage"
         />
+        <AppLoader :active="accessRequests.loading.value" />
+        </div>
 
         <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingApprove.value = null">
             <p class="text-sm text-primary">{{ t('backend.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>

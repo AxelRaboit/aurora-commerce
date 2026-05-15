@@ -14,6 +14,7 @@ export function useDealsListPage(props) {
 
     const {
         items,
+        loading,
         page,
         totalPages,
         search: searchInput,
@@ -28,6 +29,7 @@ export function useDealsListPage(props) {
     return {
         stageOptions,
         items,
+        loading,
         page,
         totalPages,
         searchInput,

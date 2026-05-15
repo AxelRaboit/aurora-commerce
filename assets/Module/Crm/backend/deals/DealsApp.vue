@@ -10,6 +10,7 @@ import { useDealsDelete } from "@crm/backend/deals/composables/useDealsDelete.js
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -56,10 +57,10 @@ const { localColumns, kanbanColumnsLoaded, kanbanLoading, activeStage, totalBySt
 
 const { view, setView } = useDealsViewToggle(props, ensureKanbanColumns);
 
-const { stageOptions, items, page, totalPages, searchInput, onSearch, goToPage, reset } =
+const { stageOptions, items, loading, page, totalPages, searchInput, onSearch, goToPage, reset } =
     useDealsListPage(props);
 
-const { modal, form, errors, loading, openCreate, openEdit, submit } = useDealsForm(
+const { modal, form, errors, loading: formLoading, openCreate, openEdit, submit } = useDealsForm(
     props.createPath,
     props.updatePath,
     reset,
@@ -124,6 +125,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                         </AppButton>
                     </template>
                 </AppListToolbar>
+                <div class="relative space-y-4">
                 <div class="sm:hidden space-y-3">
                     <div v-for="deal in items" :key="deal.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                         <div class="flex items-start justify-between gap-3">
@@ -186,6 +188,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 </div>
 
                 <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+                <AppLoader :active="loading" />
+                </div>
             </div>
 
             <!-- KANBAN VIEW -->
@@ -310,7 +314,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 <template #footer>
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" type="button" v-on:click="modal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                        <AppButton variant="primary" size="md" type="submit" :loading="loading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
+                        <AppButton variant="primary" size="md" type="submit" :loading="formLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.save') }}</AppButton>
                     </AppModalFooter>
                 </template>
             </AppModal>

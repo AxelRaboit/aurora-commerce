@@ -14,6 +14,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppLink from "@/shared/components/nav/AppLink.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Eye, Save, X, Building2 } from "lucide-vue-next";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
@@ -29,7 +30,7 @@ const props = defineProps({
     showPath: { type: String, default: "" },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     { initialSearch: props.search, initialData: props.companies },
 );
@@ -62,6 +63,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 </AppButton>
             </template>
         </AppListToolbar>
+        <div class="relative space-y-4">
         <div class="sm:hidden space-y-3">
             <div v-for="company in items" :key="company.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                 <div class="flex items-start justify-between gap-3">
@@ -127,6 +129,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </div>
 
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <AppModal
             :show="showCreate"

@@ -16,6 +16,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X, ScanSearch, Settings } from "lucide-vue-next";
 
 const { t } = useI18n();
@@ -32,7 +33,7 @@ const props = defineProps({
     mediaPickerPath: { type: String, default: "" },
 });
 
-const { items, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath, { initialSearch: props.search, initialData: props.templates },
 );
 
@@ -63,6 +64,7 @@ const {
             </template>
         </AppListToolbar>
 
+        <div class="relative space-y-4">
         <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
             <table class="w-full text-sm">
                 <thead>
@@ -103,6 +105,8 @@ const {
             </table>
         </div>
         <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+        <AppLoader :active="loading" />
+        </div>
 
         <!-- Create modal -->
         <AppModal
