@@ -43,11 +43,11 @@ const hasChildren = computed(() => Array.isArray(props.node.children) && props.n
 
             <span
                 v-if="draggable"
-                class="drag-handle opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-line/50 shrink-0"
+                class="drag-handle cursor-grab active:cursor-grabbing p-0.5 rounded text-muted hover:text-primary hover:bg-line/50 shrink-0"
                 :title="$t('notes.markdown.drag_handle')"
                 v-on:click.stop
             >
-                <GripVertical class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
             </span>
 
             <button
@@ -68,12 +68,12 @@ const hasChildren = computed(() => Array.isArray(props.node.children) && props.n
         <VueDraggable
             v-if="draggable && expanded"
             v-model="node.children"
-            :group="groupName"
+            :group="{ name: groupName, pull: true, put: true }"
             handle=".drag-handle"
             :animation="150"
             ghost-class="opacity-50"
             tag="ul"
-            class="mt-0.5 min-h-1"
+            class="mt-0.5 min-h-[1.25rem] pl-3 border-l border-transparent hover:border-line/60 transition-colors"
             v-on:start="emit('drag-start')"
             v-on:end="emit('drag-end')"
         >

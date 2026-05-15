@@ -112,12 +112,12 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                     <VueDraggable
                         v-if="dragEnabled"
                         v-model="tree"
-                        group="notes-tree"
+                        :group="{ name: 'notes-tree', pull: true, put: true }"
                         handle=".drag-handle"
                         :animation="150"
                         ghost-class="opacity-50"
                         tag="ul"
-                        class="space-y-0.5"
+                        class="space-y-0.5 min-h-[2rem]"
                         v-on:start="onDragStart"
                         v-on:end="onDragEnd"
                     >
