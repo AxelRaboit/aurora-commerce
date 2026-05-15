@@ -1,0 +1,252 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Tests\Integration\Controller\Backend;
+
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\User\Entity\User;
+use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
+use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
+use Aurora\Tests\Integration\IntegrationTestCase;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+final class MarkdownNotesControllerTest extends IntegrationTestCase
+{
+    private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
+    /** @var list<int> */
+    private array $createdNoteIds = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $admin = $userRepository->findOneBy(['email' => 'dev@aurora.app', 'type' => 'backend']);
+        self::assertInstanceOf(User::class, $admin);
+        $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
+        $this->createdNoteIds = [];
+    }
+
+    protected function tearDown(): void
+    {
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $repository = static::getContainer()->get(MarkdownNoteRepository::class);
+
+        foreach ($this->createdNoteIds as $id) {
+            $note = $repository->find($id);
+            if ($note instanceof MarkdownNoteInterface) {
+                $entityManager->remove($note);
+            }
+        }
+        $entityManager->flush();
+        $entityManager->clear();
+
+        parent::tearDown();
+    }
+
+    public function testIndexReturnsEmptyListForFreshUser(): void
+    {
+        [$status, $body] = $this->getJson('backend_notes_markdown_index');
+
+        self::assertSame(200, $status);
+        self::assertTrue($body['success']);
+        self::assertSame([], $body['notes']);
+    }
+
+    public function testCreateThenShowRoundtripsContent(): void
+    {
+        $created = $this->createNote(title: 'My first note', content: "# Hello\n\nBody here.", tags: ['draft']);
+
+        self::assertSame('My first note', $created['title']);
+        self::assertSame("# Hello\n\nBody here.", $created['content']);
+        self::assertSame(['draft'], $created['tags']);
+        self::assertSame(0, $created['position']);
+        self::assertNull($created['parentId']);
+
+        [$status, $body] = $this->getJson('backend_notes_markdown_show', ['id' => $created['id']]);
+        self::assertSame(200, $status);
+        self::assertSame($created['content'], $body['note']['content']);
+    }
+
+    public function testCreatedRowOnDatabaseIsEncrypted(): void
+    {
+        $note = $this->createNote(title: 'secret-marker-xyz', content: 'plaintext-marker-xyz');
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $row = $entityManager->getConnection()
+            ->fetchAssociative('SELECT title, content FROM core_markdown_notes WHERE id = :id', ['id' => $note['id']]);
+
+        self::assertIsArray($row);
+        self::assertNotSame('secret-marker-xyz', $row['title']);
+        self::assertNotSame('plaintext-marker-xyz', $row['content']);
+        self::assertStringNotContainsString('plaintext-marker-xyz', (string) $row['content']);
+    }
+
+    public function testUpdateChangesFields(): void
+    {
+        $note = $this->createNote(title: 'old');
+
+        [$status, $body] = $this->postJson('backend_notes_markdown_update', ['id' => $note['id']], [
+            'title' => 'new',
+            'content' => 'updated body',
+            'tags' => ['urgent', 'work'],
+        ]);
+
+        self::assertSame(200, $status);
+        self::assertSame('new', $body['note']['title']);
+        self::assertSame('updated body', $body['note']['content']);
+        self::assertSame(['urgent', 'work'], $body['note']['tags']);
+    }
+
+    public function testCreateAssignsIncrementingPositionsForSiblings(): void
+    {
+        $first = $this->createNote(title: 'A');
+        $second = $this->createNote(title: 'B');
+        $third = $this->createNote(title: 'C');
+
+        self::assertSame(0, $first['position']);
+        self::assertSame(1, $second['position']);
+        self::assertSame(2, $third['position']);
+    }
+
+    public function testMoveToChildSetsParentId(): void
+    {
+        $parent = $this->createNote(title: 'parent');
+        $child = $this->createNote(title: 'child');
+
+        [$status, $body] = $this->postJson('backend_notes_markdown_move', ['id' => $child['id']], [
+            'parentId' => $parent['id'],
+        ]);
+
+        self::assertSame(200, $status);
+        self::assertSame($parent['id'], $body['note']['parentId']);
+    }
+
+    public function testMoveCannotCreateCycle(): void
+    {
+        $a = $this->createNote(title: 'A');
+        $b = $this->createNote(title: 'B');
+
+        // make B a child of A
+        $this->postJson('backend_notes_markdown_move', ['id' => $b['id']], ['parentId' => $a['id']]);
+
+        // try to move A under B — would create a cycle
+        [$status, $body] = $this->postJson('backend_notes_markdown_move', ['id' => $a['id']], ['parentId' => $b['id']]);
+
+        self::assertSame(400, $status);
+        self::assertFalse($body['success']);
+        self::assertSame('cycle', $body['error']);
+    }
+
+    public function testReorderAssignsPositionsByListOrder(): void
+    {
+        $a = $this->createNote(title: 'A');
+        $b = $this->createNote(title: 'B');
+        $c = $this->createNote(title: 'C');
+
+        [$status, ] = $this->postJson('backend_notes_markdown_reorder', [], [
+            'ids' => [$c['id'], $a['id'], $b['id']],
+        ]);
+
+        self::assertSame(200, $status);
+
+        $repository = static::getContainer()->get(MarkdownNoteRepository::class);
+        self::assertSame(0, $repository->find($c['id'])->getPosition());
+        self::assertSame(1, $repository->find($a['id'])->getPosition());
+        self::assertSame(2, $repository->find($b['id'])->getPosition());
+    }
+
+    public function testDeleteRemovesTheNote(): void
+    {
+        $note = $this->createNote(title: 'doomed');
+        $id = $note['id'];
+
+        [$status, $body] = $this->postJson('backend_notes_markdown_delete', ['id' => $id], []);
+        self::assertSame(200, $status);
+        self::assertTrue($body['success']);
+
+        $repository = static::getContainer()->get(MarkdownNoteRepository::class);
+        self::assertNull($repository->find($id));
+
+        // remove from cleanup list since it's already gone
+        $this->createdNoteIds = array_values(array_filter($this->createdNoteIds, fn ($i) => $i !== $id));
+    }
+
+    public function testShowReturnsNotFoundForUnknownId(): void
+    {
+        [$status, $body] = $this->getJson('backend_notes_markdown_show', ['id' => 999999]);
+        self::assertSame(404, $status);
+        self::assertFalse($body['success']);
+    }
+
+    /**
+     * @param list<string> $tags
+     *
+     * @return array<string, mixed>
+     */
+    private function createNote(
+        string $title = 'Note',
+        string $content = '',
+        array $tags = [],
+        ?int $parentId = null,
+    ): array {
+        [$status, $body] = $this->postJson('backend_notes_markdown_create', [], [
+            'title' => $title,
+            'content' => $content,
+            'tags' => $tags,
+            'parentId' => $parentId,
+        ]);
+        self::assertSame(200, $status, 'note creation should succeed; got body: '.json_encode($body));
+
+        $note = $body['note'];
+        $this->createdNoteIds[] = $note['id'];
+
+        return $note;
+    }
+
+    /**
+     * @param array<string, mixed> $routeParameters
+     *
+     * @return array{0: int, 1: array<string, mixed>}
+     */
+    private function getJson(string $route, array $routeParameters = []): array
+    {
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate($route, $routeParameters));
+
+        return [
+            $this->client->getResponse()->getStatusCode(),
+            json_decode((string) $this->client->getResponse()->getContent(), true) ?? [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $routeParameters
+     * @param array<string, mixed> $payload
+     *
+     * @return array{0: int, 1: array<string, mixed>}
+     */
+    private function postJson(string $route, array $routeParameters, array $payload): array
+    {
+        $this->client->request(
+            HttpMethodEnum::Post->value,
+            $this->urlGenerator->generate($route, $routeParameters),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload),
+        );
+
+        return [
+            $this->client->getResponse()->getStatusCode(),
+            json_decode((string) $this->client->getResponse()->getContent(), true) ?? [],
+        ];
+    }
+}
