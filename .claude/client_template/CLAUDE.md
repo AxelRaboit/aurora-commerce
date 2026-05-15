@@ -24,6 +24,12 @@ Les mémoires sont des **symlinks** vers `vendor/axelraboit/aurora/.claude/memor
 créés par `make aurora-update`. Elles restent toujours en phase avec la version
 installée d'aurora-core. **Ne pas éditer ces fichiers** — ils vivent dans vendor.
 
+### Conventions partagées aurora-shared (Vue, fetch, i18n, JS, process)
+[`.claude/memory/aurora-shared/MEMORY.md`](.claude/memory/aurora-shared/MEMORY.md)
+— conventions qui s'appliquent à tout code Aurora, core ou client : composants
+Vue, `useRequest`/fetch, i18n, JS, AppLoader, commits, préférences. **À lire
+en priorité** avant d'écrire du code Vue ou JS dans ce projet.
+
 ### Contexte aurora-core (conventions internes du bundle)
 [`.claude/memory/aurora-core/MEMORY.md`](.claude/memory/aurora-core/MEMORY.md)
 — conventions, décisions, pièges et heuristiques du bundle aurora-core.

@@ -364,10 +364,11 @@ sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + docs from aurora-core ve
 		echo "⚠️  $(AURORA)/.claude/client_template/CLAUDE.md not found — skipping"; \
 	fi
 	@mkdir -p .claude/memory
-	@rm -rf .claude/memory/aurora-core .claude/memory/aurora-client
+	@rm -rf .claude/memory/aurora-core .claude/memory/aurora-client .claude/memory/aurora-shared
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-core .claude/memory/aurora-core
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-client .claude/memory/aurora-client
-	@echo "✅ .claude/memory/aurora-core + aurora-client symlinked from vendor"
+	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-shared .claude/memory/aurora-shared
+	@echo "✅ .claude/memory/aurora-core + aurora-client + aurora-shared symlinked from vendor"
 	@mkdir -p docs
 	@rm -rf docs/aurora-core docs/aurora-client
 	@ln -sfn ../$(AURORA)/docs/aurora-core docs/aurora-core
