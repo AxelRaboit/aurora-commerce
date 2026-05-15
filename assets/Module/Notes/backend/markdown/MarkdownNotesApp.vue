@@ -17,7 +17,9 @@ import AppInput from '@shared/components/form/AppInput.vue';
 import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
 import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
-import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose } from 'lucide-vue-next';
+import AppModal from '@shared/components/overlay/AppModal.vue';
+import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
+import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose, X } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -48,7 +50,10 @@ const {
     selectNote,
     createNote,
     saveSelected,
-    deleteSelected,
+    pendingDelete,
+    requestDelete,
+    cancelDelete,
+    confirmDelete,
     onWikiLinkClick,
     onCheckboxToggle,
     refreshList,
@@ -210,8 +215,7 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                     <AppButton
                         variant="danger"
                         size="md"
-                        :loading="deleting"
-                        v-on:click="deleteSelected"
+                        v-on:click="requestDelete"
                     >
                         <Trash2 class="w-4 h-4" :stroke-width="2" />
                         <span class="sr-only">{{ t('notes.markdown.delete') }}</span>
@@ -274,5 +278,33 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
             v-on:close="sidePanelOpen = false"
             v-on:navigate="selectNote"
         />
+
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="!deleting"
+            :title="t('notes.markdown.delete')"
+            :icon="Trash2"
+            v-on:close="cancelDelete"
+        >
+            <p class="text-sm text-primary">
+                {{ t('notes.markdown.confirm_delete', { title: pendingDelete?.title || t('notes.markdown.untitled') }) }}
+            </p>
+            <p class="text-sm text-secondary mt-2">
+                {{ t('notes.markdown.delete_warning') }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" :disabled="deleting" v-on:click="cancelDelete">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        <span>{{ t('notes.markdown.cancel') }}</span>
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleting" v-on:click="confirmDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        <span>{{ t('notes.markdown.delete') }}</span>
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
     </div>
 </template>

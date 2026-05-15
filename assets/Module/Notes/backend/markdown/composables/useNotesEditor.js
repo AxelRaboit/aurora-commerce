@@ -21,6 +21,7 @@ export function useNotesEditor({ api, initialNotes }) {
     const form = ref({ title: '', content: '', tags: [] });
     const saving = ref(false);
     const deleting = ref(false);
+    const pendingDelete = ref(null);
 
     const selectedNote = computed(
         () => notes.value.find((n) => n.id === selectedId.value) ?? null,
@@ -87,21 +88,35 @@ export function useNotesEditor({ api, initialNotes }) {
         }
     }
 
-    async function deleteSelected() {
+    /**
+     * Open the delete confirmation modal for the currently selected note.
+     * The actual server call lives in `confirmDelete()` so the UI can
+     * surface a styled modal instead of the native window.confirm.
+     */
+    function requestDelete() {
         if (!selectedNote.value) return;
-        const label = selectedNote.value.title || t('notes.markdown.untitled');
-        if (!window.confirm(t('notes.markdown.confirm_delete', { title: label }))) {
-            return;
-        }
+        pendingDelete.value = selectedNote.value;
+    }
+
+    function cancelDelete() {
+        pendingDelete.value = null;
+    }
+
+    async function confirmDelete() {
+        if (!pendingDelete.value || deleting.value) return;
+        const targetId = pendingDelete.value.id;
         deleting.value = true;
         try {
-            const { ok } = await api.remove(selectedNote.value.id);
+            const { ok } = await api.remove(targetId);
             if (!ok) {
                 toast.error(t('notes.markdown.errors.delete_failed'));
                 return;
             }
-            selectedId.value = null;
-            form.value = { title: '', content: '', tags: [] };
+            if (selectedId.value === targetId) {
+                selectedId.value = null;
+                form.value = { title: '', content: '', tags: [] };
+            }
+            pendingDelete.value = null;
             await refreshList();
         } finally {
             deleting.value = false;
@@ -166,12 +181,15 @@ export function useNotesEditor({ api, initialNotes }) {
         isDirty,
         saving,
         deleting,
+        pendingDelete,
         // actions
         refreshList,
         selectNote,
         createNote,
         saveSelected,
-        deleteSelected,
+        requestDelete,
+        cancelDelete,
+        confirmDelete,
         onWikiLinkClick,
         onCheckboxToggle,
     };

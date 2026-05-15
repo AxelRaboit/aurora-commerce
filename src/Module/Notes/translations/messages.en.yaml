@@ -22,7 +22,9 @@ notes:
     title: Markdown notes
     save: Save
     delete: Delete
+    cancel: Cancel
     saved: Note saved
+    delete_warning: This action cannot be undone. Child notes will be detached from this parent.
     untitled: Untitled
     title_placeholder: Note title…
     search_placeholder: Search the tree…

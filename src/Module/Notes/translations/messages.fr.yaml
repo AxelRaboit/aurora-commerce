@@ -22,7 +22,9 @@ notes:
     title: Notes Markdown
     save: Enregistrer
     delete: Supprimer
+    cancel: Annuler
     saved: Note enregistrée
+    delete_warning: Cette action est irréversible. Les sous-notes seront détachées de leur parent.
     untitled: Sans titre
     title_placeholder: Titre de la note…
     search_placeholder: Rechercher dans l'arbo…
@@ -34,6 +36,7 @@ notes:
     create_root: Nouvelle note
     create_child: Ajouter une sous-note
     confirm_delete: 'Supprimer définitivement « {title} » ?'
+
     confirm_discard_changes: Vous avez des modifications non enregistrées. Les abandonner ?
     wiki_link_not_found: 'Aucune note ne correspond à « {title} ».'
     view:
