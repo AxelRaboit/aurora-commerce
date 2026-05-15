@@ -5,6 +5,7 @@ import { toast } from 'vue-sonner';
 import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
 import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
+import { useResizable } from '@shared/composables/useResizable.js';
 import { toggleCheckboxInContent } from '@notes/backend/markdown/composables/markedExtensions/markedCheckboxes.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
@@ -12,6 +13,7 @@ import NoteSidePanel from '@notes/backend/markdown/components/NoteSidePanel.vue'
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppInput from '@shared/components/form/AppInput.vue';
+import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
 import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose } from 'lucide-vue-next';
@@ -34,14 +36,26 @@ const { t } = useI18n();
 const api = useMarkdownNotesApi(props);
 const { mode: viewMode } = useViewMode();
 
+// Editor pane width in split mode — drag the seam between editor and preview.
+const editorPaneRef = ref(null);
+const { size: editorWidth, startResize: startSplitResize, dragging: splitDragging } = useResizable({
+    key: 'aurora.notes.markdown.editorWidth',
+    defaultValue: 540,
+    min: 240,
+    max: 1200,
+    axis: 'x',
+    getOrigin: () => editorPaneRef.value,
+});
+
 const notes = ref([...props.notes]);
 const selectedId = ref(null);
 const form = ref({ title: '', content: '', tags: [] });
 const saving = ref(false);
 const deleting = ref(false);
 const sidePanelOpen = ref(false);
+const treeQuery = ref('');
 
-const { tree } = useNoteTree(notes);
+const { tree } = useNoteTree(notes, treeQuery);
 
 const selectedNote = computed(() => notes.value.find((n) => n.id === selectedId.value) || null);
 const isDirty = computed(() => {
@@ -185,6 +199,13 @@ function beforeUnloadHandler(event) {
                 </AppIconButton>
             </div>
 
+            <div class="px-3 pt-2">
+                <AppSearchInput
+                    v-model="treeQuery"
+                    :placeholder="t('notes.markdown.search_placeholder')"
+                />
+            </div>
+
             <div class="flex-1 overflow-auto p-2">
                 <ul v-if="tree.length > 0" class="space-y-0.5">
                     <NoteTreeItem
@@ -196,6 +217,12 @@ function beforeUnloadHandler(event) {
                         v-on:create-child="createNote"
                     />
                 </ul>
+                <AppNoData
+                    v-else-if="treeQuery.trim() !== ''"
+                    :title="t('notes.markdown.search_no_results')"
+                    :description="t('notes.markdown.search_no_results_description', { query: treeQuery })"
+                    :icon="FileText"
+                />
                 <AppNoData
                     v-else
                     :title="t('notes.markdown.empty.title')"
@@ -270,8 +297,10 @@ function beforeUnloadHandler(event) {
                 <div class="flex-1 flex overflow-hidden">
                     <div
                         v-if="viewMode !== 'preview'"
-                        class="flex-1 p-4 overflow-auto"
-                        :class="viewMode === 'split' ? 'border-r border-line' : ''"
+                        ref="editorPaneRef"
+                        class="p-4 overflow-auto"
+                        :class="viewMode === 'split' ? 'shrink-0' : 'flex-1'"
+                        :style="viewMode === 'split' ? { width: `${editorWidth}px` } : {}"
                     >
                         <AppTextarea
                             v-model="form.content"
@@ -280,6 +309,15 @@ function beforeUnloadHandler(event) {
                             :rows="20"
                         />
                     </div>
+
+                    <!-- Resize handle (split mode only). Drag to redistribute width. -->
+                    <div
+                        v-if="viewMode === 'split'"
+                        class="w-1 shrink-0 cursor-col-resize bg-line hover:bg-accent-500/40 transition-colors"
+                        :class="splitDragging ? 'bg-accent-500/60' : ''"
+                        :title="t('notes.markdown.resize_handle')"
+                        v-on:pointerdown="startSplitResize"
+                    ></div>
 
                     <div
                         v-if="viewMode !== 'edit'"

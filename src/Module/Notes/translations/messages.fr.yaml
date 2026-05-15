@@ -25,6 +25,10 @@ notes:
     saved: Note enregistrée
     untitled: Sans titre
     title_placeholder: Titre de la note…
+    search_placeholder: Rechercher dans l'arbo…
+    search_no_results: Aucun résultat
+    search_no_results_description: 'Aucune note ne correspond à « {query} ».'
+    resize_handle: Glisser pour redimensionner
     content_placeholder: "# Écrivez du markdown ici\n\nReliez vos notes avec [[Titre]]"
     create_root: Nouvelle note
     create_child: Ajouter une sous-note
