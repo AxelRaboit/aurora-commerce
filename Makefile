@@ -323,12 +323,6 @@ fd: ## Fix code and build dev assets
 ft: ## Fix code and run all tests
 	make fix && make test
 
-# === Client ===
-create-client: ## Scaffold a new Aurora client project (prompts for project name)
-	@read -p "Project name: " name && \
-	test -n "$$name" || (echo "❌ Project name cannot be empty" && exit 1) && \
-	bin/create-client "$$name"
-
 # === Claude Memory ===
 sync-claude-memory: ## Sync .claude/memory/aurora-core/ into the global Claude memory for this project
 	@DEST="$(HOME)/.claude/projects/$$(pwd | sed 's|/|-|g')/memory"; \

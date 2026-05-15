@@ -1,8 +1,8 @@
 # Setup — Installation locale
 
-> **Nouveau projet ?** Si tu pars d'aurora-client pour démarrer un vrai projet,
-> commence par `make install-dev` puis lance `make init-project` pour supprimer
-> tous les exemples showcase. Voir la section [Démarrer un nouveau projet](#démarrer-un-nouveau-projet).
+> **Nouveau projet ?** Aurora-client est le template à dupliquer. Voir la
+> section [Démarrer un nouveau projet](#démarrer-un-nouveau-projet) pour les
+> étapes après le clone.
 
 ## Prérequis
 
@@ -163,22 +163,19 @@ automatiquement par `make db-test`. Tous les tests doivent passer en vert.
 
 ## Démarrer un nouveau projet
 
-Aurora-client est le point de départ pour tout nouveau projet. Une fois
-`make install-dev` fait, supprime le code showcase :
+Aurora-client est le **template à dupliquer** pour tout nouveau projet :
 
 ```bash
-make init-project
+git clone git@github.com:<org>/aurora-client.git mon-projet
+cd mon-projet
+rm -rf .git && git init
 ```
 
-Cette commande :
-- Supprime le module Tracking, l'extension Agency, les overrides Vue et les templates showcase
-- Restaure des configs propres (`services.yaml`, `doctrine.yaml`, `twig.yaml`)
-- Supprime les migrations showcase et recrée la base depuis zéro
-- Resynchronise les paramètres, privileges et menus Aurora
+Ensuite :
 
-Après `make init-project`, ton projet est vierge — prêt à recevoir ton propre code.
-
-**Étapes suivantes recommandées :**
-1. Mettre à jour `composer.json` (name, description)
-2. Mettre à jour `.env` (`APP_NAME`, `DATABASE_URL`)
-3. `git commit -m "chore: init project from aurora-client template"`
+1. Mettre à jour `composer.json` (name, description).
+2. Mettre à jour `.env` (`APP_NAME`, `DATABASE_URL`).
+3. Supprimer le code showcase qui ne te sert pas (module Tracking, extension Agency,
+   overrides Vue, templates showcase, migrations).
+4. `make install-dev` puis `make migrate` pour repartir d'une base propre.
+5. `git commit -m "chore: init project from aurora-client template"`.

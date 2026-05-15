@@ -233,13 +233,16 @@ pour assigner la permission.
 ## 8. Nettoyer le template (showcase → projet réel)
 
 Le template `aurora-client` ship avec un module de démo (`Tracking`, override
-d'`Agency`, migrations showcase). Pour repartir d'une base propre :
+d'`Agency`, migrations showcase). Pour repartir d'une base propre, supprimer
+manuellement à la racine du nouveau projet :
 
-```bash
-make init-project       # demande confirmation, supprime tout le showcase et reset la DB
-```
+- `src/Module/Tracking/` (module de démo)
+- `src/Entity/Agency.php`, `src/Dto/AgencyInput*.php`, `src/Manager/AgencyManager.php`, `src/Serializer/AgencySerializer.php` (extension showcase)
+- `assets/client/Module/Tracking/` et `assets/client/Overrides/` (Vue showcase)
+- `templates/Module/Tracking/` et `templates/Core/` (Twig showcase)
+- `migrations/*.php` (puis `make migrate` pour repartir de la migration aurora-core)
 
-À ne lancer **qu'une seule fois**, en début de projet réel.
+Ensuite : `make fixtures` (ou `migrate` puis seeders du nouveau projet).
 
 ---
 
