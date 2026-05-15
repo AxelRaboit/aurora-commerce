@@ -77,7 +77,7 @@ final class MountPointEncryptionServiceTest extends TestCase
         $encrypted = $service->encrypt($plaintext);
         $decoded = base64_decode($encrypted, strict: true);
         // Tamper with the last byte
-        $tampered = base64_encode(substr($decoded, 0, -1).chr((ord($decoded[-1]) + 1) % 256));
+        $tampered = base64_encode(mb_substr($decoded, 0, -1).chr((ord($decoded[-1]) + 1) % 256));
 
         self::assertNull($service->decrypt($tampered));
     }

@@ -64,7 +64,7 @@ final class FormFieldTest extends TestCase
     public function testAddTranslationIgnoresDuplicateLocale(): void
     {
         $field = new FormField();
-        $first  = (new FormFieldTranslation())->setLocale('fr')->setLabel('Nom');
+        $first = (new FormFieldTranslation())->setLocale('fr')->setLabel('Nom');
         $second = (new FormFieldTranslation())->setLocale('fr')->setLabel('Prénom');
 
         $field->addTranslation($first);

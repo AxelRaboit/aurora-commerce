@@ -71,8 +71,8 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
         $repo = $this->createStub(MediaRepository::class);
         $repo->method('findBy')->willReturn([$existing, $new]);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $audit = $this->createMock(AuditLogger::class);
+        $em = $this->createStub(EntityManagerInterface::class);
+        $audit = $this->createStub(AuditLogger::class);
 
         $task = (new ProjectTask())->setProject(new Project());
         $task->addAttachment($existing);
