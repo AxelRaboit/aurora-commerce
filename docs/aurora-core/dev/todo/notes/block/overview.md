@@ -1,23 +1,24 @@
-# Notes Notion-like (EditorJS) — vue d'ensemble
+# Notes Block (EditorJS) — vue d'ensemble
 
-Sous-module miroir du sous-module Obsidian-like, **même UX globale**
-(arbo à gauche + éditeur full-page au centre + tags + recherche), mais
-l'éditeur est **[EditorJS](https://editorjs.io)** (block editor type
-Notion) au lieu de markdown texte.
+Sous-module miroir du sous-module Markdown, **même UX globale** (arbo à
+gauche + éditeur full-page au centre + tags + recherche), mais l'éditeur
+est **[EditorJS](https://editorjs.io)** : chaque élément de contenu est
+un block typé (paragraph, header, list, image, code…) sérialisé en JSON
+au lieu d'être du markdown texte.
 
-## Pourquoi un sous-module séparé plutôt qu'un toggle dans Obsidian-like
+## Pourquoi un sous-module séparé plutôt qu'un toggle dans Markdown
 
 - **Storage différent** : EditorJS sérialise en **JSON structuré** (array
   de blocks typés), pas en texte. Stocker du JSON dans le même champ
   `content` que du markdown polluerait le schéma et la logique Manager.
 - **Pas de wiki-links / graph** : EditorJS n'a pas de syntaxe `[[…]]`
-  native. Toute la plomberie wiki-links + backlinks + graph d'Obsidian-like
-  ne s'applique pas.
-- **Cibles utilisateurs distinctes** : Obsidian-like = utilisateur tech
-  (raw markdown, syntaxe) ; Notion-like = utilisateur WYSIWYG block-based
-  qui ne veut pas taper de markdown.
+  native. Toute la plomberie wiki-links + backlinks + graph du
+  sous-module Markdown ne s'applique pas.
+- **Cibles utilisateurs distinctes** : Markdown = utilisateur tech (raw
+  markdown, syntaxe) ; Block = utilisateur WYSIWYG block-based qui ne
+  veut pas taper de markdown.
 
-## Ce qui est identique au sous-module Obsidian-like
+## Ce qui est identique au sous-module Markdown
 
 - Arborescence parent/enfant illimitée
 - Tags (json array)
@@ -25,16 +26,16 @@ Notion) au lieu de markdown texte.
 - Ownership par user (voter Symfony)
 - Convention 5-couches (Entity / DTO / Manager / Serializer / Vue)
 - Chiffrement at-rest du contenu (réutiliser le Type Doctrine de
-  [`../obsidian/encryption.md`](../obsidian/encryption.md))
-- Images upload/serve/cleanup — partager le `NoteImageController`
-  d'Obsidian-like (c'est juste un stockage de fichiers)
+  [`../markdown/encryption.md`](../markdown/encryption.md))
+- Images upload/serve/cleanup — partager le `NoteImageController` du
+  sous-module Markdown (c'est juste un stockage de fichiers)
 - Templates, raccourcis clavier, sommaire (TOC)
 
 ## Ce qui change
 
-| Aspect | Obsidian-like | Notion-like (EditorJS) |
+| Aspect | Markdown | Block (EditorJS) |
 |---|---|---|
-| Champ contenu | `content` text encrypted | `content_blocks` json encrypted |
+| Champ contenu | `content` text encrypted | `contentBlocks` json encrypted |
 | Rendu preview | marked.js + extensions | EditorJS renderer (ou `editorjs-html`) |
 | Wiki-links | ✅ `[[…]]` | ❌ |
 | Backlinks / mentions | ✅ | ❌ |
@@ -46,8 +47,8 @@ Notion) au lieu de markdown texte.
 
 ## Décisions structurelles
 
-- [x] **Entité séparée** `NotionNote` (pas de discriminator avec
-      `ObsidianNote`). Justification : champ contenu de type différent
+- [x] **Entité séparée** `BlockNote` (pas de discriminator avec
+      `MarkdownNote`). Justification : champ contenu de type différent
       (json vs text), pas de wiki-link cache, arbo propre à chaque
       sous-module.
 - [x] **Choix EditorJS** confirmé. Bibliothèque mature, plugins riches,
@@ -58,21 +59,21 @@ Notion) au lieu de markdown texte.
 - [ ] **Compat mobile** : EditorJS a une UX mobile correcte mais à
       tester avant de s'engager.
 
-## Sous-tâches (à détailler une fois Obsidian-like stabilisé)
+## Sous-tâches (à détailler une fois Markdown stabilisé)
 
-- Entity & schéma (mêmes champs qu'`ObsidianNote` sauf `content` →
-  `content_blocks` json encrypted)
-- Manager & Serializer (réutiliser le pattern Obsidian-like ; supprimer
-  la logique wiki-links/graph)
+- Entity & schéma (mêmes champs que `MarkdownNote` sauf `content` →
+  `contentBlocks` json encrypted)
+- Manager & Serializer (réutiliser le pattern Markdown ; supprimer la
+  logique wiki-links/graph)
 - Éditeur Vue : intégrer `@editorjs/editorjs` + plugins, wrapper Vue 3
   custom (ou lib existante), gérer save debounced du JSON
 
 ## Ordre d'exécution
 
-Démarrer **après** le sous-module Obsidian-like stabilisé. Réutilisations
+Démarrer **après** le sous-module Markdown stabilisé. Réutilisations
 directes :
-- Type Doctrine encrypted (`../obsidian/encryption.md`)
-- Controller images (`../obsidian/images.md`)
-- Pattern Manager + voter ownership (`../obsidian/manager.md`)
+- Type Doctrine encrypted (`../markdown/encryption.md`)
+- Controller images (`../markdown/images.md`)
+- Pattern Manager + voter ownership (`../markdown/manager.md`)
 - Composable `useNoteTree.js` (drag-drop arbo) — strictement identique
 - i18n base notes

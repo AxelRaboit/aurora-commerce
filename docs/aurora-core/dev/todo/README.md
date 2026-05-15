@@ -25,8 +25,8 @@ Module `src/Module/Notes/` à créer, regroupant deux sous-modules complémentai
 de prise de notes. Vue d'ensemble et arbitrages communs dans
 [`notes/README.md`](notes/README.md).
 
-- [Sous-module Obsidian-like](notes/obsidian/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
-- [Sous-module Notion-like](notes/notion/overview.md) — éditeur block-based EditorJS
+- [Sous-module Markdown](notes/markdown/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
+- [Sous-module Block](notes/block/overview.md) — éditeur block-based EditorJS
 
 ---
 

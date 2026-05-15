@@ -2,50 +2,51 @@
 
 Le module `src/Module/Notes/` regroupe deux sous-modules de prise de
 notes, partageant l'infra (arborescence, tags, recherche, images,
-chiffrement, ownership) mais avec deux UX distinctes :
+chiffrement, ownership) mais avec deux techniques de stockage et deux
+UX distinctes :
 
-- **Obsidian-like** — éditeur Markdown + wiki-links + graph
-- **Notion-like** — éditeur block-based EditorJS
+- **Markdown** — éditeur texte markdown + wiki-links + graph
+- **Block** — éditeur block-based (JSON typé) via EditorJS
 
 ## Sous-modules
 
-### [`obsidian/`](obsidian/) — Notes Obsidian-like (port d'Onyx)
+### [`markdown/`](markdown/) — Notes Markdown (port d'Onyx)
 
-Éditeur Markdown complet façon Obsidian : wiki-links `[[…]]`, graph view,
-callouts, slash commands, templates, images drag-drop. Source à porter :
+Éditeur Markdown complet : wiki-links `[[…]]`, graph view, callouts,
+slash commands, templates, images drag-drop. Source à porter :
 `/home/axel/Documents/dev/personal/onyx/`.
 
-- [Entity & schéma](obsidian/entity.md)
-- [Manager & Serializer](obsidian/manager.md)
-- [Éditeur Vue](obsidian/editor.md)
-- [Wiki-links & graph](obsidian/wiki-links.md)
-- [Images](obsidian/images.md)
-- [Chiffrement at-rest](obsidian/encryption.md)
-- [Script d'import depuis Onyx](obsidian/import.md)
+- [Entity & schéma](markdown/entity.md)
+- [Manager & Serializer](markdown/manager.md)
+- [Éditeur Vue](markdown/editor.md)
+- [Wiki-links & graph](markdown/wiki-links.md)
+- [Images](markdown/images.md)
+- [Chiffrement at-rest](markdown/encryption.md)
+- [Script d'import depuis Onyx](markdown/import.md)
 
-### [`notion/`](notion/) — Notes Notion-like (EditorJS)
+### [`block/`](block/) — Notes Block (EditorJS)
 
-Éditeur block-based façon Notion via [EditorJS](https://editorjs.io).
-Même UX globale qu'Obsidian-like (arbo + éditeur full-page + tags +
-recherche), mais contenu structuré en blocks JSON au lieu de markdown
-texte. Pas de wiki-links / graph.
+Éditeur block-based via [EditorJS](https://editorjs.io) : chaque élément
+de contenu est un block typé (paragraph, header, list, image…) sérialisé
+en JSON. Même UX globale (arbo + éditeur full-page + tags + recherche),
+mais pas de wiki-links / graph.
 
-- [Vue d'ensemble & décisions](notion/overview.md)
+- [Vue d'ensemble & décisions](block/overview.md)
 - (entity / manager / editor à détailler une fois le sous-module
-  Obsidian stabilisé)
+  Markdown stabilisé)
 
 ## Architecture commune
 
-- **Entités séparées** `ObsidianNote` et `NotionNote` (pas de
+- **Entités séparées** `MarkdownNote` et `BlockNote` (pas de
   discriminator) — voir justifications dans
-  [`notion/overview.md`](notion/overview.md). Si plus tard une vue
-  unifiée "toutes mes notes" devient utile, extraire les champs communs
+  [`block/overview.md`](block/overview.md). Si plus tard une vue unifiée
+  "toutes mes notes" devient utile, extraire les champs communs
   (`tags`, `user`, `parent`, `position`) dans une abstract partagée.
-- **Réutilisations directes** côté Notion-like depuis Obsidian-like :
-  - Type Doctrine encrypted (`obsidian/encryption.md`)
-  - Controller images (`obsidian/images.md`)
+- **Réutilisations directes** côté Block depuis Markdown :
+  - Type Doctrine encrypted (`markdown/encryption.md`)
+  - Controller images (`markdown/images.md`)
   - Pattern Manager 5-couches + voter ownership
   - Composable `useNoteTree.js` (drag-drop arbo)
   - i18n base
-- **Ordre d'exécution** : démarrer par Obsidian-like (besoin existant,
-  port d'Onyx). Notion-like vient ensuite et hérite de l'infra.
+- **Ordre d'exécution** : démarrer par Markdown (besoin existant, port
+  d'Onyx). Block vient ensuite et hérite de l'infra.
