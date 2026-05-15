@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { ChevronDown, ChevronRight, Pencil, Trash2, Plus } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, Pencil, Trash2, Plus, Tag, Folder } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 
 const props = defineProps({
@@ -75,6 +75,16 @@ const indentStyle = computed(() => ({ paddingLeft: `${props.depth * 1}rem` }));
                     isBeingDragged ? 'opacity-40' : '',
                 ]"
             >
+                <!--
+                    Leading glyph: Folder when the term holds children (visual
+                    cue that it's a parent), Tag otherwise. Mirrors the
+                    media folder sidebar's icon convention.
+                -->
+                <component
+                    :is="hasChildren ? Folder : Tag"
+                    class="w-4 h-4 shrink-0 text-muted"
+                    :stroke-width="2"
+                />
                 <span class="flex-1 text-sm truncate">{{ name }}</span>
                 <span v-if="slug" class="text-xs text-muted font-mono shrink-0 hidden sm:inline">{{ slug }}</span>
             </div>
