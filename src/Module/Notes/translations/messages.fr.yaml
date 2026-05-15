@@ -1,0 +1,42 @@
+backend:
+  permissions:
+    names:
+      notes:
+        markdown:
+          use: Utiliser les notes Markdown
+  nav:
+    sections:
+      notes: Notes
+    notes_markdown: Notes Markdown
+    notes_markdown_description: Prise de notes Markdown façon Obsidian (wiki-links, graphe)
+  audit:
+    actions:
+      notes_markdown:
+        note:
+          created: Note créée
+          updated: Note mise à jour
+          deleted: Note supprimée
+
+notes:
+  markdown:
+    title: Notes Markdown
+    save: Enregistrer
+    delete: Supprimer
+    saved: Note enregistrée
+    untitled: Sans titre
+    title_placeholder: Titre de la note…
+    content_placeholder: "# Écrivez du markdown ici\n\nReliez vos notes avec [[Titre]]"
+    create_root: Nouvelle note
+    create_child: Ajouter une sous-note
+    confirm_delete: 'Supprimer définitivement « {title} » ?'
+    empty:
+      title: Aucune note
+      description: Cliquez sur + pour créer votre première note.
+    no_selection:
+      title: Sélectionnez une note
+      description: Choisissez une note dans l'arborescence ou créez-en une nouvelle.
+    errors:
+      load_failed: Impossible de charger la note.
+      create_failed: Impossible de créer la note.
+      save_failed: Impossible d'enregistrer la note.
+      delete_failed: Impossible de supprimer la note.

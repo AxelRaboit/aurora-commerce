@@ -54,11 +54,21 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
 
     public function testIndexReturnsEmptyListForFreshUser(): void
     {
-        [$status, $body] = $this->getJson('backend_notes_markdown_index');
+        [$status, $body] = $this->getJson('backend_notes_markdown_list');
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
         self::assertSame([], $body['notes']);
+    }
+
+    public function testIndexPageRendersTwigTemplate(): void
+    {
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_notes_markdown'));
+        $response = $this->client->getResponse();
+        $content = (string) $response->getContent();
+
+        self::assertSame(200, $response->getStatusCode(), 'response body: '.substr($content, 0, 800));
+        self::assertStringContainsString('notes/backend/markdown/MarkdownNotesApp', $content);
     }
 
     public function testCreateThenShowRoundtripsContent(): void

@@ -21,6 +21,7 @@ export const aliases = {
     "@hr": moduleAlias("Hr"),
     "@planning": moduleAlias("Planning"),
     "@project": moduleAlias("Project"),
+    "@notes": moduleAlias("Notes"),
     "@vault": moduleAlias("Vault"),
     "@password-generator": moduleAlias("PasswordGenerator"),
 };
