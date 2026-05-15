@@ -14,13 +14,7 @@ import { Plus, Save, X, Trash2, Check, UserPlus, Pencil } from "lucide-vue-next"
 import { useUsers } from "./composables/useUsers.js";
 import UserBadges from "./UserBadges.vue";
 import UserActions from "./UserActions.vue";
-
-const LOCALE_OPTIONS = [
-    { value: "fr", label: "Français" },
-    { value: "en", label: "English" },
-    { value: "es", label: "Español" },
-    { value: "de", label: "Deutsch" },
-];
+import { LOCALE_OPTIONS } from "@core/utils/locales.js";
 
 const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
@@ -193,9 +187,7 @@ onMounted(() => {
                     toggleable
                     required
                 />
-                <AppSelect v-model="users.newUser.value.locale" :label="t('backend.users.locale')">
-                    <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
-                </AppSelect>
+                <AppSelect v-model="users.newUser.value.locale" :label="t('backend.users.locale')" :options="LOCALE_OPTIONS" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -236,9 +228,7 @@ onMounted(() => {
                     autocomplete="new-password"
                     toggleable
                 />
-                <AppSelect v-model="users.editUserForm.value.locale" :label="t('backend.users.locale')">
-                    <option v-for="option in LOCALE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
-                </AppSelect>
+                <AppSelect v-model="users.editUserForm.value.locale" :label="t('backend.users.locale')" :options="LOCALE_OPTIONS" />
             </form>
             <template #footer>
                 <AppModalFooter>

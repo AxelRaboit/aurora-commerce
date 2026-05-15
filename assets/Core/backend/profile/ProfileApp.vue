@@ -9,6 +9,7 @@ import AppSelect from "@/shared/components/form/AppSelect.vue";
 import AppPasswordStrength from "@/shared/components/form/AppPasswordStrength.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import { useProfileLocale } from "@core/backend/profile/composables/useProfileLocale.js";
+import { LOCALE_OPTIONS } from "@core/utils/locales.js";
 import { useProfileInfo } from "@core/backend/profile/composables/useProfileInfo.js";
 import { useProfileMood } from "@core/backend/profile/composables/useProfileMood.js";
 import { useProfilePassword } from "@core/backend/profile/composables/useProfilePassword.js";
@@ -54,10 +55,7 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                 <AppSelect
                     v-model="selectedLocale"
                     :label="t('backend.profile.locale.field')"
-                    :options="[
-                        { value: 'fr', label: t('shared.locales.fr') },
-                        { value: 'en', label: t('shared.locales.en') },
-                    ]"
+                    :options="LOCALE_OPTIONS"
                     :disabled="localeLoading"
                     v-on:update:model-value="changeLocale"
                 />
