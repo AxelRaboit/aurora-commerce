@@ -116,7 +116,8 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         handle=".drag-handle"
                         :animation="150"
                         ghost-class="opacity-50"
-                        tag="ul"
+                        drag-class="drag-active"
+                        tag="div"
                         class="space-y-0.5 min-h-[2rem]"
                         v-on:start="onDragStart"
                         v-on:end="onDragEnd"
@@ -135,7 +136,7 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         />
                     </VueDraggable>
 
-                    <ul v-else class="space-y-0.5">
+                    <div v-else class="space-y-0.5">
                         <NoteTreeItem
                             v-for="node in tree"
                             :key="node.id"
@@ -145,7 +146,7 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                             v-on:select="selectNote"
                             v-on:create-child="createNote"
                         />
-                    </ul>
+                    </div>
                 </template>
                 <AppNoData
                     v-else-if="treeQuery.trim() !== ''"

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
-import { ChevronRight, ChevronDown, FileText, Plus, GripVertical } from 'lucide-vue-next';
+import { ChevronRight, ChevronDown, GripVertical, Plus } from 'lucide-vue-next';
+import AppIconButton from '@shared/components/action/AppIconButton.vue';
 
 const props = defineProps({
     node: { type: Object, required: true },
@@ -11,36 +12,34 @@ const props = defineProps({
     groupName: { type: String, default: 'notes-tree' },
 });
 
-const emit = defineEmits(['select', 'create-child', 'drag-start', 'drag-end']);
+const emit = defineEmits(['select', 'create-child', 'drag-start', 'drag-end', 'update:node']);
 
 const expanded = ref(true);
-const hasChildren = computed(() => Array.isArray(props.node.children) && props.node.children.length > 0);
+
+/**
+ * Computed children with get/set — same pattern as ListingCategoryNode.
+ * Reading returns the live array (shared reference with the parent tree,
+ * so VueDraggable's in-place splice/push mutations propagate to
+ * tree.value automatically). The setter is a safety net for the rare
+ * case where vue-draggable-plus replaces the array entirely.
+ */
+const children = computed({
+    get: () => props.node.children ?? [],
+    set: (value) => emit('update:node', { ...props.node, children: value }),
+});
+const hasChildren = computed(() => children.value.length > 0);
+const isSelected = computed(() => props.selectedId === props.node.id);
 </script>
 
 <template>
-    <li class="select-none">
+    <div class="space-y-0.5">
         <div
-            class="group flex items-center gap-1 px-2 py-1.5 rounded-md cursor-pointer text-sm"
+            class="group flex items-center gap-0.5 px-1.5 py-1 rounded-md cursor-pointer text-sm border border-transparent"
             :class="[
-                selectedId === node.id ? 'bg-accent-100 dark:bg-accent-900/30 text-primary' : 'hover:bg-surface-2 text-secondary',
+                isSelected ? 'bg-accent-100 dark:bg-accent-900/30 text-primary border-accent-500/30' : 'hover:bg-surface-2 text-secondary',
             ]"
-            :style="{ paddingLeft: `${depth * 12 + 4}px` }"
             v-on:click="emit('select', node.id)"
         >
-            <button
-                v-if="hasChildren"
-                class="p-0.5 rounded hover:bg-line/50"
-                v-on:click.stop="expanded = !expanded"
-            >
-                <ChevronDown v-if="expanded" class="w-3.5 h-3.5" :stroke-width="2" />
-                <ChevronRight v-else class="w-3.5 h-3.5" :stroke-width="2" />
-            </button>
-            <FileText v-else class="w-3.5 h-3.5 text-muted shrink-0 ml-1" :stroke-width="1.75" />
-
-            <span class="truncate flex-1">
-                {{ node.title || $t('notes.markdown.untitled') }}
-            </span>
-
             <span
                 v-if="draggable"
                 class="drag-handle cursor-grab active:cursor-grabbing p-0.5 rounded text-muted hover:text-primary hover:bg-line/50 shrink-0"
@@ -50,35 +49,56 @@ const hasChildren = computed(() => Array.isArray(props.node.children) && props.n
                 <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
             </span>
 
-            <button
-                class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-line/50 shrink-0"
+            <AppIconButton
+                v-if="hasChildren"
+                size="sm"
+                variant="ghost"
+                class="p-0.5"
+                v-on:click.stop="expanded = !expanded"
+            >
+                <ChevronDown v-if="expanded" class="w-3.5 h-3.5" :stroke-width="2" />
+                <ChevronRight v-else class="w-3.5 h-3.5" :stroke-width="2" />
+            </AppIconButton>
+            <span v-else class="w-5 shrink-0" />
+
+            <span class="truncate flex-1">
+                {{ node.title || $t('notes.markdown.untitled') }}
+            </span>
+
+            <AppIconButton
+                size="sm"
+                variant="ghost"
+                class="opacity-0 group-hover:opacity-100 shrink-0"
                 :title="$t('notes.markdown.create_child')"
                 v-on:click.stop="emit('create-child', node.id)"
             >
                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-            </button>
+            </AppIconButton>
         </div>
 
         <!--
-            Children list: always a VueDraggable when drag is enabled, so users
-            can drop a node *into* an empty parent (the list serves as a drop
-            target). When drag is disabled (filter active) we fall back to a
-            plain <ul>.
+            Children container — always rendered as a VueDraggable when drag
+            is on, so empty parents are still valid drop targets. The pl-5
+            indent + persistent left border give a visible drop zone even
+            when no children exist; the zone grows on drag-over to make
+            'drop as child of this note' obvious.
         -->
         <VueDraggable
             v-if="draggable && expanded"
-            v-model="node.children"
+            v-model="children"
             :group="{ name: groupName, pull: true, put: true }"
             handle=".drag-handle"
             :animation="150"
             ghost-class="opacity-50"
-            tag="ul"
-            class="mt-0.5 min-h-[1.25rem] pl-3 border-l border-transparent hover:border-line/60 transition-colors"
+            drag-class="drag-active"
+            tag="div"
+            class="ml-3 pl-3 border-l border-line/40 space-y-0.5 transition-[min-height,border-color] py-0.5"
+            :class="hasChildren ? 'min-h-[1.5rem]' : 'min-h-[2rem] hover:border-accent-500/60 hover:bg-accent-50/30 dark:hover:bg-accent-900/10'"
             v-on:start="emit('drag-start')"
             v-on:end="emit('drag-end')"
         >
             <NoteTreeItem
-                v-for="child in node.children"
+                v-for="child in children"
                 :key="child.id"
                 :node="child"
                 :selected-id="selectedId"
@@ -92,9 +112,9 @@ const hasChildren = computed(() => Array.isArray(props.node.children) && props.n
             />
         </VueDraggable>
 
-        <ul v-else-if="hasChildren && expanded" class="mt-0.5">
+        <div v-else-if="hasChildren && expanded" class="ml-3 pl-3 border-l border-line/40 space-y-0.5">
             <NoteTreeItem
-                v-for="child in node.children"
+                v-for="child in children"
                 :key="child.id"
                 :node="child"
                 :selected-id="selectedId"
@@ -103,6 +123,6 @@ const hasChildren = computed(() => Array.isArray(props.node.children) && props.n
                 v-on:select="(id) => emit('select', id)"
                 v-on:create-child="(id) => emit('create-child', id)"
             />
-        </ul>
-    </li>
+        </div>
+    </div>
 </template>
