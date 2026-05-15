@@ -35,6 +35,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case FaviconMediaId = 'favicon_media_id';
     case SeoTitleTemplate = 'seo_title_template';
     case SeoDefaultDescription = 'seo_default_description';
+    case SeoDefaultOgImage = 'seo_default_og_image';
+    case SeoTwitterHandle = 'seo_twitter_handle';
     case EcommerceLowStockThreshold = 'backend_ecommerce_low_stock_threshold';
     case GedDocumentPrefix = 'backend_ged_document_prefix';
     case PdfFormDocumentPrefix = 'backend_pdfform_document_prefix';
@@ -120,6 +122,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => 'backend.parameters.favicon_media_id.label',
             self::SeoTitleTemplate => 'backend.parameters.seo_title_template.label',
             self::SeoDefaultDescription => 'backend.parameters.seo_default_description.label',
+            self::SeoDefaultOgImage => 'backend.parameters.seo_default_og_image.label',
+            self::SeoTwitterHandle => 'backend.parameters.seo_twitter_handle.label',
             self::EcommerceLowStockThreshold => 'backend.parameters.ecommerce_low_stock_threshold.label',
             self::GedDocumentPrefix => 'backend.parameters.ged_document_prefix.label',
             self::PdfFormDocumentPrefix => 'backend.parameters.pdfform_document_prefix.label',
@@ -190,6 +194,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => 'backend.parameters.favicon_media_id.description',
             self::SeoTitleTemplate => 'backend.parameters.seo_title_template.description',
             self::SeoDefaultDescription => 'backend.parameters.seo_default_description.description',
+            self::SeoDefaultOgImage => 'backend.parameters.seo_default_og_image.description',
+            self::SeoTwitterHandle => 'backend.parameters.seo_twitter_handle.description',
             self::EcommerceLowStockThreshold => 'backend.parameters.ecommerce_low_stock_threshold.description',
             self::BillingInvoicePrefix => 'backend.parameters.billing_invoice_prefix.description',
             self::BillingCreditNotePrefix => 'backend.parameters.billing_credit_note_prefix.description',
@@ -260,6 +266,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::FaviconMediaId => '',
             self::SeoTitleTemplate => '{title} — {siteName}',
             self::SeoDefaultDescription => '',
+            self::SeoDefaultOgImage => '',
+            self::SeoTwitterHandle => '',
             self::EcommerceLowStockThreshold => '5',
             self::GedDocumentPrefix => 'DOC',
             self::PdfFormDocumentPrefix => SequencePrefixEnum::PdfFormDocument->value,
@@ -310,7 +318,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::DefaultFront, self::DefaultLocale, self::EmailLocale, self::Timezone => 'select',
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders, self::SingleLocaleMode => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
-            self::LogoMediaId, self::FaviconMediaId => 'media',
+            self::LogoMediaId, self::FaviconMediaId, self::SeoDefaultOgImage => 'media',
             self::ColorPickerPresets => 'json',
             default => 'string',
         };
@@ -333,7 +341,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
-            self::SeoTitleTemplate, self::SeoDefaultDescription => 'seo',
+            self::SeoTitleTemplate, self::SeoDefaultDescription, self::SeoDefaultOgImage, self::SeoTwitterHandle => 'seo',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix, self::PdfFormDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',

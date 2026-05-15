@@ -1,6 +1,9 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ term.translation.name }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({
+    title: term.translation.name,
+    description: term.translation.description|default(''),
+}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('editorial/frontend/TermApp', {

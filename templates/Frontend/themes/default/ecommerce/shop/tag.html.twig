@@ -1,7 +1,9 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ tag.name }} — {{ context.siteName }}{% endblock %}
-{% block pageDescription %}{{ tag.description ?? '' }}{% endblock %}
+{% block seo_define %}{% do seo({
+    title: tag.name,
+    description: tag.description,
+}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/ShopTagApp', {

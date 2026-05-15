@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/auth/layout.html.twig' %}
 
-{% block title %}{{ 'frontend.login.title'|trans }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'frontend.login.title'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
     <div {{ vue_component('core/frontend/auth/LoginApp', {

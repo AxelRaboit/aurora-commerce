@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/auth/layout.html.twig' %}
 
-{% block title %}{{ 'frontend.register.confirm_title'|trans }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'frontend.register.confirm_title'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
     <div {{ vue_component('core/frontend/auth/RegisterConfirmApp', {

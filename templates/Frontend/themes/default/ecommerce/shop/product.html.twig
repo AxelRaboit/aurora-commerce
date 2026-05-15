@@ -1,7 +1,11 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ listing.seoTitle ?? listing.displayTitle }} — {{ context.siteName }}{% endblock %}
-{% block pageDescription %}{{ listing.seoDescription ?? listing.marketingDescription ?? '' }}{% endblock %}
+{% block seo_define %}{% do seo({
+    title: listing.seoTitle ?? listing.displayTitle,
+    description: listing.seoDescription ?? listing.marketingDescription,
+    image: listing.featuredImage,
+    type: 'product',
+}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/ShopProductApp', {

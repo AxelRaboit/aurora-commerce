@@ -129,6 +129,12 @@ backend:
     seo_default_description:
       label: Default SEO description
       description: Meta description used when no specific description is defined
+    seo_default_og_image:
+      label: Default Open Graph image
+      description: Image used for social previews (Facebook, LinkedIn, Twitter…) when the page doesn't define one. 1200×630 px recommended.
+    seo_twitter_handle:
+      label: Twitter / X handle
+      description: 'Twitter handle of the site (with @, e.g.: @aurora_app). Used in the twitter:site Twitter Cards meta tag.'
     ecommerce_low_stock_threshold:
       label: Low stock threshold (e-commerce)
       description: "Displays a \"Only X left\" warning on the product page when available stock is less than or equal to this value. Set to 0 to disable."

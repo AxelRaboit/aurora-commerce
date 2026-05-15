@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ 'frontend.account.orders'|trans }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'frontend.account.orders'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/AccountOrdersApp', {

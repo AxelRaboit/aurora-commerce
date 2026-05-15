@@ -1,30 +1,69 @@
+{#
+    SEO / Open Graph / Twitter Cards head partial.
+    See docs/aurora-core/dev/convention_seo_head.md for the full contract.
+
+    Each passerelle must `{% set seo = seo({...}) %}` at its top (after `{% extends %}`).
+    The `seo()` function (SeoExtension) returns a normalized hash with these keys, all
+    pre-resolved (title template applied, URLs absolutized, defaults injected):
+
+      seo.title          → <title>, og:title, twitter:title
+      seo.description    → meta description, og:description, twitter:description
+      seo.image          → absolute URL for og:image / twitter:image
+      seo.canonical      → absolute canonical URL (used for canonical link AND og:url)
+      seo.type           → og:type ("website" | "article" | "product" | …)
+      seo.twitterCard    → "summary_large_image" if image, else "summary"
+      seo.noindex        → bool → emits <meta name="robots" content="noindex, nofollow">
+      seo.extraMeta      → raw HTML (article:*, product:*, …)
+      seo.jsonLd         → array → <script type="application/ld+json">
+
+    Twig blocks defined here cannot be overridden by templates that extend layout.html.twig
+    (because head is `include`d, not `embed`ed) — use the `seo()` function instead.
+#}
+{%- set seo = seo_current() -%}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}{{ context.siteName }}{% endblock %}</title>
+<title>{{ seo.title }}</title>
 
-{% block meta %}
-    <meta name="description" content="{{ pageDescription }}">
-    <meta property="og:title" content="{{ block('title') }}">
-    <meta property="og:description" content="{{ pageDescription }}">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ context.siteName }}">
-    <meta property="og:locale" content="{{ locale }}">
-    {% for alt in alternates %}
-        {% if alt.locale != locale %}
-            <meta property="og:locale:alternate" content="{{ alt.locale }}">
-        {% endif %}
-    {% endfor %}
-    {% for alt in alternates %}
-        <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ context.siteUrl }}{{ alt.url }}">
-        {% if alt.locale == context.defaultLocale %}
-            <link rel="alternate" hreflang="x-default" href="{{ context.siteUrl }}{{ alt.url }}">
-        {% endif %}
-    {% endfor %}
-    {% block og_image %}{% endblock %}
-    {% block canonical %}{% endblock %}
-    {% block robots %}{% endblock %}
-    {% block jsonld %}{% endblock %}
-{% endblock %}
+<meta name="description" content="{{ seo.description }}">
+
+<meta property="og:title" content="{{ seo.title }}">
+<meta property="og:description" content="{{ seo.description }}">
+<meta property="og:type" content="{{ seo.type }}">
+<meta property="og:site_name" content="{{ context.siteName }}">
+<meta property="og:url" content="{{ seo.canonical }}">
+<meta property="og:locale" content="{{ locale }}">
+{% for alt in alternates %}
+    {% if alt.locale != locale %}
+        <meta property="og:locale:alternate" content="{{ alt.locale }}">
+    {% endif %}
+{% endfor %}
+{% for alt in alternates %}
+    <link rel="alternate" hreflang="{{ alt.locale }}" href="{{ context.siteUrl }}{{ alt.url }}">
+    {% if alt.locale == context.defaultLocale %}
+        <link rel="alternate" hreflang="x-default" href="{{ context.siteUrl }}{{ alt.url }}">
+    {% endif %}
+{% endfor %}
+{% if seo.image %}
+    <meta property="og:image" content="{{ seo.image }}">
+{% endif %}
+
+<link rel="canonical" href="{{ seo.canonical }}">
+
+<meta name="twitter:card" content="{{ seo.twitterCard }}">
+{% if seo.twitterHandle %}
+    <meta name="twitter:site" content="{{ seo.twitterHandle }}">
+{% endif %}
+<meta name="twitter:title" content="{{ seo.title }}">
+<meta name="twitter:description" content="{{ seo.description }}">
+{% if seo.image %}
+    <meta name="twitter:image" content="{{ seo.image }}">
+{% endif %}
+
+{% if seo.extraMeta %}{{ seo.extraMeta|raw }}{% endif %}
+{% if seo.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+{% if seo.jsonLd %}
+    <script type="application/ld+json">{{ seo.jsonLd|json_encode|raw }}</script>
+{% endif %}
 
 {% if siteFaviconUrl %}
     <link rel="icon" href="{{ siteFaviconUrl }}">

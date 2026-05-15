@@ -1,7 +1,9 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ category.seoTitle ?? category.name }} — {{ context.siteName }}{% endblock %}
-{% block pageDescription %}{{ category.seoDescription ?? '' }}{% endblock %}
+{% block seo_define %}{% do seo({
+    title: category.seoTitle ?? category.name,
+    description: category.seoDescription,
+}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/ShopCategoryApp', {

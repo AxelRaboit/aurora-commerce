@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/auth/layout.html.twig' %}
 
-{% block title %}{{ 'frontend.verify_email.title'|trans }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'frontend.verify_email.title'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('core/frontend/auth/VerifyEmailApp', {

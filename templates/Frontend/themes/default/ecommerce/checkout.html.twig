@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ 'frontend.checkout.title'|trans }} — {{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'frontend.checkout.title'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ecommerce/frontend/checkout/CheckoutApp', {

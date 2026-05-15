@@ -1,6 +1,6 @@
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ 'ged.frontend.documents.title'|trans }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'ged.frontend.documents.title'|trans, noindex: true}) %}{% endblock %}
 
 {% block body %}
 <div {{ vue_component('ged/frontend/DocumentsApp', {

@@ -1,52 +1,53 @@
 ---
 name: convention_frontend_rendering
-description: Tous les templates frontend sont des passerelles Vue — le head Twig porte le SEO, le body monte un composant Vue.
+description: Passerelles Vue frontend — chaque passerelle override {% block seo_define %} pour appeler seo({...}). Block body = un vue_component.
 metadata:
   type: feedback
 ---
 
 ## Règle
 
-**TOUS les templates frontend sont des passerelles Vue.** Plus de SSR Twig complet, plus de mélange. Le pattern unique :
-
-- `<head>` rendu côté serveur via blocs Twig (`title`, `og_image`, `canonical`, `robots`, `jsonld`) → les crawlers voient les meta SEO **avant** que Vue ne mount.
-- `{% block body %}` contient **uniquement** un seul `<div {{ vue_component(...) }}></div>`.
-
-> L'ancienne règle "Twig SSR pour les pages indexées" est **dépréciée**. Le SEO passe désormais par les meta du `<head>` (title, og:image, canonical, JSON-LD) — pas par du contenu Twig dans le body.
-
-### Pattern type
+**TOUS les templates frontend sont des passerelles Vue.** Pattern unique :
 
 ```twig
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ post.title }}{% endblock %}
-{% block canonical %}{{ url('frontend_post_show', { slug: post.slug }) }}{% endblock %}
-{% block og_image %}{{ post.coverUrl }}{% endblock %}
-{% block jsonld %}{{ post.jsonLd|raw }}{% endblock %}
+{% block seo_define %}{% do seo({
+    title: listing.seoTitle ?? listing.displayTitle,
+    description: listing.seoDescription,
+    image: listing.featuredImage,
+    type: 'product',
+}) %}{% endblock %}
 
 {% block body %}
-<div {{ vue_component('Editorial/frontend/PostShowApp', {
-    post: post,
-    relatedPosts: relatedPosts,
-}) }}></div>
+    <div {{ vue_component('ecommerce/frontend/ShopProductApp', { listing: listing }) }}></div>
 {% endblock %}
 ```
 
-### Pages concernées
+- **SEO** via la fonction Twig `seo({...})` appelée dans `{% block seo_define %}` (override le block du layout, rendu avant l'include du head). Doc complète : [`docs/aurora-core/dev/convention_seo_head.md`](../../../docs/aurora-core/dev/convention_seo_head.md).
+- **Body** = un seul `<div {{ vue_component(...) }}></div>`. Aucun markup HTML, aucune logique métier.
 
-Tout `templates/Module/Editorial/frontend/` (post, term, archive, home, form) et tout `templates/Module/Ecommerce/frontend/` (shop, category, tag, product, account, order) — `cart.html.twig` et `checkout.html.twig` étaient déjà des passerelles, ils restent inchangés.
+## Pourquoi cette mécanique (block + side-effect)
 
-Les partials Twig `editorial/_post_card.html.twig` et `editorial/_pagination.html.twig` ont été **supprimés** — leurs équivalents Vue (`PostCard.vue`, `AppPagination`) prennent le relais.
+Deux contraintes Twig découvertes empiriquement obligent ce design :
 
-## Pourquoi
+1. **`partials/head.html.twig` est inclus** (pas étendu) par le layout. Donc les `{% block og_image %}`, `{% block canonical %}`, etc. à l'intérieur de `head.html.twig` **ne sont pas overridables** depuis une passerelle. Ces blocks étaient du code mort silencieux avant le refactor de mai 2026.
 
-**Twig shell partout** est cohérent avec le backend admin (déjà 100% Twig shell + Vue). Le head meta côté serveur sert le SEO (crawlers, Open Graph, schema.org), le body interactif vit en Vue — pas de duplication SSR/CSR, pas de drift entre deux rendus, et la stack JS profite uniformément des composants partagés (`PostCard`, `ShopListingCard`, `AppPagination`, etc.).
+2. **`{% set %}` au top-level d'un template qui extends ne propage que sur 1 niveau**. Pour la chaîne `auth/login → auth/layout → layout`, un `{% set seo = ... %}` dans `auth/login` est silencieusement **perdu** — seuls les `{% set %}` de l'enfant direct du layout (donc `auth/layout`) propagent. Vérifié.
 
-Voir aussi : [[convention_no_bem_tailwind_first]], [[structure_template_folders]].
+Les **blocks**, en revanche, traversent toute la chaîne extends. D'où le pattern : `seo()` (PHP Twig function) stocke le payload résolu dans les attributs de la request courante (side-effect), et `head.html.twig` appelle `seo_current()` pour le lire. Le block `seo_define` du layout, rendu avant l'include du head, garantit l'ordre.
+
+## Implications pratiques
+
+- **JAMAIS** utiliser `{% block title %}`, `{% block og_image %}`, `{% block canonical %}`, `{% block robots %}`, `{% block jsonld %}` — ces blocks n'existent pas dans `head.html.twig` ; leur output serait ignoré silencieusement (bug SEO).
+- **Pages auth** : chacune doit inclure `noindex: true` dans son propre `seo(...)`. L'astuce "centraliser noindex dans auth/layout" ne marche pas (cf. contrainte 2).
+- **Theme custom** : peut override `partials/head.html.twig` mais doit consommer `seo_current()` pour préserver le contrat.
 
 ## Comment l'appliquer
 
-1. Nouvelle page frontend → créer `<Module>/frontend/<feature>/index.html.twig` (cf [[structure_template_folders]]), extends le layout du thème, override les blocs `<head>` pertinents.
-2. `{% block body %}` = un seul `vue_component(...)`. Aucune logique métier, aucun markup HTML.
-3. Le composant Vue reçoit toutes les données nécessaires via les props (passées par le `*FrontendViewBuilder`).
-4. SEO = blocs `<head>` — vérifier que `title`, `canonical`, et au moins `og_image` (ou `jsonld`) sont définis pour les pages indexables.
+1. Nouvelle page frontend → créer `<Module>/frontend/<feature>/index.html.twig` (cf [[structure_template_folders]]), extends `layout.html.twig`.
+2. Override `{% block seo_define %}{% do seo({...}) %}{% endblock %}` au minimum avec `title`. Cf. cookbook par type de page dans [`convention_seo_head.md`](../../../docs/aurora-core/dev/convention_seo_head.md).
+3. `{% block body %}` = un seul `vue_component(...)`.
+4. Pages privées (panier, checkout, compte, login, order…) → toujours `noindex: true` dans `seo({...})`.
+
+Voir aussi : [[convention_no_bem_tailwind_first]], [[structure_template_folders]].
