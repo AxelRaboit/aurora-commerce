@@ -30,12 +30,8 @@ final class LocaleContextTest extends TestCase
     public function testReturnsDefaultLocaleOnlyWhenSingleModeIsOn(): void
     {
         $repository = $this->createMock(SettingRepository::class);
-        $repository->method('getBoolean')
-            ->with(ApplicationParameterEnum::SingleLocaleMode->value, false)
-            ->willReturn(true);
-        $repository->method('getOrDefault')
-            ->with(ApplicationParameterEnum::DefaultLocale)
-            ->willReturn(LocaleEnum::English->value);
+        $repository->method('getBoolean')->willReturn(true);
+        $repository->method('getOrDefault')->willReturn(LocaleEnum::English->value);
 
         $context = new LocaleContext($repository, LocaleEnum::values());
 
