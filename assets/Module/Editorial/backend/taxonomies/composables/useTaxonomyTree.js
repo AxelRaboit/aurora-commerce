@@ -223,6 +223,19 @@ export function useTaxonomyTree(
         return list;
     });
 
+    /**
+     * Parent-select options for a given term being edited (or null when
+     * creating). When editing, the term and its descendants are stripped
+     * out so the user can't move a node under itself or its own subtree.
+     */
+    function parentOptionsForTerm(term) {
+        if (!selected.value?.hierarchical) return [];
+        const forbidden = term
+            ? collectDescendantIds(findNodeInTree(tree.value, term.id) ?? term)
+            : new Set();
+        return flatTermsForParentSelect.value.filter((opt) => !forbidden.has(opt.id));
+    }
+
     return {
         tree,
         draggingId,
@@ -239,6 +252,7 @@ export function useTaxonomyTree(
         onDropOnTerm,
         onDropOnRoot,
         flatTermsForParentSelect,
+        parentOptionsForTerm,
         collectDescendantIds,
         findNodeInTree,
     };

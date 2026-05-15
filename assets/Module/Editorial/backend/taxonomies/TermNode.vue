@@ -39,14 +39,28 @@ const hasChildren = computed(() => children.value.length > 0);
 const isDragOver = computed(() => props.dragOverId === props.node.id);
 const isBeingDragged = computed(() => props.draggingId === props.node.id);
 
-// 1rem per level — same convention as the media folder sidebar.
-const indentStyle = computed(() => ({ paddingLeft: `${props.depth * 1}rem` }));
+// Children indent only — the row card itself spans full width so its
+// edges always align with the surrounding header / hint banner.
+const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
 </script>
 
 <template>
     <div>
+        <!--
+            The full row is a single rounded-lg card. Chevron, icon, label,
+            slug and action buttons are all inside it, so the card spans
+            edge-to-edge of its container and aligns with the AppMessage
+            banner above. Depth indent is applied as margin-left on the
+            card itself.
+        -->
         <div
-            class="group flex items-center gap-1"
+            class="group flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors min-w-0 cursor-grab active:cursor-grabbing"
+            :class="[
+                isDragOver
+                    ? 'bg-accent-600/15 text-accent-400 border-accent-600/30 ring-2 ring-accent-500'
+                    : 'hover:bg-surface-2 text-primary border-transparent',
+                isBeingDragged ? 'opacity-40' : '',
+            ]"
             :style="indentStyle"
             :draggable="true"
             v-on:dragstart.stop="emit('term-drag-start', node, $event)"
@@ -55,41 +69,28 @@ const indentStyle = computed(() => ({ paddingLeft: `${props.depth * 1}rem` }));
             v-on:dragleave="emit('term-drag-leave', node, $event)"
             v-on:drop="emit('drop-on-term', node, $event)"
         >
-            <button
+            <AppIconButton
                 v-if="hierarchical && hasChildren"
-                type="button"
-                class="p-1 -ml-1 text-muted hover:text-primary rounded shrink-0"
+                size="sm"
+                variant="ghost"
+                class="-ml-1 shrink-0"
+                :title="isCollapsed ? $t('shared.common.expand') : $t('shared.common.collapse')"
                 v-on:click.stop="emit('toggle-collapse', node.id)"
             >
                 <ChevronRight v-if="isCollapsed" class="w-3 h-3" :stroke-width="2" />
                 <ChevronDown v-else class="w-3 h-3" :stroke-width="2" />
-            </button>
-            <span v-else class="w-4 shrink-0" />
+            </AppIconButton>
 
-            <div
-                class="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg transition-colors border min-w-0 cursor-grab active:cursor-grabbing"
-                :class="[
-                    isDragOver
-                        ? 'bg-accent-600/15 text-accent-400 border-accent-600/30 ring-2 ring-accent-500'
-                        : 'hover:bg-surface-2 text-primary border-transparent',
-                    isBeingDragged ? 'opacity-40' : '',
-                ]"
-            >
-                <!--
-                    Leading glyph: Folder when the term holds children (visual
-                    cue that it's a parent), Tag otherwise. Mirrors the
-                    media folder sidebar's icon convention.
-                -->
-                <component
-                    :is="hasChildren ? Folder : Tag"
-                    class="w-4 h-4 shrink-0 text-muted"
-                    :stroke-width="2"
-                />
-                <span class="flex-1 text-sm truncate">{{ name }}</span>
-                <span v-if="slug" class="text-xs text-muted font-mono shrink-0 hidden sm:inline">{{ slug }}</span>
-            </div>
+            <component
+                :is="hasChildren ? Folder : Tag"
+                class="w-4 h-4 shrink-0 text-muted"
+                :stroke-width="2"
+            />
 
-            <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
+            <span class="flex-1 text-sm truncate min-w-0">{{ name }}</span>
+            <span v-if="slug" class="text-xs text-muted font-mono shrink-0 hidden sm:inline">{{ slug }}</span>
+
+            <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity shrink-0">
                 <AppIconButton v-if="hierarchical" color="sky" :title="$t('backend.taxonomies.terms.addChild')" v-on:click.stop="emit('add-child', node.id)">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
@@ -102,11 +103,6 @@ const indentStyle = computed(() => ({ paddingLeft: `${props.depth * 1}rem` }));
             </div>
         </div>
 
-        <!--
-            Recursive children — same depth incremented by 1 so each level
-            picks up another rem of padding. No nested borders or extra
-            indent containers; the visual hierarchy is conveyed by inset.
-        -->
         <div v-if="hierarchical && !isCollapsed && hasChildren" class="space-y-0.5 mt-0.5">
             <TermNode
                 v-for="child in children"

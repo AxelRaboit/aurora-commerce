@@ -22,7 +22,8 @@ import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNavListItem from "@/shared/components/nav/AppNavListItem.vue";
 import TermNode from "@editorial/backend/taxonomies/TermNode.vue";
-import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
+import { useTermFormHelpers } from "@editorial/backend/taxonomies/composables/useTermFormHelpers.js";
+import { required } from "@/shared/utils/validation/validators.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 
 const { t } = useI18n();
@@ -47,11 +48,13 @@ const { taxonomies, selectedId, activeLocale, selected, replaceTaxonomy, transla
 const flatTerms = computed(() => selected.value?.terms ?? []);
 
 const {
-    tree, collapsed, toggleCollapsed, flatTermsForParentSelect, collectDescendantIds, findNodeInTree,
+    tree, collapsed, toggleCollapsed, parentOptionsForTerm,
     draggingId, dragOverId, rootDragOver,
     onTermDragStart, onTermDragEnd, onTermDragOver, onTermDragLeave,
     onRootDragOver, onRootDragLeave, onDropOnTerm, onDropOnRoot,
 } = useTaxonomyTree(selected, flatTerms, props.termReorderPath, props.locales, activeLocale, replaceTaxonomy, termName);
+
+const { autoSlugTerm: autoSlugTermHelper, normalizeAllLocaleSlugs } = useTermFormHelpers();
 
 const { deletingTaxonomy, confirmDeleteTaxonomy } = useTaxonomyDelete(props.deletePath, taxonomies, selectedId);
 const { deletingTerm, confirmDeleteTerm } = useTermDelete(props.termDeletePath, selected, replaceTaxonomy);
@@ -77,6 +80,11 @@ const {
     }),
     createUrl: () => props.createPath,
     editUrl:   (tx) => buildPath(props.editPath, { id: tx.id }),
+    rules: () => ({
+        slug: () => required(t("backend.taxonomies.errors.slug_required"))(taxonomyForm.slug),
+        [`translations[${activeLocale.value}].label`]: () =>
+            required(t("backend.taxonomies.errors.label_required"))(taxonomyForm.translations[activeLocale.value]?.label),
+    }),
     onSuccess: ({ data }) => { replaceTaxonomy(data.taxonomy); selectedId.value = data.taxonomy.id; },
 });
 
@@ -102,6 +110,10 @@ const {
     }),
     createUrl: () => buildPath(props.termCreatePath, { id: selected.value.id }),
     editUrl:   (tr) => buildPath(props.termEditPath, { id: selected.value.id, termId: tr.id }),
+    rules: () => ({
+        [`translations[${activeLocale.value}].name`]: () =>
+            required(t("backend.taxonomies.terms.errors.name_required"))(termForm.translations[activeLocale.value]?.name),
+    }),
     onSuccess: ({ data }) => replaceTaxonomy(data.taxonomy),
 });
 
@@ -110,27 +122,15 @@ function openCreateTerm(parentId = null) {
     openTermCreate();
 }
 
-function autoSlugTerm(locale) {
-    const entry = termForm.translations[locale];
-    if (entry) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
-}
+const autoSlugTerm = (locale) => autoSlugTermHelper(termForm, locale);
 
 function submitTerm() {
     if (!selected.value) return;
-    for (const locale of props.locales) {
-        const entry = termForm.translations[locale];
-        if (entry?.name) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
-    }
+    normalizeAllLocaleSlugs(termForm, props.locales);
     rawSubmitTerm();
 }
 
-const parentOptions = computed(() => {
-    if (!selected.value?.hierarchical) return [];
-    const forbidden = termModal.entity
-        ? collectDescendantIds(findNodeInTree(tree.value, termModal.entity.id) ?? termModal.entity)
-        : new Set();
-    return flatTermsForParentSelect.value.filter((opt) => !forbidden.has(opt.id));
-});
+const parentOptions = computed(() => parentOptionsForTerm(termModal.entity));
 </script>
 
 <template>
@@ -238,7 +238,7 @@ const parentOptions = computed(() => {
 
                     <div
                         v-else
-                        class="space-y-1 p-1 rounded-md transition-colors"
+                        class="space-y-1 rounded-md transition-colors"
                         :class="rootDragOver ? 'bg-accent-50 dark:bg-accent-900/10 ring-1 ring-accent-500/40' : ''"
                         v-on:dragover="onRootDragOver"
                         v-on:dragleave="onRootDragLeave"
@@ -310,6 +310,7 @@ const parentOptions = computed(() => {
                         v-model="taxonomyForm.translations[activeLocale].label"
                         :label="t('backend.taxonomies.label')"
                         :placeholder="t('backend.taxonomies.labelPlaceholder')"
+                        :error="taxonomyErrors[`translations[${activeLocale}].label`] ?? ''"
                     />
                     <AppTextarea
                         v-model="taxonomyForm.translations[activeLocale].description"
@@ -346,7 +347,7 @@ const parentOptions = computed(() => {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="taxonomyModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="taxonomyLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="taxonomyLoading" v-on:click="submitTaxonomy"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -409,7 +410,7 @@ const parentOptions = computed(() => {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="termModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="termLoading"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="termLoading" v-on:click="submitTerm"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
